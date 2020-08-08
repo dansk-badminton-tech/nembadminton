@@ -1,0 +1,92 @@
+<?php
+declare(strict_types = 1);
+
+namespace FlyCompany\Import;
+
+use Illuminate\Support\Str;
+
+class Ranking
+{
+
+    /**
+     * @var VintageCollection
+     */
+    private VintageCollection $vintageCollection;
+
+    /**
+     * @var LeagueCollection
+     */
+    private LeagueCollection $leagues;
+
+    /**
+     * @var ClubCollection
+     */
+    private ClubCollection $clubs;
+
+    public function __construct(VintageCollection $vintages, LeagueCollection $leagues, ClubCollection $clubs)
+    {
+        $this->vintageCollection = $vintages;
+        $this->leagues = $leagues;
+        $this->clubs = $clubs;
+    }
+
+    public static function factory(\SimpleXMLElement $data)
+    {
+        $vintageCollection = new VintageCollection();
+        foreach ($data->gl->g as $vintage){
+            $vintageCollection->add(Vintage::xmlFactory($vintage->attributes()));
+        }
+        $leagueCollection = new LeagueCollection();
+        foreach ($data->cl->c as $league){
+            $leagueCollection->add(League::xmlFactory($league->attributes()));
+        }
+        $clubCollection = new ClubCollection();
+        foreach ($data->c as $club){
+            $clubCollection->add(Club::xmlFactory($club->attributes(), $club));
+        }
+        return new Ranking($vintageCollection, $leagueCollection, $clubCollection);
+    }
+
+    /**
+     * @return VintageCollection
+     */
+    public function getVintageCollection() : VintageCollection
+    {
+        return $this->vintageCollection;
+    }
+
+    /**
+     * @return LeagueCollection
+     */
+    public function getLeagues() : LeagueCollection
+    {
+        return $this->leagues;
+    }
+
+    /**
+     * @return ClubCollection
+     */
+    public function getClubs() : ClubCollection
+    {
+        return $this->clubs;
+    }
+
+    public function searchMemberByName(string $name) : MemberCollection{
+        $members = new MemberCollection();
+        /** @var Club $club */
+        foreach ($this->clubs as $club){
+            $filteredMembers = $club->getMembers()->filter(static function (Member $value) use ($name) {
+                return Str::contains($value->getName(), $name);
+            });
+            $members = $members->merge($filteredMembers);
+        }
+        return $members;
+    }
+
+    public function searchClubByName(string $name){
+        return $this->clubs->filter(static function(Club $value) use ($name) {
+            return Str::contains($value->getName1(), $name);
+        });
+    }
+
+}

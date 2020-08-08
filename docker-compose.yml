@@ -1,0 +1,62 @@
+version: '3.7'
+
+services:
+    app:
+      image: flycompany/holdkamp
+      build:
+        context: .
+        dockerfile: Dockerfile
+        target: dev
+      volumes:
+        - .:/var/www/html
+        - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug-confg.ini
+      ports:
+        - 80:80
+      depends_on:
+        - database
+        - phpmyadmin
+        - smtp
+
+    artisan:
+      image: flycompany/holdkamp
+      user: "1000:1000"
+      entrypoint: "php -d memory_limit=1G artisan"
+      build:
+        context: .
+        dockerfile: Dockerfile
+      volumes:
+        - .:/var/www/html
+
+    database:
+      image: mysql:8.0
+      volumes:
+        - db-data:/var/lib/mysql
+      environment:
+        MYSQL_DATABASE: challenge
+        MYSQL_USER: challenge
+        MYSQL_PASSWORD: password
+        MYSQL_ROOT_PASSWORD: password
+
+    smtp:
+      image: schickling/mailcatcher
+      ports:
+        - 1080:1080
+
+    ngrok:
+      image: wernight/ngrok
+      command: 'ngrok http app:80'
+      ports:
+        - 4040:4040
+
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+        PMA_HOST: database
+        PMA_USER: root
+        PMA_PASSWORD: password
+      ports:
+        - 8080:80
+
+volumes:
+  db-data:
+    driver: local
