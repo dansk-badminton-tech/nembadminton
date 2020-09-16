@@ -1,6 +1,6 @@
 FROM php:7.4-apache as base
-
-RUN docker-php-ext-install pdo pdo_mysql gettext
+RUN apt-get update && apt-get install -y libzip-dev zip
+RUN docker-php-ext-install pdo_mysql gettext zip
 RUN a2enmod headers rewrite
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public

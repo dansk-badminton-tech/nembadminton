@@ -13,6 +13,14 @@ class MemberVintage
 
     private PointCollection $points;
 
+    /**
+     * @return string
+     */
+    public function getName() : string
+    {
+        return $this->name;
+    }
+
     public static function xmlFactory(\SimpleXMLElement $attributes, \SimpleXMLElement $points) : MemberVintage
     {
         $vintage = new self();
@@ -32,7 +40,7 @@ class MemberVintage
     }
 
     /**
-     * @return PointCollection
+     * @return PointCollection|Point[]
      */
     public function getPoints() : PointCollection
     {

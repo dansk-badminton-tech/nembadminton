@@ -32,8 +32,8 @@ services:
       volumes:
         - db-data:/var/lib/mysql
       environment:
-        MYSQL_DATABASE: challenge
-        MYSQL_USER: challenge
+        MYSQL_DATABASE: holdkamp
+        MYSQL_USER: holdkamp
         MYSQL_PASSWORD: password
         MYSQL_ROOT_PASSWORD: password
 

@@ -3,31 +3,36 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Import;
 
+/**
+ * Class Club
+ *
+ * @package FlyCompany\Import
+ */
 class Club
 {
 
-    private ?int    $id;
+    private ?int             $id = null;
 
-    private ?string $name1 = '';
+    private ?string          $name1    = null;
 
-    private ?string $name2;
+    private ?string          $name2    = null;
 
-    private ?string $address;
+    private ?string          $address  = null;
 
-    private ?int    $zipCode;
+    private ?int             $zipCode  = null;
 
-    private ?string $city;
+    private ?string          $city     = null;
 
-    private ?string $email;
+    private ?string          $email    = null;
 
-    private ?string $memberOf;
+    private ?string          $memberOf = null;
 
-    private ?string $union;
+    private ?string          $union    = null;
 
     private MemberCollection $members;
 
     /**
-     * @param \SimpleXMLElement         $attributes
+     * @param \SimpleXMLElement   $attributes
      * @param \SimpleXMLElement[] $members
      *
      * @return Club
@@ -66,7 +71,7 @@ class Club
         }
 
         $membersCollection = new MemberCollection();
-        foreach ($members as $member){
+        foreach ($members as $member) {
             $membersCollection->add(Member::xmlFactory($member->attributes(), $member->g));
         }
         $club->members = $membersCollection;
@@ -75,7 +80,7 @@ class Club
     }
 
     /**
-     * @return MemberCollection
+     * @return MemberCollection|Member[]
      */
     public function getMembers() : MemberCollection
     {
@@ -153,6 +158,5 @@ class Club
     {
         return $this->union;
     }
-
 
 }

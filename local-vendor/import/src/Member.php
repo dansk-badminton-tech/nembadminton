@@ -6,10 +6,10 @@ namespace FlyCompany\Import;
 class Member
 {
 
-    private int $id;
-    private string $name;
-    private string $gender;
-    private string $birthDay;
+    private ?string $id = null;
+    private string $name = '';
+    private ?string $gender = null;
+    private ?string $birthday = null;
     private MemberVintageCollection $memberVintages;
 
     public static function xmlFactory(\SimpleXMLElement $attributes, \SimpleXMLElement $memberVintages) : Member
@@ -17,7 +17,7 @@ class Member
         $member = new self();
         foreach ($attributes as $key => $value){
             if($key === 'id'){
-                $member->id = (int)$value;
+                $member->id = (string)$value;
             }
             if($key === 'nam'){
                 $member->name = (string)$value;
@@ -26,7 +26,7 @@ class Member
                 $member->gender = (string)$value;
             }
             if($key === 'dat'){
-                $member->birthDay = (string)$value;
+                $member->birthday = (string)$value;
             }
         }
 
@@ -40,7 +40,7 @@ class Member
     }
 
     /**
-     * @return MemberVintageCollection
+     * @return MemberVintageCollection|MemberVintage[]
      */
     public function getMemberVintages() : MemberVintageCollection
     {
@@ -48,9 +48,9 @@ class Member
     }
 
     /**
-     * @return int
+     * @return string|null
      */
-    public function getId() : int
+    public function getId() : ?string
     {
         return $this->id;
     }
@@ -66,7 +66,7 @@ class Member
     /**
      * @return string
      */
-    public function getGender() : string
+    public function getGender() : ?string
     {
         return $this->gender;
     }
@@ -74,9 +74,9 @@ class Member
     /**
      * @return string
      */
-    public function getBirthDay() : string
+    public function getBirthday() : ?string
     {
-        return $this->birthDay;
+        return $this->birthday;
     }
 
 }

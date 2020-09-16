@@ -8,6 +8,10 @@ use Illuminate\Support\Str;
 class Ranking
 {
 
+    private string $version;
+    private string $format;
+    private string $time;
+
     /**
      * @var VintageCollection
      */
@@ -32,6 +36,7 @@ class Ranking
 
     public static function factory(\SimpleXMLElement $data)
     {
+
         $vintageCollection = new VintageCollection();
         foreach ($data->gl->g as $vintage){
             $vintageCollection->add(Vintage::xmlFactory($vintage->attributes()));
@@ -44,7 +49,19 @@ class Ranking
         foreach ($data->c as $club){
             $clubCollection->add(Club::xmlFactory($club->attributes(), $club));
         }
-        return new Ranking($vintageCollection, $leagueCollection, $clubCollection);
+        $ranking = new self($vintageCollection, $leagueCollection, $clubCollection);
+        foreach ($data->attributes() as $key => $value){
+            if($key === 'version'){
+                $ranking->version = (string)$value;
+            }
+            if($key === 'format'){
+                $ranking->format = (string)$value;
+            }
+            if($key === 'time'){
+                $ranking->time = (string)$value;
+            }
+        }
+        return $ranking;
     }
 
     /**
@@ -64,11 +81,35 @@ class Ranking
     }
 
     /**
-     * @return ClubCollection
+     * @return ClubCollection|Club[]
      */
     public function getClubs() : ClubCollection
     {
         return $this->clubs;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion() : string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat() : string
+    {
+        return $this->format;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTime() : string
+    {
+        return $this->time;
     }
 
     public function searchMemberByName(string $name) : MemberCollection{
