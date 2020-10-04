@@ -1,6 +1,7 @@
 import VueRouter from 'vue-router'
 import Home from "./views/Home";
 import RoundsGenerator from "./views/RoundsGenerator";
+import TeamFight from "./views/TeamFight";
 
 const router = new VueRouter({
                                  mode: 'history',
@@ -14,6 +15,11 @@ const router = new VueRouter({
                                          path: '/rounds-generator',
                                          name: 'rounds-generator',
                                          component: RoundsGenerator
+                                     },
+                                     {
+                                         path: '/team-fight',
+                                         name: 'team-fight',
+                                         component: TeamFight
                                      }
                                  ],
                              });

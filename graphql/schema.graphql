@@ -7,13 +7,35 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 type Query {
     users: [User!]! @paginate(defaultCount: 10)
     user(id: ID @eq): User @find
-    members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name"])): [Member!]! @paginate(defaultCount: 10)
+    membersSearch(
+        name: String @where(operator: "like"),
+        hasClubs: _ @whereHasConditions(columns: ["id"]),
+        excludeMembers: [Int!] @notIn(key: "id"),
+        orderBy: _ @orderBy(columns: ["name"])
+    ): [Member!]! @paginate(defaultCount: 10)
+    clubsSearch(name: String @where(operator: "like", key: "name1"), orderBy: _ @orderBy(columns: ["name1"])): [Club!]! @paginate(defaultCount: 10)
 }
 
 type Member {
     id: ID!
     refId: String!
     name: String!
+    gender: String!
+    points: [Point!] @hasMany
+    clubs: [Club!]! @belongsToMany
+}
+
+type Point {
+    points: Int
+    position: Int
+    category: String
+    vintage: String
+}
+
+type Club {
+    id: ID!
+    name1: String!
+    name2: String!
 }
 
 type User {

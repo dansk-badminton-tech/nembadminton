@@ -1,8 +1,9 @@
 const da = {
-    createClub: {
-        clubName: 'Klub navn',
-        contactPerson: 'Kontakt person',
-        contactEmail: 'Kontakt email'
+    roundsGenerator: {
+        findPlayer: 'Søger efter spiller',
+        findPlayerPlaceholder: 'fx. Viktor',
+        findClub: 'Søg efter klub',
+        findClubPlaceholder: 'fx. Skovbakken'
     }
 }
 

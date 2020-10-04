@@ -1,91 +1,98 @@
 <template>
-    <fragment>
-        <b-field label="Find a name">
-            <b-autocomplete
-                v-model="querySearchName"
-                placeholder="e.g. Daniel"
-                :keep-first="true"
-                :loading="$apollo.queries.members.loading"
-                :data="this.members.data"
-                :clear-on-select="true"
-                field="name"
-                @typing="searchMembers"
-                @select="addMember"
-                :clearable="true"
-            >
-                <template slot="empty">No results for {{ querySearchName }}</template>
-            </b-autocomplete>
-        </b-field>
-        {{ selectedMembers }}
-        <b-field :label="$t('createClub.clubName')">
-            <b-input v-model="clubName"></b-input>
-        </b-field>
-    </fragment>
+    <div>
+        <div class="columns">
+            <div class="column">
+                <ClubSearch :select-club="selectClub"></ClubSearch>
+            </div>
+            <div class="column">
+                <PlayerSearch :add-player="addPlayer" :club-id="clubId" :exclude-players="this.players"></PlayerSearch>
+            </div>
+        </div>
+        <b-button @click="addCourt">Tilføj Bane</b-button>
+        <div class="mt-3">
+            <Court v-for="court in courts" :key="court.id" :court="court" :remove-player="removePlayer"></Court>
+        </div>
+    </div>
 </template>
 
 <script>
-import {ValidationProvider} from "vee-validate";
-import gql from 'graphql-tag'
-import {debounce} from "../helpers";
+import PlayerSearch from "../components/search-player/PlayerSearch";
+import ClubSearch from "../components/search-club/ClubSearch";
+import Court from "../components/courts/Court";
+import PlayerList from "./PlayerList";
+import {chunk, defaultIfUndefined} from "../helpers";
 
 export default {
     name: "RoundsGenerator",
     components: {
-        ValidationProvider
+        PlayerList,
+        Court,
+        ClubSearch,
+        PlayerSearch
     },
     data() {
         return {
-            querySearchName: '',
-            searchName: '',
-            clubName: '',
-            selectedMembers: [],
-            members: {
-                data: []
-            }
+            clubId: null,
+            courts: [],
+            players: [],
+            onCourtPlayers: []
         }
     },
     methods: {
-        addMember(option) {
-            if (!option) {
-                return
-            }
-            this.selectedMembers.push(option)
+        selectClub(id) {
+            this.clubId = id
         },
-        searchMembers: debounce(function (name) {
-            if (!name.length) {
-                this.members.data = []
-                return
+        addPlayer(player) {
+            this.players.push(player)
+            this.shufflePlayers()
+        },
+        shufflePlayers() {
+            let teams = chunk(this.players, 4)
+            for (let court of this.courts) {
+                let team = teams.shift();
+                court.left = []
+                court.right = []
+                court.left.push(defaultIfUndefined(team.shift(), {id: 1, name: '-'}))
+                court.right.push(defaultIfUndefined(team.shift(), {id: 2, name: '-'}))
+                court.left.push(defaultIfUndefined(team.shift(), {id: 3, name: '-'}))
+                court.right.push(defaultIfUndefined(team.shift(), {id: 4, name: '-'}))
             }
-            this.searchName = name;
-            this.$apollo.queries.members.refresh();
-        }, 200)
-    },
-    apollo: {
-        members: {
-            query: gql`query MembersSearch($name: String){
-                      members(name: $name, orderBy: { column: NAME, order: ASC }) {
-                        data {
-                          id
-                          name
-                          refId
-                        }
-                        paginatorInfo {
-                          count
-                          total
-                        }
-                      }
-                    }
-                `,
-            variables() {
-                return {
-                    name: '%' + this.searchName + '%'
+        },
+        removePlayer(court, player) {
+            let indexOfCourt = this.courts.indexOf(court);
+            let foundCourt = this.courts[indexOfCourt]
+
+            let indexLeft = foundCourt.left.indexOf(player)
+            if (indexLeft > -1) {
+                foundCourt.left[indexLeft] = {id: indexLeft, name: '-'}
+            }
+            let indexRight = foundCourt.right.indexOf(player)
+            if (indexRight > -1) {
+                foundCourt.left[indexRight] = {id: indexLeft, name: '-'}
+            }
+            this.courts[indexOfCourt] = foundCourt
+            console.log(this.courts)
+        },
+        addCourt() {
+            if (typeof this.addCourt.count == 'undefined') {
+                this.addCourt.count = 0;
+            }
+            this.courts.push(
+                {
+                    id: this.addCourt.count,
+                    left: [
+                        {id: 1, name: '-'},
+                        {id: 2, name: '-'}
+                    ],
+                    right: [
+                        {id: 3, name: '-'},
+                        {id: 4, name: '-'}
+                    ]
                 }
-            }
+            )
+            this.addCourt.count++
         }
     }
 }
 </script>
 
-<style scoped>
-
-</style>

@@ -12,12 +12,15 @@ use Illuminate\Support\Facades\Storage;
 
 class ImportPoints extends Command
 {
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'import:points {data : ranking to import format \'ddmmyy\'}';
+    protected $signature = 'import:points
+                            {date : ranking to import format \'ddmmyy\'}
+                            {--member-ids= : Members ids}';
 
     /**
      * The console command description.
@@ -49,23 +52,26 @@ class ImportPoints extends Command
         $data = XMLHelper::loadXML($path, Storage::disk());
         $this->info('Mapping to objects');
         $ranking = Ranking::factory($data);
+        $memberIds = explode(',', $this->option('member-ids'));
 
         foreach ($ranking->getClubs() as $club) {
             foreach ($club->getMembers() as $member) {
-                $memberModel = \App\Models\Member::query()->where('refId', $member->getId())->first();
-                if($memberModel !== null){
-                    $this->info('Adding points to '.$member->getName());
-                    foreach ($member->getMemberVintages() as $memberVintage){
-                        foreach ($memberVintage->getPoints() as $point){
-                            Point::query()->create([
-                                'points' => $point->getPoints(),
-                                'position' => $point->getPosition(),
-                                'category' => $point->getCategory(),
-                                'cll' => $point->getCll(),
-                                'clh' => $point->getClh(),
-                                'vintage' => $memberVintage->getName(),
-                                'member_id' => $memberModel->id
-                            ]);
+                if (\in_array($member->getId(), $memberIds)) {
+                    $memberModel = \App\Models\Member::query()->where('refId', $member->getId())->first();
+                    if ($memberModel !== null) {
+                        $this->info('Adding points to ' . $member->getName());
+                        foreach ($member->getMemberVintages() as $memberVintage) {
+                            foreach ($memberVintage->getPoints() as $point) {
+                                Point::query()->create([
+                                    'points'    => $point->getPoints(),
+                                    'position'  => $point->getPosition(),
+                                    'category'  => $point->getCategory(),
+                                    'cll'       => $point->getCll(),
+                                    'clh'       => $point->getClh(),
+                                    'vintage'   => $memberVintage->getName(),
+                                    'member_id' => $memberModel->id,
+                                ]);
+                            }
                         }
                     }
                 }
