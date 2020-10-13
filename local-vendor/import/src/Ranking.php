@@ -34,34 +34,36 @@ class Ranking
         $this->clubs = $clubs;
     }
 
+    public static function factoryClub(\SimpleXMLElement $data, int $id)
+    {
+        $leagueCollection = new LeagueCollection();
+        $vintageCollection = new VintageCollection();
+        $clubCollection = new ClubCollection();
+        foreach ($data->c as $club) {
+            if (Club::isClubId($club->attributes(), $id)) {
+                $clubCollection->add(Club::xmlFactory($club->attributes(), $club));
+            }
+        }
+
+        return self::createRanking($vintageCollection, $leagueCollection, $clubCollection, $data);
+    }
+
     public static function factory(\SimpleXMLElement $data)
     {
-
         $vintageCollection = new VintageCollection();
-        foreach ($data->gl->g as $vintage){
+        foreach ($data->gl->g as $vintage) {
             $vintageCollection->add(Vintage::xmlFactory($vintage->attributes()));
         }
         $leagueCollection = new LeagueCollection();
-        foreach ($data->cl->c as $league){
+        foreach ($data->cl->c as $league) {
             $leagueCollection->add(League::xmlFactory($league->attributes()));
         }
         $clubCollection = new ClubCollection();
-        foreach ($data->c as $club){
+        foreach ($data->c as $club) {
             $clubCollection->add(Club::xmlFactory($club->attributes(), $club));
         }
-        $ranking = new self($vintageCollection, $leagueCollection, $clubCollection);
-        foreach ($data->attributes() as $key => $value){
-            if($key === 'version'){
-                $ranking->version = (string)$value;
-            }
-            if($key === 'format'){
-                $ranking->format = (string)$value;
-            }
-            if($key === 'time'){
-                $ranking->time = (string)$value;
-            }
-        }
-        return $ranking;
+
+        return self::createRanking($vintageCollection, $leagueCollection, $clubCollection, $data);
     }
 
     /**
@@ -121,13 +123,41 @@ class Ranking
             });
             $members = $members->merge($filteredMembers);
         }
+
         return $members;
     }
 
-    public function searchClubByName(string $name){
-        return $this->clubs->filter(static function(Club $value) use ($name) {
+    public function searchClubByName(string $name)
+    {
+        return $this->clubs->filter(static function (Club $value) use ($name) {
             return Str::contains($value->getName1(), $name);
         });
+    }
+
+    /**
+     * @param VintageCollection $vintageCollection
+     * @param LeagueCollection  $leagueCollection
+     * @param ClubCollection    $clubCollection
+     * @param \SimpleXMLElement $data
+     *
+     * @return Ranking
+     */
+    protected static function createRanking(VintageCollection $vintageCollection, LeagueCollection $leagueCollection, ClubCollection $clubCollection, \SimpleXMLElement $data) : Ranking
+    {
+        $ranking = new self($vintageCollection, $leagueCollection, $clubCollection);
+        foreach ($data->attributes() as $key => $value) {
+            if ($key === 'version') {
+                $ranking->version = (string)$value;
+            }
+            if ($key === 'format') {
+                $ranking->format = (string)$value;
+            }
+            if ($key === 'time') {
+                $ranking->time = (string)$value;
+            }
+        }
+
+        return $ranking;
     }
 
 }

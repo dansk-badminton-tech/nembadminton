@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Console\Commands;
 
+use App\Models\Member;
 use App\Models\Point;
 use FlyCompany\Import\Ranking;
 use FlyCompany\Import\Util\Path;
@@ -53,12 +54,12 @@ class ImportPoints extends Command
         $this->info('Mapping to objects');
         $ranking = Ranking::factory($data);
         $memberIds = explode(',', $this->option('member-ids'));
-
         foreach ($ranking->getClubs() as $club) {
             foreach ($club->getMembers() as $member) {
                 if (\in_array($member->getId(), $memberIds)) {
-                    $memberModel = \App\Models\Member::query()->where('refId', $member->getId())->first();
+                    $memberModel = Member::query()->where('refId', $member->getId())->first();
                     if ($memberModel !== null) {
+                        Point::query()->where('member_id', $memberModel->id)->delete();
                         $this->info('Adding points to ' . $member->getName());
                         foreach ($member->getMemberVintages() as $memberVintage) {
                             foreach ($memberVintage->getPoints() as $point) {
@@ -77,6 +78,7 @@ class ImportPoints extends Command
                 }
             }
         }
+
         return 0;
     }
 }

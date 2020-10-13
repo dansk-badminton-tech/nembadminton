@@ -1,6 +1,7 @@
 FROM php:7.4-apache as base
 RUN apt-get update && apt-get install -y libzip-dev zip
-RUN docker-php-ext-install pdo_mysql gettext zip
+RUN pecl install redis && docker-php-ext-enable redis
+RUN docker-php-ext-install pdo_mysql gettext zip pcntl
 RUN a2enmod headers rewrite
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public

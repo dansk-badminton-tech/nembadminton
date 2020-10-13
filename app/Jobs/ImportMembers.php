@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Jobs;
 
+use App\Import\Import;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -16,16 +17,20 @@ class ImportMembers implements ShouldQueue
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private array $clubIds;
+    private array  $clubIds;
+
+    private string $date;
 
     /**
      * Create a new job instance.
      *
-     * @param array $clubIds
+     * @param string $date
+     * @param array  $clubIds
      */
-    public function __construct(array $clubIds)
+    public function __construct(string $date, array $clubIds)
     {
         $this->clubIds = $clubIds;
+        $this->date = $date;
     }
 
     /**
@@ -35,6 +40,6 @@ class ImportMembers implements ShouldQueue
      */
     public function handle()
     {
-        Artisan::call('import:members', ['date' => '300820', '--club-ids' => implode(',', $this->clubIds)]);
+        Import::importMembers($this->date, $this->clubIds);
     }
 }

@@ -11,7 +11,7 @@ namespace FlyCompany\Import;
 class Club
 {
 
-    private ?int             $id = null;
+    private ?int             $id       = null;
 
     private ?string          $name1    = null;
 
@@ -30,6 +30,17 @@ class Club
     private ?string          $union    = null;
 
     private MemberCollection $members;
+
+    public static function isClubId(\SimpleXMLElement $attributes, int $clubId) : bool
+    {
+        foreach ($attributes as $key => $value) {
+            if ($key === 'id' && (int)$value === $clubId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * @param \SimpleXMLElement   $attributes

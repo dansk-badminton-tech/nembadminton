@@ -14,6 +14,20 @@ type Query {
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate(defaultCount: 10)
     clubsSearch(name: String @where(operator: "like", key: "name1"), orderBy: _ @orderBy(columns: ["name1"])): [Club!]! @paginate(defaultCount: 10)
+    teams(id: ID! @eq) : Teams @find
+}
+
+type Mutation {
+    updateTeam(id: ID! @eq, teams: String): Teams! @update
+    createTeam(teams: String, name: String) : Teams! @create
+}
+
+type Teams {
+    id: ID,
+    "JSON string of teams"
+    teams: String,
+    "Name of the team"
+    name: String
 }
 
 type Member {

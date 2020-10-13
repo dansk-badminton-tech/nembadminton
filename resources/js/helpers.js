@@ -30,22 +30,34 @@ export function debounce(fn, delay) {
     }
 }
 
-export function findPlayersInCategory(categories, searchCategory) {
+export function findPlayersInCategory(categories, searchCategory, gender) {
     const players = [];
     for (let categoryItem of categories) {
         if (categoryItem.category === searchCategory) {
-            players.push.apply(players, categoryItem.players)
+            for (let player of categoryItem.players) {
+                if (player.gender === gender) {
+                    players.push(player)
+                }
+            }
         }
     }
     return players;
 }
 
-export function findLevel(member) {
+export function findLevel(member, category) {
     if (!member.points) {
         return 0
     }
     for (let point of member.points) {
-        if (point.category === null && point.points !== null) {
+        if (category === 'MD') {
+            if (member.gender === 'M' && point.category === 'MxH') {
+                return point.points
+            }
+            if (member.gender === 'K' && point.category === 'MxD') {
+                return point.points
+            }
+        }
+        if (point.category === category) {
             return point.points
         }
     }

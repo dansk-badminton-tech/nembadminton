@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-    app:
+  app:
       image: flycompany/holdkamp
       build:
         context: .
@@ -16,16 +16,18 @@ services:
         - database
         - phpmyadmin
         - smtp
+        - redis
 
     artisan:
       image: flycompany/holdkamp
       user: "1000:1000"
-      entrypoint: "php -d memory_limit=1G artisan"
+      entrypoint: "php artisan"
       build:
         context: .
         dockerfile: Dockerfile
       volumes:
         - .:/var/www/html
+        - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
 
     database:
       image: mysql:8.0
@@ -48,14 +50,21 @@ services:
       ports:
         - 4040:4040
 
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      environment:
-        PMA_HOST: database
-        PMA_USER: root
-        PMA_PASSWORD: password
-      ports:
-        - 8080:80
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: password
+    ports:
+      - 8080:80
+
+  redis:
+    image: bitnami/redis:4.0
+    ports:
+      - "6379:6379"
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
 
 volumes:
   db-data:

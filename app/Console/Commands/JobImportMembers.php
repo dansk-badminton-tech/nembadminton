@@ -17,7 +17,8 @@ class JobImportMembers extends Command
      * @var string
      */
     protected $signature = 'import:job-import-members
-                            {date : ranking to import format \'ddmmyy\'}';
+                            {date : ranking to import format \'ddmmyy\'}
+                            {--club-ids= : Club Ids}';
 
     /**
      * The console command description.
@@ -47,19 +48,25 @@ class JobImportMembers extends Command
         $path = Path::getRankingPath($date);
         $this->info('Loading ' . $path);
         $data = XMLHelper::loadXML($path, Storage::disk());
-        $this->info('Mapping to objects');
-        $ranking = Ranking::factory($data);
+        $clubIds = explode(',', $this->option('club-ids'));
 
-        $clubIds = [];
-        foreach ($ranking->getClubs() as $club) {
-            $clubIds[] = $club->getId();
+        if (count($clubIds) === 1 && empty($clubIds[0])) {
+            $this->info('Mapping to objects');
+            $ranking = Ranking::factory($data);
+            $clubIds = [];
+            foreach ($ranking->getClubs() as $club) {
+                if (is_numeric($club->getId())) {
+                    $clubIds[] = $club->getId();
+                }
+            }
         }
 
-        $clubIdsChunks = array_chunk($clubIds, 20);
+        $clubIdsChunks = array_chunk($clubIds, 5);
 
         foreach ($clubIdsChunks as $clubIdsChunk) {
             $this->info('Queuing chunk');
-            \App\Jobs\ImportMembers::dispatch($clubIdsChunk);
+            \App\Jobs\ImportMembers::dispatch($date, $clubIdsChunk);
+            break;
         }
 
         return 0;
