@@ -33,14 +33,16 @@ class ImportMembers extends Command
     /**
      * Execute the console command.
      *
+     * @param Import $import
+     *
      * @return int
      */
-    public function handle()
+    public function handle(Import $import)
     {
         $date = $this->argument('date');
         $clubIds = explode(',', $this->option('club-ids'));
 
-        Import::importMembers($date, $clubIds);
+        $import->importMembers($date, $clubIds);
 
         return 0;
     }

@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Artisan;
 
 class ImportMembers implements ShouldQueue
 {
@@ -36,10 +35,12 @@ class ImportMembers implements ShouldQueue
     /**
      * Execute the job.
      *
+     * @param Import $import
+     *
      * @return void
      */
-    public function handle()
+    public function handle(Import $import)
     {
-        Import::importMembers($this->date, $this->clubIds);
+        $import->importMembers($this->date, $this->clubIds);
     }
 }

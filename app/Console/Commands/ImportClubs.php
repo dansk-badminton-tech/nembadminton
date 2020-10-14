@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace App\Console\Commands;
 
+use App\Import\Import;
 use FlyCompany\Import\Ranking;
 use FlyCompany\Import\Util\Path;
 use Illuminate\Console\Command;
@@ -16,7 +17,7 @@ class ImportClubs extends Command
      *
      * @var string
      */
-    protected $signature = 'import:clubs {date : ranking to import format \'ddmmyy\'}';
+    protected $signature = 'import:clubs {date : ranking to import format \'ddmmyy\'} {--club-ids= : Club Ids} {--import-members : queue import members job}';
 
     /**
      * The console command description.
@@ -28,35 +29,18 @@ class ImportClubs extends Command
     /**
      * Execute the console command.
      *
+     * @param Import $import
+     *
      * @return int
      */
-    public function handle()
+    public function handle(Import $import)
     {
         $date = $this->argument('date');
-        $path = Path::getRankingPath($date);
+        $clubIds = explode(',', $this->option('club-ids'));
+        $import->importClubs($date, $clubIds);
 
-        $this->info('Loading ' . $path);
-        $data = XMLHelper::loadXML($path, Storage::disk());
-        $this->info('Mapping to objects');
-        $ranking = Ranking::factoryClubWithoutMembers($data);
-
-        foreach ($ranking->getClubs() as $club) {
-            $this->info('Updating '.$club->getName1());
-            if (!is_numeric($club->getId())) {
-                continue;
-            }
-            \App\Models\Club::updateOrCreate([
-                'id' => $club->getId(),
-            ], [
-                'name1'    => $club->getName1(),
-                'name2'    => $club->getName2(),
-                'address'  => $club->getAddress(),
-                'zipCode'  => $club->getZipCode(),
-                'city'     => $club->getCity(),
-                'email'    => $club->getEmail(),
-                'memberOf' => $club->getMemberOf(),
-                'union'    => $club->getUnion(),
-            ]);
+        if ($this->option('import-members')) {
+            \App\Jobs\ImportMembers::dispatch($date, $clubIds);
         }
 
         return 0;

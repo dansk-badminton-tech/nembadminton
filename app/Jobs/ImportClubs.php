@@ -1,40 +1,44 @@
 <?php
-declare(strict_types = 1);
-
 
 namespace App\Jobs;
 
+use App\Import\Import;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Artisan;
 
-class ImportPoints implements ShouldQueue
+class ImportClubs implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private array $membersIds;
+    private string $date;
+
+    private array  $clubIds;
 
     /**
      * Create a new job instance.
      *
-     * @param array $memberIds
+     * @param string $date
+     * @param array  $clubIds
      */
-    public function __construct(array $memberIds)
+    public function __construct(string $date, array $clubIds)
     {
-        $this->membersIds = $memberIds;
+        $this->date = $date;
+        $this->clubIds = $clubIds;
     }
 
     /**
      * Execute the job.
      *
+     * @param Import $import
+     *
      * @return void
      */
-    public function handle()
+    public function handle(Import $import) : void
     {
-        Artisan::call('import:points', ['date' => '300820', '--member-ids' => implode(',', $this->membersIds)]);
+        $import->importClubs($this->date, $this->clubIds);
     }
 }
