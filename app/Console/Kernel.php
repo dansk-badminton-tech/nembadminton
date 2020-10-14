@@ -4,10 +4,12 @@
 namespace App\Console;
 
 use App\Console\Commands\ImportClubs;
+use App\Console\Commands\ImportDownloadRanking;
 use App\Console\Commands\ImportMembers;
 use App\Models\Watch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Cache;
 
 class Kernel extends ConsoleKernel
 {
@@ -30,20 +32,27 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command(ImportDownloadRanking::class)
+                 ->appendOutputTo(storage_path('logs/cron.log'))
+                 ->dailyAt('01:10');
+
+        $date = Cache::get('last-ranklist');
         $clubWatch = Watch::query()->get();
         $schedule->command(ImportClubs::class, [
-            '041020',
+            $date,
             '--club-ids=' . $clubWatch->map(function (Watch $club) {
                 return $club->club_id;
             })->join(','),
-        ])->appendOutputTo(storage_path('logs/cron.log'))->everyMinute();
+        ])
+                 ->appendOutputTo(storage_path('logs/cron.log'))
+                 ->dailyAt('01:10');
 
         $schedule->command(ImportMembers::class, [
-            '041020',
+            $date,
             '--club-ids=' . $clubWatch->map(function (Watch $club) {
                 return $club->club_id;
             })->join(','),
-        ])->appendOutputTo(storage_path('logs/cron.log'))->everyMinute();
+        ])->appendOutputTo(storage_path('logs/cron.log'))->dailyAt('01:10');
     }
 
     /**

@@ -6,7 +6,7 @@ namespace App\Console\Commands;
 use FlyCompany\Import\Util\Path;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Filesystem\Factory;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -55,6 +55,7 @@ class ImportDownloadRanking extends Command
         $this->line('Saving '.$filePath);
         Storage::put( $filePath, file_get_contents('/tmp/DBF.stm'));
 
+        Cache::put('last-ranklist', date('dmy'));
         return 0;
     }
 }
