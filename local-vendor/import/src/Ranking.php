@@ -34,6 +34,16 @@ class Ranking
         $this->clubs = $clubs;
     }
 
+    public static function factoryClubWithoutMembers(\SimpleXMLElement $data){
+        $leagueCollection = new LeagueCollection();
+        $vintageCollection = new VintageCollection();
+        $clubCollection = new ClubCollection();
+        foreach ($data->c as $club) {
+            $clubCollection->add(Club::xmlFactory($club->attributes(), null));
+        }
+        return self::createRanking($vintageCollection, $leagueCollection, $clubCollection, $data);
+    }
+
     public static function factoryClub(\SimpleXMLElement $data, int $id)
     {
         $leagueCollection = new LeagueCollection();

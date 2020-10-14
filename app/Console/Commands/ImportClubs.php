@@ -38,7 +38,7 @@ class ImportClubs extends Command
         $this->info('Loading ' . $path);
         $data = XMLHelper::loadXML($path, Storage::disk());
         $this->info('Mapping to objects');
-        $ranking = Ranking::factory($data);
+        $ranking = Ranking::factoryClubWithoutMembers($data);
 
         foreach ($ranking->getClubs() as $club) {
             $this->info('Updating '.$club->getName1());

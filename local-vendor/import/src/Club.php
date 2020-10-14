@@ -48,7 +48,7 @@ class Club
      *
      * @return Club
      */
-    public static function xmlFactory(\SimpleXMLElement $attributes, \SimpleXMLElement $members) : Club
+    public static function xmlFactory(\SimpleXMLElement $attributes, ?\SimpleXMLElement $members) : Club
     {
         $club = new self();
         foreach ($attributes as $key => $value) {
@@ -81,11 +81,13 @@ class Club
             }
         }
 
-        $membersCollection = new MemberCollection();
-        foreach ($members as $member) {
-            $membersCollection->add(Member::xmlFactory($member->attributes(), $member->g));
+        if($members !== null){
+            $membersCollection = new MemberCollection();
+            foreach ($members as $member) {
+                $membersCollection->add(Member::xmlFactory($member->attributes(), $member->g));
+            }
+            $club->members = $membersCollection;
         }
-        $club->members = $membersCollection;
 
         return $club;
     }

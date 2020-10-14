@@ -2,53 +2,53 @@ version: '3.7'
 
 services:
   app:
-      image: flycompany/holdkamp
-      build:
-        context: .
-        dockerfile: Dockerfile
-        target: dev
-      volumes:
-        - .:/var/www/html
-        - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug-confg.ini
-      ports:
-        - 80:80
-      depends_on:
-        - database
-        - phpmyadmin
-        - smtp
-        - redis
+    image: flycompany/holdkamp
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/var/www/html
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug-confg.ini
+    ports:
+      - 80:80
+    depends_on:
+      - database
+      - phpmyadmin
+      - smtp
+      - redis
 
-    artisan:
-      image: flycompany/holdkamp
-      user: "1000:1000"
-      entrypoint: "php artisan"
-      build:
-        context: .
-        dockerfile: Dockerfile
-      volumes:
-        - .:/var/www/html
-        - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
+  artisan:
+    image: flycompany/holdkamp
+    user: "1000:1000"
+    entrypoint: "php artisan"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+      - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
 
-    database:
-      image: mysql:8.0
-      volumes:
-        - db-data:/var/lib/mysql
-      environment:
-        MYSQL_DATABASE: holdkamp
-        MYSQL_USER: holdkamp
-        MYSQL_PASSWORD: password
-        MYSQL_ROOT_PASSWORD: password
+  database:
+    image: mysql:8.0
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: holdkamp
+      MYSQL_USER: holdkamp
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
 
-    smtp:
-      image: schickling/mailcatcher
-      ports:
-        - 1080:1080
+  smtp:
+    image: schickling/mailcatcher
+    ports:
+      - 1080:1080
 
-    ngrok:
-      image: wernight/ngrok
-      command: 'ngrok http app:80'
-      ports:
-        - 4040:4040
+  ngrok:
+    image: wernight/ngrok
+    command: 'ngrok http app:80'
+    ports:
+      - 4040:4040
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -66,6 +66,12 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: 'yes'
 
+  composer:
+    image: composer
+    user: "1000:1000"
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
 volumes:
   db-data:
     driver: local
