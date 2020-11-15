@@ -4,58 +4,11 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
-type Query {
-    users: [User!]! @paginate(defaultCount: 10)
-    user(id: ID @eq): User @find
-    membersSearch(
-        name: String @where(operator: "like"),
-        hasClubs: _ @whereHasConditions(columns: ["id"]),
-        excludeMembers: [Int!] @notIn(key: "id"),
-        orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10)
-    clubsSearch(name: String @where(operator: "like", key: "name1"), orderBy: _ @orderBy(columns: ["name1"])): [Club!]! @paginate(defaultCount: 10)
-    teams(id: ID! @eq) : Teams @find
-}
+type Query
+type Mutation
 
-type Mutation {
-    updateTeam(id: ID! @eq, teams: String): Teams! @update
-    createTeam(teams: String, name: String) : Teams! @create
-}
-
-type Teams {
-    id: ID,
-    "JSON string of teams"
-    teams: String,
-    "Name of the team"
-    name: String
-}
-
-type Member {
-    id: ID!
-    refId: String!
-    name: String!
-    gender: String!
-    points: [Point!] @hasMany
-    clubs: [Club!]! @belongsToMany
-}
-
-type Point {
-    points: Int
-    position: Int
-    category: String
-    vintage: String
-}
-
-type Club {
-    id: ID!
-    name1: String!
-    name2: String!
-}
-
-type User {
-    id: ID!
-    name: String!
-    email: String!
-    created_at: DateTime!
-    updated_at: DateTime!
-}
+#import users.graphql
+#import organization.graphql
+#import bdf.graphql
+#import teams.graphql
+#import register.graphql

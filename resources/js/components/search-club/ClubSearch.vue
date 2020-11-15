@@ -2,6 +2,7 @@
     <div>
         <b-field :label="$t('roundsGenerator.findClub')">
             <b-autocomplete
+                v-if="!selectedClub"
                 v-model="querySearchName"
                 :clear-on-select="true"
                 :clearable="true"

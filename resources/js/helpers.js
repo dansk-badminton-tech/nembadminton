@@ -91,3 +91,17 @@ export function findPositions(member) {
     }
     return '(' + summary.join(', ') + ')'
 }
+
+export function extractErrors(graphqlErrors) {
+    let errors = [];
+    for (let graphqlError of graphqlErrors) {
+        if (graphqlError.extensions.category === 'validation') {
+            for (let validationKey in graphqlError.extensions.validation) {
+                for (let error of graphqlError.extensions.validation[validationKey]) {
+                    errors.push(error)
+                }
+            }
+        }
+    }
+    return errors;
+}

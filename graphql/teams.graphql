@@ -1,0 +1,24 @@
+extend type Query {
+    team(id: ID! @eq) : Teams @find @guard
+    teams(order: _ @orderBy(columns: ["created_at", "updated_at"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
+}
+
+extend type Mutation {
+    updateTeam(id: ID! @eq, teams: String, name: String, gameDate: String @rename(attribute: "game_date")): Teams! @update @guard @inject(context: "user.id", name: "user_id")
+    createTeam(teams: String, name: String, gameDate: String @rename(attribute: "game_date")) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
+    deleteTeam(id: ID! @eq) : Teams! @delete @inject(context: "user.id", name: "user_id")
+}
+
+type Teams {
+    id: ID,
+    "JSON string of teams"
+    teams: String,
+    "Name of the team"
+    name: String,
+    "Game day"
+    gameDate: Date @rename(attribute: "game_date"),
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}

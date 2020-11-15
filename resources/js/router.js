@@ -1,22 +1,35 @@
 import VueRouter from 'vue-router'
 import RoundsGenerator from "./views/RoundsGenerator";
 import TeamFight from "./views/TeamFight";
-import TeamFightView from "./views/TeamFightView";
-import TeamFightRecent from "./views/TeamFightRecent";
+import TeamFightReadOnly from "./views/TeamFightReadOnly";
+import TeamFightList from "./views/TeamFightList";
+import CreateUser from "./views/CreateUser";
+import Login from "./views/Login";
+import Home from "./views/Home";
+import MyProfile from "./views/MyProfile";
 
 const router = new VueRouter({
                                  mode: 'history',
                                  routes: [
+                                     {
+                                         path: '/',
+                                         name: 'home',
+                                         component: Home
+                                     },
+                                     {
+                                         path: '/my-profile',
+                                         name: 'my-profile',
+                                         component: MyProfile
+                                     },
                                      {
                                          path: '/rounds-generator',
                                          name: 'rounds-generator',
                                          component: RoundsGenerator
                                      },
                                      {
-                                         path: '/team-fight/recent',
-                                         name: 'team-fight-recent',
-                                         component: TeamFightRecent,
-                                         props: {createMode: true}
+                                         path: '/team-fight/dashboard',
+                                         name: 'team-fight-dashboard',
+                                         component: TeamFightList
                                      },
                                      {
                                          path: '/team-fight/:teamUUID/edit',
@@ -33,8 +46,18 @@ const router = new VueRouter({
                                      {
                                          path: '/team-fight/:teamUUID/view',
                                          name: 'team-fight-view',
-                                         component: TeamFightView
-                                     }
+                                         component: TeamFightReadOnly
+                                     },
+                                     {
+                                         path: '/new-user',
+                                         name: 'new-user-create',
+                                         component: CreateUser
+                                     },
+                                     {
+                                         path: '/login',
+                                         name: 'login',
+                                         component: Login
+                                     },
                                  ],
                              });
 export default router;

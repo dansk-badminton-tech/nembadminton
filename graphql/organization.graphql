@@ -1,0 +1,8 @@
+type Organization{
+    id: ID,
+    name: String
+}
+
+input CreateOrganizationInput {
+    name: String @rules(apply: ["required", "min:2"])
+}

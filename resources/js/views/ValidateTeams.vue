@@ -1,6 +1,5 @@
 <template>
     <span>
-        <b-button icon-left="brain" @click="validTeams">Validerer</b-button>
         <b-modal v-model="showLinesModal" :width="940">
             <pre v-if="logs.length">{{ logs.join('\n') }}</pre>
         </b-modal>
@@ -12,7 +11,7 @@ import {findLevel, findPlayersInCategory} from "../helpers";
 export default {
     name: 'ValidateTeams',
     props: {
-        teams: Array
+        teams: Array,
     },
     data() {
         return {

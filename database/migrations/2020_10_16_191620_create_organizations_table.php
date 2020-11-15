@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWatchesTable extends Migration
+class CreateOrganizationsTable extends Migration
 {
 
     /**
@@ -15,9 +15,11 @@ class CreateWatchesTable extends Migration
      */
     public function up()
     {
-        Schema::create('watches', function (Blueprint $table) {
+        Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('club_id')->constrained()->cascadeOnDelete();
+            $table->string('name', 100);
+            $table->string('contactName', 100);
+            $table->string('contactEmail', 100);
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateWatchesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('watches');
+        Schema::dropIfExists('organizations');
     }
 }

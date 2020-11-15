@@ -2,7 +2,7 @@ const da = {
     roundsGenerator: {
         findPlayer: 'Søger efter spiller',
         findPlayerPlaceholder: 'fx. Viktor',
-        findClub: 'Søg efter klub',
+        findClub: 'Vælge klub',
         findClubPlaceholder: 'fx. Skovbakken'
     }
 }
