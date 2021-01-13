@@ -53,7 +53,7 @@ export default {
                 })
                 .then(({data}) => {
                     localStorage.setItem('access_token', data.register.tokens.access_token)
-                    this.$router.push({name: 'team-fight-recent'})
+                    this.$router.push({name: 'home'})
                 })
                 .catch(({graphQLErrors}) => {
                     let errors = extractErrors(graphQLErrors)

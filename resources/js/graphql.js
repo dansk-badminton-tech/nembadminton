@@ -1,21 +1,18 @@
 import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
+import {getAuthToken, isLoggedIn} from "./auth";
 
 const apolloClient = new ApolloClient(
     {
         uri: '/graphql',
         request: (operation) => {
-            const token = localStorage.getItem('access_token')
-            if (!!token) {
+            if (isLoggedIn()) {
                 operation.setContext(
                     {
                         headers: {
-                            Authorization: token
-                                           ? `Bearer ${token}`
-                                           : ''
+                            Authorization: 'Bearer ' + getAuthToken()
                         }
-                    }
-                )
+                    })
             }
         }
     }

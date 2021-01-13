@@ -42,6 +42,7 @@ export default {
                 }
             ).then(({data}) => {
                 localStorage.setItem('access_token', data.login.access_token)
+                this.$root.$emit('loggedIn')
                 this.$router.push({name: 'team-fight-dashboard'})
             }).catch(({graphQLErrors}) => {
                 this.$buefy.snackbar.open(

@@ -72,7 +72,7 @@ export default {
                 this.$buefy.snackbar.open(
                     {
                         duration: 2000,
-                        type: 'is-sucess',
+                        type: 'is-success',
                         message: `Din adgangskode er nu opdateret`
                     })
             })
@@ -81,8 +81,9 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation updatePassword($input: UpdateMe!){
+                        mutation updateMe($input: UpdateMe!){
                             updateMe(input: $input){
+                                id
                                 name
                                 email
                             }
@@ -96,10 +97,11 @@ export default {
                     }
                 }
             ).then(() => {
+                this.$root.$emit('userUpdated')
                 this.$buefy.snackbar.open(
                     {
                         duration: 2000,
-                        type: 'is-sucess',
+                        type: 'is-success',
                         message: `Din profil er nu opdateret`
                     })
             })

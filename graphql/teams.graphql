@@ -1,20 +1,95 @@
 extend type Query {
-    team(id: ID! @eq) : Teams @find @guard
-    teams(order: _ @orderBy(columns: ["created_at", "updated_at"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
+    team(id: ID! @eq) : Teams @find
+    teams(order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
 }
 
 extend type Mutation {
-    updateTeam(id: ID! @eq, teams: String, name: String, gameDate: String @rename(attribute: "game_date")): Teams! @update @guard @inject(context: "user.id", name: "user_id")
-    createTeam(teams: String, name: String, gameDate: String @rename(attribute: "game_date")) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
-    deleteTeam(id: ID! @eq) : Teams! @delete @inject(context: "user.id", name: "user_id")
+    updateTeam(input: UpdateTeamInput @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutation\\UpdateTeams@updateTeams")
+    createTeam(input: CreateTeamInput @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
+    deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
+}
+
+input CreateTeamInput {
+    club: CreateTeamBelongsTo
+    name: String,
+    gameDate: String @rename(attribute: "game_date")
+}
+
+input CreateTeamBelongsTo {
+    connect: ID
+}
+
+input UpdateTeamInput {
+    id: ID!
+    name: String
+    gameDate: String @rename(attribute: "game_date")
+    squads: [UpdateSquadInput!]!
+}
+
+input UpdateSquadInput {
+    id: ID
+    playerLimit: Int!
+    categories: [UpdateCatagoryInput!]!
+}
+
+input UpdateCatagoryInput {
+    category: String
+    name: String
+    players: [UpdatePlayerInput!]!
+}
+
+input UpdatePlayerInput {
+    id: ID
+    gender: String
+    name: String
+    refId: String
+    points: [UpdatePointInput!]!
+}
+
+input UpdatePointInput {
+    id: ID
+    category: String
+    points: Int
+    position: Int
+}
+
+type SquadMember {
+    id: ID!
+    refId: String! @rename(attribute: "member_ref_id")
+    name: String!
+    gender: String!
+    points: [SquadPoint!] @hasMany
+}
+
+type SquadPoint {
+    points: Int
+    position: Int
+    category: String
+}
+
+type SquadCategory {
+    category: String!
+    name: String!
+    players: [SquadMember!]!
+}
+
+type Squad {
+    "ID"
+    id: Int!
+    "Number of players on the team"
+    playerLimit: Int!
+    "Categories"
+    categories: [SquadCategory!]!
 }
 
 type Teams {
     id: ID,
-    "JSON string of teams"
-    teams: String,
+    "Squads"
+    squads: [Squad!]! @hasMany,
     "Name of the team"
     name: String,
+    "Club"
+    club: Club
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
     "Updated at"

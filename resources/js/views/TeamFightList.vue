@@ -1,5 +1,6 @@
 <template>
     <fragment>
+        <b-button :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
         <b-table :data="teams.data" :loading="$apollo.loading">
             <b-table-column v-slot="props" field="id" label="Navn">
                 <router-link v-bind:to="'/team-fight/'+props.row.id+'/edit'">{{ props.row.name }}</router-link>
@@ -12,6 +13,13 @@
             </b-table-column>
             <b-table-column v-slot="props" field="createdAt" label="Oprettet">
                 {{ props.row.createdAt }}
+            </b-table-column>
+            <b-table-column v-slot="props" label="Funktioner">
+                <b-button size="is-small"
+                          tag="router-link"
+                          type="is-link"
+                          v-bind:to="'/team-fight/'+props.row.id+'/edit'">Rediger
+                </b-button>
             </b-table-column>
         </b-table>
         <CreateTeamFightAction v-if="!$apollo.loading && teams.data.length === 0"></CreateTeamFightAction>
@@ -34,7 +42,7 @@ export default {
         teams: {
             query: gql`
                 query {
-                    teams(order: {column: UPDATED_AT, order: DESC}, first: 20){
+                    teams(order: {column: GAME_DATE, order: DESC}, first: 20){
                         data{
                             id,
                             name,

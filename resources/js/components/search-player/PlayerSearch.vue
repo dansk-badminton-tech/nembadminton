@@ -43,7 +43,7 @@ export default {
         }, 200)
     },
     props: {
-        clubId: Number,
+        clubId: String,
         addPlayer: Function,
         excludePlayers: Array
     },
@@ -64,6 +64,7 @@ export default {
                           id
                           name
                           gender
+                          refId
                           points{
                             points
                             position

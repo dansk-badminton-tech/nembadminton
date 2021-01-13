@@ -2,7 +2,7 @@
     <table class="table is-bordered">
         <tbody>
         <tr>
-            <th>Reserver</th>
+            <th>Bænk</th>
             <draggable :list="this.players" group="players" tag="td">
                 <div v-for="player in this.players" :key="player.id" class="is-bordered">
                     {{ player.name }} {{ findPositions(player) }}

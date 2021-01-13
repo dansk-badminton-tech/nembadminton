@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Util\Util;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 class Teams extends Model
@@ -33,6 +35,16 @@ class Teams extends Model
     public function scopeCurrentUser(Builder $query) : Builder
     {
         return $query->where('user_id', Auth::user()->id);
+    }
+
+    public function club() : BelongsTo
+    {
+        return $this->belongsTo(Club::class);
+    }
+
+    public function squads() : hasMany
+    {
+        return $this->hasMany(Squad::class);
     }
 
 }

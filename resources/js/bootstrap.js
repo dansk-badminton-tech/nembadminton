@@ -7,9 +7,11 @@ import VueApollo from 'vue-apollo'
 import 'buefy/dist/buefy.css'
 import './vee-validate';
 import './awesome-font'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VueApollo)
 Vue.use(VueI18n)
 Vue.use(Plugin)
 Vue.use(Buefy)
 Vue.use(VueRouter)
+Vue.use(VueClipboard)
