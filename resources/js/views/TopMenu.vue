@@ -12,7 +12,7 @@
             </b-navbar-item>
         </template>
         <template slot="end">
-            <b-navbar-item v-if="!$apollo.loading && !me" tag="div">
+            <b-navbar-item v-if="!$apollo.queries.me.loading && !loggedIn" tag="div">
                 <div class="buttons">
                     <router-link :to="{ name: 'new-user-create' }" class="button">
                         <strong>Kom i gang</strong>
@@ -23,7 +23,7 @@
                 </div>
             </b-navbar-item>
             <b-dropdown
-                v-if="!$apollo.loading && me"
+                v-if="!$apollo.queries.me.loading && loggedIn"
                 append-to-body
                 aria-role="menu"
                 expanded>
@@ -53,17 +53,23 @@
 </template>
 <script>
 import gql from 'graphql-tag'
+import {isLoggedIn, logoutUser} from "../auth";
 
 export default {
     name: 'TopMenu',
     data() {
         return {
-            me: null
+            loggedIn: false
         }
     },
     mounted() {
+        this.loggedIn = isLoggedIn()
         this.$root.$on('loggedIn', () => {
             this.$apollo.queries.me.refresh()
+            // This is a hack to make sure apollo is in loading state
+            setTimeout(() => {
+                this.loggedIn = true
+            }, 300)
         })
         this.$root.$on('userUpdated', () => {
             this.$apollo.queries.me.refresh()
@@ -79,10 +85,7 @@ export default {
                         email
                     }
                 }
-            `,
-            error(error) {
-                this.me = null;
-            },
+            `
         }
     },
     methods: {
@@ -96,9 +99,10 @@ export default {
                     }`
                 })
                 .finally(() => {
-                    localStorage.removeItem('access_token')
-                    this.me = null
-                    this.$router.push({name: 'home'})
+                    logoutUser()
+                    this.loggedIn = false
+                    this.$router.push({name: 'home'}).catch(() => {
+                    })
                 })
         }
     }

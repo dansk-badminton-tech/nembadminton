@@ -12,13 +12,14 @@
         <b-field label="Gentag adgangskode">
             <b-input v-model="password_confirmation" type="password"></b-input>
         </b-field>
-        <b-button @click="create">Opret</b-button>
+        <b-button :loading="loading" @click="create">Opret</b-button>
     </div>
 </template>
 
 <script>
 import gql from "graphql-tag"
 import {extractErrors} from "../helpers";
+import {setAuthToken} from "../auth";
 
 export default {
     name: "CreateUser",
@@ -27,11 +28,13 @@ export default {
             name: null,
             email: null,
             password: null,
-            password_confirmation: null
+            password_confirmation: null,
+            loading: false
         }
     },
     methods: {
         create() {
+            this.loading = true;
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -52,7 +55,8 @@ export default {
                     }
                 })
                 .then(({data}) => {
-                    localStorage.setItem('access_token', data.register.tokens.access_token)
+                    setAuthToken(data.register.tokens.access_token)
+                    this.$root.$emit('loggedIn')
                     this.$router.push({name: 'home'})
                 })
                 .catch(({graphQLErrors}) => {
@@ -63,6 +67,9 @@ export default {
                             type: 'is-danger',
                             message: `Kunne ikke oprette bruger. <br />` + errors.join('<br />')
                         })
+                }).finally(
+                () => {
+                    this.loading = false;
                 })
         }
     }

@@ -6,24 +6,27 @@
         <b-field label="Adgangskode">
             <b-input v-model="password" type="password"></b-input>
         </b-field>
-        <b-button native-type="submit" tag="input" value="Login"/>
+        <b-button :loading="loading" native-type="submit" tag="input" value="Login"/>
     </form>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import {extractErrors} from "../helpers";
+import {setAuthToken} from "../auth";
 
 export default {
     name: "Login",
     data() {
         return {
             email: null,
-            password: null
+            password: null,
+            loading: false
         }
     },
     methods: {
         login() {
+            this.loading = true;
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -41,7 +44,7 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                localStorage.setItem('access_token', data.login.access_token)
+                setAuthToken(data.login.access_token)
                 this.$root.$emit('loggedIn')
                 this.$router.push({name: 'team-fight-dashboard'})
             }).catch(({graphQLErrors}) => {
@@ -51,6 +54,8 @@ export default {
                         type: 'is-danger',
                         message: `Forkert brugernavn eller adgangskode.`
                     })
+            }).finally(() => {
+                this.loading = false
             })
         }
     }

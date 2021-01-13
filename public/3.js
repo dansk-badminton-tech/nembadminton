@@ -11,6 +11,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../auth */ "./resources/js/auth.js");
 function _templateObject2() {
   var data = _taggedTemplateLiteral(["mutation{\n                        logout{\n                            status\n                        }\n                    }"]);
 
@@ -87,18 +88,25 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'TopMenu',
   data: function data() {
     return {
-      me: null
+      loggedIn: false
     };
   },
   mounted: function mounted() {
     var _this = this;
 
+    this.loggedIn = Object(_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])();
     this.$root.$on('loggedIn', function () {
-      _this.$apollo.queries.me.refresh();
+      _this.$apollo.queries.me.refresh(); // This is a hack to make sure apollo is in loading state
+
+
+      setTimeout(function () {
+        _this.loggedIn = true;
+      }, 300);
     });
     this.$root.$on('userUpdated', function () {
       _this.$apollo.queries.me.refresh();
@@ -106,10 +114,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   },
   apollo: {
     me: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
-      error: function error(_error) {
-        this.me = null;
-      }
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject())
     }
   },
   methods: {
@@ -119,12 +124,12 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       this.$apollo.mutate({
         mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2())
       })["finally"](function () {
-        localStorage.removeItem('access_token');
-        _this2.me = null;
+        Object(_auth__WEBPACK_IMPORTED_MODULE_1__["logoutUser"])();
+        _this2.loggedIn = false;
 
         _this2.$router.push({
           name: 'home'
-        });
+        })["catch"](function () {});
       });
     }
   }
@@ -241,7 +246,7 @@ var render = function() {
         "template",
         { slot: "end" },
         [
-          !_vm.$apollo.loading && !_vm.me
+          !_vm.$apollo.queries.me.loading && !_vm.loggedIn
             ? _c("b-navbar-item", { attrs: { tag: "div" } }, [
                 _c(
                   "div",
@@ -270,7 +275,7 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          !_vm.$apollo.loading && _vm.me
+          !_vm.$apollo.queries.me.loading && _vm.loggedIn
             ? _c(
                 "b-dropdown",
                 {

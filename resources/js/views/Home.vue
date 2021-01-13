@@ -45,7 +45,7 @@
                     <div class="columns">
                         <div class="column is-6">
                             <figure class="image is-16by9">
-                                <iframe allowfullscreen class="has-ratio" frameborder="0" height="360" src="https://www.youtube.com/embed/YE7VzlLtp-4" width="640"></iframe>
+<!--                                <iframe allowfullscreen class="has-ratio" frameborder="0" height="360" src="https://www.youtube.com/embed/YE7VzlLtp-4" width="640"></iframe>-->
                             </figure>
                         </div>
                         <div class="column is-6">
@@ -73,7 +73,7 @@
                     </div>
                     <div class="column is-6">
                         <figure class="image is-16by9">
-                            <iframe allowfullscreen class="has-ratio" frameborder="0" height="360" src="https://www.youtube.com/embed/YE7VzlLtp-4" width="640"></iframe>
+                            <!--                            <iframe allowfullscreen class="has-ratio" frameborder="0" height="360" src="https://www.youtube.com/embed/YE7VzlLtp-4" width="640"></iframe>-->
                         </figure>
                     </div>
                 </div>

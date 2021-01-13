@@ -63010,22 +63010,40 @@ new vue__WEBPACK_IMPORTED_MODULE_2___default.a({
 /*!******************************!*\
   !*** ./resources/js/auth.js ***!
   \******************************/
-/*! exports provided: getAuthToken, isLoggedIn */
+/*! exports provided: setAuthToken, getAuthToken, isLoggedIn, logoutUser, clearAuthToken, getUserInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAuthToken", function() { return setAuthToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAuthToken", function() { return getAuthToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoggedIn", function() { return isLoggedIn; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "logoutUser", function() { return logoutUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearAuthToken", function() { return clearAuthToken; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUserInfo", function() { return getUserInfo; });
 /* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jwt-decode */ "./node_modules/jwt-decode/build/jwt-decode.esm.js");
 
 var AUTH_TOKEN_KEY = 'access_token';
+function setAuthToken(token) {
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
 function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN_KEY);
 }
 function isLoggedIn() {
   var authToken = getAuthToken();
   return !!authToken && !isTokenExpired(authToken);
+}
+function logoutUser() {
+  clearAuthToken();
+}
+function clearAuthToken() {
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+}
+function getUserInfo() {
+  if (isLoggedIn()) {
+    return Object(jwt_decode__WEBPACK_IMPORTED_MODULE_0__["default"])(getAuthToken());
+  }
 }
 
 function isTokenExpired(token) {

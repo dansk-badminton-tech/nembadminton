@@ -2,6 +2,10 @@ import decode from 'jwt-decode'
 
 const AUTH_TOKEN_KEY = 'access_token'
 
+export function setAuthToken(token) {
+    localStorage.setItem(AUTH_TOKEN_KEY, token)
+}
+
 export function getAuthToken() {
     return localStorage.getItem(AUTH_TOKEN_KEY)
 }
@@ -9,6 +13,20 @@ export function getAuthToken() {
 export function isLoggedIn() {
     let authToken = getAuthToken()
     return !!authToken && !isTokenExpired(authToken)
+}
+
+export function logoutUser() {
+    clearAuthToken()
+}
+
+export function clearAuthToken() {
+    localStorage.removeItem(AUTH_TOKEN_KEY)
+}
+
+export function getUserInfo() {
+    if (isLoggedIn()) {
+        return decode(getAuthToken())
+    }
 }
 
 function isTokenExpired(token) {

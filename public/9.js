@@ -170,13 +170,13 @@ var render = function() {
         _c("div", { staticClass: "container has-text-centered" }, [
           _c("p", { staticClass: "title" }, [
             _vm._v(
-              "\n                    Badminton værktøjskassen\n                "
+              "\n                        Badminton værktøjskassen\n                    "
             )
           ]),
           _vm._v(" "),
           _c("p", { staticClass: "subtitle" }, [
             _vm._v(
-              "\n                    Gør din oplevelse med badminton nemmere\n                "
+              "\n                        Gør din oplevelse med badminton nemmere\n                    "
             )
           ])
         ])
@@ -226,18 +226,7 @@ var render = function() {
         _c("div", { staticClass: "container" }, [
           _c("div", { staticClass: "columns" }, [
             _c("div", { staticClass: "column is-6" }, [
-              _c("figure", { staticClass: "image is-16by9" }, [
-                _c("iframe", {
-                  staticClass: "has-ratio",
-                  attrs: {
-                    allowfullscreen: "",
-                    frameborder: "0",
-                    height: "360",
-                    src: "https://www.youtube.com/embed/YE7VzlLtp-4",
-                    width: "640"
-                  }
-                })
-              ])
+              _c("figure", { staticClass: "image is-16by9" })
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "column is-6" }, [
@@ -282,18 +271,7 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "column is-6" }, [
-            _c("figure", { staticClass: "image is-16by9" }, [
-              _c("iframe", {
-                staticClass: "has-ratio",
-                attrs: {
-                  allowfullscreen: "",
-                  frameborder: "0",
-                  height: "360",
-                  src: "https://www.youtube.com/embed/YE7VzlLtp-4",
-                  width: "640"
-                }
-              })
-            ])
+            _c("figure", { staticClass: "image is-16by9" })
           ])
         ])
       ])
@@ -303,7 +281,9 @@ var render = function() {
       _c("div", { staticClass: "container" }, [
         _c("div", { staticClass: "column has-text-centered is-12 mb-6" }, [
           _c("p", { staticClass: "title" }, [
-            _vm._v("\n                    Udvikleren bag\n                ")
+            _vm._v(
+              "\n                        Udvikleren bag\n                    "
+            )
           ])
         ]),
         _vm._v(" "),
@@ -320,7 +300,7 @@ var render = function() {
               _vm._v(" "),
               _c("p", [
                 _vm._v(
-                  "\n                        Har altid gerne vil lave noget, som var med til at gør badminton verden bedre. Kombineret sammen med mit ønske om at blive iværksætter har jeg lavet denne side. Hvis man har ideer til nye værktøjer eller forbedringer er man velkommen til at kontakte mig\n                    "
+                  "\n                            Har altid gerne vil lave noget, som var med til at gør badminton verden bedre. Kombineret sammen med mit ønske om at blive iværksætter har jeg lavet denne side. Hvis man har ideer til nye værktøjer eller forbedringer er man velkommen til at kontakte mig\n                        "
                 )
               ]),
               _vm._v(" "),

@@ -1,11 +1,9 @@
 extend type Query {
-    # users: [User!]! @paginate(defaultCount: 10)
-    # user(id: ID @eq): User @find @guard
     me : User @auth
 }
 
 extend type Mutation {
-    updateMe(input: UpdateMe! @spread) : User! @update @inject(context: "user.id", name: "id")
+    updateMe(input: UpdateMe! @spread) : User! @update @inject(context: "user.id", name: "id") @guard
 }
 
 input UpdateMe {

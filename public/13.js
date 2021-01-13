@@ -32,7 +32,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n            query{\n                me{\n                    id\n                    email\n                    name\n                }\n            }\n        "]);
+  var data = _taggedTemplateLiteral(["\n                query{\n                    me{\n                        id\n                        email\n                        name\n                    }\n                }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -77,16 +77,22 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       },
       password: '',
       password_confirmation: '',
-      old_password: ''
+      old_password: '',
+      updatingPassword: false,
+      updatingProfile: false
     };
   },
   apollo: {
-    me: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject())
+    me: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
+      fetchPolicy: "network-only"
+    }
   },
   methods: {
     updatePassword: function updatePassword() {
       var _this = this;
 
+      this.updatingPassword = true;
       this.$apollo.mutate({
         mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2()),
         variables: {
@@ -102,11 +108,14 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
           type: 'is-success',
           message: "Din adgangskode er nu opdateret"
         });
+      })["finally"](function () {
+        _this.updatingPassword = false;
       });
     },
     update: function update() {
       var _this2 = this;
 
+      this.updatingProfile = true;
       this.$apollo.mutate({
         mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject3()),
         variables: {
@@ -123,6 +132,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
           type: 'is-success',
           message: "Din profil er nu opdateret"
         });
+      })["finally"](function () {
+        _this2.updatingProfile = false;
       });
     }
   }
@@ -183,7 +194,11 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("b-button", { on: { click: _vm.update } }, [_vm._v("Gem")]),
+      _c(
+        "b-button",
+        { attrs: { loading: _vm.updatingProfile }, on: { click: _vm.update } },
+        [_vm._v("Gem")]
+      ),
       _vm._v(" "),
       _c("div", { staticClass: "mt-4" }),
       _vm._v(" "),
@@ -241,9 +256,14 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("b-button", { on: { click: _vm.updatePassword } }, [
-        _vm._v("Skift adgangskode")
-      ])
+      _c(
+        "b-button",
+        {
+          attrs: { loading: _vm.updatingPassword },
+          on: { click: _vm.updatePassword }
+        },
+        [_vm._v("Skift adgangskode")]
+      )
     ],
     1
   )

@@ -12,6 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers */ "./resources/js/helpers.js");
+/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../auth */ "./resources/js/auth.js");
 function _templateObject() {
   var data = _taggedTemplateLiteral(["\n                        mutation ($input: LoginInput){\n                          login(input: $input){\n                            access_token\n                          }\n                        }\n                    "]);
 
@@ -38,18 +39,21 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Login",
   data: function data() {
     return {
       email: null,
-      password: null
+      password: null,
+      loading: false
     };
   },
   methods: {
     login: function login() {
       var _this = this;
 
+      this.loading = true;
       this.$apollo.mutate({
         mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
         variables: {
@@ -60,7 +64,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
         }
       }).then(function (_ref) {
         var data = _ref.data;
-        localStorage.setItem('access_token', data.login.access_token);
+        Object(_auth__WEBPACK_IMPORTED_MODULE_2__["setAuthToken"])(data.login.access_token);
 
         _this.$root.$emit('loggedIn');
 
@@ -75,6 +79,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
           type: 'is-danger',
           message: "Forkert brugernavn eller adgangskode."
         });
+      })["finally"](function () {
+        _this.loading = false;
       });
     }
   }
@@ -145,7 +151,12 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("b-button", {
-        attrs: { "native-type": "submit", tag: "input", value: "Login" }
+        attrs: {
+          loading: _vm.loading,
+          "native-type": "submit",
+          tag: "input",
+          value: "Login"
+        }
       })
     ],
     1
