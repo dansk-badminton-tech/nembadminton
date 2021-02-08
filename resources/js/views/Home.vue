@@ -106,7 +106,7 @@
                             </div>
                             <div class="column">
                                 <p>
-                                    <strong>Email Me</strong>
+                                    <strong>Email</strong>
                                 </p>
                                 <p>
                                     <a href="mailto:danielflynygaard@gmail.com">danielflynygaard@gmail.com</a>

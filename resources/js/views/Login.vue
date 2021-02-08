@@ -12,7 +12,6 @@
 
 <script>
 import gql from 'graphql-tag'
-import {extractErrors} from "../helpers";
 import {setAuthToken} from "../auth";
 
 export default {

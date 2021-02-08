@@ -37,6 +37,12 @@
                                         Slet
                                     </a>
                                 </b-dropdown-item>
+                                <b-dropdown-item aria-role="menuitem" has-link>
+                                    <a href="#" @click.prevent="copyPlayer(category, player)">
+                                        <b-icon icon="copy"></b-icon>
+                                        Kopier
+                                    </a>
+                                </b-dropdown-item>
                             </b-dropdown>
                         </div>
                         <p v-if="!category.players.length">---------------</p>
@@ -59,6 +65,7 @@ export default {
         confirmDelete: Function,
         move: Function,
         deletePlayer: Function,
+        copyPlayer: Function,
         teams: {
             type: Array,
             default: []

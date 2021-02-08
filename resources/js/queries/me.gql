@@ -1,0 +1,11 @@
+query {
+    me{
+        id
+        name
+        email
+        club{
+            name1
+        }
+        organization_id
+    }
+}

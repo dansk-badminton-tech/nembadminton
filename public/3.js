@@ -12,18 +12,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../auth */ "./resources/js/auth.js");
-function _templateObject2() {
-  var data = _taggedTemplateLiteral(["mutation{\n                        logout{\n                            status\n                        }\n                    }"]);
-
-  _templateObject2 = function _templateObject2() {
-    return data;
-  };
-
-  return data;
-}
-
+/* harmony import */ var _queries_me_gql__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../queries/me.gql */ "./resources/js/queries/me.gql");
+/* harmony import */ var _queries_me_gql__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_queries_me_gql__WEBPACK_IMPORTED_MODULE_2__);
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                query {\n                    me{\n                        id\n                        name\n                        email\n                    }\n                }\n            "]);
+  var data = _taggedTemplateLiteral(["\n                    mutation{\n                        logout{\n                            status\n                        }\n                    }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -80,56 +72,47 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'TopMenu',
-  data: function data() {
-    return {
-      loggedIn: false
-    };
+  apollo: {
+    me: {
+      query: _queries_me_gql__WEBPACK_IMPORTED_MODULE_2___default.a,
+      skip: function skip() {
+        return !Object(_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])();
+      }
+    }
   },
   mounted: function mounted() {
     var _this = this;
 
-    this.loggedIn = Object(_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])();
     this.$root.$on('loggedIn', function () {
-      _this.$apollo.queries.me.refresh(); // This is a hack to make sure apollo is in loading state
+      _this.$apollo.queries.me.skip = false;
 
-
-      setTimeout(function () {
-        _this.loggedIn = true;
-      }, 300);
+      _this.$apollo.queries.me.refetch();
     });
     this.$root.$on('userUpdated', function () {
-      _this.$apollo.queries.me.refresh();
+      _this.$apollo.queries.me.skip = false;
+
+      _this.$apollo.queries.me.refetch();
     });
-  },
-  apollo: {
-    me: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject())
-    }
   },
   methods: {
     logout: function logout() {
       var _this2 = this;
 
       this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2())
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject())
       })["finally"](function () {
         Object(_auth__WEBPACK_IMPORTED_MODULE_1__["logoutUser"])();
-        _this2.loggedIn = false;
 
         _this2.$router.push({
           name: 'home'
-        })["catch"](function () {});
+        })["catch"](function () {})["finally"](function () {
+          window.location.reload();
+        });
       });
     }
   }
@@ -246,7 +229,7 @@ var render = function() {
         "template",
         { slot: "end" },
         [
-          !_vm.$apollo.queries.me.loading && !_vm.loggedIn
+          !_vm.$apollo.loading && !_vm.me
             ? _c("b-navbar-item", { attrs: { tag: "div" } }, [
                 _c(
                   "div",
@@ -275,7 +258,7 @@ var render = function() {
               ])
             : _vm._e(),
           _vm._v(" "),
-          !_vm.$apollo.queries.me.loading && _vm.loggedIn
+          !_vm.$apollo.loading && _vm.me
             ? _c(
                 "b-dropdown",
                 {
@@ -359,6 +342,137 @@ var render = function() {
 var staticRenderFns = []
 render._withStripped = true
 
+
+
+/***/ }),
+
+/***/ "./resources/js/queries/me.gql":
+/*!*************************************!*\
+  !*** ./resources/js/queries/me.gql ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+    var doc = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"club"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name1"},"arguments":[],"directives":[]}]}},{"kind":"Field","name":{"kind":"Name","value":"organization_id"},"arguments":[],"directives":[]}]}}]}}],"loc":{"start":0,"end":128}};
+    doc.loc.source = {"body":"query {\n    me{\n        id\n        name\n        email\n        club{\n            name1\n        }\n        organization_id\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
+  
+
+    var names = {};
+    function unique(defs) {
+      return defs.filter(
+        function(def) {
+          if (def.kind !== 'FragmentDefinition') return true;
+          var name = def.name.value
+          if (names[name]) {
+            return false;
+          } else {
+            names[name] = true;
+            return true;
+          }
+        }
+      )
+    }
+  
+
+    // Collect any fragment/type references from a node, adding them to the refs Set
+    function collectFragmentReferences(node, refs) {
+      if (node.kind === "FragmentSpread") {
+        refs.add(node.name.value);
+      } else if (node.kind === "VariableDefinition") {
+        var type = node.type;
+        if (type.kind === "NamedType") {
+          refs.add(type.name.value);
+        }
+      }
+
+      if (node.selectionSet) {
+        node.selectionSet.selections.forEach(function(selection) {
+          collectFragmentReferences(selection, refs);
+        });
+      }
+
+      if (node.variableDefinitions) {
+        node.variableDefinitions.forEach(function(def) {
+          collectFragmentReferences(def, refs);
+        });
+      }
+
+      if (node.definitions) {
+        node.definitions.forEach(function(def) {
+          collectFragmentReferences(def, refs);
+        });
+      }
+    }
+
+    var definitionRefs = {};
+    (function extractReferences() {
+      doc.definitions.forEach(function(def) {
+        if (def.name) {
+          var refs = new Set();
+          collectFragmentReferences(def, refs);
+          definitionRefs[def.name.value] = refs;
+        }
+      });
+    })();
+
+    function findOperation(doc, name) {
+      for (var i = 0; i < doc.definitions.length; i++) {
+        var element = doc.definitions[i];
+        if (element.name && element.name.value == name) {
+          return element;
+        }
+      }
+    }
+
+    function oneQuery(doc, operationName) {
+      // Copy the DocumentNode, but clear out the definitions
+      var newDoc = {
+        kind: doc.kind,
+        definitions: [findOperation(doc, operationName)]
+      };
+      if (doc.hasOwnProperty("loc")) {
+        newDoc.loc = doc.loc;
+      }
+
+      // Now, for the operation we're running, find any fragments referenced by
+      // it or the fragments it references
+      var opRefs = definitionRefs[operationName] || new Set();
+      var allRefs = new Set();
+      var newRefs = new Set();
+
+      // IE 11 doesn't support "new Set(iterable)", so we add the members of opRefs to newRefs one by one
+      opRefs.forEach(function(refName) {
+        newRefs.add(refName);
+      });
+
+      while (newRefs.size > 0) {
+        var prevRefs = newRefs;
+        newRefs = new Set();
+
+        prevRefs.forEach(function(refName) {
+          if (!allRefs.has(refName)) {
+            allRefs.add(refName);
+            var childRefs = definitionRefs[refName] || new Set();
+            childRefs.forEach(function(childRef) {
+              newRefs.add(childRef);
+            });
+          }
+        });
+      }
+
+      allRefs.forEach(function(refName) {
+        var op = findOperation(doc, refName);
+        if (op) {
+          newDoc.definitions.push(op);
+        }
+      });
+
+      return newDoc;
+    }
+
+    module.exports = doc;
+    
 
 
 /***/ }),

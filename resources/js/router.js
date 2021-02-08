@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router'
 import {isLoggedIn} from "./auth";
+import Vue from "vue";
 
 const router = new VueRouter(
     {
@@ -10,7 +11,8 @@ const router = new VueRouter(
                 name: 'home',
                 component: () => import("./views/Home"),
                 meta: {
-                    allowAnonymous: true
+                    allowAnonymous: true,
+                    title: 'Forside'
                 }
             },
             {
@@ -21,7 +23,10 @@ const router = new VueRouter(
                     {
                         path: '/my-profile',
                         name: 'my-profile',
-                        component: () => import("./views/MyProfile")
+                        component: () => import("./views/MyProfile"),
+                        meta: {
+                            title: 'Min profil'
+                        }
                     },
                     {
                         path: '/rounds-generator',
@@ -31,25 +36,35 @@ const router = new VueRouter(
                     {
                         path: '/team-fight/dashboard',
                         name: 'team-fight-dashboard',
-                        component: () => import("./views/TeamFightList")
+                        component: () => import("./views/TeamFightList"),
+                        meta: {
+                            title: 'Holdkamps oversigt'
+                        }
                     },
                     {
                         path: '/team-fight/:teamUUID/edit',
                         name: 'team-fight-edit',
                         component: () => import("./views/TeamFight"),
-                        props: route => ({teamFightId: route.params.teamUUID})
+                        props: route => ({teamFightId: route.params.teamUUID}),
+                        meta: {
+                            title: 'Rediger en Holdkamp'
+                        }
                     },
                     {
                         path: '/team-fight/create',
                         name: 'team-fight-create',
-                        component: () => import("./views/TeamFightCreate")
+                        component: () => import("./views/TeamFightCreate"),
+                        meta: {
+                            title: 'Opret en holdkamp'
+                        }
                     },
                     {
                         path: '/new-user',
                         name: 'new-user-create',
                         component: () => import("./views/CreateUser"),
                         meta: {
-                            allowAnonymous: true
+                            allowAnonymous: true,
+                            title: 'Ny bruger'
                         }
                     },
                     {
@@ -57,7 +72,8 @@ const router = new VueRouter(
                         name: 'login',
                         component: () => import("./views/Login"),
                         meta: {
-                            allowAnonymous: true
+                            allowAnonymous: true,
+                            title: 'Login'
                         }
                     }
                 ]
@@ -68,11 +84,21 @@ const router = new VueRouter(
                 component: () => import("./views/TeamFightPublic"),
                 props: route => ({teamFightId: route.params.teamUUID}),
                 meta: {
-                    allowAnonymous: true
+                    allowAnonymous: true,
+                    title: ''
                 }
             }
         ]
     })
+
+const DEFAULT_TITLE = '...';
+router.afterEach((to, from) => {
+    // Use next tick to handle router history correctly
+    // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+    Vue.nextTick(() => {
+        document.title = to.meta.title || DEFAULT_TITLE;
+    });
+});
 
 router.beforeEach((to, from, next) => {
     if (!to.meta.allowAnonymous && !isLoggedIn()) {

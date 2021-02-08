@@ -158,12 +158,6 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -232,6 +226,9 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
     },
     deletePlayer: function deletePlayer(category, player) {
       category.players.splice(category.players.indexOf(player));
+    },
+    copyPlayer: function copyPlayer(category, player) {
+      category.players.push(Object.assign({}, player));
     },
     deleteTeam: function deleteTeam(team) {
       var _this2 = this;
@@ -1030,31 +1027,6 @@ var render = function() {
           _vm._v(" "),
           _c(
             "b-dropdown-item",
-            { attrs: { "has-link": true, "aria-role": "listitem" } },
-            [
-              _c(
-                "router-link",
-                {
-                  attrs: {
-                    to: {
-                      name: "team-fight-view",
-                      params: { teamFightId: _vm.teamFightId }
-                    },
-                    target: "_blank"
-                  }
-                },
-                [
-                  _c("b-icon", { attrs: { icon: "eye" } }),
-                  _vm._v("\n                Vis for spiller\n            ")
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-dropdown-item",
             {
               attrs: { "aria-role": "listitem" },
               on: {
@@ -1065,7 +1037,7 @@ var render = function() {
             },
             [
               _c("b-icon", { attrs: { icon: "brain" } }),
-              _vm._v("\n            Validere hold\n        ")
+              _vm._v("\n            Validere hold (eksperimentel)\n        ")
             ],
             1
           ),
@@ -1158,6 +1130,10 @@ var render = function() {
       _vm._v(" "),
       _c("h1", { staticClass: "title" }, [_vm._v("Holdet")]),
       _vm._v(" "),
+      _c("h1", { staticClass: "subtitle" }, [
+        _vm._v("Træk spillerne rundt ved at drag-and-drop")
+      ]),
+      _vm._v(" "),
       _c("div", { staticClass: "columns" }, [
         _c(
           "div",
@@ -1176,8 +1152,6 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("PlayerList", { attrs: { players: _vm.players } }),
-      _vm._v(" "),
-      _c("p", [_vm._v("Træk spillerne fra bænken til et hold")]),
       _vm._v(" "),
       _vm.team.squads.length === 0
         ? _c(
@@ -1220,6 +1194,7 @@ var render = function() {
           _c("TeamTable", {
             attrs: {
               "confirm-delete": _vm.deleteTeam,
+              "copy-player": _vm.copyPlayer,
               "delete-player": _vm.deletePlayer,
               move: _vm.move,
               teams: _vm.team.squads

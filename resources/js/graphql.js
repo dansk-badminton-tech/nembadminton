@@ -2,7 +2,7 @@ import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
 import {getAuthToken, isLoggedIn} from "./auth";
 
-const apolloClient = new ApolloClient(
+const ApolloClientInstance = new ApolloClient(
     {
         uri: '/graphql',
         request: (operation) => {
@@ -19,7 +19,8 @@ const apolloClient = new ApolloClient(
 )
 
 const apolloProvider = new VueApollo({
-                                         defaultClient: apolloClient,
+                                         defaultClient: ApolloClientInstance,
                                      }
 )
 export default apolloProvider
+export {ApolloClientInstance}

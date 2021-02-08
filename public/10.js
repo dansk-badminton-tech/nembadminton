@@ -1,9 +1,9 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[10],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Login.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Login.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -11,10 +11,9 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../helpers */ "./resources/js/helpers.js");
-/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../auth */ "./resources/js/auth.js");
+/* harmony import */ var _TeamTable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TeamTable */ "./resources/js/views/TeamTable.vue");
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                        mutation ($input: LoginInput){\n                          login(input: $input){\n                            access_token\n                          }\n                        }\n                    "]);
+  var data = _taggedTemplateLiteral([" query ($id: ID!){\n                  team(id: $id){\n                    id\n                    name\n                    gameDate\n                    squads{\n                        id\n                        playerLimit\n                        categories{\n                            category\n                            name\n                            players{\n                                gender\n                                id\n                                name\n                                refId\n                                points{\n                                    category\n                                    points\n                                    position\n                                }\n                            }\n                        }\n                    }\n                    club {\n                        id\n                        name1\n                    }\n                  }\n                }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -37,61 +36,41 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Login",
+  name: "TeamFightPublic",
+  components: {
+    TeamTable: _TeamTable__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   data: function data() {
     return {
-      email: null,
-      password: null,
-      loading: false
+      searchPlayer: ''
     };
   },
-  methods: {
-    login: function login() {
-      var _this = this;
-
-      this.loading = true;
-      this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
-        variables: {
-          input: {
-            username: this.email,
-            password: this.password
-          }
-        }
-      }).then(function (_ref) {
-        var data = _ref.data;
-        Object(_auth__WEBPACK_IMPORTED_MODULE_2__["setAuthToken"])(data.login.access_token);
-
-        _this.$root.$emit('loggedIn');
-
-        _this.$router.push({
-          name: 'team-fight-dashboard'
-        });
-      })["catch"](function (_ref2) {
-        var graphQLErrors = _ref2.graphQLErrors;
-
-        _this.$buefy.snackbar.open({
-          duration: 6000,
-          type: 'is-danger',
-          message: "Forkert brugernavn eller adgangskode."
-        });
-      })["finally"](function () {
-        _this.loading = false;
-      });
+  props: {
+    teamFightId: String
+  },
+  apollo: {
+    team: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
+      fetchPolicy: "network-only",
+      variables: function variables() {
+        return {
+          id: this.teamFightId
+        };
+      }
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true&":
-/*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true& ***!
-  \***************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true& ***!
+  \*************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -103,64 +82,52 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "form",
-    {
-      on: {
-        submit: function($event) {
-          $event.preventDefault()
-          return _vm.login($event)
-        }
-      }
-    },
-    [
-      _c(
-        "b-field",
-        { attrs: { label: "Email" } },
+  return !_vm.$apollo.loading
+    ? _c(
+        "section",
+        { staticClass: "section" },
         [
-          _c("b-input", {
-            attrs: { type: "email" },
-            model: {
-              value: _vm.email,
-              callback: function($$v) {
-                _vm.email = $$v
-              },
-              expression: "email"
-            }
-          })
+          _c("h1", { staticClass: "is-size-1" }, [
+            _vm._v(_vm._s(_vm.team.name))
+          ]),
+          _vm._v(" "),
+          _c("p", [_vm._v("Spille dato: " + _vm._s(_vm.team.gameDate))]),
+          _vm._v(" "),
+          _c(
+            "b-field",
+            { attrs: { label: "Søg efter spiller" } },
+            [
+              _c("b-input", {
+                model: {
+                  value: _vm.searchPlayer,
+                  callback: function($$v) {
+                    _vm.searchPlayer = $$v
+                  },
+                  expression: "searchPlayer"
+                }
+              })
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "columns is-multiline" },
+            [
+              _c("TeamTable", {
+                attrs: {
+                  search: this.searchPlayer,
+                  teams: this.team.squads,
+                  viewMode: true
+                }
+              })
+            ],
+            1
+          )
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "b-field",
-        { attrs: { label: "Adgangskode" } },
-        [
-          _c("b-input", {
-            attrs: { type: "password" },
-            model: {
-              value: _vm.password,
-              callback: function($$v) {
-                _vm.password = $$v
-              },
-              expression: "password"
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("b-button", {
-        attrs: {
-          loading: _vm.loading,
-          "native-type": "submit",
-          tag: "input",
-          value: "Login"
-        }
-      })
-    ],
-    1
-  )
+      )
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -375,17 +342,17 @@ function extractErrors(graphqlErrors) {
 
 /***/ }),
 
-/***/ "./resources/js/views/Login.vue":
-/*!**************************************!*\
-  !*** ./resources/js/views/Login.vue ***!
-  \**************************************/
+/***/ "./resources/js/views/TeamFightPublic.vue":
+/*!************************************************!*\
+  !*** ./resources/js/views/TeamFightPublic.vue ***!
+  \************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Login.vue?vue&type=template&id=12f5395a&scoped=true& */ "./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true&");
-/* harmony import */ var _Login_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Login.vue?vue&type=script&lang=js& */ "./resources/js/views/Login.vue?vue&type=script&lang=js&");
+/* harmony import */ var _TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true& */ "./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true&");
+/* harmony import */ var _TeamFightPublic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TeamFightPublic.vue?vue&type=script&lang=js& */ "./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -395,50 +362,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Login_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _TeamFightPublic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "12f5395a",
+  "daba7da6",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/views/Login.vue"
+component.options.__file = "resources/js/views/TeamFightPublic.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/views/Login.vue?vue&type=script&lang=js&":
-/*!***************************************************************!*\
-  !*** ./resources/js/views/Login.vue?vue&type=script&lang=js& ***!
-  \***************************************************************/
+/***/ "./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Login.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Login.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightPublic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightPublic.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightPublic.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightPublic_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true& ***!
-  \*********************************************************************************/
+/***/ "./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true& ***!
+  \*******************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Login.vue?vue&type=template&id=12f5395a&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Login.vue?vue&type=template&id=12f5395a&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightPublic.vue?vue&type=template&id=daba7da6&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Login_vue_vue_type_template_id_12f5395a_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightPublic_vue_vue_type_template_id_daba7da6_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

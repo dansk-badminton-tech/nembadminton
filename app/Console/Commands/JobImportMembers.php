@@ -3,9 +3,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
+use App\Models\Watch;
 use FlyCompany\Import\Ranking;
 use FlyCompany\Import\Util\Path;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class JobImportMembers extends Command
@@ -16,9 +19,7 @@ class JobImportMembers extends Command
      *
      * @var string
      */
-    protected $signature = 'import:job-import-members
-                            {date : ranking to import format \'ddmmyy\'}
-                            {--club-ids= : Club Ids}';
+    protected $signature = 'import:job-import-members';
 
     /**
      * The console command description.
@@ -44,29 +45,15 @@ class JobImportMembers extends Command
      */
     public function handle()
     {
-        $date = $this->argument('date');
-        $path = Path::getRankingPath($date);
-        $this->info('Loading ' . $path);
-        $data = XMLHelper::loadXML($path, Storage::disk());
-        $clubIds = explode(',', $this->option('club-ids'));
-
-        if (count($clubIds) === 1 && empty($clubIds[0])) {
-            $this->info('Mapping to objects');
-            $ranking = Ranking::factory($data);
-            $clubIds = [];
-            foreach ($ranking->getClubs() as $club) {
-                if (is_numeric($club->getId())) {
-                    $clubIds[] = $club->getId();
-                }
-            }
-        }
+        $date = date('dmy');
+        $clubs = User::query()->groupBy(['organization_id'])->get(['organization_id'])->toArray();
+        $clubIds = Arr::pluck($clubs, 'organization_id');
 
         $clubIdsChunks = array_chunk($clubIds, 5);
 
         foreach ($clubIdsChunks as $clubIdsChunk) {
-            $this->info('Queuing chunk');
-            \App\Jobs\ImportMembers::dispatch($date, $clubIdsChunk);
-            break;
+            $this->info('Queuing clubId: ' . implode(',', $clubIdsChunk));
+            \App\Jobs\ImportMembers::dispatchNow($date, $clubIdsChunk);
         }
 
         return 0;

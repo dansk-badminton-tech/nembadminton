@@ -173,6 +173,7 @@ return [
                 'processes'  => 10,
                 'tries'      => 1,
                 'nice'       => 0,
+                'memory' => 128,
             ],
         ],
 
@@ -185,6 +186,7 @@ return [
                 'tries'      => 1,
                 'nice'       => 0,
                 'timeout'    => 120,
+                'memory' => 128,
             ],
         ],
     ],

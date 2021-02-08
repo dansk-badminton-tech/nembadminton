@@ -24,11 +24,15 @@ import {
     faEye,
     faEllipsisV,
     faShareAlt,
-    faBars
+    faBars,
+    faSearch,
+    faEnvelope,
+    faLock,
+    faCopy
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-library.add(faBars, faShareAlt, faEllipsisV, faEye, faCheck, faAngleUp, faAngleDown, faHandRock, faCalendarAlt, faHome, faAngleLeft, faAngleRight, faTrash, faUsers, faUserAlt, faSave, faBrain, faArrowsAlt, faTrashAlt, faArrowUp, faTimesCircle, faExclamationCircle, faSignOutAlt);
+library.add(faCopy, faLock, faEnvelope, faSearch, faBars, faShareAlt, faEllipsisV, faEye, faCheck, faAngleUp, faAngleDown, faHandRock, faCalendarAlt, faHome, faAngleLeft, faAngleRight, faTrash, faUsers, faUserAlt, faSave, faBrain, faArrowsAlt, faTrashAlt, faArrowUp, faTimesCircle, faExclamationCircle, faSignOutAlt);
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 Vue.use(Buefy, {
     defaultIconComponent: 'vue-fontawesome',

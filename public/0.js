@@ -57,6 +57,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -144,6 +145,7 @@ var render = function() {
                 "b-autocomplete",
                 {
                   attrs: {
+                    icon: "search",
                     "clear-on-select": true,
                     clearable: true,
                     data: this.clubs.data,

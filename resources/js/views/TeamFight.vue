@@ -23,15 +23,9 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
-            <b-dropdown-item :has-link="true" aria-role="listitem">
-                <router-link :to="{ name: 'team-fight-view', params: {teamFightId: teamFightId} }" target="_blank">
-                    <b-icon icon="eye"></b-icon>
-                    Vis for spiller
-                </router-link>
-            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="$refs.validateTeams.validTeams()">
                 <b-icon icon="brain"></b-icon>
-                Validere hold
+                Validere hold (eksperimentel)
             </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                 <b-icon icon="trash"></b-icon>
@@ -64,13 +58,13 @@
             </div>
         </div>
         <h1 class="title">Holdet</h1>
+        <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
         <div class="columns">
             <div class="column">
                 <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]"></PlayerSearch>
             </div>
         </div>
         <PlayerList :players="players"></PlayerList>
-        <p>Træk spillerne fra bænken til et hold</p>
         <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
             <p>
                 <b-icon
@@ -91,7 +85,7 @@
             </b-button>
         </div>
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
-            <TeamTable :confirm-delete="deleteTeam" :delete-player="deletePlayer" :move="move" :teams="team.squads"/>
+            <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move" :teams="team.squads"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
@@ -205,6 +199,9 @@ export default {
         },
         deletePlayer(category, player) {
             category.players.splice(category.players.indexOf(player))
+        },
+        copyPlayer(category, player) {
+            category.players.push(Object.assign({}, player))
         },
         deleteTeam(team) {
             this.$buefy.dialog.confirm(

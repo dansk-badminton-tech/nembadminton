@@ -67,6 +67,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -79,6 +85,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     confirmDelete: Function,
     move: Function,
     deletePlayer: Function,
+    copyPlayer: Function,
     teams: {
       type: Array,
       "default": []
@@ -299,6 +306,42 @@ var render = function() {
                                         }),
                                         _vm._v(
                                           "\n                                    Slet\n                                "
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "b-dropdown-item",
+                                  {
+                                    attrs: {
+                                      "aria-role": "menuitem",
+                                      "has-link": ""
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "a",
+                                      {
+                                        attrs: { href: "#" },
+                                        on: {
+                                          click: function($event) {
+                                            $event.preventDefault()
+                                            return _vm.copyPlayer(
+                                              category,
+                                              player
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("b-icon", {
+                                          attrs: { icon: "copy" }
+                                        }),
+                                        _vm._v(
+                                          "\n                                    Kopier\n                                "
                                         )
                                       ],
                                       1

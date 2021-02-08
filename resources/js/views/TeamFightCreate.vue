@@ -1,6 +1,6 @@
 <template>
     <div class="columns">
-        <div class="column">
+        <div v-if="!$apollo.queries.me.loading" class="column">
             <b-field label="Navn">
                 <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
             </b-field>
@@ -12,7 +12,9 @@
                     trap-focus>
                 </b-datepicker>
             </b-field>
-            <ClubSearch :select-club="selectClub"></ClubSearch>
+            <b-field label="Klub">
+                <b-input v-model="me.club.name1" disabled="true"></b-input>
+            </b-field>
             <b-button class="mt-2" icon-left="save" @click="createTeam">Opret</b-button>
         </div>
     </div>
@@ -20,16 +22,20 @@
 
 <script>
 import gql from 'graphql-tag'
-import ClubSearch from "../components/search-club/ClubSearch";
+import ME from "../queries/me.gql";
 
 export default {
     name: "TeamFightCreate",
-    components: {ClubSearch},
     data() {
         return {
             name: null,
             gameDate: null,
             clubId: null
+        }
+    },
+    apollo: {
+        me: {
+            query: ME
         }
     },
     methods: {
@@ -55,7 +61,7 @@ export default {
                                 name: this.name,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                                 club: {
-                                    connect: this.clubId
+                                    connect: this.me.organization_id
                                 }
                             }
                         }

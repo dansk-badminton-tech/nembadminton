@@ -63010,11 +63010,13 @@ new vue__WEBPACK_IMPORTED_MODULE_2___default.a({
 /*!******************************!*\
   !*** ./resources/js/auth.js ***!
   \******************************/
-/*! exports provided: setAuthToken, getAuthToken, isLoggedIn, logoutUser, clearAuthToken, getUserInfo */
+/*! exports provided: setUser, getUser, setAuthToken, getAuthToken, isLoggedIn, logoutUser, clearAuthToken, getUserInfo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setUser", function() { return setUser; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUser", function() { return getUser; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setAuthToken", function() { return setAuthToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getAuthToken", function() { return getAuthToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isLoggedIn", function() { return isLoggedIn; });
@@ -63022,8 +63024,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clearAuthToken", function() { return clearAuthToken; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getUserInfo", function() { return getUserInfo; });
 /* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jwt-decode */ "./node_modules/jwt-decode/build/jwt-decode.esm.js");
+/* harmony import */ var _globals__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./globals */ "./resources/js/globals.js");
+
 
 var AUTH_TOKEN_KEY = 'access_token';
+function setUser(newUser) {
+  _globals__WEBPACK_IMPORTED_MODULE_1__["default"].user = newUser;
+}
+function getUser() {
+  return _globals__WEBPACK_IMPORTED_MODULE_1__["default"].user;
+}
 function setAuthToken(token) {
   localStorage.setItem(AUTH_TOKEN_KEY, token);
 }
@@ -63085,7 +63095,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_2__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faBars"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faShareAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faEllipsisV"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faEye"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faCheck"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleUp"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faHandRock"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faCalendarAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faHome"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleLeft"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleRight"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faUserAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSave"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faBrain"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faArrowsAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTrashAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faArrowUp"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTimesCircle"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faExclamationCircle"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSignOutAlt"]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_2__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faCopy"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faLock"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faEnvelope"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faBars"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faShareAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faEllipsisV"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faEye"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faCheck"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleUp"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleDown"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faHandRock"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faCalendarAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faHome"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleLeft"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faAngleRight"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faUserAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSave"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faBrain"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faArrowsAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTrashAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faArrowUp"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faTimesCircle"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faExclamationCircle"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_3__["faSignOutAlt"]);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.component('vue-fontawesome', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"]);
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(buefy__WEBPACK_IMPORTED_MODULE_0__["default"], {
   defaultIconComponent: 'vue-fontawesome',
@@ -63146,22 +63156,38 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_clipboard2__WEBPACK_IMPORTED_
 
 /***/ }),
 
-/***/ "./resources/js/graphql.js":
+/***/ "./resources/js/globals.js":
 /*!*********************************!*\
-  !*** ./resources/js/graphql.js ***!
+  !*** ./resources/js/globals.js ***!
   \*********************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  user: {}
+});
+
+/***/ }),
+
+/***/ "./resources/js/graphql.js":
+/*!*********************************!*\
+  !*** ./resources/js/graphql.js ***!
+  \*********************************/
+/*! exports provided: default, ApolloClientInstance */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ApolloClientInstance", function() { return ApolloClientInstance; });
 /* harmony import */ var apollo_boost__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! apollo-boost */ "./node_modules/apollo-boost/lib/bundle.esm.js");
 /* harmony import */ var vue_apollo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-apollo */ "./node_modules/vue-apollo/dist/vue-apollo.esm.js");
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./auth */ "./resources/js/auth.js");
 
 
 
-var apolloClient = new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["default"]({
+var ApolloClientInstance = new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["default"]({
   uri: '/graphql',
   request: function request(operation) {
     if (Object(_auth__WEBPACK_IMPORTED_MODULE_2__["isLoggedIn"])()) {
@@ -63174,9 +63200,10 @@ var apolloClient = new apollo_boost__WEBPACK_IMPORTED_MODULE_0__["default"]({
   }
 });
 var apolloProvider = new vue_apollo__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  defaultClient: apolloClient
+  defaultClient: ApolloClientInstance
 });
 /* harmony default export */ __webpack_exports__["default"] = (apolloProvider);
+
 
 /***/ }),
 
@@ -63194,7 +63221,7 @@ var da = {
     findPlayer: 'Søger efter spiller',
     findPlayerPlaceholder: 'fx. Viktor',
     findClub: 'Vælge klub',
-    findClubPlaceholder: 'fx. Skovbakken'
+    findClubPlaceholder: ''
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (da);
@@ -63212,6 +63239,9 @@ var da = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth */ "./resources/js/auth.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
@@ -63220,22 +63250,26 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     path: '/home',
     name: 'home',
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(9)]).then(__webpack_require__.bind(null, /*! ./views/Home */ "./resources/js/views/Home.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(8)]).then(__webpack_require__.bind(null, /*! ./views/Home */ "./resources/js/views/Home.vue"));
     },
     meta: {
-      allowAnonymous: true
+      allowAnonymous: true,
+      title: 'Forside'
     }
   }, {
     path: "/",
     redirect: "/home",
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(12)]).then(__webpack_require__.bind(null, /*! ./views/Base */ "./resources/js/views/Base.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(11)]).then(__webpack_require__.bind(null, /*! ./views/Base */ "./resources/js/views/Base.vue"));
     },
     children: [{
       path: '/my-profile',
       name: 'my-profile',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 13).then(__webpack_require__.bind(null, /*! ./views/MyProfile */ "./resources/js/views/MyProfile.vue"));
+        return __webpack_require__.e(/*! import() */ 14).then(__webpack_require__.bind(null, /*! ./views/MyProfile */ "./resources/js/views/MyProfile.vue"));
+      },
+      meta: {
+        title: 'Min profil'
       }
     }, {
       path: '/rounds-generator',
@@ -63248,6 +63282,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       name: 'team-fight-dashboard',
       component: function component() {
         return __webpack_require__.e(/*! import() */ 7).then(__webpack_require__.bind(null, /*! ./views/TeamFightList */ "./resources/js/views/TeamFightList.vue"));
+      },
+      meta: {
+        title: 'Holdkamps oversigt'
       }
     }, {
       path: '/team-fight/:teamUUID/edit',
@@ -63259,37 +63296,45 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         return {
           teamFightId: route.params.teamUUID
         };
+      },
+      meta: {
+        title: 'Rediger en Holdkamp'
       }
     }, {
       path: '/team-fight/create',
       name: 'team-fight-create',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(14)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightCreate */ "./resources/js/views/TeamFightCreate.vue"));
+        return __webpack_require__.e(/*! import() */ 9).then(__webpack_require__.bind(null, /*! ./views/TeamFightCreate */ "./resources/js/views/TeamFightCreate.vue"));
+      },
+      meta: {
+        title: 'Opret en holdkamp'
       }
     }, {
       path: '/new-user',
       name: 'new-user-create',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 8).then(__webpack_require__.bind(null, /*! ./views/CreateUser */ "./resources/js/views/CreateUser.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(0), __webpack_require__.e(12)]).then(__webpack_require__.bind(null, /*! ./views/CreateUser */ "./resources/js/views/CreateUser.vue"));
       },
       meta: {
-        allowAnonymous: true
+        allowAnonymous: true,
+        title: 'Ny bruger'
       }
     }, {
       path: '/login',
       name: 'login',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 10).then(__webpack_require__.bind(null, /*! ./views/Login */ "./resources/js/views/Login.vue"));
+        return __webpack_require__.e(/*! import() */ 13).then(__webpack_require__.bind(null, /*! ./views/Login */ "./resources/js/views/Login.vue"));
       },
       meta: {
-        allowAnonymous: true
+        allowAnonymous: true,
+        title: 'Login'
       }
     }]
   }, {
     path: '/team-fight/:teamUUID/view',
     name: 'team-fight-view',
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(4), __webpack_require__.e(11)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(4), __webpack_require__.e(10)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
     },
     props: function props(route) {
       return {
@@ -63297,9 +63342,18 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       };
     },
     meta: {
-      allowAnonymous: true
+      allowAnonymous: true,
+      title: ''
     }
   }]
+});
+var DEFAULT_TITLE = '...';
+router.afterEach(function (to, from) {
+  // Use next tick to handle router history correctly
+  // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+  vue__WEBPACK_IMPORTED_MODULE_2___default.a.nextTick(function () {
+    document.title = to.meta.title || DEFAULT_TITLE;
+  });
 });
 router.beforeEach(function (to, from, next) {
   if (!to.meta.allowAnonymous && !Object(_auth__WEBPACK_IMPORTED_MODULE_1__["isLoggedIn"])()) {

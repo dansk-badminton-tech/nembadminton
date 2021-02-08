@@ -1,6 +1,15 @@
 import decode from 'jwt-decode'
+import globals from './globals'
 
 const AUTH_TOKEN_KEY = 'access_token'
+
+export function setUser(newUser) {
+    globals.user = newUser;
+}
+
+export function getUser() {
+    return globals.user;
+}
 
 export function setAuthToken(token) {
     localStorage.setItem(AUTH_TOKEN_KEY, token)
