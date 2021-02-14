@@ -18,6 +18,21 @@ services:
       - smtp
       - redis
 
+  worker:
+    image: flycompany/holdkamp
+    entrypoint: "php artisan horizon"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - database
+      - phpmyadmin
+      - smtp
+      - redis
+
   artisan:
     image: flycompany/holdkamp
     user: "1000:1000"

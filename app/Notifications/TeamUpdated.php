@@ -5,12 +5,13 @@ namespace App\Notifications;
 
 use App\Models\Teams;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use NotificationChannels\WebPush\WebPushChannel;
 use NotificationChannels\WebPush\WebPushMessage;
 
-class TeamUpdated extends Notification
+class TeamUpdated extends Notification implements ShouldQueue
 {
 
     use Queueable;
@@ -23,7 +24,7 @@ class TeamUpdated extends Notification
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param Teams $team
      */
     public function __construct(Teams $team)
     {
@@ -61,7 +62,7 @@ class TeamUpdated extends Notification
 
     private function getTitle() : string
     {
-        return 'Ændring på ' . $this->team->name;
+        return 'Ny opdatering på ' . $this->team->name;
     }
 
     /**
@@ -77,7 +78,7 @@ class TeamUpdated extends Notification
      */
     protected function getActionUrl() : string
     {
-        return url("/team-fight/{$this->team->id}/view");
+        return url($this->getPath());
     }
 
     /**
@@ -94,7 +95,16 @@ class TeamUpdated extends Notification
             ->title($this->getTitle())
             ->icon('/notification-icon.png')
             ->body($this->getBody())
-            ->action('View app', 'view_app')
-            ->data(['id' => $notification->id]);
+            ->tag($notification->id)
+            ->action('Vis holdkamp', 'view_teamfight')
+            ->data(['id' => $notification->id, 'path' => $this->getPath(), 'action' => 'view_teamfight']);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPath(): string
+    {
+        return "/team-fight/{$this->team->id}/view";
     }
 }

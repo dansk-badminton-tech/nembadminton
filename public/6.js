@@ -20,8 +20,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TeamTable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./TeamTable */ "./resources/js/views/TeamTable.vue");
 /* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! omit-deep */ "./node_modules/omit-deep/index.js");
 /* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(omit_deep__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/team-fight/teams */ "./resources/js/components/team-fight/teams.js");
 function _templateObject4() {
-  var data = _taggedTemplateLiteral(["\n                        mutation($id: ID!){\n                            notify(id: $id)\n                        }\n                    "]);
+  var data = _taggedTemplateLiteral(["\n                                    mutation($id: ID!){\n                                        notify(id: $id)\n                                    }\n                                "]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -172,7 +173,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
+
 
 
 
@@ -269,114 +270,14 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       this.team.squads = teams;
     },
     addTeam10: function addTeam10() {
-      this.team.squads.push({
-        id: this.teamCount++,
-        playerLimit: 10,
-        categories: [{
-          name: "1. MD",
-          category: "MD",
-          players: []
-        }, {
-          name: "2. MD",
-          category: "MD",
-          players: []
-        }, {
-          name: "1. DS",
-          category: "DS",
-          players: []
-        }, {
-          name: "2. DS",
-          category: "DS",
-          players: []
-        }, {
-          name: "1. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "2. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "3. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "4. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "1. DD",
-          category: "DD",
-          players: []
-        }, {
-          name: "2. DD",
-          category: "DD",
-          players: []
-        }, {
-          name: "1. HD",
-          category: "HD",
-          players: []
-        }, {
-          name: "2. HD",
-          category: "HD",
-          players: []
-        }, {
-          name: "3. HD",
-          category: "HD",
-          players: []
-        }]
-      });
+      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__["TeamFightHelper"].generate10Players();
+      players.id = this.teamCount++;
+      this.team.squads.push(players);
     },
     addTeam8: function addTeam8() {
-      this.team.squads.push({
-        id: this.teamCount++,
-        playerLimit: 8,
-        categories: [{
-          name: "1. MD",
-          category: "MD",
-          players: []
-        }, {
-          name: "2. MD",
-          category: "MD",
-          players: []
-        }, {
-          name: "1. DS",
-          category: "DS",
-          players: []
-        }, {
-          name: "2. DS",
-          category: "DS",
-          players: []
-        }, {
-          name: "1. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "2. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "3. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "4. HS",
-          category: "HS",
-          players: []
-        }, {
-          name: "1. DD",
-          category: "DD",
-          players: []
-        }, {
-          name: "1. HD",
-          category: "HD",
-          players: []
-        }, {
-          name: "2. HD",
-          category: "HD",
-          players: []
-        }]
-      });
+      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__["TeamFightHelper"].generate8Players();
+      players.id = this.teamCount++;
+      this.team.squads.push(players);
     },
     loadTeamFromCache: function loadTeamFromCache() {
       this.team.squads = JSON.parse(localStorage.getItem('teams'));
@@ -437,25 +338,30 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
     notify: function notify() {
       var _this5 = this;
 
-      this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject4()),
-        variables: {
-          id: this.teamFightId
-        }
-      }).then(function (_ref3) {
-        var data = _ref3.data;
+      this.$buefy.dialog.confirm({
+        message: 'Sikker på du vil notificer spillerne omkring ændringer?<br /><br /><strong>OSB</strong>: Det er kun spiller som har tilmeldt sig notifikationer, der vil modtage dem.',
+        onConfirm: function onConfirm() {
+          _this5.$apollo.mutate({
+            mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject4()),
+            variables: {
+              id: _this5.teamFightId
+            }
+          }).then(function (_ref3) {
+            var data = _ref3.data;
 
-        _this5.$buefy.snackbar.open({
-          duration: 2000,
-          type: 'is-success',
-          message: "Dine spiller er nu notificeret"
-        });
-      })["catch"](function (error) {
-        _this5.$buefy.snackbar.open({
-          duration: 2000,
-          type: 'is-dagner',
-          message: "Kunne ikke notificer spillerne"
-        });
+            _this5.$buefy.snackbar.open({
+              duration: 2000,
+              type: 'is-success',
+              message: "Dine spiller er nu notificeret"
+            });
+          })["catch"](function (error) {
+            _this5.$buefy.snackbar.open({
+              duration: 2000,
+              type: 'is-dagner',
+              message: "Kunne ikke notificer spillerne"
+            });
+          });
+        }
       });
     }
   }
@@ -980,6 +886,12 @@ var render = function() {
       ),
       _vm._v(" "),
       _c(
+        "b-button",
+        { attrs: { "icon-left": "bell" }, on: { click: _vm.notify } },
+        [_vm._v("Notificer")]
+      ),
+      _vm._v(" "),
+      _c(
         "b-dropdown",
         {
           attrs: { "aria-role": "list" },
@@ -1063,16 +975,6 @@ var render = function() {
           ])
         },
         [
-          _vm._v(" "),
-          _c(
-            "b-dropdown-item",
-            { attrs: { "aria-role": "listitem" }, on: { click: _vm.notify } },
-            [
-              _c("b-icon", { attrs: { icon: "brain" } }),
-              _vm._v("\n            Notificer\n        ")
-            ],
-            1
-          ),
           _vm._v(" "),
           _c(
             "b-dropdown-item",
@@ -1271,7 +1173,7 @@ var render = function() {
               _c("div", { staticClass: "content" }, [
                 _c("p", [
                   _vm._v(
-                    "Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for at se holdet."
+                    "Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for\n                        at se holdet."
                   )
                 ]),
                 _vm._v(" "),
@@ -1375,6 +1277,146 @@ var staticRenderFns = []
 render._withStripped = true
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/team-fight/teams.js":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/team-fight/teams.js ***!
+  \*****************************************************/
+/*! exports provided: TeamFightHelper */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TeamFightHelper", function() { return TeamFightHelper; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var TeamFightHelper = /*#__PURE__*/function () {
+  function TeamFightHelper() {
+    _classCallCheck(this, TeamFightHelper);
+  }
+
+  _createClass(TeamFightHelper, null, [{
+    key: "generate10Players",
+    value: function generate10Players() {
+      return {
+        playerLimit: 10,
+        categories: [{
+          name: "1. MD",
+          category: "MD",
+          players: []
+        }, {
+          name: "2. MD",
+          category: "MD",
+          players: []
+        }, {
+          name: "1. DS",
+          category: "DS",
+          players: []
+        }, {
+          name: "2. DS",
+          category: "DS",
+          players: []
+        }, {
+          name: "1. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "2. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "3. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "4. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "1. DD",
+          category: "DD",
+          players: []
+        }, {
+          name: "2. DD",
+          category: "DD",
+          players: []
+        }, {
+          name: "1. HD",
+          category: "HD",
+          players: []
+        }, {
+          name: "2. HD",
+          category: "HD",
+          players: []
+        }, {
+          name: "3. HD",
+          category: "HD",
+          players: []
+        }]
+      };
+    }
+  }, {
+    key: "generate8Players",
+    value: function generate8Players() {
+      return {
+        playerLimit: 8,
+        categories: [{
+          name: "1. MD",
+          category: "MD",
+          players: []
+        }, {
+          name: "2. MD",
+          category: "MD",
+          players: []
+        }, {
+          name: "1. DS",
+          category: "DS",
+          players: []
+        }, {
+          name: "2. DS",
+          category: "DS",
+          players: []
+        }, {
+          name: "1. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "2. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "3. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "4. HS",
+          category: "HS",
+          players: []
+        }, {
+          name: "1. DD",
+          category: "DD",
+          players: []
+        }, {
+          name: "1. HD",
+          category: "HD",
+          players: []
+        }, {
+          name: "2. HD",
+          category: "HD",
+          players: []
+        }]
+      };
+    }
+  }]);
+
+  return TeamFightHelper;
+}();
 
 /***/ }),
 

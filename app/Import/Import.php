@@ -104,7 +104,7 @@ class Import
         $ranking = Ranking::factoryClubWithoutMembers($data);
 
         foreach ($ranking->getClubs() as $club) {
-            //if (in_array($club->getId(), $clubIds)) {
+            if (in_array($club->getId(), $clubIds) || empty($clubIds)) {
                 $this->output->info('Updating ' . $club->getName1());
                 if (!is_numeric($club->getId())) {
                     continue;
@@ -121,7 +121,7 @@ class Import
                     'memberOf' => $club->getMemberOf(),
                     'union'    => $club->getUnion(),
                 ]);
-            //}
+            }
         }
     }
 

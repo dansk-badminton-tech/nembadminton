@@ -36,10 +36,11 @@
          * @param {NotificationEvent} event
          */
         notificationClick (event) {
-            // console.log(event.notification)
+            const clickedNotification = event.notification;
+            clickedNotification.close();
 
-            if (event.action === 'some_action') {
-                // Do something...
+            if (event.action === 'view_teamfight') {
+                self.clients.openWindow(clickedNotification.data.path)
             } else {
                 self.clients.openWindow('/')
             }

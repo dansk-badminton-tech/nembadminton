@@ -3,6 +3,7 @@
         <b-loading v-model="$apollo.loading" :can-cancel="true" :is-full-page="true"></b-loading>
         <b-button :loading="saving" icon-left="save" @click="saveTeams">Gem</b-button>
         <b-button icon-left="share-alt" @click="publish">Del</b-button>
+        <b-button icon-left="bell" @click="notify">Notificer</b-button>
         <b-dropdown aria-role="list">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                 <span>Tilføj hold</span>
@@ -23,10 +24,6 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
-            <b-dropdown-item aria-role="listitem" @click="notify">
-                <b-icon icon="brain"></b-icon>
-                Notificer
-            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="$refs.validateTeams.validTeams()">
                 <b-icon icon="brain"></b-icon>
                 Validere hold (eksperimentel)
@@ -89,13 +86,15 @@
             </b-button>
         </div>
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
-            <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move" :teams="team.squads"/>
+            <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
+                       :teams="team.squads"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
                 <div class="card-content">
                     <div class="content">
-                        <p>Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for at se holdet.</p>
+                        <p>Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for
+                            at se holdet.</p>
                         <pre>{{ shareUrl }}</pre>
                     </div>
                 </div>
@@ -118,6 +117,7 @@ import gql from "graphql-tag"
 import ValidateTeams from "./ValidateTeams";
 import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
+import teams, {TeamFightHelper} from "../components/team-fight/teams";
 
 export default {
     name: "TeamFight",
@@ -231,116 +231,14 @@ export default {
             this.team.squads = teams
         },
         addTeam10() {
-            this.team.squads.push({
-                                      id: this.teamCount++,
-                                      playerLimit: 10,
-                                      categories: [{
-                                          name: "1. MD",
-                                          category: "MD",
-                                          players: []
-                                      }, {
-                                          name: "2. MD",
-                                          category: "MD",
-                                          players: []
-                                      }, {
-                                          name: "1. DS",
-                                          category: "DS",
-                                          players: []
-                                      }, {
-                                          name: "2. DS",
-                                          category: "DS",
-                                          players: []
-                                      }, {
-                                          name: "1. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "2. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "3. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "4. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "1. DD",
-                                          category: "DD",
-                                          players: []
-                                      }, {
-                                          name: "2. DD",
-                                          category: "DD",
-                                          players: []
-                                      }, {
-                                          name: "1. HD",
-                                          category: "HD",
-                                          players: []
-                                      }, {
-                                          name: "2. HD",
-                                          category: "HD",
-                                          players: []
-                                      }, {
-                                          name: "3. HD",
-                                          category: "HD",
-                                          players: []
-                                      }
-                                      ]
-                                  })
+            let players = TeamFightHelper.generate10Players()
+            players.id = this.teamCount++
+            this.team.squads.push(players)
         },
         addTeam8() {
-            this.team.squads.push({
-                                      id: this.teamCount++,
-                                      playerLimit: 8,
-                                      categories: [{
-                                          name: "1. MD",
-                                          category: "MD",
-                                          players: []
-                                      }, {
-                                          name: "2. MD",
-                                          category: "MD",
-                                          players: []
-                                      }, {
-                                          name: "1. DS",
-                                          category: "DS",
-                                          players: []
-                                      }, {
-                                          name: "2. DS",
-                                          category: "DS",
-                                          players: []
-                                      }, {
-                                          name: "1. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "2. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "3. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "4. HS",
-                                          category: "HS",
-                                          players: []
-                                      }, {
-                                          name: "1. DD",
-                                          category: "DD",
-                                          players: []
-                                      }, {
-                                          name: "1. HD",
-                                          category: "HD",
-                                          players: []
-                                      }, {
-                                          name: "2. HD",
-                                          category: "HD",
-                                          players: []
-                                      }
-                                      ]
-                                  })
+            let players = TeamFightHelper.generate8Players()
+            players.id = this.teamCount++
+            this.team.squads.push(players)
         },
         loadTeamFromCache() {
             this.team.squads = JSON.parse(localStorage.getItem('teams'));
@@ -410,32 +308,38 @@ export default {
                 })
         },
         notify() {
-            this.$apollo.mutate(
+            this.$buefy.dialog.confirm(
                 {
-                    mutation: gql`
-                        mutation($id: ID!){
-                            notify(id: $id)
-                        }
-                    `,
-                    variables: {
-                        id: this.teamFightId
+                    message: 'Sikker på du vil notificer spillerne omkring ændringer?<br /><br /><strong>OSB</strong>: Det er kun spiller som har tilmeldt sig notifikationer, der vil modtage dem.',
+                    onConfirm: () => {
+                        this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                    mutation($id: ID!){
+                                        notify(id: $id)
+                                    }
+                                `,
+                                variables: {
+                                    id: this.teamFightId
+                                }
+                            })
+                            .then(({data}) => {
+                                this.$buefy.snackbar.open(
+                                    {
+                                        duration: 2000,
+                                        type: 'is-success',
+                                        message: `Dine spiller er nu notificeret`
+                                    })
+                            })
+                            .catch((error) => {
+                                this.$buefy.snackbar.open(
+                                    {
+                                        duration: 2000,
+                                        type: 'is-dagner',
+                                        message: `Kunne ikke notificer spillerne`
+                                    })
+                            })
                     }
-                })
-                .then(({data}) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 2000,
-                            type: 'is-success',
-                            message: `Dine spiller er nu notificeret`
-                        })
-                })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 2000,
-                            type: 'is-dagner',
-                            message: `Kunne ikke notificer spillerne`
-                        })
                 })
         }
     }

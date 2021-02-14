@@ -36,7 +36,12 @@ class ImportClubs extends Command
     public function handle(Import $import)
     {
         $date = $this->argument('date');
-        $clubIds = explode(',', $this->option('club-ids'));
+        $clubIdsString = $this->option('club-ids');
+        if($clubIdsString !== null){
+            $clubIds = explode(',', $clubIdsString);
+        }else{
+            $clubIds = [];
+        }
         $import->importClubs($date, $clubIds);
 
         if ($this->option('import-members')) {
