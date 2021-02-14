@@ -4,7 +4,8 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateTeam(input: UpdateTeamInput @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutation\\UpdateTeams@updateTeams")
+    updateTeam(input: UpdateTeamInput @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutations\\UpdateTeams@updateTeams")
+    notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutations\\UpdateTeams@notify")
     createTeam(input: CreateTeamInput @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
 }

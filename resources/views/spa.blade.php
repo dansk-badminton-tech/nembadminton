@@ -6,6 +6,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
     <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css') }}">
+    <!-- Scripts -->
+    <script>
+        window.Laravel = {!! json_encode([
+            'vapidPublicKey' => config('webpush.vapid.public_key'),
+        ], JSON_THROW_ON_ERROR) !!};
+    </script>
 </head>
 <body>
 <div id="app">

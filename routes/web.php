@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,4 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('notifications/{id}/dismiss', [NotificationController::class, 'dismiss']);
 Route::get('/{any}', 'SpaController@index')->where('any', '.*');

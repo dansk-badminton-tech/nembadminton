@@ -1,12 +1,12 @@
 <template>
-    <form @submit.prevent="login">
+    <form class="mt-2" @submit.prevent="login">
         <b-field label="Email">
             <b-input v-model="email" type="email"></b-input>
         </b-field>
         <b-field label="Adgangskode">
             <b-input v-model="password" type="password"></b-input>
         </b-field>
-        <b-button :loading="loading" native-type="submit" tag="input" value="Login"/>
+        <b-button :loading="loading" native-type="submit">Login</b-button>
     </form>
 </template>
 
@@ -22,6 +22,9 @@ export default {
             password: null,
             loading: false
         }
+    },
+    props: {
+        afterLogin: Function
     },
     methods: {
         login() {
@@ -45,7 +48,11 @@ export default {
             ).then(({data}) => {
                 setAuthToken(data.login.access_token)
                 this.$root.$emit('loggedIn')
-                this.$router.push({name: 'team-fight-dashboard'})
+                if (this.afterLogin instanceof Function) {
+                    this.afterLogin()
+                } else {
+                    this.$router.push({name: 'team-fight-dashboard'})
+                }
             }).catch(({graphQLErrors}) => {
                 this.$buefy.snackbar.open(
                     {

@@ -17,13 +17,15 @@
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
         "joselfonseca/lighthouse-graphql-passport-auth": "^5.1",
+        "laravel-notification-channels/webpush": "^5.1",
         "laravel/framework": "^8.0",
         "laravel/horizon": "^5.0",
         "laravel/passport": "^10.0",
         "laravel/tinker": "^2.0",
         "mll-lab/graphql-php-scalars": "^3.1",
         "mll-lab/laravel-graphql-playground": "^2.4",
-        "nuwave/lighthouse": "^4.17"
+        "nuwave/lighthouse": "^4.17",
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -39,7 +41,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "platform": {
-            "ext-pcntl": "1.0"
+            "ext-pcntl": "1.0",
+            "php": "7.4"
         }
     },
     "extra": {

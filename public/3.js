@@ -72,6 +72,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
 
 
 
@@ -307,10 +308,12 @@ var render = function() {
                         "router-link",
                         { attrs: { to: { name: "my-profile" } } },
                         [
+                          _c("b-icon", { attrs: { icon: "user-alt" } }),
                           _vm._v(
                             "\n                    Min profil\n                "
                           )
-                        ]
+                        ],
+                        1
                       )
                     ],
                     1

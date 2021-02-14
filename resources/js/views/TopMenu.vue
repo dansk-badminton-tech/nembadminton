@@ -33,6 +33,7 @@
                 <hr class="dropdown-divider">
                 <b-dropdown-item aria-role="menuitem" has-link>
                     <router-link :to="{ name: 'my-profile'}">
+                        <b-icon icon="user-alt"></b-icon>
                         Min profil
                     </router-link>
                 </b-dropdown-item>

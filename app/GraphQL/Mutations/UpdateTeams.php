@@ -2,14 +2,17 @@
 declare(strict_types = 1);
 
 
-namespace App\GraphQL\Mutation;
+namespace App\GraphQL\Mutations;
 
 use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
 use App\Models\Teams;
+use App\Models\User;
+use App\Notifications\TeamUpdated;
 use GraphQL\Type\Definition\ResolveInfo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -20,6 +23,24 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
  */
 class UpdateTeams
 {
+
+    public function notify($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
+        $team = $args['id'];
+        $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($team) {
+            $builder->where('id', $team);
+        })->with('user')->get();
+        $users = $members->pluck('user')->unique('id')->filter(function ($value) {
+            return $value !== null;
+        });
+
+        /** @var Teams $team */
+        $team = Teams::query()->findOrFail($team);
+        /** @var User[] $users */
+        foreach ($users as $user) {
+            $user->notify(new TeamUpdated($team));
+        }
+    }
 
     /**
      * @param                $rootValue

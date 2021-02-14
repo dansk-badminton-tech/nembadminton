@@ -45,6 +45,9 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
+//
 
 
 
@@ -54,6 +57,9 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   components: {
     ClubSearch: _components_search_club_ClubSearch__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
+  props: {
+    afterRegister: Function
+  },
   data: function data() {
     return {
       name: null,
@@ -61,7 +67,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       password: null,
       password_confirmation: null,
       clubId: null,
-      loading: false
+      loading: false,
+      playerId: null
     };
   },
   methods: {
@@ -79,6 +86,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
             name: this.name,
             email: this.email,
             organization_id: this.clubId,
+            player_id: this.playerId,
             password: this.password,
             password_confirmation: this.password_confirmation
           }
@@ -89,9 +97,13 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
         _this.$root.$emit('loggedIn');
 
-        _this.$router.push({
-          name: 'home'
-        });
+        if (_this.afterRegister instanceof Function) {
+          _this.afterRegister();
+        } else {
+          _this.$router.push({
+            name: 'home'
+          });
+        }
       })["catch"](function (_ref2) {
         var graphQLErrors = _ref2.graphQLErrors;
         var errors = Object(_helpers__WEBPACK_IMPORTED_MODULE_1__["extractErrors"])(graphQLErrors);
@@ -127,13 +139,14 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "mb-2" },
     [
       _c(
         "b-field",
         { attrs: { label: "Navn" } },
         [
           _c("b-input", {
-            attrs: { icon: "user-alt" },
+            attrs: { icon: "user-alt", placeholder: "Viktor Axelsen" },
             model: {
               value: _vm.name,
               callback: function($$v) {
@@ -151,7 +164,11 @@ var render = function() {
         { attrs: { label: "Email" } },
         [
           _c("b-input", {
-            attrs: { icon: "envelope", type: "email" },
+            attrs: {
+              icon: "envelope",
+              placeholder: "viktor@gmail.com",
+              type: "email"
+            },
             model: {
               value: _vm.email,
               callback: function($$v) {
@@ -168,10 +185,28 @@ var render = function() {
       _vm._v(" "),
       _c(
         "b-field",
+        { attrs: { label: "Badminton Player ID" } },
+        [
+          _c("b-input", {
+            attrs: { icon: "user-alt", placeholder: "100990-12", type: "text" },
+            model: {
+              value: _vm.playerId,
+              callback: function($$v) {
+                _vm.playerId = $$v
+              },
+              expression: "playerId"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-field",
         { attrs: { label: "Adgangskode" } },
         [
           _c("b-input", {
-            attrs: { icon: "lock", type: "password" },
+            attrs: { icon: "lock", placeholder: "******", type: "password" },
             model: {
               value: _vm.password,
               callback: function($$v) {
@@ -189,7 +224,7 @@ var render = function() {
         { attrs: { label: "Gentag adgangskode" } },
         [
           _c("b-input", {
-            attrs: { icon: "lock", type: "password" },
+            attrs: { icon: "lock", placeholder: "******", type: "password" },
             model: {
               value: _vm.password_confirmation,
               callback: function($$v) {

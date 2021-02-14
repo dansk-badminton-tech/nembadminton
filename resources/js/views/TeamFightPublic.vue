@@ -2,27 +2,61 @@
     <section v-if="!$apollo.loading" class="section">
         <h1 class="is-size-1">{{ team.name }}</h1>
         <p>Spille dato: {{ team.gameDate }}</p>
+        <b-button
+            label="Notifikationer"
+            size="is-medium"
+            type="is-primary"
+            @click="showNotificationPopUp = true"/>
+
+        <b-modal
+            v-model="showNotificationPopUp"
+            :destroy-on-hide="false"
+            aria-label="Notifikation"
+            aria-modal
+            aria-role="dialog"
+            has-modal-card
+            trap-focus>
+            <template #default="props">
+                <CreateNotification></CreateNotification>
+            </template>
+        </b-modal>
         <b-field label="Søg efter spiller">
             <b-input v-model="searchPlayer"></b-input>
         </b-field>
         <div class="columns is-multiline">
             <TeamTable :search="this.searchPlayer" :teams="this.team.squads" :viewMode="true"/>
         </div>
+
     </section>
 </template>
 
 <script>
 import gql from 'graphql-tag'
 import TeamTable from "./TeamTable";
+import CreateNotification from "../components/team-fight/CreateNotification";
 
 export default {
     name: "TeamFightPublic",
     components: {
+        CreateNotification,
         TeamTable
+    },
+    methods: {
+        sendNotification() {
+            this.loading = true
+            this.$apollo.mutate({
+                                    mutation: gql`
+                                    mutation{
+                                        sendNotification
+                                    }
+                                `
+                                })
+        }
     },
     data() {
         return {
-            searchPlayer: ''
+            searchPlayer: '',
+            showNotificationPopUp: false
         }
     },
     props: {

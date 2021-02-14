@@ -12,3 +12,4 @@ type Mutation
 #import bdf.graphql
 #import teams.graphql
 #import register.graphql
+#import subscription.graphql

@@ -23,6 +23,6 @@ class Squad extends Model
 
     public function team() : BelongsTo
     {
-        return $this->belongsTo(Teams::class);
+        return $this->belongsTo(Teams::class, 'teams_id');
     }
 }

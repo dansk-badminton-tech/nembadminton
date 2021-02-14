@@ -6,7 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -24,5 +24,15 @@ class SquadMember extends Model
     public function points() : HasMany
     {
         return $this->hasMany(SquadPoint::class);
+    }
+
+    public function user() : BelongsTo
+    {
+        return $this->belongsTo(User::class, 'member_ref_id', 'player_id');
+    }
+
+    public function category() : BelongsTo
+    {
+        return $this->belongsTo(SquadCategory::class, 'squad_category_id');
     }
 }

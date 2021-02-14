@@ -47,7 +47,7 @@ const router = new VueRouter(
                         component: () => import("./views/TeamFight"),
                         props: route => ({teamFightId: route.params.teamUUID}),
                         meta: {
-                            title: 'Rediger en Holdkamp'
+                            title: 'Rediger holdkamp'
                         }
                     },
                     {
@@ -55,7 +55,7 @@ const router = new VueRouter(
                         name: 'team-fight-create',
                         component: () => import("./views/TeamFightCreate"),
                         meta: {
-                            title: 'Opret en holdkamp'
+                            title: 'Opret holdkamp'
                         }
                     },
                     {
@@ -85,7 +85,7 @@ const router = new VueRouter(
                 props: route => ({teamFightId: route.params.teamUUID}),
                 meta: {
                     allowAnonymous: true,
-                    title: ''
+                    title: 'Holdkamp'
                 }
             }
         ]

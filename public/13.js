@@ -47,6 +47,9 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       loading: false
     };
   },
+  props: {
+    afterLogin: Function
+  },
   methods: {
     login: function login() {
       var _this = this;
@@ -66,9 +69,13 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
         _this.$root.$emit('loggedIn');
 
-        _this.$router.push({
-          name: 'team-fight-dashboard'
-        });
+        if (_this.afterLogin instanceof Function) {
+          _this.afterLogin();
+        } else {
+          _this.$router.push({
+            name: 'team-fight-dashboard'
+          });
+        }
       })["catch"](function (_ref2) {
         var graphQLErrors = _ref2.graphQLErrors;
 
@@ -104,6 +111,7 @@ var render = function() {
   return _c(
     "form",
     {
+      staticClass: "mt-2",
       on: {
         submit: function($event) {
           $event.preventDefault()
@@ -148,14 +156,11 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("b-button", {
-        attrs: {
-          loading: _vm.loading,
-          "native-type": "submit",
-          tag: "input",
-          value: "Login"
-        }
-      })
+      _c(
+        "b-button",
+        { attrs: { loading: _vm.loading, "native-type": "submit" } },
+        [_vm._v("Login")]
+      )
     ],
     1
   )

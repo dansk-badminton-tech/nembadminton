@@ -63221,7 +63221,7 @@ var da = {
     findPlayer: 'Søger efter spiller',
     findPlayerPlaceholder: 'fx. Viktor',
     findClub: 'Vælge klub',
-    findClubPlaceholder: ''
+    findClubPlaceholder: 'Skovbakken'
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (da);
@@ -63250,7 +63250,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     path: '/home',
     name: 'home',
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(8)]).then(__webpack_require__.bind(null, /*! ./views/Home */ "./resources/js/views/Home.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(3), __webpack_require__.e(9)]).then(__webpack_require__.bind(null, /*! ./views/Home */ "./resources/js/views/Home.vue"));
     },
     meta: {
       allowAnonymous: true,
@@ -63275,13 +63275,13 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       path: '/rounds-generator',
       name: 'rounds-generator',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(2), __webpack_require__.e(6)]).then(__webpack_require__.bind(null, /*! ./views/RoundsGenerator */ "./resources/js/views/RoundsGenerator.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(2), __webpack_require__.e(7)]).then(__webpack_require__.bind(null, /*! ./views/RoundsGenerator */ "./resources/js/views/RoundsGenerator.vue"));
       }
     }, {
       path: '/team-fight/dashboard',
       name: 'team-fight-dashboard',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 7).then(__webpack_require__.bind(null, /*! ./views/TeamFightList */ "./resources/js/views/TeamFightList.vue"));
+        return __webpack_require__.e(/*! import() */ 8).then(__webpack_require__.bind(null, /*! ./views/TeamFightList */ "./resources/js/views/TeamFightList.vue"));
       },
       meta: {
         title: 'Holdkamps oversigt'
@@ -63290,7 +63290,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       path: '/team-fight/:teamUUID/edit',
       name: 'team-fight-edit',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(2), __webpack_require__.e(4), __webpack_require__.e(5)]).then(__webpack_require__.bind(null, /*! ./views/TeamFight */ "./resources/js/views/TeamFight.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(2), __webpack_require__.e(4), __webpack_require__.e(6)]).then(__webpack_require__.bind(null, /*! ./views/TeamFight */ "./resources/js/views/TeamFight.vue"));
       },
       props: function props(route) {
         return {
@@ -63298,16 +63298,16 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         };
       },
       meta: {
-        title: 'Rediger en Holdkamp'
+        title: 'Rediger holdkamp'
       }
     }, {
       path: '/team-fight/create',
       name: 'team-fight-create',
       component: function component() {
-        return __webpack_require__.e(/*! import() */ 9).then(__webpack_require__.bind(null, /*! ./views/TeamFightCreate */ "./resources/js/views/TeamFightCreate.vue"));
+        return __webpack_require__.e(/*! import() */ 10).then(__webpack_require__.bind(null, /*! ./views/TeamFightCreate */ "./resources/js/views/TeamFightCreate.vue"));
       },
       meta: {
-        title: 'Opret en holdkamp'
+        title: 'Opret holdkamp'
       }
     }, {
       path: '/new-user',
@@ -63334,7 +63334,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     path: '/team-fight/:teamUUID/view',
     name: 'team-fight-view',
     component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(4), __webpack_require__.e(10)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
+      return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(5)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
     },
     props: function props(route) {
       return {
@@ -63343,7 +63343,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     },
     meta: {
       allowAnonymous: true,
-      title: ''
+      title: 'Holdkamp'
     }
   }]
 });

@@ -6,17 +6,35 @@ extend type Mutation {
     updateMe(input: UpdateMe! @spread) : User! @update @inject(context: "user.id", name: "id") @guard
 }
 
+input UpsertSubscriptionSettingBelongTo {
+    upsert: UpsertSubscriptionSettingInput
+}
+
+input UpsertSubscriptionSettingInput {
+    id: ID
+    email: Boolean!
+}
+
 input UpdateMe {
-    name: String!
-    email: String!
+    name: String
+    email: String
+    player_id: String
+    subscriptionSettings: UpsertSubscriptionSettingBelongTo
 }
 
 type User {
     id: ID!
     name: String!
     email: String!
+    player_id: String
     club: Club!
     organization_id: Int!
+    subscriptionSettings: SubscriptionSetting
     created_at: DateTime!
     updated_at: DateTime!
+}
+
+type SubscriptionSetting {
+    id: ID!
+    email: Boolean!
 }

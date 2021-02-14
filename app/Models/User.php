@@ -5,14 +5,16 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class User extends Authenticatable
 {
 
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasPushSubscriptions;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'organization_id',
+        'player_id',
     ];
 
     /**
@@ -48,6 +51,11 @@ class User extends Authenticatable
     public function club() : BelongsTo
     {
         return $this->belongsTo(Club::class, 'organization_id', 'id');
+    }
+
+    public function subscriptionSettings() : HasOne
+    {
+        return $this->hasOne(SubscriptionSetting::class);
     }
 
 }

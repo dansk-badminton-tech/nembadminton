@@ -1,0 +1,20 @@
+extend type Mutation {
+    subscribeWebPush(input: SubscribeWebPushInput!) : PushSubscription @field(resolver: "App\\GraphQL\\Mutations\\Subscription@subscribe")
+    unsubscribeWebPush(input: UnsubscribeWebPushInput!) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@unsubscribe")
+    sendNotification : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@sendNotification")
+}
+
+input UnsubscribeWebPushInput {
+    endpoint: String!
+}
+
+type PushSubscription {
+    id: ID!
+}
+
+input SubscribeWebPushInput {
+    endpoint: String!
+    publicKey: String
+    authToken: String
+    contentEncoding: String
+}

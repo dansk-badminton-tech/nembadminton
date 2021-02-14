@@ -23,6 +23,10 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
+            <b-dropdown-item aria-role="listitem" @click="notify">
+                <b-icon icon="brain"></b-icon>
+                Notificer
+            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="$refs.validateTeams.validTeams()">
                 <b-icon icon="brain"></b-icon>
                 Validere hold (eksperimentel)
@@ -96,6 +100,7 @@
                     </div>
                 </div>
                 <footer class="card-footer">
+                    <a :href="shareUrl" class="card-footer-item" target="_blank">Vis (Nyt vindue)</a>
                     <a class="card-footer-item" @click.prevent="copyShareLink">Kopier</a>
                     <a class="card-footer-item" @click.prevent="showShareLink = !showShareLink">Luk</a>
                 </footer>
@@ -198,7 +203,7 @@ export default {
             this.showShareLink = !this.showShareLink
         },
         deletePlayer(category, player) {
-            category.players.splice(category.players.indexOf(player))
+            category.players.splice(category.players.indexOf(player), 1)
         },
         copyPlayer(category, player) {
             category.players.push(Object.assign({}, player))
@@ -402,6 +407,35 @@ export default {
                             this.$router.push({name: 'team-fight-dashboard'})
                         })
                     }
+                })
+        },
+        notify() {
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation($id: ID!){
+                            notify(id: $id)
+                        }
+                    `,
+                    variables: {
+                        id: this.teamFightId
+                    }
+                })
+                .then(({data}) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 2000,
+                            type: 'is-success',
+                            message: `Dine spiller er nu notificeret`
+                        })
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 2000,
+                            type: 'is-dagner',
+                            message: `Kunne ikke notificer spillerne`
+                        })
                 })
         }
     }

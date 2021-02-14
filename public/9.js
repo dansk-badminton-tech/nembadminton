@@ -1,30 +1,15 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[9],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Home.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Home.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _queries_me_gql__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../queries/me.gql */ "./resources/js/queries/me.gql");
-/* harmony import */ var _queries_me_gql__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_queries_me_gql__WEBPACK_IMPORTED_MODULE_1__);
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                        mutation ($input: CreateTeamInput){\n                          createTeam(input: $input){\n                            id\n                            name\n                            gameDate\n                          }\n                        }\n                    "]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
+/* harmony import */ var _TopMenu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TopMenu */ "./resources/js/views/TopMenu.vue");
 //
 //
 //
@@ -47,67 +32,125 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "TeamFightCreate",
-  data: function data() {
-    return {
-      name: null,
-      gameDate: null,
-      clubId: null
-    };
-  },
-  apollo: {
-    me: {
-      query: _queries_me_gql__WEBPACK_IMPORTED_MODULE_1___default.a
-    }
-  },
-  methods: {
-    selectClub: function selectClub(id) {
-      this.clubId = id;
-    },
-    createTeam: function createTeam() {
-      var _this = this;
-
-      var createTeamGQL = graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject());
-      this.$apollo.mutate({
-        mutation: createTeamGQL,
-        variables: {
-          input: {
-            name: this.name,
-            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-            club: {
-              connect: this.me.organization_id
-            }
-          }
-        }
-      }).then(function (_ref) {
-        var data = _ref.data;
-
-        _this.$buefy.snackbar.open({
-          duration: 2000,
-          type: 'is-success',
-          message: "Dit hold er gemt"
-        });
-
-        _this.$router.push({
-          name: 'team-fight-edit',
-          params: {
-            teamUUID: data.createTeam.id
-          }
-        });
-      });
-    }
+  name: "Home",
+  components: {
+    TopMenu: _TopMenu__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true&":
-/*!*************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true& ***!
-  \*************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml&":
+/*!**********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -119,83 +162,199 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "columns" }, [
-    !_vm.$apollo.queries.me.loading
-      ? _c(
-          "div",
-          { staticClass: "column" },
-          [
-            _c(
-              "b-field",
-              { attrs: { label: "Navn" } },
-              [
-                _c("b-input", {
-                  attrs: { placeholder: "fx. Runde 1" },
-                  model: {
-                    value: _vm.name,
-                    callback: function($$v) {
-                      _vm.name = $$v
-                    },
-                    expression: "name"
-                  }
-                })
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "b-field",
-              { attrs: { label: "Spille dato" } },
-              [
-                _c("b-datepicker", {
-                  attrs: {
-                    icon: "calendar-alt",
-                    placeholder: "Klik for at vælge dato...",
-                    "trap-focus": ""
-                  },
-                  model: {
-                    value: _vm.gameDate,
-                    callback: function($$v) {
-                      _vm.gameDate = $$v
-                    },
-                    expression: "gameDate"
-                  }
-                })
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "b-field",
-              { attrs: { label: "Klub" } },
-              [
-                _c("b-input", {
-                  attrs: { disabled: "true" },
-                  model: {
-                    value: _vm.me.club.name1,
-                    callback: function($$v) {
-                      _vm.$set(_vm.me.club, "name1", $$v)
-                    },
-                    expression: "me.club.name1"
-                  }
-                })
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "b-button",
-              {
-                staticClass: "mt-2",
-                attrs: { "icon-left": "save" },
-                on: { click: _vm.createTeam }
-              },
-              [_vm._v("Opret")]
+  return _c("fragment", [
+    _c("section", { staticClass: "hero is-info is-medium" }, [
+      _c("div", { staticClass: "hero-head" }, [_c("TopMenu")], 1),
+      _vm._v(" "),
+      _c("div", { staticClass: "hero-body" }, [
+        _c("div", { staticClass: "container has-text-centered" }, [
+          _c("p", { staticClass: "title" }, [
+            _vm._v(
+              "\n                        Badminton værktøjskassen\n                    "
             )
-          ],
-          1
-        )
-      : _vm._e()
+          ]),
+          _vm._v(" "),
+          _c("p", { staticClass: "subtitle" }, [
+            _vm._v(
+              "\n                        Gør din oplevelse med badminton nemmere\n                    "
+            )
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "section" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "tile is-ancestor has-text-centered" }, [
+          _c("div", { staticClass: "tile is-parent" }, [
+            _c("article", { staticClass: "tile is-child box" }, [
+              _c("p", { staticClass: "title mt-4" }, [
+                _vm._v("Data fra badmintonplayer")
+              ]),
+              _vm._v(" "),
+              _c("p", { staticClass: "subtitle" }, [
+                _vm._v("Data opdateres hver nat")
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "tile is-parent" }, [
+            _c("article", { staticClass: "tile is-child box" }, [
+              _c("p", { staticClass: "title" }, [_vm._v("Gratis")]),
+              _vm._v(" "),
+              _c("p", { staticClass: "subtitle" }, [
+                _vm._v("Kvit og frit, ingen betaling")
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "tile is-parent" }, [
+            _c("article", { staticClass: "tile is-child box" }, [
+              _c("p", { staticClass: "title" }, [_vm._v("Nemmere hverdag")]),
+              _vm._v(" "),
+              _c("p", { staticClass: "subtitle" }, [
+                _vm._v("Værktøjer som gør badmintonuniverset nemmere")
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "hero is-info is-small" }, [
+      _c("div", { staticClass: "hero-body" }, [
+        _c("div", { staticClass: "container" }, [
+          _c("div", { staticClass: "columns" }, [
+            _c("div", { staticClass: "column is-6" }, [
+              _c("figure", { staticClass: "image is-16by9" })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column is-6" }, [
+              _c("p", { staticClass: "title has-text-centered" }, [
+                _vm._v("Holdkamp")
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "content" }, [
+                _c("p", [
+                  _vm._v(
+                    "Hjælper med sammensætning af hold til holdkampe, nem deling til alle spillere."
+                  )
+                ]),
+                _vm._v(" "),
+                _c("ul", [
+                  _c("li", [_vm._v("Planlæg holdkamp")]),
+                  _vm._v(" "),
+                  _c("li", [_vm._v("Nem deling med spillere via link")])
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "section" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "columns" }, [
+          _c("div", { staticClass: "column is-6" }, [
+            _c("p", { staticClass: "title has-text-centered" }, [
+              _vm._v("Data fra badmintonplayer")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "content" }, [
+              _c("p", [
+                _vm._v(
+                  "Hver nat opdateres alle spiller med data fra badmintonplayer. Det sikre du nemt og hurtigt kan sammensæt et hold helt efter reglerne."
+                )
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "column is-6" }, [
+            _c("figure", { staticClass: "image is-16by9" })
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "section" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "column has-text-centered is-12 mb-6" }, [
+          _c("p", { staticClass: "title" }, [
+            _vm._v(
+              "\n                        Udvikleren bag\n                    "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "columns is-multiline" }, [
+          _c(
+            "div",
+            { staticClass: "column is-6 has-vertically-aligned-content" },
+            [
+              _c("p", { staticClass: "is-size-4" }, [
+                _c("strong", [_vm._v("Daniel Fly Nygaard, Programmør/DevOps")])
+              ]),
+              _vm._v(" "),
+              _c("br"),
+              _vm._v(" "),
+              _c("p", [
+                _vm._v(
+                  "\n                            Har altid gerne vil lave noget, som var med til at gør badminton verden bedre. Kombineret sammen med mit ønske om at blive iværksætter har jeg lavet denne side. Hvis man har ideer til nye værktøjer eller forbedringer er man velkommen til at kontakte mig\n                        "
+                )
+              ]),
+              _vm._v(" "),
+              _c("br"),
+              _vm._v(" "),
+              _c("div", { staticClass: "is-divider" }),
+              _vm._v(" "),
+              _c("div", { staticClass: "columns about-links" }, [
+                _c("div", { staticClass: "column" }, [
+                  _c("p", [_c("strong", [_vm._v("LinkedIn")])]),
+                  _vm._v(" "),
+                  _c("p", [
+                    _c(
+                      "a",
+                      {
+                        attrs: {
+                          href:
+                            "https://www.linkedin.com/in/daniel-fly-nygaard-ab67818b/"
+                        }
+                      },
+                      [_vm._v("LinkedIn")]
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "column" }, [
+                  _c("p", [_c("strong", [_vm._v("Email")])]),
+                  _vm._v(" "),
+                  _c("p", [
+                    _c(
+                      "a",
+                      { attrs: { href: "mailto:danielflynygaard@gmail.com" } },
+                      [_vm._v("danielflynygaard@gmail.com")]
+                    )
+                  ])
+                ])
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "column is-6" }, [
+            _c("figure", { staticClass: "image is-square" }, [
+              _c("img", {
+                staticClass: "is-rounded",
+                attrs: {
+                  alt: "",
+                  src: __webpack_require__(/*! ../../assets/daniel_fly_nygaard.jpeg */ "./resources/assets/daniel_fly_nygaard.jpeg")
+                }
+              })
+            ])
+          ])
+        ])
+      ])
+    ])
   ])
 }
 var staticRenderFns = []
@@ -205,148 +364,28 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./resources/js/queries/me.gql":
-/*!*************************************!*\
-  !*** ./resources/js/queries/me.gql ***!
-  \*************************************/
+/***/ "./resources/assets/daniel_fly_nygaard.jpeg":
+/*!**************************************************!*\
+  !*** ./resources/assets/daniel_fly_nygaard.jpeg ***!
+  \**************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-
-    var doc = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"email"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"club"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name1"},"arguments":[],"directives":[]}]}},{"kind":"Field","name":{"kind":"Name","value":"organization_id"},"arguments":[],"directives":[]}]}}]}}],"loc":{"start":0,"end":128}};
-    doc.loc.source = {"body":"query {\n    me{\n        id\n        name\n        email\n        club{\n            name1\n        }\n        organization_id\n    }\n}\n","name":"GraphQL request","locationOffset":{"line":1,"column":1}};
-  
-
-    var names = {};
-    function unique(defs) {
-      return defs.filter(
-        function(def) {
-          if (def.kind !== 'FragmentDefinition') return true;
-          var name = def.name.value
-          if (names[name]) {
-            return false;
-          } else {
-            names[name] = true;
-            return true;
-          }
-        }
-      )
-    }
-  
-
-    // Collect any fragment/type references from a node, adding them to the refs Set
-    function collectFragmentReferences(node, refs) {
-      if (node.kind === "FragmentSpread") {
-        refs.add(node.name.value);
-      } else if (node.kind === "VariableDefinition") {
-        var type = node.type;
-        if (type.kind === "NamedType") {
-          refs.add(type.name.value);
-        }
-      }
-
-      if (node.selectionSet) {
-        node.selectionSet.selections.forEach(function(selection) {
-          collectFragmentReferences(selection, refs);
-        });
-      }
-
-      if (node.variableDefinitions) {
-        node.variableDefinitions.forEach(function(def) {
-          collectFragmentReferences(def, refs);
-        });
-      }
-
-      if (node.definitions) {
-        node.definitions.forEach(function(def) {
-          collectFragmentReferences(def, refs);
-        });
-      }
-    }
-
-    var definitionRefs = {};
-    (function extractReferences() {
-      doc.definitions.forEach(function(def) {
-        if (def.name) {
-          var refs = new Set();
-          collectFragmentReferences(def, refs);
-          definitionRefs[def.name.value] = refs;
-        }
-      });
-    })();
-
-    function findOperation(doc, name) {
-      for (var i = 0; i < doc.definitions.length; i++) {
-        var element = doc.definitions[i];
-        if (element.name && element.name.value == name) {
-          return element;
-        }
-      }
-    }
-
-    function oneQuery(doc, operationName) {
-      // Copy the DocumentNode, but clear out the definitions
-      var newDoc = {
-        kind: doc.kind,
-        definitions: [findOperation(doc, operationName)]
-      };
-      if (doc.hasOwnProperty("loc")) {
-        newDoc.loc = doc.loc;
-      }
-
-      // Now, for the operation we're running, find any fragments referenced by
-      // it or the fragments it references
-      var opRefs = definitionRefs[operationName] || new Set();
-      var allRefs = new Set();
-      var newRefs = new Set();
-
-      // IE 11 doesn't support "new Set(iterable)", so we add the members of opRefs to newRefs one by one
-      opRefs.forEach(function(refName) {
-        newRefs.add(refName);
-      });
-
-      while (newRefs.size > 0) {
-        var prevRefs = newRefs;
-        newRefs = new Set();
-
-        prevRefs.forEach(function(refName) {
-          if (!allRefs.has(refName)) {
-            allRefs.add(refName);
-            var childRefs = definitionRefs[refName] || new Set();
-            childRefs.forEach(function(childRef) {
-              newRefs.add(childRef);
-            });
-          }
-        });
-      }
-
-      allRefs.forEach(function(refName) {
-        var op = findOperation(doc, refName);
-        if (op) {
-          newDoc.definitions.push(op);
-        }
-      });
-
-      return newDoc;
-    }
-
-    module.exports = doc;
-    
-
+module.exports = "/images/daniel_fly_nygaard.jpeg?ec940a24fc4c55ce9516c2c5aec9faaa";
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightCreate.vue":
-/*!************************************************!*\
-  !*** ./resources/js/views/TeamFightCreate.vue ***!
-  \************************************************/
+/***/ "./resources/js/views/Home.vue":
+/*!*************************************!*\
+  !*** ./resources/js/views/Home.vue ***!
+  \*************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true& */ "./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true&");
-/* harmony import */ var _TeamFightCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TeamFightCreate.vue?vue&type=script&lang=js& */ "./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js&");
+/* harmony import */ var _Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml& */ "./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml&");
+/* harmony import */ var _Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Home.vue?vue&type=script&lang=js& */ "./resources/js/views/Home.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -356,50 +395,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _TeamFightCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "72bb2e40",
+  "63cd6604",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/views/TeamFightCreate.vue"
+component.options.__file = "resources/js/views/Home.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js&":
-/*!*************************************************************************!*\
-  !*** ./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************/
+/***/ "./resources/js/views/Home.vue?vue&type=script&lang=js&":
+/*!**************************************************************!*\
+  !*** ./resources/js/views/Home.vue?vue&type=script&lang=js& ***!
+  \**************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightCreate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightCreate.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Home.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Home.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true& ***!
-  \*******************************************************************************************/
+/***/ "./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml&":
+/*!****************************************************************************************************************************!*\
+  !*** ./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml& ***!
+  \****************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightCreate.vue?vue&type=template&id=72bb2e40&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Home.vue?vue&type=template&id=63cd6604&scoped=true&xmlns=http%3A%2F%2Fwww.w3.org%2F1999%2Fhtml&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightCreate_vue_vue_type_template_id_72bb2e40_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Home_vue_vue_type_template_id_63cd6604_scoped_true_xmlns_http_3A_2F_2Fwww_w3_org_2F1999_2Fhtml___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
