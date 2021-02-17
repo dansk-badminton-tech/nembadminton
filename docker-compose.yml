@@ -17,6 +17,7 @@ services:
       - phpmyadmin
       - smtp
       - redis
+      - worker
 
   worker:
     image: flycompany/holdkamp

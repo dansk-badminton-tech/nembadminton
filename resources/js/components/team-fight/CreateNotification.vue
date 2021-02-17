@@ -9,15 +9,17 @@
                     @click="$parent.close()"/>
             </header>
             <section class="modal-card-body">
-                <p class="mb-2">Få notifikation når der sker ændringer på holdet.</p>
-                <hr/>
-                <div v-if="!loggedIn" class="buttons">
-                    <b-button v-if="(showLogin || showCreateUser)" expanded @click="showLogin = false; showCreateUser = false">Tilbage</b-button>
-                    <b-button v-if="!(showLogin || showCreateUser)" expanded @click="showLogin = !showLogin">Login</b-button>
-                    <b-button v-if="!(showLogin || showCreateUser)" expanded @click="showCreateUser = !showCreateUser">Opret bruger</b-button>
+                <div v-if="!loggedIn">
+                    <p class="mb-2">Tilmeld dig og få notifikationer når der sker ændringer.</p>
+                    <hr/>
+                    <div class="buttons">
+                        <b-button v-if="(showLogin || showCreateUser)" expanded @click="showLogin = false; showCreateUser = false">Tilbage</b-button>
+                        <b-button v-if="!(showLogin || showCreateUser)" expanded @click="showLogin = !showLogin">Login</b-button>
+                        <b-button v-if="!(showLogin || showCreateUser)" expanded @click="showCreateUser = !showCreateUser">Opret bruger</b-button>
+                    </div>
+                    <create-user v-if="showCreateUser" :after-register="refresh"></create-user>
+                    <login v-if="showLogin" :after-login="refresh"></login>
                 </div>
-                <create-user v-if="showCreateUser" :after-register="refresh"></create-user>
-                <login v-if="showLogin" :after-login="refresh"></login>
                 <notification v-if="loggedIn"></notification>
             </section>
             <footer v-if="loggedIn" class="modal-card-foot">

@@ -394,7 +394,7 @@ var render = function() {
             target: "_blank"
           }
         },
-        [_vm._v("Find Badminton ID på ranglisten")]
+        [_vm._v("Find dit Badminton ID på ranglisten")]
       ),
       _vm._v(" "),
       _c(

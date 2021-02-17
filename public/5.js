@@ -79,6 +79,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
 
 
 
@@ -93,7 +95,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       pushButtonDisabled: false,
       subscribingWebPushLoading: false,
       unsubscribingWebPushLoading: false,
-      updateSubscriptionEmailLoading: false
+      updateSubscriptionEmailLoading: false,
+      isPushPossible: true
     };
   },
   computed: {
@@ -111,20 +114,26 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   mounted: function mounted() {
     var _this = this;
 
-    _service_worker__WEBPACK_IMPORTED_MODULE_0__["ServiceWorkerHelper"].registerServiceWorker().then(function (registration) {
-      registration.pushManager.getSubscription().then(function (subscription) {
-        _this.pushButtonDisabled = false;
+    var serviceWorker = _service_worker__WEBPACK_IMPORTED_MODULE_0__["ServiceWorkerHelper"].registerServiceWorker();
 
-        if (!subscription) {
-          return;
-        }
+    if (serviceWorker) {
+      serviceWorker.then(function (registration) {
+        registration.pushManager.getSubscription().then(function (subscription) {
+          _this.pushButtonDisabled = false;
 
-        _service_worker__WEBPACK_IMPORTED_MODULE_0__["ServiceWorkerHelper"].updateSubscription(subscription);
-        _this.isPushEnabled = true;
-      })["catch"](function (e) {
-        console.log('Error during getSubscription()', e);
+          if (!subscription) {
+            return;
+          }
+
+          _service_worker__WEBPACK_IMPORTED_MODULE_0__["ServiceWorkerHelper"].updateSubscription(subscription);
+          _this.isPushEnabled = true;
+        })["catch"](function (e) {
+          console.log('Error during getSubscription()', e);
+        });
       });
-    });
+    } else {
+      this.isPushPossible = false;
+    }
   },
   apollo: {
     me: {
@@ -210,6 +219,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_CreateUser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../views/CreateUser */ "./resources/js/views/CreateUser.vue");
 /* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../auth */ "./resources/js/auth.js");
 /* harmony import */ var _views_Login__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../views/Login */ "./resources/js/views/Login.vue");
+//
+//
 //
 //
 //
@@ -401,6 +412,7 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
+//
 //
 //
 //
@@ -742,6 +754,7 @@ var render = function() {
                   {
                     attrs: {
                       loading: this.subscribingWebPushLoading,
+                      disabled: !_vm.isPushPossible,
                       type: "is-primary"
                     },
                     on: { click: _vm.subscribe }
@@ -755,6 +768,7 @@ var render = function() {
                   "b-button",
                   {
                     attrs: {
+                      disabled: !_vm.isPushPossible,
                       loading: this.unsubscribingWebPushLoading,
                       type: "is-primary"
                     },
@@ -877,73 +891,83 @@ var render = function() {
           "section",
           { staticClass: "modal-card-body" },
           [
-            _c("p", { staticClass: "mb-2" }, [
-              _vm._v("Få notifikation når der sker ændringer på holdet.")
-            ]),
-            _vm._v(" "),
-            _c("hr"),
-            _vm._v(" "),
             !_vm.loggedIn
               ? _c(
                   "div",
-                  { staticClass: "buttons" },
                   [
-                    _vm.showLogin || _vm.showCreateUser
-                      ? _c(
-                          "b-button",
-                          {
-                            attrs: { expanded: "" },
-                            on: {
-                              click: function($event) {
-                                _vm.showLogin = false
-                                _vm.showCreateUser = false
-                              }
-                            }
-                          },
-                          [_vm._v("Tilbage")]
-                        )
+                    _c("p", { staticClass: "mb-2" }, [
+                      _vm._v(
+                        "Tilmeld dig og få notifikationer når der sker ændringer."
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("hr"),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "buttons" },
+                      [
+                        _vm.showLogin || _vm.showCreateUser
+                          ? _c(
+                              "b-button",
+                              {
+                                attrs: { expanded: "" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.showLogin = false
+                                    _vm.showCreateUser = false
+                                  }
+                                }
+                              },
+                              [_vm._v("Tilbage")]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        !(_vm.showLogin || _vm.showCreateUser)
+                          ? _c(
+                              "b-button",
+                              {
+                                attrs: { expanded: "" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.showLogin = !_vm.showLogin
+                                  }
+                                }
+                              },
+                              [_vm._v("Login")]
+                            )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        !(_vm.showLogin || _vm.showCreateUser)
+                          ? _c(
+                              "b-button",
+                              {
+                                attrs: { expanded: "" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.showCreateUser = !_vm.showCreateUser
+                                  }
+                                }
+                              },
+                              [_vm._v("Opret bruger")]
+                            )
+                          : _vm._e()
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _vm.showCreateUser
+                      ? _c("create-user", {
+                          attrs: { "after-register": _vm.refresh }
+                        })
                       : _vm._e(),
                     _vm._v(" "),
-                    !(_vm.showLogin || _vm.showCreateUser)
-                      ? _c(
-                          "b-button",
-                          {
-                            attrs: { expanded: "" },
-                            on: {
-                              click: function($event) {
-                                _vm.showLogin = !_vm.showLogin
-                              }
-                            }
-                          },
-                          [_vm._v("Login")]
-                        )
-                      : _vm._e(),
-                    _vm._v(" "),
-                    !(_vm.showLogin || _vm.showCreateUser)
-                      ? _c(
-                          "b-button",
-                          {
-                            attrs: { expanded: "" },
-                            on: {
-                              click: function($event) {
-                                _vm.showCreateUser = !_vm.showCreateUser
-                              }
-                            }
-                          },
-                          [_vm._v("Opret bruger")]
-                        )
+                    _vm.showLogin
+                      ? _c("login", { attrs: { "after-login": _vm.refresh } })
                       : _vm._e()
                   ],
                   1
                 )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.showCreateUser
-              ? _c("create-user", { attrs: { "after-register": _vm.refresh } })
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.showLogin
-              ? _c("login", { attrs: { "after-login": _vm.refresh } })
               : _vm._e(),
             _vm._v(" "),
             _vm.loggedIn ? _c("notification") : _vm._e()
@@ -1070,7 +1094,7 @@ var render = function() {
             target: "_blank"
           }
         },
-        [_vm._v("Find Badminton ID på ranglisten")]
+        [_vm._v("Find dit Badminton ID på ranglisten")]
       ),
       _vm._v(" "),
       _c(
@@ -1158,10 +1182,10 @@ var render = function() {
       _vm._v(" "),
       _c(
         "b-field",
-        { attrs: { label: "Badminton Player ID" } },
+        { attrs: { label: "Badminton Player ID (Valgfrit)" } },
         [
           _c("b-input", {
-            attrs: { icon: "user-alt", placeholder: "100990-12", type: "text" },
+            attrs: { icon: "user-alt", placeholder: "900910-17", type: "text" },
             model: {
               value: _vm.playerId,
               callback: function($$v) {
@@ -1172,6 +1196,18 @@ var render = function() {
           })
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "is-clearfix",
+          attrs: {
+            href: "https://www.badmintonplayer.dk/DBF/Ranglister/",
+            target: "_blank"
+          }
+        },
+        [_vm._v("Find dit Badminton ID på ranglisten")]
       ),
       _vm._v(" "),
       _c(
@@ -1322,14 +1358,15 @@ var render = function() {
   var _c = _vm._self._c || _h
   return !_vm.$apollo.loading
     ? _c(
-        "section",
-        { staticClass: "section" },
+        "fragment",
         [
-          _c("h1", { staticClass: "is-size-1" }, [
-            _vm._v(_vm._s(_vm.team.name))
+          _c("h1", { staticClass: "title" }, [
+            _vm._v(_vm._s(_vm.team.name) + " - " + _vm._s(_vm.team.club.name1))
           ]),
           _vm._v(" "),
-          _c("p", [_vm._v("Spille dato: " + _vm._s(_vm.team.gameDate))]),
+          _c("h2", { staticClass: "subtitle" }, [
+            _vm._v("Spille dato: " + _vm._s(_vm.team.gameDate))
+          ]),
           _vm._v(" "),
           _c("b-button", {
             attrs: {

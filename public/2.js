@@ -85,6 +85,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   apollo: {
     members: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_1___default()(_templateObject()),
+      fetchPolicy: "network-only",
       update: function update(data) {
         return data.membersSearch;
       },

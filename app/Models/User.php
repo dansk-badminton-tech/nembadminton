@@ -11,6 +11,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
+/**
+ * @property string              player_id
+ * @property SubscriptionSetting subscriptionSettings
+ */
 class User extends Authenticatable
 {
 

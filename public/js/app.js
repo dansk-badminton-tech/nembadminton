@@ -63329,22 +63329,22 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         allowAnonymous: true,
         title: 'Login'
       }
+    }, {
+      path: '/team-fight/:teamUUID/view',
+      name: 'team-fight-view',
+      component: function component() {
+        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(5)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
+      },
+      props: function props(route) {
+        return {
+          teamFightId: route.params.teamUUID
+        };
+      },
+      meta: {
+        allowAnonymous: true,
+        title: 'Holdkamp'
+      }
     }]
-  }, {
-    path: '/team-fight/:teamUUID/view',
-    name: 'team-fight-view',
-    component: function component() {
-      return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(5)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
-    },
-    props: function props(route) {
-      return {
-        teamFightId: route.params.teamUUID
-      };
-    },
-    meta: {
-      allowAnonymous: true,
-      title: 'Holdkamp'
-    }
   }]
 });
 var DEFAULT_TITLE = '...';
@@ -63485,8 +63485,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/danielfly/projects/holdkamp/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/danielfly/projects/holdkamp/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/daniel/projects/holdkamp/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/daniel/projects/holdkamp/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

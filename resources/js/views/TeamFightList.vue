@@ -1,44 +1,45 @@
 <template>
     <fragment>
-        <b-button :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
-        <b-table :data="teams.data" :loading="$apollo.loading">
-            <b-table-column v-slot="props" field="id" label="Navn">
-                <router-link v-bind:to="'/team-fight/'+props.row.id+'/edit'">{{ props.row.name }}</router-link>
-            </b-table-column>
-            <b-table-column v-slot="props" field="gameDate" label="Spille Dato">
-                {{ props.row.gameDate }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="updatedAt" label="Opdateret">
-                {{ props.row.updatedAt }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="createdAt" label="Oprettet">
-                {{ props.row.createdAt }}
-            </b-table-column>
-            <b-table-column v-slot="props" label="Funktioner">
-                <b-button size="is-small"
-                          tag="router-link"
-                          type="is-link"
-                          v-bind:to="'/team-fight/'+props.row.id+'/edit'">Rediger
-                </b-button>
-            </b-table-column>
-        </b-table>
+        <h1 class="title">Holdkampe du planlægger</h1>
+        <b-button v-if="!$apollo.loading && teams.data.length !== 0" :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
+        <ListTeamFights v-if="!$apollo.loading && teams.data.length !== 0" :loading="$apollo.loading" :teams="teams.data"/>
         <CreateTeamFightAction v-if="!$apollo.loading && teams.data.length === 0"></CreateTeamFightAction>
+        <h1 class="title mt-4">Holdkampe du spiller i</h1>
+        <ListTeamFights v-if="!$apollo.loading && teamsByBadmintonId.length !== 0" :loading="$apollo.loading" :teams="teamsByBadmintonId" :view-mode="true"/>
+        <UpdateYourProfileAction v-if="!$apollo.loading && teamsByBadmintonId.length === 0"/>
     </fragment>
 </template>
 
 <script>
 import CreateTeamFightAction from "../components/team-fight/CreateTeamFightAction";
 import gql from "graphql-tag"
+import ListTeamFights from "../components/team-fight/ListTeamFights";
+import UpdateYourProfileAction from "./UpdateYourProfileAction";
 
 export default {
     name: "TeamFightList",
-    components: {CreateTeamFightAction},
+    components: {UpdateYourProfileAction, ListTeamFights, CreateTeamFightAction},
     data() {
         return {
-            teams: []
+            teams: [],
+            teamsByBadmintonId: []
         }
     },
     apollo: {
+        teamsByBadmintonId: {
+            query: gql`
+                query {
+                    teamsByBadmintonId{
+                        id,
+                        name,
+                        gameDate,
+                        createdAt,
+                        updatedAt
+                    }
+                }
+            `,
+            fetchPolicy: 'network-only'
+        },
         teams: {
             query: gql`
                 query {
@@ -59,6 +60,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>

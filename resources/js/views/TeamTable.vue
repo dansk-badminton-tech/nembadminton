@@ -20,7 +20,7 @@
                 <tr v-for="category in team.categories" :key="category.name">
                     <th>{{ category.name }}</th>
                     <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td">
-                        <div v-for="player in category.players" :key="player.id" class="is-clearfix mt-1">
+                        <div v-for="player in category.players" class="is-clearfix mt-1">
                             <p class="fa-pull-left handle" v-bind:class="highlight(player.name)">
                                 <b-icon
                                     v-if="!viewMode"
@@ -82,8 +82,8 @@ export default {
             if (this.search.trim() !== '') {
                 base = {
                     ...{
-                        'has-text-white': name.includes(this.search),
-                        'has-background-black': name.includes(this.search)
+                        'has-text-white': name.toLowerCase().includes(this.search.toLowerCase()),
+                        'has-background-black': name.toLowerCase().includes(this.search.toLowerCase())
                     }, ...base
                 }
             }

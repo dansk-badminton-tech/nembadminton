@@ -63,8 +63,8 @@ input RegisterInput {
     email: String! @rules(apply: ["required", "email", "unique:users,email"])
     password: String! @rules(apply: ["required", "confirmed", "min:8"])
     password_confirmation: String!
-    organization_id: Int!
-    player_id: String
+    organization_id: Int! @rules(apply: ["required"])
+    player_id: String @rules(apply: ["unique:users,player_id"])
 }
 
 input SocialLoginInput {

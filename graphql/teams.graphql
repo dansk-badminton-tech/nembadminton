@@ -1,6 +1,7 @@
 extend type Query {
     team(id: ID! @eq) : Teams @find
     teams(order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
+    teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
 }
 
 extend type Mutation {

@@ -78,6 +78,7 @@ export default {
                       }
                     }
                 `,
+            fetchPolicy: "network-only",
             update: data => data.membersSearch,
             variables() {
                 let params = {

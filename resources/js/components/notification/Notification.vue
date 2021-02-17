@@ -9,12 +9,14 @@
             <b-button
                 v-if="!isPushEnabled"
                 :loading="this.subscribingWebPushLoading"
+                :disabled="!isPushPossible"
                 type="is-primary"
                 @click="subscribe">
                 Aktiver
             </b-button>
             <b-button
                 v-if="isPushEnabled"
+                :disabled="!isPushPossible"
                 :loading="this.unsubscribingWebPushLoading"
                 type="is-primary"
                 @click="unsubscribe">
@@ -56,7 +58,8 @@ export default {
             pushButtonDisabled: false,
             subscribingWebPushLoading: false,
             unsubscribingWebPushLoading: false,
-            updateSubscriptionEmailLoading: false
+            updateSubscriptionEmailLoading: false,
+            isPushPossible: true
         }
     },
     computed: {
@@ -68,9 +71,9 @@ export default {
         }
     },
     mounted() {
-        ServiceWorkerHelper
-            .registerServiceWorker()
-            .then(registration => {
+        let serviceWorker = ServiceWorkerHelper.registerServiceWorker();
+        if (serviceWorker) {
+            serviceWorker.then(registration => {
                 registration
                     .pushManager
                     .getSubscription()
@@ -89,6 +92,9 @@ export default {
                         console.log('Error during getSubscription()', e)
                     })
             })
+        } else {
+            this.isPushPossible = false
+        }
     },
     apollo: {
         me: {

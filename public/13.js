@@ -48,6 +48,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
 
 
 
@@ -185,10 +186,10 @@ var render = function() {
       _vm._v(" "),
       _c(
         "b-field",
-        { attrs: { label: "Badminton Player ID" } },
+        { attrs: { label: "Badminton Player ID (Valgfrit)" } },
         [
           _c("b-input", {
-            attrs: { icon: "user-alt", placeholder: "100990-12", type: "text" },
+            attrs: { icon: "user-alt", placeholder: "900910-17", type: "text" },
             model: {
               value: _vm.playerId,
               callback: function($$v) {
@@ -199,6 +200,18 @@ var render = function() {
           })
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "is-clearfix",
+          attrs: {
+            href: "https://www.badmintonplayer.dk/DBF/Ranglister/",
+            target: "_blank"
+          }
+        },
+        [_vm._v("Find dit Badminton ID på ranglisten")]
       ),
       _vm._v(" "),
       _c(

@@ -7,9 +7,10 @@
             <b-input v-model="email" icon="envelope" placeholder="viktor@gmail.com" type="email"></b-input>
         </b-field>
         <ClubSearch :select-club="selectClub"></ClubSearch>
-        <b-field label="Badminton Player ID">
-            <b-input v-model="playerId" icon="user-alt" placeholder="100990-12" type="text"></b-input>
+        <b-field label="Badminton Player ID (Valgfrit)">
+            <b-input v-model="playerId" icon="user-alt" placeholder="900910-17" type="text"></b-input>
         </b-field>
+        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>
         <b-field label="Adgangskode">
             <b-input v-model="password" icon="lock" placeholder="******" type="password"></b-input>
         </b-field>

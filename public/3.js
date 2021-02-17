@@ -218,7 +218,9 @@ var render = function() {
             [
               _c("b-icon", { attrs: { icon: "hand-rock" } }),
               _vm._v(" "),
-              _c("span", { staticClass: "nav-item-span" }, [_vm._v("Holdkamp")])
+              _c("span", { staticClass: "nav-item-span" }, [
+                _vm._v("Mine Holdkampe")
+              ])
             ],
             1
           )

@@ -4,8 +4,10 @@
 namespace App\Notifications;
 
 use App\Models\Teams;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use NotificationChannels\WebPush\WebPushChannel;
@@ -38,9 +40,14 @@ class TeamUpdated extends Notification implements ShouldQueue
      *
      * @return array
      */
-    public function via($notifiable)
+    public function via(User $notifiable)
     {
-        return ['database', WebPushChannel::class];
+        $channels = ['database', WebPushChannel::class];
+        if ($notifiable->subscriptionSettings()->exists() && $notifiable->subscriptionSettings->email) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
     }
 
     /**
@@ -100,10 +107,21 @@ class TeamUpdated extends Notification implements ShouldQueue
             ->data(['id' => $notification->id, 'path' => $this->getPath(), 'action' => 'view_teamfight']);
     }
 
+    public function toMail($notifiable)
+    {
+        return (new MailMessage())
+            ->greeting("Hej, $notifiable->name")
+            ->subject($this->getTitle())
+            ->line('Der er sket ændringer på ' . $this->team->name)
+            ->line('Se ændringerne her')
+            ->line("[{$this->getActionUrl()}]({$this->getActionUrl()})")
+            ->salutation('Hilsen ....');
+    }
+
     /**
      * @return string
      */
-    protected function getPath(): string
+    protected function getPath() : string
     {
         return "/team-fight/{$this->team->id}/view";
     }

@@ -1,7 +1,7 @@
 <template>
-    <section v-if="!$apollo.loading" class="section">
-        <h1 class="is-size-1">{{ team.name }}</h1>
-        <p>Spille dato: {{ team.gameDate }}</p>
+    <fragment v-if="!$apollo.loading">
+        <h1 class="title">{{ team.name }} - {{ team.club.name1 }}</h1>
+        <h2 class="subtitle">Spille dato: {{ team.gameDate }}</h2>
         <b-button
             label="Notifikationer"
             size="is-medium"
@@ -27,7 +27,7 @@
             <TeamTable :search="this.searchPlayer" :teams="this.team.squads" :viewMode="true"/>
         </div>
 
-    </section>
+    </fragment>
 </template>
 
 <script>

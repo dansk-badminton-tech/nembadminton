@@ -9,7 +9,7 @@
         <b-field label="Badminton ID">
             <b-input v-model="me.player_id" placeholder="ÅÅMMDD-XX" type="text"></b-input>
         </b-field>
-        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find Badminton ID på ranglisten</a>
+        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>
         <b-button :loading="updatingProfile" class="mt-2" @click="update">Gem</b-button>
         <div class="mt-4"></div>
     </form>

@@ -75,18 +75,18 @@ const router = new VueRouter(
                             allowAnonymous: true,
                             title: 'Login'
                         }
+                    },
+                    {
+                        path: '/team-fight/:teamUUID/view',
+                        name: 'team-fight-view',
+                        component: () => import("./views/TeamFightPublic"),
+                        props: route => ({teamFightId: route.params.teamUUID}),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Holdkamp'
+                        }
                     }
                 ]
-            },
-            {
-                path: '/team-fight/:teamUUID/view',
-                name: 'team-fight-view',
-                component: () => import("./views/TeamFightPublic"),
-                props: route => ({teamFightId: route.params.teamUUID}),
-                meta: {
-                    allowAnonymous: true,
-                    title: 'Holdkamp'
-                }
             }
         ]
     })

@@ -104,8 +104,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (this.search.trim() !== '') {
         base = _objectSpread(_objectSpread({}, {
-          'has-text-white': name.includes(this.search),
-          'has-background-black': name.includes(this.search)
+          'has-text-white': name.toLowerCase().includes(this.search.toLowerCase()),
+          'has-background-black': name.toLowerCase().includes(this.search.toLowerCase())
         }), base);
       }
 
@@ -234,7 +234,7 @@ var render = function() {
                       _vm._l(category.players, function(player) {
                         return _c(
                           "div",
-                          { key: player.id, staticClass: "is-clearfix mt-1" },
+                          { staticClass: "is-clearfix mt-1" },
                           [
                             _c(
                               "p",
