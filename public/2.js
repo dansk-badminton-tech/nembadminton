@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_1__);
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["query MembersSearch($name: String, $hasClubs: MembersSearchHasClubsWhereConditions, $excludeMembers: [Int!]){\n                      membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }) {\n                        data {\n                          id\n                          name\n                          gender\n                          refId\n                          points{\n                            points\n                            position\n                            category\n                          }\n                        }\n                        paginatorInfo {\n                          count\n                          total\n                        }\n                      }\n                    }\n                "]);
+  var data = _taggedTemplateLiteral(["query MembersSearch($name: String, $hasClubs: MembersSearchHasClubsWhereConditions, $excludeMembers: [Int!], $version: String){\n                      membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }) {\n                        data {\n                          id\n                          name\n                          gender\n                          refId\n                          points(version: $version){\n                            points\n                            position\n                            category\n                          }\n                        }\n                        paginatorInfo {\n                          count\n                          total\n                        }\n                      }\n                    }\n                "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -44,11 +44,23 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "PlayerSearch",
   methods: {
+    findPositions: _helpers__WEBPACK_IMPORTED_MODULE_0__["findPositions"],
     addMember: function addMember(option) {
       if (!option) {
         return;
@@ -71,7 +83,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   props: {
     clubId: String,
     addPlayer: Function,
-    excludePlayers: Array
+    excludePlayers: Array,
+    version: Date
   },
   data: function data() {
     return {
@@ -96,6 +109,10 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
             return member.id;
           })
         };
+
+        if (!!this.version) {
+          params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate();
+        }
 
         if (this.clubId) {
           params.hasClubs = {
@@ -295,6 +312,33 @@ var render = function() {
                 field: "name"
               },
               on: { select: _vm.addMember, typing: _vm.searchMembers },
+              scopedSlots: _vm._u([
+                {
+                  key: "default",
+                  fn: function(props) {
+                    return [
+                      _c("div", { staticClass: "media" }, [
+                        _c("div", { staticClass: "media-content" }, [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(props.option.name) +
+                              "\n                        "
+                          ),
+                          _c("br"),
+                          _vm._v(" "),
+                          _c("small", [
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(_vm.findPositions(props.option)) +
+                                "\n                        "
+                            )
+                          ])
+                        ])
+                      ])
+                    ]
+                  }
+                }
+              ]),
               model: {
                 value: _vm.querySearchName,
                 callback: function($$v) {
@@ -304,6 +348,7 @@ var render = function() {
               }
             },
             [
+              _vm._v(" "),
               _c("template", { slot: "empty" }, [
                 _vm._v("No results for " + _vm._s(_vm.querySearchName))
               ])

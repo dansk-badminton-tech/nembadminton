@@ -16,8 +16,15 @@
  */
 
 /*!
- * vue-i18n v8.22.2 
- * (c) 2020 kazuya kawaguchi
+ * clipboard.js v2.0.6
+ * https://clipboardjs.com/
+ * 
+ * Licensed MIT © Zeno Rocha
+ */
+
+/*!
+ * vue-i18n v8.22.3 
+ * (c) 2021 kazuya kawaguchi
  * Released under the MIT License.
  */
 

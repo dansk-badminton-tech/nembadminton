@@ -4,10 +4,7 @@ declare(strict_types = 1);
 namespace App\Console\Commands;
 
 use App\Import\Import;
-use FlyCompany\Import\Ranking;
-use FlyCompany\Import\Util\Path;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class ImportClubs extends Command
 {
@@ -17,7 +14,7 @@ class ImportClubs extends Command
      *
      * @var string
      */
-    protected $signature = 'import:clubs {date : ranking to import format \'ddmmyy\'} {--club-ids= : Club Ids} {--import-members : queue import members job}';
+    protected $signature = 'import:clubs {date : ranking to import format \'yyyy-mm-dd\'} {--club-ids= : Club Ids} {--import-members : queue import members job}';
 
     /**
      * The console command description.

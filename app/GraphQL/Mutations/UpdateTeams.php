@@ -54,7 +54,7 @@ class UpdateTeams
         $team = Teams::query()
                      ->where('user_id', $context->user()->getAuthIdentifier())
                      ->where('id', $args['id'])->firstOrFail();
-        $team->fill(Arr::only($args, ['name', 'game_date']));
+        $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
         $team->saveOrFail();
 
         // Clear all squads

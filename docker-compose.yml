@@ -21,7 +21,7 @@ services:
 
   worker:
     image: flycompany/holdkamp
-    entrypoint: "php artisan horizon"
+    entrypoint: "php artisan queue:listen --timeout 600"
     build:
       context: .
       dockerfile: Dockerfile

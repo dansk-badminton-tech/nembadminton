@@ -6,7 +6,7 @@ namespace App\Console;
 use App\Console\Commands\ImportClubs;
 use App\Console\Commands\ImportDownloadRanking;
 use App\Console\Commands\ImportMembers;
-use App\Console\Commands\JobImportMembers;
+use App\Console\Commands\UpdateAllPoints;
 use App\Models\Watch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
                  ->appendOutputTo(storage_path('logs/cron.log'))
                  ->dailyAt('01:10');
 
-        $schedule->command(JobImportMembers::class)
+        $schedule->command(UpdateAllPoints::class)
                  ->appendOutputTo(storage_path('logs/cron.log'))
                  ->dailyAt('01:30');
     }

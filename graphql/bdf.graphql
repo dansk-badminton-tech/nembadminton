@@ -4,7 +4,7 @@ extend type Query{
         hasClubs: _ @whereHasConditions(columns: ["id"]),
         excludeMembers: [Int!] @notIn(key: "id"),
         orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10)
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
     clubsSearch(name: String @where(operator: "like", key: "name1"), orderBy: _ @orderBy(columns: ["name1"])): [Club!]! @paginate(defaultCount: 10)
 }
 
@@ -13,7 +13,7 @@ type Member {
     refId: String!
     name: String!
     gender: String!
-    points: [Point!] @hasMany
+    points(version: String @eq): [Point!] @hasMany
     clubs: [Club!]! @belongsToMany
 }
 
@@ -22,6 +22,7 @@ type Point {
     position: Int
     category: String
     vintage: String
+    version: Date
 }
 
 type Club {

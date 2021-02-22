@@ -1,17 +1,13 @@
 <?php
-
+declare(strict_types = 1);
 
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Models\Watch;
-use FlyCompany\Import\Ranking;
-use FlyCompany\Import\Util\Path;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
-class JobImportMembers extends Command
+class UpdateAllPoints extends Command
 {
 
     /**
@@ -19,24 +15,14 @@ class JobImportMembers extends Command
      *
      * @var string
      */
-    protected $signature = 'import:job-import-members';
+    protected $signature = 'import:job-import-members {date : ranking to import format \'yyyy-mm-dd\'}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Update all points in the system';
 
     /**
      * Execute the console command.
@@ -45,7 +31,7 @@ class JobImportMembers extends Command
      */
     public function handle()
     {
-        $date = date('dmy');
+        $date = $this->argument('date');
         $clubs = User::query()->groupBy(['organization_id'])->get(['organization_id'])->toArray();
         $clubIds = Arr::pluck($clubs, 'organization_id');
 
@@ -53,7 +39,7 @@ class JobImportMembers extends Command
 
         foreach ($clubIdsChunks as $clubIdsChunk) {
             $this->info('Queuing clubId: ' . implode(',', $clubIdsChunk));
-            \App\Jobs\ImportMembers::dispatchNow($date, $clubIdsChunk);
+            \App\Jobs\ImportMembers::dispatch($date, $clubIdsChunk);
         }
 
         return 0;

@@ -65,19 +65,22 @@ class Import
                             }
 
                             $this->output->info('Removing old points');
-                            Point::query()->where('member_id', $memberModel->id)->delete();
+                            Point::query()->where('member_id', $memberModel->id)->where('version', $date)->delete();
                             foreach ($member->getMemberVintages() as $memberVintage) {
                                 foreach ($memberVintage->getPoints() as $point) {
                                     $this->output->info('Adding points for ' . $point->getCategory());
-                                    Point::query()->create([
-                                        'points'    => $point->getPoints(),
-                                        'position'  => $point->getPosition(),
-                                        'category'  => $point->getCategory(),
-                                        'cll'       => $point->getCll(),
-                                        'clh'       => $point->getClh(),
-                                        'vintage'   => $memberVintage->getName(),
-                                        'member_id' => $memberModel->id,
-                                    ]);
+                                    if ($this->validPoint($point)) {
+                                        Point::query()->create([
+                                            'points'    => $point->getPoints(),
+                                            'position'  => $point->getPosition(),
+                                            'category'  => $point->getCategory(),
+                                            'cll'       => $point->getCll(),
+                                            'clh'       => $point->getClh(),
+                                            'vintage'   => $memberVintage->getName(),
+                                            'version'   => $date,
+                                            'member_id' => $memberModel->id,
+                                        ]);
+                                    }
                                 }
                             }
                             $syncIds[] = $memberModel->id;
@@ -123,6 +126,11 @@ class Import
                 ]);
             }
         }
+    }
+
+    private function validPoint(\FlyCompany\Import\Point $point)
+    {
+        return !($point->getPoints() === null && $point->getPosition() === null && $point->getCategory() === null);
     }
 
 }

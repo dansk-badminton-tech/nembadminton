@@ -20,7 +20,7 @@ class ImportMembers extends Command
      * @var string
      */
     protected $signature = 'import:members
-                            {date : ranking to import format \'ddmmyy\'}
+                            {date : ranking to import format \'yyyy-mm-dd\'}
                             {--club-ids= : Club Ids}';
 
     /**

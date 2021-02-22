@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Point extends Model
 {
 
-    protected $fillable = ['points', 'position', 'category', 'cll', 'clh', 'vintage', 'member_id'];
+    protected $fillable = ['points', 'position', 'category', 'cll', 'clh', 'vintage', 'member_id', 'version'];
 
     public function member() : BelongsTo
     {

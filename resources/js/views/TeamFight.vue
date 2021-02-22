@@ -45,8 +45,14 @@
                         v-model="gameDate"
                         icon="calendar-alt"
                         placeholder="Klik for at vælge dato..."
+                        :first-day-of-week="1"
                         trap-focus>
                     </b-datepicker>
+                </b-field>
+            </div>
+            <div class="column">
+                <b-field label="Rangliste">
+                    <RankingListDatePicker v-model="version"/>
                 </b-field>
             </div>
             <div class="column">
@@ -62,7 +68,7 @@
         <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
         <div class="columns">
             <div class="column">
-                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]"></PlayerSearch>
+                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]" :version="version"></PlayerSearch>
             </div>
         </div>
         <PlayerList :players="players"></PlayerList>
@@ -109,7 +115,6 @@
 </template>
 
 <script>
-import ClubSearch from "../components/search-club/ClubSearch";
 import PlayerSearch from "../components/search-player/PlayerSearch";
 import PlayerList from "./PlayerList";
 import Draggable from "vuedraggable"
@@ -118,15 +123,16 @@ import ValidateTeams from "./ValidateTeams";
 import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
 import teams, {TeamFightHelper} from "../components/team-fight/teams";
+import RankingListDatePicker from "../components/team-fight/RankingListDatePicker";
 
 export default {
     name: "TeamFight",
     components: {
+        RankingListDatePicker,
         TeamTable,
         ValidateTeams,
         PlayerList,
         PlayerSearch,
-        ClubSearch,
         Draggable
     },
     props: {
@@ -140,6 +146,7 @@ export default {
             saving: false,
             shareUrl: '',
             gameDate: new Date(),
+            version: null,
             team: {
                 squads: [],
                 club: {}
@@ -172,6 +179,7 @@ export default {
                     }
                     name
                     gameDate
+                    version
                     club {
                         id
                         name1
@@ -185,6 +193,7 @@ export default {
             },
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
+                this.version = new Date(data.team.version);
             }
         }
     },
@@ -260,6 +269,7 @@ export default {
                             input: {
                                 id: this.teamFightId,
                                 name: this.team.name,
+                                version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                                 squads: omitDeep(this.team.squads, ['__typename'])
                             }

@@ -12,6 +12,17 @@
                 field="name"
                 @select="addMember"
                 @typing="searchMembers">
+                <template slot-scope="props">
+                    <div class="media">
+                        <div class="media-content">
+                            {{ props.option.name }}
+                            <br>
+                            <small>
+                                {{ findPositions(props.option) }}
+                            </small>
+                        </div>
+                    </div>
+                </template>
                 <template slot="empty">No results for {{ querySearchName }}</template>
             </b-autocomplete>
         </b-field>
@@ -19,12 +30,13 @@
 </template>
 
 <script>
-import {debounce} from "../../helpers";
+import {debounce, findPositions} from "../../helpers";
 import gql from 'graphql-tag'
 
 export default {
     name: "PlayerSearch",
     methods: {
+        findPositions,
         addMember(option) {
             if (!option) {
                 return
@@ -45,7 +57,8 @@ export default {
     props: {
         clubId: String,
         addPlayer: Function,
-        excludePlayers: Array
+        excludePlayers: Array,
+        version: Date
     },
     data() {
         return {
@@ -58,14 +71,14 @@ export default {
     },
     apollo: {
         members: {
-            query: gql`query MembersSearch($name: String, $hasClubs: MembersSearchHasClubsWhereConditions, $excludeMembers: [Int!]){
+            query: gql`query MembersSearch($name: String, $hasClubs: MembersSearchHasClubsWhereConditions, $excludeMembers: [Int!], $version: String){
                       membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }) {
                         data {
                           id
                           name
                           gender
                           refId
-                          points{
+                          points(version: $version){
                             points
                             position
                             category
@@ -83,7 +96,10 @@ export default {
             variables() {
                 let params = {
                     name: '%' + this.searchName + '%',
-                    excludeMembers: this.excludePlayers.map(member => member.id)
+                    excludeMembers: this.excludePlayers.map(member => member.id),
+                }
+                if (!!this.version) {
+                    params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
                 }
                 if (this.clubId) {
                     params.hasClubs = {

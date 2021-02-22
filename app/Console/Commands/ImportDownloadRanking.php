@@ -17,31 +17,36 @@ class ImportDownloadRanking extends Command
      *
      * @var string
      */
-    protected $signature = 'import:download-ranklist';
+    protected $signature = 'import:download-ranklist {date : ranking to import format \'yyyy-mm-dd\'}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Download ranklist';
 
     /**
      * Execute the console command.
      *
      * @return int
+     * @throws \Exception
      */
     public function handle() : int
     {
-        $downloadUrl = 'http://badmintonplayer.dk/DBF/DownloadRankings';
-        $this->line('Downloading ranking from '.$downloadUrl);
-        $filename = 'ranking-'.date('dmy').'.zip';
+        $dateStr = $this->argument('date');
+        $date = Path::validateRankingDate($dateStr);
+
+        $dateFormatted = $date->format('Y-m-d');
+        $downloadUrl = 'http://badmintonplayer.dk/DBF/DownloadRankings?v=' . $dateFormatted;
+        $this->line('Downloading ranking from ' . $downloadUrl);
+        $filename = 'ranking-' . $dateFormatted . '.zip';
         $tempZip = tempnam(sys_get_temp_dir(), $filename);
         $client = new Client();
         $client->get($downloadUrl, ['sink' => $tempZip]);
 
         $tmpDir = '/tmp';
-        $this->line('Unzipping '.$tempZip.' to '.$tmpDir);
+        $this->line('Unzipping ' . $tempZip . ' to ' . $tmpDir);
         $zip = new ZipArchive();
         $res = $zip->open($tempZip);
         if ($res === true) {
@@ -51,8 +56,8 @@ class ImportDownloadRanking extends Command
             $this->output->writeln('Failed unzipping');
             return 0;
         }
-        $filePath = Path::getRankingPath(date('dmy'));
-        $this->line('Saving '.$filePath);
+        $filePath = Path::getRankingPath($dateFormatted);
+        $this->line('Saving ' . $filePath);
         Storage::put( $filePath, file_get_contents('/tmp/DBF.stm'));
 
         Cache::put('last-ranklist', date('dmy'));

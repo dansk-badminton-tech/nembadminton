@@ -14,7 +14,8 @@ extend type Mutation {
 input CreateTeamInput {
     club: CreateTeamBelongsTo
     name: String,
-    gameDate: String @rename(attribute: "game_date")
+    version: Date
+    gameDate: Date @rename(attribute: "game_date")
 }
 
 input CreateTeamBelongsTo {
@@ -24,7 +25,8 @@ input CreateTeamBelongsTo {
 input UpdateTeamInput {
     id: ID!
     name: String
-    gameDate: String @rename(attribute: "game_date")
+    version: Date
+    gameDate: Date @rename(attribute: "game_date")
     squads: [UpdateSquadInput!]!
 }
 
@@ -92,6 +94,8 @@ type Teams {
     name: String,
     "Club"
     club: Club
+    "Version"
+    version: Date
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
     "Updated at"

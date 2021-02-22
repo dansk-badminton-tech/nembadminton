@@ -411,6 +411,8 @@ function findLevel(member, category) {
   return 0;
 }
 function findPositions(member) {
+  var show = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
+
   if (!member.points) {
     return '';
   }
@@ -424,24 +426,33 @@ function findPositions(member) {
     for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
       var point = _step4.value;
 
-      if (point.category === null && point.points !== null) {
+      if (point.category === null && point.points !== null && (show === 'all' || show === 'N')) {
         summary.push('N:' + point.points);
-      } //                if (point.category === 'HS') {
-      //                    summary.push('HS:' + point.points)
-      //                }
-      //                if (point.category === 'HD') {
-      //                    summary.push('HD:' + point.points)
-      //                }
-      //                if (point.category === 'DS') {
-      //                    summary.push('DS:' + point.points)
-      //                }
-      //                if (point.category === 'MxH') {
-      //                    summary.push('MxH:' + point.points)
-      //                }
-      //                if (point.category === 'MxD') {
-      //                    summary.push('MxD:' + point.points)
-      //                }
+      }
 
+      if (point.category === 'HS' && (show === 'all' || show === 'HS')) {
+        summary.push('HS:' + point.points);
+      }
+
+      if (point.category === 'HD' && (show === 'all' || show === 'HD')) {
+        summary.push('HD:' + point.points);
+      }
+
+      if (point.category === 'DS' && (show === 'all' || show === 'DS')) {
+        summary.push('DS:' + point.points);
+      }
+
+      if (point.category === 'DD' && (show === 'all' || show === 'DD')) {
+        summary.push('DD:' + point.points);
+      }
+
+      if (point.category === 'MxH' && (show === 'all' || show === 'MxH')) {
+        summary.push('MxH:' + point.points);
+      }
+
+      if (point.category === 'MxD' && (show === 'all' || show === 'MxD')) {
+        summary.push('MxD:' + point.points);
+      }
     }
   } catch (err) {
     _iterator4.e(err);
@@ -449,7 +460,7 @@ function findPositions(member) {
     _iterator4.f();
   }
 
-  return '(' + summary.join(', ') + ')';
+  return summary.join(', ');
 }
 function extractErrors(graphqlErrors) {
   var errors = [];

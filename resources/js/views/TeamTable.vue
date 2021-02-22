@@ -27,7 +27,7 @@
                                     icon="bars"
                                     size="is-small">
                                 </b-icon>
-                                {{ player.name }} {{ findPositions(player) }}
+                                {{ player.name }} ({{ findPositions(player, 'N') }})
                             </p>
                             <b-dropdown aria-role="list" class="is-pulled-right">
                                 <b-button v-if="category.players.length && !viewMode" slot="trigger" icon-left="ellipsis-v" size="is-small"></b-button>
