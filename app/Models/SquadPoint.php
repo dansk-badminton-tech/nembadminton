@@ -7,6 +7,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property SquadMember member
+ * @property string      category
+ * @property integer     points
+ * @property integer     position
+ */
 class SquadPoint extends Model
 {
 
@@ -14,7 +20,7 @@ class SquadPoint extends Model
 
     public function member() : BelongsTo
     {
-        $this->belongsTo(SquadMember::class);
+        return $this->belongsTo(SquadMember::class, 'squad_member_id');
     }
 
     public function usesTimestamps() : bool

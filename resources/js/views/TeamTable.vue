@@ -19,9 +19,9 @@
                 <tbody>
                 <tr v-for="category in team.categories" :key="category.name">
                     <th>{{ category.name }}</th>
-                    <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td">
+                    <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td" @end="$emit('end')">
                         <div v-for="player in category.players" class="is-clearfix mt-1">
-                            <p class="fa-pull-left handle" v-bind:class="highlight(player.name)">
+                            <p class="fa-pull-left handle" v-bind:class="highlight(player)">
                                 <b-icon
                                     v-if="!viewMode"
                                     icon="bars"
@@ -66,6 +66,10 @@ export default {
         move: Function,
         deletePlayer: Function,
         copyPlayer: Function,
+        playingToHigh: {
+            type: Array,
+            default: []
+        },
         teams: {
             type: Array,
             default: []
@@ -77,14 +81,25 @@ export default {
     },
     methods: {
         findPositions,
-        highlight: function (name) {
-            let base = {'pointer': !this.viewMode};
-            if (this.search.trim() !== '') {
-                base = {
-                    ...{
-                        'has-text-white': name.toLowerCase().includes(this.search.toLowerCase()),
-                        'has-background-black': name.toLowerCase().includes(this.search.toLowerCase())
-                    }, ...base
+        highlight: function (player) {
+            let base = {}
+            if (this.viewMode) {
+                base = {'pointer': false};
+                if (this.search.trim() !== '') {
+                    base = {
+                        ...{
+                            'has-text-white': player.name.toLowerCase().includes(this.search.toLowerCase()),
+                            'has-background-black': player.name.toLowerCase().includes(this.search.toLowerCase())
+                        }, ...base
+                    }
+                }
+            } else {
+                if (this.playingToHigh.find(toHighPlayer => toHighPlayer.id === player.id)) {
+                    base = {
+                        ...{
+                            'has-background-warning': true
+                        }, ...base
+                    }
                 }
             }
             return base;

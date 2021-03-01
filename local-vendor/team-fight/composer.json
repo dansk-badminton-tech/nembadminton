@@ -1,0 +1,19 @@
+{
+    "name": "flycompany/local-team-fight",
+    "description": "Logic around team fight",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "daniel",
+            "email": "email@example.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\TeamFight\\": "src/"
+        }
+    }
+}

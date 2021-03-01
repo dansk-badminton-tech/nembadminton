@@ -13,6 +13,6 @@ class Point extends Model
 
     public function member() : BelongsTo
     {
-        $this->belongsTo(Member::class);
+        return $this->belongsTo(Member::class);
     }
 }

@@ -73,6 +73,10 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -207,6 +211,19 @@ var render = function() {
         "template",
         { slot: "start" },
         [
+          _c(
+            "b-navbar-item",
+            { attrs: { to: { path: "/player-stats" }, tag: "router-link" } },
+            [
+              _c("b-icon", { attrs: { icon: "hand-rock" } }),
+              _vm._v(" "),
+              _c("span", { staticClass: "nav-item-span" }, [
+                _vm._v("Mine stats")
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
           _c(
             "b-navbar-item",
             {

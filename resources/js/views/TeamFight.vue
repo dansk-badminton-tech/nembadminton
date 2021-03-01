@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-loading v-model="$apollo.loading" :can-cancel="true" :is-full-page="true"></b-loading>
+        <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
         <b-button :loading="saving" icon-left="save" @click="saveTeams">Gem</b-button>
         <b-button icon-left="share-alt" @click="publish">Del</b-button>
         <b-button icon-left="bell" @click="notify">Notificer</b-button>
@@ -24,9 +24,13 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
-            <b-dropdown-item aria-role="listitem" @click="$refs.validateTeams.validTeams()">
+            <b-dropdown-item aria-role="listitem" @click="validTeams">
                 <b-icon icon="brain"></b-icon>
-                Validere hold (eksperimentel)
+                Validere hold
+            </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
+                <b-icon icon="brain"></b-icon>
+                Update player points
             </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                 <b-icon icon="trash"></b-icon>
@@ -93,7 +97,7 @@
         </div>
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
             <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
-                       :teams="team.squads"/>
+                       :playing-to-high="playingToHighList" :teams="team.squads" @end="validTeams"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
@@ -140,10 +144,12 @@ export default {
     },
     data() {
         return {
+            playingToHighList: [],
             teamCount: 1,
             players: [],
             showShareLink: false,
             saving: false,
+            updating: false,
             shareUrl: '',
             gameDate: new Date(),
             version: null,
@@ -191,6 +197,7 @@ export default {
                     id: this.teamFightId
                 }
             },
+            fetchPolicy: "network-only",
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
                 this.version = new Date(data.team.version);
@@ -198,6 +205,68 @@ export default {
         }
     },
     methods: {
+        updateToRankingList() {
+            this.updating = true;
+            let version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate();
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation ($id: ID!, $version: String!){
+                          updatePoints(id: $id, version: $version)
+                        }
+                    `,
+                    variables: {
+                        id: this.teamFightId,
+                        version: version
+                    }
+                })
+                .then(({data}) => {
+                    this.$apollo.queries.team.refresh()
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-success',
+                            message: `Points er nu ` + version + ' ranglisten'
+                        })
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-dagner',
+                            message: `Kunne ikke opdater points :(`
+                        })
+                })
+                .finally(() => {
+                    this.updating = false;
+                })
+        },
+        validTeams() {
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation ($input: UpdateTeamInput!){
+                          validate(input: $input){
+                            playingToHigh
+                            name
+                            id
+                          }
+                        }
+                    `,
+                    variables: {
+                        input: {
+                            id: this.teamFightId,
+                            name: this.team.name,
+                            version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
+                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
+                            squads: omitDeep(this.team.squads, ['__typename'])
+                        }
+                    }
+                })
+                .then(({data}) => {
+                    this.playingToHighList = data.validate;
+                })
+        },
         copyShareLink() {
             this.$copyText(this.shareUrl).then((e) => {
                 this.$buefy.snackbar.open(`Kopiret til udklipsholder`)
@@ -258,7 +327,7 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: UpdateTeamInput){
+                        mutation ($input: UpdateTeamInput!){
                           updateTeam(input: $input){
                             id
                           }

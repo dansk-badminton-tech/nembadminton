@@ -1,5 +1,43 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[7],{
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'RankingListDatePicker',
+  props: ['value'],
+  computed: {
+    version: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(newValue) {
+        this.$emit('input', newValue);
+      }
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFight.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFight.vue?vue&type=script&lang=js& ***!
@@ -9,20 +47,40 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_search_club_ClubSearch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/search-club/ClubSearch */ "./resources/js/components/search-club/ClubSearch.vue");
-/* harmony import */ var _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/search-player/PlayerSearch */ "./resources/js/components/search-player/PlayerSearch.vue");
-/* harmony import */ var _PlayerList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PlayerList */ "./resources/js/views/PlayerList.vue");
-/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.common.js");
-/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _ValidateTeams__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ValidateTeams */ "./resources/js/views/ValidateTeams.vue");
-/* harmony import */ var _TeamTable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./TeamTable */ "./resources/js/views/TeamTable.vue");
-/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! omit-deep */ "./node_modules/omit-deep/index.js");
-/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(omit_deep__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/team-fight/teams */ "./resources/js/components/team-fight/teams.js");
-function _templateObject4() {
+/* harmony import */ var _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/search-player/PlayerSearch */ "./resources/js/components/search-player/PlayerSearch.vue");
+/* harmony import */ var _PlayerList__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PlayerList */ "./resources/js/views/PlayerList.vue");
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.common.js");
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _ValidateTeams__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ValidateTeams */ "./resources/js/views/ValidateTeams.vue");
+/* harmony import */ var _TeamTable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TeamTable */ "./resources/js/views/TeamTable.vue");
+/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! omit-deep */ "./node_modules/omit-deep/index.js");
+/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(omit_deep__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/team-fight/teams */ "./resources/js/components/team-fight/teams.js");
+/* harmony import */ var _components_team_fight_RankingListDatePicker__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/team-fight/RankingListDatePicker */ "./resources/js/components/team-fight/RankingListDatePicker.vue");
+function _templateObject6() {
   var data = _taggedTemplateLiteral(["\n                                    mutation($id: ID!){\n                                        notify(id: $id)\n                                    }\n                                "]);
+
+  _templateObject6 = function _templateObject6() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject5() {
+  var data = _taggedTemplateLiteral(["\n                                    mutation ($id: ID!){\n                                        deleteTeam(id: $id){\n                                            id\n                                        }\n                                    }\n                                "]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject4() {
+  var data = _taggedTemplateLiteral(["\n                        mutation ($input: UpdateTeamInput!){\n                          updateTeam(input: $input){\n                            id\n                          }\n                        }\n                    "]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -32,7 +90,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n                                    mutation ($id: ID!){\n                                        deleteTeam(id: $id){\n                                            id\n                                        }\n                                    }\n                                "]);
+  var data = _taggedTemplateLiteral(["\n                        mutation ($input: UpdateTeamInput!){\n                          validate(input: $input){\n                            playingToHigh\n                            name\n                            id\n                          }\n                        }\n                    "]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -42,7 +100,7 @@ function _templateObject3() {
 }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n                        mutation ($input: UpdateTeamInput){\n                          updateTeam(input: $input){\n                            id\n                          }\n                        }\n                    "]);
+  var data = _taggedTemplateLiteral(["\n                        mutation ($id: ID!, $version: String!){\n                          updatePoints(id: $id, version: $version)\n                        }\n                    "]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -183,11 +241,6 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 
@@ -200,22 +253,24 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TeamFight",
   components: {
-    TeamTable: _TeamTable__WEBPACK_IMPORTED_MODULE_6__["default"],
-    ValidateTeams: _ValidateTeams__WEBPACK_IMPORTED_MODULE_5__["default"],
-    PlayerList: _PlayerList__WEBPACK_IMPORTED_MODULE_2__["default"],
-    PlayerSearch: _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_1__["default"],
-    ClubSearch: _components_search_club_ClubSearch__WEBPACK_IMPORTED_MODULE_0__["default"],
-    Draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_3___default.a
+    RankingListDatePicker: _components_team_fight_RankingListDatePicker__WEBPACK_IMPORTED_MODULE_8__["default"],
+    TeamTable: _TeamTable__WEBPACK_IMPORTED_MODULE_5__["default"],
+    ValidateTeams: _ValidateTeams__WEBPACK_IMPORTED_MODULE_4__["default"],
+    PlayerList: _PlayerList__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PlayerSearch: _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_0__["default"],
+    Draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_2___default.a
   },
   props: {
     teamFightId: String
   },
   data: function data() {
     return {
+      playingToHighList: [],
       teamCount: 1,
       players: [],
       showShareLink: false,
       saving: false,
+      updating: false,
       shareUrl: '',
       gameDate: new Date(),
       version: null,
@@ -227,12 +282,13 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   },
   apollo: {
     team: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject()),
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject()),
       variables: function variables() {
         return {
           id: this.teamFightId
         };
       },
+      fetchPolicy: "network-only",
       result: function result(_ref) {
         var data = _ref.data;
         this.gameDate = new Date(data.team.gameDate);
@@ -241,15 +297,65 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
     }
   },
   methods: {
-    copyShareLink: function copyShareLink() {
+    updateToRankingList: function updateToRankingList() {
       var _this = this;
 
-      this.$copyText(this.shareUrl).then(function (e) {
-        _this.$buefy.snackbar.open("Kopiret til udklipsholder");
+      this.updating = true;
+      var version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate();
+      this.$apollo.mutate({
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject2()),
+        variables: {
+          id: this.teamFightId,
+          version: version
+        }
+      }).then(function (_ref2) {
+        var data = _ref2.data;
 
-        _this.showShareLink = false;
+        _this.$apollo.queries.team.refresh();
+
+        _this.$buefy.snackbar.open({
+          duration: 4000,
+          type: 'is-success',
+          message: "Points er nu " + version + ' ranglisten'
+        });
+      })["catch"](function (error) {
+        _this.$buefy.snackbar.open({
+          duration: 4000,
+          type: 'is-dagner',
+          message: "Kunne ikke opdater points :("
+        });
+      })["finally"](function () {
+        _this.updating = false;
+      });
+    },
+    validTeams: function validTeams() {
+      var _this2 = this;
+
+      this.$apollo.mutate({
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject3()),
+        variables: {
+          input: {
+            id: this.teamFightId,
+            name: this.team.name,
+            version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
+            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
+            squads: omit_deep__WEBPACK_IMPORTED_MODULE_6___default()(this.team.squads, ['__typename'])
+          }
+        }
+      }).then(function (_ref3) {
+        var data = _ref3.data;
+        _this2.playingToHighList = data.validate;
+      });
+    },
+    copyShareLink: function copyShareLink() {
+      var _this3 = this;
+
+      this.$copyText(this.shareUrl).then(function (e) {
+        _this3.$buefy.snackbar.open("Kopiret til udklipsholder");
+
+        _this3.showShareLink = false;
       }, function (e) {
-        _this.$buefy.snackbar.open("Kunne ikke kopir til udklipsholder. :(");
+        _this3.$buefy.snackbar.open("Kunne ikke kopir til udklipsholder. :(");
       });
     },
     publish: function publish() {
@@ -264,12 +370,12 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       category.players.push(Object.assign({}, player));
     },
     deleteTeam: function deleteTeam(team) {
-      var _this2 = this;
+      var _this4 = this;
 
       this.$buefy.dialog.confirm({
         message: 'Sikker på du vil slette hold ' + (this.team.squads.indexOf(team) + 1) + '?',
         onConfirm: function onConfirm() {
-          _this2.team.squads.splice(_this2.team.squads.indexOf(team), 1);
+          _this4.team.squads.splice(_this4.team.squads.indexOf(team), 1);
         }
       });
     },
@@ -287,12 +393,12 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       this.team.squads = teams;
     },
     addTeam10: function addTeam10() {
-      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__["TeamFightHelper"].generate10Players();
+      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_7__["TeamFightHelper"].generate10Players();
       players.id = this.teamCount++;
       this.team.squads.push(players);
     },
     addTeam8: function addTeam8() {
-      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_8__["TeamFightHelper"].generate8Players();
+      var players = _components_team_fight_teams__WEBPACK_IMPORTED_MODULE_7__["TeamFightHelper"].generate8Players();
       players.id = this.teamCount++;
       this.team.squads.push(players);
     },
@@ -300,34 +406,34 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       this.team.squads = JSON.parse(localStorage.getItem('teams'));
     },
     saveTeams: function saveTeams() {
-      var _this3 = this;
+      var _this5 = this;
 
       localStorage.setItem('teams', JSON.stringify(this.teams));
       this.saving = true;
       this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject2()),
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject4()),
         variables: {
           input: {
             id: this.teamFightId,
             name: this.team.name,
             version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
             gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-            squads: omit_deep__WEBPACK_IMPORTED_MODULE_7___default()(this.team.squads, ['__typename'])
+            squads: omit_deep__WEBPACK_IMPORTED_MODULE_6___default()(this.team.squads, ['__typename'])
           }
         }
-      }).then(function (_ref2) {
-        var data = _ref2.data;
-        _this3.saving = false;
+      }).then(function (_ref4) {
+        var data = _ref4.data;
+        _this5.saving = false;
 
-        _this3.$buefy.snackbar.open({
+        _this5.$buefy.snackbar.open({
           duration: 2000,
           type: 'is-success',
           message: "Dit hold er gemt"
         });
       })["catch"](function (error) {
-        _this3.saving = false;
+        _this5.saving = false;
 
-        _this3.$buefy.snackbar.open({
+        _this5.$buefy.snackbar.open({
           duration: 2000,
           type: 'is-dagner',
           message: "Kunne ikke gemme dit hold :("
@@ -335,18 +441,18 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       });
     },
     deleteTeamFight: function deleteTeamFight() {
-      var _this4 = this;
+      var _this6 = this;
 
       this.$buefy.dialog.confirm({
         message: 'Sikker på du vil slette helt holdet?',
         onConfirm: function onConfirm() {
-          _this4.$apollo.mutate({
-            mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject3()),
+          _this6.$apollo.mutate({
+            mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject5()),
             variables: {
-              id: _this4.teamFightId
+              id: _this6.teamFightId
             }
           }).then(function () {
-            _this4.$router.push({
+            _this6.$router.push({
               name: 'team-fight-dashboard'
             });
           });
@@ -354,26 +460,26 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
       });
     },
     notify: function notify() {
-      var _this5 = this;
+      var _this7 = this;
 
       this.$buefy.dialog.confirm({
         message: 'Sikker på du vil notificer spillerne omkring ændringer?<br /><br /><strong>OSB</strong>: Det er kun spiller som har tilmeldt sig notifikationer, der vil modtage dem.',
         onConfirm: function onConfirm() {
-          _this5.$apollo.mutate({
-            mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_4___default()(_templateObject4()),
+          _this7.$apollo.mutate({
+            mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject6()),
             variables: {
-              id: _this5.teamFightId
+              id: _this7.teamFightId
             }
-          }).then(function (_ref3) {
-            var data = _ref3.data;
+          }).then(function (_ref5) {
+            var data = _ref5.data;
 
-            _this5.$buefy.snackbar.open({
+            _this7.$buefy.snackbar.open({
               duration: 2000,
               type: 'is-success',
               message: "Dine spiller er nu notificeret"
             });
           })["catch"](function (error) {
-            _this5.$buefy.snackbar.open({
+            _this7.$buefy.snackbar.open({
               duration: 2000,
               type: 'is-dagner',
               message: "Kunne ikke notificer spillerne"
@@ -859,6 +965,47 @@ module.exports = function unset(obj, prop) {
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c&":
+/*!***********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c& ***!
+  \***********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("b-datepicker", {
+    attrs: {
+      "first-day-of-week": 1,
+      "max-date": new Date(),
+      "show-week-number": true,
+      "unselectable-days-of-week": [0, 2, 4, 6],
+      icon: "calendar-alt",
+      placeholder: "Vælge rangliste",
+      "trap-focus": ""
+    },
+    model: {
+      value: _vm.version,
+      callback: function($$v) {
+        _vm.version = $$v
+      },
+      expression: "version"
+    }
+  })
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFight.vue?vue&type=template&id=69f02fb8&":
 /*!*******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFight.vue?vue&type=template&id=69f02fb8& ***!
@@ -880,11 +1027,11 @@ var render = function() {
       _c("b-loading", {
         attrs: { "can-cancel": true, "is-full-page": true },
         model: {
-          value: _vm.$apollo.loading,
+          value: _vm.$apollo.loading || this.updating,
           callback: function($$v) {
-            _vm.$set(_vm.$apollo, "loading", $$v)
+            _vm.$set(_vm.$apollo.loading || this, "updating", $$v)
           },
-          expression: "$apollo.loading"
+          expression: "$apollo.loading || this.updating"
         }
       }),
       _vm._v(" "),
@@ -998,15 +1145,24 @@ var render = function() {
             "b-dropdown-item",
             {
               attrs: { "aria-role": "listitem" },
-              on: {
-                click: function($event) {
-                  return _vm.$refs.validateTeams.validTeams()
-                }
-              }
+              on: { click: _vm.validTeams }
             },
             [
               _c("b-icon", { attrs: { icon: "brain" } }),
-              _vm._v("\n            Validere hold (eksperimentel)\n        ")
+              _vm._v("\n            Validere hold\n        ")
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "b-dropdown-item",
+            {
+              attrs: { "aria-role": "listitem" },
+              on: { click: _vm.updateToRankingList }
+            },
+            [
+              _c("b-icon", { attrs: { icon: "brain" } }),
+              _vm._v("\n            Update player points\n        ")
             ],
             1
           ),
@@ -1091,15 +1247,7 @@ var render = function() {
               "b-field",
               { attrs: { label: "Rangliste" } },
               [
-                _c("b-datepicker", {
-                  attrs: {
-                    icon: "calendar-alt",
-                    placeholder: "Vælge rangliste",
-                    "trap-focus": "",
-                    "unselectable-days-of-week": [0, 2, 4, 6],
-                    "first-day-of-week": 1,
-                    "show-week-number": true
-                  },
+                _c("RankingListDatePicker", {
                   model: {
                     value: _vm.version,
                     callback: function($$v) {
@@ -1143,10 +1291,10 @@ var render = function() {
           [
             _c("PlayerSearch", {
               attrs: {
-                version: _vm.version,
                 "add-player": _vm.addPlayer,
                 "club-id": _vm.team.club.id,
-                "exclude-players": []
+                "exclude-players": [],
+                version: _vm.version
               }
             })
           ],
@@ -1200,8 +1348,10 @@ var render = function() {
               "copy-player": _vm.copyPlayer,
               "delete-player": _vm.deletePlayer,
               move: _vm.move,
-              teams: _vm.team.squads
-            }
+              teams: _vm.team.squads,
+              "playing-to-high": _vm.playingToHighList
+            },
+            on: { end: _vm.validTeams }
           })
         ],
         1
@@ -1327,6 +1477,75 @@ var render = function() {
 }
 var staticRenderFns = []
 render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/team-fight/RankingListDatePicker.vue":
+/*!**********************************************************************!*\
+  !*** ./resources/js/components/team-fight/RankingListDatePicker.vue ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RankingListDatePicker.vue?vue&type=template&id=3a978a6c& */ "./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c&");
+/* harmony import */ var _RankingListDatePicker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RankingListDatePicker.vue?vue&type=script&lang=js& */ "./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _RankingListDatePicker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/team-fight/RankingListDatePicker.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RankingListDatePicker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./RankingListDatePicker.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RankingListDatePicker_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c&":
+/*!*****************************************************************************************************!*\
+  !*** ./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c& ***!
+  \*****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./RankingListDatePicker.vue?vue&type=template&id=3a978a6c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/team-fight/RankingListDatePicker.vue?vue&type=template&id=3a978a6c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RankingListDatePicker_vue_vue_type_template_id_3a978a6c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -1469,6 +1688,223 @@ var TeamFightHelper = /*#__PURE__*/function () {
 
   return TeamFightHelper;
 }();
+
+/***/ }),
+
+/***/ "./resources/js/helpers.js":
+/*!*********************************!*\
+  !*** ./resources/js/helpers.js ***!
+  \*********************************/
+/*! exports provided: chunk, defaultIfUndefined, debounce, findPlayersInCategory, findLevel, findPositions, extractErrors */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "chunk", function() { return chunk; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultIfUndefined", function() { return defaultIfUndefined; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findPlayersInCategory", function() { return findPlayersInCategory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findLevel", function() { return findLevel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findPositions", function() { return findPositions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "extractErrors", function() { return extractErrors; });
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function chunk(array, size) {
+  var chunked_arr = [];
+
+  for (var i = 0; i < array.length; i++) {
+    var last = chunked_arr[chunked_arr.length - 1];
+
+    if (!last || last.length === size) {
+      chunked_arr.push([array[i]]);
+    } else {
+      last.push(array[i]);
+    }
+  }
+
+  return chunked_arr;
+}
+function defaultIfUndefined(test, defaultValue) {
+  if (test === undefined) {
+    return defaultValue;
+  }
+
+  return test;
+}
+function debounce(fn, delay) {
+  var timeoutID = null;
+  return function () {
+    clearTimeout(timeoutID);
+    var args = arguments;
+    var that = this;
+    timeoutID = setTimeout(function () {
+      fn.apply(that, args);
+    }, delay);
+  };
+}
+function findPlayersInCategory(categories, searchCategory, gender) {
+  var players = [];
+
+  var _iterator = _createForOfIteratorHelper(categories),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var categoryItem = _step.value;
+
+      if (categoryItem.category === searchCategory) {
+        var _iterator2 = _createForOfIteratorHelper(categoryItem.players),
+            _step2;
+
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var player = _step2.value;
+
+            if (player.gender === gender) {
+              players.push(player);
+            }
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+      }
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return players;
+}
+function findLevel(member, category) {
+  if (!member.points) {
+    return 0;
+  }
+
+  var _iterator3 = _createForOfIteratorHelper(member.points),
+      _step3;
+
+  try {
+    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+      var point = _step3.value;
+
+      if (category === 'MD') {
+        if (member.gender === 'M' && point.category === 'MxH') {
+          return point.points;
+        }
+
+        if (member.gender === 'K' && point.category === 'MxD') {
+          return point.points;
+        }
+      }
+
+      if (point.category === category) {
+        return point.points;
+      }
+    }
+  } catch (err) {
+    _iterator3.e(err);
+  } finally {
+    _iterator3.f();
+  }
+
+  return 0;
+}
+function findPositions(member) {
+  var show = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
+
+  if (!member.points) {
+    return '';
+  }
+
+  var summary = [];
+
+  var _iterator4 = _createForOfIteratorHelper(member.points),
+      _step4;
+
+  try {
+    for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+      var point = _step4.value;
+
+      if (point.category === null && point.points !== null && (show === 'all' || show === 'N')) {
+        summary.push('N:' + point.points);
+      }
+
+      if (point.category === 'HS' && (show === 'all' || show === 'HS')) {
+        summary.push('HS:' + point.points);
+      }
+
+      if (point.category === 'HD' && (show === 'all' || show === 'HD')) {
+        summary.push('HD:' + point.points);
+      }
+
+      if (point.category === 'DS' && (show === 'all' || show === 'DS')) {
+        summary.push('DS:' + point.points);
+      }
+
+      if (point.category === 'DD' && (show === 'all' || show === 'DD')) {
+        summary.push('DD:' + point.points);
+      }
+
+      if (point.category === 'MxH' && (show === 'all' || show === 'MxH')) {
+        summary.push('MxH:' + point.points);
+      }
+
+      if (point.category === 'MxD' && (show === 'all' || show === 'MxD')) {
+        summary.push('MxD:' + point.points);
+      }
+    }
+  } catch (err) {
+    _iterator4.e(err);
+  } finally {
+    _iterator4.f();
+  }
+
+  return summary.join(', ');
+}
+function extractErrors(graphqlErrors) {
+  var errors = [];
+
+  var _iterator5 = _createForOfIteratorHelper(graphqlErrors),
+      _step5;
+
+  try {
+    for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+      var graphqlError = _step5.value;
+
+      if (graphqlError.extensions.category === 'validation') {
+        for (var validationKey in graphqlError.extensions.validation) {
+          var _iterator6 = _createForOfIteratorHelper(graphqlError.extensions.validation[validationKey]),
+              _step6;
+
+          try {
+            for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+              var error = _step6.value;
+              errors.push(error);
+            }
+          } catch (err) {
+            _iterator6.e(err);
+          } finally {
+            _iterator6.f();
+          }
+        }
+      }
+    }
+  } catch (err) {
+    _iterator5.e(err);
+  } finally {
+    _iterator5.f();
+  }
+
+  return errors;
+}
 
 /***/ }),
 

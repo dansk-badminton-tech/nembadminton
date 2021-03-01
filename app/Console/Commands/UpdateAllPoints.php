@@ -15,7 +15,7 @@ class UpdateAllPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'import:job-import-members {date : ranking to import format \'yyyy-mm-dd\'}';
+    protected $signature = 'import:update-members {date : ranking to import format \'yyyy-mm-dd\'}';
 
     /**
      * The console command description.

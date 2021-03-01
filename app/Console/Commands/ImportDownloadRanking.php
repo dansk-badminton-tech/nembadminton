@@ -6,7 +6,7 @@ namespace App\Console\Commands;
 use FlyCompany\Import\Util\Path;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -17,7 +17,7 @@ class ImportDownloadRanking extends Command
      *
      * @var string
      */
-    protected $signature = 'import:download-ranklist {date : ranking to import format \'yyyy-mm-dd\'}';
+    protected $signature = 'import:download-ranking {date : ranking to import format \'yyyy-mm-dd\'} {--import-members : queue import members job}';
 
     /**
      * The console command description.
@@ -35,12 +35,18 @@ class ImportDownloadRanking extends Command
     public function handle() : int
     {
         $dateStr = $this->argument('date');
-        $date = Path::validateRankingDate($dateStr);
+        Path::validateRankingDate($dateStr);
+        $filePath = Path::getRankingPath($dateStr);
 
-        $dateFormatted = $date->format('Y-m-d');
-        $downloadUrl = 'http://badmintonplayer.dk/DBF/DownloadRankings?v=' . $dateFormatted;
+        if (Storage::exists($filePath)) {
+            $this->line($filePath . ' already downloaded');
+
+            return 0;
+        }
+
+        $downloadUrl = 'http://badmintonplayer.dk/DBF/DownloadRankings?v=' . $dateStr;
         $this->line('Downloading ranking from ' . $downloadUrl);
-        $filename = 'ranking-' . $dateFormatted . '.zip';
+        $filename = 'ranking-' . $dateStr . '.zip';
         $tempZip = tempnam(sys_get_temp_dir(), $filename);
         $client = new Client();
         $client->get($downloadUrl, ['sink' => $tempZip]);
@@ -54,13 +60,17 @@ class ImportDownloadRanking extends Command
             $zip->close();
         } else {
             $this->output->writeln('Failed unzipping');
+
             return 0;
         }
-        $filePath = Path::getRankingPath($dateFormatted);
         $this->line('Saving ' . $filePath);
-        Storage::put( $filePath, file_get_contents('/tmp/DBF.stm'));
+        Storage::put($filePath, file_get_contents('/tmp/DBF.stm'));
 
-        Cache::put('last-ranklist', date('dmy'));
+        $this->line('Queuing import:update-members');
+        Artisan::queue('import:update-members', [
+            'date' => $dateStr,
+        ]);
+
         return 0;
     }
 }

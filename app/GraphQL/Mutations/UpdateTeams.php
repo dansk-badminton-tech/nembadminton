@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Point;
 use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
@@ -24,7 +25,13 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 class UpdateTeams
 {
 
-    public function notify($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    /**
+     * @param                $rootValue
+     * @param array          $args
+     * @param GraphQLContext $context
+     * @param ResolveInfo    $resolveInfo
+     */
+    public function notify($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : void
     {
         $team = $args['id'];
         $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($team) {
@@ -47,6 +54,43 @@ class UpdateTeams
      * @param array          $args
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
+     */
+    public function updatePoints($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
+    {
+        $teamId = $args['id'];
+        $version = $args['version'];
+
+        /** @var SquadPoint[] $squadPoints */
+        $squadPoints = SquadPoint::query()->with('member')->whereHas('member.category.squad.team', function (Builder $query) use ($context, $teamId) {
+            $query->where('id', $teamId);
+            $query->where('user_id', $context->user()->getAuthIdentifier());
+        })->get();
+
+        foreach ($squadPoints as $squadPoint) {
+            $point = Point::query()
+                          ->where('version', $version)
+                          ->where('category', $squadPoint->category)
+                          ->whereHas('member', function (Builder $query) use ($squadPoint) {
+                              $query->where('refId', $squadPoint->member->member_ref_id);
+                          })->first();
+            if ($point !== null) {
+                $squadPoint->points = $point->points;
+                $squadPoint->position = $point->position;
+                $squadPoint->saveOrFail();
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param                $rootValue
+     * @param array          $args
+     * @param GraphQLContext $context
+     * @param ResolveInfo    $resolveInfo
+     *
+     * @return Teams
+     * @throws \Throwable
      */
     public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {

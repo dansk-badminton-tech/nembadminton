@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use App\Util\Util;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * @property string name
  * @property string id
+ * @property Carbon version
  */
 class Teams extends Model
 {

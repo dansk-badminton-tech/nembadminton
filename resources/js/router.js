@@ -85,6 +85,15 @@ const router = new VueRouter(
                             allowAnonymous: true,
                             title: 'Holdkamp'
                         }
+                    },
+                    {
+                        path: '/player-stats',
+                        name: 'player-stats',
+                        component: () => import("./views/PlayerStats"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Spiller stats'
+                        }
                     }
                 ]
             }

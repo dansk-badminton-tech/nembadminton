@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Class SquadMember
  *
+ * @property String member_ref_id
  * @package App\Models
  */
 class SquadMember extends Model
@@ -23,7 +24,7 @@ class SquadMember extends Model
 
     public function points() : HasMany
     {
-        return $this->hasMany(SquadPoint::class);
+        return $this->hasMany(SquadPoint::class, 'squad_member_id');
     }
 
     public function user() : BelongsTo

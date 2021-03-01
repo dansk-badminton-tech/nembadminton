@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14b4d014188a0d668c9d48d1e85ae47c",
+    "content-hash": "90935337e80769f99b398294cb195435",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -728,6 +728,35 @@
                 }
             },
             "description": "Import of ranking list",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "flycompany/local-team-fight",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/team-fight",
+                "reference": "11cd85df80be95d046aa6b4da72f4b447c8f45ed"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\TeamFight\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "daniel",
+                    "email": "email@example.com"
+                }
+            ],
+            "description": "Logic around team fight",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -9500,12 +9529,14 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "flycompany/local-import": 20
+        "flycompany/local-import": 20,
+        "flycompany/local-team-fight": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4",
+        "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "ext-zip": "*"

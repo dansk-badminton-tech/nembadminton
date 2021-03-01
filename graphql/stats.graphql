@@ -1,0 +1,19 @@
+extend type Query {
+    playerStats(badmintonId: String) : PlayerStats @field(resolver: "App\\GraphQL\\Queries\\PlayerStats@stats")
+}
+
+type StatsPunkt{
+    position: Int
+    points: Int!
+    version: Date
+}
+
+type PlayerStats {
+    level: [StatsPunkt!]
+    mixWomen: [StatsPunkt!]
+    mixMen: [StatsPunkt!]
+    singleWomen: [StatsPunkt!]
+    singleMen: [StatsPunkt!]
+    doubleWomen: [StatsPunkt!]
+    doubleMen: [StatsPunkt!]
+}

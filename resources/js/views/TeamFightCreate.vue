@@ -50,7 +50,7 @@ export default {
         },
         createTeam() {
             const createTeamGQL = gql`
-                        mutation ($input: CreateTeamInput){
+                        mutation ($input: CreateTeamInput!){
                           createTeam(input: $input){
                             id
                             name
