@@ -241,6 +241,12 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1104,6 +1110,25 @@ var render = function() {
               _vm._v("\n            10 personer\n        ")
             ],
             1
+          ),
+          _vm._v(" "),
+          _c(
+            "b-dropdown-item",
+            { attrs: { "has-link": "", "aria-role": "listitem" } },
+            [
+              _c(
+                "router-link",
+                { attrs: { to: "/team-fight/" + _vm.teamFightId + "/import" } },
+                [
+                  _c("b-icon", { attrs: { size: "is-small", icon: "users" } }),
+                  _vm._v(
+                    "\n                Import fra BadmintonPlayer\n            "
+                  )
+                ],
+                1
+              )
+            ],
+            1
           )
         ],
         1
@@ -1348,8 +1373,8 @@ var render = function() {
               "copy-player": _vm.copyPlayer,
               "delete-player": _vm.deletePlayer,
               move: _vm.move,
-              teams: _vm.team.squads,
-              "playing-to-high": _vm.playingToHighList
+              "playing-to-high": _vm.playingToHighList,
+              teams: _vm.team.squads
             },
             on: { end: _vm.validTeams }
           })

@@ -63301,6 +63301,20 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         title: 'Rediger holdkamp'
       }
     }, {
+      path: '/team-fight/:teamUUID/import',
+      name: 'team-fight-import',
+      component: function component() {
+        return __webpack_require__.e(/*! import() */ 17).then(__webpack_require__.bind(null, /*! ./views/TeamFightImport */ "./resources/js/views/TeamFightImport.vue"));
+      },
+      props: function props(route) {
+        return {
+          teamFightId: route.params.teamUUID
+        };
+      },
+      meta: {
+        title: 'Importer fra badmintonplayer.dk'
+      }
+    }, {
       path: '/team-fight/create',
       name: 'team-fight-create',
       component: function component() {

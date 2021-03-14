@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_1__);
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                    query($badmintonId: String){\n                        playerStats(badmintonId: $badmintonId){\n                            level{\n                              points\n                              position\n                              version\n                            },\n                            mixWomen{\n                              points\n                              position\n                            }\n                            mixMen{\n                              points\n                              position\n                            }\n                            singleWomen{\n                              points\n                              position\n                            }\n                            singleMen{\n                              points\n                              position\n                            }\n                            doubleMen{\n                              points\n                              position\n                            }\n                            doubleWomen{\n                              position\n                              points\n                            }\n                          }\n                    },\n                "]);
+  var data = _taggedTemplateLiteral(["\n                    query($badmintonId: String){\n                        playerStats(badmintonId: $badmintonId){\n                            player{\n                                name\n                            }\n                            level{\n                              points\n                              position\n                              version\n                            },\n                            mixWomen{\n                              points\n                              position\n                              version\n                            }\n                            mixMen{\n                              points\n                              position\n                              version\n                            }\n                            singleWomen{\n                              points\n                              position\n                              version\n                            }\n                            singleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleWomen{\n                              position\n                              points\n                              version\n                            }\n                          }\n                    },\n                "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -24,6 +24,12 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -76,55 +82,89 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
           }]
         }
       },
-      badmintonId: ''
+      badmintonId: '',
+      chartDatas: []
     };
   },
   methods: {
     searchPlayer: function searchPlayer() {
+      if (this.badmintonId.length < 6) {
+        return;
+      }
+
       this.$apollo.queries.playerStats.refresh();
     }
   },
   apollo: {
     playerStats: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_1___default()(_templateObject()),
+      skip: function skip() {
+        return this.badmintonId.length < 6;
+      },
       variables: function variables() {
-        var _this$badmintonId;
-
         return {
-          badmintonId: (_this$badmintonId = this.badmintonId) !== null && _this$badmintonId !== void 0 ? _this$badmintonId : ''
+          badmintonId: this.badmintonId
         };
       },
       result: function result(ApolloQueryResult, key) {
-        var pointsLabels = ApolloQueryResult.data.playerStats.level.map(function (body) {
-          return body.version;
-        });
-        var pointsDataset = ApolloQueryResult.data.playerStats.level.map(function (body) {
-          return body.points;
-        });
-        this.dataPoints = {
-          labels: pointsLabels,
-          datasets: [{
-            label: 'Points',
-            fill: false,
-            borderColor: '#E09228',
-            data: pointsDataset
-          }]
+        if (ApolloQueryResult.data.playerStats === null) {
+          return null;
+        }
+
+        var generateChartData = function generateChartData(key, label) {
+          var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'position';
+
+          if (ApolloQueryResult.data.playerStats.hasOwnProperty(key)) {
+            var labels = ApolloQueryResult.data.playerStats[key].map(function (body) {
+              return body.version;
+            });
+            var dataset = ApolloQueryResult.data.playerStats[key].map(function (body) {
+              return body[value];
+            });
+            return {
+              labels: labels,
+              datasets: [{
+                label: label,
+                fill: false,
+                data: dataset
+              }]
+            };
+          } else {
+            return {
+              labels: [],
+              datasets: []
+            };
+          }
         };
-        var positionLabels = ApolloQueryResult.data.playerStats.level.map(function (body) {
-          return body.version;
-        });
-        var positionDataset = ApolloQueryResult.data.playerStats.level.map(function (body) {
-          return body.position;
-        });
-        this.dataPositions = {
-          labels: positionLabels,
-          datasets: [{
-            label: 'Position',
-            fill: false,
-            borderColor: '#E09228',
-            data: positionDataset
-          }]
-        };
+
+        var categories = [{
+          key: 'doubleMen',
+          label: 'Herre double'
+        }, {
+          key: 'doubleWomen',
+          label: 'Dame double'
+        }, {
+          key: 'mixMen',
+          label: 'Herre Mix double'
+        }, {
+          key: 'mixWomen',
+          label: 'Dame Mix double'
+        }, {
+          key: 'singleMen',
+          label: 'Herre single'
+        }, {
+          key: 'singleWomen',
+          label: 'Dame single'
+        }];
+        this.chartDatas = [];
+
+        for (var _i = 0, _categories = categories; _i < _categories.length; _i++) {
+          var category = _categories[_i];
+          this.chartDatas.push(generateChartData(category.key, category.label));
+        }
+
+        this.dataPoints = generateChartData('level', 'Points', 'points');
+        this.dataPositions = generateChartData('level', 'Position');
       },
       fetchPolicy: "network-only"
     }
@@ -472,51 +512,77 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "columns" },
-        [
-          _c("b-loading", {
-            attrs: { "can-cancel": true, "is-full-page": false },
-            model: {
-              value: _vm.$apollo.loading,
-              callback: function($$v) {
-                _vm.$set(_vm.$apollo, "loading", $$v)
-              },
-              expression: "$apollo.loading"
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "column is-half" },
-            [
-              _c("line-chart", {
-                attrs: {
-                  "chart-data": _vm.dataPoints,
-                  options: _vm.optionsPoints
-                }
-              })
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "column" },
-            [
-              _c("line-chart", {
-                attrs: {
-                  "chart-data": _vm.dataPositions,
-                  options: _vm.optionsPosition
-                }
-              })
-            ],
-            1
-          )
-        ],
-        1
-      )
+      _c("b-loading", {
+        attrs: { "can-cancel": true, "is-full-page": false },
+        model: {
+          value: _vm.$apollo.loading,
+          callback: function($$v) {
+            _vm.$set(_vm.$apollo, "loading", $$v)
+          },
+          expression: "$apollo.loading"
+        }
+      }),
+      _vm._v(" "),
+      _vm.playerStats !== undefined && _vm.playerStats !== null
+        ? _c("div", [
+            _c("h1", { staticClass: "title" }, [
+              _vm._v(_vm._s(_vm.playerStats.player.name || ""))
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "columns is-desktop is-multiline" },
+              [
+                _c(
+                  "div",
+                  { staticClass: "column is-half" },
+                  [
+                    _c("line-chart", {
+                      attrs: {
+                        "chart-data": _vm.dataPoints,
+                        options: _vm.optionsPoints
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "column is-half" },
+                  [
+                    _c("line-chart", {
+                      attrs: {
+                        "chart-data": _vm.dataPositions,
+                        options: _vm.optionsPosition
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _vm._l(_vm.chartDatas, function(chardata) {
+                  return chardata.labels.length > 0
+                    ? _c(
+                        "div",
+                        { staticClass: "column is-half" },
+                        [
+                          _c("line-chart", {
+                            attrs: {
+                              "chart-data": chardata,
+                              options: _vm.optionsPosition
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    : _vm._e()
+                })
+              ],
+              2
+            )
+          ])
+        : _vm._e()
     ],
     1
   )

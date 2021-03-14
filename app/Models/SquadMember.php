@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * Class SquadMember
  *
  * @property String member_ref_id
+ * @property int    id
  * @package App\Models
  */
 class SquadMember extends Model

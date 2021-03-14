@@ -14,3 +14,4 @@ type Mutation
 #import register.graphql
 #import subscription.graphql
 #import stats.graphql
+#import import.graphql

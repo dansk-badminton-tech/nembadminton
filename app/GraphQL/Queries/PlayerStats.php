@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\GraphQL\Queries;
 
+use App\Models\Member;
 use App\Models\Point;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +28,14 @@ class PlayerStats
         $badmintonId = $args['badmintonId'] ?? '';
         $select = ['points', 'position', 'version'];
 
+        $member = Member::query()->where('refId', $badmintonId)->first();
+
+        if ($member === null) {
+            return null;
+        }
+
         return [
+            'player'      => $member,
             'level'       => $this->getLevelPoints($select, $badmintonId),
             'mixWomen'    => $this->getCategoryPointAndPosition($badmintonId, 'MxD', $select),
             'mixMen'      => $this->getCategoryPointAndPosition($badmintonId, 'MxH', $select),

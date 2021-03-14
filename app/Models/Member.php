@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Class Member
  *
+ * @property string refId
+ * @property string gender
  * @package App\Models
  */
 class Member extends Model

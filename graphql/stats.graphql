@@ -9,6 +9,7 @@ type StatsPunkt{
 }
 
 type PlayerStats {
+    player: Member!
     level: [StatsPunkt!]
     mixWomen: [StatsPunkt!]
     mixMen: [StatsPunkt!]

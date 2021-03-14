@@ -1,0 +1,19 @@
+{
+    "name": "flycompany/local-scraper",
+    "description": "description",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "daniel",
+            "email": "email@example.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\Scraper\\": "src/"
+        }
+    }
+}

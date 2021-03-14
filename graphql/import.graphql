@@ -1,0 +1,67 @@
+extend type Query {
+    badmintonPlayerClubs: [OptionClub] @field(resolver: "App\\GraphQL\\Queries\\ImportClubOptions")
+    badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "App\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
+}
+
+input BadmintonPlayerTeamMatchInput {
+    clubId: String!
+    leagueMatchId: String!
+    season: String!
+    version: String!
+}
+
+extend type Mutation {
+    badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
+}
+
+input TeamMatchImportInput {
+    team: ID!
+    badmintonPlayerTeamMatch: BadmintonPlayerTeamMatchInput!
+    side: Side!
+}
+
+enum Side {
+    HOME @enum(value: "home")
+    GUEST @enum(value: "guest")
+}
+
+type ImportTeamMatch {
+    home: ImportTeam
+    guest: ImportTeam
+}
+
+type ImportTeam {
+    name: String!
+    squad: ImportSquad
+}
+
+type ImportSquad {
+    playerLimit: Int!
+    categories: [ImportCategory]
+}
+
+type ImportMember {
+    refId: String!
+    name: String!
+    gender: String!
+    points: [ImportPoint!]
+}
+
+type ImportPoint {
+    id: Int,
+    points: Int
+    position: Int
+    category: String
+    version: String
+}
+
+type ImportCategory {
+    category: String!
+    name: String!
+    players: [ImportMember!]!
+}
+
+type OptionClub {
+    id: ID!
+    name: String!
+}

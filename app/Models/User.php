@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,6 +15,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 /**
  * @property string              player_id
  * @property SubscriptionSetting subscriptionSettings
+ * @property club                club
  */
 class User extends Authenticatable
 {
@@ -60,6 +62,11 @@ class User extends Authenticatable
     public function subscriptionSettings() : HasOne
     {
         return $this->hasOne(SubscriptionSetting::class);
+    }
+
+    public function teams() : HasMany
+    {
+        return $this->hasMany(Teams::class);
     }
 
 }

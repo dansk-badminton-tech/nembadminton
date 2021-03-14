@@ -17,6 +17,12 @@
                 <b-icon icon="users" size="is-small"></b-icon>
                 10 personer
             </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" has-link>
+                <router-link v-bind:to="'/team-fight/'+teamFightId+'/import'">
+                    <b-icon icon="users" size="is-small"></b-icon>
+                    Import fra BadmintonPlayer
+                </router-link>
+            </b-dropdown-item>
         </b-dropdown>
         <ValidateTeams ref="validateTeams" :teams="team.squads"/>
         <b-dropdown aria-role="list">
