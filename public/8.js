@@ -136,9 +136,6 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
 
 
 
@@ -459,24 +456,6 @@ var render = function() {
       _vm._v(" "),
       !_vm.$apollo.loading && _vm.teams.data.length === 0
         ? _c("CreateTeamFightAction")
-        : _vm._e(),
-      _vm._v(" "),
-      _c("h1", { staticClass: "title mt-4" }, [
-        _vm._v("Holdkampe du spiller i")
-      ]),
-      _vm._v(" "),
-      !_vm.$apollo.loading && _vm.teamsByBadmintonId.length !== 0
-        ? _c("ListTeamFights", {
-            attrs: {
-              loading: _vm.$apollo.loading,
-              teams: _vm.teamsByBadmintonId,
-              "view-mode": true
-            }
-          })
-        : _vm._e(),
-      _vm._v(" "),
-      !_vm.$apollo.loading && _vm.teamsByBadmintonId.length === 0
-        ? _c("UpdateYourProfileAction")
         : _vm._e()
     ],
     1

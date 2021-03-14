@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\GraphQL\Queries;
+namespace FlyCompany\Scraper\GraphQL\Queries;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GuzzleHttp\Client;

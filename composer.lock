@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "319cdcd6a9669273124e196b39342efd",
+    "content-hash": "ed0370ae4093004a83fa74d807a40817",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -728,6 +728,26 @@
                 }
             },
             "description": "Import of ranking list",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "flycompany/local-members",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/members",
+                "reference": "95f392b54f0ea5579df8e6252b83bf4f678556f3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\Members\\": "src/"
+                }
+            },
+            "description": "Administration for members",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -9884,6 +9904,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "flycompany/local-import": 20,
+        "flycompany/local-members": 20,
         "flycompany/local-scraper": 20,
         "flycompany/local-team-fight": 20
     },

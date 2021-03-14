@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\GraphQL\Mutations;
+namespace FlyCompany\Scraper\GraphQL\Mutations;
 
 use App\Models\Teams;
 use FlyCompany\Scraper\BadmintonPlayer;

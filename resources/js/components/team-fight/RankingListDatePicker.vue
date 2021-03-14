@@ -4,7 +4,6 @@
         :first-day-of-week="1"
         :max-date="new Date()"
         :show-week-number="true"
-        :unselectable-days-of-week="[0,2,4,6]"
         icon="calendar-alt"
         placeholder="Vælge rangliste"
         trap-focus

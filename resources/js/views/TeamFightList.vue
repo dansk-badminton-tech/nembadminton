@@ -4,9 +4,6 @@
         <b-button v-if="!$apollo.loading && teams.data.length !== 0" :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
         <ListTeamFights v-if="!$apollo.loading && teams.data.length !== 0" :loading="$apollo.loading" :teams="teams.data"/>
         <CreateTeamFightAction v-if="!$apollo.loading && teams.data.length === 0"></CreateTeamFightAction>
-        <h1 class="title mt-4">Holdkampe du spiller i</h1>
-        <ListTeamFights v-if="!$apollo.loading && teamsByBadmintonId.length !== 0" :loading="$apollo.loading" :teams="teamsByBadmintonId" :view-mode="true"/>
-        <UpdateYourProfileAction v-if="!$apollo.loading && teamsByBadmintonId.length === 0"/>
     </fragment>
 </template>
 

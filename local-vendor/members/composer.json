@@ -1,0 +1,10 @@
+{
+    "name": "flycompany/local-members",
+    "type": "library",
+    "description": "Administration for members",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\Members\\": "src/"
+        }
+    }
+}

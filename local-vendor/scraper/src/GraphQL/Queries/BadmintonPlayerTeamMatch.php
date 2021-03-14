@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\GraphQL\Queries;
+namespace FlyCompany\Scraper\GraphQL\Queries;
 
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Enricher;

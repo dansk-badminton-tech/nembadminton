@@ -11,8 +11,28 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-function _templateObject2() {
+function _templateObject4() {
   var data = _taggedTemplateLiteral(["\n                        mutation badmintonPlayerTeamMatchImport($importInput: TeamMatchImportInput) {\n                          badmintonPlayerTeamMatchImport(input: $importInput)\n                        }"]);
+
+  _templateObject4 = function _templateObject4() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject3() {
+  var data = _taggedTemplateLiteral(["\n                            query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {\n                              badmintonPlayerTeamMatch(input: $badmintonInput) {\n                                guest {\n                                  ...matcheClub\n                                }\n                                home{\n                                  ...matcheClub\n                                }\n                              }\n                            }\n                             fragment matcheClub on ImportTeam {\n                                  name\n                                  squad {\n                                    playerLimit\n                                    categories {\n                                      category\n                                      name\n                                      players {\n                                        name\n                                      }\n                                    }\n                                  }\n                                }"]);
+
+  _templateObject3 = function _templateObject3() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject2() {
+  var data = _taggedTemplateLiteral(["\n                            query {\n                             badmintonPlayerClubs{\n                                id\n                                name\n                              }\n                            }\n                           "]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -22,7 +42,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                            query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {\n                              badmintonPlayerTeamMatch(input: $badmintonInput) {\n                                guest {\n                                  ...matcheClub\n                                }\n                                home{\n                                  ...matcheClub\n                                }\n                              }\n                            }\n                             fragment matcheClub on ImportTeam {\n                                  name\n                                  squad {\n                                    playerLimit\n                                    categories {\n                                      category\n                                      name\n                                      players {\n                                        name\n                                      }\n                                    }\n                                  }\n                                }"]);
+  var data = _taggedTemplateLiteral([" query ($id: ID!){\n                  team(id: $id){\n                    id\n                    version\n                  }\n                }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -74,7 +94,6 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TeamFightImport",
@@ -83,17 +102,34 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   },
   data: function data() {
     return {
-      clubId: "1622",
+      clubId: null,
       leagueMatchId: null,
       season: "2020",
-      version: "2021-02-17",
+      version: null,
       skipPlayers: true,
       importing: false
     };
   },
   apollo: {
-    badmintonPlayerTeamMatch: {
+    team: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
+      variables: function variables() {
+        return {
+          id: this.teamFightId
+        };
+      },
+      fetchPolicy: "network-only",
+      result: function result(_ref) {
+        var data = _ref.data;
+        var date = new Date(data.team.version);
+        this.version = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      }
+    },
+    badmintonPlayerClubs: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2())
+    },
+    badmintonPlayerTeamMatch: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject3()),
       variables: function variables() {
         return {
           badmintonInput: {
@@ -119,7 +155,7 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
       this.importing = true;
       this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2()),
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject4()),
         variables: {
           importInput: {
             team: this.teamFightId,
@@ -132,8 +168,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
             side: side
           }
         }
-      }).then(function (_ref) {
-        var data = _ref.data;
+      }).then(function (_ref2) {
+        var data = _ref2.data;
 
         _this.$buefy.snackbar.open({
           duration: 4000,
@@ -173,20 +209,19 @@ var render = function() {
   return _c(
     "section",
     [
-      _vm._v(
-        '\n\n    "team": "o5nuLdBPT8rH4yik1aQUz6GA",\n    "badmintonPlayerTeamMatch": {\n    "clubId": "1622",\n    "leagueMatchId": "385663",\n    "season": "2020",\n    "version": "2021-02-17"\n    },\n    "side": "GUEST"\n    '
-      ),
       _c(
         "b-button",
         {
           attrs: {
             tag: "router-link",
-            to: "/team-fight/" + this.teamFightId + "/edit",
-            type: "is-link"
+            type: "is-link",
+            to: "/team-fight/" + this.teamFightId + "/edit"
           }
         },
         [_vm._v("\n        Tilbage\n    ")]
       ),
+      _vm._v(" "),
+      _c("div", { staticClass: "m-5" }),
       _vm._v(" "),
       _c(
         "form",
@@ -200,17 +235,34 @@ var render = function() {
         [
           _c(
             "b-field",
-            { attrs: { label: "Klub Id" } },
             [
-              _c("b-input", {
-                model: {
-                  value: _vm.clubId,
-                  callback: function($$v) {
-                    _vm.clubId = $$v
-                  },
-                  expression: "clubId"
-                }
-              })
+              _c(
+                "b-select",
+                {
+                  attrs: { placeholder: "Select a name" },
+                  model: {
+                    value: _vm.clubId,
+                    callback: function($$v) {
+                      _vm.clubId = $$v
+                    },
+                    expression: "clubId"
+                  }
+                },
+                _vm._l(_vm.badmintonPlayerClubs, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.id, domProps: { value: option.id } },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(option.name) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                }),
+                0
+              )
             ],
             1
           ),
@@ -254,6 +306,7 @@ var render = function() {
             { attrs: { label: "Ranglist version" } },
             [
               _c("b-input", {
+                attrs: { disabled: "" },
                 model: {
                   value: _vm.version,
                   callback: function($$v) {

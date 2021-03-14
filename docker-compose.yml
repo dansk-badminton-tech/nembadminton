@@ -83,11 +83,12 @@ services:
       ALLOW_EMPTY_PASSWORD: 'yes'
 
   composer:
-    image: composer
+    image: composer:2
     user: "1000:1000"
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+
 volumes:
   db-data:
     driver: local

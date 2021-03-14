@@ -6,7 +6,11 @@ namespace App\Console\Commands;
 use App\Models\Member;
 use App\Models\User;
 use Carbon\Carbon;
+use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\Exception\NoPlayersException;
+use FlyCompany\Scraper\Models\Point;
+use FlyCompany\Scraper\Parser;
 use FlyCompany\TeamFight\Enricher;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
@@ -42,23 +46,21 @@ class Test extends Command
      * Execute the console command.
      *
      * @param BadmintonPlayer $scraper
-     * @param Enricher        $enricher
-     * @param TeamManager     $teamManager
-     * @param SquadManager    $squadManager
-     *
+     * @param PointsManager $pointsManager
      * @return int
-     * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayer $scraper, Enricher $enricher, TeamManager $teamManager, SquadManager $squadManager)
+    public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager)
     {
-        $teamMatch = $scraper->getTeamMatch('1622', '386334', '2020');
-        $version = '2021-02-17';
-        foreach ($teamMatch->home->squad->categories as $category) {
-            $enricher->players($category->players, $version);
+        /** @var Point[] $rankingCollection */
+        $version = Carbon::createFromDate(2020, 8,1);
+        $rankingCollection = $scraper->getRankingListPlayers(287, 2020, 1622, $version);
+
+        foreach ($rankingCollection as $item){
+            $pointsManager->addPointsByName($item->getName(), $item->getPoints(), $item->getPosition(), $version, null, $item->getVintage());
         }
 
-        dd($teamMatch);
+        dump($rankingCollection);
 
         return 0;
     }

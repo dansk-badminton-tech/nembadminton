@@ -1,22 +1,21 @@
 <template>
     <section>
-
-        "team": "o5nuLdBPT8rH4yik1aQUz6GA",
-        "badmintonPlayerTeamMatch": {
-        "clubId": "1622",
-        "leagueMatchId": "385663",
-        "season": "2020",
-        "version": "2021-02-17"
-        },
-        "side": "GUEST"
         <b-button tag="router-link"
                   type="is-link"
                   v-bind:to="'/team-fight/'+this.teamFightId+'/edit'">
             Tilbage
         </b-button>
+        <div class="m-5"></div>
         <form @submit.prevent>
-            <b-field label="Klub Id">
-                <b-input v-model="clubId"></b-input>
+            <b-field>
+                <b-select v-model="clubId" placeholder="Select a name">
+                    <option
+                        v-for="option in badmintonPlayerClubs"
+                        :value="option.id"
+                        :key="option.id">
+                        {{ option.name }}
+                    </option>
+                </b-select>
             </b-field>
             <b-field label="Kamp Id">
                 <b-input v-model="leagueMatchId"></b-input>
@@ -25,7 +24,7 @@
                 <b-input v-model="season"></b-input>
             </b-field>
             <b-field label="Ranglist version">
-                <b-input v-model="version"></b-input>
+                <b-input disabled v-model="version"></b-input>
             </b-field>
             <b-button type="submit" @click="fetchPlayers">Test</b-button>
         </form>
@@ -50,15 +49,44 @@ export default {
     },
     data() {
         return {
-            clubId: "1622",
+            clubId: null,
             leagueMatchId: null,
             season: "2020",
-            version: "2021-02-17",
+            version: null,
             skipPlayers: true,
             importing: false
         }
     },
     apollo: {
+        team: {
+            query: gql` query ($id: ID!){
+                  team(id: $id){
+                    id
+                    version
+                  }
+                }`,
+            variables: function () {
+                return {
+                    id: this.teamFightId
+                }
+            },
+            fetchPolicy: "network-only",
+            result({data}) {
+                let date = new Date(data.team.version);
+                this.version = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+            }
+        },
+        badmintonPlayerClubs: {
+            query: gql`
+                            query {
+                             badmintonPlayerClubs{
+                                id
+                                name
+                              }
+                            }
+                           `
+        }
+        ,
         badmintonPlayerTeamMatch: {
             query: gql`
                             query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {

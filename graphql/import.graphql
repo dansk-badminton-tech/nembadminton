@@ -1,6 +1,6 @@
 extend type Query {
-    badmintonPlayerClubs: [OptionClub] @field(resolver: "App\\GraphQL\\Queries\\ImportClubOptions")
-    badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "App\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
+    badmintonPlayerClubs: [OptionClub] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions")
+    badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
 }
 
 input BadmintonPlayerTeamMatchInput {
@@ -11,7 +11,7 @@ input BadmintonPlayerTeamMatchInput {
 }
 
 extend type Mutation {
-    badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
+    badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
 }
 
 input TeamMatchImportInput {

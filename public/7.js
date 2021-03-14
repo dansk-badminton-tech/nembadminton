@@ -20,7 +20,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RankingListDatePicker',
   props: ['value'],
@@ -991,7 +990,6 @@ var render = function() {
       "first-day-of-week": 1,
       "max-date": new Date(),
       "show-week-number": true,
-      "unselectable-days-of-week": [0, 2, 4, 6],
       icon: "calendar-alt",
       placeholder: "Vælge rangliste",
       "trap-focus": ""
@@ -1114,13 +1112,13 @@ var render = function() {
           _vm._v(" "),
           _c(
             "b-dropdown-item",
-            { attrs: { "has-link": "", "aria-role": "listitem" } },
+            { attrs: { "aria-role": "listitem", "has-link": "" } },
             [
               _c(
                 "router-link",
                 { attrs: { to: "/team-fight/" + _vm.teamFightId + "/import" } },
                 [
-                  _c("b-icon", { attrs: { size: "is-small", icon: "users" } }),
+                  _c("b-icon", { attrs: { icon: "users", size: "is-small" } }),
                   _vm._v(
                     "\n                Import fra BadmintonPlayer\n            "
                   )
