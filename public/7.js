@@ -20,6 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RankingListDatePicker',
   props: ['value'],
@@ -89,7 +90,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n                        mutation ($input: UpdateTeamInput!){\n                          validate(input: $input){\n                            playingToHigh\n                            name\n                            id\n                          }\n                        }\n                    "]);
+  var data = _taggedTemplateLiteral(["\n                        mutation ($input: UpdateTeamInput!){\n                          validate(input: $input){\n                            name\n                            id\n                          }\n                        }\n                    "]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -120,6 +121,7 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
+//
 //
 //
 //
@@ -991,6 +993,7 @@ var render = function() {
       "max-date": new Date(),
       "show-week-number": true,
       icon: "calendar-alt",
+      locale: "da-DK",
       placeholder: "Vælge rangliste",
       "trap-focus": ""
     },
@@ -1243,6 +1246,7 @@ var render = function() {
                 _c("b-datepicker", {
                   attrs: {
                     icon: "calendar-alt",
+                    locale: "da-DK",
                     placeholder: "Klik for at vælge dato...",
                     "first-day-of-week": 1,
                     "trap-focus": ""

@@ -52,15 +52,13 @@ class Test extends Command
      */
     public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager)
     {
-        /** @var Point[] $rankingCollection */
-        $version = Carbon::createFromDate(2020, 8,1);
-        $rankingCollection = $scraper->getRankingListPlayers(287, 2020, 1622, $version);
+        $season = 2020;
+        $clubId = 1622;
+        $teams = $scraper->getClubTeams($season, $clubId);
 
-        foreach ($rankingCollection as $item){
-            $pointsManager->addPointsByName($item->getName(), $item->getPoints(), $item->getPosition(), $version, null, $item->getVintage());
+        foreach ($teams as $team) {
+            $scraper->getTeamFights($season, $clubId, $team['ageGroupId'], $team['leagueGroupID'], $team['name']);
         }
-
-        dump($rankingCollection);
 
         return 0;
     }

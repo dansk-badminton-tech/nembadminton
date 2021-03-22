@@ -20,6 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RankingListDatePicker',
   props: ['value'],
@@ -63,6 +64,7 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
+//
 //
 //
 //
@@ -172,6 +174,7 @@ var render = function() {
       "max-date": new Date(),
       "show-week-number": true,
       icon: "calendar-alt",
+      locale: "da-DK",
       placeholder: "Vælge rangliste",
       "trap-focus": ""
     },
@@ -238,6 +241,7 @@ var render = function() {
                   attrs: {
                     icon: "calendar-alt",
                     placeholder: "Klik for at vælge dato...",
+                    locale: "da-DK",
                     "trap-focus": ""
                   },
                   model: {

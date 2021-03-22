@@ -14,7 +14,6 @@ extend type Mutation {
 }
 
 type PlayingToHigh{
-    playingToHigh: Boolean!
     name: String!
     id: ID!
 }

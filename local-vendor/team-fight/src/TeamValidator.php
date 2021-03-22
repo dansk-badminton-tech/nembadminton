@@ -9,6 +9,14 @@ use Illuminate\Support\Collection;
 class TeamValidator
 {
 
+    private array $categories = [
+        'MD',
+        'DS',
+        'DD',
+        'HS',
+        'HD',
+    ];
+
     public function validateSquads(array $squads) : array
     {
 
@@ -18,16 +26,8 @@ class TeamValidator
 
         $validationMapping = [];
 
-        $categories = [
-            'MD',
-            'DS',
-            'DD',
-            'HS',
-            'HD',
-        ];
-
         foreach ($squads as $teamLevel => $squad) {
-            foreach ($categories as $category) {
+            foreach ($this->categories as $category) {
                 $playersInCategory = $this->getPlayersByCategory($squad['categories'], $category);
                 $offset = -1 * $teamLevel;
                 if ($offset === 0) {
@@ -40,11 +40,18 @@ class TeamValidator
                         foreach ($abovePlayers as $abovePlayer) {
                             $playerPoints = $this->getPlayerLevel($player);
                             $abovePlayerPoints = $this->getPlayerLevel($abovePlayer) + $limit;
-                            if ($playerPoints > $abovePlayerPoints && !isset($validationMapping[$abovePlayer['id']])) {
-                                $validationMapping[$abovePlayer['id']] = [
-                                    'id'            => $abovePlayer['id'],
-                                    'playingToHigh' => true,
-                                    'name'          => $abovePlayer['name'],
+                            if ($playerPoints > $abovePlayerPoints) {
+                                $possibleToHighPlayers[] = [
+                                    'abovePlayer' => [
+                                        'id'    => $abovePlayer['id'],
+                                        'refId' => $abovePlayer['refId'],
+                                        'name'  => $abovePlayer['name'],
+                                    ],
+                                    'player'      => [
+                                        'id'    => $player['id'],
+                                        'refId' => $player['refId'],
+                                        'name'  => $player['name'],
+                                    ],
                                 ];
                             }
                         }
@@ -52,8 +59,34 @@ class TeamValidator
                 }
             }
         }
+        $hits = [];
+        foreach ($possibleToHighPlayers as $player) {
+            $hits[$player['player']['refId']][] = $player['abovePlayer'];
+        }
+
+        foreach ($hits as $refId => $players) {
+            $collection = new Collection($players);
+            /** @var Collection $playersByRef */
+            foreach ($collection->groupBy('refId') as $playersByRef) {
+                if ($playersByRef->count() >= 2) {
+                    $validationMapping = array_merge($validationMapping, $playersByRef->toArray());
+                }
+            }
+        }
 
         return $validationMapping;
+    }
+
+    private function findPlayerById(string $id, array $players)
+    {
+        foreach ($squads as $teamLevel => $squad) {
+            foreach ($this->categories as $category) {
+                $playersInCategory = $this->getPlayersByCategory($squad['categories'], $category);
+                foreach ($playersInCategory as $player) {
+                    $lookingForId = $player["id"];
+                }
+            }
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 
 namespace FlyCompany\Scraper;
@@ -23,7 +23,7 @@ class BadmintonPlayer
     private $clientConfig = [
         'headers' => [
             'User-Agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
-            'Accept' => 'text/html',
+            'Accept'     => 'text/html',
         ],
         'base_uri' => 'https://badmintonplayer.dk/',
     ];
@@ -34,6 +34,7 @@ class BadmintonPlayer
      * @var Client
      */
     private Client $client;
+
     /**
      * @var Parser
      */
@@ -45,34 +46,93 @@ class BadmintonPlayer
         $this->parser = $parser;
     }
 
-    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param): string
+    public function getTeamFights(int $season, int $clubId, int $ageGroupID, int $leagueGroupId, string $clubName) : array
     {
         $params = [
             "callbackcontextkey" => $this->getToken(),
-            "agefrom" => "",
-            "agegroupid" => "",
-            "ageto" => "",
-            "birthdatefromstring" => "",
-            "birthdatetostring" => "",
-            "classid" => "",
-            "clubid" => $clubId,
-            "gender" => "",
-            "getplayer" => true,
-            "getversions" => true,
-            "pageindex" => $pageIndex,
-            "param" => $param,
-            "playerid" => "",
-            "pointsfrom" => "",
-            "pointsto" => "",
-            "rankingfrom" => "",
-            "rankinglistagegroupid" => 15, // Magic number i dont understand yet
-            "rankinglistid" => $rankingListId,
+            "ageGroupID"         => (string)$ageGroupID,
+            "clubID"             => (string)$clubId,
+            "leagueGroupID"      => (string)$leagueGroupId,
+            "leagueGroupTeamID"  => "",
+            "leagueMatchID"      => "",
+            "playerID"           => "",
+            "regionID"           => "",
+            "seasonID"           => (string)$season,
+            "subPage"            => "4",
+        ];
+
+        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
+            'json' => $params,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+        $teamFights = $this->parser->teamFights($data["d"]['html']);
+
+        $teamFights = array_filter($teamFights, static function ($teamFight) use ($clubName) {
+            return in_array($clubName, $teamFight['teams']);
+        });
+
+        return $teamFights;
+    }
+
+    public function getClubTeams(int $season, int $clubId) : array
+    {
+        $params = [
+            "callbackcontextkey" => $this->getToken(),
+            "ageGroupID"         => "",
+            "clubID"             => (string)$clubId,
+            "leagueGroupID"      => "",
+            "leagueGroupTeamID"  => "",
+            "leagueMatchID"      => "",
+            "playerID"           => "",
+            "regionID"           => "",
+            "seasonID"           => (string)$season,
+            "subPage"            => "6",
+        ];
+
+        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
+            'json' => $params,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+
+        return $this->parser->clubTeams($data["d"]['html']);
+    }
+
+    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param) : string
+    {
+        $params = [
+            "callbackcontextkey"     => $this->getToken(),
+            "agefrom"                => "",
+            "agegroupid"             => "",
+            "ageto"                  => "",
+            "birthdatefromstring"    => "",
+            "birthdatetostring"      => "",
+            "classid"                => "",
+            "clubid"                 => $clubId,
+            "gender"                 => "",
+            "getplayer"              => true,
+            "getversions"            => true,
+            "pageindex"              => $pageIndex,
+            "param"                  => $param,
+            "playerid"               => "",
+            "pointsfrom"             => "",
+            "pointsto"               => "",
+            "rankingfrom"            => "",
+            "rankinglistagegroupid"  => 15, // Magic number i dont understand yet
+            "rankinglistid"          => $rankingListId,
             "rankinglistversiondate" => $rankingVersion->format('m/d/Y'),
-            "rankingto" => "",
-            "regionid" => "",
-            "searchall" => false,
-            "seasonid" => $season,
-            "sortfield" => 0,
+            "rankingto"              => "",
+            "regionid"               => "",
+            "searchall"              => false,
+            "seasonid"               => $season,
+            "sortfield"              => 0,
         ];
 
         $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetRankingListPlayers', [
@@ -83,19 +143,21 @@ class BadmintonPlayer
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
+
         return Str::replaceFirst("<table class='RankingListGrid'", "<table class='RankingListGrid'>", $data["d"]['Html']);
     }
 
     /**
      * @param string $rankingList
-     * @param int $season
+     * @param int    $season
      * @param string $clubId
      * @param Carbon $rankingVersion
+     *
      * @return Point[]|array
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
-    public function getRankingListPlayers(string $rankingList, int $season, string $clubId, Carbon $rankingVersion): array
+    public function getRankingListPlayers(string $rankingList, int $season, string $clubId, Carbon $rankingVersion) : array
     {
         [$rankingListId, $param] = $this->getRankingListIdAndParams($rankingList);
 
@@ -108,41 +170,43 @@ class BadmintonPlayer
                 break;
             }
         }
+
         return $rankingCollection;
     }
 
-    private function getRankingListIdAndParams(string $rankingList): array
+    private function getRankingListIdAndParams(string $rankingList) : array
     {
         $mapping = [
             'Level' => [
                 287,
-                ''
+                '',
             ],
-            'HS' => [
-                292,
-                'M'
+            'HS'    => [
+                288,
+                'M',
             ],
-            'DS' => [
-                292,
-                'K'
+            'DS'    => [
+                288,
+                'K',
             ],
-            'DD' => [
+            'DD'    => [
                 289,
-                'M'
+                'K',
             ],
-            'HD' => [
+            'HD'    => [
                 289,
-                'K'
+                'M',
             ],
-            'MxH' => [
+            'MxH'   => [
                 292,
-                'M'
+                'M',
             ],
-            'MxD' => [
+            'MxD'   => [
                 292,
-                'K'
+                'K',
             ],
         ];
+
         return $mapping[$rankingList];
     }
 
@@ -155,19 +219,19 @@ class BadmintonPlayer
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
-    public function getTeamMatch(string $clubId, string $leagueMatchId, string $season): TeamMatch
+    public function getTeamMatch(string $clubId, string $leagueMatchId, string $season) : TeamMatch
     {
         $params = [
-            "ageGroupID" => '',
+            "ageGroupID"         => '',
             "callbackcontextkey" => $this->getToken(),
-            "clubID" => $clubId,
-            "leagueGroupID" => "",
-            "leagueGroupTeamID" => "",
-            "leagueMatchID" => $leagueMatchId,
-            "playerID" => "",
-            "regionID" => "",
-            "seasonID" => $season,
-            "subPage" => "5",
+            "clubID"             => $clubId,
+            "leagueGroupID"      => "",
+            "leagueGroupTeamID"  => "",
+            "leagueMatchID"      => $leagueMatchId,
+            "playerID"           => "",
+            "regionID"           => "",
+            "seasonID"           => $season,
+            "subPage"            => "5",
         ];
 
         $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
@@ -179,13 +243,14 @@ class BadmintonPlayer
             throw new \RuntimeException('Did not get any data back');
         }
         $html = $data["d"]['html'];
+
         return $this->parser->teamMatch($html);
     }
 
     /**
      * @return string
      */
-    private function getToken(): string
+    private function getToken() : string
     {
         if ($this->token !== null) {
             return $this->token;
@@ -205,17 +270,6 @@ class BadmintonPlayer
         $this->token = $key[1];
 
         return $this->token;
-    }
-
-    private function prettyPrint(string $html)
-    {
-        $dom = new DOMDocument();
-
-        $dom->preserveWhiteSpace = false;
-        $dom->loadHTML('<body>' . $html . '</body>', LIBXML_HTML_NOIMPLIED);
-        $dom->formatOutput = true;
-
-        return $dom->saveXML($dom->documentElement);;
     }
 
 }

@@ -9,6 +9,7 @@
                     v-model="gameDate"
                     icon="calendar-alt"
                     placeholder="Klik for at vælge dato..."
+                    locale="da-DK"
                     trap-focus>
                 </b-datepicker>
             </b-field>

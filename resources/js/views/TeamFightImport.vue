@@ -7,8 +7,20 @@
         </b-button>
         <div class="m-5"></div>
         <form @submit.prevent>
-            <b-field>
-                <b-select v-model="clubId" placeholder="Select a name">
+            <div class="columns">
+                <div class="column">
+                    <b-field label="Spille dato">
+                        <b-input v-model="gameDate" disabled></b-input>
+                    </b-field>
+                </div>
+                <div class="column">
+                    <b-field label="Ranglist version">
+                        <b-input v-model="version" disabled></b-input>
+                    </b-field>
+                </div>
+            </div>
+            <b-field label="Klub">
+                <b-select v-model="clubId" :loading="$apollo.queries.badmintonPlayerClubs.loading" expanded placeholder="Vælge klub" @input="resetAll">
                     <option
                         v-for="option in badmintonPlayerClubs"
                         :value="option.id"
@@ -17,23 +29,59 @@
                     </option>
                 </b-select>
             </b-field>
-            <b-field label="Kamp Id">
-                <b-input v-model="leagueMatchId"></b-input>
-            </b-field>
             <b-field label="Sæson">
-                <b-input v-model="season"></b-input>
+                <b-select v-model="season" expanded placeholder="Vælge sæson">
+                    <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                </b-select>
             </b-field>
-            <b-field label="Ranglist version">
-                <b-input disabled v-model="version"></b-input>
+            <b-field label="Hold">
+                <b-select v-model="playerTeam" :loading="$apollo.queries.badmintonPlayerTeams.loading" expanded placeholder="Vælge hold" @input="resetTeamMatch">
+                    <option
+                        v-for="option in badmintonPlayerTeams"
+                        :key="option.leagueGroupID"
+                        :value="option">
+                        {{ option.name }} - {{ option.league }}
+                    </option>
+                </b-select>
             </b-field>
-            <b-button type="submit" @click="fetchPlayers">Test</b-button>
+            <b-field label="Kamp">
+                <b-select v-model="teamFight" :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @input="resetTeamMatch">
+                    <option
+                        v-for="option in badmintonPlayerTeamFights"
+                        :key="option.matchId"
+                        :value="option">
+                        {{ option.gameTime }} - {{ option.teams.join(' - ') }}
+                    </option>
+                </b-select>
+            </b-field>
+            <b-button type="submit" @click="fetchPlayers">Hent kamp</b-button>
         </form>
-        <div v-if="!skipPlayers && !$apollo.loading">
-            <div>{{ badmintonPlayerTeamMatch.home.name }}
-                <b-button :loading="importing" @click="importTeam('HOME')">Import</b-button>
+        <b-loading v-model="fetchingTeamMatch"></b-loading>
+        <div v-if="badmintonPlayerTeamMatch" class="columns mt-5">
+            <div class="column is-half">
+                <h1 class="title">{{ badmintonPlayerTeamMatch.home.name }}</h1>
+                <b-button :loading="importing" class="is-primary" expanded @click="importTeam('HOME')">Import</b-button>
+                <b-table :data="badmintonPlayerTeamMatch.home.squad.categories">
+                    <b-table-column v-slot="props" field="name" label="Kategori">
+                        {{ props.row.name }}
+                    </b-table-column>
+                    <b-table-column v-slot="props" field="players" label="Spillere">
+                        <p v-for="player in props.row.players">{{ player.name }}</p>
+                    </b-table-column>
+                </b-table>
             </div>
-            <div>{{ badmintonPlayerTeamMatch.guest.name }}
-                <b-button :loading="importing" @click="importTeam('GUEST')">Import</b-button>
+            <div class="column is-half">
+                <h1 class="title">{{ badmintonPlayerTeamMatch.guest.name }}</h1>
+                <b-button :loading="importing" class="is-primary" expanded @click="importTeam('GUEST')">Import</b-button>
+                <b-table :data="badmintonPlayerTeamMatch.guest.squad.categories">
+                    <b-table-column v-slot="props" field="name" label="Kategori">
+                        {{ props.row.name }}
+                    </b-table-column>
+                    <b-table-column v-slot="props" field="players" label="Spillere">
+                        <p v-for="player in props.row.players">{{ player.name }}</p>
+                    </b-table-column>
+                </b-table>
             </div>
         </div>
     </section>
@@ -49,12 +97,17 @@ export default {
     },
     data() {
         return {
+            gameDate: null,
             clubId: null,
             leagueMatchId: null,
-            season: "2020",
+            season: null,
             version: null,
             skipPlayers: true,
-            importing: false
+            importing: false,
+            fetchingTeamMatch: false,
+            badmintonPlayerTeamMatch: false,
+            playerTeam: null,
+            teamFight: null
         }
     },
     apollo: {
@@ -63,6 +116,7 @@ export default {
                   team(id: $id){
                     id
                     version
+                    gameDate
                   }
                 }`,
             variables: function () {
@@ -74,63 +128,122 @@ export default {
             result({data}) {
                 let date = new Date(data.team.version);
                 this.version = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                date = new Date(data.team.gameDate);
+                this.gameDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
             }
         },
         badmintonPlayerClubs: {
             query: gql`
-                            query {
-                             badmintonPlayerClubs{
-                                id
-                                name
-                              }
-                            }
-                           `
-        }
-        ,
-        badmintonPlayerTeamMatch: {
+                query {
+                 badmintonPlayerClubs{
+                    id
+                    name
+                  }
+                }
+               `
+        },
+        badmintonPlayerTeams: {
             query: gql`
-                            query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {
-                              badmintonPlayerTeamMatch(input: $badmintonInput) {
-                                guest {
-                                  ...matcheClub
-                                }
-                                home{
-                                  ...matcheClub
-                                }
-                              }
-                            }
-                             fragment matcheClub on ImportTeam {
-                                  name
-                                  squad {
-                                    playerLimit
-                                    categories {
-                                      category
-                                      name
-                                      players {
-                                        name
-                                      }
-                                    }
-                                  }
-                                }`,
+                query($input: BadmintonPlayerTeamsInput){
+                    badmintonPlayerTeams(input: $input){
+                        leagueGroupId
+                        ageGroupId
+                        name
+                        league
+                    }
+                }
+            `,
             variables() {
                 return {
-                    badmintonInput: {
-                        "clubId": this.clubId,
-                        "leagueMatchId": this.leagueMatchId,
-                        "season": this.season,
-                        "version": this.version
+                    input: {
+                        clubId: this.clubId,
+                        season: this.season
                     }
                 }
             },
             skip() {
-                return this.skipPlayers
+                return this.clubId === null || this.season === null
+            }
+        },
+        badmintonPlayerTeamFights: {
+            query: gql`
+                query($input: BadmintonPlayerTeamFightsInput){
+                    badmintonPlayerTeamFights(input: $input){
+                        teams
+                        matchId
+                        gameTime
+                    }
+                }
+            `,
+            variables() {
+                return {
+                    input: {
+                        clubId: this.clubId,
+                        season: this.season,
+                        ageGroupId: this.playerTeam.ageGroupId,
+                        leagueGroupId: this.playerTeam.leagueGroupId,
+                        clubName: this.playerTeam.name
+                    }
+                }
+            },
+            skip() {
+                return this.playerTeam === null
             }
         }
     },
     methods: {
         fetchPlayers() {
-            this.skipPlayers = false;
-            this.$apollo.queries.badmintonPlayerTeamMatch.refresh()
+            this.fetchingTeamMatch = true;
+            this.$apollo.query(
+                {
+                    query: gql`
+                        query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {
+                          badmintonPlayerTeamMatch(input: $badmintonInput) {
+                            guest {
+                              ...matcheClub
+                            }
+                            home{
+                              ...matcheClub
+                            }
+                          }
+                        }
+                        fragment matcheClub on ImportTeam {
+                              name
+                              squad {
+                                playerLimit
+                                categories {
+                                  category
+                                  name
+                                  players {
+                                    name
+                                  }
+                                }
+                              }
+                        }`,
+                    variables: {
+                        badmintonInput: {
+                            "clubId": this.clubId,
+                            "leagueMatchId": this.teamFight.matchId,
+                            "season": this.season,
+                            "version": this.version
+                        }
+                    }
+                })
+                .then(({data}) => {
+                    this.badmintonPlayerTeamMatch = data.badmintonPlayerTeamMatch
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-dagner',
+                            message: 'Kunne ikke hente kamp'
+                        })
+                })
+                .finally(() => {
+                    this.fetchingTeamMatch = false;
+                })
+
         },
         importTeam(side) {
             this.importing = true;
@@ -145,7 +258,7 @@ export default {
                             team: this.teamFightId,
                             badmintonPlayerTeamMatch: {
                                 clubId: this.clubId,
-                                leagueMatchId: this.leagueMatchId,
+                                leagueMatchId: this.teamFight.matchId,
                                 season: this.season,
                                 version: this.version
                             },
@@ -154,6 +267,7 @@ export default {
                     }
                 })
                 .then(({data}) => {
+                    this.resetTeamMatch()
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
@@ -172,6 +286,14 @@ export default {
                 .finally(() => {
                     this.importing = false;
                 })
+        },
+        resetTeamMatch() {
+            this.badmintonPlayerTeamMatch = false
+        },
+        resetAll() {
+            this.playerTeam = null
+            this.teamFight = null
+            this.resetTeamMatch()
         }
     }
 }

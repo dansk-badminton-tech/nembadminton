@@ -44,6 +44,7 @@ export default {
                         data{
                             id,
                             name,
+                            version,
                             gameDate,
                             createdAt,
                             updatedAt

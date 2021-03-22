@@ -54,6 +54,7 @@
                     <b-datepicker
                         v-model="gameDate"
                         icon="calendar-alt"
+                        locale="da-DK"
                         placeholder="Klik for at vælge dato..."
                         :first-day-of-week="1"
                         trap-focus>
@@ -253,7 +254,6 @@ export default {
                     mutation: gql`
                         mutation ($input: UpdateTeamInput!){
                           validate(input: $input){
-                            playingToHigh
                             name
                             id
                           }

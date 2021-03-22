@@ -5,6 +5,7 @@ namespace FlyCompany\Scraper\GraphQL\Queries;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ImportClubOptions
@@ -42,6 +43,8 @@ class ImportClubOptions
                 'name' => $clubName,
             ];
         }
+
+        $responseJson = Arr::sort($responseJson, 'name');
 
         return $responseJson;
     }

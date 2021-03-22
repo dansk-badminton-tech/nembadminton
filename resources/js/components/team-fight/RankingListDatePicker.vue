@@ -5,6 +5,7 @@
         :max-date="new Date()"
         :show-week-number="true"
         icon="calendar-alt"
+        locale="da-DK"
         placeholder="Vælge rangliste"
         trap-focus
     />

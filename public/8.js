@@ -106,7 +106,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_team_fight_ListTeamFights__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/team-fight/ListTeamFights */ "./resources/js/components/team-fight/ListTeamFights.vue");
 /* harmony import */ var _UpdateYourProfileAction__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./UpdateYourProfileAction */ "./resources/js/views/UpdateYourProfileAction.vue");
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n                query {\n                    teams(order: {column: GAME_DATE, order: DESC}, first: 20){\n                        data{\n                            id,\n                            name,\n                            gameDate,\n                            createdAt,\n                            updatedAt\n                        }\n                    }\n                }\n            "]);
+  var data = _taggedTemplateLiteral(["\n                query {\n                    teams(order: {column: GAME_DATE, order: DESC}, first: 20){\n                        data{\n                            id,\n                            name,\n                            version,\n                            gameDate,\n                            createdAt,\n                            updatedAt\n                        }\n                    }\n                }\n            "]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -335,13 +335,13 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("b-table-column", {
-        attrs: { field: "updatedAt", label: "Opdateret" },
+        attrs: { field: "version", label: "Rankliste" },
         scopedSlots: _vm._u([
           {
             key: "default",
             fn: function(props) {
               return [
-                _vm._v("\n        " + _vm._s(props.row.updatedAt) + "\n    ")
+                _vm._v("\n        " + _vm._s(props.row.version) + "\n    ")
               ]
             }
           }
@@ -349,13 +349,13 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("b-table-column", {
-        attrs: { field: "createdAt", label: "Oprettet" },
+        attrs: { field: "updatedAt", label: "Opdateret" },
         scopedSlots: _vm._u([
           {
             key: "default",
             fn: function(props) {
               return [
-                _vm._v("\n        " + _vm._s(props.row.createdAt) + "\n    ")
+                _vm._v("\n        " + _vm._s(props.row.updatedAt) + "\n    ")
               ]
             }
           }

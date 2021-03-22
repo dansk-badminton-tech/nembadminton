@@ -7,11 +7,11 @@
         <b-table-column v-slot="props" field="gameDate" label="Spille Dato">
             {{ props.row.gameDate }}
         </b-table-column>
+        <b-table-column v-slot="props" field="version" label="Rankliste">
+            {{ props.row.version }}
+        </b-table-column>
         <b-table-column v-slot="props" field="updatedAt" label="Opdateret">
             {{ props.row.updatedAt }}
-        </b-table-column>
-        <b-table-column v-slot="props" field="createdAt" label="Oprettet">
-            {{ props.row.createdAt }}
         </b-table-column>
         <b-table-column v-slot="props" label="Funktioner">
             <b-button v-if="viewMode"

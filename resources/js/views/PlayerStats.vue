@@ -1,9 +1,21 @@
 <template>
     <div>
-        <b-field label="Badminton ID">
-            <b-input v-model="badmintonId" type="text" @change="searchPlayer"/>
-        </b-field>
         <b-loading v-model="$apollo.loading" :can-cancel="true" :is-full-page="false"></b-loading>
+        <div v-if="playerStats === null" class="content has-text-grey has-text-centered">
+            <p>
+                <b-icon
+                    icon="users"
+                    size="is-large">
+                </b-icon>
+            </p>
+            <p>Du mangler at sætte dit badminton ID</p>
+            <b-button
+                tag="router-link"
+                to="/my-profile"
+                type="is-primary">
+                Gå til min profil
+            </b-button>
+        </div>
         <div v-if="playerStats !== undefined && playerStats !== null">
             <h1 class="title">{{ playerStats.player.name || '' }}</h1>
             <div class="columns is-desktop is-multiline">
@@ -69,6 +81,19 @@ export default {
         }
     },
     apollo: {
+        me: {
+            query: gql`
+                query{
+                    me{
+                        id
+                        player_id
+                    }
+                }`,
+            fetchPolicy: "network-only",
+            result({data}, key) {
+                this.badmintonId = data.me.player_id
+            }
+        },
         playerStats: {
             query: gql`
                     query($badmintonId: String){
@@ -117,7 +142,7 @@ export default {
             skip: function () {
                 return this.badmintonId.length < 6
             },
-            variables: function () {
+            variables() {
                 return {
                     badmintonId: this.badmintonId
                 }

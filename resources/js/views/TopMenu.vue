@@ -6,6 +6,10 @@
             </b-navbar-item>
         </template>
         <template slot="start">
+            <b-navbar-item :to="{ path: '/player-stats' }" tag="router-link">
+                <b-icon icon="hand-rock"></b-icon>
+                <span class="nav-item-span">Mine stats</span>
+            </b-navbar-item>
             <b-navbar-item :to="{ path: '/team-fight/dashboard' }" tag="router-link">
                 <b-icon icon="hand-rock"></b-icon>
                 <span class="nav-item-span">Mine Holdkampe</span>

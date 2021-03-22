@@ -12,8 +12,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_charts_LineChart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/charts/LineChart */ "./resources/js/components/charts/LineChart.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_1__);
-function _templateObject() {
+function _templateObject2() {
   var data = _taggedTemplateLiteral(["\n                    query($badmintonId: String){\n                        playerStats(badmintonId: $badmintonId){\n                            player{\n                                name\n                            }\n                            level{\n                              points\n                              position\n                              version\n                            },\n                            mixWomen{\n                              points\n                              position\n                              version\n                            }\n                            mixMen{\n                              points\n                              position\n                              version\n                            }\n                            singleWomen{\n                              points\n                              position\n                              version\n                            }\n                            singleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleWomen{\n                              position\n                              points\n                              version\n                            }\n                          }\n                    },\n                "]);
+
+  _templateObject2 = function _templateObject2() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["\n                query{\n                    me{\n                        id\n                        player_id\n                    }\n                }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -24,6 +34,18 @@ function _templateObject() {
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -96,8 +118,16 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
     }
   },
   apollo: {
-    playerStats: {
+    me: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_1___default()(_templateObject()),
+      fetchPolicy: "network-only",
+      result: function result(_ref, key) {
+        var data = _ref.data;
+        this.badmintonId = data.me.player_id;
+      }
+    },
+    playerStats: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_1___default()(_templateObject2()),
       skip: function skip() {
         return this.badmintonId.length < 6;
       },
@@ -493,25 +523,6 @@ var render = function() {
   return _c(
     "div",
     [
-      _c(
-        "b-field",
-        { attrs: { label: "Badminton ID" } },
-        [
-          _c("b-input", {
-            attrs: { type: "text" },
-            on: { change: _vm.searchPlayer },
-            model: {
-              value: _vm.badmintonId,
-              callback: function($$v) {
-                _vm.badmintonId = $$v
-              },
-              expression: "badmintonId"
-            }
-          })
-        ],
-        1
-      ),
-      _vm._v(" "),
       _c("b-loading", {
         attrs: { "can-cancel": true, "is-full-page": false },
         model: {
@@ -522,6 +533,35 @@ var render = function() {
           expression: "$apollo.loading"
         }
       }),
+      _vm._v(" "),
+      _vm.playerStats === null
+        ? _c(
+            "div",
+            { staticClass: "content has-text-grey has-text-centered" },
+            [
+              _c(
+                "p",
+                [_c("b-icon", { attrs: { icon: "users", size: "is-large" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c("p", [_vm._v("Du mangler at sætte dit badminton ID")]),
+              _vm._v(" "),
+              _c(
+                "b-button",
+                {
+                  attrs: {
+                    tag: "router-link",
+                    to: "/my-profile",
+                    type: "is-primary"
+                  }
+                },
+                [_vm._v("\n            Gå til min profil\n        ")]
+              )
+            ],
+            1
+          )
+        : _vm._e(),
       _vm._v(" "),
       _vm.playerStats !== undefined && _vm.playerStats !== null
         ? _c("div", [

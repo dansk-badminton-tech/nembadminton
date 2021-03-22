@@ -11,8 +11,28 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
 /* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-function _templateObject4() {
+function _templateObject6() {
   var data = _taggedTemplateLiteral(["\n                        mutation badmintonPlayerTeamMatchImport($importInput: TeamMatchImportInput) {\n                          badmintonPlayerTeamMatchImport(input: $importInput)\n                        }"]);
+
+  _templateObject6 = function _templateObject6() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject5() {
+  var data = _taggedTemplateLiteral(["\n                        query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {\n                          badmintonPlayerTeamMatch(input: $badmintonInput) {\n                            guest {\n                              ...matcheClub\n                            }\n                            home{\n                              ...matcheClub\n                            }\n                          }\n                        }\n                        fragment matcheClub on ImportTeam {\n                              name\n                              squad {\n                                playerLimit\n                                categories {\n                                  category\n                                  name\n                                  players {\n                                    name\n                                  }\n                                }\n                              }\n                        }"]);
+
+  _templateObject5 = function _templateObject5() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject4() {
+  var data = _taggedTemplateLiteral(["\n                query($input: BadmintonPlayerTeamFightsInput){\n                    badmintonPlayerTeamFights(input: $input){\n                        teams\n                        matchId\n                        gameTime\n                    }\n                }\n            "]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -22,7 +42,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n                            query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {\n                              badmintonPlayerTeamMatch(input: $badmintonInput) {\n                                guest {\n                                  ...matcheClub\n                                }\n                                home{\n                                  ...matcheClub\n                                }\n                              }\n                            }\n                             fragment matcheClub on ImportTeam {\n                                  name\n                                  squad {\n                                    playerLimit\n                                    categories {\n                                      category\n                                      name\n                                      players {\n                                        name\n                                      }\n                                    }\n                                  }\n                                }"]);
+  var data = _taggedTemplateLiteral(["\n                query($input: BadmintonPlayerTeamsInput){\n                    badmintonPlayerTeams(input: $input){\n                        leagueGroupId\n                        ageGroupId\n                        name\n                        league\n                    }\n                }\n            "]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -32,7 +52,7 @@ function _templateObject3() {
 }
 
 function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n                            query {\n                             badmintonPlayerClubs{\n                                id\n                                name\n                              }\n                            }\n                           "]);
+  var data = _taggedTemplateLiteral(["\n                query {\n                 badmintonPlayerClubs{\n                    id\n                    name\n                  }\n                }\n               "]);
 
   _templateObject2 = function _templateObject2() {
     return data;
@@ -42,7 +62,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral([" query ($id: ID!){\n                  team(id: $id){\n                    id\n                    version\n                  }\n                }"]);
+  var data = _taggedTemplateLiteral([" query ($id: ID!){\n                  team(id: $id){\n                    id\n                    version\n                    gameDate\n                  }\n                }"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -94,6 +114,54 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "TeamFightImport",
@@ -102,12 +170,17 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
   },
   data: function data() {
     return {
+      gameDate: null,
       clubId: null,
       leagueMatchId: null,
-      season: "2020",
+      season: null,
       version: null,
       skipPlayers: true,
-      importing: false
+      importing: false,
+      fetchingTeamMatch: false,
+      badmintonPlayerTeamMatch: false,
+      playerTeam: null,
+      teamFight: null
     };
   },
   apollo: {
@@ -123,68 +196,118 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
         var data = _ref.data;
         var date = new Date(data.team.version);
         this.version = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        date = new Date(data.team.gameDate);
+        this.gameDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
       }
     },
     badmintonPlayerClubs: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2())
     },
-    badmintonPlayerTeamMatch: {
+    badmintonPlayerTeams: {
       query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject3()),
       variables: function variables() {
         return {
-          badmintonInput: {
-            "clubId": this.clubId,
-            "leagueMatchId": this.leagueMatchId,
-            "season": this.season,
-            "version": this.version
+          input: {
+            clubId: this.clubId,
+            season: this.season
           }
         };
       },
       skip: function skip() {
-        return this.skipPlayers;
+        return this.clubId === null || this.season === null;
+      }
+    },
+    badmintonPlayerTeamFights: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject4()),
+      variables: function variables() {
+        return {
+          input: {
+            clubId: this.clubId,
+            season: this.season,
+            ageGroupId: this.playerTeam.ageGroupId,
+            leagueGroupId: this.playerTeam.leagueGroupId,
+            clubName: this.playerTeam.name
+          }
+        };
+      },
+      skip: function skip() {
+        return this.playerTeam === null;
       }
     }
   },
   methods: {
     fetchPlayers: function fetchPlayers() {
-      this.skipPlayers = false;
-      this.$apollo.queries.badmintonPlayerTeamMatch.refresh();
+      var _this = this;
+
+      this.fetchingTeamMatch = true;
+      this.$apollo.query({
+        query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject5()),
+        variables: {
+          badmintonInput: {
+            "clubId": this.clubId,
+            "leagueMatchId": this.teamFight.matchId,
+            "season": this.season,
+            "version": this.version
+          }
+        }
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+        _this.badmintonPlayerTeamMatch = data.badmintonPlayerTeamMatch;
+      })["catch"](function (error) {
+        _this.$buefy.snackbar.open({
+          duration: 4000,
+          type: 'is-dagner',
+          message: 'Kunne ikke hente kamp'
+        });
+      })["finally"](function () {
+        _this.fetchingTeamMatch = false;
+      });
     },
     importTeam: function importTeam(side) {
-      var _this = this;
+      var _this2 = this;
 
       this.importing = true;
       this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject4()),
+        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject6()),
         variables: {
           importInput: {
             team: this.teamFightId,
             badmintonPlayerTeamMatch: {
               clubId: this.clubId,
-              leagueMatchId: this.leagueMatchId,
+              leagueMatchId: this.teamFight.matchId,
               season: this.season,
               version: this.version
             },
             side: side
           }
         }
-      }).then(function (_ref2) {
-        var data = _ref2.data;
+      }).then(function (_ref3) {
+        var data = _ref3.data;
 
-        _this.$buefy.snackbar.open({
+        _this2.resetTeamMatch();
+
+        _this2.$buefy.snackbar.open({
           duration: 4000,
           type: 'is-success',
           message: 'Importering færdig'
         });
       })["catch"](function (error) {
-        _this.$buefy.snackbar.open({
+        _this2.$buefy.snackbar.open({
           duration: 4000,
           type: 'is-dagner',
           message: 'Kunne ikke importer'
         });
       })["finally"](function () {
-        _this.importing = false;
+        _this2.importing = false;
       });
+    },
+    resetTeamMatch: function resetTeamMatch() {
+      this.badmintonPlayerTeamMatch = false;
+    },
+    resetAll: function resetAll() {
+      this.playerTeam = null;
+      this.teamFight = null;
+      this.resetTeamMatch();
     }
   }
 });
@@ -233,13 +356,71 @@ var render = function() {
           }
         },
         [
+          _c("div", { staticClass: "columns" }, [
+            _c(
+              "div",
+              { staticClass: "column" },
+              [
+                _c(
+                  "b-field",
+                  { attrs: { label: "Spille dato" } },
+                  [
+                    _c("b-input", {
+                      attrs: { disabled: "" },
+                      model: {
+                        value: _vm.gameDate,
+                        callback: function($$v) {
+                          _vm.gameDate = $$v
+                        },
+                        expression: "gameDate"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "column" },
+              [
+                _c(
+                  "b-field",
+                  { attrs: { label: "Ranglist version" } },
+                  [
+                    _c("b-input", {
+                      attrs: { disabled: "" },
+                      model: {
+                        value: _vm.version,
+                        callback: function($$v) {
+                          _vm.version = $$v
+                        },
+                        expression: "version"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ],
+              1
+            )
+          ]),
+          _vm._v(" "),
           _c(
             "b-field",
+            { attrs: { label: "Klub" } },
             [
               _c(
                 "b-select",
                 {
-                  attrs: { placeholder: "Select a name" },
+                  attrs: {
+                    loading: _vm.$apollo.queries.badmintonPlayerClubs.loading,
+                    expanded: "",
+                    placeholder: "Vælge klub"
+                  },
+                  on: { input: _vm.resetAll },
                   model: {
                     value: _vm.clubId,
                     callback: function($$v) {
@@ -269,52 +450,111 @@ var render = function() {
           _vm._v(" "),
           _c(
             "b-field",
-            { attrs: { label: "Kamp Id" } },
-            [
-              _c("b-input", {
-                model: {
-                  value: _vm.leagueMatchId,
-                  callback: function($$v) {
-                    _vm.leagueMatchId = $$v
-                  },
-                  expression: "leagueMatchId"
-                }
-              })
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-field",
             { attrs: { label: "Sæson" } },
             [
-              _c("b-input", {
-                model: {
-                  value: _vm.season,
-                  callback: function($$v) {
-                    _vm.season = $$v
-                  },
-                  expression: "season"
-                }
-              })
+              _c(
+                "b-select",
+                {
+                  attrs: { expanded: "", placeholder: "Vælge sæson" },
+                  model: {
+                    value: _vm.season,
+                    callback: function($$v) {
+                      _vm.season = $$v
+                    },
+                    expression: "season"
+                  }
+                },
+                [
+                  _c("option", { attrs: { value: "2020" } }, [_vm._v("2020")]),
+                  _vm._v(" "),
+                  _c("option", { attrs: { value: "2021" } }, [_vm._v("2021")])
+                ]
+              )
             ],
             1
           ),
           _vm._v(" "),
           _c(
             "b-field",
-            { attrs: { label: "Ranglist version" } },
+            { attrs: { label: "Hold" } },
             [
-              _c("b-input", {
-                attrs: { disabled: "" },
-                model: {
-                  value: _vm.version,
-                  callback: function($$v) {
-                    _vm.version = $$v
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    loading: _vm.$apollo.queries.badmintonPlayerTeams.loading,
+                    expanded: "",
+                    placeholder: "Vælge hold"
                   },
-                  expression: "version"
-                }
-              })
+                  on: { input: _vm.resetTeamMatch },
+                  model: {
+                    value: _vm.playerTeam,
+                    callback: function($$v) {
+                      _vm.playerTeam = $$v
+                    },
+                    expression: "playerTeam"
+                  }
+                },
+                _vm._l(_vm.badmintonPlayerTeams, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.leagueGroupID, domProps: { value: option } },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(option.name) +
+                          " - " +
+                          _vm._s(option.league) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                }),
+                0
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "b-field",
+            { attrs: { label: "Kamp" } },
+            [
+              _c(
+                "b-select",
+                {
+                  attrs: {
+                    loading:
+                      _vm.$apollo.queries.badmintonPlayerTeamFights.loading,
+                    expanded: "",
+                    placeholder: "Vælge kamp"
+                  },
+                  on: { input: _vm.resetTeamMatch },
+                  model: {
+                    value: _vm.teamFight,
+                    callback: function($$v) {
+                      _vm.teamFight = $$v
+                    },
+                    expression: "teamFight"
+                  }
+                },
+                _vm._l(_vm.badmintonPlayerTeamFights, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.matchId, domProps: { value: option } },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(option.gameTime) +
+                          " - " +
+                          _vm._s(option.teams.join(" - ")) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                }),
+                0
+              )
             ],
             1
           ),
@@ -322,25 +562,37 @@ var render = function() {
           _c(
             "b-button",
             { attrs: { type: "submit" }, on: { click: _vm.fetchPlayers } },
-            [_vm._v("Test")]
+            [_vm._v("Hent kamp")]
           )
         ],
         1
       ),
       _vm._v(" "),
-      !_vm.skipPlayers && !_vm.$apollo.loading
-        ? _c("div", [
+      _c("b-loading", {
+        model: {
+          value: _vm.fetchingTeamMatch,
+          callback: function($$v) {
+            _vm.fetchingTeamMatch = $$v
+          },
+          expression: "fetchingTeamMatch"
+        }
+      }),
+      _vm._v(" "),
+      _vm.badmintonPlayerTeamMatch
+        ? _c("div", { staticClass: "columns mt-5" }, [
             _c(
               "div",
+              { staticClass: "column is-half" },
               [
-                _vm._v(
-                  _vm._s(_vm.badmintonPlayerTeamMatch.home.name) +
-                    "\n            "
-                ),
+                _c("h1", { staticClass: "title" }, [
+                  _vm._v(_vm._s(_vm.badmintonPlayerTeamMatch.home.name))
+                ]),
+                _vm._v(" "),
                 _c(
                   "b-button",
                   {
-                    attrs: { loading: _vm.importing },
+                    staticClass: "is-primary",
+                    attrs: { loading: _vm.importing, expanded: "" },
                     on: {
                       click: function($event) {
                         return _vm.importTeam("HOME")
@@ -348,6 +600,61 @@ var render = function() {
                     }
                   },
                   [_vm._v("Import")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "b-table",
+                  {
+                    attrs: {
+                      data: _vm.badmintonPlayerTeamMatch.home.squad.categories
+                    }
+                  },
+                  [
+                    _c("b-table-column", {
+                      attrs: { field: "name", label: "Kategori" },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(props) {
+                              return [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(props.row.name) +
+                                    "\n                "
+                                )
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        false,
+                        1702630298
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c("b-table-column", {
+                      attrs: { field: "players", label: "Spillere" },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(props) {
+                              return _vm._l(props.row.players, function(
+                                player
+                              ) {
+                                return _c("p", [_vm._v(_vm._s(player.name))])
+                              })
+                            }
+                          }
+                        ],
+                        null,
+                        false,
+                        3371718981
+                      )
+                    })
+                  ],
+                  1
                 )
               ],
               1
@@ -355,15 +662,17 @@ var render = function() {
             _vm._v(" "),
             _c(
               "div",
+              { staticClass: "column is-half" },
               [
-                _vm._v(
-                  _vm._s(_vm.badmintonPlayerTeamMatch.guest.name) +
-                    "\n            "
-                ),
+                _c("h1", { staticClass: "title" }, [
+                  _vm._v(_vm._s(_vm.badmintonPlayerTeamMatch.guest.name))
+                ]),
+                _vm._v(" "),
                 _c(
                   "b-button",
                   {
-                    attrs: { loading: _vm.importing },
+                    staticClass: "is-primary",
+                    attrs: { loading: _vm.importing, expanded: "" },
                     on: {
                       click: function($event) {
                         return _vm.importTeam("GUEST")
@@ -371,6 +680,61 @@ var render = function() {
                     }
                   },
                   [_vm._v("Import")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "b-table",
+                  {
+                    attrs: {
+                      data: _vm.badmintonPlayerTeamMatch.guest.squad.categories
+                    }
+                  },
+                  [
+                    _c("b-table-column", {
+                      attrs: { field: "name", label: "Kategori" },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(props) {
+                              return [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(props.row.name) +
+                                    "\n                "
+                                )
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        false,
+                        1702630298
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c("b-table-column", {
+                      attrs: { field: "players", label: "Spillere" },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "default",
+                            fn: function(props) {
+                              return _vm._l(props.row.players, function(
+                                player
+                              ) {
+                                return _c("p", [_vm._v(_vm._s(player.name))])
+                              })
+                            }
+                          }
+                        ],
+                        null,
+                        false,
+                        3371718981
+                      )
+                    })
+                  ],
+                  1
                 )
               ],
               1

@@ -3,7 +3,6 @@
 
 namespace FlyCompany\Scraper;
 
-
 use DiDom\Document;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Models\Point;
@@ -12,17 +11,94 @@ use FlyCompany\Scraper\Models\TeamMatch;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Parser
 {
 
     /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $output;
+
+    public function __construct(LoggerInterface $output)
+    {
+        $this->output = $output;
+    }
+
+    public function teamFights(string $html) : array
+    {
+        $document = new Document($html);
+        $trs = $document->find('table.matchlist tr');
+
+        // remove table header
+        array_shift($trs);
+
+        $teams = [];
+        foreach ($trs as $tr) {
+            if ($tr->attr('class') !== 'roundheader') {
+                $data = [];
+                foreach ($tr->find('td.team') as $td) {
+                    $data['teams'][] = $td->text();
+                }
+                foreach ($tr->find('td.matchno') as $td) {
+                    $data['matchId'] = $td->text();
+                }
+                $data['gameTime'] = $this->findTime($tr->find('td.time')[0]);
+                $teams[] = $data;
+            }
+        }
+
+        return $teams;
+    }
+
+    public function clubTeams(string $html) : array
+    {
+        $document = new Document($html);
+        $trs = $document->find('table.clubgrouplist tr.grouprow');
+
+        $teams = [];
+        foreach ($trs as $teamTr) {
+            $onClick = $teamTr->find('td a')[0]->attr('onclick');
+            preg_match_all('/\d+/', $onClick, $ids);
+            $leagueGroupId = $ids[0][2];
+            $ageGroupId = $ids[0][3];
+
+            $teams[] = [
+                'leagueGroupId' => $leagueGroupId,
+                'ageGroupId'    => $ageGroupId,
+                'name'          => $teamTr->find('td')[0]->text(),
+                'league'        => $teamTr->find('td')[1]->text(),
+            ];
+        }
+
+        return $teams;
+    }
+
+    private function findTime(string $text) : string
+    {
+        $normalizedStr = \str_replace('‑', '-', $text);
+        preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches);
+        $date = $dateMatches[0];
+        preg_match('/(\d\d:\d\d)/', $normalizedStr, $timeMatches);
+
+        if (!empty($timeMatches)) {
+            $date .= ' ' . $timeMatches[0];
+        }
+
+        return $date;
+    }
+
+    /**
      * @param string $html
+     *
      * @return Point[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function rankingListPlayers(string $html): array
+    public function rankingListPlayers(string $html) : array
     {
         $document = new Document($html);
         $trs = $document->find('table.RankingListGrid tr');
@@ -31,33 +107,44 @@ class Parser
         array_shift($trs);
 
         $pointsCollection = [];
-        if(count($trs) < 3){
+        if (count($trs) < 3) {
             throw new NoPlayersException('No players');
         }
-        foreach ($trs as $match) {
+        foreach ($trs as $tr) {
 
             // Will continue if name is not set
-            if($aTagName = $match->find('td.name a')[0] ?? false){
+            if ($aTagName = $tr->find('td.name a')[0] ?? false) {
                 $name = $aTagName->text();
-            }else{
+            } else {
                 continue;
             }
 
-            $points = $match->find('td.points')[0]->text();
-            $position = preg_replace("/[^0-9]/", "",$match->find('td')[1]->text());
-            preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $match->find('td.clas')[0]->text(), $matches);
-            $vintage = $matches[1][0];
-            $pointsCollection[] = new Point($name, $points, $position, $vintage);
+            $points = $tr->find('td.points')[0]->text();
+            $refId = $tr->find('td.playerid')[0]->text();
+            $position = preg_replace("/[^0-9]/", "", $tr->find('td')[1]->text());
+            $vintageText = $tr->find('td.clas')[0]->text();
+            if (empty($vintageText)) {
+                // If no vintage(fx SEN) we will skip
+                continue;
+            }
+            preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $vintageText, $matches);
+            $vintage = $matches[1][0] ?? null;
+            if (!isset($vintage)) {
+                throw new \RuntimeException('Could not find vintage for player in html: ' . $vintageText);
+            }
+            $pointsCollection[] = new Point($name, $points, $position, $vintage, $refId);
         }
+
         return $pointsCollection;
     }
 
     /**
      * @param string $html
+     *
      * @return TeamMatch
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function teamMatch(string $html): TeamMatch
+    public function teamMatch(string $html) : TeamMatch
     {
         $document = new Document($html);
         $trs = $document->find('table.matchresultschema.showmatch tr');
@@ -128,7 +215,7 @@ class Parser
         return new TeamMatch($team1, $team2);
     }
 
-    private function findCategoryByName(string $categoryName): string
+    private function findCategoryByName(string $categoryName) : string
     {
         $category = null;
         $MD = 'MD';
