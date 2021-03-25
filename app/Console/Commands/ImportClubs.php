@@ -14,14 +14,14 @@ class ImportClubs extends Command
      *
      * @var string
      */
-    protected $signature = 'import:clubs {date : ranking to import format \'yyyy-mm-dd\'} {--club-ids= : Club Ids} {--import-members : queue import members job}';
+    protected $signature = 'xml-import:clubs {date : ranking to import format \'yyyy-mm-dd\'} {--club-ids= : Club Ids} {--import-members : queue import members job}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update clubs';
+    protected $description = 'Import clubs from xml';
 
     /**
      * Execute the console command.

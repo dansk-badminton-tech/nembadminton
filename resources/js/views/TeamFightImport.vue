@@ -20,14 +20,7 @@
                 </div>
             </div>
             <b-field label="Klub">
-                <b-select v-model="clubId" :loading="$apollo.queries.badmintonPlayerClubs.loading" expanded placeholder="Vælge klub" @input="resetAll">
-                    <option
-                        v-for="option in badmintonPlayerClubs"
-                        :value="option.id"
-                        :key="option.id">
-                        {{ option.name }}
-                    </option>
-                </b-select>
+                <BadmintonPlayerClubs v-model="clubId" @input="resetAll"/>
             </b-field>
             <b-field label="Sæson">
                 <b-select v-model="season" expanded placeholder="Vælge sæson">
@@ -89,9 +82,11 @@
 
 <script>
 import gql from "graphql-tag"
+import BadmintonPlayerClubs from "../components/badminton-player/BadmintonPlayerClubs";
 
 export default {
     name: "TeamFightImport",
+    components: {BadmintonPlayerClubs},
     props: {
         teamFightId: String
     },
@@ -131,16 +126,6 @@ export default {
                 date = new Date(data.team.gameDate);
                 this.gameDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
             }
-        },
-        badmintonPlayerClubs: {
-            query: gql`
-                query {
-                 badmintonPlayerClubs{
-                    id
-                    name
-                  }
-                }
-               `
         },
         badmintonPlayerTeams: {
             query: gql`
@@ -299,6 +284,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>

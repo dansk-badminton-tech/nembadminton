@@ -17,14 +17,14 @@ class ImportDownloadRanking extends Command
      *
      * @var string
      */
-    protected $signature = 'import:download-ranking {date : ranking to import format \'yyyy-mm-dd\'} {--import-members : queue import members job}';
+    protected $signature = 'xml-import:download-ranking {date : ranking to import format \'yyyy-mm-dd\'} {--import-members : queue import members job}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Download ranklist';
+    protected $description = 'Download XML ranking list';
 
     /**
      * Execute the console command.
@@ -66,8 +66,8 @@ class ImportDownloadRanking extends Command
         $this->line('Saving ' . $filePath);
         Storage::put($filePath, file_get_contents('/tmp/DBF.stm'));
 
-        $this->line('Queuing import:update-members');
-        Artisan::queue('import:update-members', [
+        $this->line('Queuing xml-import:update-members');
+        Artisan::queue('xml-import:update-members', [
             'date' => $dateStr,
         ]);
 

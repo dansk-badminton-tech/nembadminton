@@ -63347,7 +63347,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
       path: '/team-fight/:teamUUID/view',
       name: 'team-fight-view',
       component: function component() {
-        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(6)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
+        return Promise.all(/*! import() */[__webpack_require__.e(1), __webpack_require__.e(0), __webpack_require__.e(4), __webpack_require__.e(14), __webpack_require__.e(18)]).then(__webpack_require__.bind(null, /*! ./views/TeamFightPublic */ "./resources/js/views/TeamFightPublic.vue"));
       },
       props: function props(route) {
         return {
@@ -63365,7 +63365,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
         return Promise.all(/*! import() */[__webpack_require__.e(5), __webpack_require__.e(12)]).then(__webpack_require__.bind(null, /*! ./views/PlayerStats */ "./resources/js/views/PlayerStats.vue"));
       },
       meta: {
-        allowAnonymous: true,
+        allowAnonymous: false,
         title: 'Spiller stats'
       }
     }]

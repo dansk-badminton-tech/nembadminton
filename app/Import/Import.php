@@ -27,8 +27,11 @@ class Import
     /**
      * @param string $date
      * @param array  $clubIds
+     * @param bool   $skipPoints
+     *
+     * @throws \Exception
      */
-    public function importMembers(string $date, array $clubIds) : void
+    public function importMembers(string $date, array $clubIds, bool $skipPoints = false) : void
     {
         $path = Path::getRankingPath($date);
         $data = XMLHelper::loadXML($path, Storage::disk());
@@ -64,22 +67,24 @@ class Import
                                 ]);
                             }
 
-                            $this->output->info('Removing old points');
-                            Point::query()->where('member_id', $memberModel->id)->where('version', $date)->delete();
-                            foreach ($member->getMemberVintages() as $memberVintage) {
-                                foreach ($memberVintage->getPoints() as $point) {
-                                    $this->output->info('Adding points for ' . $point->getCategory());
-                                    if ($this->validPoint($point)) {
-                                        Point::query()->create([
-                                            'points'    => $point->getPoints(),
-                                            'position'  => $point->getPosition(),
-                                            'category'  => $point->getCategory(),
-                                            'cll'       => $point->getCll(),
-                                            'clh'       => $point->getClh(),
-                                            'vintage'   => $memberVintage->getName(),
-                                            'version'   => $date,
-                                            'member_id' => $memberModel->id,
-                                        ]);
+                            if (!$skipPoints) {
+                                $this->output->info('Removing old points');
+                                Point::query()->where('member_id', $memberModel->id)->where('version', $date)->delete();
+                                foreach ($member->getMemberVintages() as $memberVintage) {
+                                    foreach ($memberVintage->getPoints() as $point) {
+                                        $this->output->info('Adding points for ' . $point->getCategory());
+                                        if ($this->validPoint($point)) {
+                                            Point::query()->create([
+                                                'points'    => $point->getPoints(),
+                                                'position'  => $point->getPosition(),
+                                                'category'  => $point->getCategory(),
+                                                'cll'       => $point->getCll(),
+                                                'clh'       => $point->getClh(),
+                                                'vintage'   => $memberVintage->getName(),
+                                                'version'   => $date,
+                                                'member_id' => $memberModel->id,
+                                            ]);
+                                        }
                                     }
                                 }
                             }

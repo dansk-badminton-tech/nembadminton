@@ -15,14 +15,14 @@ class UpdateAllPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'import:update-members {date : ranking to import format \'yyyy-mm-dd\'}';
+    protected $signature = 'xml-import:update-members {date : ranking to import format \'yyyy-mm-dd\'}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update all points in the system';
+    protected $description = 'Update all points in the system from XML';
 
     /**
      * Execute the console command.

@@ -19,16 +19,17 @@ class ImportMembers extends Command
      *
      * @var string
      */
-    protected $signature = 'import:members
+    protected $signature = 'xml-import:members
                             {date : ranking to import format \'yyyy-mm-dd\'}
-                            {--club-ids= : Club Ids}';
+                            {--club-ids= : Club Ids}
+                            {--skip-points : Skip points import}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import members to club';
+    protected $description = 'Import members to club from xml';
 
     /**
      * Execute the console command.

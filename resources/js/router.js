@@ -100,7 +100,7 @@ const router = new VueRouter(
                         name: 'player-stats',
                         component: () => import("./views/PlayerStats"),
                         meta: {
-                            allowAnonymous: true,
+                            allowAnonymous: false,
                             title: 'Spiller stats'
                         }
                     }

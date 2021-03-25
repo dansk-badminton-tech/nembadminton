@@ -15,6 +15,7 @@ use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class BadmintonPlayer
@@ -44,6 +45,38 @@ class BadmintonPlayer
     {
         $this->client = new Client($this->clientConfig);
         $this->parser = $parser;
+    }
+
+    /**
+     * @return array
+     * @throws \JsonException
+     */
+    public function getClubs() : array
+    {
+        $client = new Client();
+        $response = $client->get('http://www.badmintonpeople.dk/sportsresults/components/clubcomponents/clublistclientscript.aspx?unionid=1');
+        $body = $response->getBody()->getContents();
+        $needle = 'var SportsResultsTeamList =';
+        $pos = strpos($body, $needle);
+        $pos += strlen($needle);
+
+        $clubsStr = rtrim(trim(substr($body, $pos)), ';');
+        $clubsStr = str_replace("'", '"', $clubsStr);
+        $clubs = json_decode($clubsStr, true, 512, JSON_THROW_ON_ERROR);
+
+        $responseJson = [];
+        foreach ($clubs as $clubPair) {
+
+            $clubName = str_replace("–", "-", $clubPair[0]);
+            $responseJson[] = [
+                'id'   => $clubPair[1],
+                'name' => $clubName,
+            ];
+        }
+
+        $responseJson = Arr::sort($responseJson, 'name');
+
+        return $responseJson;
     }
 
     public function getTeamFights(int $season, int $clubId, int $ageGroupID, int $leagueGroupId, string $clubName) : array
@@ -105,7 +138,7 @@ class BadmintonPlayer
         return $this->parser->clubTeams($data["d"]['html']);
     }
 
-    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param) : string
+    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param, string $gender) : string
     {
         $params = [
             "callbackcontextkey"     => $this->getToken(),
@@ -116,7 +149,7 @@ class BadmintonPlayer
             "birthdatetostring"      => "",
             "classid"                => "",
             "clubid"                 => $clubId,
-            "gender"                 => "",
+            "gender"                 => $gender,
             "getplayer"              => true,
             "getversions"            => true,
             "pageindex"              => $pageIndex,
@@ -153,57 +186,69 @@ class BadmintonPlayer
      * @param string $clubId
      * @param Carbon $rankingVersion
      *
-     * @return Point[]|array
+     * @return \FlyCompany\Scraper\Models\Player[]|array
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
     public function getRankingListPlayers(string $rankingList, int $season, string $clubId, Carbon $rankingVersion) : array
     {
-        [$rankingListId, $param] = $this->getRankingListIdAndParams($rankingList);
+        [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
 
-        $rankingCollection = [];
+        $playersCollection = [];
         for ($i = 0; $i < 100; $i++) {
             try {
-                $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param);
-                $rankingCollection = \array_merge($rankingCollection, $this->parser->rankingListPlayers($html));
+                $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
+                $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html));
             } catch (NoPlayersException $exception) {
                 break;
             }
         }
 
-        return $rankingCollection;
+        return $playersCollection;
     }
 
     private function getRankingListIdAndParams(string $rankingList) : array
     {
         $mapping = [
-            'Level' => [
+            'DL'    => [
                 287,
                 '',
+                'K',
+            ],
+            'HL'    => [
+                287,
+                '',
+                'M',
             ],
             'HS'    => [
                 288,
                 'M',
+                '',
             ],
             'DS'    => [
                 288,
                 'K',
+                '',
             ],
             'DD'    => [
                 289,
                 'K',
+                '',
             ],
             'HD'    => [
                 289,
                 'M',
+                '',
             ],
             'MxH'   => [
                 292,
                 'M',
+                '',
             ],
             'MxD'   => [
                 292,
                 'K',
+                '',
             ],
         ];
 

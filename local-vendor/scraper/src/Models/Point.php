@@ -7,31 +7,17 @@ namespace FlyCompany\Scraper\Models;
 class Point
 {
 
-    private string $name;
-
     private int    $points;
 
     private int    $position;
 
     private string $vintage;
 
-    private string $badmintonId;
-
-    public function __construct(string $name, int $points, int $position, string $vintage, string $badmintonId)
+    public function __construct(int $points, int $position, string $vintage)
     {
-        $this->name = $name;
         $this->points = $points;
         $this->position = $position;
         $this->vintage = $vintage;
-        $this->badmintonId = $badmintonId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     /**
@@ -56,14 +42,6 @@ class Point
     public function getVintage() : string
     {
         return $this->vintage;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBadmintonId() : string
-    {
-        return $this->badmintonId;
     }
 
 }

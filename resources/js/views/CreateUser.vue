@@ -6,7 +6,9 @@
         <b-field label="Email">
             <b-input v-model="email" icon="envelope" placeholder="viktor@gmail.com" type="email"></b-input>
         </b-field>
-        <ClubSearch :select-club="selectClub"></ClubSearch>
+        <b-field label="Badminton Player Klub">
+            <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
+        </b-field>
         <b-field label="Badminton Player ID (Valgfrit)">
             <b-input v-model="playerId" icon="user-alt" placeholder="900910-17" type="text"></b-input>
         </b-field>
@@ -26,10 +28,11 @@ import gql from "graphql-tag"
 import {extractErrors} from "../helpers";
 import {setAuthToken} from "../auth";
 import ClubSearch from "../components/search-club/ClubSearch";
+import BadmintonPlayerClubs from "../components/badminton-player/BadmintonPlayerClubs";
 
 export default {
     name: "CreateUser",
-    components: {ClubSearch},
+    components: {BadmintonPlayerClubs},
     props: {
         afterRegister: Function
     },
@@ -45,9 +48,6 @@ export default {
         }
     },
     methods: {
-        selectClub(clubId) {
-            this.clubId = clubId
-        },
         create() {
             this.loading = true;
             this.$apollo.mutate(

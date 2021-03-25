@@ -5,16 +5,15 @@ namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use FlyCompany\Scraper\Exception\NoPlayersException;
+use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
 use FlyCompany\TeamFight\Models\Category;
-use FlyCompany\TeamFight\Models\Player;
+use FlyCompany\TeamFight\Models\Player as TeamFightPlayer;
 use FlyCompany\TeamFight\Models\Squad;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class Parser
 {
@@ -95,7 +94,7 @@ class Parser
     /**
      * @param string $html
      *
-     * @return Point[]
+     * @return Player[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
     public function rankingListPlayers(string $html) : array
@@ -106,7 +105,7 @@ class Parser
         // Remove top of table
         array_shift($trs);
 
-        $pointsCollection = [];
+        $playersCollection = [];
         if (count($trs) < 3) {
             throw new NoPlayersException('No players');
         }
@@ -120,7 +119,7 @@ class Parser
             }
 
             $points = $tr->find('td.points')[0]->text();
-            $refId = $tr->find('td.playerid')[0]->text();
+            $refId = \str_replace('‑', '-', $tr->find('td.playerid')[0]->text());
             $position = preg_replace("/[^0-9]/", "", $tr->find('td')[1]->text());
             $vintageText = $tr->find('td.clas')[0]->text();
             if (empty($vintageText)) {
@@ -132,10 +131,11 @@ class Parser
             if (!isset($vintage)) {
                 throw new \RuntimeException('Could not find vintage for player in html: ' . $vintageText);
             }
-            $pointsCollection[] = new Point($name, $points, $position, $vintage, $refId);
+            $player = new Player($name, [new Point($points, $position, $vintage)], $refId);
+            $playersCollection[] = $player;
         }
 
-        return $pointsCollection;
+        return $playersCollection;
     }
 
     /**
@@ -182,10 +182,10 @@ class Parser
             $categoryObj->name = $categoryName;
             $squad1->categories[] = $categoryObj;
 
-            $player1 = new Player();
+            $player1 = new TeamFightPlayer();
             $player1->name = $club1Player1;
             if ($club1Player2 !== null) {
-                $player2 = new Player();
+                $player2 = new TeamFightPlayer();
                 $player2->name = $club1Player2;
                 $categoryObj->players[] = $player2;
             }
@@ -198,10 +198,10 @@ class Parser
             $categoryObj->name = $categoryName;
             $squad2->categories[] = $categoryObj;
 
-            $player1 = new Player();
+            $player1 = new TeamFightPlayer();
             $player1->name = $club2Player1;
             if ($club2Player2 !== null) {
-                $player2 = new Player();
+                $player2 = new TeamFightPlayer();
                 $player2->name = $club2Player2;
                 $categoryObj->players[] = $player2;
             }

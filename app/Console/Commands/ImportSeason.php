@@ -15,14 +15,14 @@ class ImportSeason extends Command
      *
      * @var string
      */
-    protected $signature = 'import:season {year : ranking to import format \'yyyy\'}';
+    protected $signature = 'xml-import:season {year : ranking to import format \'yyyy\'}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import a hole season';
+    protected $description = 'Import a hole season from xml';
 
     /**
      * Execute the console command.
@@ -37,7 +37,7 @@ class ImportSeason extends Command
 
         foreach ($dates as $date) {
             $this->line('Queuing ' . $date);
-            Artisan::queue('import:download-ranking', [
+            Artisan::queue('xml-import:download-ranking', [
                 'date'             => $date,
                 '--import-members' => true,
             ]);

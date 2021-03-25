@@ -3,13 +3,22 @@
 
 namespace FlyCompany\Scraper\GraphQL\Queries;
 
+use FlyCompany\Scraper\BadmintonPlayer;
 use GraphQL\Type\Definition\ResolveInfo;
-use GuzzleHttp\Client;
-use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ImportClubOptions
 {
+
+    /**
+     * @var BadmintonPlayer
+     */
+    private BadmintonPlayer $badmintonPlayer;
+
+    public function __construct(BadmintonPlayer $badmintonPlayer)
+    {
+        $this->badmintonPlayer = $badmintonPlayer;
+    }
 
     /**
      * Return a value for the field.
@@ -23,29 +32,6 @@ class ImportClubOptions
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $client = new Client();
-        $response = $client->get('http://www.badmintonpeople.dk/sportsresults/components/clubcomponents/clublistclientscript.aspx?unionid=1');
-        $body = $response->getBody()->getContents();
-        $needle = 'var SportsResultsTeamList =';
-        $pos = strpos($body, $needle);
-        $pos += strlen($needle);
-
-        $clubsStr = rtrim(trim(substr($body, $pos)), ';');
-        $clubsStr = str_replace("'", '"', $clubsStr);
-        $clubs = json_decode($clubsStr, true, 512, JSON_THROW_ON_ERROR);
-
-        $responseJson = [];
-        foreach ($clubs as $clubPair) {
-
-            $clubName = str_replace("–", "-", $clubPair[0]);
-            $responseJson[] = [
-                'id'   => $clubPair[1],
-                'name' => $clubName,
-            ];
-        }
-
-        $responseJson = Arr::sort($responseJson, 'name');
-
-        return $responseJson;
+        return $this->badmintonPlayer->getClubs();
     }
 }

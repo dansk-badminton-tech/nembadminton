@@ -41,6 +41,6 @@ class ImportMembers implements ShouldQueue
      */
     public function handle(Import $import)
     {
-        $import->importMembers($this->date, $this->clubIds);
+        $import->importMembers($this->date, $this->clubIds, true);
     }
 }
