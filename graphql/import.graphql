@@ -1,7 +1,11 @@
 extend type Query {
+    "Clubs from badmintonplayer.dk. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerClubs: [OptionClub] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions")
+    "Teams from a club. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeams(input: BadmintonPlayerTeamsInput @spread): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams")
+    "Team fights for a team. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
+    "Team macth. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
 }
 

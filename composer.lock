@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed0370ae4093004a83fa74d807a40817",
+    "content-hash": "20fcf538d6b48ef6251271a12a765f1d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -714,6 +714,26 @@
             "time": "2020-03-25T18:49:23+00:00"
         },
         {
+            "name": "flycompany/local-club",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/club",
+                "reference": "cbb103dfaef8d192ae0ecc16298f079bc7084b15"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\Club\\": "src/"
+                }
+            },
+            "description": "Import of ranking list",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "flycompany/local-import",
             "version": "dev-master",
             "dist": {
@@ -765,6 +785,35 @@
             "autoload": {
                 "psr-4": {
                     "FlyCompany\\Scraper\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "daniel",
+                    "email": "email@example.com"
+                }
+            ],
+            "description": "description",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "flycompany/local-stats",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/stats",
+                "reference": "a54ec9dc2855828f881b67f89218ce12d64e3331"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\Stats\\": "src/"
                 }
             },
             "license": [
@@ -9903,9 +9952,11 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "flycompany/local-club": 20,
         "flycompany/local-import": 20,
         "flycompany/local-members": 20,
         "flycompany/local-scraper": 20,
+        "flycompany/local-stats": 20,
         "flycompany/local-team-fight": 20
     },
     "prefer-stable": true,

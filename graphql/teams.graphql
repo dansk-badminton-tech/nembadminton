@@ -5,12 +5,12 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutations\\UpdateTeams@updateTeams")
+    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updateTeams")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
-    notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "App\\GraphQL\\Mutations\\UpdateTeams@notify")
-    validate(input: UpdateTeamInput! @spread) : [PlayingToHigh!]! @guard @field(resolver: "App\\GraphQL\\Mutations\\Validate@validate")
-    updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "App\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
+    notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
+    validate(input: UpdateTeamInput! @spread) : [PlayingToHigh!]! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validate")
+    updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
 }
 
 type PlayingToHigh{

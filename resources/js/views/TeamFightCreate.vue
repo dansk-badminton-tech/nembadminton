@@ -14,7 +14,7 @@
                 </b-datepicker>
             </b-field>
             <b-field label="Rangliste">
-                <RankingListDatePicker v-model="version"></RankingListDatePicker>
+                <RankingVersionSelect v-model="version" expanded/>
             </b-field>
             <b-field label="Klub">
                 <b-input v-model="me.club.name1" disabled="true"></b-input>
@@ -28,10 +28,11 @@
 import gql from 'graphql-tag'
 import ME from "../queries/me.gql";
 import RankingListDatePicker from "../components/team-fight/RankingListDatePicker";
+import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 
 export default {
     name: "TeamFightCreate",
-    components: {RankingListDatePicker},
+    components: {RankingVersionSelect, RankingListDatePicker},
     data() {
         return {
             name: null,
@@ -67,7 +68,7 @@ export default {
                             input: {
                                 name: this.name,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                                version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
+                                version: this.version,
                                 club: {
                                     connect: this.me.organization_id
                                 }

@@ -8,10 +8,8 @@ type Query
 type Mutation
 
 #import users.graphql
-#import organization.graphql
-#import bdf.graphql
+#import club.graphql
 #import teams.graphql
-#import register.graphql
 #import subscription.graphql
 #import stats.graphql
 #import import.graphql

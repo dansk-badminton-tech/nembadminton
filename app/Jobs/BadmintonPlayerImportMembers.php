@@ -13,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class BadmintonPlayerImportMembers implements ShouldQueue
 {
@@ -24,8 +25,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param string $date
-     * @param array  $clubIds
+     * @param array|String[] $clubIds
      */
     public function __construct(array $clubIds)
     {
@@ -53,31 +53,39 @@ class BadmintonPlayerImportMembers implements ShouldQueue
         $now = Carbon::now();
         $now->subMonth();
         $now->setDay(1);
+        $season = $this->calculateSeason($now);
         foreach ($this->clubIds as $clubId) {
+            $clubModel = \App\Models\Club::query()->where(['id' => $clubId])->firstOrFail();
+            \FlyCompany\Club\Log::createLog((int)$clubId, "Begynder importering af medlemmer fra niveau ranglisten fra sæson $season.", 'member-importer');
             $syncIds = [];
             foreach ($rankingLists as $rankingList) {
-                $season = $this->calculateSeason($now);
-                $gender = $rankingList === 'HL'
-                    ? 'M'
-                    : 'K';
-                /** @var \App\Models\Club $clubModel */
-                $clubModel = \App\Models\Club::query()->where(['id' => $clubId])->firstOrFail();
-                $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $clubId, $now);
+                $starting = Carbon::create($season, 7)->setTime(0, 0);
+                while ($starting < $now) {
+                    $gender = $rankingList === 'HL'
+                        ? 'M'
+                        : 'K';
+                    /** @var \App\Models\Club $clubModel */
+                    $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $clubId, $starting);
 
-                foreach ($playersCollection as $player) {
-                    $rankingListNormalized = \in_array($rankingList, ['HL', 'DL'])
-                        ? null
-                        : $rankingList;
+                    foreach ($playersCollection as $player) {
+                        $rankingListNormalized = \in_array($rankingList, ['HL', 'DL'])
+                            ? null
+                            : $rankingList;
 
-                    $player->setGender($gender);
-                    $member = $memberManager->addMember($player->getRefId(), $player->getName(), $player->getGender());
-                    foreach ($player->getPoints() as $point) {
-                        $pointsManager->addPointsByMember($member, $point->getPoints(), $point->getPosition(), $now, $rankingListNormalized, $point->getVintage());
+                        $player->setGender($gender);
+                        $member = $memberManager->addOrUpdateMember($player->getRefId(), $player->getName(), $player->getGender());
+                        foreach ($player->getPoints() as $point) {
+                            $pointsManager->addPointsByMember($member, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
+                        }
+                        $syncIds[] = $member->id;
                     }
-                    $syncIds[] = $member->id;
+                    $starting->addMonth();
                 }
             }
-            $clubModel->members()->sync($syncIds);
+            $membersIds = array_unique($syncIds);
+            \FlyCompany\Club\Log::createLog((int)$clubId, "Importering af medlemmer fra sæson $season fuldført", 'member-importer');
+//            Log::info("Added ".count($membersIds)." ids: " . implode(',', $membersIds));
+            $clubModel->members()->sync($membersIds);
         }
     }
 

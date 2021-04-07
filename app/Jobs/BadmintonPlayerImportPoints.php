@@ -53,8 +53,10 @@ class BadmintonPlayerImportPoints implements ShouldQueue
         ];
 
         $now = Carbon::now();
+        $season = 2020;
         foreach ($rankingLists as $rankingList) {
-            $starting = Carbon::create(2021, 1)->setTime(0, 0);
+            \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season til nu", 'points-importer');
+            $starting = Carbon::create($season, 7)->setTime(0, 0);
             while ($starting < $now) {
                 $season = $this->calculateSeason($starting);
                 $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $this->clubId, $starting);
@@ -69,6 +71,7 @@ class BadmintonPlayerImportPoints implements ShouldQueue
                 }
                 $starting->addMonth();
             }
+            \FlyCompany\Club\Log::createLog($this->clubId, "Opdatering af point fra rangliste: $rankingList fuldført", 'points-importer');
         }
 
         return 0;

@@ -63,7 +63,7 @@
             </div>
             <div class="column">
                 <b-field label="Rangliste">
-                    <RankingListDatePicker v-model="version"/>
+                    <RankingVersionSelect v-model="version" expanded></RankingVersionSelect>
                 </b-field>
             </div>
             <div class="column">
@@ -79,7 +79,7 @@
         <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
         <div class="columns">
             <div class="column">
-                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]" :version="version"></PlayerSearch>
+                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]" :version="versionDate"></PlayerSearch>
             </div>
         </div>
         <PlayerList :players="players"></PlayerList>
@@ -135,10 +135,12 @@ import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
 import teams, {TeamFightHelper} from "../components/team-fight/teams";
 import RankingListDatePicker from "../components/team-fight/RankingListDatePicker";
+import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 
 export default {
     name: "TeamFight",
     components: {
+        RankingVersionSelect,
         RankingListDatePicker,
         TeamTable,
         ValidateTeams,
@@ -160,6 +162,7 @@ export default {
             shareUrl: '',
             gameDate: new Date(),
             version: null,
+            versionDate: null,
             team: {
                 squads: [],
                 club: {}
@@ -207,14 +210,15 @@ export default {
             fetchPolicy: "network-only",
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
-                this.version = new Date(data.team.version);
+                this.version = data.team.version;
+                this.versionDate = new Date(data.team.version);
             }
         }
     },
     methods: {
         updateToRankingList() {
             this.updating = true;
-            let version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate();
+            let version = this.version;
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -263,7 +267,7 @@ export default {
                         input: {
                             id: this.teamFightId,
                             name: this.team.name,
-                            version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
+                            version: this.version,
                             gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                             squads: omitDeep(this.team.squads, ['__typename'])
                         }
@@ -344,7 +348,7 @@ export default {
                             input: {
                                 id: this.teamFightId,
                                 name: this.team.name,
-                                version: this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate(),
+                                version: this.version,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                                 squads: omitDeep(this.team.squads, ['__typename'])
                             }

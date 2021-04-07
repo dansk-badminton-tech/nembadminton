@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 
-namespace App\GraphQL\Queries;
+namespace FlyCompany\Stats\GraphQL\Queries;
 
 use App\Models\Member;
 use App\Models\Point;

@@ -5,22 +5,13 @@ declare(strict_types = 1);
 namespace App\Listeners;
 
 use App\Jobs\BadmintonPlayerImportMembers;
+use App\Jobs\BadmintonPlayerImportPoints;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Bus;
 
 class ImportClubMembers
 {
-
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
 
     /**
      * Handle the event.
@@ -36,6 +27,7 @@ class ImportClubMembers
         $clubId = $user->club->id;
         Bus::chain([
             new BadmintonPlayerImportMembers([(string)$clubId]),
+            new BadmintonPlayerImportPoints($clubId),
         ])->dispatch();
     }
 }

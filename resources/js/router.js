@@ -96,12 +96,22 @@ const router = new VueRouter(
                         }
                     },
                     {
-                        path: '/player-stats',
+                        path: '/player-stats/:badmintonId',
                         name: 'player-stats',
                         component: () => import("./views/PlayerStats"),
+                        props: route => ({badmintonId: route.params.badmintonId}),
                         meta: {
                             allowAnonymous: false,
                             title: 'Spiller stats'
+                        }
+                    },
+                    {
+                        path: '/my-club',
+                        name: 'my-club',
+                        component: () => import("./views/ClubDashboard"),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Min klub'
                         }
                     }
                 ]

@@ -11,7 +11,7 @@ class PointsManager
 {
 
     /**
-     * @param string      $name
+     * @param Member      $member
      * @param int         $points
      * @param int         $position
      * @param Carbon      $version

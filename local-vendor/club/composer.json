@@ -1,0 +1,10 @@
+{
+    "name": "flycompany/local-club",
+    "type": "library",
+    "description": "Import of ranking list",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\Club\\": "src/"
+        }
+    }
+}

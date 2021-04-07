@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 
-namespace App\GraphQL\Mutations;
+namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use App\Models\Point;
 use App\Models\SquadMember;

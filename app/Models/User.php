@@ -16,6 +16,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
  * @property string              player_id
  * @property SubscriptionSetting subscriptionSettings
  * @property club                club
+ * @property int                 organization_id
  */
 class User extends Authenticatable
 {

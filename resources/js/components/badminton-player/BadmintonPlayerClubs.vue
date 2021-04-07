@@ -1,10 +1,10 @@
 <template>
-    <b-select :loading="$apollo.queries.badmintonPlayerClubs.loading" expanded placeholder="Vælge klub" @input="handleInput">
+    <b-select :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælge klub" @input="handleInput">
         <option
-            v-for="option in badmintonPlayerClubs"
+            v-for="option in clubs"
             :key="option.id"
             :value="option.id">
-            {{ option.name }}
+            {{ option.name1 }}
         </option>
     </b-select>
 </template>
@@ -21,12 +21,12 @@ export default {
         }
     },
     apollo: {
-        badmintonPlayerClubs: {
+        clubs: {
             query: gql`
                 query {
-                 badmintonPlayerClubs{
+                 clubs{
                     id
-                    name
+                    name1
                   }
                 }
                `

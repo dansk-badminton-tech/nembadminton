@@ -15,4 +15,5 @@ class Club extends Model
     public function members() : BelongsToMany{
         return $this->belongsToMany(Member::class);
     }
+
 }

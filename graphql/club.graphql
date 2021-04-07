@@ -1,0 +1,49 @@
+extend type Query{
+    membersSearch(
+        name: String @where(operator: "like"),
+        hasClubs: _ @whereHasConditions(columns: ["id"]),
+        excludeMembers: [Int!] @notIn(key: "id"),
+        orderBy: _ @orderBy(columns: ["name"])
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
+    clubsSearch(
+        name: String @where(operator: "like", key: "name1"),
+        orderBy: _ @orderBy(columns: ["name1"])
+    ): [Club!]! @paginate(defaultCount: 10)
+    members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name"])): [Member!]! @guard @paginate(defaultCount: 20, scopes: ["myClub"])
+    rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
+    clubs: [Club!]! @all
+    logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
+}
+
+type Log {
+    id: ID!
+    log: String!
+    component: String!
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}
+
+type Member {
+    id: ID!
+    refId: String!
+    name: String!
+    gender: String!
+    points(version: String @eq): [Point!] @hasMany
+    clubs: [Club!]! @belongsToMany
+}
+
+type Point {
+    points: Int
+    position: Int
+    category: String
+    vintage: String
+    version: Date
+}
+
+type Club {
+    id: ID!
+    name1: String!
+    name2: String!
+}

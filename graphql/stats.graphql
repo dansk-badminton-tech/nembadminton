@@ -1,5 +1,24 @@
 extend type Query {
-    playerStats(badmintonId: String) : PlayerStats @field(resolver: "App\\GraphQL\\Queries\\PlayerStats@stats")
+    playerStats(badmintonId: String) : PlayerStats @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@stats")
+    clubStats : ClubInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubStats")
+}
+
+type ClubInfo {
+    players: Int!
+    womenPlayers: Int!
+    menPlayers: Int!
+    highestPlayers: HighestPlayerList
+}
+
+type HighestPlayerList {
+    DL: Member
+    HL: Member
+    DS: Member
+    HS: Member
+    HD: Member
+    DD: Member
+    MxD: Member
+    MxH: Member
 }
 
 type StatsPunkt{

@@ -77,7 +77,7 @@ export default {
                     if (this.afterRegister instanceof Function) {
                         this.afterRegister()
                     } else {
-                        this.$router.push({name: 'home'})
+                        this.$router.push({name: 'my-club'})
                     }
                 })
                 .catch(({graphQLErrors}) => {

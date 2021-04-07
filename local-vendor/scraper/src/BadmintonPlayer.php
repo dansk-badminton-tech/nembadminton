@@ -16,6 +16,7 @@ use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BadmintonPlayer
@@ -167,6 +168,8 @@ class BadmintonPlayer
             "seasonid"               => $season,
             "sortfield"              => 0,
         ];
+
+//        Log::info('getRankingListPlayersHtml: ' . \json_encode($params, JSON_THROW_ON_ERROR));
 
         $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetRankingListPlayers', [
             'json' => $params,
