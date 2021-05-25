@@ -5,13 +5,12 @@ namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use FlyCompany\Scraper\Exception\NoPlayersException;
+use FlyCompany\Scraper\Models\Category;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Point;
+use FlyCompany\Scraper\Models\Squad;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
-use FlyCompany\TeamFight\Models\Category;
-use FlyCompany\TeamFight\Models\Player as TeamFightPlayer;
-use FlyCompany\TeamFight\Models\Squad;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 
@@ -66,15 +65,51 @@ class Parser
             $leagueGroupId = $ids[0][2];
             $ageGroupId = $ids[0][3];
 
-            $teams[] = [
-                'leagueGroupId' => $leagueGroupId,
-                'ageGroupId'    => $ageGroupId,
-                'name'          => $teamTr->find('td')[0]->text(),
-                'league'        => $teamTr->find('td')[1]->text(),
-            ];
+            $team = new Team($teamTr->find('td')[0]->text());
+            $team->leagueGroupId = $leagueGroupId;
+            $team->ageGroupId = $ageGroupId;
+            $team->league = $teamTr->find('td')[1]->text();
+
+            $teams[] = $team;
         }
 
         return $teams;
+    }
+
+    public function searchPlayer(string $html) : array
+    {
+        $document = new Document($html);
+        $trs = $document->find('table tr');
+
+        $players = [];
+        foreach ($trs as $playerTr) {
+            $player = [];
+            $onClick = $playerTr->attr('onclick');
+            $arguments = self::parseFunction($onClick);
+            $badmintonPlayerInternalId = $arguments[0];
+
+            $tds = $playerTr->find('td');
+            $player['badmintonId'] = $tds[1]->text();
+            $player['badmintonPlayerInternalId'] = $badmintonPlayerInternalId;
+            $player['name'] = $tds[2]->text();
+            $player['club'] = $tds[3]->text();
+
+            $players[] = $player;
+        }
+
+        return $players;
+    }
+
+    public static function parseFunction(string $function) : array
+    {
+        /** @var string[] $parts */
+        $parts = preg_match("/'(.+)'/", $function);
+        $arguments = $parts[0];
+        $arguments = explode(',', $arguments);
+
+        return array_map(static function ($value) {
+            return trim(trim($value, '\''));
+        }, $arguments);
     }
 
     private function findTime(string $text) : string
@@ -97,7 +132,7 @@ class Parser
      * @return Player[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function rankingListPlayers(string $html) : array
+    public function rankingListPlayers(string $html, string $rankingList) : array
     {
         $document = new Document($html);
         $trs = $document->find('table.RankingListGrid tr');
@@ -112,7 +147,8 @@ class Parser
         foreach ($trs as $tr) {
 
             // Will continue if name is not set
-            if ($aTagName = $tr->find('td.name a')[0] ?? false) {
+            $aTagName = $tr->find('td.name a')[0] ?? false;
+            if ($aTagName) {
                 $name = $aTagName->text();
             } else {
                 continue;
@@ -122,16 +158,15 @@ class Parser
             $refId = \str_replace('‑', '-', $tr->find('td.playerid')[0]->text());
             $position = preg_replace("/[^0-9]/", "", $tr->find('td')[1]->text());
             $vintageText = $tr->find('td.clas')[0]->text();
-            if (empty($vintageText)) {
-                // If no vintage(fx SEN) we will skip
-                continue;
-            }
+
             preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $vintageText, $matches);
-            $vintage = $matches[1][0] ?? null;
-            if (!isset($vintage)) {
-                throw new \RuntimeException('Could not find vintage for player in html: ' . $vintageText);
-            }
-            $player = new Player($name, [new Point($points, $position, $vintage)], $refId);
+            $vintage = $matches[1][0] ?? '';
+
+            $player = new Player();
+            $player->name = $name;
+            $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
+            $player->points = [new Point($points, $position, $vintage)];
+            $player->refId = $refId;
             $playersCollection[] = $player;
         }
 
@@ -182,10 +217,10 @@ class Parser
             $categoryObj->name = $categoryName;
             $squad1->categories[] = $categoryObj;
 
-            $player1 = new TeamFightPlayer();
+            $player1 = new Player();
             $player1->name = $club1Player1;
             if ($club1Player2 !== null) {
-                $player2 = new TeamFightPlayer();
+                $player2 = new Player();
                 $player2->name = $club1Player2;
                 $categoryObj->players[] = $player2;
             }
@@ -198,10 +233,10 @@ class Parser
             $categoryObj->name = $categoryName;
             $squad2->categories[] = $categoryObj;
 
-            $player1 = new TeamFightPlayer();
+            $player1 = new Player();
             $player1->name = $club2Player1;
             if ($club2Player2 !== null) {
-                $player2 = new TeamFightPlayer();
+                $player2 = new Player();
                 $player2->name = $club2Player2;
                 $categoryObj->players[] = $player2;
             }
@@ -244,7 +279,7 @@ class Parser
         }
 
         if ($category === null) {
-            throw new \RuntimeException('Unknow category ' . $category);
+            throw new \RuntimeException('Unknown category ' . $category);
         }
 
         return $category;

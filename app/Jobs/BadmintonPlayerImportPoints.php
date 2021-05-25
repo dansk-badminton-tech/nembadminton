@@ -6,11 +6,14 @@ namespace App\Jobs;
 use Carbon\Carbon;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class BadmintonPlayerImportPoints implements ShouldQueue
 {
@@ -41,48 +44,31 @@ class BadmintonPlayerImportPoints implements ShouldQueue
      */
     public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager) : int
     {
-        $rankingLists = [
-            'DL',
-            'HL',
-            'HS',
-            'DS',
-            'HD',
-            'DD',
-            'MxD',
-            'MxH',
-        ];
-
+        $rankingLists = BadmintonPlayer::rankingLists();
         $now = Carbon::now();
         $season = 2020;
         foreach ($rankingLists as $rankingList) {
             \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season til nu", 'points-importer');
             $starting = Carbon::create($season, 7)->setTime(0, 0);
             while ($starting < $now) {
-                $season = $this->calculateSeason($starting);
+                $season = BadmintonPlayer::calculateSeason($starting);
                 $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $this->clubId, $starting);
 
                 foreach ($playersCollection as $player) {
-                    $rankingListNormalized = !\in_array($rankingList, ['HL', 'DL'])
-                        ? $rankingList
-                        : null;
-                    foreach ($player->getPoints() as $point) {
-                        $pointsManager->addPointsByName($player->getName(), $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
+                    $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
+                    foreach ($player->points as $point) {
+                        try {
+                            $pointsManager->addPointsByName($player->name, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
+                        } catch (ModelNotFoundException $exception) {
+                            Log::info("Skipping: $player->name could not find player");
+                        }
                     }
                 }
                 $starting->addMonth();
             }
-            \FlyCompany\Club\Log::createLog($this->clubId, "Opdatering af point fra rangliste: $rankingList fuldført", 'points-importer');
+            \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList fuldført", 'points-importer');
         }
 
         return 0;
-    }
-
-    private function calculateSeason(Carbon $currentTime) : int
-    {
-        if ($currentTime->month > 6) {
-            return $currentTime->year;
-        }
-
-        return $currentTime->year - 1;
     }
 }

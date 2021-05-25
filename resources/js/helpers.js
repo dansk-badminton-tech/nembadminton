@@ -85,10 +85,10 @@ export function findPositions(member, show = 'all') {
         if (point.category === 'DD' && (show === 'all' || show === 'DD')) {
             summary.push('DD:' + point.points)
         }
-        if (point.category === 'MxH' && (show === 'all' || show === 'MxH')) {
+        if (point.category === 'MxH' && member.gender === 'M' && (show === 'all' || show === 'MD')) {
             summary.push('MxH:' + point.points)
         }
-        if (point.category === 'MxD' && (show === 'all' || show === 'MxD')) {
+        if (point.category === 'MxD' && member.gender === 'K' && (show === 'all' || show === 'MD')) {
             summary.push('MxD:' + point.points)
         }
     }

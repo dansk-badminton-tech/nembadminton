@@ -7,6 +7,8 @@ namespace FlyCompany\TeamFight\Models;
 class Player
 {
 
+    public ?int    $id;
+
     public string  $gender;
 
     public string  $name;

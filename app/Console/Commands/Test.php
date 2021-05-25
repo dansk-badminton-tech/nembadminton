@@ -52,9 +52,8 @@ class Test extends Command
      */
     public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager)
     {
-        $season = 2020;
         $clubId = 1622;
-        $teams = $scraper->getClubTeams($season, $clubId);
+        $teams = $scraper->searchPlayer($clubId, '900910-17');
 
         foreach ($teams as $team) {
             $scraper->getTeamFights($season, $clubId, $team['ageGroupId'], $team['leagueGroupID'], $team['name']);

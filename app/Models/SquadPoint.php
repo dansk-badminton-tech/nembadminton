@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string      category
  * @property integer     points
  * @property integer     position
+ * @property integer     squad_member_id
  */
 class SquadPoint extends Model
 {

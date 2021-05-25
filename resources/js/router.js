@@ -113,6 +113,15 @@ const router = new VueRouter(
                             allowAnonymous: false,
                             title: 'Min klub'
                         }
+                    },
+                    {
+                        path: '/team-fight/check',
+                        name: 'check-team-fight',
+                        component: () => import("./views/CheckTeamFight"),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Tjek holdkamps runde'
+                        }
                     }
                 ]
             }

@@ -4,14 +4,20 @@
 namespace FlyCompany\Scraper\Models;
 
 
+use Carbon\Carbon;
+
 class Point
 {
 
-    private int    $points;
+    public int     $points;
 
-    private int    $position;
+    public int     $position;
 
-    private string $vintage;
+    public string  $vintage;
+
+    public ?string $category;
+
+    public ?Carbon $version;
 
     public function __construct(int $points, int $position, string $vintage)
     {
@@ -42,6 +48,22 @@ class Point
     public function getVintage() : string
     {
         return $this->vintage;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCategory() : ?string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string|null $category
+     */
+    public function setCategory(?string $category) : void
+    {
+        $this->category = $category;
     }
 
 }

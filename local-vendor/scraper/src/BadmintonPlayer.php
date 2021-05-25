@@ -5,18 +5,11 @@ declare(strict_types = 1);
 namespace FlyCompany\Scraper;
 
 use Carbon\Carbon;
-use DiDom\Document;
-use DOMDocument;
 use FlyCompany\Scraper\Exception\NoPlayersException;
-use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
-use FlyCompany\TeamFight\Models\Category;
-use FlyCompany\TeamFight\Models\Player;
-use FlyCompany\TeamFight\Models\Squad;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BadmintonPlayer
@@ -112,6 +105,13 @@ class BadmintonPlayer
         return $teamFights;
     }
 
+    /**
+     * @param int $season
+     * @param int $clubId
+     *
+     * @return array|Team[]
+     * @throws \JsonException
+     */
     public function getClubTeams(int $season, int $clubId) : array
     {
         $params = [
@@ -139,6 +139,18 @@ class BadmintonPlayer
         return $this->parser->clubTeams($data["d"]['html']);
     }
 
+    /**
+     * @param int    $rankingListId
+     * @param int    $season
+     * @param string $clubId
+     * @param Carbon $rankingVersion
+     * @param        $pageIndex
+     * @param string $param
+     * @param string $gender
+     *
+     * @return string
+     * @throws \JsonException
+     */
     private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param, string $gender) : string
     {
         $params = [
@@ -201,13 +213,32 @@ class BadmintonPlayer
         for ($i = 0; $i < 100; $i++) {
             try {
                 $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
-                $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html));
+                $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
             } catch (NoPlayersException $exception) {
                 break;
             }
         }
 
         return $playersCollection;
+    }
+
+    /**
+     * @param int    $season
+     * @param string $clubId
+     * @param Carbon $rankingVersion
+     *
+     * @return array
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws \JsonException
+     */
+    public function getAllRankingListPlayers(int $season, string $clubId, Carbon $rankingVersion) : array
+    {
+        $rankingLists = [];
+        foreach (static::rankingLists() as $rankingList) {
+            $rankingLists[$rankingList] = $this->getRankingListPlayers($rankingList, $season, $clubId, $rankingVersion);
+        }
+
+        return $rankingLists;
     }
 
     private function getRankingListIdAndParams(string $rankingList) : array
@@ -295,6 +326,35 @@ class BadmintonPlayer
         return $this->parser->teamMatch($html);
     }
 
+    public function searchPlayer(int $clubId, string $badmintonId) : array
+    {
+        $params = [
+            "agegroupcontext"    => 0,
+            "agegroupid"         => "",
+            "callbackcontextkey" => $this->getToken(),
+            "clubid"             => (string)$clubId,
+            "gender"             => "",
+            "licenseonly"        => false,
+            "name"               => "",
+            "playernumber"       => $badmintonId,
+            "searchteam"         => false,
+            "selectfunction"     => "SPSel1",
+            "tournamentdate"     => "",
+        ];
+
+        $response = $this->client->post('SportsResults/Components/WebService1.asmx/SearchPlayer', [
+            'json' => $params,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+        $html = $data["d"]['html'];
+
+        return $this->parser->searchPlayer($html);
+    }
+
     /**
      * @return string
      */
@@ -318,6 +378,53 @@ class BadmintonPlayer
         $this->token = $key[1];
 
         return $this->token;
+    }
+
+    public static function calculateSeason(Carbon $currentTime) : int
+    {
+        if ($currentTime->month > 6) {
+            return $currentTime->year;
+        }
+
+        return $currentTime->year - 1;
+    }
+
+    public static function getCurrentSeason() : int
+    {
+        return static::calculateSeason(Carbon::now());
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function rankingLists() : array
+    {
+        return [
+            'DL',
+            'HL',
+            'HS',
+            'DS',
+            'HD',
+            'DD',
+            'MxD',
+            'MxH',
+        ];
+    }
+
+    public static function findGenderByRanking(string $ranking) : string
+    {
+        $genderRankingMapping = [
+            'DL'  => 'K',
+            'HL'  => 'M',
+            'HS'  => 'M',
+            'DS'  => 'K',
+            'HD'  => 'M',
+            'DD'  => 'K',
+            'MxD' => 'K',
+            'MxH' => 'M',
+        ];
+
+        return $genderRankingMapping[$ranking];
     }
 
 }

@@ -4,16 +4,20 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Scraper\Models;
 
-use FlyCompany\TeamFight\Models\Squad;
-
 class Team
 {
 
-    public string $name;
+    public ?string $name;
 
-    public Squad  $squad;
+    public ?string $leagueGroupId;
 
-    public function __construct(string $name, Squad $squad)
+    public ?string $ageGroupId;
+
+    public ?string $league;
+
+    public ?Squad  $squad;
+
+    public function __construct(string $name, ?Squad $squad = null)
     {
         $this->name = $name;
         $this->squad = $squad;

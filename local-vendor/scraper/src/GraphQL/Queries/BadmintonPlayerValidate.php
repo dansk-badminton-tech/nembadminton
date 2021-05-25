@@ -3,24 +3,18 @@
 
 namespace FlyCompany\Scraper\GraphQL\Queries;
 
-use App\Models\Teams;
-use FlyCompany\Scraper\BadmintonPlayer;
-use FlyCompany\TeamFight\Enricher;
-use FlyCompany\TeamFight\SquadManager;
+use FlyCompany\TeamFight\TeamValidator;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class BadmintonPlayerTeamFights
+class BadmintonPlayerValidate
 {
 
-    /**
-     * @var BadmintonPlayer
-     */
-    private BadmintonPlayer $scraper;
+    private TeamValidator $teamValidator;
 
-    public function __construct(BadmintonPlayer $scraper)
+    public function __construct(TeamValidator $teamValidator)
     {
-        $this->scraper = $scraper;
+        $this->teamValidator = $teamValidator;
     }
 
     /**
@@ -39,12 +33,8 @@ class BadmintonPlayerTeamFights
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $clubId = $args['clubId'];
-        $season = $args['season'];
-        $ageGroupId = $args['ageGroupId'];
-        $leagueGroupId = $args['leagueGroupId'];
-        $clubName = $args['clubName'];
 
-        return $this->scraper->getTeamFights($season, $clubId, $ageGroupId, $leagueGroupId, $clubName);
+
+        $this->teamValidator->validateSquads();
     }
 }

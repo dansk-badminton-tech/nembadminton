@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class Member
  *
- * @property string refId
- * @property string gender
+ * @property string  refId
+ * @property string  gender
+ * @property Point[] points
  * @package App\Models
  */
 class Member extends Model

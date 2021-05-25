@@ -1,28 +1,35 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[13],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js&":
-/*!************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/courts/Court.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n                query {\n                 clubs{\n                    id\n                    name1\n                  }\n                }\n               "]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.common.js");
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -35,85 +42,44 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'BadmintonPlayerClubs',
-  props: ['value'],
-  methods: {
-    handleInput: function handleInput(value) {
-      this.$emit('input', value);
+  name: "Court",
+  display: "Two Lists",
+  order: 1,
+  filters: {
+    filterNull: function filterNull(side) {
+      return side;
     }
   },
-  apollo: {
-    clubs: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject())
-    }
+  components: {
+    draggable: vuedraggable__WEBPACK_IMPORTED_MODULE_0___default.a
+  },
+  props: {
+    court: Object,
+    removePlayer: Function
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js&":
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js&":
 /*!*********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js& ***!
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _components_badminton_player_BadmintonPlayerClubs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/badminton-player/BadmintonPlayerClubs */ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue");
-function _templateObject5() {
-  var data = _taggedTemplateLiteral(["\n                        mutation badmintonPlayerTeamMatchImport($importInput: TeamMatchImportInput) {\n                          badmintonPlayerTeamMatchImport(input: $importInput)\n                        }"]);
+/* harmony import */ var _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/search-player/PlayerSearch */ "./resources/js/components/search-player/PlayerSearch.vue");
+/* harmony import */ var _components_search_club_ClubSearch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/search-club/ClubSearch */ "./resources/js/components/search-club/ClubSearch.vue");
+/* harmony import */ var _components_courts_Court__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/courts/Court */ "./resources/js/components/courts/Court.vue");
+/* harmony import */ var _PlayerList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PlayerList */ "./resources/js/views/PlayerList.vue");
+/* harmony import */ var _helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../helpers */ "./resources/js/helpers.js");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
-  _templateObject5 = function _templateObject5() {
-    return data;
-  };
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-  return data;
-}
-
-function _templateObject4() {
-  var data = _taggedTemplateLiteral(["\n                        query badmintonPlayerTeamMatch($badmintonInput: BadmintonPlayerTeamMatchInput) {\n                          badmintonPlayerTeamMatch(input: $badmintonInput) {\n                            guest {\n                              ...matcheClub\n                            }\n                            home{\n                              ...matcheClub\n                            }\n                          }\n                        }\n                        fragment matcheClub on ImportTeam {\n                              name\n                              squad {\n                                playerLimit\n                                categories {\n                                  category\n                                  name\n                                  players {\n                                    name\n                                  }\n                                }\n                              }\n                        }"]);
-
-  _templateObject4 = function _templateObject4() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n                query($input: BadmintonPlayerTeamFightsInput){\n                    badmintonPlayerTeamFights(input: $input){\n                        teams\n                        matchId\n                        gameTime\n                    }\n                }\n            "]);
-
-  _templateObject3 = function _templateObject3() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject2() {
-  var data = _taggedTemplateLiteral(["\n                query($input: BadmintonPlayerTeamsInput){\n                    badmintonPlayerTeams(input: $input){\n                        leagueGroupId\n                        ageGroupId\n                        name\n                        league\n                    }\n                }\n            "]);
-
-  _templateObject2 = function _templateObject2() {
-    return data;
-  };
-
-  return data;
-}
-
-function _templateObject() {
-  var data = _taggedTemplateLiteral([" query ($id: ID!){\n                  team(id: $id){\n                    id\n                    version\n                    gameDate\n                  }\n                }"]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 //
 //
@@ -132,228 +98,176 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "TeamFightImport",
+  name: "RoundsGenerator",
   components: {
-    BadmintonPlayerClubs: _components_badminton_player_BadmintonPlayerClubs__WEBPACK_IMPORTED_MODULE_1__["default"]
-  },
-  props: {
-    teamFightId: String
+    PlayerList: _PlayerList__WEBPACK_IMPORTED_MODULE_3__["default"],
+    Court: _components_courts_Court__WEBPACK_IMPORTED_MODULE_2__["default"],
+    ClubSearch: _components_search_club_ClubSearch__WEBPACK_IMPORTED_MODULE_1__["default"],
+    PlayerSearch: _components_search_player_PlayerSearch__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
     return {
-      gameDate: null,
       clubId: null,
-      leagueMatchId: null,
-      season: null,
-      version: null,
-      skipPlayers: true,
-      importing: false,
-      fetchingTeamMatch: false,
-      badmintonPlayerTeamMatch: false,
-      playerTeam: null,
-      teamFight: null
+      courts: [],
+      players: [],
+      onCourtPlayers: []
     };
   },
-  apollo: {
-    team: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject()),
-      variables: function variables() {
-        return {
-          id: this.teamFightId
-        };
-      },
-      fetchPolicy: "network-only",
-      result: function result(_ref) {
-        var data = _ref.data;
-        var date = new Date(data.team.version);
-        this.version = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-        date = new Date(data.team.gameDate);
-        this.gameDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-      }
-    },
-    badmintonPlayerTeams: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject2()),
-      variables: function variables() {
-        return {
-          input: {
-            clubId: this.clubId,
-            season: this.season
-          }
-        };
-      },
-      skip: function skip() {
-        return this.clubId === null || this.season === null;
-      }
-    },
-    badmintonPlayerTeamFights: {
-      query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject3()),
-      variables: function variables() {
-        return {
-          input: {
-            clubId: this.clubId,
-            season: this.season,
-            ageGroupId: this.playerTeam.ageGroupId,
-            leagueGroupId: this.playerTeam.leagueGroupId,
-            clubName: this.playerTeam.name
-          }
-        };
-      },
-      skip: function skip() {
-        return this.playerTeam === null;
-      }
-    }
-  },
   methods: {
-    fetchPlayers: function fetchPlayers() {
-      var _this = this;
+    selectClub: function selectClub(id) {
+      this.clubId = id;
+    },
+    addPlayer: function addPlayer(player) {
+      this.players.push(player);
+      this.shufflePlayers();
+    },
+    shufflePlayers: function shufflePlayers() {
+      var teams = Object(_helpers__WEBPACK_IMPORTED_MODULE_4__["chunk"])(this.players, 4);
 
-      this.fetchingTeamMatch = true;
-      this.$apollo.query({
-        query: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject4()),
-        variables: {
-          badmintonInput: {
-            "clubId": this.clubId,
-            "leagueMatchId": this.teamFight.matchId,
-            "season": this.season,
-            "version": this.version
-          }
+      var _iterator = _createForOfIteratorHelper(this.courts),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var court = _step.value;
+          var team = teams.shift();
+          court.left = [];
+          court.right = [];
+          court.left.push(Object(_helpers__WEBPACK_IMPORTED_MODULE_4__["defaultIfUndefined"])(team.shift(), {
+            id: 1,
+            name: '-'
+          }));
+          court.right.push(Object(_helpers__WEBPACK_IMPORTED_MODULE_4__["defaultIfUndefined"])(team.shift(), {
+            id: 2,
+            name: '-'
+          }));
+          court.left.push(Object(_helpers__WEBPACK_IMPORTED_MODULE_4__["defaultIfUndefined"])(team.shift(), {
+            id: 3,
+            name: '-'
+          }));
+          court.right.push(Object(_helpers__WEBPACK_IMPORTED_MODULE_4__["defaultIfUndefined"])(team.shift(), {
+            id: 4,
+            name: '-'
+          }));
         }
-      }).then(function (_ref2) {
-        var data = _ref2.data;
-        _this.badmintonPlayerTeamMatch = data.badmintonPlayerTeamMatch;
-      })["catch"](function (error) {
-        _this.$buefy.snackbar.open({
-          duration: 4000,
-          type: 'is-dagner',
-          message: 'Kunne ikke hente kamp'
-        });
-      })["finally"](function () {
-        _this.fetchingTeamMatch = false;
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    },
+    removePlayer: function removePlayer(court, player) {
+      var indexOfCourt = this.courts.indexOf(court);
+      var foundCourt = this.courts[indexOfCourt];
+      var indexLeft = foundCourt.left.indexOf(player);
+
+      if (indexLeft > -1) {
+        foundCourt.left[indexLeft] = {
+          id: indexLeft,
+          name: '-'
+        };
+      }
+
+      var indexRight = foundCourt.right.indexOf(player);
+
+      if (indexRight > -1) {
+        foundCourt.left[indexRight] = {
+          id: indexLeft,
+          name: '-'
+        };
+      }
+
+      this.courts[indexOfCourt] = foundCourt;
+      console.log(this.courts);
+    },
+    addCourt: function addCourt() {
+      if (typeof this.addCourt.count == 'undefined') {
+        this.addCourt.count = 0;
+      }
+
+      this.courts.push({
+        id: this.addCourt.count,
+        left: [{
+          id: 1,
+          name: '-'
+        }, {
+          id: 2,
+          name: '-'
+        }],
+        right: [{
+          id: 3,
+          name: '-'
+        }, {
+          id: 4,
+          name: '-'
+        }]
       });
-    },
-    importTeam: function importTeam(side) {
-      var _this2 = this;
-
-      this.importing = true;
-      this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_0___default()(_templateObject5()),
-        variables: {
-          importInput: {
-            team: this.teamFightId,
-            badmintonPlayerTeamMatch: {
-              clubId: this.clubId,
-              leagueMatchId: this.teamFight.matchId,
-              season: this.season,
-              version: this.version
-            },
-            side: side
-          }
-        }
-      }).then(function (_ref3) {
-        var data = _ref3.data;
-
-        _this2.resetTeamMatch();
-
-        _this2.$buefy.snackbar.open({
-          duration: 4000,
-          type: 'is-success',
-          message: 'Importering færdig'
-        });
-      })["catch"](function (error) {
-        _this2.$buefy.snackbar.open({
-          duration: 4000,
-          type: 'is-dagner',
-          message: 'Kunne ikke importer'
-        });
-      })["finally"](function () {
-        _this2.importing = false;
-      });
-    },
-    resetTeamMatch: function resetTeamMatch() {
-      this.badmintonPlayerTeamMatch = false;
-    },
-    resetAll: function resetAll() {
-      this.playerTeam = null;
-      this.teamFight = null;
-      this.resetTeamMatch();
+      this.addCourt.count++;
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c&":
-/*!****************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c& ***!
-  \****************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.border[data-v-46d7ceaf] {\n    border: 2px solid #73AD21;\n}\n.round-corners[data-v-46d7ceaf] {\n    border-radius: 25px;\n    border: 2px solid #73AD21;\n    padding: 20px;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true& ***!
+  \***************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -365,23 +279,90 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "b-select",
-    {
-      attrs: {
-        loading: _vm.$apollo.queries.clubs.loading,
-        expanded: "",
-        placeholder: "Vælge klub"
-      },
-      on: { input: _vm.handleInput }
-    },
-    _vm._l(_vm.clubs, function(option) {
-      return _c("option", { key: option.id, domProps: { value: option.id } }, [
-        _vm._v("\n        " + _vm._s(option.name1) + "\n    ")
-      ])
-    }),
-    0
-  )
+  return _c("div", { staticClass: "row" }, [
+    _c(
+      "div",
+      { staticClass: "tile is-ancestor" },
+      [
+        _c(
+          "draggable",
+          {
+            staticClass: "tile is-parent is-vertical",
+            attrs: {
+              list: _vm.court.left,
+              swap: true,
+              group: "courts",
+              tag: "div"
+            }
+          },
+          _vm._l(_vm.court.left, function(player) {
+            return _c(
+              "article",
+              { key: player.id, staticClass: "tile is-child box" },
+              [
+                _c("p", { staticClass: "subtitle" }, [
+                  _vm._v(_vm._s(player.name))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "b-button",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.removePlayer(_vm.court, player)
+                      }
+                    }
+                  },
+                  [_vm._v("Slet")]
+                )
+              ],
+              1
+            )
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c(
+          "draggable",
+          {
+            staticClass: "tile is-parent is-vertical",
+            attrs: {
+              list: _vm.court.right,
+              swap: true,
+              group: "courts",
+              tag: "div"
+            }
+          },
+          _vm._l(_vm.court.right, function(player) {
+            return _c(
+              "article",
+              { key: player.id, staticClass: "tile is-child box" },
+              [
+                _c("p", { staticClass: "subtitle" }, [
+                  _vm._v(_vm._s(player.name))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "b-button",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.removePlayer(_vm.court, player)
+                      }
+                    }
+                  },
+                  [_vm._v("Slet")]
+                )
+              ],
+              1
+            )
+          }),
+          0
+        )
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -390,9 +371,9 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e&":
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df&":
 /*!*************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e& ***!
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df& ***!
   \*************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -406,395 +387,45 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "section",
+    "div",
     [
-      _c(
-        "b-button",
-        {
-          attrs: {
-            tag: "router-link",
-            type: "is-link",
-            to: "/team-fight/" + this.teamFightId + "/edit"
-          }
-        },
-        [_vm._v("\n        Tilbage\n    ")]
-      ),
+      _c("div", { staticClass: "columns" }, [
+        _c(
+          "div",
+          { staticClass: "column" },
+          [_c("ClubSearch", { attrs: { "select-club": _vm.selectClub } })],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "column" },
+          [
+            _c("PlayerSearch", {
+              attrs: {
+                "add-player": _vm.addPlayer,
+                "club-id": _vm.clubId,
+                "exclude-players": this.players
+              }
+            })
+          ],
+          1
+        )
+      ]),
       _vm._v(" "),
-      _c("div", { staticClass: "m-5" }),
+      _c("b-button", { on: { click: _vm.addCourt } }, [_vm._v("Tilføj Bane")]),
       _vm._v(" "),
       _c(
-        "form",
-        {
-          on: {
-            submit: function($event) {
-              $event.preventDefault()
-            }
-          }
-        },
-        [
-          _c("div", { staticClass: "columns" }, [
-            _c(
-              "div",
-              { staticClass: "column" },
-              [
-                _c(
-                  "b-field",
-                  { attrs: { label: "Spille dato" } },
-                  [
-                    _c("b-input", {
-                      attrs: { disabled: "" },
-                      model: {
-                        value: _vm.gameDate,
-                        callback: function($$v) {
-                          _vm.gameDate = $$v
-                        },
-                        expression: "gameDate"
-                      }
-                    })
-                  ],
-                  1
-                )
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "column" },
-              [
-                _c(
-                  "b-field",
-                  { attrs: { label: "Ranglist version" } },
-                  [
-                    _c("b-input", {
-                      attrs: { disabled: "" },
-                      model: {
-                        value: _vm.version,
-                        callback: function($$v) {
-                          _vm.version = $$v
-                        },
-                        expression: "version"
-                      }
-                    })
-                  ],
-                  1
-                )
-              ],
-              1
-            )
-          ]),
-          _vm._v(" "),
-          _c(
-            "b-field",
-            { attrs: { label: "Klub" } },
-            [
-              _c("BadmintonPlayerClubs", {
-                on: { input: _vm.resetAll },
-                model: {
-                  value: _vm.clubId,
-                  callback: function($$v) {
-                    _vm.clubId = $$v
-                  },
-                  expression: "clubId"
-                }
-              })
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-field",
-            { attrs: { label: "Sæson" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: { expanded: "", placeholder: "Vælge sæson" },
-                  model: {
-                    value: _vm.season,
-                    callback: function($$v) {
-                      _vm.season = $$v
-                    },
-                    expression: "season"
-                  }
-                },
-                [
-                  _c("option", { attrs: { value: "2020" } }, [_vm._v("2020")]),
-                  _vm._v(" "),
-                  _c("option", { attrs: { value: "2021" } }, [_vm._v("2021")])
-                ]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-field",
-            { attrs: { label: "Hold" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: {
-                    loading: _vm.$apollo.queries.badmintonPlayerTeams.loading,
-                    expanded: "",
-                    placeholder: "Vælge hold"
-                  },
-                  on: { input: _vm.resetTeamMatch },
-                  model: {
-                    value: _vm.playerTeam,
-                    callback: function($$v) {
-                      _vm.playerTeam = $$v
-                    },
-                    expression: "playerTeam"
-                  }
-                },
-                _vm._l(_vm.badmintonPlayerTeams, function(option) {
-                  return _c(
-                    "option",
-                    { key: option.leagueGroupID, domProps: { value: option } },
-                    [
-                      _vm._v(
-                        "\n                    " +
-                          _vm._s(option.name) +
-                          " - " +
-                          _vm._s(option.league) +
-                          "\n                "
-                      )
-                    ]
-                  )
-                }),
-                0
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-field",
-            { attrs: { label: "Kamp" } },
-            [
-              _c(
-                "b-select",
-                {
-                  attrs: {
-                    loading:
-                      _vm.$apollo.queries.badmintonPlayerTeamFights.loading,
-                    expanded: "",
-                    placeholder: "Vælge kamp"
-                  },
-                  on: { input: _vm.resetTeamMatch },
-                  model: {
-                    value: _vm.teamFight,
-                    callback: function($$v) {
-                      _vm.teamFight = $$v
-                    },
-                    expression: "teamFight"
-                  }
-                },
-                _vm._l(_vm.badmintonPlayerTeamFights, function(option) {
-                  return _c(
-                    "option",
-                    { key: option.matchId, domProps: { value: option } },
-                    [
-                      _vm._v(
-                        "\n                    " +
-                          _vm._s(option.gameTime) +
-                          " - " +
-                          _vm._s(option.teams.join(" - ")) +
-                          "\n                "
-                      )
-                    ]
-                  )
-                }),
-                0
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "b-button",
-            { attrs: { type: "submit" }, on: { click: _vm.fetchPlayers } },
-            [_vm._v("Hent kamp")]
-          )
-        ],
+        "div",
+        { staticClass: "mt-3" },
+        _vm._l(_vm.courts, function(court) {
+          return _c("Court", {
+            key: court.id,
+            attrs: { court: court, "remove-player": _vm.removePlayer }
+          })
+        }),
         1
-      ),
-      _vm._v(" "),
-      _c("b-loading", {
-        model: {
-          value: _vm.fetchingTeamMatch,
-          callback: function($$v) {
-            _vm.fetchingTeamMatch = $$v
-          },
-          expression: "fetchingTeamMatch"
-        }
-      }),
-      _vm._v(" "),
-      _vm.badmintonPlayerTeamMatch
-        ? _c("div", { staticClass: "columns mt-5" }, [
-            _c(
-              "div",
-              { staticClass: "column is-half" },
-              [
-                _c("h1", { staticClass: "title" }, [
-                  _vm._v(_vm._s(_vm.badmintonPlayerTeamMatch.home.name))
-                ]),
-                _vm._v(" "),
-                _c(
-                  "b-button",
-                  {
-                    staticClass: "is-primary",
-                    attrs: { loading: _vm.importing, expanded: "" },
-                    on: {
-                      click: function($event) {
-                        return _vm.importTeam("HOME")
-                      }
-                    }
-                  },
-                  [_vm._v("Import")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "b-table",
-                  {
-                    attrs: {
-                      data: _vm.badmintonPlayerTeamMatch.home.squad.categories
-                    }
-                  },
-                  [
-                    _c("b-table-column", {
-                      attrs: { field: "name", label: "Kategori" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(props.row.name) +
-                                    "\n                "
-                                )
-                              ]
-                            }
-                          }
-                        ],
-                        null,
-                        false,
-                        1702630298
-                      )
-                    }),
-                    _vm._v(" "),
-                    _c("b-table-column", {
-                      attrs: { field: "players", label: "Spillere" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return _vm._l(props.row.players, function(
-                                player
-                              ) {
-                                return _c("p", [_vm._v(_vm._s(player.name))])
-                              })
-                            }
-                          }
-                        ],
-                        null,
-                        false,
-                        3371718981
-                      )
-                    })
-                  ],
-                  1
-                )
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "column is-half" },
-              [
-                _c("h1", { staticClass: "title" }, [
-                  _vm._v(_vm._s(_vm.badmintonPlayerTeamMatch.guest.name))
-                ]),
-                _vm._v(" "),
-                _c(
-                  "b-button",
-                  {
-                    staticClass: "is-primary",
-                    attrs: { loading: _vm.importing, expanded: "" },
-                    on: {
-                      click: function($event) {
-                        return _vm.importTeam("GUEST")
-                      }
-                    }
-                  },
-                  [_vm._v("Import")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "b-table",
-                  {
-                    attrs: {
-                      data: _vm.badmintonPlayerTeamMatch.guest.squad.categories
-                    }
-                  },
-                  [
-                    _c("b-table-column", {
-                      attrs: { field: "name", label: "Kategori" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(props.row.name) +
-                                    "\n                "
-                                )
-                              ]
-                            }
-                          }
-                        ],
-                        null,
-                        false,
-                        1702630298
-                      )
-                    }),
-                    _vm._v(" "),
-                    _c("b-table-column", {
-                      attrs: { field: "players", label: "Spillere" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return _vm._l(props.row.players, function(
-                                player
-                              ) {
-                                return _c("p", [_vm._v(_vm._s(player.name))])
-                              })
-                            }
-                          }
-                        ],
-                        null,
-                        false,
-                        3371718981
-                      )
-                    })
-                  ],
-                  1
-                )
-              ],
-              1
-            )
-          ])
-        : _vm._e()
+      )
     ],
     1
   )
@@ -806,18 +437,20 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/badminton-player/BadmintonPlayerClubs.vue ***!
-  \***************************************************************************/
+/***/ "./resources/js/components/courts/Court.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/courts/Court.vue ***!
+  \**************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c& */ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c&");
-/* harmony import */ var _BadmintonPlayerClubs_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BadmintonPlayerClubs.vue?vue&type=script&lang=js& */ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Court.vue?vue&type=template&id=46d7ceaf&scoped=true& */ "./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true&");
+/* harmony import */ var _Court_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Court.vue?vue&type=script&lang=js& */ "./resources/js/components/courts/Court.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& */ "./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -825,67 +458,83 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BadmintonPlayerClubs_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _Court_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  null,
+  "46d7ceaf",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/badminton-player/BadmintonPlayerClubs.vue"
+component.options.__file = "resources/js/components/courts/Court.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************!*\
-  !*** ./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************/
+/***/ "./resources/js/components/courts/Court.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/courts/Court.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BadmintonPlayerClubs_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./BadmintonPlayerClubs.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BadmintonPlayerClubs_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Court.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c&":
-/*!**********************************************************************************************************!*\
-  !*** ./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c& ***!
-  \**********************************************************************************************************/
+/***/ "./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&":
+/*!***********************************************************************************************************!*\
+  !*** ./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& ***!
+  \***********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--6-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--6-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=style&index=0&id=46d7ceaf&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_style_index_0_id_46d7ceaf_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
+
+/***/ }),
+
+/***/ "./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true& ***!
+  \*********************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/badminton-player/BadmintonPlayerClubs.vue?vue&type=template&id=e0d0687c&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Court.vue?vue&type=template&id=46d7ceaf&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/courts/Court.vue?vue&type=template&id=46d7ceaf&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BadmintonPlayerClubs_vue_vue_type_template_id_e0d0687c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Court_vue_vue_type_template_id_46d7ceaf_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightImport.vue":
+/***/ "./resources/js/views/RoundsGenerator.vue":
 /*!************************************************!*\
-  !*** ./resources/js/views/TeamFightImport.vue ***!
+  !*** ./resources/js/views/RoundsGenerator.vue ***!
   \************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TeamFightImport.vue?vue&type=template&id=c068f72e& */ "./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e&");
-/* harmony import */ var _TeamFightImport_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TeamFightImport.vue?vue&type=script&lang=js& */ "./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js&");
+/* harmony import */ var _RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RoundsGenerator.vue?vue&type=template&id=610087df& */ "./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df&");
+/* harmony import */ var _RoundsGenerator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RoundsGenerator.vue?vue&type=script&lang=js& */ "./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -895,9 +544,9 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _TeamFightImport_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _RoundsGenerator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -907,38 +556,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/views/TeamFightImport.vue"
+component.options.__file = "resources/js/views/RoundsGenerator.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js&":
+/***/ "./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js&":
 /*!*************************************************************************!*\
-  !*** ./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js& ***!
+  !*** ./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js& ***!
   \*************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightImport_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightImport.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightImport.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightImport_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundsGenerator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./RoundsGenerator.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/RoundsGenerator.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundsGenerator_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e&":
+/***/ "./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df&":
 /*!*******************************************************************************!*\
-  !*** ./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e& ***!
+  !*** ./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df& ***!
   \*******************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TeamFightImport.vue?vue&type=template&id=c068f72e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/TeamFightImport.vue?vue&type=template&id=c068f72e&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./RoundsGenerator.vue?vue&type=template&id=610087df& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/RoundsGenerator.vue?vue&type=template&id=610087df&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TeamFightImport_vue_vue_type_template_id_c068f72e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundsGenerator_vue_vue_type_template_id_610087df___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
+use App\Models\Member;
 use App\Models\Point;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
@@ -16,6 +17,7 @@ use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Symfony\Component\Serializer\Serializer;
 
@@ -78,22 +80,27 @@ class UpdateTeams
         $teamId = $args['id'];
         $version = $args['version'];
 
-        /** @var SquadPoint[] $squadPoints */
-        $squadPoints = SquadPoint::query()->with('member')->whereHas('member.category.squad.team', function (Builder $query) use ($context, $teamId) {
-            $query->where('id', $teamId);
-            $query->where('user_id', $context->user()->getAuthIdentifier());
+        /** @var SquadMember[] $members */
+        $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($context, $teamId) {
+            $builder->where('id', $teamId);
+            $builder->where('user_id', $context->user()->getAuthIdentifier());
         })->get();
 
-        foreach ($squadPoints as $squadPoint) {
-            $point = Point::query()
-                          ->where('version', $version)
-                          ->where('category', $squadPoint->category)
-                          ->whereHas('member', function (Builder $query) use ($squadPoint) {
-                              $query->where('refId', $squadPoint->member->member_ref_id);
-                          })->first();
-            if ($point !== null) {
+        foreach ($members as $member) {
+            $member->points()->delete();
+            /** @var Point[] $points */
+            $points = Point::query()
+                           ->where('version', $version)
+                           ->whereHas('member', function (Builder $query) use ($member) {
+                               $query->where('refId', $member->member_ref_id);
+                           })->get();
+            foreach ($points as $point) {
+                $squadPoint = new SquadPoint();
                 $squadPoint->points = $point->points;
                 $squadPoint->position = $point->position;
+                $squadPoint->category = $point->category;
+                $squadPoint->points = $point->points;
+                $squadPoint->squad_member_id = $member->id;
                 $squadPoint->saveOrFail();
             }
         }

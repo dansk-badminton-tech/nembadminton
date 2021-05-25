@@ -104,7 +104,7 @@
         </div>
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
             <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
-                       :playing-to-high="playingToHighList" :teams="team.squads" @end="validTeams"/>
+                       :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList" :teams="team.squads" @end="validTeams"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
@@ -154,6 +154,7 @@ export default {
     data() {
         return {
             playingToHighList: [],
+            playingToHighSquadList: [],
             teamCount: 1,
             players: [],
             showShareLink: false,
@@ -253,6 +254,29 @@ export default {
                 })
         },
         validTeams() {
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation ($input: UpdateTeamInput!){
+                          validateSquad(input: $input){
+                            name
+                            id
+                          }
+                        }
+                    `,
+                    variables: {
+                        input: {
+                            id: this.teamFightId,
+                            name: this.team.name,
+                            version: this.version,
+                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
+                            squads: omitDeep(this.team.squads, ['__typename'])
+                        }
+                    }
+                })
+                .then(({data}) => {
+                    this.playingToHighSquadList = data.validateSquad;
+                })
             this.$apollo.mutate(
                 {
                     mutation: gql`

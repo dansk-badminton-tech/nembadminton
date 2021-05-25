@@ -10,12 +10,8 @@ extend type Mutation {
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
     validate(input: UpdateTeamInput! @spread) : [PlayingToHigh!]! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validate")
+    validateSquad(input: UpdateTeamInput! @spread) : [PlayingToHigh!]! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquad")
     updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
-}
-
-type PlayingToHigh{
-    name: String!
-    id: ID!
 }
 
 input CreateTeamInput {

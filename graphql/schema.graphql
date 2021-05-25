@@ -12,4 +12,5 @@ type Mutation
 #import teams.graphql
 #import subscription.graphql
 #import stats.graphql
-#import import.graphql
+#import badmintonplayer.graphql
+#import validate.graphql

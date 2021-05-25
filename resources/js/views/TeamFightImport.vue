@@ -29,24 +29,10 @@
                 </b-select>
             </b-field>
             <b-field label="Hold">
-                <b-select v-model="playerTeam" :loading="$apollo.queries.badmintonPlayerTeams.loading" expanded placeholder="Vælge hold" @input="resetTeamMatch">
-                    <option
-                        v-for="option in badmintonPlayerTeams"
-                        :key="option.leagueGroupID"
-                        :value="option">
-                        {{ option.name }} - {{ option.league }}
-                    </option>
-                </b-select>
+                <BadmintonPlayerTeams v-model="playerTeam" :clubId="clubId" :season="season" @input="resetTeamMatch"/>
             </b-field>
             <b-field label="Kamp">
-                <b-select v-model="teamFight" :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @input="resetTeamMatch">
-                    <option
-                        v-for="option in badmintonPlayerTeamFights"
-                        :key="option.matchId"
-                        :value="option">
-                        {{ option.gameTime }} - {{ option.teams.join(' - ') }}
-                    </option>
-                </b-select>
+                <BadmintonPlayerTeamFights v-model="teamFight" :clubId="clubId" :player-team="playerTeam" :season="season" @input="resetTeamMatch"/>
             </b-field>
             <b-button type="submit" @click="fetchPlayers">Hent kamp</b-button>
         </form>
@@ -83,10 +69,12 @@
 <script>
 import gql from "graphql-tag"
 import BadmintonPlayerClubs from "../components/badminton-player/BadmintonPlayerClubs";
+import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayerTeams";
+import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
 
 export default {
     name: "TeamFightImport",
-    components: {BadmintonPlayerClubs},
+    components: {BadmintonPlayerTeamFights, BadmintonPlayerTeams, BadmintonPlayerClubs},
     props: {
         teamFightId: String
     },
@@ -126,54 +114,6 @@ export default {
                 date = new Date(data.team.gameDate);
                 this.gameDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
             }
-        },
-        badmintonPlayerTeams: {
-            query: gql`
-                query($input: BadmintonPlayerTeamsInput){
-                    badmintonPlayerTeams(input: $input){
-                        leagueGroupId
-                        ageGroupId
-                        name
-                        league
-                    }
-                }
-            `,
-            variables() {
-                return {
-                    input: {
-                        clubId: this.clubId,
-                        season: this.season
-                    }
-                }
-            },
-            skip() {
-                return this.clubId === null || this.season === null
-            }
-        },
-        badmintonPlayerTeamFights: {
-            query: gql`
-                query($input: BadmintonPlayerTeamFightsInput){
-                    badmintonPlayerTeamFights(input: $input){
-                        teams
-                        matchId
-                        gameTime
-                    }
-                }
-            `,
-            variables() {
-                return {
-                    input: {
-                        clubId: this.clubId,
-                        season: this.season,
-                        ageGroupId: this.playerTeam.ageGroupId,
-                        leagueGroupId: this.playerTeam.leagueGroupId,
-                        clubName: this.playerTeam.name
-                    }
-                }
-            },
-            skip() {
-                return this.playerTeam === null
-            }
         }
     },
     methods: {
@@ -207,10 +147,10 @@ export default {
                         }`,
                     variables: {
                         badmintonInput: {
-                            "clubId": this.clubId,
-                            "leagueMatchId": this.teamFight.matchId,
-                            "season": this.season,
-                            "version": this.version
+                            clubId: this.clubId,
+                            leagueMatchId: this.teamFight.matchId,
+                            season: this.season,
+                            version: this.version
                         }
                     }
                 })

@@ -27,7 +27,7 @@
                                     icon="bars"
                                     size="is-small">
                                 </b-icon>
-                                {{ player.name }} ({{ findPositions(player, 'N') }})
+                                {{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
                             </p>
                             <b-dropdown aria-role="list" class="is-pulled-right">
                                 <b-button v-if="category.players.length && !viewMode" slot="trigger" icon-left="ellipsis-v" size="is-small"></b-button>
@@ -70,6 +70,10 @@ export default {
             type: Array,
             default: []
         },
+        playingToHighInSquad: {
+            type: Array,
+            default: []
+        },
         teams: {
             type: Array,
             default: []
@@ -98,6 +102,13 @@ export default {
                     base = {
                         ...{
                             'has-background-warning': true
+                        }, ...base
+                    }
+                }
+                if (this.playingToHighInSquad.find(toHighPlayer => toHighPlayer.id === player.id)) {
+                    base = {
+                        ...{
+                            'has-background-danger': true
                         }, ...base
                     }
                 }

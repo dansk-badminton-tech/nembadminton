@@ -14,6 +14,10 @@
                 <b-icon icon="hand-rock"></b-icon>
                 <span class="nav-item-span">Mine Holdkampe</span>
             </b-navbar-item>
+            <b-navbar-item :to="{ path: '/team-fight/check' }" tag="router-link">
+                <b-icon icon="hand-rock"></b-icon>
+                <span class="nav-item-span">Tjek holdkamp</span>
+            </b-navbar-item>
         </template>
         <template slot="end">
             <b-navbar-item v-if="!$apollo.loading && !me" tag="div">

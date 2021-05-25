@@ -15,4 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('notifications/{id}/dismiss', [NotificationController::class, 'dismiss']);
+Route::get('php-info', function () {
+    if (app()->environment('local')) {
+        phpinfo();
+    }
+});
 Route::get('/{any}', 'SpaController@index')->where('any', '.*');

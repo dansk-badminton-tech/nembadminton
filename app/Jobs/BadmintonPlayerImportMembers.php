@@ -55,6 +55,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
         $now->setDay(1);
         $season = $this->calculateSeason($now);
         foreach ($this->clubIds as $clubId) {
+            /** @var \App\Models\Club $clubModel */
             $clubModel = \App\Models\Club::query()->where(['id' => $clubId])->firstOrFail();
             \FlyCompany\Club\Log::createLog((int)$clubId, "Begynder importering af medlemmer fra niveau ranglisten fra sæson $season.", 'member-importer');
             $syncIds = [];
@@ -64,7 +65,6 @@ class BadmintonPlayerImportMembers implements ShouldQueue
                     $gender = $rankingList === 'HL'
                         ? 'M'
                         : 'K';
-                    /** @var \App\Models\Club $clubModel */
                     $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $clubId, $starting);
 
                     foreach ($playersCollection as $player) {
@@ -72,9 +72,9 @@ class BadmintonPlayerImportMembers implements ShouldQueue
                             ? null
                             : $rankingList;
 
-                        $player->setGender($gender);
-                        $member = $memberManager->addOrUpdateMember($player->getRefId(), $player->getName(), $player->getGender());
-                        foreach ($player->getPoints() as $point) {
+                        $player->gender = $gender;
+                        $member = $memberManager->addOrUpdateMember($player->refId, $player->name, $player->gender);
+                        foreach ($player->points as $point) {
                             $pointsManager->addPointsByMember($member, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
                         }
                         $syncIds[] = $member->id;

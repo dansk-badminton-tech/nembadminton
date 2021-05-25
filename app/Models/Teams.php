@@ -13,9 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * @property string name
- * @property string id
- * @property Carbon version
+ * @property string  name
+ * @property string  id
+ * @property Carbon  version
+ * @property Squad[] squads
  */
 class Teams extends Model
 {
