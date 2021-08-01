@@ -119,7 +119,7 @@ const router = new VueRouter(
                         name: 'check-team-fight',
                         component: () => import("./views/CheckTeamFight"),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Tjek holdkamps runde'
                         }
                     }
