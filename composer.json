@@ -32,6 +32,7 @@
         "mll-lab/graphql-php-scalars": "^3.1",
         "mll-lab/laravel-graphql-playground": "^2.4",
         "nuwave/lighthouse": "^4.17",
+        "phpdocumentor/reflection-docblock": "^5.2",
         "symfony/property-access": "^5.2",
         "symfony/property-info": "^5.2",
         "symfony/serializer": "^5.2"
