@@ -108,3 +108,7 @@ export function extractErrors(graphqlErrors) {
     }
     return errors;
 }
+
+export function isPlayingToHigh(playingToHighPlayers, player){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id) !== undefined;
+}

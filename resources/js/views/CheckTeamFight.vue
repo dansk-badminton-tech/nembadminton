@@ -67,7 +67,14 @@
                         {{ props.row.name }}
                     </b-table-column>
                     <b-table-column v-slot="props" field="players" label="Spillere">
-                        <p v-for="player in props.row.players" v-bind:class="highlight(player)">{{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
+                        <b-tooltip
+                            v-for="player in props.row.players"
+                            :key="player.name+props.row.category"
+                            :label="resolveLabel(player)"
+                            :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player)"
+                            multilined>
+                            <p v-bind:class="highlight(player)">{{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
+                        </b-tooltip>
                     </b-table-column>
                 </b-table>
             </div>
@@ -81,7 +88,7 @@ import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayer
 import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
 import omitDeep from "omit-deep";
-import {findPositions} from "../helpers";
+import {findPositions, isPlayingToHigh} from "../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import Draggable from "vuedraggable";
 
@@ -105,19 +112,35 @@ export default {
         }
     },
     methods: {
+        resolveLabel(player){
+            let msg = ""
+            if(this.isPlayingToHigh(player)){
+                msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
+            }
+            if(this.isPlayingToHighInSquad(player)){
+                msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
+            }
+            return msg
+        },
+        isPlayingToHigh(player){
+            return isPlayingToHigh(this.playingToHigh, player);
+        },
+        isPlayingToHighInSquad(player){
+            return isPlayingToHigh(this.playingToHighInSquad, player);
+        },
         nextStep() {
             this.activeStep = 1;
         },
         highlight: function (player) {
             let base = {}
-            if (this.playingToHigh.find(toHighPlayer => toHighPlayer.name === player.name)) {
+            if (isPlayingToHigh(this.playingToHigh, player)) {
                 base = {
                     ...{
                         'has-background-warning': true
                     }, ...base
                 }
             }
-            if (this.playingToHighInSquad.find(toHighPlayer => toHighPlayer.name === player.name)) {
+            if (isPlayingToHigh(this.playingToHighInSquad, player)) {
                 base = {
                     ...{
                         'has-background-danger': true
