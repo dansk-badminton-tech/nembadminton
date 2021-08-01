@@ -91,7 +91,12 @@ class TeamValidator
         return $validationMapping;
     }
 
-    public function validateSquad(Squad $squad)
+    /**
+     * @param Squad $squad
+     *
+     * @return array
+     */
+    public function validateSquad(Squad $squad) : array
     {
         $limit = 50;
         $limitDouble = 100;
@@ -122,17 +127,21 @@ class TeamValidator
                 $playersInCategory = $this->getPlayersByCategory($squad->categories, $category);
                 while ($playersInCategory->count() > 1) {
                     $belowPlayer = $playersInCategory->pop();
-                    $belowPlayerPoints = $this->getPlayerCategoryPoint($belowPlayer, $category);
-                    /** @var Player $belowPlayer */
-                    foreach ($playersInCategory as $abovePlayer) {
-                        $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
-                        if ($belowPlayerPoints > $abovePlayerPoints + $limit) {
-                            $playingToHigh[] = [
-                                'id'    => $abovePlayer->id,
-                                'refId' => $abovePlayer->refId,
-                                'name'  => $abovePlayer->name,
-                            ];
+                    try {
+                        $belowPlayerPoints = $this->getPlayerCategoryPoint($belowPlayer, $category);
+                        /** @var Player $belowPlayer */
+                        foreach ($playersInCategory as $abovePlayer) {
+                            $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
+                            if ($belowPlayerPoints > $abovePlayerPoints + $limit) {
+                                $playingToHigh[] = [
+                                    'id'    => $abovePlayer->id,
+                                    'refId' => $abovePlayer->refId,
+                                    'name'  => $abovePlayer->name,
+                                ];
+                            }
                         }
+                    } catch (PointNotFoundInCategoryException $exception) {
+                        continue;
                     }
                 }
             }
@@ -226,7 +235,7 @@ class TeamValidator
                 return (int)$point->points;
             }
         }
-        throw new \RuntimeException('Bad lucky');
+        throw new PointNotFoundInCategoryException("Could not find points in '{$category}' for player '{$player->name}'");
     }
 
     private function getRankingCategory(string $category, string $gender)

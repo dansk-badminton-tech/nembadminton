@@ -11,7 +11,7 @@ extend type Query{
     ): [Club!]! @paginate(defaultCount: 10)
     members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name"])): [Member!]! @guard @paginate(defaultCount: 20, scopes: ["myClub"])
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
-    clubs: [Club!]! @all
+    clubs: [Club!]! @all(scopes: ["OrderByName"])
     logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
 }
 

@@ -1,17 +1,28 @@
-<template xmlns="http://www.w3.org/1999/html">
+<template>
     <fragment>
         <section class="hero is-info is-fullheight">
             <div class="hero-head">
                 <TopMenu/>
             </div>
             <div class="hero-body">
-                <div class="container has-text-centered">
-                    <p class="title">
-                        Badminton værktøjskassen
-                    </p>
-                    <p class="subtitle">
-                        Gør din oplevelse med badminton nemmere
-                    </p>
+                <div class="container">
+                    <div class="columns is-vcentered">
+                        <div class="column is-two-fifths">
+                            <h1 class="title is-1">Hurtig tjek din holdopstilling</h1>
+                            <h2 class="subtitle">Med data direkte fra badmintonplayer.dk, kan du på få minutter tjekke om dit hold overholder rangliste reglerne</h2>
+                            <b-button
+                                tag="router-link"
+                                to="/team-fight/check"
+                                type="is-success is-light is-link">
+                                Tjek holdopstilling
+                            </b-button>
+                        </div>
+                        <div class="column">
+                            <figure class="image">
+                                <img alt="" src="../../assets/teamfight-landing-1.png">
+                            </figure>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

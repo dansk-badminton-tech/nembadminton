@@ -1,48 +1,10 @@
 /*!
- * get-value <https://github.com/jonschlinkert/get-value>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
+ * Chart.js v2.9.4
+ * https://www.chartjs.org
+ * (c) 2020 Chart.js Contributors
+ * Released under the MIT License
  */
 
-/*!
- * has-value <https://github.com/jonschlinkert/has-value>
- *
- * Copyright (c) 2014-2016, Jon Schlinkert.
- * Licensed under the MIT License.
- */
+//! moment.js
 
-/*!
- * has-values <https://github.com/jonschlinkert/has-values>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-/*!
- * unset-value <https://github.com/jonschlinkert/unset-value>
- *
- * Copyright (c) 2015, 2017, Jon Schlinkert.
- * Released under the MIT License.
- */
+//! moment.js locale configuration

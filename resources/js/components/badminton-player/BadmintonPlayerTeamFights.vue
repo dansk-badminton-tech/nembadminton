@@ -17,7 +17,7 @@ export default {
     props: ['value', 'clubId', 'season', 'playerTeam'],
     methods: {
         handleInput(value) {
-            this.$emit('input', value)
+            this.$emit('input', value, this.playerTeam)
         }
     },
     apollo: {

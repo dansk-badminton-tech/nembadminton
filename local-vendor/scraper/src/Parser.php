@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types = 1);
 
 namespace FlyCompany\Scraper;
 
@@ -45,7 +45,7 @@ class Parser
                 foreach ($tr->find('td.matchno') as $td) {
                     $data['matchId'] = $td->text();
                 }
-                $data['gameTime'] = $this->findTime($tr->find('td.time')[0]);
+                $data['gameTime'] = $this->findTime((string)$tr->find('td.time')[0]);
                 $teams[] = $data;
             }
         }
@@ -165,7 +165,7 @@ class Parser
             $player = new Player();
             $player->name = $name;
             $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
-            $player->points = [new Point($points, $position, $vintage)];
+            $player->points = [new Point((int)$points, (int)$position, $vintage)];
             $player->refId = $refId;
             $playersCollection[] = $player;
         }

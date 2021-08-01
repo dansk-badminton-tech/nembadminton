@@ -1,33 +1,19 @@
 (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[17],{
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/PlayerStats.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/PlayerStats.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_badminton_player_BadmintonPlayerClubs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/badminton-player/BadmintonPlayerClubs */ "./resources/js/components/badminton-player/BadmintonPlayerClubs.vue");
-/* harmony import */ var _components_badminton_player_BadmintonPlayerTeams__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/badminton-player/BadmintonPlayerTeams */ "./resources/js/components/badminton-player/BadmintonPlayerTeams.vue");
-/* harmony import */ var _components_badminton_player_BadmintonPlayerTeamFights__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/badminton-player/BadmintonPlayerTeamFights */ "./resources/js/components/badminton-player/BadmintonPlayerTeamFights.vue");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
-/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! omit-deep */ "./node_modules/omit-deep/index.js");
-/* harmony import */ var omit_deep__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(omit_deep__WEBPACK_IMPORTED_MODULE_4__);
-function _templateObject2() {
-  var data = _taggedTemplateLiteral(["mutation validateTeamMatch($input: [ValidateTeam!]!){\n                      validateTeamMatch(input: $input){\n                        name\n                        id\n                      }\n                    }\n                    "]);
-
-  _templateObject2 = function _templateObject2() {
-    return data;
-  };
-
-  return data;
-}
-
+/* harmony import */ var _components_charts_LineChart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/charts/LineChart */ "./resources/js/components/charts/LineChart.js");
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! graphql-tag */ "./node_modules/graphql-tag/src/index.js");
+/* harmony import */ var graphql_tag__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(graphql_tag__WEBPACK_IMPORTED_MODULE_1__);
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["mutation ($input: BadmintonPlayerTeamMatchInput!){\n                        badmintonPlayerTeamMatchesImport(input: $input){\n                            name\n                            squad{\n                              playerLimit\n                              categories{\n                                category\n                                name\n                                players{\n                                  refId\n                                  name\n                                  gender\n                                  points{\n                                    points\n                                    position\n                                    category\n                                    version\n                                  }\n                                }\n                              }\n                            }\n                          }\n                        }\n                    "]);
+  var data = _taggedTemplateLiteral(["\n                    query($badmintonId: String){\n                        playerStats(badmintonId: $badmintonId){\n                            player{\n                                name\n                            }\n                            level{\n                              points\n                              position\n                              version\n                            },\n                            mixWomen{\n                              points\n                              position\n                              version\n                            }\n                            mixMen{\n                              points\n                              position\n                              version\n                            }\n                            singleWomen{\n                              points\n                              position\n                              version\n                            }\n                            singleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleMen{\n                              points\n                              position\n                              version\n                            }\n                            doubleWomen{\n                              position\n                              points\n                              version\n                            }\n                          }\n                    },\n                "]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -58,451 +44,428 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "CheckTeamFight",
+  name: "PlayerStats",
   components: {
-    BadmintonPlayerTeamFights: _components_badminton_player_BadmintonPlayerTeamFights__WEBPACK_IMPORTED_MODULE_2__["default"],
-    BadmintonPlayerTeams: _components_badminton_player_BadmintonPlayerTeams__WEBPACK_IMPORTED_MODULE_1__["default"],
-    BadmintonPlayerClubs: _components_badminton_player_BadmintonPlayerClubs__WEBPACK_IMPORTED_MODULE_0__["default"]
+    LineChart: _components_charts_LineChart__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
+  props: ['badmintonId'],
   data: function data() {
     return {
-      clubId: null,
-      playerTeam: null,
-      season: null,
-      teamFight: null,
-      selectedTeamFights: [],
-      teams: [],
-      playingToHigh: []
+      dataPoints: {
+        labels: [],
+        datasets: []
+      },
+      optionsPoints: {
+        responsive: true,
+        maintainAspectRatio: false
+      },
+      dataPositions: {
+        labels: [],
+        datasets: []
+      },
+      optionsPosition: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [{
+            display: true,
+            ticks: {
+              min: 1,
+              suggestedMin: 1,
+              reverse: true
+            }
+          }]
+        }
+      }
     };
   },
-  methods: {
-    badmintonPlayerTeamMatchesImport: function badmintonPlayerTeamMatchesImport() {
-      var _this = this;
+  apollo: {
+    playerStats: {
+      query: graphql_tag__WEBPACK_IMPORTED_MODULE_1___default()(_templateObject()),
+      skip: function skip() {
+        return this.badmintonId.length < 6;
+      },
+      variables: function variables() {
+        return {
+          badmintonId: this.badmintonId
+        };
+      },
+      result: function result(ApolloQueryResult, key) {
+        if (ApolloQueryResult.data.playerStats === null) {
+          return null;
+        }
 
-      this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject()),
-        variables: {
-          input: {
-            clubId: parseInt(this.clubId),
-            leagueMatchIds: this.selectedTeamFights.map(function (team) {
-              return team.teamFight.matchId;
-            }),
-            season: parseInt(this.season),
-            version: "2020-08-01"
+        var generateChartData = function generateChartData(key, label) {
+          var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'position';
+
+          if (ApolloQueryResult.data.playerStats.hasOwnProperty(key)) {
+            var labels = ApolloQueryResult.data.playerStats[key].map(function (body) {
+              return body.version;
+            });
+            var dataset = ApolloQueryResult.data.playerStats[key].map(function (body) {
+              return body[value];
+            });
+            return {
+              labels: labels,
+              datasets: [{
+                label: label,
+                fill: false,
+                data: dataset
+              }]
+            };
+          } else {
+            return {
+              labels: [],
+              datasets: []
+            };
           }
-        }
-      }).then(function (_ref) {
-        var data = _ref.data;
-        _this.teams = data.badmintonPlayerTeamMatchesImport;
-      });
-    },
-    validate: function validate() {
-      var _this2 = this;
+        };
 
-      this.$apollo.mutate({
-        mutation: graphql_tag__WEBPACK_IMPORTED_MODULE_3___default()(_templateObject2()),
-        variables: {
-          input: omit_deep__WEBPACK_IMPORTED_MODULE_4___default()(this.teams, ['__typename'])
+        var categories = [{
+          key: 'doubleMen',
+          label: 'Herre double'
+        }, {
+          key: 'doubleWomen',
+          label: 'Dame double'
+        }, {
+          key: 'mixMen',
+          label: 'Herre Mix double'
+        }, {
+          key: 'mixWomen',
+          label: 'Dame Mix double'
+        }, {
+          key: 'singleMen',
+          label: 'Herre single'
+        }, {
+          key: 'singleWomen',
+          label: 'Dame single'
+        }];
+        this.chartDatas = [];
+
+        for (var _i = 0, _categories = categories; _i < _categories.length; _i++) {
+          var category = _categories[_i];
+          this.chartDatas.push(generateChartData(category.key, category.label));
         }
-      }).then(function (_ref2) {
-        var data = _ref2.data;
-        _this2.playingToHigh = data.validateTeamMatch;
-      });
-    },
-    addTeamFight: function addTeamFight() {
-      this.selectedTeamFights.push({
-        clubId: this.clubId,
-        season: this.season,
-        playerTeam: this.playerTeam,
-        teamFight: this.teamFight
-      });
+
+        this.dataPoints = generateChartData('level', 'Points', 'points');
+        this.dataPositions = generateChartData('level', 'Position');
+      },
+      fetchPolicy: "network-only"
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/get-value/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/get-value/index.js ***!
-  \*****************************************/
+/***/ "./node_modules/moment/locale sync recursive ^\\.\\/.*$":
+/*!**************************************************!*\
+  !*** ./node_modules/moment/locale sync ^\.\/.*$ ***!
+  \**************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-/*!
- * get-value <https://github.com/jonschlinkert/get-value>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-module.exports = function(obj, prop, a, b, c) {
-  if (!isObject(obj) || !prop) {
-    return obj;
-  }
-
-  prop = toString(prop);
-
-  // allowing for multiple properties to be passed as
-  // a string or array, but much faster (3-4x) than doing
-  // `[].slice.call(arguments)`
-  if (a) prop += '.' + toString(a);
-  if (b) prop += '.' + toString(b);
-  if (c) prop += '.' + toString(c);
-
-  if (prop in obj) {
-    return obj[prop];
-  }
-
-  var segs = prop.split('.');
-  var len = segs.length;
-  var i = -1;
-
-  while (obj && (++i < len)) {
-    var key = segs[i];
-    while (key[key.length - 1] === '\\') {
-      key = key.slice(0, -1) + '.' + segs[++i];
-    }
-    obj = obj[key];
-  }
-  return obj;
+var map = {
+	"./af": "./node_modules/moment/locale/af.js",
+	"./af.js": "./node_modules/moment/locale/af.js",
+	"./ar": "./node_modules/moment/locale/ar.js",
+	"./ar-dz": "./node_modules/moment/locale/ar-dz.js",
+	"./ar-dz.js": "./node_modules/moment/locale/ar-dz.js",
+	"./ar-kw": "./node_modules/moment/locale/ar-kw.js",
+	"./ar-kw.js": "./node_modules/moment/locale/ar-kw.js",
+	"./ar-ly": "./node_modules/moment/locale/ar-ly.js",
+	"./ar-ly.js": "./node_modules/moment/locale/ar-ly.js",
+	"./ar-ma": "./node_modules/moment/locale/ar-ma.js",
+	"./ar-ma.js": "./node_modules/moment/locale/ar-ma.js",
+	"./ar-sa": "./node_modules/moment/locale/ar-sa.js",
+	"./ar-sa.js": "./node_modules/moment/locale/ar-sa.js",
+	"./ar-tn": "./node_modules/moment/locale/ar-tn.js",
+	"./ar-tn.js": "./node_modules/moment/locale/ar-tn.js",
+	"./ar.js": "./node_modules/moment/locale/ar.js",
+	"./az": "./node_modules/moment/locale/az.js",
+	"./az.js": "./node_modules/moment/locale/az.js",
+	"./be": "./node_modules/moment/locale/be.js",
+	"./be.js": "./node_modules/moment/locale/be.js",
+	"./bg": "./node_modules/moment/locale/bg.js",
+	"./bg.js": "./node_modules/moment/locale/bg.js",
+	"./bm": "./node_modules/moment/locale/bm.js",
+	"./bm.js": "./node_modules/moment/locale/bm.js",
+	"./bn": "./node_modules/moment/locale/bn.js",
+	"./bn-bd": "./node_modules/moment/locale/bn-bd.js",
+	"./bn-bd.js": "./node_modules/moment/locale/bn-bd.js",
+	"./bn.js": "./node_modules/moment/locale/bn.js",
+	"./bo": "./node_modules/moment/locale/bo.js",
+	"./bo.js": "./node_modules/moment/locale/bo.js",
+	"./br": "./node_modules/moment/locale/br.js",
+	"./br.js": "./node_modules/moment/locale/br.js",
+	"./bs": "./node_modules/moment/locale/bs.js",
+	"./bs.js": "./node_modules/moment/locale/bs.js",
+	"./ca": "./node_modules/moment/locale/ca.js",
+	"./ca.js": "./node_modules/moment/locale/ca.js",
+	"./cs": "./node_modules/moment/locale/cs.js",
+	"./cs.js": "./node_modules/moment/locale/cs.js",
+	"./cv": "./node_modules/moment/locale/cv.js",
+	"./cv.js": "./node_modules/moment/locale/cv.js",
+	"./cy": "./node_modules/moment/locale/cy.js",
+	"./cy.js": "./node_modules/moment/locale/cy.js",
+	"./da": "./node_modules/moment/locale/da.js",
+	"./da.js": "./node_modules/moment/locale/da.js",
+	"./de": "./node_modules/moment/locale/de.js",
+	"./de-at": "./node_modules/moment/locale/de-at.js",
+	"./de-at.js": "./node_modules/moment/locale/de-at.js",
+	"./de-ch": "./node_modules/moment/locale/de-ch.js",
+	"./de-ch.js": "./node_modules/moment/locale/de-ch.js",
+	"./de.js": "./node_modules/moment/locale/de.js",
+	"./dv": "./node_modules/moment/locale/dv.js",
+	"./dv.js": "./node_modules/moment/locale/dv.js",
+	"./el": "./node_modules/moment/locale/el.js",
+	"./el.js": "./node_modules/moment/locale/el.js",
+	"./en-au": "./node_modules/moment/locale/en-au.js",
+	"./en-au.js": "./node_modules/moment/locale/en-au.js",
+	"./en-ca": "./node_modules/moment/locale/en-ca.js",
+	"./en-ca.js": "./node_modules/moment/locale/en-ca.js",
+	"./en-gb": "./node_modules/moment/locale/en-gb.js",
+	"./en-gb.js": "./node_modules/moment/locale/en-gb.js",
+	"./en-ie": "./node_modules/moment/locale/en-ie.js",
+	"./en-ie.js": "./node_modules/moment/locale/en-ie.js",
+	"./en-il": "./node_modules/moment/locale/en-il.js",
+	"./en-il.js": "./node_modules/moment/locale/en-il.js",
+	"./en-in": "./node_modules/moment/locale/en-in.js",
+	"./en-in.js": "./node_modules/moment/locale/en-in.js",
+	"./en-nz": "./node_modules/moment/locale/en-nz.js",
+	"./en-nz.js": "./node_modules/moment/locale/en-nz.js",
+	"./en-sg": "./node_modules/moment/locale/en-sg.js",
+	"./en-sg.js": "./node_modules/moment/locale/en-sg.js",
+	"./eo": "./node_modules/moment/locale/eo.js",
+	"./eo.js": "./node_modules/moment/locale/eo.js",
+	"./es": "./node_modules/moment/locale/es.js",
+	"./es-do": "./node_modules/moment/locale/es-do.js",
+	"./es-do.js": "./node_modules/moment/locale/es-do.js",
+	"./es-mx": "./node_modules/moment/locale/es-mx.js",
+	"./es-mx.js": "./node_modules/moment/locale/es-mx.js",
+	"./es-us": "./node_modules/moment/locale/es-us.js",
+	"./es-us.js": "./node_modules/moment/locale/es-us.js",
+	"./es.js": "./node_modules/moment/locale/es.js",
+	"./et": "./node_modules/moment/locale/et.js",
+	"./et.js": "./node_modules/moment/locale/et.js",
+	"./eu": "./node_modules/moment/locale/eu.js",
+	"./eu.js": "./node_modules/moment/locale/eu.js",
+	"./fa": "./node_modules/moment/locale/fa.js",
+	"./fa.js": "./node_modules/moment/locale/fa.js",
+	"./fi": "./node_modules/moment/locale/fi.js",
+	"./fi.js": "./node_modules/moment/locale/fi.js",
+	"./fil": "./node_modules/moment/locale/fil.js",
+	"./fil.js": "./node_modules/moment/locale/fil.js",
+	"./fo": "./node_modules/moment/locale/fo.js",
+	"./fo.js": "./node_modules/moment/locale/fo.js",
+	"./fr": "./node_modules/moment/locale/fr.js",
+	"./fr-ca": "./node_modules/moment/locale/fr-ca.js",
+	"./fr-ca.js": "./node_modules/moment/locale/fr-ca.js",
+	"./fr-ch": "./node_modules/moment/locale/fr-ch.js",
+	"./fr-ch.js": "./node_modules/moment/locale/fr-ch.js",
+	"./fr.js": "./node_modules/moment/locale/fr.js",
+	"./fy": "./node_modules/moment/locale/fy.js",
+	"./fy.js": "./node_modules/moment/locale/fy.js",
+	"./ga": "./node_modules/moment/locale/ga.js",
+	"./ga.js": "./node_modules/moment/locale/ga.js",
+	"./gd": "./node_modules/moment/locale/gd.js",
+	"./gd.js": "./node_modules/moment/locale/gd.js",
+	"./gl": "./node_modules/moment/locale/gl.js",
+	"./gl.js": "./node_modules/moment/locale/gl.js",
+	"./gom-deva": "./node_modules/moment/locale/gom-deva.js",
+	"./gom-deva.js": "./node_modules/moment/locale/gom-deva.js",
+	"./gom-latn": "./node_modules/moment/locale/gom-latn.js",
+	"./gom-latn.js": "./node_modules/moment/locale/gom-latn.js",
+	"./gu": "./node_modules/moment/locale/gu.js",
+	"./gu.js": "./node_modules/moment/locale/gu.js",
+	"./he": "./node_modules/moment/locale/he.js",
+	"./he.js": "./node_modules/moment/locale/he.js",
+	"./hi": "./node_modules/moment/locale/hi.js",
+	"./hi.js": "./node_modules/moment/locale/hi.js",
+	"./hr": "./node_modules/moment/locale/hr.js",
+	"./hr.js": "./node_modules/moment/locale/hr.js",
+	"./hu": "./node_modules/moment/locale/hu.js",
+	"./hu.js": "./node_modules/moment/locale/hu.js",
+	"./hy-am": "./node_modules/moment/locale/hy-am.js",
+	"./hy-am.js": "./node_modules/moment/locale/hy-am.js",
+	"./id": "./node_modules/moment/locale/id.js",
+	"./id.js": "./node_modules/moment/locale/id.js",
+	"./is": "./node_modules/moment/locale/is.js",
+	"./is.js": "./node_modules/moment/locale/is.js",
+	"./it": "./node_modules/moment/locale/it.js",
+	"./it-ch": "./node_modules/moment/locale/it-ch.js",
+	"./it-ch.js": "./node_modules/moment/locale/it-ch.js",
+	"./it.js": "./node_modules/moment/locale/it.js",
+	"./ja": "./node_modules/moment/locale/ja.js",
+	"./ja.js": "./node_modules/moment/locale/ja.js",
+	"./jv": "./node_modules/moment/locale/jv.js",
+	"./jv.js": "./node_modules/moment/locale/jv.js",
+	"./ka": "./node_modules/moment/locale/ka.js",
+	"./ka.js": "./node_modules/moment/locale/ka.js",
+	"./kk": "./node_modules/moment/locale/kk.js",
+	"./kk.js": "./node_modules/moment/locale/kk.js",
+	"./km": "./node_modules/moment/locale/km.js",
+	"./km.js": "./node_modules/moment/locale/km.js",
+	"./kn": "./node_modules/moment/locale/kn.js",
+	"./kn.js": "./node_modules/moment/locale/kn.js",
+	"./ko": "./node_modules/moment/locale/ko.js",
+	"./ko.js": "./node_modules/moment/locale/ko.js",
+	"./ku": "./node_modules/moment/locale/ku.js",
+	"./ku.js": "./node_modules/moment/locale/ku.js",
+	"./ky": "./node_modules/moment/locale/ky.js",
+	"./ky.js": "./node_modules/moment/locale/ky.js",
+	"./lb": "./node_modules/moment/locale/lb.js",
+	"./lb.js": "./node_modules/moment/locale/lb.js",
+	"./lo": "./node_modules/moment/locale/lo.js",
+	"./lo.js": "./node_modules/moment/locale/lo.js",
+	"./lt": "./node_modules/moment/locale/lt.js",
+	"./lt.js": "./node_modules/moment/locale/lt.js",
+	"./lv": "./node_modules/moment/locale/lv.js",
+	"./lv.js": "./node_modules/moment/locale/lv.js",
+	"./me": "./node_modules/moment/locale/me.js",
+	"./me.js": "./node_modules/moment/locale/me.js",
+	"./mi": "./node_modules/moment/locale/mi.js",
+	"./mi.js": "./node_modules/moment/locale/mi.js",
+	"./mk": "./node_modules/moment/locale/mk.js",
+	"./mk.js": "./node_modules/moment/locale/mk.js",
+	"./ml": "./node_modules/moment/locale/ml.js",
+	"./ml.js": "./node_modules/moment/locale/ml.js",
+	"./mn": "./node_modules/moment/locale/mn.js",
+	"./mn.js": "./node_modules/moment/locale/mn.js",
+	"./mr": "./node_modules/moment/locale/mr.js",
+	"./mr.js": "./node_modules/moment/locale/mr.js",
+	"./ms": "./node_modules/moment/locale/ms.js",
+	"./ms-my": "./node_modules/moment/locale/ms-my.js",
+	"./ms-my.js": "./node_modules/moment/locale/ms-my.js",
+	"./ms.js": "./node_modules/moment/locale/ms.js",
+	"./mt": "./node_modules/moment/locale/mt.js",
+	"./mt.js": "./node_modules/moment/locale/mt.js",
+	"./my": "./node_modules/moment/locale/my.js",
+	"./my.js": "./node_modules/moment/locale/my.js",
+	"./nb": "./node_modules/moment/locale/nb.js",
+	"./nb.js": "./node_modules/moment/locale/nb.js",
+	"./ne": "./node_modules/moment/locale/ne.js",
+	"./ne.js": "./node_modules/moment/locale/ne.js",
+	"./nl": "./node_modules/moment/locale/nl.js",
+	"./nl-be": "./node_modules/moment/locale/nl-be.js",
+	"./nl-be.js": "./node_modules/moment/locale/nl-be.js",
+	"./nl.js": "./node_modules/moment/locale/nl.js",
+	"./nn": "./node_modules/moment/locale/nn.js",
+	"./nn.js": "./node_modules/moment/locale/nn.js",
+	"./oc-lnc": "./node_modules/moment/locale/oc-lnc.js",
+	"./oc-lnc.js": "./node_modules/moment/locale/oc-lnc.js",
+	"./pa-in": "./node_modules/moment/locale/pa-in.js",
+	"./pa-in.js": "./node_modules/moment/locale/pa-in.js",
+	"./pl": "./node_modules/moment/locale/pl.js",
+	"./pl.js": "./node_modules/moment/locale/pl.js",
+	"./pt": "./node_modules/moment/locale/pt.js",
+	"./pt-br": "./node_modules/moment/locale/pt-br.js",
+	"./pt-br.js": "./node_modules/moment/locale/pt-br.js",
+	"./pt.js": "./node_modules/moment/locale/pt.js",
+	"./ro": "./node_modules/moment/locale/ro.js",
+	"./ro.js": "./node_modules/moment/locale/ro.js",
+	"./ru": "./node_modules/moment/locale/ru.js",
+	"./ru.js": "./node_modules/moment/locale/ru.js",
+	"./sd": "./node_modules/moment/locale/sd.js",
+	"./sd.js": "./node_modules/moment/locale/sd.js",
+	"./se": "./node_modules/moment/locale/se.js",
+	"./se.js": "./node_modules/moment/locale/se.js",
+	"./si": "./node_modules/moment/locale/si.js",
+	"./si.js": "./node_modules/moment/locale/si.js",
+	"./sk": "./node_modules/moment/locale/sk.js",
+	"./sk.js": "./node_modules/moment/locale/sk.js",
+	"./sl": "./node_modules/moment/locale/sl.js",
+	"./sl.js": "./node_modules/moment/locale/sl.js",
+	"./sq": "./node_modules/moment/locale/sq.js",
+	"./sq.js": "./node_modules/moment/locale/sq.js",
+	"./sr": "./node_modules/moment/locale/sr.js",
+	"./sr-cyrl": "./node_modules/moment/locale/sr-cyrl.js",
+	"./sr-cyrl.js": "./node_modules/moment/locale/sr-cyrl.js",
+	"./sr.js": "./node_modules/moment/locale/sr.js",
+	"./ss": "./node_modules/moment/locale/ss.js",
+	"./ss.js": "./node_modules/moment/locale/ss.js",
+	"./sv": "./node_modules/moment/locale/sv.js",
+	"./sv.js": "./node_modules/moment/locale/sv.js",
+	"./sw": "./node_modules/moment/locale/sw.js",
+	"./sw.js": "./node_modules/moment/locale/sw.js",
+	"./ta": "./node_modules/moment/locale/ta.js",
+	"./ta.js": "./node_modules/moment/locale/ta.js",
+	"./te": "./node_modules/moment/locale/te.js",
+	"./te.js": "./node_modules/moment/locale/te.js",
+	"./tet": "./node_modules/moment/locale/tet.js",
+	"./tet.js": "./node_modules/moment/locale/tet.js",
+	"./tg": "./node_modules/moment/locale/tg.js",
+	"./tg.js": "./node_modules/moment/locale/tg.js",
+	"./th": "./node_modules/moment/locale/th.js",
+	"./th.js": "./node_modules/moment/locale/th.js",
+	"./tk": "./node_modules/moment/locale/tk.js",
+	"./tk.js": "./node_modules/moment/locale/tk.js",
+	"./tl-ph": "./node_modules/moment/locale/tl-ph.js",
+	"./tl-ph.js": "./node_modules/moment/locale/tl-ph.js",
+	"./tlh": "./node_modules/moment/locale/tlh.js",
+	"./tlh.js": "./node_modules/moment/locale/tlh.js",
+	"./tr": "./node_modules/moment/locale/tr.js",
+	"./tr.js": "./node_modules/moment/locale/tr.js",
+	"./tzl": "./node_modules/moment/locale/tzl.js",
+	"./tzl.js": "./node_modules/moment/locale/tzl.js",
+	"./tzm": "./node_modules/moment/locale/tzm.js",
+	"./tzm-latn": "./node_modules/moment/locale/tzm-latn.js",
+	"./tzm-latn.js": "./node_modules/moment/locale/tzm-latn.js",
+	"./tzm.js": "./node_modules/moment/locale/tzm.js",
+	"./ug-cn": "./node_modules/moment/locale/ug-cn.js",
+	"./ug-cn.js": "./node_modules/moment/locale/ug-cn.js",
+	"./uk": "./node_modules/moment/locale/uk.js",
+	"./uk.js": "./node_modules/moment/locale/uk.js",
+	"./ur": "./node_modules/moment/locale/ur.js",
+	"./ur.js": "./node_modules/moment/locale/ur.js",
+	"./uz": "./node_modules/moment/locale/uz.js",
+	"./uz-latn": "./node_modules/moment/locale/uz-latn.js",
+	"./uz-latn.js": "./node_modules/moment/locale/uz-latn.js",
+	"./uz.js": "./node_modules/moment/locale/uz.js",
+	"./vi": "./node_modules/moment/locale/vi.js",
+	"./vi.js": "./node_modules/moment/locale/vi.js",
+	"./x-pseudo": "./node_modules/moment/locale/x-pseudo.js",
+	"./x-pseudo.js": "./node_modules/moment/locale/x-pseudo.js",
+	"./yo": "./node_modules/moment/locale/yo.js",
+	"./yo.js": "./node_modules/moment/locale/yo.js",
+	"./zh-cn": "./node_modules/moment/locale/zh-cn.js",
+	"./zh-cn.js": "./node_modules/moment/locale/zh-cn.js",
+	"./zh-hk": "./node_modules/moment/locale/zh-hk.js",
+	"./zh-hk.js": "./node_modules/moment/locale/zh-hk.js",
+	"./zh-mo": "./node_modules/moment/locale/zh-mo.js",
+	"./zh-mo.js": "./node_modules/moment/locale/zh-mo.js",
+	"./zh-tw": "./node_modules/moment/locale/zh-tw.js",
+	"./zh-tw.js": "./node_modules/moment/locale/zh-tw.js"
 };
 
-function isObject(val) {
-  return val !== null && (typeof val === 'object' || typeof val === 'function');
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
 }
-
-function toString(val) {
-  if (!val) return '';
-  if (Array.isArray(val)) {
-    return val.join('.');
-  }
-  return val;
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
 }
-
-
-/***/ }),
-
-/***/ "./node_modules/has-value/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/has-value/index.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * has-value <https://github.com/jonschlinkert/has-value>
- *
- * Copyright (c) 2014-2016, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-var isObject = __webpack_require__(/*! isobject */ "./node_modules/has-value/node_modules/isobject/index.js");
-var hasValues = __webpack_require__(/*! has-values */ "./node_modules/has-values/index.js");
-var get = __webpack_require__(/*! get-value */ "./node_modules/get-value/index.js");
-
-module.exports = function(obj, prop, noZero) {
-  if (isObject(obj)) {
-    return hasValues(get(obj, prop), noZero);
-  }
-  return hasValues(obj, prop);
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/has-value/node_modules/isobject/index.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/has-value/node_modules/isobject/index.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-var isArray = __webpack_require__(/*! isarray */ "./node_modules/isarray/index.js");
-
-module.exports = function isObject(val) {
-  return val != null && typeof val === 'object' && isArray(val) === false;
-};
-
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 
 /***/ }),
 
-/***/ "./node_modules/has-values/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/has-values/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * has-values <https://github.com/jonschlinkert/has-values>
- *
- * Copyright (c) 2014-2015, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
-
-
-module.exports = function hasValue(o, noZero) {
-  if (o === null || o === undefined) {
-    return false;
-  }
-
-  if (typeof o === 'boolean') {
-    return true;
-  }
-
-  if (typeof o === 'number') {
-    if (o === 0 && noZero === true) {
-      return false;
-    }
-    return true;
-  }
-
-  if (o.length !== undefined) {
-    return o.length !== 0;
-  }
-
-  for (var key in o) {
-    if (o.hasOwnProperty(key)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/is-plain-object/index.js":
-/*!***********************************************!*\
-  !*** ./node_modules/is-plain-object/index.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-
-
-var isObject = __webpack_require__(/*! isobject */ "./node_modules/isobject/index.js");
-
-function isObjectObject(o) {
-  return isObject(o) === true
-    && Object.prototype.toString.call(o) === '[object Object]';
-}
-
-module.exports = function isPlainObject(o) {
-  var ctor,prot;
-
-  if (isObjectObject(o) === false) return false;
-
-  // If has modified constructor
-  ctor = o.constructor;
-  if (typeof ctor !== 'function') return false;
-
-  // If has modified prototype
-  prot = ctor.prototype;
-  if (isObjectObject(prot) === false) return false;
-
-  // If constructor does not have an Object-specific method
-  if (prot.hasOwnProperty('isPrototypeOf') === false) {
-    return false;
-  }
-
-  // Most likely a plain Object
-  return true;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/isarray/index.js":
-/*!***************************************!*\
-  !*** ./node_modules/isarray/index.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/isobject/index.js":
-/*!****************************************!*\
-  !*** ./node_modules/isobject/index.js ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-
-
-module.exports = function isObject(val) {
-  return val != null && typeof val === 'object' && Array.isArray(val) === false;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/omit-deep/index.js":
-/*!*****************************************!*\
-  !*** ./node_modules/omit-deep/index.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var isObject = __webpack_require__(/*! is-plain-object */ "./node_modules/is-plain-object/index.js");
-var unset = __webpack_require__(/*! unset-value */ "./node_modules/unset-value/index.js");
-
-module.exports = function omitDeep(value, keys) {
-  if (typeof value === 'undefined') {
-    return {};
-  }
-
-  if (Array.isArray(value)) {
-    for (var i = 0; i < value.length; i++) {
-      value[i] = omitDeep(value[i], keys);
-    }
-    return value;
-  }
-
-  if (!isObject(value)) {
-    return value;
-  }
-
-  if (typeof keys === 'string') {
-    keys = [keys];
-  }
-
-  if (!Array.isArray(keys)) {
-    return value;
-  }
-
-  for (var j = 0; j < keys.length; j++) {
-    unset(value, keys[j]);
-  }
-
-  for (var key in value) {
-    if (value.hasOwnProperty(key)) {
-      value[key] = omitDeep(value[key], keys);
-    }
-  }
-
-  return value;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/unset-value/index.js":
-/*!*******************************************!*\
-  !*** ./node_modules/unset-value/index.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*!
- * unset-value <https://github.com/jonschlinkert/unset-value>
- *
- * Copyright (c) 2015, 2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-
-
-var isObject = __webpack_require__(/*! isobject */ "./node_modules/isobject/index.js");
-var has = __webpack_require__(/*! has-value */ "./node_modules/has-value/index.js");
-
-module.exports = function unset(obj, prop) {
-  if (!isObject(obj)) {
-    throw new TypeError('expected an object.');
-  }
-  if (obj.hasOwnProperty(prop)) {
-    delete obj[prop];
-    return true;
-  }
-
-  if (has(obj, prop)) {
-    var segs = prop.split('.');
-    var last = segs.pop();
-    while (segs.length && segs[segs.length - 1].slice(-1) === '\\') {
-      last = segs.pop().slice(0, -1) + '.' + last;
-    }
-    while (segs.length) obj = obj[prop = segs.shift()];
-    return (delete obj[last]);
-  }
-  return true;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true&":
-/*!************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true& ***!
-  \************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true& ***!
+  \*********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -514,181 +477,83 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", [
-    _c(
-      "form",
-      [
-        _c(
-          "b-field",
-          { attrs: { label: "Klub" } },
-          [
-            _c("BadmintonPlayerClubs", {
-              model: {
-                value: _vm.clubId,
-                callback: function($$v) {
-                  _vm.clubId = $$v
-                },
-                expression: "clubId"
-              }
-            })
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "b-field",
-          { attrs: { label: "Sæson" } },
-          [
+  return _c(
+    "div",
+    [
+      _c("b-loading", {
+        attrs: { "can-cancel": true, "is-full-page": false },
+        model: {
+          value: _vm.$apollo.loading,
+          callback: function($$v) {
+            _vm.$set(_vm.$apollo, "loading", $$v)
+          },
+          expression: "$apollo.loading"
+        }
+      }),
+      _vm._v(" "),
+      _vm.playerStats !== undefined && _vm.playerStats !== null
+        ? _c("div", [
+            _c("h1", { staticClass: "title" }, [
+              _vm._v(_vm._s(_vm.playerStats.player.name || ""))
+            ]),
+            _vm._v(" "),
             _c(
-              "b-select",
-              {
-                attrs: { expanded: "", placeholder: "Vælge sæson" },
-                model: {
-                  value: _vm.season,
-                  callback: function($$v) {
-                    _vm.season = $$v
-                  },
-                  expression: "season"
-                }
-              },
-              [
-                _c("option", { attrs: { value: "2020" } }, [_vm._v("2020")]),
-                _vm._v(" "),
-                _c("option", { attrs: { value: "2021" } }, [_vm._v("2021")])
-              ]
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "b-field",
-          { attrs: { label: "Hold" } },
-          [
-            _c("BadmintonPlayerTeams", {
-              attrs: { clubId: _vm.clubId, season: _vm.season },
-              model: {
-                value: _vm.playerTeam,
-                callback: function($$v) {
-                  _vm.playerTeam = $$v
-                },
-                expression: "playerTeam"
-              }
-            })
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "b-field",
-          { attrs: { label: "Kamp" } },
-          [
-            _c("BadmintonPlayerTeamFights", {
-              attrs: {
-                clubId: _vm.clubId,
-                "player-team": _vm.playerTeam,
-                season: _vm.season
-              },
-              model: {
-                value: _vm.teamFight,
-                callback: function($$v) {
-                  _vm.teamFight = $$v
-                },
-                expression: "teamFight"
-              }
-            })
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("b-button", { on: { click: _vm.addTeamFight } }, [_vm._v("Tilføj")]),
-        _vm._v(" "),
-        _vm._l(_vm.selectedTeamFights, function(teamFight) {
-          return _c("p", [
-            _vm._v(
-              _vm._s(teamFight.teamFight.gameTime) +
-                " - " +
-                _vm._s(teamFight.teamFight.teams.join(" - "))
-            )
-          ])
-        }),
-        _vm._v(" "),
-        _c(
-          "b-button",
-          { on: { click: _vm.badmintonPlayerTeamMatchesImport } },
-          [_vm._v("Hent")]
-        ),
-        _vm._v(" "),
-        _c("b-button", { on: { click: _vm.validate } }, [_vm._v("Validate")]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "columns is-multiline" },
-          _vm._l(_vm.teams, function(team) {
-            return _c(
               "div",
-              { staticClass: "column" },
+              { staticClass: "columns is-desktop is-multiline" },
               [
-                _c("h1", { staticClass: "title" }, [_vm._v(_vm._s(team.name))]),
-                _vm._v(" "),
                 _c(
-                  "b-table",
-                  { attrs: { data: team.squad.categories } },
+                  "div",
+                  { staticClass: "column is-half" },
                   [
-                    _c("b-table-column", {
-                      attrs: { field: "name", label: "Kategori" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return [
-                                _vm._v(
-                                  "\n                        " +
-                                    _vm._s(props.row.name) +
-                                    "\n                    "
-                                )
-                              ]
-                            }
-                          }
-                        ],
-                        null,
-                        true
-                      )
-                    }),
-                    _vm._v(" "),
-                    _c("b-table-column", {
-                      attrs: { field: "players", label: "Spillere" },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(props) {
-                              return _vm._l(props.row.players, function(
-                                player
-                              ) {
-                                return _c("p", [_vm._v(_vm._s(player.name))])
-                              })
-                            }
-                          }
-                        ],
-                        null,
-                        true
-                      )
+                    _c("line-chart", {
+                      attrs: {
+                        "chart-data": _vm.dataPoints,
+                        options: _vm.optionsPoints
+                      }
                     })
                   ],
                   1
-                )
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "column is-half" },
+                  [
+                    _c("line-chart", {
+                      attrs: {
+                        "chart-data": _vm.dataPositions,
+                        options: _vm.optionsPosition
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _vm._l(_vm.chartDatas, function(chardata) {
+                  return chardata.labels.length > 0
+                    ? _c(
+                        "div",
+                        { staticClass: "column is-half" },
+                        [
+                          _c("line-chart", {
+                            attrs: {
+                              "chart-data": chardata,
+                              options: _vm.optionsPosition
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    : _vm._e()
+                })
               ],
-              1
+              2
             )
-          }),
-          0
-        )
-      ],
-      2
-    )
-  ])
+          ])
+        : _vm._e()
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -697,17 +562,40 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./resources/js/views/CheckTeamFight.vue":
-/*!***********************************************!*\
-  !*** ./resources/js/views/CheckTeamFight.vue ***!
-  \***********************************************/
+/***/ "./resources/js/components/charts/LineChart.js":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/charts/LineChart.js ***!
+  \*****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true& */ "./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true&");
-/* harmony import */ var _CheckTeamFight_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CheckTeamFight.vue?vue&type=script&lang=js& */ "./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js&");
+/* harmony import */ var vue_chartjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chartjs */ "./node_modules/vue-chartjs/es/index.js");
+
+var reactiveProp = vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["mixins"].reactiveProp;
+/* harmony default export */ __webpack_exports__["default"] = ({
+  "extends": vue_chartjs__WEBPACK_IMPORTED_MODULE_0__["Line"],
+  mixins: [reactiveProp],
+  props: ['options'],
+  mounted: function mounted() {
+    this.renderChart(this.chartData, this.options);
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/views/PlayerStats.vue":
+/*!********************************************!*\
+  !*** ./resources/js/views/PlayerStats.vue ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PlayerStats.vue?vue&type=template&id=8798a222&scoped=true& */ "./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true&");
+/* harmony import */ var _PlayerStats_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PlayerStats.vue?vue&type=script&lang=js& */ "./resources/js/views/PlayerStats.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -717,50 +605,50 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CheckTeamFight_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _PlayerStats_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "16be90ea",
+  "8798a222",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/views/CheckTeamFight.vue"
+component.options.__file = "resources/js/views/PlayerStats.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js&":
-/*!************************************************************************!*\
-  !*** ./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js& ***!
-  \************************************************************************/
+/***/ "./resources/js/views/PlayerStats.vue?vue&type=script&lang=js&":
+/*!*********************************************************************!*\
+  !*** ./resources/js/views/PlayerStats.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CheckTeamFight_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./CheckTeamFight.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CheckTeamFight.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CheckTeamFight_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PlayerStats_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./PlayerStats.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/PlayerStats.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PlayerStats_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true&":
-/*!******************************************************************************************!*\
-  !*** ./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true& ***!
-  \******************************************************************************************/
+/***/ "./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true& ***!
+  \***************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/CheckTeamFight.vue?vue&type=template&id=16be90ea&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./PlayerStats.vue?vue&type=template&id=8798a222&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/PlayerStats.vue?vue&type=template&id=8798a222&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CheckTeamFight_vue_vue_type_template_id_16be90ea_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PlayerStats_vue_vue_type_template_id_8798a222_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
