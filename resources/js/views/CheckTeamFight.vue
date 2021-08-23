@@ -16,11 +16,21 @@
                         </b-field>
                     </b-step-item>
                     <b-step-item label="Hold">
+                        <h1 class="title">Hold</h1>
+                        <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
+                        <b-message title="Vigtig!" type="is-warning">
+                            Understøtter pt kun SEN (ikke SEN+XX, UX, 4 spillere hold, div. 1 + Liga). Så alle hold som falder under <a href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">disse regler</a>. Det ligger på roadmap at udvikle de andre, men skriv gerne hvis du vil påvirke prioriteten.
+                        </b-message>
                         <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season" @input="clearTeamFights"/>
                     </b-step-item>
                     <b-step-item label="Kampe">
-                        <b-field label="Rangliste">
+                        <h1 class="title">Rangliste</h1>
+                        <h2 class="subtitle">§ 38. Den først offentliggjorte rangliste i en ny måned er gældende for holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende måned. </h2>
+                        <b-field>
                             <b-select v-model="rankingList" expanded placeholder="Vælge rangliste">
+                                <option value="2021-10-01">2021-10-01</option>
+                                <option value="2021-09-01">2021-09-01</option>
+                                <option value="2021-08-01">2021-08-01</option>
                                 <option value="2021-07-01">2021-07-01</option>
                                 <option value="2020-12-01">2020-12-01</option>
                                 <option value="2020-11-01">2020-11-01</option>
@@ -30,35 +40,72 @@
                                 <option value="2020-07-01">2020-07-01</option>
                             </b-select>
                         </b-field>
-                        <draggable
-                            :list="playerTeams"
-                            handle=".handle"
-                        >
-                            <b-field v-for="team in playerTeams" :key="team.leagueGroupId+playerTeams.length" :label="team.name">
-                                <b-icon class="handle mr-2" icon="align-justify"></b-icon>
-                                <BadmintonPlayerTeamFights :clubId="clubId" :player-team="team" :season="season" @input="addTeamFight"/>
-                            </b-field>
-                        </draggable>
+                        <h1 class="title">Hold kampe</h1>
+                        <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps runden</h2>
+                        <b-field v-for="(team, index) in playerTeams" :key="team.leagueGroupId+playerTeams.length" :label="team.name">
+                            <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId" :player-team="team" :season="season"/>
+                        </b-field>
                     </b-step-item>
                     <b-step-item label="Bekræft">
-                        <b-field label="Rangliste">
-                            <b-input v-model="rankingList" disabled/>
-                        </b-field>
-                        <b-table :data="selectedTeamMatches">
-                            <b-table-column v-slot="props" field="team.name" label="Hold">
+                        <h1 class="title">Hold sortering</h1>
+                        <h2 class="subtitle">Sortering er vigtig når spillerunden skal tjekkes. Drag and Drop holdene rundt eller via knapperne, så styrkeordenen passer</h2>
+                        <b-table :data="castToArray(selectedTeamMatches)"
+                                 :draggable="true"
+                                 @dragstart="dragstart"
+                                 @drop="drop"
+                                 @dragover="dragover"
+                                 @dragleave="dragleave">
+                            <b-table-column
+                                label="#"
+                                width="20"
+                                numeric
+                                v-slot="props">
+                                {{ props.index + 1 }}
+                            </b-table-column>
+                            <b-table-column
+                                field="team.name"
+                                label="Hold"
+                                v-slot="props">
                                 {{ props.row.team.name }}
                             </b-table-column>
-                            <b-table-column v-slot="props" field="team.name" label="Kamp">
-                                {{ props.row.teamMatch.gameTime }} - {{ props.row.teamMatch.teams.join(' - ') }}
+                            <b-table-column
+                                field="team.league"
+                                label="Række"
+                                v-slot="props">
+                                {{ props.row.team.league }}
+                            </b-table-column>
+                            <b-table-column
+                                field="teamMatch.teams"
+                                label="Kamp"
+                                v-slot="props">
+                                {{ props.row.teamMatch.teams.join(' - ') }} {{ props.row.teamMatch.gameTime }}
+                            </b-table-column>
+                            <b-table-column
+                                v-slot="props">
+                                <b-button :disabled="props.index === 0" @click="moveUp(props.index)" type="is-success">Op</b-button>
+                                <b-button :disabled="maybeMoveDown(props.index)" @click="moveDown(props.index)" i type="is-success">Ned</b-button>
+                                <b-button tag="a" target="_blank" :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+props.row.teamMatch.matchId+',,'" type="is-success">Se på BP</b-button>
                             </b-table-column>
                         </b-table>
-
-                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport">Hent og tjek</b-button>
+                        <hr />
+                        <b-field>
+                            <b-checkbox v-model="sortingConfirmed">Holdene står i den rigtige sortering. (Flyt hold rundt via Drag&Drop eller via knapperne)</b-checkbox>
+                        </b-field>
+                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport" :disabled="!sortingConfirmed">Tjek spillerunden</b-button>
+                        <b-message v-if="errorImporting" title="Fejl ved import" class="mt-2" type="is-danger">
+                            En eller flere hold kunne ikke importeres. Prøv at tjek på badmintonplayer.dk om der er indrapporteret spiller på alle holde?
+                        </b-message>
                     </b-step-item>
                 </template>
             </b-steps>
         </form>
-        <b-button v-if="done" @click="goToStart">Tilbage til start</b-button>
+        <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
+        <b-message v-if="done && !hasViolations" title="Fandt ingen overtrædelser" type="is-success">
+            Fandt ingen fejl.
+        </b-message>
+        <b-message v-if="done && hasViolations" title="Fandt overtrædelser" type="is-warning">
+            Fandt fejl. Kig efter spillere som er markeret gule eller rød.
+        </b-message>
         <div v-if="done" class="columns is-multiline">
             <div v-for="team in teams" class="column is-4">
                 <h1 class="title">{{ team.name }}</h1>
@@ -88,7 +135,7 @@ import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayer
 import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
 import omitDeep from "omit-deep";
-import {findPositions, isPlayingToHigh} from "../helpers";
+import {findPositions, isPlayingToHighByName, swap, swapObject} from "../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import Draggable from "vuedraggable";
 
@@ -97,50 +144,99 @@ export default {
     components: {BadmintonPlayerTeamsMultiSelect, BadmintonPlayerTeamFights, BadmintonPlayerTeams, BadmintonPlayerClubs, Draggable},
     data() {
         return {
+            columns: [
+                {
+                    field: 'team.name',
+                    label: 'Hold',
+                }
+            ],
             clubId: null,
             playerTeams: [],
             season: null,
             teamFight: null,
-            selectedTeamMatches: [],
+            selectedTeamMatches: {},
             teams: [],
             playingToHigh: [],
             playingToHighInSquad: [],
             rankingList: null,
             activeStep: 0,
             fetchingAndValidating: false,
-            done: false
+            done: false,
+            sortingConfirmed: false,
+            draggingRow: null,
+            draggingRowIndex: null,
+            draggingColumn: null,
+            draggingColumnIndex: null,
+            errorImporting: false
         }
     },
+    computed: {
+        hasViolations() {
+            return this.playingToHigh.length > 0 || this.playingToHighInSquad.length > 0;
+        },
+
+    },
     methods: {
-        resolveLabel(player){
+        maybeMoveDown(index){
+            return this.castToArray(this.selectedTeamMatches).length-1 === index
+        },
+        moveUp(index){
+            swapObject(this.selectedTeamMatches, index, index-1)
+        },
+        moveDown(index){
+            swapObject(this.selectedTeamMatches, index, index+1)
+        },
+        castToArray(object) {
+            return Object.values(object)
+        },
+        dragstart(payload) {
+            this.draggingRow = payload.row
+            this.draggingRowIndex = payload.index
+            payload.event.dataTransfer.effectAllowed = 'copy'
+        },
+        dragover(payload) {
+            payload.event.dataTransfer.dropEffect = 'copy'
+            payload.event.target.closest('tr').classList.add('is-selected')
+            payload.event.preventDefault()
+        },
+        dragleave(payload) {
+            payload.event.target.closest('tr').classList.remove('is-selected')
+            payload.event.preventDefault()
+        },
+        drop(payload) {
+            payload.event.target.closest('tr').classList.remove('is-selected')
+            const droppedOnRowIndex = payload.index
+            swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
+        },
+        resolveLabel(player) {
             let msg = ""
-            if(this.isPlayingToHigh(player)){
+            if (this.isPlayingToHigh(player)) {
                 msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
             }
-            if(this.isPlayingToHighInSquad(player)){
+            if (this.isPlayingToHighInSquad(player)) {
                 msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
             }
             return msg
         },
-        isPlayingToHigh(player){
-            return isPlayingToHigh(this.playingToHigh, player);
+        isPlayingToHigh(player) {
+            return isPlayingToHighByName(this.playingToHigh, player);
         },
-        isPlayingToHighInSquad(player){
-            return isPlayingToHigh(this.playingToHighInSquad, player);
+        isPlayingToHighInSquad(player) {
+            return isPlayingToHighByName(this.playingToHighInSquad, player);
         },
         nextStep() {
             this.activeStep = 1;
         },
         highlight: function (player) {
             let base = {}
-            if (isPlayingToHigh(this.playingToHigh, player)) {
+            if (isPlayingToHighByName(this.playingToHigh, player)) {
                 base = {
                     ...{
                         'has-background-warning': true
                     }, ...base
                 }
             }
-            if (isPlayingToHigh(this.playingToHighInSquad, player)) {
+            if (isPlayingToHighByName(this.playingToHighInSquad, player)) {
                 base = {
                     ...{
                         'has-background-danger': true
@@ -152,6 +248,7 @@ export default {
         findPositions,
         badmintonPlayerTeamMatchesImport() {
             this.fetchingAndValidating = true;
+            this.errorImporting = false;
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation ($input: BadmintonPlayerTeamMatchInput!){
@@ -181,7 +278,7 @@ export default {
                     variables: {
                         input: {
                             clubId: parseInt(this.clubId),
-                            leagueMatchIds: this.selectedTeamMatches.map((teamMatch) => (teamMatch.teamMatch.matchId)),
+                            leagueMatchIds: this.castToArray(this.selectedTeamMatches).map((teamMatch) => (teamMatch.teamMatch.matchId)),
                             season: parseInt(this.season),
                             version: this.rankingList//"2020-08-01"
                         }
@@ -191,6 +288,13 @@ export default {
                 this.teams = data.badmintonPlayerTeamMatchesImport
                 this.validate()
             }).catch(() => {
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Et eller flere hold kunne ikke hentes`,
+                                           position: 'is-bottom',
+                                           type: 'is-danger'
+                                       })
+                this.errorImporting = true;
                 this.fetchingAndValidating = false;
             })
         },
@@ -215,28 +319,22 @@ export default {
                 this.fetchingAndValidating = false
             })
         },
-        addTeamFight(teamMatch, team) {
-            this.selectedTeamMatches.push(
-                {
-                    teamMatch: teamMatch,
-                    team: team
-                }
-            );
-        },
         goToStart() {
             this.done = false;
             this.activeStep = 0;
         },
         goToStepTeamsStep() {
             if (!(this.clubId === null || this.season === null)) {
+                this.clearTeamFights();
                 this.activeStep = 1;
             }
         },
         clearTeams() {
+            this.clearTeamFights()
             this.playerTeams = [];
         },
         clearTeamFights() {
-            this.selectedTeamMatches = [];
+            this.selectedTeamMatches = {};
         }
     }
 }

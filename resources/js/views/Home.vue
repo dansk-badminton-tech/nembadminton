@@ -8,13 +8,13 @@
                 <div class="container">
                     <div class="columns is-vcentered">
                         <div class="column is-two-fifths">
-                            <h1 class="title is-1">Hurtig tjek din holdopstilling</h1>
-                            <h2 class="subtitle">Med data direkte fra badmintonplayer.dk, kan du på få minutter tjekke om dit hold overholder rangliste reglerne</h2>
+                            <h1 class="title is-1">Tjek din modstander</h1>
+                            <h2 class="subtitle">På få minutter kan du tjekke om din modstanders holdopstilling overholder rangliste reglerne. Hold kan importeres direkte fra badmintonpeople.dk</h2>
                             <b-button
                                 tag="router-link"
                                 to="/team-fight/check"
                                 type="is-success is-light is-link">
-                                Tjek holdopstilling
+                                Tjek modstanders holdopstilling nu!
                             </b-button>
                         </div>
                         <div class="column">

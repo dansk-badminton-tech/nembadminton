@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Enricher;
+use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\TeamFight\SquadManager;

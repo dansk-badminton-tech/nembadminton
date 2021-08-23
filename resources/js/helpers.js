@@ -112,3 +112,18 @@ export function extractErrors(graphqlErrors) {
 export function isPlayingToHigh(playingToHighPlayers, player){
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id) !== undefined;
 }
+
+export function isPlayingToHighByName(playingToHighPlayers, player){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name) !== undefined;
+}
+
+export function swap(arr, from, to) {
+    arr.splice(from, 1, arr.splice(to, 1, arr[from])[0]);
+}
+
+export function swapObject(obj, from, to) {
+    const fromItem = obj[from]
+    const toItem = obj[to]
+    obj[to] = fromItem
+    obj[from] = toItem
+}

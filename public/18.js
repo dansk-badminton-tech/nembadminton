@@ -185,12 +185,12 @@ var render = function() {
               { staticClass: "column is-two-fifths" },
               [
                 _c("h1", { staticClass: "title is-1" }, [
-                  _vm._v("Hurtig tjek din holdopstilling")
+                  _vm._v("Tjek din modstander")
                 ]),
                 _vm._v(" "),
                 _c("h2", { staticClass: "subtitle" }, [
                   _vm._v(
-                    "Med data direkte fra badmintonplayer.dk, kan du på få minutter tjekke om dit hold overholder rangliste reglerne"
+                    "På få minutter kan du tjekke om din modstanders holdopstilling overholder rangliste reglerne. Hold kan importeres direkte fra badmintonpeople.dk"
                   )
                 ]),
                 _vm._v(" "),
@@ -205,7 +205,7 @@ var render = function() {
                   },
                   [
                     _vm._v(
-                      "\n                            Tjek holdopstilling\n                        "
+                      "\n                            Tjek modstanders holdopstilling nu!\n                        "
                     )
                   ]
                 )

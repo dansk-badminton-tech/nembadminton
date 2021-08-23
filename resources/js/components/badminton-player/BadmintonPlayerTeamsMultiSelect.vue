@@ -4,8 +4,9 @@
         :columns="columns"
         :data="badmintonPlayerTeams"
         :loading="$apollo.queries.badmintonPlayerTeams.loading"
-        checkable>
-
+        checkable
+        :is-row-checkable="isRowCheckable"
+    >
         <template #empty>
             <div class="has-text-centered">Ingen hold fundet. Har du valgt den rigtige sæson og klub?</div>
         </template>
@@ -18,6 +19,18 @@ import gql from "graphql-tag"
 export default {
     name: "BadmintonPlayerTeamsMultiSelect",
     props: ['value', 'clubId', 'season'],
+    methods: {
+        isRowCheckable(row) {
+            return !((new RegExp('u[0-9]+', 'gmi')).test(row.league)
+                   || (new RegExp('sen\\+[0-9]+', 'gmi')).test(row.league)
+                    || (new RegExp('senior motion', 'gmi')).test(row.league)
+                    || (new RegExp('DMU', 'gmi')).test(row.league)
+                    || (new RegExp('1\\. division', 'gmi')).test(row.league)
+                    || (new RegExp('liga', 'gmi')).test(row.league)
+                    || (new RegExp('4 spillere', 'gmi')).test(row.league)
+            )
+        }
+    },
     watch: {
         teams(newValue, oldValue) {
             this.$emit('input', newValue)

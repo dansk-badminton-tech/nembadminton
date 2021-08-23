@@ -5,6 +5,7 @@ namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use FlyCompany\Scraper\Exception\NoPlayersException;
+use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Point;
@@ -184,7 +185,11 @@ class Parser
         $document = new Document($html);
         $trs = $document->find('table.matchresultschema.showmatch tr');
 
-        $topRow = array_shift($trs)->find('td');
+        $playersTrs = array_shift($trs);
+        if($playersTrs === null){
+            throw new NoPlayersFoundInTeamMatchException('Could not find any players on match');
+        }
+        $topRow = $playersTrs->find('td');
         $club1 = $topRow[1]->text();
         $club2 = $topRow[2]->text();
 
