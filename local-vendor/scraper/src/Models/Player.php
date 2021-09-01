@@ -18,4 +18,6 @@ class Player
 
     public string  $refId;
 
+    public string $rankingList;
+
 }

@@ -10,6 +10,7 @@ services:
     volumes:
       - .:/var/www/html
       - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug-confg.ini
+      - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
     ports:
       - 80:80
     depends_on:

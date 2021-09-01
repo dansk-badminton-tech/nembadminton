@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Enricher;
+use FlyCompany\Scraper\Exception\MultiplePlayersFoundException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Team;
@@ -78,6 +79,7 @@ class BadmintonPlayerTeamMatchesImport
             }
         }
 
+
         $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string)$clubId, $version);
         $playersWithPoints = BadmintonPlayerHelper::collapseRankingLists($rankingLists);
 
@@ -90,8 +92,15 @@ class BadmintonPlayerTeamMatchesImport
                         foreach ($player->points as $point) {
                             $point->version = $version;
                         }
+                    }else{
+                        try{
+                            $player = $this->scraper->getPlayerByName($player->name, $version, $season);
+                        }catch (MultiplePlayersFoundException $exception){
+                            throw new \RuntimeException("Did not find points for player $player->name");
+                        }
                     }
                 }
+                unset($player);
             }
         }
 

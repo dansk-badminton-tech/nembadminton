@@ -31,7 +31,7 @@ class Enricher
     {
         foreach ($categories as $category) {
             $rankingList = BadmintonPlayer::getRankingList($category->category,);
-            $badmintonPlayers = $this->scraper->getRankingListPlayers($rankingList, $season, $clubId, $version);
+            $badmintonPlayers = $this->scraper->getRankingListPlayersByClub($rankingList, $season, $clubId, $version);
             foreach ($badmintonPlayers as $badmintonPlayer) {
                 $rankingListNormalized = !\in_array($rankingList, ['HL', 'DL'])
                     ? $rankingList

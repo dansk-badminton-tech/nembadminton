@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Parser;
@@ -46,18 +47,20 @@ class Test extends Command
      * Execute the console command.
      *
      * @param BadmintonPlayer $scraper
-     * @param PointsManager $pointsManager
+     *
      * @return int
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager)
+    public function handle(BadmintonPlayer $scraper)
     {
         $clubId = 1622;
-        $teams = $scraper->searchPlayer($clubId, '900910-17');
+        $player = $scraper->getPlayerByName("Peter Lose Iversen", Carbon::create(2020, 8, 1), "2020");
 
-        foreach ($teams as $team) {
-            $scraper->getTeamFights($season, $clubId, $team['ageGroupId'], $team['leagueGroupID'], $team['name']);
-        }
+        //$rankingLists = $scraper->getAllRankingListPlayers(2020, (string)$clubId, Carbon::create(2020, 8, 1));
+        //$playersWithPoints = BadmintonPlayerHelper::collapseRankingLists($rankingLists);
+
+        //dump($playersWithPoints);
+        dump($player);
 
         return 0;
     }

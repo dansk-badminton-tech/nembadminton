@@ -10,6 +10,11 @@ use FlyCompany\Scraper\Models\Point;
 class BadmintonPlayerHelper
 {
 
+    /**
+     * @param array $rankingLists
+     *
+     * @return Player[]
+     */
     public static function collapseRankingLists(array $rankingLists) : array
     {
         /** @var Player[] $selectedPlayers */

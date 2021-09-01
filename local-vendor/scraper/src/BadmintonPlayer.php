@@ -5,7 +5,10 @@ declare(strict_types = 1);
 namespace FlyCompany\Scraper;
 
 use Carbon\Carbon;
+use FlyCompany\Scraper\Exception\MultiplePlayersFoundException;
 use FlyCompany\Scraper\Exception\NoPlayersException;
+use FlyCompany\Scraper\Models\Player;
+use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
 use GuzzleHttp\Client;
@@ -147,11 +150,12 @@ class BadmintonPlayer
      * @param        $pageIndex
      * @param string $param
      * @param string $gender
+     * @param string $playerId
      *
      * @return string
      * @throws \JsonException
      */
-    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param, string $gender) : string
+    private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param, string $gender, string $playerId = "") : string
     {
         $params = [
             "callbackcontextkey"     => $this->getToken(),
@@ -167,7 +171,7 @@ class BadmintonPlayer
             "getversions"            => true,
             "pageindex"              => $pageIndex,
             "param"                  => $param,
-            "playerid"               => "",
+            "playerid"               => $playerId,
             "pointsfrom"             => "",
             "pointsto"               => "",
             "rankingfrom"            => "",
@@ -195,6 +199,35 @@ class BadmintonPlayer
         return Str::replaceFirst("<table class='RankingListGrid'", "<table class='RankingListGrid'>", $data["d"]['Html']);
     }
 
+    public function getPlayerByName(string $name, Carbon $rankingVersion, int $season) : Player{
+        $players = $this->searchPlayer($name);
+
+        $count = count($players);
+        if($count > 1 || $count === 0){
+            throw new MultiplePlayersFoundException("Multiple or no players found under the name $name");
+        }
+        $player = $players[0];
+
+        $playersCollection = [];
+        foreach (static::rankingLists() as $rankingList) {
+            for ($i = 0; $i < 100; $i++) {
+                [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
+                try {
+                    $html = $this->getRankingListPlayersHtml($rankingListId, $season, "", $rankingVersion, $i, $param, $gender, $player->badmintonPlayerInternalId);
+                    $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
+                } catch (NoPlayersException $exception) {
+                    break;
+                }
+            }
+        }
+
+        $points = Arr::pluck($playersCollection, 'points');
+        $player = $playersCollection[0];
+        $player->points = $points;
+
+        return $player;
+    }
+
     /**
      * @param string $rankingList
      * @param int    $season
@@ -205,12 +238,15 @@ class BadmintonPlayer
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
-    public function getRankingListPlayers(string $rankingList, int $season, string $clubId, Carbon $rankingVersion) : array
+    public function getRankingListPlayersByClub(string $rankingList, int $season, string $clubId, Carbon $rankingVersion) : array
     {
         [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
 
         $playersCollection = [];
         for ($i = 0; $i < 100; $i++) {
+            if($i === 10){
+                throw new \RuntimeException(implode(', ', [$rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender]));
+            }
             try {
                 $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
                 $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
@@ -235,7 +271,7 @@ class BadmintonPlayer
     {
         $rankingLists = [];
         foreach (static::rankingLists() as $rankingList) {
-            $rankingLists[$rankingList] = $this->getRankingListPlayers($rankingList, $season, $clubId, $rankingVersion);
+            $rankingLists[$rankingList] = $this->getRankingListPlayersByClub($rankingList, $season, $clubId, $rankingVersion);
         }
 
         return $rankingLists;
@@ -326,20 +362,27 @@ class BadmintonPlayer
         return $this->parser->teamMatch($html);
     }
 
-    public function searchPlayer(int $clubId, string $badmintonId) : array
+    /**
+     * @param string $name
+     *
+     * @return array|PlayerSearch[]
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws \JsonException
+     */
+    public function searchPlayer(string $name) : array
     {
         $params = [
             "agegroupcontext"    => 0,
             "agegroupid"         => "",
             "callbackcontextkey" => $this->getToken(),
-            "clubid"             => (string)$clubId,
+            "clubid"             => "",
             "gender"             => "",
             "licenseonly"        => false,
-            "name"               => "",
-            "playernumber"       => $badmintonId,
+            "name"               => $name,
+            "playernumber"       => "",
             "searchteam"         => false,
             "selectfunction"     => "SPSel1",
-            "tournamentdate"     => "",
+            "tournamentdate"     => ""
         ];
 
         $response = $this->client->post('SportsResults/Components/WebService1.asmx/SearchPlayer', [
@@ -350,7 +393,7 @@ class BadmintonPlayer
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
-        $html = $data["d"]['html'];
+        $html = $data["d"]['Html'];
 
         return $this->parser->searchPlayer($html);
     }

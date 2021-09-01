@@ -8,6 +8,7 @@ use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
 use FlyCompany\Scraper\Models\Player;
+use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Squad;
 use FlyCompany\Scraper\Models\Team;
@@ -17,16 +18,6 @@ use Psr\Log\LoggerInterface;
 
 class Parser
 {
-
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $output;
-
-    public function __construct(LoggerInterface $output)
-    {
-        $this->output = $output;
-    }
 
     public function teamFights(string $html) : array
     {
@@ -77,6 +68,12 @@ class Parser
         return $teams;
     }
 
+    /**
+     * @param string $html
+     *
+     * @return array|PlayerSearch[]
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     */
     public function searchPlayer(string $html) : array
     {
         $document = new Document($html);
@@ -90,10 +87,11 @@ class Parser
             $badmintonPlayerInternalId = $arguments[0];
 
             $tds = $playerTr->find('td');
-            $player['badmintonId'] = $tds[1]->text();
-            $player['badmintonPlayerInternalId'] = $badmintonPlayerInternalId;
-            $player['name'] = $tds[2]->text();
-            $player['club'] = $tds[3]->text();
+            $player = new PlayerSearch();
+            $player->refId = $tds[1]->text();
+            $player->badmintonPlayerInternalId = $badmintonPlayerInternalId;
+            $player->name = $tds[2]->text();
+            $player->club = $tds[3]->text();
 
             $players[] = $player;
         }
@@ -104,8 +102,8 @@ class Parser
     public static function parseFunction(string $function) : array
     {
         /** @var string[] $parts */
-        $parts = preg_match("/'(.+)'/", $function);
-        $arguments = $parts[0];
+        $parts = preg_match_all("/'(.+)'/", $function, $out);
+        $arguments = $out[0][0];
         $arguments = explode(',', $arguments);
 
         return array_map(static function ($value) {
@@ -141,10 +139,16 @@ class Parser
         // Remove top of table
         array_shift($trs);
 
-        $playersCollection = [];
-        if (count($trs) < 3) {
+        if (count($trs) < 1) {
             throw new NoPlayersException('No players');
         }
+        $testRow = $trs[0];
+        $seePlayer = $testRow->has('td.rank') && $testRow->has('td.playerid');
+        if (!$seePlayer) {
+            throw new NoPlayersException('No players');
+        }
+
+        $playersCollection = [];
         foreach ($trs as $tr) {
 
             // Will continue if name is not set
@@ -166,7 +170,9 @@ class Parser
             $player = new Player();
             $player->name = $name;
             $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
-            $player->points = [new Point((int)$points, (int)$position, $vintage)];
+            $point = new Point((int)$points, (int)$position, $vintage);
+            $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
+            $player->points = [$point];
             $player->refId = $refId;
             $playersCollection[] = $player;
         }

@@ -65,7 +65,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
                     $gender = $rankingList === 'HL'
                         ? 'M'
                         : 'K';
-                    $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $clubId, $starting);
+                    $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $clubId, $starting);
 
                     foreach ($playersCollection as $player) {
                         $rankingListNormalized = \in_array($rankingList, ['HL', 'DL'])

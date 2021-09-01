@@ -52,7 +52,7 @@ class BadmintonPlayerImportPoints implements ShouldQueue
             $starting = Carbon::create($season, 7)->setTime(0, 0);
             while ($starting < $now) {
                 $season = BadmintonPlayer::calculateSeason($starting);
-                $playersCollection = $scraper->getRankingListPlayers($rankingList, $season, $this->clubId, $starting);
+                $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
 
                 foreach ($playersCollection as $player) {
                     $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
