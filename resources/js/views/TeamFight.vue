@@ -3,7 +3,7 @@
         <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
         <b-button :loading="saving" icon-left="save" @click="saveTeams">Gem</b-button>
         <b-button icon-left="share-alt" @click="publish">Del</b-button>
-        <b-button icon-left="bell" @click="notify">Notificer</b-button>
+<!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
         <b-dropdown aria-role="list">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                 <span>Tilføj hold</span>
@@ -16,12 +16,6 @@
             <b-dropdown-item aria-role="listitem" @click="addTeam10">
                 <b-icon icon="users" size="is-small"></b-icon>
                 10 personer
-            </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" has-link>
-                <router-link v-bind:to="'/team-fight/'+teamFightId+'/import'">
-                    <b-icon icon="users" size="is-small"></b-icon>
-                    Import fra BadmintonPlayer
-                </router-link>
             </b-dropdown-item>
         </b-dropdown>
         <ValidateTeams ref="validateTeams" :teams="team.squads"/>

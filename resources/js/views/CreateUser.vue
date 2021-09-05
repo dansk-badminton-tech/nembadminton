@@ -9,10 +9,10 @@
         <b-field label="Badminton Player Klub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
         </b-field>
-        <b-field label="Badminton Player ID (Valgfrit)">
-            <b-input v-model="playerId" icon="user-alt" placeholder="900910-17" type="text"></b-input>
-        </b-field>
-        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>
+<!--        <b-field label="Badminton Player ID (Valgfrit)">-->
+<!--            <b-input v-model="playerId" icon="user-alt" placeholder="900910-17" type="text"></b-input>-->
+<!--        </b-field>-->
+<!--        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>-->
         <b-field label="Adgangskode">
             <b-input v-model="password" icon="lock" placeholder="******" type="password"></b-input>
         </b-field>

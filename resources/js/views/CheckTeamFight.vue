@@ -9,7 +9,7 @@
                             <BadmintonPlayerClubs v-model="clubId" @input="clearTeams"/>
                         </b-field>
                         <b-field label="Sæson">
-                            <b-select v-model="season" expanded placeholder="Vælge sæson" @input="goToStepTeamsStep">
+                            <b-select v-model="season" expanded placeholder="Vælge sæson">
                                 <option value="2020">2019/2020</option>
                                 <option value="2021">2021/2022</option>
                             </b-select>
@@ -27,18 +27,7 @@
                         <h1 class="title">Rangliste</h1>
                         <h2 class="subtitle">§ 38. Den først offentliggjorte rangliste i en ny måned er gældende for holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende måned. </h2>
                         <b-field>
-                            <b-select v-model="rankingList" expanded placeholder="Vælge rangliste">
-                                <option value="2021-10-01">2021-10-01</option>
-                                <option value="2021-09-01">2021-09-01</option>
-                                <option value="2021-08-01">2021-08-01</option>
-                                <option value="2021-07-01">2021-07-01</option>
-                                <option value="2020-12-01">2020-12-01</option>
-                                <option value="2020-11-01">2020-11-01</option>
-                                <option value="2020-10-01">2020-10-01</option>
-                                <option value="2020-09-01">2020-09-01</option>
-                                <option value="2020-08-01">2020-08-01</option>
-                                <option value="2020-07-01">2020-07-01</option>
-                            </b-select>
+                            <ranking-list-dropdown v-model="rankingList"></ranking-list-dropdown>
                         </b-field>
                         <h1 class="title">Hold kampe</h1>
                         <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps runden</h2>
@@ -138,10 +127,11 @@ import omitDeep from "omit-deep";
 import {findPositions, isPlayingToHighByName, swap, swapObject} from "../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import Draggable from "vuedraggable";
+import RankingListDropdown from "../components/ranking-list-dropdown/RankingListDropDown";
 
 export default {
     name: "CheckTeamFight",
-    components: {BadmintonPlayerTeamsMultiSelect, BadmintonPlayerTeamFights, BadmintonPlayerTeams, BadmintonPlayerClubs, Draggable},
+    components: {RankingListDropdown, BadmintonPlayerTeamsMultiSelect, BadmintonPlayerTeamFights, BadmintonPlayerTeams, BadmintonPlayerClubs, Draggable},
     data() {
         return {
             columns: [
@@ -322,12 +312,6 @@ export default {
         goToStart() {
             this.done = false;
             this.activeStep = 0;
-        },
-        goToStepTeamsStep() {
-            if (!(this.clubId === null || this.season === null)) {
-                this.clearTeamFights();
-                this.activeStep = 1;
-            }
         },
         clearTeams() {
             this.clearTeamFights()
