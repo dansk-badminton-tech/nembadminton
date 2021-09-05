@@ -13,13 +13,14 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
-   .sourceMaps(false, 'source-map')
+   .sourceMaps(false, 'cheap-module-eval-source-map')
    .webpackConfig({
                       module: {
                           rules: [
                               {
                                   test: /\.(gql|graphql)$/,
-                                  loader: 'graphql-tag/loader'
+                                  loader: 'graphql-tag/loader',
+                                  exclude: '/node_modules/'
                               }
                           ]
                       }
@@ -33,5 +34,5 @@ if (mix.inProduction()) {
             }
         }
     )
-    mix.version();
+    //mix.version();
 }
