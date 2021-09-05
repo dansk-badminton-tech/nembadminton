@@ -26,5 +26,12 @@ mix.js('resources/js/app.js', 'public/js')
                   });
 
 if (mix.inProduction()) {
+    mix.webpackConfig(
+        {
+            output: {
+                chunkFilename: "js/chunks/[name].[chunkhash].js"
+            }
+        }
+    )
     mix.version();
 }
