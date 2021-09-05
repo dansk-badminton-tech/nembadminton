@@ -2,11 +2,11 @@
     <fragment v-if="!$apollo.loading">
         <h1 class="title">{{ team.name }} - {{ team.club.name1 }}</h1>
         <h2 class="subtitle">Spille dato: {{ team.gameDate }}</h2>
-        <b-button
-            label="Notifikationer"
-            size="is-medium"
-            type="is-primary"
-            @click="showNotificationPopUp = true"/>
+<!--        <b-button-->
+<!--            label="Notifikationer"-->
+<!--            size="is-medium"-->
+<!--            type="is-primary"-->
+<!--            @click="showNotificationPopUp = true"/>-->
 
         <b-modal
             v-model="showNotificationPopUp"
