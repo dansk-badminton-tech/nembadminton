@@ -13,7 +13,7 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
-   .sourceMaps(false, 'cheap-module-eval-source-map')
+   .sourceMaps(false, 'source-map')
    .webpackConfig({
                       module: {
                           rules: [
