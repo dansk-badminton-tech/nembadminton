@@ -51,7 +51,6 @@ class BadmintonPlayerImportMembers implements ShouldQueue
         ];
 
         $now = Carbon::now();
-        $now->subMonth();
         $now->setDay(1);
         $season = $this->calculateSeason($now);
         foreach ($this->clubIds as $clubId) {
@@ -71,7 +70,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
                         $rankingListNormalized = \in_array($rankingList, ['HL', 'DL'])
                             ? null
                             : $rankingList;
-
+                        Log::debug("Adding/Updating $player->name");
                         $player->gender = $gender;
                         $member = $memberManager->addOrUpdateMember($player->refId, $player->name, $player->gender);
                         foreach ($player->points as $point) {
@@ -84,7 +83,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
             }
             $membersIds = array_unique($syncIds);
             \FlyCompany\Club\Log::createLog((int)$clubId, "Importering af medlemmer fra sæson $season fuldført", 'member-importer');
-//            Log::info("Added ".count($membersIds)." ids: " . implode(',', $membersIds));
+            Log::info("Added ".count($membersIds)." ids: " . implode(',', $membersIds));
             $clubModel->members()->sync($membersIds);
         }
     }

@@ -13,6 +13,7 @@ use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
 use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class BadmintonPlayer
@@ -242,15 +243,15 @@ class BadmintonPlayer
     {
         [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
 
+        Log::debug("Fetching ranking list: $rankingList, gender: $gender, clubId: $clubId, season: $season, version: $rankingVersion");
         $playersCollection = [];
         for ($i = 0; $i < 100; $i++) {
-            if($i === 10){
-                throw new \RuntimeException(implode(', ', [$rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender]));
-            }
+            Log::debug("Fetching page: $i");
             try {
                 $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
                 $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
             } catch (NoPlayersException $exception) {
+                Log::debug("No players found on page: $i");
                 break;
             }
         }
