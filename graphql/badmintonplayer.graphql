@@ -51,9 +51,14 @@ type BadmintonPlayerTeam {
 
 input BadmintonPlayerTeamMatchInput {
     clubId: Int!
-    leagueMatchIds: [Int!]!
+    leagueMatches: [BadmintonPlayerLeagueMatchInput!]!
     season: Int!
     version: Date!
+}
+
+input BadmintonPlayerLeagueMatchInput {
+    id: Int!
+    teamNameHint: String!
 }
 
 

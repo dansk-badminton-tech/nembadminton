@@ -70,9 +70,9 @@ class BadmintonPlayerTeamMatchesImport
         $version = $badmintonPlayerTeamMatches['version'];
         /** @var Team[] $teams */
         $teams = [];
-        foreach ($badmintonPlayerTeamMatches['leagueMatchIds'] as $badmintonPlayerTeamMatchId) {
-            $teamMatch = $this->scraper->getTeamMatch((string)$clubId, (string)$badmintonPlayerTeamMatchId, (string)$season);
-            if ($this->isClubTeam($teamMatch->guest->name, $clubId)) {
+        foreach ($badmintonPlayerTeamMatches['leagueMatches'] as $badmintonPlayerTeamMatch) {
+            $teamMatch = $this->scraper->getTeamMatch((string)$clubId, (string)$badmintonPlayerTeamMatch['id'], (string)$season);
+            if (Str::contains($teamMatch->guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
                 $teams[] = $teamMatch->guest;
             } else {
                 $teams[] = $teamMatch->home;

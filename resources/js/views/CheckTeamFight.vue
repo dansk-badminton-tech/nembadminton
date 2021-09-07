@@ -268,7 +268,7 @@ export default {
                     variables: {
                         input: {
                             clubId: parseInt(this.clubId),
-                            leagueMatchIds: this.castToArray(this.selectedTeamMatches).map((teamMatch) => (teamMatch.teamMatch.matchId)),
+                            leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch) => ({id: teamMatch.teamMatch.matchId, teamNameHint: teamMatch.team.name})),
                             season: parseInt(this.season),
                             version: this.rankingList//"2020-08-01"
                         }
