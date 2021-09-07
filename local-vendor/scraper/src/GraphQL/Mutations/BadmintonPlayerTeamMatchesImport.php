@@ -96,7 +96,7 @@ class BadmintonPlayerTeamMatchesImport
                         try{
                             $player = $this->scraper->getPlayerByName($player->name, $version, $season);
                         }catch (MultiplePlayersFoundException $exception){
-                            throw new \RuntimeException("Did not find points for player $player->name");
+                            throw new \RuntimeException("Multiple players named $player->name");
                         }
                     }
                 }

@@ -181,7 +181,7 @@ class BadmintonPlayer
             "rankinglistversiondate" => $rankingVersion->format('m/d/Y'),
             "rankingto"              => "",
             "regionid"               => "",
-            "searchall"              => false,
+            "searchall"              => true,
             "seasonid"               => $season,
             "sortfield"              => 0,
         ];
