@@ -168,27 +168,28 @@ class BadmintonPlayer
             "classid"                => "",
             "clubid"                 => $clubId,
             "gender"                 => $gender,
-            "getplayer"              => true,
-            "getversions"            => true,
+            "getplayer"              => $clubId === "",
+            "getversions"            => $clubId === "",
             "pageindex"              => $pageIndex,
             "param"                  => $param,
             "playerid"               => $playerId,
             "pointsfrom"             => "",
             "pointsto"               => "",
             "rankingfrom"            => "",
-            "rankinglistagegroupid"  => 15, // Magic number i dont understand yet
+            "rankinglistagegroupid"  => (string)15, // Magic number i dont understand yet
             "rankinglistid"          => $rankingListId,
             "rankinglistversiondate" => $rankingVersion->format('m/d/Y'),
             "rankingto"              => "",
             "regionid"               => "",
             "searchall"              => true,
-            "seasonid"               => $season,
+            "seasonid"               => (string)$season,
             "sortfield"              => 0,
         ];
 
-//        Log::info('getRankingListPlayersHtml: ' . \json_encode($params, JSON_THROW_ON_ERROR));
+        $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayers";
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
-        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetRankingListPlayers', [
+        $response = $this->client->post($url, [
             'json' => $params,
         ]);
 
@@ -197,7 +198,9 @@ class BadmintonPlayer
             throw new \RuntimeException('Did not get any data back');
         }
 
-        return Str::replaceFirst("<table class='RankingListGrid'", "<table class='RankingListGrid'>", $data["d"]['Html']);
+        $html = Str::replaceFirst("<table class='RankingListGrid'", "<table class='RankingListGrid'>", $data["d"]['Html']);
+        //Log::debug("HTML: $html");
+        return $html;
     }
 
     public function getPlayerByName(string $name, Carbon $rankingVersion, int $season) : Player{

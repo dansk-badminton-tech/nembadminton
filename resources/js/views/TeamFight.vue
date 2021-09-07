@@ -3,7 +3,7 @@
         <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
         <b-button :loading="saving" icon-left="save" @click="saveTeams">Gem</b-button>
         <b-button icon-left="share-alt" @click="publish">Del</b-button>
-<!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
+        <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
         <b-dropdown aria-role="list">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                 <span>Tilføj hold</span>
@@ -271,6 +271,14 @@ export default {
                 .then(({data}) => {
                     this.playingToHighSquadList = data.validateSquad;
                 })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-dagner',
+                            message: `Noget gik galt under valideringen af holdet (validateSquad)`
+                        })
+                })
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -293,6 +301,14 @@ export default {
                 })
                 .then(({data}) => {
                     this.playingToHighList = data.validate;
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-dagner',
+                            message: `Noget gik galt under valideringen af holdet (validate)`
+                        })
                 })
         },
         copyShareLink() {

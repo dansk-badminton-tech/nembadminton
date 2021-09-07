@@ -143,7 +143,7 @@ class Parser
             throw new NoPlayersException('No players');
         }
         $testRow = $trs[0];
-        $seePlayer = $testRow->has('td.rank') && $testRow->has('td.playerid');
+        $seePlayer = $testRow->has('td.name') && $testRow->has('td.playerid');
         if (!$seePlayer) {
             throw new NoPlayersException('No players');
         }
