@@ -389,7 +389,10 @@ class BadmintonPlayer
             "tournamentdate"     => ""
         ];
 
-        $response = $this->client->post('SportsResults/Components/WebService1.asmx/SearchPlayer', [
+        $url = 'SportsResults/Components/WebService1.asmx/SearchPlayer';
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
+
+        $response = $this->client->post($url, [
             'json' => $params,
         ]);
 
