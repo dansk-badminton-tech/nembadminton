@@ -20,7 +20,7 @@ class BadmintonPlayer
 {
 
     private $clientConfig = [
-        'headers' => [
+        'headers'  => [
             'User-Agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
             'Accept'     => 'text/html',
         ],
@@ -52,7 +52,7 @@ class BadmintonPlayer
     public function getClubs() : array
     {
         $client = new Client();
-        $response = $client->get('http://www.badmintonpeople.dk/sportsresults/components/clubcomponents/clublistclientscript.aspx?unionid=1');
+        $response = $client->get('https://www.badmintonplayer.dk/sportsresults/components/clubcomponents/clublistclientscript.aspx?unionid=1');
         $body = $response->getBody()->getContents();
         $needle = 'var SportsResultsTeamList =';
         $pos = strpos($body, $needle);
@@ -60,6 +60,7 @@ class BadmintonPlayer
 
         $clubsStr = rtrim(trim(substr($body, $pos)), ';');
         $clubsStr = str_replace("'", '"', $clubsStr);
+
         $clubs = json_decode($clubsStr, true, 512, JSON_THROW_ON_ERROR);
 
         $responseJson = [];
@@ -67,7 +68,7 @@ class BadmintonPlayer
 
             $clubName = str_replace("–", "-", $clubPair[0]);
             $responseJson[] = [
-                'id'   => $clubPair[1],
+                'id'   => (int)$clubPair[1],
                 'name' => $clubName,
             ];
         }
@@ -199,21 +200,62 @@ class BadmintonPlayer
         }
 
         $html = Str::replaceFirst("<table class='RankingListGrid'", "<table class='RankingListGrid'>", $data["d"]['Html']);
+
         //Log::debug("HTML: $html");
         return $html;
     }
 
-    public function getPlayerByName(string $name, Carbon $rankingVersion, int $season) : Player{
-        $players = $this->searchPlayer($name);
+    public function getPlayerByBadmintonPlayerId(int $badmintonPlayerId, Carbon $rankingVersion, int $season) : Player
+    {
+        $params = [
+            "callbackcontextkey" => $this->getToken(),
+            "getplayerdata"      => true,
+            "playerid"           => (string)$badmintonPlayerId,
+            "seasonid"           => null,
+            "showUserProfile"    => true,
+            "showheader"         => false,
+        ];
 
+        $url = 'SportsResults/Components/WebService1.asmx/GetPlayerProfile';
+
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
+
+        $response = $this->client->post($url, [
+            'json' => $params,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+
+        return $this->getPlayerByBadmintonId($data['d']['playernumber'], $rankingVersion, $season);
+    }
+
+    public function getPlayerByBadmintonId(string $badmintonId, Carbon $rankingVersion, int $season) : Player
+    {
+        $players = $this->searchPlayers("", $badmintonId);
+
+        return $this->getRankingList($players, $rankingVersion, $season);
+    }
+
+    public function getPlayerByName(string $name, Carbon $rankingVersion, int $season) : Player
+    {
+        $players = $this->searchPlayers($name);
+
+        return $this->getRankingList($players, $rankingVersion, $season);
+    }
+
+    private function getRankingList(array $players, Carbon $rankingVersion, int $season) : Player
+    {
         $count = count($players);
-        if($count > 1 || $count === 0){
-            throw new MultiplePlayersFoundException("Multiple or no players found under the name $name");
+        if ($count > 1 || $count === 0) {
+            throw new MultiplePlayersFoundException("Multiple or no players found under the name {$players[0]->name}");
         }
         $player = $players[0];
 
         $playersCollection = [];
-        foreach (static::rankingLists() as $rankingList) {
+        foreach (static::rankingLists($player->gender) as $rankingList) {
             for ($i = 0; $i < 100; $i++) {
                 [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
                 try {
@@ -284,42 +326,42 @@ class BadmintonPlayer
     private function getRankingListIdAndParams(string $rankingList) : array
     {
         $mapping = [
-            'DL'    => [
+            'DL'  => [
                 287,
                 '',
                 'K',
             ],
-            'HL'    => [
+            'HL'  => [
                 287,
                 '',
                 'M',
             ],
-            'HS'    => [
+            'HS'  => [
                 288,
                 'M',
                 '',
             ],
-            'DS'    => [
+            'DS'  => [
                 288,
                 'K',
                 '',
             ],
-            'DD'    => [
+            'DD'  => [
                 289,
                 'K',
                 '',
             ],
-            'HD'    => [
+            'HD'  => [
                 289,
                 'M',
                 '',
             ],
-            'MxH'   => [
+            'MxH' => [
                 292,
                 'M',
                 '',
             ],
-            'MxD'   => [
+            'MxD' => [
                 292,
                 'K',
                 '',
@@ -353,7 +395,11 @@ class BadmintonPlayer
             "subPage"            => "5",
         ];
 
-        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
+        $url = 'SportsResults/Components/WebService1.asmx/GetLeagueStanding';
+
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
+
+        $response = $this->client->post($url, [
             'json' => $params,
         ]);
 
@@ -373,7 +419,7 @@ class BadmintonPlayer
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */
-    public function searchPlayer(string $name) : array
+    public function searchPlayers(string $name = "", string $badmintonId = "") : array
     {
         $params = [
             "agegroupcontext"    => 0,
@@ -383,10 +429,10 @@ class BadmintonPlayer
             "gender"             => "",
             "licenseonly"        => false,
             "name"               => $name,
-            "playernumber"       => "",
+            "playernumber"       => $badmintonId,
             "searchteam"         => false,
             "selectfunction"     => "SPSel1",
-            "tournamentdate"     => ""
+            "tournamentdate"     => "",
         ];
 
         $url = 'SportsResults/Components/WebService1.asmx/SearchPlayer';
@@ -445,20 +491,42 @@ class BadmintonPlayer
     }
 
     /**
+     *
      * @return string[]
      */
-    public static function rankingLists() : array
+    public static function rankingLists(?string $gender = null) : array
     {
-        return [
-            'DL',
-            'HL',
-            'HS',
-            'DS',
-            'HD',
-            'DD',
-            'MxD',
-            'MxH',
-        ];
+        if ($gender === null) {
+            return [
+                'DL',
+                'HL',
+                'HS',
+                'DS',
+                'HD',
+                'DD',
+                'MxD',
+                'MxH',
+            ];
+        }
+
+        if ($gender === 'K') {
+            return [
+                'DL',
+                'DS',
+                'DD',
+                'MxD',
+            ];
+        }
+
+        if ($gender === 'M') {
+            return [
+                'HL',
+                'HS',
+                'HD',
+                'MxH',
+            ];
+        }
+        throw new \RuntimeException("Unknown gender '$gender'");
     }
 
     public static function findGenderByRanking(string $ranking) : string

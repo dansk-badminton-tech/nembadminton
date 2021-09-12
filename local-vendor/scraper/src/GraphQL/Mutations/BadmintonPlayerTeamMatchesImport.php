@@ -94,7 +94,7 @@ class BadmintonPlayerTeamMatchesImport
                         }
                     }else{
                         try{
-                            $player = $this->scraper->getPlayerByName($player->name, $version, $season);
+                            $player = $this->scraper->getPlayerByBadmintonPlayerId($player->badmintonPlayerId, $version, $season);
                         }catch (MultiplePlayersFoundException $exception){
                             throw new \RuntimeException("Multiple players named $player->name");
                         }

@@ -18,6 +18,8 @@ class Player
 
     public string  $refId;
 
+    public int $badmintonPlayerId;
+
     public string $rankingList;
 
 }

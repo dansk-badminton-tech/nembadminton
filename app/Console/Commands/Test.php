@@ -3,6 +3,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Club;
 use App\Models\Member;
 use App\Models\User;
 use Carbon\Carbon;
@@ -55,23 +56,7 @@ class Test extends Command
     public function handle(BadmintonPlayer $scraper)
     {
 
-        $html = file_get_contents(__DIR__.'/../../../test.html');
-        $document = new Document($html);
-        $trs = $document->find('table.RankingListGrid tr');
-
-        // Remove top of table
-        array_shift($trs);
-
-        $testRow = $trs[0];
-        dump($testRow->has('td.name'),$testRow->has('td.playerid'));
-        //        $clubId = 1622;
-//        $player = $scraper->getPlayerByName("Peter Lose Iversen", Carbon::create(2020, 8, 1), "2020");
-
-        //$rankingLists = $scraper->getAllRankingListPlayers(2020, (string)$clubId, Carbon::create(2020, 8, 1));
-        //$playersWithPoints = BadmintonPlayerHelper::collapseRankingLists($rankingLists);
-
-        //dump($playersWithPoints);
-//        dump($player);
+        $clubs = $scraper->searchPlayers("");
 
         return 0;
     }

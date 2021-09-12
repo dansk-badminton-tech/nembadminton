@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace FlyCompany\Scraper;
 
 use DiDom\Document;
+use DiDom\Element;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
@@ -85,6 +86,7 @@ class Parser
             $onClick = $playerTr->attr('onclick');
             $arguments = self::parseFunction($onClick);
             $badmintonPlayerInternalId = $arguments[0];
+            $gender = str_replace('\'', '', $arguments[5]);
 
             $tds = $playerTr->find('td');
             $player = new PlayerSearch();
@@ -92,6 +94,7 @@ class Parser
             $player->badmintonPlayerInternalId = $badmintonPlayerInternalId;
             $player->name = $tds[2]->text();
             $player->club = $tds[3]->text();
+            $player->gender = $gender;
 
             $players[] = $player;
         }
@@ -208,18 +211,19 @@ class Parser
             $category = $this->findCategoryByName($categoryName);
             $isSinglePlayer = Str::contains($categoryName, ['HS', 'DS']);
 
-            $club1Player1 = $match->find('td')[1]->find('a')[0]->text();
+            $aElement = $match->find('td')[1]->find('a')[0];
+            [$club1Player1Name, $club1Player1BadmintonPlayerId] = $this->extractNameAndId($aElement);
             if (!$isSinglePlayer) {
-                $club1Player2 = $match->find('td')[1]->find('a')[1]->text();
+                [$club1Player2Name, $club1Player2BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[1]->find('a')[1]);
             } else {
-                $club1Player2 = null;
+                $club1Player2Name = null;
             }
 
-            $club2Player1 = $match->find('td')[2]->find('a')[0]->text();
+            [$club2Player1Name, $club2Player1BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[2]->find('a')[0]);
             if (!$isSinglePlayer) {
-                $club2Player2 = $match->find('td')[2]->find('a')[1]->text();
+                [$club2Player2Name, $club2Player2BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[2]->find('a')[1]);
             } else {
-                $club2Player2 = null;
+                $club2Player2Name = null;
             }
 
             // Squad 1
@@ -229,10 +233,12 @@ class Parser
             $squad1->categories[] = $categoryObj;
 
             $player1 = new Player();
-            $player1->name = $club1Player1;
-            if ($club1Player2 !== null) {
+            $player1->name = $club1Player1Name;
+            $player1->badmintonPlayerId = $club1Player1BadmintonPlayerId;
+            if ($club1Player2Name !== null) {
                 $player2 = new Player();
-                $player2->name = $club1Player2;
+                $player2->name = $club1Player2Name;
+                $player2->badmintonPlayerId = $club1Player2BadmintonPlayerId;
                 $categoryObj->players[] = $player2;
             }
 
@@ -245,10 +251,12 @@ class Parser
             $squad2->categories[] = $categoryObj;
 
             $player1 = new Player();
-            $player1->name = $club2Player1;
-            if ($club2Player2 !== null) {
+            $player1->name = $club2Player1Name;
+            $player1->badmintonPlayerId = $club2Player1BadmintonPlayerId;
+            if ($club2Player2Name !== null) {
                 $player2 = new Player();
-                $player2->name = $club2Player2;
+                $player2->name = $club2Player2Name;
+                $player2->badmintonPlayerId = $club2Player2BadmintonPlayerId;
                 $categoryObj->players[] = $player2;
             }
 
@@ -259,6 +267,18 @@ class Parser
         $team2 = new Team($club2, $squad2);
 
         return new TeamMatch($team1, $team2);
+    }
+
+    /**
+     * @param Element $aElement
+     *
+     * @return array
+     */
+    private function extractNameAndId(Element $aElement) : array
+    {
+        $href = $aElement->getAttribute('href');
+        $badmintonPlayerId = Str::after($href, '#');
+        return [$aElement->text(), (int)$badmintonPlayerId];
     }
 
     private function findCategoryByName(string $categoryName) : string

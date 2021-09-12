@@ -15,4 +15,6 @@ class PlayerSearch
 
     public string $refId;
 
+    public string $gender;
+
 }

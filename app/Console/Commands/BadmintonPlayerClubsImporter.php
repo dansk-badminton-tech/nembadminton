@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace App\Console\Commands;
 
 use App\Import\Import;
+use App\Models\Club;
 use FlyCompany\Scraper\BadmintonPlayer;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class BadmintonPlayerClubsImporter extends Command
 {
@@ -36,17 +38,36 @@ class BadmintonPlayerClubsImporter extends Command
     {
         $clubs = $badmintonPlayer->getClubs();
 
-        foreach ($clubs as $club) {
-            $clubId = $club['id'];
-            if (!is_numeric($clubId)) {
-                continue;
-            }
-            \App\Models\Club::updateOrCreate([
-                'id' => $clubId,
+        $positiveClubs = array_filter($clubs, static function ($club) {
+            return $club['id'] > 0;
+        });
+        $negativeClubs = array_filter($clubs, static function ($club) {
+            return $club['id'] < 0;
+        });
+
+        foreach ($positiveClubs as $club) {
+            \App\Models\Club::query()->updateOrCreate([
+                'id' => $club['id'],
             ], [
-                'name1' => $club['name'],
+                'name1'             => $club['name'],
+                'badmintonPlayerId' => $club['id'],
             ]);
+            $this->info("Update/Creates {$club['name']}");
         }
+
+//        foreach ($negativeClubs as $club) {
+//            $clubId = $club['id'];
+//            $model = Club::query()->where('id', $clubId * -1)->first();
+//            if($model !== null && $model->name1 === $club['name']){
+//                \App\Models\Club::query()->updateOrCreate([
+//                    'id'    => $clubId * -1,
+//                ], [
+//                    'name1'             => $club['name'],
+//                    'badmintonPlayerId' => $club['id'],
+//                ]);
+//            }
+//            $this->info("Update/Creates {$club['name']}");
+//        }
 
         return 0;
     }

@@ -46,4 +46,5 @@ type Club {
     id: ID!
     name1: String!
     name2: String!
+    badmintonPlayerId: Int!
 }

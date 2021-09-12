@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Club extends Model
 {
 
-    protected $fillable = ['id', 'name1', 'name2', 'address', 'zipCode', 'city', 'email', 'memberOf', 'union'];
+    protected $fillable = ['id', 'name1', 'name2', 'address', 'zipCode', 'city', 'email', 'memberOf', 'union', 'badmintonPlayerId'];
 
     public function members() : BelongsToMany
     {
