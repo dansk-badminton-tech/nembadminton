@@ -109,12 +109,42 @@ export function extractErrors(graphqlErrors) {
     return errors;
 }
 
-export function isPlayingToHigh(playingToHighPlayers, player){
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id) !== undefined;
+export function isPlayingToHigh(playingToHighPlayers, player, category){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category) !== undefined;
 }
 
-export function isPlayingToHighByName(playingToHighPlayers, player){
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name) !== undefined;
+export function isPlayingToHighByName(playingToHighPlayers, player, category){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name && toHighPlayer.category === category) !== undefined;
+}
+
+export function resolveLabel(player, category){
+    let msg = ""
+    if(this.isPlayingToHigh(player, category)){
+        msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
+    }
+    if(this.isPlayingToHighInSquad(player, category)){
+        msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
+    }
+    return msg
+}
+
+export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
+    let base = {}
+    if (isPlayingToHighByName(playingToHighCrossSquads, player, category)) {
+        base = {
+            ...{
+                'has-background-warning': true
+            }, ...base
+        }
+    }
+    if (isPlayingToHighByName(playingToHighInSquad, player, category)) {
+        base = {
+            ...{
+                'has-background-danger': true
+            }, ...base
+        }
+    }
+    return base;
 }
 
 export function swap(arr, from, to) {

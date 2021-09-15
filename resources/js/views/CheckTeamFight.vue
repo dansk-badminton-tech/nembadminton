@@ -106,10 +106,10 @@
                         <b-tooltip
                             v-for="player in props.row.players"
                             :key="player.name+props.row.category"
-                            :label="resolveLabel(player)"
-                            :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player)"
+                            :label="resolveLabel(player, props.row.category)"
+                            :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)"
                             multilined>
-                            <p v-bind:class="highlight(player)">{{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
+                            <p v-bind:class="highlight(player, props.row.category)">{{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
                         </b-tooltip>
                     </b-table-column>
                 </b-table>
@@ -124,7 +124,7 @@ import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayer
 import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
 import omitDeep from "omit-deep";
-import {findPositions, isPlayingToHighByName, swap, swapObject} from "../helpers";
+import {findPositions, isPlayingToHighByName, resolveLabel, swapObject, highlight as simpleHighlight} from "../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import Draggable from "vuedraggable";
 import RankingListDropdown from "../components/ranking-list-dropdown/RankingListDropDown";
@@ -198,42 +198,18 @@ export default {
             const droppedOnRowIndex = payload.index
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
-        resolveLabel(player) {
-            let msg = ""
-            if (this.isPlayingToHigh(player)) {
-                msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
-            }
-            if (this.isPlayingToHighInSquad(player)) {
-                msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
-            }
-            return msg
+        resolveLabel,
+        isPlayingToHigh(player, category) {
+            return isPlayingToHighByName(this.playingToHigh, player, category);
         },
-        isPlayingToHigh(player) {
-            return isPlayingToHighByName(this.playingToHigh, player);
-        },
-        isPlayingToHighInSquad(player) {
-            return isPlayingToHighByName(this.playingToHighInSquad, player);
+        isPlayingToHighInSquad(player, category) {
+            return isPlayingToHighByName(this.playingToHighInSquad, player, category);
         },
         nextStep() {
             this.activeStep = 1;
         },
-        highlight: function (player) {
-            let base = {}
-            if (isPlayingToHighByName(this.playingToHigh, player)) {
-                base = {
-                    ...{
-                        'has-background-warning': true
-                    }, ...base
-                }
-            }
-            if (isPlayingToHighByName(this.playingToHighInSquad, player)) {
-                base = {
-                    ...{
-                        'has-background-danger': true
-                    }, ...base
-                }
-            }
-            return base;
+        highlight(player, category){
+            return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category)
         },
         findPositions,
         badmintonPlayerTeamMatchesImport() {
@@ -291,10 +267,12 @@ export default {
         validate() {
             this.$apollo.mutate(
                 {
-                    mutation: gql`mutation validateTeamMatch($input: [ValidateTeam!]!){
-                      validateTeamMatch(input: $input){
+                    mutation: gql`mutation validateCrossSquads($input: [ValidateTeam!]!){
+                      validateCrossSquads(input: $input){
                         name
                         id
+                        gender
+                        category
                       }
                     }
                     `,
@@ -303,7 +281,28 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.playingToHigh = data.validateTeamMatch
+                this.playingToHigh = data.validateCrossSquads
+                this.done = true;
+            }).finally(() => {
+                this.fetchingAndValidating = false
+            })
+            this.$apollo.mutate(
+                {
+                    mutation: gql`mutation validateSquads($input: [ValidateTeam!]!){
+                      validateSquads(input: $input){
+                        name
+                        id
+                        gender
+                        category
+                      }
+                    }
+                    `,
+                    variables: {
+                        input: omitDeep(this.teams, ['__typename'])
+                    }
+                }
+            ).then(({data}) => {
+                this.playingToHighInSquad = data.validateSquads
                 this.done = true;
             }).finally(() => {
                 this.fetchingAndValidating = false

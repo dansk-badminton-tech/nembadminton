@@ -65,10 +65,39 @@ class Validate
         return $this->teamValidator->validateSquads($squads);
     }
 
-    public function validateSquad($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    /**
+     * @param $rootValue
+     * @param array $args
+     * @param GraphQLContext $context
+     * @param ResolveInfo $resolveInfo
+     * @return array
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function validateSquad($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
     {
         /** @var Squad[] $squads */
         $squads = $this->serializer->denormalize($args['squads'], Squad::class . '[]');
+        $playingToHigh = [];
+        foreach ($squads as $squad) {
+            $playingToHigh = array_merge($this->teamValidator->validateSquad($squad), $playingToHigh);
+        }
+
+        return $playingToHigh;
+    }
+
+    /**
+     * @param $rootValue
+     * @param array $args
+     * @param GraphQLContext $context
+     * @param ResolveInfo $resolveInfo
+     * @return array
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function validateSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
+    {
+        $squads = new Collection($args['input']);
+        $squads = $squads->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
         $playingToHigh = [];
         foreach ($squads as $squad) {
             $playingToHigh = array_merge($this->teamValidator->validateSquad($squad), $playingToHigh);

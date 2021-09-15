@@ -60,11 +60,15 @@ class TeamValidator
                                         'id'    => $abovePlayer->id ?? 0,
                                         'refId' => $abovePlayer->refId,
                                         'name'  => $abovePlayer->name,
+                                        'gender' => $abovePlayer->gender,
+                                        'category' => $category
                                     ],
                                     'player'      => [
                                         'id'    => $player->id ?? 0,
                                         'refId' => $player->refId,
                                         'name'  => $player->name,
+                                        'gender' => $player->gender,
+                                        'category' => $category
                                     ],
                                 ];
                             }
@@ -111,14 +115,18 @@ class TeamValidator
                         $abovePairsPoints = $this->getPairPoints($abovePair, $category);
                         if ($belowPairsPoints > $abovePairsPoints + $limitDouble) {
                             $playingToHigh[] = [
-                                'id'    => $abovePair[0]->id,
+                                'id'    => $abovePair[0]->id ?? 0,
                                 'refId' => $abovePair[0]->refId,
                                 'name'  => $abovePair[0]->name,
+                                'gender'  => $abovePair[0]->gender,
+                                'category' => $category
                             ];
                             $playingToHigh[] = [
-                                'id'    => $abovePair[1]->id,
+                                'id'    => $abovePair[1]->id ?? 0,
                                 'refId' => $abovePair[1]->refId,
                                 'name'  => $abovePair[1]->name,
+                                'gender'  => $abovePair[1]->gender,
+                                'category' => $category,
                             ];
                         }
                     }
@@ -134,9 +142,11 @@ class TeamValidator
                             $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
                             if ($belowPlayerPoints > $abovePlayerPoints + $limit) {
                                 $playingToHigh[] = [
-                                    'id'    => $abovePlayer->id,
+                                    'id'    => $abovePlayer->id ?? 0,
                                     'refId' => $abovePlayer->refId,
                                     'name'  => $abovePlayer->name,
+                                    'category' => $category,
+                                    'gender' => $abovePlayer->gender
                                 ];
                             }
                         }

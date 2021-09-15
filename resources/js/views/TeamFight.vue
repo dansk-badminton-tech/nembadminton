@@ -255,6 +255,9 @@ export default {
                           validateSquad(input: $input){
                             name
                             id
+                            category
+                            gender
+                            refId
                           }
                         }
                     `,
