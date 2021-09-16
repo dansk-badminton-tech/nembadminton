@@ -19,25 +19,36 @@
                         <h1 class="title">Hold</h1>
                         <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
                         <b-message title="Vigtig!" type="is-warning">
-                            Understøtter pt kun SEN (ikke SEN+XX, UX, 4 spillere hold, div. 1 + Liga). Så alle hold som falder under <a href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">disse regler</a>. Det ligger på roadmap at udvikle de andre, men skriv gerne hvis du vil påvirke prioriteten.
+                            Understøtter pt kun SEN (ikke SEN+XX, UX, 4 spillere hold, div. 1 + Liga). Så alle hold som
+                            falder under <a
+                            href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">disse
+                            regler</a>. Det ligger på roadmap at udvikle de andre, men skriv gerne hvis du vil påvirke
+                            prioriteten.
                         </b-message>
-                        <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season" @input="clearTeamFights"/>
+                        <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"
+                                                         @input="clearTeamFights"/>
                     </b-step-item>
                     <b-step-item label="Kampe">
                         <h1 class="title">Rangliste</h1>
-                        <h2 class="subtitle">§ 38. Den først offentliggjorte rangliste i en ny måned er gældende for holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende måned. </h2>
+                        <h2 class="subtitle">§ 38. Den først offentliggjorte rangliste i en ny måned er gældende for
+                            holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende
+                            måned. </h2>
                         <b-field>
                             <ranking-list-dropdown v-model="rankingList"></ranking-list-dropdown>
                         </b-field>
                         <h1 class="title">Hold kampe</h1>
-                        <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps runden</h2>
-                        <b-field v-for="(team, index) in playerTeams" :key="team.leagueGroupId+playerTeams.length" :label="team.name">
-                            <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId" :player-team="team" :season="season"/>
+                        <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps
+                            runden</h2>
+                        <b-field v-for="(team, index) in playerTeams" :key="team.leagueGroupId+playerTeams.length"
+                                 :label="team.name">
+                            <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId"
+                                                       :player-team="team" :season="season"/>
                         </b-field>
                     </b-step-item>
                     <b-step-item label="Bekræft">
                         <h1 class="title">Hold sortering</h1>
-                        <h2 class="subtitle">Sortering er vigtig når spillerunden skal tjekkes. Drag and Drop holdene rundt eller via knapperne, så styrkeordenen passer</h2>
+                        <h2 class="subtitle">Sortering er vigtig når spillerunden skal tjekkes. Drag and Drop holdene
+                            rundt eller via knapperne, så styrkeordenen passer</h2>
                         <b-table :data="castToArray(selectedTeamMatches)"
                                  :draggable="true"
                                  @dragstart="dragstart"
@@ -71,18 +82,30 @@
                             </b-table-column>
                             <b-table-column
                                 v-slot="props">
-                                <b-button :disabled="props.index === 0" @click="moveUp(props.index)" type="is-success">Op</b-button>
-                                <b-button :disabled="maybeMoveDown(props.index)" @click="moveDown(props.index)" i type="is-success">Ned</b-button>
-                                <b-button tag="a" target="_blank" :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+props.row.teamMatch.matchId+',,'" type="is-success">Se på BP</b-button>
+                                <b-button :disabled="props.index === 0" @click="moveUp(props.index)" type="is-success">
+                                    Op
+                                </b-button>
+                                <b-button :disabled="maybeMoveDown(props.index)" @click="moveDown(props.index)" i
+                                          type="is-success">Ned
+                                </b-button>
+                                <b-button tag="a" target="_blank"
+                                          :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+props.row.teamMatch.matchId+',,'"
+                                          type="is-success">Se på BP
+                                </b-button>
                             </b-table-column>
                         </b-table>
-                        <hr />
+                        <hr/>
                         <b-field>
-                            <b-checkbox v-model="sortingConfirmed">Holdene står i den rigtige sortering. (Flyt hold rundt via Drag&Drop eller via knapperne)</b-checkbox>
+                            <b-checkbox v-model="sortingConfirmed">Holdene står i den rigtige sortering. (Flyt hold
+                                rundt via Drag&Drop eller via knapperne)
+                            </b-checkbox>
                         </b-field>
-                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport" :disabled="!sortingConfirmed">Tjek spillerunden</b-button>
+                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport"
+                                  :disabled="!sortingConfirmed">Tjek spillerunden
+                        </b-button>
                         <b-message v-if="errorImporting" title="Fejl ved import" class="mt-2" type="is-danger">
-                            En eller flere hold kunne ikke importeres. Prøv at tjek på badmintonplayer.dk om der er indrapporteret spiller på alle holde?
+                            En eller flere hold kunne ikke importeres. Prøv at tjek på badmintonplayer.dk om der er
+                            indrapporteret spiller på alle holde?
                         </b-message>
                     </b-step-item>
                 </template>
@@ -109,7 +132,8 @@
                             :label="resolveLabel(player, props.row.category)"
                             :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)"
                             multilined>
-                            <p v-bind:class="highlight(player, props.row.category)">{{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
+                            <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
+                                ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
                         </b-tooltip>
                     </b-table-column>
                 </b-table>
@@ -124,14 +148,26 @@ import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayer
 import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
 import omitDeep from "omit-deep";
-import {findPositions, isPlayingToHighByName, resolveLabel, swapObject, highlight as simpleHighlight} from "../helpers";
+import {
+    findPositions,
+    swapObject,
+    highlight as simpleHighlight,
+    resolveToolTip, isPlayingToHighByBadmintonPlayerId
+} from "../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import Draggable from "vuedraggable";
 import RankingListDropdown from "../components/ranking-list-dropdown/RankingListDropDown";
 
 export default {
     name: "CheckTeamFight",
-    components: {RankingListDropdown, BadmintonPlayerTeamsMultiSelect, BadmintonPlayerTeamFights, BadmintonPlayerTeams, BadmintonPlayerClubs, Draggable},
+    components: {
+        RankingListDropdown,
+        BadmintonPlayerTeamsMultiSelect,
+        BadmintonPlayerTeamFights,
+        BadmintonPlayerTeams,
+        BadmintonPlayerClubs,
+        Draggable
+    },
     data() {
         return {
             columns: [
@@ -167,14 +203,14 @@ export default {
 
     },
     methods: {
-        maybeMoveDown(index){
-            return this.castToArray(this.selectedTeamMatches).length-1 === index
+        maybeMoveDown(index) {
+            return this.castToArray(this.selectedTeamMatches).length - 1 === index
         },
-        moveUp(index){
-            swapObject(this.selectedTeamMatches, index, index-1)
+        moveUp(index) {
+            swapObject(this.selectedTeamMatches, index, index - 1)
         },
-        moveDown(index){
-            swapObject(this.selectedTeamMatches, index, index+1)
+        moveDown(index) {
+            swapObject(this.selectedTeamMatches, index, index + 1)
         },
         castToArray(object) {
             return Object.values(object)
@@ -198,17 +234,19 @@ export default {
             const droppedOnRowIndex = payload.index
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
-        resolveLabel,
+        resolveLabel(player, category) {
+            return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
+        },
         isPlayingToHigh(player, category) {
-            return isPlayingToHighByName(this.playingToHigh, player, category);
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
         },
         isPlayingToHighInSquad(player, category) {
-            return isPlayingToHighByName(this.playingToHighInSquad, player, category);
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         nextStep() {
             this.activeStep = 1;
         },
-        highlight(player, category){
+        highlight(player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category)
         },
         findPositions,
@@ -244,7 +282,10 @@ export default {
                     variables: {
                         input: {
                             clubId: parseInt(this.clubId),
-                            leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch) => ({id: teamMatch.teamMatch.matchId, teamNameHint: teamMatch.team.name})),
+                            leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch) => ({
+                                id: teamMatch.teamMatch.matchId,
+                                teamNameHint: teamMatch.team.name
+                            })),
                             season: parseInt(this.season),
                             version: this.rankingList//"2020-08-01"
                         }
@@ -255,11 +296,11 @@ export default {
                 this.validate()
             }).catch(() => {
                 this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Et eller flere hold kunne ikke hentes`,
-                                           position: 'is-bottom',
-                                           type: 'is-danger'
-                                       })
+                    duration: 5000,
+                    message: `Et eller flere hold kunne ikke hentes`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
                 this.errorImporting = true;
                 this.fetchingAndValidating = false;
             })
@@ -273,6 +314,12 @@ export default {
                         id
                         gender
                         category
+                        refId
+                        belowPlayer {
+                                name
+                                id
+                                refId
+                            }
                       }
                     }
                     `,
@@ -294,6 +341,12 @@ export default {
                         id
                         gender
                         category
+                        refId
+                        belowPlayer {
+                            name
+                            id
+                            refId
+                        }
                       }
                     }
                     `,

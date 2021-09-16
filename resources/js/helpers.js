@@ -110,34 +110,35 @@ export function extractErrors(graphqlErrors) {
 }
 
 export function isPlayingToHigh(playingToHighPlayers, player, category){
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category) !== undefined;
+    return getPlayingToHigh(playingToHighPlayers, player, category) !== undefined;
 }
 
 export function isPlayingToHighByName(playingToHighPlayers, player, category){
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name && toHighPlayer.category === category) !== undefined;
 }
 
-export function resolveLabel(player, category){
-    let msg = ""
-    if(this.isPlayingToHigh(player, category)){
-        msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
-    }
-    if(this.isPlayingToHighInSquad(player, category)){
-        msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
-    }
-    return msg
+export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category){
+    return getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) !== undefined;
+}
+
+export function getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category === category)
+}
+
+export function getPlayingToHigh(playingToHighPlayers, player, category){
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category)
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
     let base = {}
-    if (isPlayingToHighByName(playingToHighCrossSquads, player, category)) {
+    if (isPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)) {
         base = {
             ...{
                 'has-background-warning': true
             }, ...base
         }
     }
-    if (isPlayingToHighByName(playingToHighInSquad, player, category)) {
+    if (isPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)) {
         base = {
             ...{
                 'has-background-danger': true
@@ -145,6 +146,29 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
         }
     }
     return base;
+}
+
+export function resolveToolTip(player, category, playingToHigh, playingToHighInSquad){
+    let msg = ""
+    let resolveNames = (playerWithBelowPlayers) => {
+        let names = playerWithBelowPlayers.belowPlayer.map(x => x.name)
+        return names.join(', ')
+    }
+    let playerWithBelowPlayers = getPlayingToHighByBadmintonPlayerId(playingToHigh, player, category)
+    let playerWithBelowPlayersSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)
+    if(playerWithBelowPlayers !== undefined){
+        msg += "Bedre spiller: "+resolveNames(playerWithBelowPlayers)+"\n"
+    }
+    if(playerWithBelowPlayersSquad !== undefined){
+        msg += "Bedre spiller: "+resolveNames(playerWithBelowPlayersSquad)+"\n"
+    }
+//    if(isPlayingToHigh(player)){
+//        msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
+//    }
+//    if(isPlayingToHigh(player)){
+//        msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
+//    }
+    return msg
 }
 
 export function swap(arr, from, to) {
