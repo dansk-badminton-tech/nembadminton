@@ -8,12 +8,15 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-      - uses: php-actions/composer@v5 # or alternative dependency management
+      - uses: php-actions/composer@v5
         with:
           php_version: 7.4
           version: 2
@@ -22,5 +25,5 @@ jobs:
         run: php artisan key:generate
       - name: Generate passport keys
         run: php artisan passport:keys
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        run: vendor/bin/phpunit
+      - name: Execute tests (GraphQL tests) via PHPUnit
+        run: php vendor/bin/phpunit
