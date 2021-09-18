@@ -20,5 +20,7 @@ jobs:
           args: --ignore-platform-reqs
       - name: Generate key
         run: php artisan key:generate
+      - name: Generate passport keys
+        run: php artisan passport:keys
       - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: vendor/bin/phpunit
