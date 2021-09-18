@@ -73,7 +73,8 @@
         <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
         <div class="columns">
             <div class="column">
-                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]" :version="versionDate"></PlayerSearch>
+                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]"
+                              :version="versionDate"></PlayerSearch>
             </div>
         </div>
         <PlayerList :players="players"></PlayerList>
@@ -98,7 +99,8 @@
         </div>
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
             <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
-                       :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList" :teams="team.squads" @end="validTeams"/>
+                       :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
+                       :teams="team.squads" @end="validTeams"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
@@ -251,28 +253,27 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: UpdateTeamInput!){
-                          validateSquad(input: $input){
+                        mutation ($input: [ValidateTeam!]!){
+                          validateSquads(input: $input){
                             name
                             id
+                            refId
                             category
                             gender
-                            refId
+                            belowPlayer {
+                                name
+                                id
+                                refId
+                            }
                           }
                         }
                     `,
                     variables: {
-                        input: {
-                            id: this.teamFightId,
-                            name: this.team.name,
-                            version: this.version,
-                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                            squads: omitDeep(this.team.squads, ['__typename'])
-                        }
+                        input: omitDeep(this.team.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
                     }
                 })
                 .then(({data}) => {
-                    this.playingToHighSquadList = data.validateSquad;
+                    this.playingToHighSquadList = data.validateSquads;
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -285,25 +286,26 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: UpdateTeamInput!){
-                          validate(input: $input){
+                        mutation ($input: [ValidateTeam!]!){
+                          validateCrossSquads(input: $input){
                             name
                             id
+                            category
+                            refId
+                            belowPlayer {
+                                name
+                                id
+                                refId
+                            }
                           }
                         }
                     `,
                     variables: {
-                        input: {
-                            id: this.teamFightId,
-                            name: this.team.name,
-                            version: this.version,
-                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                            squads: omitDeep(this.team.squads, ['__typename'])
-                        }
+                        input: omitDeep(this.team.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
                     }
                 })
                 .then(({data}) => {
-                    this.playingToHighList = data.validate;
+                    this.playingToHighList = data.validateCrossSquads;
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(

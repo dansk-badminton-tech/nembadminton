@@ -19,7 +19,9 @@ use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\SquadManager;
 use FlyCompany\TeamFight\TeamManager;
+use FlyCompany\TeamFight\TeamValidator;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -48,15 +50,17 @@ class Test extends Command
     /**
      * Execute the console command.
      *
-     * @param BadmintonPlayer $scraper
      *
      * @return int
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayer $scraper)
+    public function handle(TeamValidator $teamValidator)
     {
-
-        $clubs = $scraper->searchPlayers("");
+        $squads = require __DIR__.'/skovbakken-data.php';
+        $squads = new Collection($squads['input']);
+        $squads = $squads->pluck('squad');
+        $squads = SerializerHelper::getSerializer()->denormalize($squads->toArray(), Squad::class . '[]');
+        dd($teamValidator->validateCrossSquadsV2($squads));
 
         return 0;
     }

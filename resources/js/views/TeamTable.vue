@@ -60,7 +60,13 @@
 </template>
 <script>
 import Draggable from "vuedraggable"
-import {findPositions, isPlayingToHigh, resolveLabel, highlight as simpleHighlight} from "../helpers";
+import {
+    findPositions,
+    isPlayingToHigh,
+    highlight as simpleHighlight,
+    resolveToolTip,
+    isPlayingToHighByBadmintonPlayerId
+} from "../helpers";
 
 export default {
     name: 'TeamTable',
@@ -89,12 +95,14 @@ export default {
         }
     },
     methods: {
-        resolveLabel,
+        resolveLabel(player, category){
+            return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
+        },
         isPlayingToHigh(player, category){
-            return isPlayingToHigh(this.playingToHigh, player, category);
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
         },
         isPlayingToHighInSquad(player, category){
-            return isPlayingToHigh(this.playingToHighInSquad, player, category);
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         findPositions,
         highlight: function (player, category) {

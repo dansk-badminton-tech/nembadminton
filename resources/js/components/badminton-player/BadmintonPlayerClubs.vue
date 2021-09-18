@@ -3,7 +3,7 @@
         <option
             v-for="option in clubs"
             :key="option.id"
-            :value="option.id">
+            :value="option.badmintonPlayerId">
             {{ option.name1 }}
         </option>
     </b-select>
@@ -27,6 +27,7 @@ export default {
                  clubs{
                     id
                     name1
+                    badmintonPlayerId
                   }
                 }
                `
