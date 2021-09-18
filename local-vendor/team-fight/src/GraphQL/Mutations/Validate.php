@@ -46,7 +46,7 @@ class Validate
         $squads = $squads->pluck('squad');
         $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
 
-        return $this->teamValidator->validateCrossSquadsV2($squads);
+        return $this->teamValidator->validateCrossSquads($squads);
     }
 
     /**

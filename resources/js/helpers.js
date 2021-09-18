@@ -148,26 +148,20 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
     return base;
 }
 
-export function resolveToolTip(player, category, playingToHigh, playingToHighInSquad){
+export function resolveToolTip(player, category, playingToHighCrossSquads, playingToHighInSquad){
     let msg = ""
     let resolveNames = (playerWithBelowPlayers) => {
         let names = playerWithBelowPlayers.belowPlayer.map(x => x.name)
         return names.join(', ')
     }
-    let playerWithBelowPlayers = getPlayingToHighByBadmintonPlayerId(playingToHigh, player, category)
+    let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)
     let playerWithBelowPlayersSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)
-    if(playerWithBelowPlayers !== undefined){
-        msg += "Bedre spiller: "+resolveNames(playerWithBelowPlayers)+"\n"
+    if(playerWithBelowPlayersCrossSquads !== undefined){
+        msg += "Bedre spiller på NIVEAU-ranglisten: "+resolveNames(playerWithBelowPlayersCrossSquads)+"\n"
     }
     if(playerWithBelowPlayersSquad !== undefined){
-        msg += "Bedre spiller: "+resolveNames(playerWithBelowPlayersSquad)+"\n"
+        msg += "Bedre spiller i kategorien: "+resolveNames(playerWithBelowPlayersSquad)+"\n"
     }
-//    if(isPlayingToHigh(player)){
-//        msg += "Gul: En eller flere spiller har mere end 50/100 point på NIVEAU-ranglisten, på et laverer hold"
-//    }
-//    if(isPlayingToHigh(player)){
-//        msg += "\n Rød: En eller flere spiller har mere end 50 point på kategori-ranglisten, på et laverer hold";
-//    }
     return msg
 }
 

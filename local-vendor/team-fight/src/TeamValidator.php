@@ -23,7 +23,7 @@ class TeamValidator
         'HD',
     ];
 
-    public function validateCrossSquadsV2(array $squads)
+    public function validateCrossSquads(array $squads)
     {
         $limit = 50;
 
@@ -110,87 +110,6 @@ class TeamValidator
         }
 
         return $collapseConflicts->values();
-    }
-
-    /**
-     * Validate multiple squads is complies with ranking point rules
-     *
-     * @param  array|Squad[]  $squads
-     *
-     * @return array|Squad[]
-     */
-    public function validateCrossSquads(array $squads): array
-    {
-        krsort($squads, SORT_REGULAR);
-        $limit = 50;
-
-        $possibleToHighPlayers = [];
-
-        foreach ($squads as $teamLevel => $squad) {
-            foreach ($this->categories as $category) {
-                $playersInCategory = $this->getPlayersByCategory($squad->categories, $category);
-                $offset = -1 * $teamLevel;
-                if ($offset === 0) {
-                    continue;
-                }
-                /** @var Squad[] $aboveSquads */
-                $aboveSquads = array_slice($squads, $offset);
-                /** @var Player[] $playersInCategory */
-                foreach ($playersInCategory as $belowPlayer) {
-                    foreach ($aboveSquads as $aboveSquad) {
-                        /** @var Player[] $abovePlayers */
-                        $abovePlayers = $this->getPlayersByCategory(
-                            $aboveSquad->categories,
-                            $category,
-                            $belowPlayer->gender
-                        );
-                        foreach ($abovePlayers as $abovePlayer) {
-                            $playerPoints = $this->getPlayerLevel($belowPlayer);
-                            $abovePlayerPoints = $this->getPlayerLevel($abovePlayer) + $limit;
-                            if ($playerPoints > $abovePlayerPoints) {
-                                $possibleToHighPlayers[$belowPlayer->refId][] = [
-                                    'id' => $abovePlayer->id ?? 0,
-                                    'refId' => $abovePlayer->refId,
-                                    'name' => $abovePlayer->name,
-                                    'category' => $category,
-                                    'gender' => $abovePlayer->gender,
-                                    'belowPlayer' => [
-                                        [
-                                            'id' => $belowPlayer->id ?? 0,
-                                            'refId' => $belowPlayer->refId,
-                                            'name' => $belowPlayer->name,
-                                            'gender' => $belowPlayer->gender,
-                                            'category' => $category
-                                        ],
-                                    ],
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        $validationMapping = [];
-        foreach ($possibleToHighPlayers as $refId => $players) {
-            $collection = new Collection($players);
-            /** @var Collection $playersByRef */
-            foreach ($collection->groupBy('refId') as $playersByRef) {
-                if ($playersByRef->count() >= 2) {
-                    $validationMapping = \array_merge($validationMapping, $playersByRef->toArray());
-                }
-            }
-        }
-
-        $collection = new Collection($validationMapping);
-        $conflictsByName = $collection->groupBy("name");
-        $conflictsByName->map(function (Collection $players) {
-            foreach ($players->groupBy("category") as $category) {
-                $category->pluck("belowPlayer");
-            }
-        });
-
-        return $validationMapping;
     }
 
     /**
