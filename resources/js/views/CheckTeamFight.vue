@@ -112,6 +112,7 @@
             </b-steps>
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
+        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
         <b-message v-if="done && !hasViolations" title="Fandt ingen overtrædelser" type="is-success">
             Fandt ingen fejl.
         </b-message>

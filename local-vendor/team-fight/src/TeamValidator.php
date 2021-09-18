@@ -23,6 +23,95 @@ class TeamValidator
         'HD',
     ];
 
+    public function validateCrossSquadsV2(array $squads)
+    {
+        $limit = 50;
+
+        // Making a list of players grouped by squad and category
+        $squadsC = new Collection($squads);
+        $teamCategories = $squadsC->pluck('categories');
+        $categories = new Collection();
+        foreach ($teamCategories as $teamCategory) {
+            $teamCategory = new Collection($teamCategory);
+            $groupedByCategory = $teamCategory->groupBy('category');
+            foreach ($groupedByCategory as $category => $players) {
+                if ($categories->has($category)) {
+                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
+                } else {
+                    $categories->put($category, new Collection());
+                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
+                }
+            }
+        }
+
+        // Finding conflicts only scoped to categorize
+        $hits = new Collection();
+        /** @var Collection[] $categories */
+        foreach ($categories as $categoryName => $category) {
+            while ($category->isNotEmpty()) {
+                /** @var Collection $currentAbovePlayers */
+                $currentAbovePlayers = $category->shift();
+                foreach ($currentAbovePlayers as $currentAbovePlayer){
+                    $allBelowPlayers = $category->collapse();
+                    foreach ($allBelowPlayers as $belowPlayer) {
+                        $belowPlayerPoints = $this->getPlayerLevel($belowPlayer);
+                        $abovePlayerPoints = $this->getPlayerLevel($currentAbovePlayer);
+                        if ($belowPlayerPoints > ($abovePlayerPoints + $limit) && $currentAbovePlayer->gender === $belowPlayer->gender) {
+                            $hits->push([$categoryName, $currentAbovePlayer, $belowPlayer]);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Finding valid conflicts. A conflict is only valid if the same players are in conflict in the same categories
+        $conflict = new Collection();
+        while ($hits->isNotEmpty()) {
+            [$category, $currentAbovePlayer, $currentBelowPlayer] = $hits->shift();
+            $playerInOtherCategory = $hits->first(
+                static function (array $players) use ($currentAbovePlayer, $currentBelowPlayer) {
+                    [$category, $abovePlayer, $belowPlayer] = $players;
+                    return $abovePlayer->refId === $currentAbovePlayer->refId && $belowPlayer->refId === $currentBelowPlayer->refId;
+                }
+            );
+            if ($playerInOtherCategory !== null) {
+                $conflict->push(
+                    new Collection([
+                        'id' => $currentAbovePlayer->id ?? 0,
+                        'refId' => $currentAbovePlayer->refId,
+                        'name' => $currentAbovePlayer->name,
+                        'category' => $category,
+                        'gender' => $currentAbovePlayer->gender,
+                        'belowPlayer' => [
+                            [
+                                'id' => $currentBelowPlayer->id ?? 0,
+                                'refId' => $currentBelowPlayer->refId,
+                                'name' => $currentBelowPlayer->name,
+                                'gender' => $currentBelowPlayer->gender,
+                                'category' => $category
+                            ]
+                        ],
+                    ])
+                );
+            }
+        }
+
+        // Collapse players together
+        $collapseConflicts = new Collection();
+        while ($conflict->isNotEmpty()) {
+            $player = $conflict->shift();
+            if ($collapseConflicts->has($player['refId'])) {
+                $belowPlayers = $collapseConflicts->get($player['refId'])->get('belowPlayer');
+                $player['belowPlayer'] = array_merge($player['belowPlayer'], $belowPlayers);
+                $collapseConflicts->put($player['refId'], new Collection($player));
+            } else {
+                $collapseConflicts->put($player['refId'], $player);
+            }
+        }
+
+        return $collapseConflicts->values();
+    }
+
     /**
      * Validate multiple squads is complies with ranking point rules
      *
@@ -30,11 +119,9 @@ class TeamValidator
      *
      * @return array|Squad[]
      */
-    public function validateSquads(array $squads): array
+    public function validateCrossSquads(array $squads): array
     {
-        $squads = new Collection($squads);
-        $squads = $squads->sortKeysDesc();
-        $squads = $squads->toArray();
+        krsort($squads, SORT_REGULAR);
         $limit = 50;
 
         $possibleToHighPlayers = [];
@@ -217,7 +304,7 @@ class TeamValidator
     private function addOrAppend(array $playingToHigh, array $item): array
     {
         foreach ($playingToHigh as &$player) {
-            if ($player['id'] === $item['id']) {
+            if ($player['refId'] === $item['refId'] && $player['category'] === $item['category']) {
                 $player['belowPlayer'] = array_merge($player['belowPlayer'], $item['belowPlayer']);
 
                 return $playingToHigh;
