@@ -6,12 +6,14 @@
                 <tr>
                     <th colspan="2">
                         Hold {{ index + 1 }}
-                        <b-button v-if="!viewMode" class="is-pulled-right" icon-left="trash-alt" @click="confirmDelete(team)"></b-button>
+                        <b-button v-if="!viewMode" class="is-pulled-right" icon-left="trash-alt"
+                                  @click="confirmDelete(team)"></b-button>
                         <b-tooltip v-if="!viewMode" class="is-pulled-right" label="Flyt hold op">
                             <b-button v-if="index !== 0" icon-left="angle-up" @click="move(index, -1)"></b-button>
                         </b-tooltip>
                         <b-tooltip v-if="!viewMode" class="is-pulled-right" label="Flyt hold ned">
-                            <b-button v-if="index !== teams.length-1" icon-left="angle-down" @click="move(index, 1)"></b-button>
+                            <b-button v-if="index !== teams.length-1" icon-left="angle-down"
+                                      @click="move(index, 1)"></b-button>
                         </b-tooltip>
                     </th>
                 </tr>
@@ -19,23 +21,28 @@
                 <tbody>
                 <tr v-for="category in team.categories" :key="category.name">
                     <th>{{ category.name }}</th>
-                    <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td" @end="$emit('end')">
+                    <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td"
+                               @end="$emit('end')">
                         <div v-for="player in category.players" class="is-clearfix mt-1">
                             <b-tooltip
-                                :label="resolveLabel(player, category.category)"
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
+                                <template v-slot:content>
+                                    <span v-html="resolveLabel(player, category.category)"></span>
+                                </template>
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
                                         v-if="!viewMode"
                                         icon="bars"
                                         size="is-small">
                                     </b-icon>
-                                    {{ player.name }} ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
+                                    {{ player.name }}
+                                    ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
                                 </p>
                             </b-tooltip>
                             <b-dropdown aria-role="list" class="is-pulled-right">
-                                <b-button v-if="category.players.length && !viewMode" slot="trigger" icon-left="ellipsis-v" size="is-small"></b-button>
+                                <b-button v-if="category.players.length && !viewMode" slot="trigger"
+                                          icon-left="ellipsis-v" size="is-small"></b-button>
                                 <b-dropdown-item aria-role="menuitem" has-link>
                                     <a href="#" @click.prevent="deletePlayer(category, player)">
                                         <b-icon icon="times-circle"></b-icon>
@@ -62,7 +69,6 @@
 import Draggable from "vuedraggable"
 import {
     findPositions,
-    isPlayingToHigh,
     highlight as simpleHighlight,
     resolveToolTip,
     isPlayingToHighByBadmintonPlayerId
@@ -95,13 +101,13 @@ export default {
         }
     },
     methods: {
-        resolveLabel(player, category){
+        resolveLabel(player, category) {
             return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
         },
-        isPlayingToHigh(player, category){
+        isPlayingToHigh(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
         },
-        isPlayingToHighInSquad(player, category){
+        isPlayingToHighInSquad(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         findPositions,

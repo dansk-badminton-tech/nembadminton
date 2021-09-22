@@ -73,7 +73,7 @@ class SquadManager
     {
         foreach ($points as $point) {
             SquadPoint::query()->updateOrCreate(
-                ['points' => $point->points, 'category' => $point->category, 'position' => $point->position, 'squad_member_id' => $member->id],
+                ['points' => $point->points, 'category' => $point->category, 'position' => $point->position, 'squad_member_id' => $member->id, 'vintage' => $point->vintage],
                 ['squad_member_id' => $member->id]
             );
         }

@@ -186,6 +186,7 @@ export default {
                                     category
                                     points
                                     position
+                                    vintage
                                 }
                             }
                         }

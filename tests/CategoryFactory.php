@@ -41,7 +41,7 @@ class CategoryFactory
         $category2Point->version = '2020-08-01';
 
         $player = new Player();
-        $player->name = "Player";
+        $player->name = "Player-$category1PointName-$category2PointName";
         $player->gender = $gender;
         $player->refId = $refId;
         $player->points[] = $levelPoint;

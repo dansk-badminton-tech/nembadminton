@@ -82,6 +82,7 @@ export default {
                             points
                             position
                             category
+                            vintage
                           }
                         }
                         paginatorInfo {
