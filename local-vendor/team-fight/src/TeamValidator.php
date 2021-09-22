@@ -51,7 +51,7 @@ class TeamValidator
             while ($category->isNotEmpty()) {
                 /** @var Collection $currentAbovePlayers */
                 $currentAbovePlayers = $category->shift();
-                foreach ($currentAbovePlayers as $currentAbovePlayer){
+                foreach ($currentAbovePlayers as $currentAbovePlayer) {
                     $allBelowPlayers = $category->collapse();
                     foreach ($allBelowPlayers as $belowPlayer) {
                         $belowPlayerPoints = $this->getPlayerLevel($belowPlayer);
@@ -67,49 +67,34 @@ class TeamValidator
         // Finding valid conflicts. A conflict is only valid if the same players are in conflict in the same categories
         $conflict = new Collection();
         while ($hits->isNotEmpty()) {
-            [$category, $currentAbovePlayer, $currentBelowPlayer] = $hits->shift();
+            [$currentCategory, $currentAbovePlayer, $currentBelowPlayer] = $hits->shift();
             $playerInOtherCategory = $hits->first(
-                static function (array $players) use ($currentAbovePlayer, $currentBelowPlayer) {
+                static function (array $players) use ($currentCategory, $currentAbovePlayer, $currentBelowPlayer) {
                     [$category, $abovePlayer, $belowPlayer] = $players;
                     return $abovePlayer->refId === $currentAbovePlayer->refId && $belowPlayer->refId === $currentBelowPlayer->refId;
                 }
             );
             if ($playerInOtherCategory !== null) {
-                $conflict->push(
-                    new Collection([
-                        'id' => $currentAbovePlayer->id ?? 0,
-                        'refId' => $currentAbovePlayer->refId,
-                        'name' => $currentAbovePlayer->name,
-                        'category' => $category,
-                        'gender' => $currentAbovePlayer->gender,
-                        'belowPlayer' => [
-                            [
-                                'id' => $currentBelowPlayer->id ?? 0,
-                                'refId' => $currentBelowPlayer->refId,
-                                'name' => $currentBelowPlayer->name,
-                                'gender' => $currentBelowPlayer->gender,
-                                'category' => $category
-                            ]
-                        ],
-                    ])
-                );
+                $this->addOrUpdateBelowPlayers($conflict, $currentAbovePlayer, $currentCategory, $currentBelowPlayer);
+                [$category, $abovePlayer, $belowPlayer] = $playerInOtherCategory;
+                $this->addOrUpdateBelowPlayers($conflict, $abovePlayer, $category, $belowPlayer);
             }
         }
 
         // Collapse players together
-        $collapseConflicts = new Collection();
-        while ($conflict->isNotEmpty()) {
-            $player = $conflict->shift();
-            if ($collapseConflicts->has($player['refId'])) {
-                $belowPlayers = $collapseConflicts->get($player['refId'])->get('belowPlayer');
-                $player['belowPlayer'] = array_merge($player['belowPlayer'], $belowPlayers);
-                $collapseConflicts->put($player['refId'], new Collection($player));
-            } else {
-                $collapseConflicts->put($player['refId'], $player);
-            }
-        }
+//        $collapseConflicts = new Collection();
+//        while ($conflict->isNotEmpty()) {
+//            $player = $conflict->shift();
+//            if ($collapseConflicts->has($player['refId'])) {
+//                $belowPlayers = $collapseConflicts->get($player['refId'])->get('belowPlayer');
+//                $player['belowPlayer'] = array_merge($player['belowPlayer'], $belowPlayers);
+//                $collapseConflicts->put($player['refId'], new Collection($player));
+//            } else {
+//                $collapseConflicts->put($player['refId'], $player);
+//            }
+//        }
 
-        return $collapseConflicts->values();
+        return  $conflict->values();
     }
 
     /**
@@ -335,6 +320,60 @@ class TeamValidator
         }
 
         return $category;
+    }
+
+    /**
+     * @param  Collection  $conflict
+     * @param $currentAbovePlayer
+     * @param $currentCategory
+     * @param $currentBelowPlayer
+     */
+    private function addOrUpdateBelowPlayers(
+        Collection $conflict,
+        $currentAbovePlayer,
+        $currentCategory,
+        $currentBelowPlayer
+    ): void {
+        /** @var Collection $currentConflictPlayer */
+        $currentConflictPlayer = $conflict->first(function (Collection $player) use (
+            $currentAbovePlayer,
+            $currentCategory
+        ) {
+            return $player->get('category') === $currentCategory && $player->get(
+                    'refId'
+                ) === $currentAbovePlayer->refId;
+        });
+        if ($currentConflictPlayer !== null) {
+            $currentConflictBelowPlayers = $currentConflictPlayer->get('belowPlayer');
+            $array = [
+                'id' => $currentBelowPlayer->id ?? 0,
+                'refId' => $currentBelowPlayer->refId,
+                'name' => $currentBelowPlayer->name,
+                'gender' => $currentBelowPlayer->gender,
+                'category' => $currentCategory
+            ];
+            $currentConflictBelowPlayers[] = $array;
+            $currentConflictPlayer->put('belowPlayer', $currentConflictBelowPlayers);
+        } else {
+            $conflict->push(
+                new Collection([
+                    'id' => $currentAbovePlayer->id ?? 0,
+                    'refId' => $currentAbovePlayer->refId,
+                    'name' => $currentAbovePlayer->name,
+                    'category' => $currentCategory,
+                    'gender' => $currentAbovePlayer->gender,
+                    'belowPlayer' => [
+                        [
+                            'id' => $currentBelowPlayer->id ?? 0,
+                            'refId' => $currentBelowPlayer->refId,
+                            'name' => $currentBelowPlayer->name,
+                            'gender' => $currentBelowPlayer->gender,
+                            'category' => $currentCategory
+                        ]
+                    ],
+                ])
+            );
+        }
     }
 
 }

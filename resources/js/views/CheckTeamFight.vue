@@ -130,9 +130,10 @@
                         <b-tooltip
                             v-for="player in props.row.players"
                             :key="player.name+props.row.category"
-                            :label="resolveLabel(player, props.row.category)"
-                            :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)"
-                            multilined>
+                            :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)">
+                            <template v-slot:content>
+                                <span v-html="resolveLabel(player, props.row.category)"></span>
+                            </template>
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
                                 ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
                         </b-tooltip>
@@ -273,6 +274,7 @@ export default {
                                     position
                                     category
                                     version
+                                    vintage
                                   }
                                 }
                               }

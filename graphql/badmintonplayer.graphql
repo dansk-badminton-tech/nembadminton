@@ -101,6 +101,7 @@ type ImportPoint{
     position: Int
     category: String
     version: Date
+    vintage: String
 }
 
 type ImportCategory{
