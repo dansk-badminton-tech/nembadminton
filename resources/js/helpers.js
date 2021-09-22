@@ -44,30 +44,6 @@ export function findPlayersInCategory(categories, searchCategory, gender) {
     return players;
 }
 
-export function isYoungPlayer(player, category) {
-    if (!player.points) {
-        return false
-    }
-    for (let point of player.points) {
-        if (point.vintage === '' || point.vintage === null) {
-            return false;
-        } else {
-            if (category === 'MD') {
-                if (player.gender === 'M' && point.category === 'MxH') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-                if (player.gender === 'K' && point.category === 'MxD') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-            }
-            if (point.category === category) {
-                return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-            }
-        }
-    }
-    return false;
-}
-
 export function findLevel(member, category) {
     if (!member.points) {
         return 0
@@ -133,81 +109,60 @@ export function extractErrors(graphqlErrors) {
     return errors;
 }
 
-export function isPlayingToHigh(playingToHighPlayers, player, category) {
+export function isPlayingToHigh(playingToHighPlayers, player, category){
     return getPlayingToHigh(playingToHighPlayers, player, category) !== undefined;
 }
 
-export function isPlayingToHighByName(playingToHighPlayers, player, category) {
+export function isPlayingToHighByName(playingToHighPlayers, player, category){
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name && toHighPlayer.category === category) !== undefined;
 }
 
-export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) {
+export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category){
     return getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) !== undefined;
 }
 
-export function getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) {
+export function getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category){
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category === category)
 }
 
-export function getPlayingToHigh(playingToHighPlayers, player, category) {
+export function getPlayingToHigh(playingToHighPlayers, player, category){
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category)
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
     let base = {}
     if (isPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
-            }
-        } else {
-            base = {
-                ...{
-                    'has-background-warning': true
-                }, ...base
-            }
+        base = {
+            ...{
+                'has-background-warning': true
+            }, ...base
         }
     }
     if (isPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
-            }
-        } else {
-            base = {
-                ...{
-                    'has-background-danger': true
-                }, ...base
-            }
+        base = {
+            ...{
+                'has-background-danger': true
+            }, ...base
         }
     }
     return base;
 }
 
-export function resolveToolTip(player, category, playingToHighCrossSquads, playingToHighInSquad) {
-    let msg = []
+export function resolveToolTip(player, category, playingToHighCrossSquads, playingToHighInSquad){
+    let msg = ""
     let resolveNames = (playerWithBelowPlayers) => {
         let names = playerWithBelowPlayers.belowPlayer.map(x => x.name)
         return names.join(', ')
     }
     let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)
     let playerWithBelowPlayersSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)
-    if (playerWithBelowPlayersSquad !== undefined || playerWithBelowPlayersCrossSquads !== undefined) {
-        if (isYoungPlayer(player, null)) {
-            msg.push("OBS: U17/U19 spiller");
-        }
+    if(playerWithBelowPlayersCrossSquads !== undefined){
+        msg += "Bedre spiller på NIVEAU-ranglisten: "+resolveNames(playerWithBelowPlayersCrossSquads)+"\n"
     }
-    if (playerWithBelowPlayersCrossSquads !== undefined) {
-        msg.push("Bedre spiller på NIVEAU-ranglisten: " + resolveNames(playerWithBelowPlayersCrossSquads));
+    if(playerWithBelowPlayersSquad !== undefined){
+        msg += "Bedre spiller i kategorien: "+resolveNames(playerWithBelowPlayersSquad)+"\n"
     }
-    if (playerWithBelowPlayersSquad !== undefined) {
-        msg.push("Bedre spiller i kategorien: " + resolveNames(playerWithBelowPlayersSquad))
-    }
-    return msg.join("<br />--------<br />");
+    return msg
 }
 
 export function swap(arr, from, to) {

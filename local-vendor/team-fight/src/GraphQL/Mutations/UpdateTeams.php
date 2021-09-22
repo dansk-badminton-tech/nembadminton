@@ -100,7 +100,6 @@ class UpdateTeams
                 $squadPoint->position = $point->position;
                 $squadPoint->category = $point->category;
                 $squadPoint->points = $point->points;
-                $squadPoint->vintage = $point->vintage;
                 $squadPoint->squad_member_id = $member->id;
                 $squadPoint->saveOrFail();
             }

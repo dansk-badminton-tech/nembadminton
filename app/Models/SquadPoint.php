@@ -13,12 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property integer     points
  * @property integer     position
  * @property integer     squad_member_id
- * @property string $vintage
  */
 class SquadPoint extends Model
 {
 
-    protected $fillable = ['points', 'position', 'category', 'squad_member_id', 'vintage'];
+    protected $fillable = ['points', 'position', 'category', 'squad_member_id'];
 
     public function member() : BelongsTo
     {

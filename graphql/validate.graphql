@@ -34,7 +34,6 @@ input ValidatePoint {
     position: Int
     category: String
     version: String
-    vintage: String
 }
 
 type BelowPlayer {

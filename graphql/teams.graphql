@@ -56,7 +56,6 @@ input UpdatePointInput {
     category: String
     points: Int
     position: Int
-    vintage: String
 }
 
 type SquadMember {
@@ -71,7 +70,6 @@ type SquadPoint {
     points: Int
     position: Int
     category: String
-    vintage: String
 }
 
 type SquadCategory {
