@@ -15,6 +15,8 @@ class Team
 
     public ?string $league;
 
+    public ?string $leagueMatchId;
+
     public ?Squad  $squad;
 
     public function __construct(string $name, ?Squad $squad = null)

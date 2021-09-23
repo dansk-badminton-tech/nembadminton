@@ -80,6 +80,7 @@ type ImportTeamMatch {
 
 type ImportTeam{
     name: String!
+    leagueMatchId: String!
     squad: ImportSquad!
 }
 

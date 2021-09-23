@@ -112,7 +112,7 @@
             </b-steps>
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
-        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
+<!--        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>-->
         <b-message v-if="done && !hasViolations" title="Fandt ingen overtrædelser" type="is-success">
             Fandt ingen fejl.
         </b-message>
@@ -121,7 +121,12 @@
         </b-message>
         <div v-if="done" class="columns is-multiline">
             <div v-for="team in teams" class="column is-4">
-                <h1 class="title">{{ team.name }}</h1>
+                <h1 class="title">{{ team.name }}
+                    <b-button class="is-pulled-right" tag="a" target="_blank"
+                              :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+team.leagueMatchId+',,'"
+                              type="is-link">Se på BP
+                    </b-button>
+                </h1>
                 <b-table :data="team.squad.categories">
                     <b-table-column v-slot="props" field="name" label="Kategori">
                         {{ props.row.name }}
@@ -202,7 +207,6 @@ export default {
         hasViolations() {
             return this.playingToHigh.length > 0 || this.playingToHighInSquad.length > 0;
         },
-
     },
     methods: {
         maybeMoveDown(index) {
@@ -260,6 +264,7 @@ export default {
                     mutation: gql`mutation ($input: BadmintonPlayerTeamMatchInput!){
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
+                            leagueMatchId
                             squad{
                               playerLimit
                               categories{
@@ -309,6 +314,8 @@ export default {
             })
         },
         validate() {
+            let teamsClone = JSON.parse(JSON.stringify(this.teams));
+            teamsClone = omitDeep(teamsClone, ['__typename', 'leagueMatchId'])
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateCrossSquads($input: [ValidateTeam!]!){
@@ -327,7 +334,7 @@ export default {
                     }
                     `,
                     variables: {
-                        input: omitDeep(this.teams, ['__typename'])
+                        input: teamsClone
                     }
                 }
             ).then(({data}) => {
@@ -354,7 +361,7 @@ export default {
                     }
                     `,
                     variables: {
-                        input: omitDeep(this.teams, ['__typename'])
+                        input: teamsClone
                     }
                 }
             ).then(({data}) => {
