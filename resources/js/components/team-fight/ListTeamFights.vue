@@ -4,10 +4,10 @@
             <router-link v-if="viewMode" v-bind:to="'/team-fight/'+props.row.id+'/view'">{{ props.row.name }}</router-link>
             <router-link v-if="!viewMode" v-bind:to="'/team-fight/'+props.row.id+'/edit'">{{ props.row.name }}</router-link>
         </b-table-column>
-        <b-table-column v-slot="props" field="gameDate" label="Spille Dato">
+        <b-table-column v-slot="props" field="gameDate" label="Spilledato">
             {{ props.row.gameDate }}
         </b-table-column>
-        <b-table-column v-slot="props" field="version" label="Rankliste">
+        <b-table-column v-slot="props" field="version" label="Rangliste">
             {{ props.row.version }}
         </b-table-column>
         <b-table-column v-slot="props" field="updatedAt" label="Opdateret">
