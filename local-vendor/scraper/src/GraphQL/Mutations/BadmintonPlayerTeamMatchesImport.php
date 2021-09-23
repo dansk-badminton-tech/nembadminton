@@ -71,11 +71,16 @@ class BadmintonPlayerTeamMatchesImport
         /** @var Team[] $teams */
         $teams = [];
         foreach ($badmintonPlayerTeamMatches['leagueMatches'] as $badmintonPlayerTeamMatch) {
-            $teamMatch = $this->scraper->getTeamMatch((string)$clubId, (string)$badmintonPlayerTeamMatch['id'], (string)$season);
-            if (Str::contains($teamMatch->guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
-                $teams[] = $teamMatch->guest;
+            $leagueMatchId = (string)$badmintonPlayerTeamMatch['id'];
+            $teamMatch = $this->scraper->getTeamMatch((string)$clubId, $leagueMatchId, (string)$season);
+            $guest = $teamMatch->guest;
+            if (Str::contains($guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
+                $guest->leagueMatchId = $leagueMatchId;
+                $teams[] = $guest;
             } else {
-                $teams[] = $teamMatch->home;
+                $home = $teamMatch->home;
+                $home->leagueMatchId = $leagueMatchId;
+                $teams[] = $home;
             }
         }
 
@@ -105,13 +110,5 @@ class BadmintonPlayerTeamMatchesImport
         }
 
         return $teams;
-    }
-
-    private function isClubTeam(string $name, int $clubId) : bool
-    {
-        /** @var Club $club */
-        $club = Club::query()->findOrFail($clubId);
-
-        return Str::contains($name, $club->name1);
     }
 }
