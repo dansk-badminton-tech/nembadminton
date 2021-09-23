@@ -1,5 +1,5 @@
 <template>
-    <b-select v-model="version" :expanded="expanded" placeholder="Vælge rankliste">
+    <b-select v-model="version" :expanded="expanded" placeholder="Vælge rangliste">
         <option
             v-for="version in rankingVersions"
             :key="version"

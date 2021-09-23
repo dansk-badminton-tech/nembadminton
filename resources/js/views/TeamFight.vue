@@ -44,7 +44,7 @@
                 </b-field>
             </div>
             <div class="column">
-                <b-field label="Spille dato">
+                <b-field label="Spilledato">
                     <b-datepicker
                         v-model="gameDate"
                         icon="calendar-alt"
