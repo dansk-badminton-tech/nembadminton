@@ -211,17 +211,22 @@ class Parser
             $category = $this->findCategoryByName($categoryName);
             $isSinglePlayer = Str::contains($categoryName, ['HS', 'DS']);
 
-            $aElement = $match->find('td')[1]->find('a')[0];
+            $playerTd = $match->find('td')[1];
+            $aElement = $playerTd->find('a')[0] ?? null;
             [$club1Player1Name, $club1Player1BadmintonPlayerId] = $this->extractNameAndId($aElement);
             if (!$isSinglePlayer) {
-                [$club1Player2Name, $club1Player2BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[1]->find('a')[1]);
+                $aElement1 = $playerTd->find('a')[1] ?? null;
+                [$club1Player2Name, $club1Player2BadmintonPlayerId] = $this->extractNameAndId($aElement1);
             } else {
                 $club1Player2Name = null;
             }
 
-            [$club2Player1Name, $club2Player1BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[2]->find('a')[0]);
+            $playerTd2 = $match->find('td')[2];
+            $aElement2 = $playerTd2->find('a')[0] ?? null;
+            [$club2Player1Name, $club2Player1BadmintonPlayerId] = $this->extractNameAndId($aElement2);
             if (!$isSinglePlayer) {
-                [$club2Player2Name, $club2Player2BadmintonPlayerId] = $this->extractNameAndId($match->find('td')[2]->find('a')[1]);
+                $aElement3 = $playerTd2->find('a')[1] ?? null;
+                [$club2Player2Name, $club2Player2BadmintonPlayerId] = $this->extractNameAndId($aElement3);
             } else {
                 $club2Player2Name = null;
             }
@@ -274,8 +279,11 @@ class Parser
      *
      * @return array
      */
-    private function extractNameAndId(Element $aElement) : array
+    private function extractNameAndId(?Element $aElement) : array
     {
+        if($aElement === null){
+            return ['Ingen spiller', 0];
+        }
         $href = $aElement->getAttribute('href');
         $badmintonPlayerId = Str::after($href, '#');
         return [$aElement->text(), (int)$badmintonPlayerId];
