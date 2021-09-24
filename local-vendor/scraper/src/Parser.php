@@ -282,7 +282,7 @@ class Parser
     private function extractNameAndId(?Element $aElement) : array
     {
         if($aElement === null){
-            return ['Ingen spiller', 0];
+            return ['Ikke fremmødt', 0];
         }
         $href = $aElement->getAttribute('href');
         $badmintonPlayerId = Str::after($href, '#');
