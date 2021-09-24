@@ -22,4 +22,8 @@ class Player
 
     public string $rankingList;
 
+    public function isNoBody() : bool {
+        return $this->badmintonPlayerId === 0;
+    }
+
 }

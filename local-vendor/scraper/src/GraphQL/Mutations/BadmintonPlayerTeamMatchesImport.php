@@ -99,13 +99,18 @@ class BadmintonPlayerTeamMatchesImport
                         }
                     }else{
                         try{
-                            $player = $this->scraper->getPlayerByBadmintonPlayerId($player->badmintonPlayerId, $version, $season);
+                            if(!$player->isNoBody()){
+                                $player = $this->scraper->getPlayerByBadmintonPlayerId($player->badmintonPlayerId, $version, $season);
+                            }else{
+                                $player = null;
+                            }
                         }catch (MultiplePlayersFoundException $exception){
                             throw new \RuntimeException("Multiple players named $player->name");
                         }
                     }
                 }
                 unset($player);
+                $category->players = array_filter($category->players, static function($player){return $player !== null;});
             }
         }
 
