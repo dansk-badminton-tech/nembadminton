@@ -19,9 +19,12 @@
                         <h1 class="title">Hold</h1>
                         <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
                         <b-message title="Vigtig!" type="is-warning">
-                            De anvendte kriterier gælder overordnet set i DH turneringen (2. div - Danmarksserien).
-                            <a href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">Download
-                                vejledning for holdsætning (badminton.dk)</a>.
+                            <p>
+                                De anvendte kriterier er opsat jf. Holdturneringsreglementet i DH turneringen fra 2. division til Danmarksserien. <br />
+                                De enkelte kredse har deres egne regler i forhold til anvendelse af rangliste og derfor kan værktøjet kun bruges vejledende under Danmarksserien. <br />
+                                <a target="_blank" href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">Download
+                                    vejledning for holdsætning (badminton.dk)</a>.
+                            </p>
                         </b-message>
                         <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"
                                                          @input="clearTeamFights"/>
@@ -115,9 +118,15 @@
             Fandt ingen fejl.
         </b-message>
         <b-message v-if="done && hasViolations" title="Fandt mulige overtrædelser" type="is-warning">
-            Grøn: Spiller for højt + er U17/U19. <a target="_blank" href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se § 38. stk. 6</a> <br />
-            Gul: Spiller på et forkert hold (NIVEAU-ranglisten) <a target="_blank" href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se § 38. stk. 4</a> <br />
-            Rød: Spiller for højt i kategorien (KATEGORI-ranglisten) <a target="_blank" href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se § 38. stk. 1-3</a>
+            Grøn: Spiller for højt + er U17/U19. <a target="_blank"
+                                                    href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
+            § 38. stk. 6</a> <br/>
+            Gul: Spiller på et forkert hold (NIVEAU-ranglisten) <a target="_blank"
+                                                                   href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
+            § 38. stk. 4</a> <br/>
+            Rød: Spiller for højt i kategorien (KATEGORI-ranglisten) <a target="_blank"
+                                                                        href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
+            § 38. stk. 1-3</a>
         </b-message>
         <div v-if="done" class="columns is-multiline">
             <div v-for="team in teams" class="column is-4">
