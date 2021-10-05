@@ -59,6 +59,7 @@ input BadmintonPlayerTeamMatchInput {
 input BadmintonPlayerLeagueMatchInput {
     id: Int!
     teamNameHint: String!
+    league: String!
 }
 
 
@@ -80,6 +81,7 @@ type ImportTeamMatch {
 
 type ImportTeam{
     name: String!
+    league: String!
     leagueMatchId: String!
     squad: ImportSquad!
 }

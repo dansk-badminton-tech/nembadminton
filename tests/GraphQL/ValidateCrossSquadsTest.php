@@ -51,6 +51,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap1 = [
             'name' => 'Team 1',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -84,6 +85,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap2 = [
             'name' => 'Team 2',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -117,6 +119,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap3 = [
             'name' => 'Team 3',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -125,7 +128,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -178,6 +181,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap1 = [
             'name' => 'Team 1',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -211,6 +215,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap2 = [
             'name' => 'Team 2',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -219,7 +224,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -293,6 +298,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap1 = [
             'name' => 'Team 1',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -326,6 +332,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap2 = [
             'name' => 'Team 2',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -359,6 +366,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap3 = [
             'name' => 'Team 3',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -367,7 +375,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -461,6 +469,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap1 = [
             'name' => 'Team 1',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -494,6 +503,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap2 = [
             'name' => 'Team 2',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -527,6 +537,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap3 = [
             'name' => 'Team 3',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -535,7 +546,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -681,6 +692,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap1 = [
             'name' => 'Team 1',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -714,6 +726,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $teamWrap2 = [
             'name' => 'Team 2',
+            'league' => 'Denmarksserien',
             'squad' => $squad
         ];
 
@@ -722,7 +735,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category

@@ -8,9 +8,7 @@ namespace FlyCompany\TeamFight;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class TeamValidator
 {
@@ -23,7 +21,86 @@ class TeamValidator
         'HD',
     ];
 
-    public function validateCrossSquads(array $squads)
+    /**
+     * @param  array|Squad[]  $squads
+     */
+    public function validateCrossSquadsLeague(array $squads): Collection
+    {
+        if(empty($squads)){
+            return new Collection();
+        }
+        if (count($squads) !== 2) {
+            throw new \RuntimeException('There must be two teams for league + 1 div validation');
+        }
+        [$leagueTeamSquad, $firstDivSquad] = $squads;
+        $firstDivSquad = new Collection($firstDivSquad);
+        $firstDivPlayers = (new Collection($firstDivSquad->get('categories')))->pluck('players')->flatten(1)->unique('refId');
+
+        $totalHits = new Collection();
+        foreach ($firstDivPlayers as $divPlayer) {
+            $hits = $this->compareEveryPlayerInEveryCategory($leagueTeamSquad, $divPlayer);
+            if ($hits->isNotEmpty()) {
+                $totalHits->push($hits);
+            }
+        }
+
+        $totalHits = $totalHits->filter(static function (Collection $hit){
+            return $hit->count() >= 2;
+        });
+
+        return $totalHits->flatten(1);
+    }
+
+    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $divPlayer): Collection
+    {
+        $limit = 50;
+        $hit = new Collection();
+        foreach ($leagueSquad->categories as $leagueCategory) {
+            foreach ($leagueCategory->players as $leaguePlayer) {
+                if ($leaguePlayer->gender !== $divPlayer->gender) {
+                    continue;
+                }
+                try {
+                    $divPlayerCategoryPoint = $this->getPlayerCategoryPoint($divPlayer, $leagueCategory->category);
+                    $leaguePlayerCategoryPoint = $this->getPlayerCategoryPoint($leaguePlayer, $leagueCategory->category);
+                    if ($divPlayerCategoryPoint > ($leaguePlayerCategoryPoint + $limit)) {
+                        $this->addOrUpdateBelowPlayers($hit, $leaguePlayer, $leagueCategory->category, $divPlayer);
+                    }
+                } catch (PointNotFoundInCategoryException $categoryException) {
+                    // We will allow a player is not placed on the ranking list
+                }
+            }
+        }
+        return $hit;
+    }
+
+    private function getCategoriesByGender(string $gender): array
+    {
+        $genderUpper = strtoupper($gender);
+        if ($genderUpper === 'M') {
+            return [
+                'MD',
+                'HS',
+                'HD'
+            ];
+        }
+
+        if ($genderUpper === 'K') {
+            return [
+                'MD',
+                'DS',
+                'DD'
+            ];
+        }
+
+        throw new \RuntimeException("Unknown gender '$gender'");
+    }
+
+    /**
+     * @param  array|Squad[]  $squads
+     * @return Collection
+     */
+    public function validateCrossSquads(array $squads): Collection
     {
         $limit = 50;
 
@@ -35,12 +112,10 @@ class TeamValidator
             $teamCategory = new Collection($teamCategory);
             $groupedByCategory = $teamCategory->groupBy('category');
             foreach ($groupedByCategory as $category => $players) {
-                if ($categories->has($category)) {
-                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
-                } else {
+                if (!$categories->has($category)) {
                     $categories->put($category, new Collection());
-                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
                 }
+                $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
             }
         }
 
@@ -81,20 +156,7 @@ class TeamValidator
             }
         }
 
-        // Collapse players together
-//        $collapseConflicts = new Collection();
-//        while ($conflict->isNotEmpty()) {
-//            $player = $conflict->shift();
-//            if ($collapseConflicts->has($player['refId'])) {
-//                $belowPlayers = $collapseConflicts->get($player['refId'])->get('belowPlayer');
-//                $player['belowPlayer'] = array_merge($player['belowPlayer'], $belowPlayers);
-//                $collapseConflicts->put($player['refId'], new Collection($player));
-//            } else {
-//                $collapseConflicts->put($player['refId'], $player);
-//            }
-//        }
-
-        return  $conflict->values();
+        return $conflict->values();
     }
 
     /**

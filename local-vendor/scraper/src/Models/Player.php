@@ -22,6 +22,10 @@ class Player
 
     public string $rankingList;
 
+    /**
+     * This can happen is a player is not plotted in on badmintonplayer.dk
+     * @return bool
+     */
     public function isNoBody() : bool {
         return $this->badmintonPlayerId === 0;
     }

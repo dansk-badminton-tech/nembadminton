@@ -287,7 +287,7 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: [ValidateTeam!]!){
+                        mutation ($input: [ValidateCrossTeamInput!]!){
                           validateCrossSquads(input: $input){
                             name
                             id

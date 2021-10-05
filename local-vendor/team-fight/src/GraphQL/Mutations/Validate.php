@@ -42,11 +42,19 @@ class Validate
      */
     public function validateCrossSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Collection
     {
-        $squads = new Collection($args['input']);
-        $squads = $squads->pluck('squad');
-        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $teams = new Collection($args['input']);
 
-        return $this->teamValidator->validateCrossSquads($squads);
+        [$leagueAnd1DivSquads, $squadsBelowFirstDiv] = ValidateHelper::splitTeams($teams);
+
+        $squads = $leagueAnd1DivSquads->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingTOHighLeagueAndFirstDiv = $this->teamValidator->validateCrossSquadsLeague($squads);
+
+        $squads = $squadsBelowFirstDiv->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingToHighBelowFirstDiv = $this->teamValidator->validateCrossSquads($squads);
+
+        return $playingTOHighLeagueAndFirstDiv->merge($playingToHighBelowFirstDiv);
     }
 
     /**

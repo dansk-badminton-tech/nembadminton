@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 
 namespace FlyCompany\Scraper\GraphQL\Mutations;
@@ -52,9 +53,9 @@ class BadmintonPlayerTeamMatchesImport
      * Return a value for the field.
      *
      * @param  @param  null  $root Always null, since this field has no parent.
-     * @param array<string, mixed>                                $args        The field arguments passed by the client.
-     * @param \Nuwave\Lighthouse\Support\Contracts\GraphQLContext $context     Shared between all fields.
-     * @param \GraphQL\Type\Definition\ResolveInfo                $resolveInfo Metadata for advanced query resolution.
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  \Nuwave\Lighthouse\Support\Contracts\GraphQLContext  $context  Shared between all fields.
+     * @param  \GraphQL\Type\Definition\ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      *
      * @return mixed
      * @throws \JsonException
@@ -73,20 +74,25 @@ class BadmintonPlayerTeamMatchesImport
         foreach ($badmintonPlayerTeamMatches['leagueMatches'] as $badmintonPlayerTeamMatch) {
             $leagueMatchId = (string)$badmintonPlayerTeamMatch['id'];
             $teamMatch = $this->scraper->getTeamMatch((string)$clubId, $leagueMatchId, (string)$season);
+
             $guest = $teamMatch->guest;
             if (Str::contains($guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
                 $guest->leagueMatchId = $leagueMatchId;
+                $guest->league = $badmintonPlayerTeamMatch['league']; // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $guest;
             } else {
                 $home = $teamMatch->home;
                 $home->leagueMatchId = $leagueMatchId;
+                $home->league = $badmintonPlayerTeamMatch['league']; // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $home;
             }
         }
 
-
-        $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string)$clubId, $version);
-        $playersWithPoints = BadmintonPlayerHelper::collapseRankingLists($rankingLists);
+        $playersWithPoints = [];
+        foreach ($this->resolveClubs($clubId) as $clubId) {
+            $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string)$clubId, $version);
+            $playersWithPoints += BadmintonPlayerHelper::collapseRankingLists($rankingLists);
+        }
 
         // Enrich players with points
         foreach ($teams as $team) {
@@ -97,23 +103,52 @@ class BadmintonPlayerTeamMatchesImport
                         foreach ($player->points as $point) {
                             $point->version = $version;
                         }
-                    }else{
-                        try{
-                            if(!$player->isNoBody()){
-                                $player = $this->scraper->getPlayerByBadmintonPlayerId($player->badmintonPlayerId, $version, $season);
-                            }else{
+                    } else {
+                        try {
+                            if (!$player->isNoBody()) {
+                                $player = $this->scraper->getPlayerByBadmintonPlayerId(
+                                    $player->badmintonPlayerId,
+                                    $version,
+                                    $season
+                                );
+                            } else {
                                 $player = null;
                             }
-                        }catch (MultiplePlayersFoundException $exception){
+                        } catch (MultiplePlayersFoundException $exception) {
                             throw new \RuntimeException("Multiple players named $player->name");
                         }
                     }
                 }
                 unset($player);
-                $category->players = array_filter($category->players, static function($player){return $player !== null;});
+                $category->players = array_filter($category->players, static function ($player) {
+                    return $player !== null;
+                });
             }
         }
 
         return $teams;
+    }
+
+    private function resolveClubs(int $clubId) : array
+    {
+        $clubIds = [$clubId];
+        if ($clubId < 0) {
+            switch ($clubId) {
+                case -473: // RSL ODENSE OBK
+                    $clubIds = [1392];
+                    break;
+                case -2: // Team Skælskør-Slagelse
+                    $clubIds = [327, 1157];
+                    break;
+                case -439: // Højbjerg/Via Biler
+                    $clubIds = [25];
+                    break;
+                case -3: // Vendsyssel
+                    $clubIds = [1494, 1500, 1497];
+                    break;
+            }
+        }
+
+        return $clubIds;
     }
 }
