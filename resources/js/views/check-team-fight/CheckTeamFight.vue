@@ -10,7 +10,8 @@
                         </b-field>
                         <b-field label="Sæson">
                             <b-select v-model="season" expanded placeholder="Vælge sæson">
-                                <option value="2020">2019/2020</option>
+                                <option value="2019">2019/2020</option>
+                                <option value="2020">2020/2021</option>
                                 <option value="2021">2021/2022</option>
                             </b-select>
                         </b-field>
@@ -27,7 +28,7 @@
                             holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende
                             måned. </h2>
                         <b-field>
-                            <ranking-list-dropdown v-model="rankingList"></ranking-list-dropdown>
+                            <ranking-list-dropdown v-model="rankingList" :season="season"></ranking-list-dropdown>
                         </b-field>
                         <h1 class="title">Hold kampe</h1>
                         <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps
