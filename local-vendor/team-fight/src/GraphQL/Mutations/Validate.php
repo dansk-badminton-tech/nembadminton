@@ -44,17 +44,21 @@ class Validate
     {
         $teams = new Collection($args['input']);
 
-        [$leagueAnd1DivSquads, $squadsBelowFirstDiv] = ValidateHelper::splitTeams($teams);
+        [$leagueAndBelowTeamPair, $firstDivisionAndBelowTeamPair, $rest] = ValidateHelper::splitTeams($teams);
 
-        $squads = $leagueAnd1DivSquads->pluck('squad');
+        $squads = $leagueAndBelowTeamPair->pluck('squad');
         $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
-        $playingTOHighLeagueAndFirstDiv = $this->teamValidator->validateCrossSquadsLeague($squads);
+        $playingToHighLeague = $this->teamValidator->validateCrossSquadsLeague($squads);
 
-        $squads = $squadsBelowFirstDiv->pluck('squad');
+        $squads = $firstDivisionAndBelowTeamPair->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingToHighFirstDivision = $this->teamValidator->validateCrossSquadsLeague($squads);
+
+        $squads = $rest->pluck('squad');
         $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
         $playingToHighBelowFirstDiv = $this->teamValidator->validateCrossSquads($squads);
 
-        return $playingTOHighLeagueAndFirstDiv->merge($playingToHighBelowFirstDiv);
+        return $playingToHighLeague->merge($playingToHighFirstDivision)->merge($playingToHighBelowFirstDiv);
     }
 
     /**

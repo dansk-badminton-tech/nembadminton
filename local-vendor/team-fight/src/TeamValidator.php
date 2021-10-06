@@ -26,10 +26,11 @@ class TeamValidator
      */
     public function validateCrossSquadsLeague(array $squads): Collection
     {
-        if(empty($squads)){
+        $count = count($squads);
+        if(empty($squads) || $count === 1){
             return new Collection();
         }
-        if (count($squads) !== 2) {
+        if ($count !== 2) {
             throw new \RuntimeException('There must be two teams for league + 1 div validation');
         }
         [$leagueTeamSquad, $firstDivSquad] = $squads;
