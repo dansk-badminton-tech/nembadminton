@@ -81,7 +81,7 @@ type ImportTeamMatch {
 
 type ImportTeam{
     name: String!
-    league: String!
+    league: LeagueType!
     leagueMatchId: String!
     squad: ImportSquad!
 }

@@ -12,6 +12,7 @@ use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Enricher;
 use FlyCompany\Scraper\Exception\MultiplePlayersFoundException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
+use FlyCompany\Scraper\Helper;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\TeamFight\SquadManager;
@@ -78,12 +79,12 @@ class BadmintonPlayerTeamMatchesImport
             $guest = $teamMatch->guest;
             if (Str::contains($guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
                 $guest->leagueMatchId = $leagueMatchId;
-                $guest->league = $badmintonPlayerTeamMatch['league']; // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                $guest->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $guest;
             } else {
                 $home = $teamMatch->home;
                 $home->leagueMatchId = $leagueMatchId;
-                $home->league = $badmintonPlayerTeamMatch['league']; // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                $home->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $home;
             }
         }

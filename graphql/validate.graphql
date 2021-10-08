@@ -10,13 +10,13 @@ input ValidateTeam{
 
 input ValidateCrossTeamInput{
     name: String!
-    league: String
     squad: ValidateSquad
 }
 
 input ValidateSquad{
     id: String
     playerLimit: Int!
+    league: LeagueType
     categories: [ValidateCategory]
 }
 

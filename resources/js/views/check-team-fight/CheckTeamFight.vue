@@ -344,7 +344,8 @@ export default {
             }).finally(() => {
                 this.fetchingAndValidating = false
             })
-            teamsClone = omitDeep(teamsClone, ['__typename', 'leagueMatchId', 'league'])
+            let teamsSquadCheck = JSON.parse(JSON.stringify(this.teams));
+            teamsSquadCheck = omitDeep(teamsSquadCheck, ['__typename', 'leagueMatchId', 'league'])
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateSquads($input: [ValidateTeam!]!){
@@ -363,7 +364,7 @@ export default {
                 }
                 `,
                     variables: {
-                        input: teamsClone
+                        input: teamsSquadCheck
                     }
                 }
             ).then(({data}) => {

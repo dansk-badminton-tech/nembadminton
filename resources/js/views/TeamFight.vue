@@ -9,6 +9,10 @@
                 <span>Tilføj hold</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
+            <b-dropdown-item aria-role="listitem" @click="addTeam6">
+                <b-icon icon="users" size="is-small"></b-icon>
+                6 personer
+            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="addTeam8">
                 <b-icon icon="users" size="is-small"></b-icon>
                 8 personer
@@ -86,6 +90,11 @@
                 </b-icon>
             </p>
             <p>Kom i gang med din næste holdkamp planlægning her</p>
+            <b-button
+                type="is-primary"
+                @click="addTeam6">
+                Tilføj 6 personers hold
+            </b-button>
             <b-button
                 type="is-primary"
                 @click="addTeam8">
@@ -174,6 +183,7 @@ export default {
                     squads{
                         id
                         playerLimit
+                        league
                         categories{
                             category
                             name
@@ -251,6 +261,7 @@ export default {
                 })
         },
         validTeams() {
+            const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -270,20 +281,31 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(this.team.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
+                        input: omitDeep(teamsClone.squads, ['__typename', 'league']).map((squad) => ({name: 'Team X', squad: squad}))
                     }
                 })
                 .then(({data}) => {
                     this.playingToHighSquadList = data.validateSquads;
+                    if(this.playingToHighSquadList.length === 0){
+                        this.$buefy.snackbar.open(
+                            {
+                                duration: 4000,
+                                type: 'is-success',
+                                queue: false,
+                                message: `Ingen fejl i opstillingen (Holdet)`
+                            })
+                    }
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
                             type: 'is-dagner',
+                            queue: false,
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
                 })
+            const crossSquads = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -302,17 +324,27 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(this.team.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
+                        input: omitDeep(crossSquads.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
                     }
                 })
                 .then(({data}) => {
                     this.playingToHighList = data.validateCrossSquads;
+                    if(this.playingToHighList.length === 0){
+                        this.$buefy.snackbar.open(
+                            {
+                                duration: 4000,
+                                type: 'is-success',
+                                queue: false,
+                                message: `Ingen fejl i opstillingen (På tværs af hold)`
+                            })
+                    }
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
                             type: 'is-dagner',
+                            queue: false,
                             message: `Noget gik galt under valideringen af holdet (validate)`
                         })
                 })
@@ -365,6 +397,11 @@ export default {
         },
         addTeam8() {
             let players = TeamFightHelper.generate8Players()
+            players.id = this.teamCount++
+            this.team.squads.push(players)
+        },
+        addTeam6() {
+            let players = TeamFightHelper.generate6Players()
             players.id = this.teamCount++
             this.team.squads.push(players)
         },

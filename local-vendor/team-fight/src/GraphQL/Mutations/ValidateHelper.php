@@ -14,10 +14,10 @@ class ValidateHelper
      */
     public static function splitTeams(Collection $teams): array
     {
-        $leagueSearchName = 'ligaen';
+        $leagueSearchName = 'LIGA';
         $leagueAndBelowTeamPair = self::getPair($teams, $leagueSearchName);
 
-        $firstDivisionSearchName = '1. division';
+        $firstDivisionSearchName = 'FIRSTDIVISION';
         $firstDivisionAndBelowTeamPair = self::getPair($teams, $firstDivisionSearchName);
 
         $rest = $teams->filter(static function(array $team) use ($leagueSearchName, $firstDivisionSearchName) {
@@ -33,7 +33,7 @@ class ValidateHelper
     private static function getPair(Collection $teams, string $leagueSearch): Collection
     {
         $leagueKey = $teams->search(static function ($team) use ($leagueSearch) {
-            return isset($team['league']) && Str::contains($team['league'], $leagueSearch);
+            return isset($team['squad']['league']) && Str::contains($team['squad']['league'], $leagueSearch);
         });
         $leagueAndBelowTeamPair = new Collection();
         $belowTeamKey = $leagueKey + 1;

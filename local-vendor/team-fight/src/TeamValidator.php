@@ -27,7 +27,7 @@ class TeamValidator
     public function validateCrossSquadsLeague(array $squads): Collection
     {
         $count = count($squads);
-        if(empty($squads) || $count === 1){
+        if (empty($squads) || $count === 1) {
             return new Collection();
         }
         if ($count !== 2) {
@@ -35,21 +35,37 @@ class TeamValidator
         }
         [$leagueTeamSquad, $firstDivSquad] = $squads;
         $firstDivSquad = new Collection($firstDivSquad);
-        $firstDivPlayers = (new Collection($firstDivSquad->get('categories')))->pluck('players')->flatten(1)->unique('refId');
+        $firstDivPlayers = (new Collection($firstDivSquad->get('categories')))->pluck('players')->flatten(1)->unique(
+            'refId'
+        );
 
         $totalHits = new Collection();
+        /** @var Player[] $firstDivPlayers */
         foreach ($firstDivPlayers as $divPlayer) {
             $hits = $this->compareEveryPlayerInEveryCategory($leagueTeamSquad, $divPlayer);
-            if ($hits->isNotEmpty()) {
-                $totalHits->push($hits);
+            $totalHits->put($divPlayer->refId, $hits);
+        }
+
+        $conflicts = new Collection();
+
+        /** @var Collection[] $totalHits */
+        foreach ($totalHits as $hits) {
+            foreach ($hits as $hit) {
+                $yes = $hit->filter(function ($balance) {
+                    return $balance['balance'] < 0;
+                });
+                if ($yes->count() === $hit->count()) {
+                    foreach ($hit as $stuff) {
+                        $currentAbovePlayer = $stuff['target'];
+                        $currentBelowPlayer = $stuff['source'];
+                        $currentCategory = $stuff['category'];
+                        $this->addOrUpdateBelowPlayers($conflicts, $currentAbovePlayer, $currentCategory, $currentBelowPlayer);
+                    }
+                }
             }
         }
 
-        $totalHits = $totalHits->filter(static function (Collection $hit){
-            return $hit->count() >= 2;
-        });
-
-        return $totalHits->flatten(1);
+        return $conflicts;
     }
 
     private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $divPlayer): Collection
@@ -63,9 +79,30 @@ class TeamValidator
                 }
                 try {
                     $divPlayerCategoryPoint = $this->getPlayerCategoryPoint($divPlayer, $leagueCategory->category);
-                    $leaguePlayerCategoryPoint = $this->getPlayerCategoryPoint($leaguePlayer, $leagueCategory->category);
-                    if ($divPlayerCategoryPoint > ($leaguePlayerCategoryPoint + $limit)) {
-                        $this->addOrUpdateBelowPlayers($hit, $leaguePlayer, $leagueCategory->category, $divPlayer);
+                    $leaguePlayerCategoryPoint = $this->getPlayerCategoryPoint(
+                        $leaguePlayer,
+                        $leagueCategory->category
+                    );
+                    $balance = $leaguePlayerCategoryPoint - $divPlayerCategoryPoint + $limit;
+                    if ($hit->has($leaguePlayer->refId)) {
+                        $hit->get($leaguePlayer->refId)->push([
+                            'balance' => $balance,
+                            'category' => $leagueCategory->category,
+                            'source' => $divPlayer,
+                            'target' => $leaguePlayer
+                        ]);
+                    } else {
+                        $hit->put(
+                            $leaguePlayer->refId,
+                            new Collection([
+                                [
+                                    'balance' => $balance,
+                                    'category' => $leagueCategory->category,
+                                    'source' => $divPlayer,
+                                    'target' => $leaguePlayer
+                                ]
+                            ])
+                        );
                     }
                 } catch (PointNotFoundInCategoryException $categoryException) {
                     // We will allow a player is not placed on the ranking list
