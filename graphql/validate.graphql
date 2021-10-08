@@ -1,5 +1,5 @@
 extend type Mutation {
-    validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh] @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
+    validateCrossSquads(input: [ValidateCrossTeamInput!]!) : [PlayingToHigh] @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh] @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
 }
 
@@ -8,9 +8,15 @@ input ValidateTeam{
     squad: ValidateSquad
 }
 
+input ValidateCrossTeamInput{
+    name: String!
+    squad: ValidateSquad
+}
+
 input ValidateSquad{
     id: String
     playerLimit: Int!
+    league: LeagueType
     categories: [ValidateCategory]
 }
 

@@ -35,6 +35,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad1Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad1Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -68,6 +69,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad2Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad2Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -101,6 +103,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -125,7 +128,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -162,6 +165,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad1Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad1Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -195,6 +199,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -219,7 +224,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -277,6 +282,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad1Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad1Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -310,6 +316,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad2Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad2Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -343,6 +350,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -367,7 +375,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -445,6 +453,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad1Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad1Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -478,6 +487,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $squad2Women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $squad2Women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -511,6 +521,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -535,7 +546,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -665,6 +676,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $specialMen2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -698,6 +710,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
+        $squad->league = 'OTHER';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -722,7 +735,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
+            mutation ($input: [ValidateCrossTeamInput!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category

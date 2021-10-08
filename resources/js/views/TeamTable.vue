@@ -5,16 +5,19 @@
                 <thead>
                 <tr>
                     <th colspan="2">
-                        Hold {{ index + 1 }}
-                        <b-button v-if="!viewMode" class="is-pulled-right" icon-left="trash-alt"
-                                  @click="confirmDelete(team)"></b-button>
-                        <b-tooltip v-if="!viewMode" class="is-pulled-right" label="Flyt hold op">
-                            <b-button v-if="index !== 0" icon-left="angle-up" @click="move(index, -1)"></b-button>
-                        </b-tooltip>
-                        <b-tooltip v-if="!viewMode" class="is-pulled-right" label="Flyt hold ned">
-                            <b-button v-if="index !== teams.length-1" icon-left="angle-down"
-                                      @click="move(index, 1)"></b-button>
-                        </b-tooltip>
+                        Hold {{ index + 1 }} ({{team.league}})
+                        <b-dropdown aria-role="list" class="is-pulled-right">
+                            <template #trigger="{ active }">
+                                <b-button
+                                    :icon-right="active ? 'angle-up' : 'angle-down'" />
+                            </template>
+                            <b-dropdown-item :disabled="team.league === 'OTHER'" @click="team.league = 'OTHER'" aria-role="listitem">Sæt som "andet" hold</b-dropdown-item>
+                            <b-dropdown-item :disabled="team.league === 'FIRSTDIVISION'" @click="team.league = 'FIRSTDIVISION'" aria-role="listitem">Sæt som 1. division hold</b-dropdown-item>
+                            <b-dropdown-item :disabled="team.league === 'LIGA'" @click="team.league = 'LIGA'" aria-role="listitem">Sæt som LIGA hold</b-dropdown-item>
+                            <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt hold op</b-dropdown-item>
+                            <b-dropdown-item :disabled="index === teams.length-1" @click="move(index, 1)" aria-role="listitem">Flyt hold ned</b-dropdown-item>
+                            <b-dropdown-item aria-role="listitem" @click="confirmDelete(team)">Slet</b-dropdown-item>
+                        </b-dropdown>
                     </th>
                 </tr>
                 </thead>

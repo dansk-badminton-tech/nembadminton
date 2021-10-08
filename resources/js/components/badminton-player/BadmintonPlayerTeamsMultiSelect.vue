@@ -25,8 +25,6 @@ export default {
                    || (new RegExp('sen\\+[0-9]+', 'gmi')).test(row.league)
                     || (new RegExp('senior motion', 'gmi')).test(row.league)
                     || (new RegExp('DMU', 'gmi')).test(row.league)
-                    || (new RegExp('1\\. division', 'gmi')).test(row.league)
-                    || (new RegExp('liga', 'gmi')).test(row.league)
                     || (new RegExp('4 spillere', 'gmi')).test(row.league)
             )
         }

@@ -10,7 +10,8 @@
                         </b-field>
                         <b-field label="Sæson">
                             <b-select v-model="season" expanded placeholder="Vælge sæson">
-                                <option value="2020">2019/2020</option>
+                                <option value="2019">2019/2020</option>
+                                <option value="2020">2020/2021</option>
                                 <option value="2021">2021/2022</option>
                             </b-select>
                         </b-field>
@@ -18,14 +19,6 @@
                     <b-step-item label="Hold">
                         <h1 class="title">Hold</h1>
                         <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
-                        <b-message title="Vigtig!" type="is-warning">
-                            <p>
-                                De anvendte kriterier er opsat jf. Holdturneringsreglementet i DH turneringen fra 2. division til Danmarksserien. <br />
-                                De enkelte kredse har deres egne regler i forhold til anvendelse af rangliste og derfor kan værktøjet kun bruges vejledende under Danmarksserien. <br />
-                                <a target="_blank" href="https://badminton.dk/wp-content/uploads/2019/09/Vejledning-for-holds%C3%A6tning-2.-div-og-nedefter-020919.pdf">Download
-                                    vejledning for holdsætning (badminton.dk)</a>.
-                            </p>
-                        </b-message>
                         <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"
                                                          @input="clearTeamFights"/>
                     </b-step-item>
@@ -35,7 +28,7 @@
                             holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende
                             måned. </h2>
                         <b-field>
-                            <ranking-list-dropdown v-model="rankingList"></ranking-list-dropdown>
+                            <ranking-list-dropdown v-model="rankingList" :season="season"></ranking-list-dropdown>
                         </b-field>
                         <h1 class="title">Hold kampe</h1>
                         <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps
@@ -113,7 +106,7 @@
             </b-steps>
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
-<!--        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>-->
+        <!--        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>-->
         <b-message v-if="done && !hasViolations" title="Fandt ingen overtrædelser" type="is-success">
             Fandt ingen fejl.
         </b-message>
@@ -159,20 +152,19 @@
 </template>
 
 <script>
-import BadmintonPlayerClubs from "../components/badminton-player/BadmintonPlayerClubs";
-import BadmintonPlayerTeams from "../components/badminton-player/BadmintonPlayerTeams";
-import BadmintonPlayerTeamFights from "../components/badminton-player/BadmintonPlayerTeamFights";
+import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs";
+import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
 import omitDeep from "omit-deep";
 import {
     findPositions,
-    swapObject,
     highlight as simpleHighlight,
-    resolveToolTip, isPlayingToHighByBadmintonPlayerId
-} from "../helpers";
-import BadmintonPlayerTeamsMultiSelect from "../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
-import Draggable from "vuedraggable";
-import RankingListDropdown from "../components/ranking-list-dropdown/RankingListDropDown";
+    isPlayingToHighByBadmintonPlayerId,
+    resolveToolTip,
+    swapObject
+} from "../../helpers";
+import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
+import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
 
 export default {
     name: "CheckTeamFight",
@@ -180,9 +172,7 @@ export default {
         RankingListDropdown,
         BadmintonPlayerTeamsMultiSelect,
         BadmintonPlayerTeamFights,
-        BadmintonPlayerTeams,
-        BadmintonPlayerClubs,
-        Draggable
+        BadmintonPlayerClubs
     },
     data() {
         return {
@@ -215,7 +205,7 @@ export default {
     computed: {
         hasViolations() {
             return this.playingToHigh.length > 0 || this.playingToHighInSquad.length > 0;
-        },
+        }
     },
     methods: {
         maybeMoveDown(index) {
@@ -276,6 +266,7 @@ export default {
                             leagueMatchId
                             squad{
                               playerLimit
+                              league
                               categories{
                                 category
                                 name
@@ -301,7 +292,8 @@ export default {
                             clubId: parseInt(this.clubId),
                             leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch) => ({
                                 id: teamMatch.teamMatch.matchId,
-                                teamNameHint: teamMatch.team.name
+                                teamNameHint: teamMatch.team.name,
+                                league: teamMatch.team.league
                             })),
                             season: parseInt(this.season),
                             version: this.rankingList//"2020-08-01"
@@ -327,7 +319,7 @@ export default {
             teamsClone = omitDeep(teamsClone, ['__typename', 'leagueMatchId'])
             this.$apollo.mutate(
                 {
-                    mutation: gql`mutation validateCrossSquads($input: [ValidateTeam!]!){
+                    mutation: gql`mutation validateCrossSquads($input: [ValidateCrossTeamInput!]!){
                       validateCrossSquads(input: $input){
                         name
                         id
@@ -352,25 +344,27 @@ export default {
             }).finally(() => {
                 this.fetchingAndValidating = false
             })
+            let teamsSquadCheck = JSON.parse(JSON.stringify(this.teams));
+            teamsSquadCheck = omitDeep(teamsSquadCheck, ['__typename', 'leagueMatchId', 'league'])
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateSquads($input: [ValidateTeam!]!){
-                      validateSquads(input: $input){
+                  validateSquads(input: $input){
+                    name
+                    id
+                    gender
+                    category
+                    refId
+                    belowPlayer {
                         name
                         id
-                        gender
-                        category
                         refId
-                        belowPlayer {
-                            name
-                            id
-                            refId
-                        }
-                      }
                     }
-                    `,
+                  }
+                }
+                `,
                     variables: {
-                        input: teamsClone
+                        input: teamsSquadCheck
                     }
                 }
             ).then(({data}) => {
@@ -395,6 +389,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>

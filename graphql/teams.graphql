@@ -34,7 +34,14 @@ input UpdateTeamInput {
 input UpdateSquadInput {
     id: ID
     playerLimit: Int!
+    league: LeagueType
     categories: [UpdateCatagoryInput!]!
+}
+
+enum LeagueType{
+    LIGA @enum(value: "LIGA")
+    FIRSTDIVISION @enum(value: "FIRSTDIVISION")
+    OTHER @enum(value: "OTHER")
 }
 
 input UpdateCatagoryInput {
@@ -85,6 +92,8 @@ type Squad {
     id: Int!
     "Number of players on the team"
     playerLimit: Int!
+    "What league the squad plays in"
+    league: LeagueType
     "Categories"
     categories: [SquadCategory!]!
 }

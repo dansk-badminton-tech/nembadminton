@@ -13,8 +13,6 @@ class Team
 
     public ?string $ageGroupId;
 
-    public ?string $league;
-
     public ?string $leagueMatchId;
 
     public ?Squad  $squad;

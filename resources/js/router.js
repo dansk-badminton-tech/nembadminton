@@ -117,7 +117,7 @@ const router = new VueRouter(
                     {
                         path: '/team-fight/check',
                         name: 'check-team-fight',
-                        component: () => import("./views/CheckTeamFight"),
+                        component: () => import("./views/check-team-fight/CheckTeamFight"),
                         meta: {
                             allowAnonymous: true,
                             title: 'Tjek holdkamps runde'

@@ -1,26 +1,31 @@
 <template>
     <b-select expanded placeholder="Vælge rangliste" @input="handleInput">
-        <option value="2021-10-01">2021-10-01</option>
-        <option value="2021-09-01">2021-09-01</option>
-        <option value="2021-08-01">2021-08-01</option>
-        <option value="2021-07-01">2021-07-01</option>
-        <option value="2020-12-01">2020-12-01</option>
-        <option value="2020-11-01">2020-11-01</option>
-        <option value="2020-10-01">2020-10-01</option>
-        <option value="2020-09-01">2020-09-01</option>
-        <option value="2020-08-01">2020-08-01</option>
-        <option value="2020-07-01">2020-07-01</option>
+        <option v-for="date in calculateDates" :value="date.value">{{ date.value }}</option>
     </b-select>
 </template>
 
 <script>
-    export default {
-        name: 'RankingListDropdown',
-        props: ['value'],
-        methods: {
-            handleInput(value) {
-                this.$emit('input', value)
+export default {
+    name: 'RankingListDropdown',
+    props: ['value', 'season'],
+    methods: {
+        handleInput(value) {
+            this.$emit('input', value)
+        }
+    },
+    computed: {
+        calculateDates() {
+            let dates = []
+            const dateObject = new Date()
+            dateObject.setFullYear(this.season, 6, 1)
+            for (let month = 0; month < 10; month++) {
+                if(dateObject <= Date.now()){
+                    dates.push({value: dateObject.toLocaleDateString('en-CA')});
+                    dateObject.setMonth(dateObject.getMonth()+1)
+                }
             }
-        },
-    };
+            return dates;
+        }
+    }
+};
 </script>

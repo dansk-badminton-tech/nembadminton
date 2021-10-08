@@ -55,19 +55,17 @@ class BadmintonPlayerClubsImporter extends Command
             $this->info("Update/Creates {$club['name']}");
         }
 
-//        foreach ($negativeClubs as $club) {
-//            $clubId = $club['id'];
-//            $model = Club::query()->where('id', $clubId * -1)->first();
-//            if($model !== null && $model->name1 === $club['name']){
-//                \App\Models\Club::query()->updateOrCreate([
-//                    'id'    => $clubId * -1,
-//                ], [
-//                    'name1'             => $club['name'],
-//                    'badmintonPlayerId' => $club['id'],
-//                ]);
-//            }
-//            $this->info("Update/Creates {$club['name']}");
-//        }
+        foreach ($negativeClubs as $club) {
+            $clubId = $club['id'] * -1;
+            $clubId = (int)str_pad((string)$clubId, 6, '0');
+            \App\Models\Club::query()->updateOrCreate([
+                'id' => $clubId,
+            ], [
+                'name1'             => $club['name'],
+                'badmintonPlayerId' => $club['id'],
+            ]);
+            $this->info("Update/Creates {$club['name']}");
+        }
 
         return 0;
     }

@@ -17,7 +17,7 @@ class Squad extends Model
 
     use HasFactory;
 
-    protected $fillable = ['playerLimit', 'teams_id'];
+    protected $fillable = ['playerLimit', 'league', 'teams_id'];
 
     public function categories() : hasMany
     {

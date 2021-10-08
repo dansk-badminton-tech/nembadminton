@@ -42,11 +42,23 @@ class Validate
      */
     public function validateCrossSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Collection
     {
-        $squads = new Collection($args['input']);
-        $squads = $squads->pluck('squad');
-        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $teams = new Collection($args['input']);
 
-        return $this->teamValidator->validateCrossSquads($squads);
+        [$leagueAndBelowTeamPair, $firstDivisionAndBelowTeamPair, $rest] = ValidateHelper::splitTeams($teams);
+
+        $squads = $leagueAndBelowTeamPair->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingToHighLeague = $this->teamValidator->validateCrossSquadsLeague($squads);
+
+        $squads = $firstDivisionAndBelowTeamPair->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingToHighFirstDivision = $this->teamValidator->validateCrossSquadsLeague($squads);
+
+        $squads = $rest->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        $playingToHighBelowFirstDiv = $this->teamValidator->validateCrossSquads($squads);
+
+        return $playingToHighLeague->merge($playingToHighFirstDivision)->merge($playingToHighBelowFirstDiv);
     }
 
     /**
