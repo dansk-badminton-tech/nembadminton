@@ -81,13 +81,13 @@ type ImportTeamMatch {
 
 type ImportTeam{
     name: String!
-    league: LeagueType!
     leagueMatchId: String!
     squad: ImportSquad!
 }
 
 type ImportSquad{
     playerLimit: Int!
+    league: LeagueType!
     categories: [ImportCategory]
 }
 

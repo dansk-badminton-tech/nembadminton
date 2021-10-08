@@ -264,9 +264,9 @@ export default {
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
                             leagueMatchId
-                            league
                             squad{
                               playerLimit
+                              league
                               categories{
                                 category
                                 name

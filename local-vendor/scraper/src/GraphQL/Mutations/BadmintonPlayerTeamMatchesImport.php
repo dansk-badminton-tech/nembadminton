@@ -79,12 +79,12 @@ class BadmintonPlayerTeamMatchesImport
             $guest = $teamMatch->guest;
             if (Str::contains($guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
                 $guest->leagueMatchId = $leagueMatchId;
-                $guest->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                $guest->squad->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $guest;
             } else {
                 $home = $teamMatch->home;
                 $home->leagueMatchId = $leagueMatchId;
-                $home->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                $home->squad->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
                 $teams[] = $home;
             }
         }
