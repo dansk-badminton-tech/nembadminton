@@ -28,7 +28,7 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
-            <b-dropdown-item aria-role="listitem" @click="validTeams">
+            <b-dropdown-item aria-role="listitem" @click="validate">
                 <b-icon icon="brain"></b-icon>
                 Validere hold
             </b-dropdown-item>
@@ -82,6 +82,8 @@
             </div>
         </div>
         <PlayerList :players="players"></PlayerList>
+        <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
+                          :invalid-level="resolveInvalidLevel"/>
         <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
             <p>
                 <b-icon
@@ -109,7 +111,7 @@
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
             <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
                        :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
-                       :teams="team.squads" @end="validTeams"/>
+                       :teams="team.squads" @end="validate"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
@@ -139,14 +141,14 @@ import ValidateTeams from "./ValidateTeams";
 import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
 import teams, {TeamFightHelper} from "../components/team-fight/teams";
-import RankingListDatePicker from "../components/team-fight/RankingListDatePicker";
 import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
+import ValidationStatus from "./ValidationStatus";
 
 export default {
     name: "TeamFight",
     components: {
+        ValidationStatus,
         RankingVersionSelect,
-        RankingListDatePicker,
         TeamTable,
         ValidateTeams,
         PlayerList,
@@ -156,10 +158,33 @@ export default {
     props: {
         teamFightId: String
     },
+    computed: {
+        resolveIncompleteTeam() {
+            if (this.validateBasicSquads.length === 0) {
+                return null
+            }
+            return this.validateBasicSquads.find(data => data.missingPlayerInCategory === true || data.spotsFulfilled === false) !== undefined
+        },
+        resolveInvalidCategory() {
+            if (!this.canValidateSquads) {
+                return null
+            }
+            return this.playingToHighSquadList.length > 0
+        },
+        resolveInvalidLevel() {
+            if (!this.canValidateCrossSquads) {
+                return null
+            }
+            return this.playingToHighList.length > 0
+        }
+    },
     data() {
         return {
+            validateBasicSquads: [],
             playingToHighList: [],
+            canValidateCrossSquads: false,
             playingToHighSquadList: [],
+            canValidateSquads: false,
             teamCount: 1,
             players: [],
             showShareLink: false,
@@ -220,6 +245,7 @@ export default {
                 this.gameDate = new Date(data.team.gameDate);
                 this.version = data.team.version;
                 this.versionDate = new Date(data.team.version);
+                this.validate()
             }
         }
     },
@@ -260,7 +286,7 @@ export default {
                     this.updating = false;
                 })
         },
-        validTeams() {
+        validateSquads() {
             const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
@@ -281,20 +307,14 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(teamsClone.squads, ['__typename', 'league']).map((squad) => ({name: 'Team X', squad: squad}))
+                        input: omitDeep(teamsClone.squads, ['__typename', 'league']).map((squad) => ({
+                            name: 'Team X',
+                            squad: squad
+                        }))
                     }
                 })
                 .then(({data}) => {
                     this.playingToHighSquadList = data.validateSquads;
-                    if(this.playingToHighSquadList.length === 0){
-                        this.$buefy.snackbar.open(
-                            {
-                                duration: 4000,
-                                type: 'is-success',
-                                queue: false,
-                                message: `Ingen fejl i opstillingen (Holdet)`
-                            })
-                    }
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -305,11 +325,13 @@ export default {
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
                 })
+        },
+        validateCrossSquads() {
             const crossSquads = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: [ValidateCrossTeamInput!]!){
+                        mutation ($input: [ValidateTeam!]!){
                           validateCrossSquads(input: $input){
                             name
                             id
@@ -324,20 +346,14 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(crossSquads.squads, ['__typename']).map((squad) => ({name: 'Team X', squad: squad}))
+                        input: omitDeep(crossSquads.squads, ['__typename']).map((squad) => ({
+                            name: 'Team X',
+                            squad: squad
+                        }))
                     }
                 })
                 .then(({data}) => {
                     this.playingToHighList = data.validateCrossSquads;
-                    if(this.playingToHighList.length === 0){
-                        this.$buefy.snackbar.open(
-                            {
-                                duration: 4000,
-                                type: 'is-success',
-                                queue: false,
-                                message: `Ingen fejl i opstillingen (På tværs af hold)`
-                            })
-                    }
                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -346,6 +362,48 @@ export default {
                             type: 'is-dagner',
                             queue: false,
                             message: `Noget gik galt under valideringen af holdet (validate)`
+                        })
+                })
+        },
+        validate() {
+            const teamsClone = JSON.parse(JSON.stringify(this.team));
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation ($input: [ValidateTeam!]!){
+                          validateBasicSquads(input: $input){
+                            index
+                            missingPlayerInCategory
+                            spotsFulfilled
+                          }
+                        }
+                    `,
+                    variables: {
+                        input: omitDeep(teamsClone.squads, ['__typename']).map((squad) => ({
+                            name: 'Team X',
+                            squad: squad
+                        }))
+                    }
+                })
+                .then(({data}) => {
+                    this.validateBasicSquads = data.validateBasicSquads;
+                    if (!this.resolveIncompleteTeam) {
+                        this.canValidateCrossSquads = true
+                        this.canValidateSquads = true
+                        this.validateSquads()
+                        this.validateCrossSquads();
+                    } else {
+                        this.canValidateCrossSquads = false
+                        this.canValidateSquads = false
+                    }
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-dagner',
+                            queue: false,
+                            message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
                 })
         },

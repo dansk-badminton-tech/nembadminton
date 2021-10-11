@@ -128,7 +128,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateCrossTeamInput!]!) {
+            mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -224,7 +224,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateCrossTeamInput!]!) {
+            mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -375,7 +375,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateCrossTeamInput!]!) {
+            mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -546,7 +546,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateCrossTeamInput!]!) {
+            mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category
@@ -735,7 +735,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR)];
         $this->graphQL(
         /** @lang GraphQL */ '
-            mutation ($input: [ValidateCrossTeamInput!]!) {
+            mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
                 category

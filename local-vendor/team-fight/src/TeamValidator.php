@@ -8,6 +8,7 @@ namespace FlyCompany\TeamFight;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class TeamValidator
@@ -59,7 +60,12 @@ class TeamValidator
                         $currentAbovePlayer = $stuff['target'];
                         $currentBelowPlayer = $stuff['source'];
                         $currentCategory = $stuff['category'];
-                        $this->addOrUpdateBelowPlayers($conflicts, $currentAbovePlayer, $currentCategory, $currentBelowPlayer);
+                        $this->addOrUpdateBelowPlayers(
+                            $conflicts,
+                            $currentAbovePlayer,
+                            $currentCategory,
+                            $currentBelowPlayer
+                        );
                     }
                 }
             }
@@ -110,28 +116,6 @@ class TeamValidator
             }
         }
         return $hit;
-    }
-
-    private function getCategoriesByGender(string $gender): array
-    {
-        $genderUpper = strtoupper($gender);
-        if ($genderUpper === 'M') {
-            return [
-                'MD',
-                'HS',
-                'HD'
-            ];
-        }
-
-        if ($genderUpper === 'K') {
-            return [
-                'MD',
-                'DS',
-                'DD'
-            ];
-        }
-
-        throw new \RuntimeException("Unknown gender '$gender'");
     }
 
     /**
@@ -474,6 +458,57 @@ class TeamValidator
                 ])
             );
         }
+    }
+
+    /**
+     * @param  array|Squad[]  $squads
+     */
+    public function validateBasicSquads(array $squads) : Collection
+    {
+        $entries = new Collection();
+        foreach ($squads as $index => $squad) {
+            $validt = true;
+            foreach ($squad->categories as $category) {
+                if ($category->isMixDouble()) {
+                    if($category->amountOfMenPlayers() !== 1 || $category->amountOfWomenPlayers() !== 1){
+                        $validt = false;
+                    }
+                } elseif ($category->isMensDouble()) {
+                    if($category->amountOfMenPlayers() !== 2){
+                        $validt = false;
+                    }
+                } elseif ($category->isWomensDouble()) {
+                    if($category->amountOfWomenPlayers() !== 2){
+                        $validt = false;
+                    }
+                } elseif ($category->isMenSingle()) {
+                    if($category->amountOfMenPlayers() !== 1){
+                        $validt = false;
+                    }
+                } elseif ($category->isWomenSingle()) {
+                    if($category->amountOfWomenPlayers() !== 1){
+                        $validt = false;
+                    }
+                }else{
+                    throw new \RuntimeException('Unknown category');
+                }
+            }
+
+            $foundOnlyOne = null;
+            if(in_array($squad->playerLimit, [10, 8])){
+                $players = (new Collection(Arr::pluck($squad->categories, 'players')))->flatten(1);
+                $playersByRefId = $players->groupBy('refId');
+                $foundOnlyOne = $playersByRefId->first(static function(Collection $players){
+                    return $players->count() !== 2;
+                });
+            }
+            $entries->push([
+                'index' => $index,
+                'spotsFulfilled' => $validt,
+                'missingPlayerInCategory' => $foundOnlyOne !== null
+            ]);
+        }
+        return $entries;
     }
 
 }
