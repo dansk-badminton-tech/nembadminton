@@ -3,7 +3,7 @@
         <div class="control">
             <div class="tags has-addons">
                 <b-tooltip
-                    label="Fejl betyder der er en ugyldig kategori. Fx Kun en dame er sat i 1. DD, Ingen spiller i 1. HS osv">
+                    label="Ugyldig kategori. Fx Kun en dame er sat i 1. DD, Ingen spiller i 1. HS osv">
                     <span class="tag is-light is-medium">Fuldendt hold</span>
                     <span
                         v-bind:class="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}"
