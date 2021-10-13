@@ -5,17 +5,34 @@
                 <thead>
                 <tr>
                     <th colspan="2">
-                        Hold {{ index + 1 }} ({{team.league}})
+                        <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
+                        <b-taglist class="ml-2 is-pulled-left">
+                            <b-tag>{{ team.league }}</b-tag>
+                            <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
+                                Fuldendt hold
+                            </b-tag>
+                        </b-taglist>
                         <b-dropdown aria-role="list" class="is-pulled-right">
                             <template #trigger="{ active }">
                                 <b-button
-                                    :icon-right="active ? 'angle-up' : 'angle-down'" />
+                                    :icon-right="active ? 'angle-up' : 'angle-down'"/>
                             </template>
-                            <b-dropdown-item :disabled="team.league === 'OTHER'" @click="team.league = 'OTHER'" aria-role="listitem">Sæt som "andet" hold</b-dropdown-item>
-                            <b-dropdown-item :disabled="team.league === 'FIRSTDIVISION'" @click="team.league = 'FIRSTDIVISION'" aria-role="listitem">Sæt som 1. division hold</b-dropdown-item>
-                            <b-dropdown-item :disabled="team.league === 'LIGA'" @click="team.league = 'LIGA'" aria-role="listitem">Sæt som LIGA hold</b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt hold op</b-dropdown-item>
-                            <b-dropdown-item :disabled="index === teams.length-1" @click="move(index, 1)" aria-role="listitem">Flyt hold ned</b-dropdown-item>
+                            <b-dropdown-item :disabled="team.league === 'OTHER'" @click="team.league = 'OTHER'"
+                                             aria-role="listitem">Sæt som "andet" hold
+                            </b-dropdown-item>
+                            <b-dropdown-item :disabled="team.league === 'FIRSTDIVISION'"
+                                             @click="team.league = 'FIRSTDIVISION'" aria-role="listitem">Sæt som 1.
+                                division hold
+                            </b-dropdown-item>
+                            <b-dropdown-item :disabled="team.league === 'LIGA'" @click="team.league = 'LIGA'"
+                                             aria-role="listitem">Sæt som LIGA hold
+                            </b-dropdown-item>
+                            <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt
+                                hold op
+                            </b-dropdown-item>
+                            <b-dropdown-item :disabled="index === teams.length-1" @click="move(index, 1)"
+                                             aria-role="listitem">Flyt hold ned
+                            </b-dropdown-item>
                             <b-dropdown-item aria-role="listitem" @click="confirmDelete(team)">Slet</b-dropdown-item>
                         </b-dropdown>
                     </th>
@@ -98,12 +115,36 @@ export default {
             type: Array,
             default: []
         },
+        teamsBaseValidations: {
+            type: Array,
+            default: () => ([])
+        },
         search: {
             type: String,
             default: ''
         }
     },
     methods: {
+        hasEmptySpots(index) {
+            if (this.teamsBaseValidations.length === 0) {
+                return false;
+            } else {
+                const found = this.teamsBaseValidations.find((base) => {
+                    return index === base.index && base.spotsFulfilled === false
+                })
+                return found !== undefined;
+            }
+        },
+        hasMissingPlayerInCategory(index) {
+            if (this.teamsBaseValidations.length === 0) {
+                return false;
+            } else {
+                const found = this.teamsBaseValidations.find((base) => {
+                    return index === base.index && base.missingPlayerInCategory === true
+                })
+                return found !== undefined;
+            }
+        },
         resolveLabel(player, category) {
             return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
         },

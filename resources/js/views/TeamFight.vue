@@ -111,7 +111,7 @@
         <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
             <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
                        :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
-                       :teams="team.squads" @end="validate"/>
+                       :teams="team.squads" @end="validate" :teams-base-validations="validateBasicSquads"/>
         </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
