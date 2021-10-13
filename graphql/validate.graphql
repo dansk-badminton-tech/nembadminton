@@ -1,14 +1,19 @@
 extend type Mutation {
-    validateCrossSquads(input: [ValidateCrossTeamInput!]!) : [PlayingToHigh] @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
-    validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh] @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
+    "Validates players is playing on the right squad (level-ranking)"
+    validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
+    "Validates categories for right streng order (category-ranking)"
+    validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
+    "Validates all spots is forfilled"
+    validateBasicSquads(input: [ValidateTeam!]!) : [BaseValidation!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateBasicSquads")
+}
+
+type BaseValidation {
+    index: Int!
+    spotsFulfilled: Boolean!
+    missingPlayerInCategory: Boolean!
 }
 
 input ValidateTeam{
-    name: String!
-    squad: ValidateSquad
-}
-
-input ValidateCrossTeamInput{
     name: String!
     squad: ValidateSquad
 }

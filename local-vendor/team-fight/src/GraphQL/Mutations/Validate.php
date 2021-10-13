@@ -82,4 +82,20 @@ class Validate
         return $playingToHigh;
     }
 
+    /**
+     * @param $rootValue
+     * @param  array  $args
+     * @param  GraphQLContext  $context
+     * @param  ResolveInfo  $resolveInfo
+     * @return Collection
+     */
+    public function validateBasicSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Collection
+    {
+        $squads = new Collection($args['input']);
+        $squads = $squads->pluck('squad');
+        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
+        /** @var Squad[] $squads */
+        return $this->teamValidator->validateBasicSquads($squads);
+    }
+
 }

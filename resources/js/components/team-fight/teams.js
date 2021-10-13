@@ -115,7 +115,7 @@ export class TeamFightHelper {
 
     static generate6Players() {
         return {
-            playerLimit: 8,
+            playerLimit: 6,
             league: 'OTHER',
             categories: [{
                 name: "1. MD",

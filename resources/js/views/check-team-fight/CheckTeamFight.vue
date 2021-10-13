@@ -314,24 +314,24 @@ export default {
                 this.fetchingAndValidating = false;
             })
         },
-        validate() {
+        validateCrossSquads() {
             let teamsClone = JSON.parse(JSON.stringify(this.teams));
             teamsClone = omitDeep(teamsClone, ['__typename', 'leagueMatchId'])
             this.$apollo.mutate(
                 {
-                    mutation: gql`mutation validateCrossSquads($input: [ValidateCrossTeamInput!]!){
-                      validateCrossSquads(input: $input){
-                        name
-                        id
-                        gender
-                        category
-                        refId
-                        belowPlayer {
+                    mutation: gql`mutation validateCrossSquads($input: [ValidateTeam!]!){
+                        validateCrossSquads(input: $input){
+                            name
+                            id
+                            gender
+                            category
+                            refId
+                            belowPlayer {
                                 name
                                 id
                                 refId
                             }
-                      }
+                        }
                     }
                     `,
                     variables: {
@@ -344,8 +344,11 @@ export default {
             }).finally(() => {
                 this.fetchingAndValidating = false
             })
+        },
+        validateSquads() {
             let teamsSquadCheck = JSON.parse(JSON.stringify(this.teams));
             teamsSquadCheck = omitDeep(teamsSquadCheck, ['__typename', 'leagueMatchId', 'league'])
+
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateSquads($input: [ValidateTeam!]!){
@@ -373,6 +376,10 @@ export default {
             }).finally(() => {
                 this.fetchingAndValidating = false
             })
+        },
+        validate() {
+            this.validateCrossSquads()
+            this.validateSquads()
         },
         goToStart() {
             this.done = false;
