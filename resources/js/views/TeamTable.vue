@@ -48,7 +48,7 @@
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
-                                    <span v-html="resolveLabel(player, category.category)"></span>
+                                    <span v-html="resolveLabel(player, category.category, team.league)"></span>
                                 </template>
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
@@ -145,8 +145,8 @@ export default {
                 return found !== undefined;
             }
         },
-        resolveLabel(player, category) {
-            return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
+        resolveLabel(player, category, league) {
+            return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
         isPlayingToHigh(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
