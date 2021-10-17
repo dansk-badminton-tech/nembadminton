@@ -111,15 +111,7 @@
             Fandt ingen fejl.
         </b-message>
         <b-message v-if="done && hasViolations" title="Fandt mulige overtrædelser" type="is-warning">
-            Grøn: Spiller for højt + er U17/U19. <a target="_blank"
-                                                    href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
-            § 38. stk. 6</a> <br/>
-            Gul: Spiller på et forkert hold (NIVEAU-ranglisten) <a target="_blank"
-                                                                   href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
-            § 38. stk. 4</a> <br/>
-            Rød: Spiller for højt i kategorien (KATEGORI-ranglisten) <a target="_blank"
-                                                                        href="https://badminton.dk/wp-content/uploads/2021/08/Holdturneringsreglement-for-badminton-i-Danmark-opdateret-190821.pdf">Se
-            § 38. stk. 1-3</a>
+            Hold musen henover de farvede spillere for beskrivelse.
         </b-message>
         <div v-if="done" class="columns is-multiline">
             <div v-for="team in teams" class="column is-4">
@@ -139,7 +131,7 @@
                             :key="player.name+props.row.category"
                             :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)">
                             <template v-slot:content>
-                                <span v-html="resolveLabel(player, props.row.category)"></span>
+                                <span v-html="resolveLabel(player, props.row.category, team.squad.league)"></span>
                             </template>
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
                                 ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
@@ -239,8 +231,8 @@ export default {
             const droppedOnRowIndex = payload.index
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
-        resolveLabel(player, category) {
-            return resolveToolTip(player, category, this.playingToHigh, this.playingToHighInSquad)
+        resolveLabel(player, category, league) {
+            return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
         isPlayingToHigh(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);

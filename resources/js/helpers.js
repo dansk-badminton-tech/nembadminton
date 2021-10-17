@@ -188,7 +188,7 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
     return base;
 }
 
-export function resolveToolTip(player, category, playingToHighCrossSquads, playingToHighInSquad) {
+export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
     let msg = []
     let resolveNames = (playerWithBelowPlayers) => {
         let names = playerWithBelowPlayers.belowPlayer.map(x => x.name)
@@ -202,12 +202,20 @@ export function resolveToolTip(player, category, playingToHighCrossSquads, playi
         }
     }
     if (playerWithBelowPlayersCrossSquads !== undefined) {
-        msg.push("Bedre spiller på NIVEAU-ranglisten: " + resolveNames(playerWithBelowPlayersCrossSquads));
+        if(isLeagueOrFirstDivision(league)){
+            msg.push("Bedre spiller på KATEGORI-ranglisten: " + resolveNames(playerWithBelowPlayersCrossSquads));
+        }else{
+            msg.push("Bedre spiller på NIVEAU-ranglisten: " + resolveNames(playerWithBelowPlayersCrossSquads));
+        }
     }
     if (playerWithBelowPlayersSquad !== undefined) {
         msg.push("Bedre spiller i kategorien: " + resolveNames(playerWithBelowPlayersSquad))
     }
     return msg.join("<br />--------<br />");
+}
+
+function isLeagueOrFirstDivision(league){
+    return league.toUpperCase() === 'FIRSTDIVISION' || league.toUpperCase() === 'LIGA';
 }
 
 export function swap(arr, from, to) {

@@ -246,6 +246,14 @@ class BadmintonPlayer
         return $this->getRankingList($players, $rankingVersion, $season);
     }
 
+    /**
+     * @param  array|Player[]  $players
+     * @param  Carbon  $rankingVersion
+     * @param  int  $season
+     * @return Player
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws \JsonException
+     */
     private function getRankingList(array $players, Carbon $rankingVersion, int $season) : Player
     {
         $count = count($players);
@@ -268,6 +276,9 @@ class BadmintonPlayer
         }
 
         $points = Arr::pluck($playersCollection, 'points');
+        if(empty($playersCollection)){
+            throw new \RuntimeException("Found not points in any category for {$player->name}");
+        }
         $player = $playersCollection[0];
         $player->points = $points;
 
