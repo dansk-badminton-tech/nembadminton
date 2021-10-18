@@ -3,7 +3,7 @@
         <div class="control">
             <div class="tags has-addons">
                 <b-tooltip
-                    label="Ugyldig kategori. Fx Kun en dame er sat i 1. DD, Ingen spiller i 1. HS osv">
+                    label="Alle kategorier er udfyldt.">
                     <span class="tag is-light is-medium">Fuldendt hold</span>
                     <span
                         v-bind:class="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}"
@@ -13,9 +13,9 @@
         </div>
         <div class="control">
             <b-tooltip
-                label="§ 38. stk. 4. Spiller på et forkert hold (NIVEAU-ranglisten)">
+                label="Se § 38. stk. 4-5. i Holdturneringsreglement">
                 <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Styrkeorden niveau-ranglisten (på tværs af hold)</span>
+                    <span class="tag is-light is-medium">Spiller på et forkert hold</span>
                     <span
                         v-bind:class="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}"
                         class="tag is-medium">{{ invalidLevelText }}</span>
@@ -24,9 +24,9 @@
         </div>
         <div class="control">
             <b-tooltip
-                label="§ 38. stk. 1-3. Spiller for højt i kategorien (KATEGORI-ranglisten)">
+                label="Se § 38. stk. 1-3. i Holdturneringsreglement">
                 <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Styrkeorden kategori-ranglisten (på holdet)</span>
+                    <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
                     <span
                         v-bind:class="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}"
                         class="tag is-medium">{{ invalidCategoryText }}</span>

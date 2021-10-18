@@ -31,11 +31,18 @@ import {
     faCopy,
     faBell,
     faAlignJustify,
-    faQuestion
+    faQuestion,
+    faMars,
+    faVenus
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-library.add(faBell, faCopy, faLock, faEnvelope, faSearch, faBars, faShareAlt, faEllipsisV, faEye, faCheck, faAngleUp, faAngleDown, faHandRock, faCalendarAlt, faHome, faAngleLeft, faAngleRight, faTrash, faUsers, faUserAlt, faSave, faBrain, faArrowsAlt, faTrashAlt, faArrowUp, faTimesCircle, faExclamationCircle, faSignOutAlt, faAlignJustify, faQuestion);
+library.add(faBell,
+    faCopy,
+    faLock, faEnvelope, faSearch, faBars, faShareAlt, faEllipsisV, faEye, faCheck, faAngleUp, faAngleDown, faHandRock, faCalendarAlt, faHome, faAngleLeft, faAngleRight, faTrash, faUsers, faUserAlt, faSave, faBrain, faArrowsAlt, faTrashAlt, faArrowUp, faTimesCircle, faExclamationCircle, faSignOutAlt, faAlignJustify,
+    faQuestion,
+    faMars,
+    faVenus);
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 Vue.use(Buefy, {
     defaultIconComponent: 'vue-fontawesome',
