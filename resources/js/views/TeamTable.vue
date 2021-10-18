@@ -52,8 +52,13 @@
                                 </template>
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
-                                        v-if="!viewMode"
-                                        icon="bars"
+                                        v-show="player.gender === 'M'"
+                                        icon="mars"
+                                        size="is-small">
+                                    </b-icon>
+                                    <b-icon
+                                        v-show="player.gender === 'K'"
+                                        icon="venus"
                                         size="is-small">
                                     </b-icon>
                                     {{ player.name }}
