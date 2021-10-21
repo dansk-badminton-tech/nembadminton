@@ -1,6 +1,6 @@
 <template>
     <fragment>
-        <div v-for="(team, index) in teams" :key="team.id" class="column is-4">
+        <div v-for="(team, index) in teams" :key="team.id" class="column is-full">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
                 <tr>
@@ -9,7 +9,7 @@
                         <b-taglist class="ml-2 is-pulled-left">
                             <b-tag>{{ team.league }}</b-tag>
                             <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
-                                Fuldendt hold
+                                Ugyldig hold
                             </b-tag>
                         </b-taglist>
                         <b-dropdown aria-role="list" class="is-pulled-right">
@@ -65,22 +65,10 @@
                                     ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
                                 </p>
                             </b-tooltip>
-                            <b-dropdown aria-role="list" class="is-pulled-right">
-                                <b-button v-if="category.players.length && !viewMode" slot="trigger"
-                                          icon-left="ellipsis-v" size="is-small"></b-button>
-                                <b-dropdown-item aria-role="menuitem" has-link>
-                                    <a href="#" @click.prevent="deletePlayer(category, player)">
-                                        <b-icon icon="times-circle"></b-icon>
-                                        Slet
-                                    </a>
-                                </b-dropdown-item>
-                                <b-dropdown-item aria-role="menuitem" has-link>
-                                    <a href="#" @click.prevent="copyPlayer(category, player)">
-                                        <b-icon icon="copy"></b-icon>
-                                        Kopier
-                                    </a>
-                                </b-dropdown-item>
-                            </b-dropdown>
+                            <div class="buttons is-pulled-right">
+                                <b-button size="is-small" title="Slet" icon-right="times-circle" @click="deletePlayer(category, player)"></b-button>
+                                <b-button size="is-small" title="Kopier spiller" icon-right="copy" @click="copyPlayer(category, player)"></b-button>
+                            </div>
                         </div>
                         <p v-if="!category.players.length">---------------</p>
                     </draggable>

@@ -214,6 +214,42 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
     return msg.join("<br />--------<br />");
 }
 
+export function isDoubleCategory(category){
+    return ["MD", "DD", "HD"].includes(category.category.toUpperCase());
+}
+
+export function isWomenDouble(category){
+    return ["DD"].includes(category.category.toUpperCase());
+}
+
+export function isMensDouble(category){
+    return ["HD"].includes(category.category.toUpperCase());
+}
+
+export function isMixDouble(category){
+    return ["MD"].includes(category.category.toUpperCase());
+}
+
+export function isMensSingle(category){
+    return ["HS"].includes(category.category.toUpperCase());
+}
+
+export function isWomensSingle(category){
+    return ["DS"].includes(category.category.toUpperCase());
+}
+
+export function containsWomen(category){
+    return category.players.some((player) => {
+        return player.gender === 'K';
+    });
+}
+
+export function containsMen(category){
+    return category.players.some((player) => {
+        return player.gender === 'M';
+    });
+}
+
 function isLeagueOrFirstDivision(league){
     return league.toUpperCase() === 'FIRSTDIVISION' || league.toUpperCase() === 'LIGA';
 }

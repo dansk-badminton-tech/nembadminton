@@ -73,46 +73,50 @@
                 </div>
             </div>
         </div>
-        <h1 class="title">Holdet</h1>
-        <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
-        <div class="columns">
-            <div class="column">
-                <PlayerSearch :add-player="addPlayer" :club-id="team.club.id" :exclude-players="[]"
-                              :version="versionDate"></PlayerSearch>
-            </div>
-        </div>
-        <PlayerList :players="players"></PlayerList>
         <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
                           :invalid-level="resolveInvalidLevel"/>
-        <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
-            <p>
-                <b-icon
-                    icon="users"
-                    size="is-large">
-                </b-icon>
-            </p>
-            <p>Kom i gang med din næste holdkamp planlægning her</p>
-            <b-button
-                type="is-primary"
-                @click="addTeam6">
-                Tilføj 6 personers hold
-            </b-button>
-            <b-button
-                type="is-primary"
-                @click="addTeam8">
-                Tilføj 8 personers hold
-            </b-button>
-            <b-button
-                type="is-primary"
-                @click="addTeam10">
-                Tilføj 10 personers hold
-            </b-button>
+        <hr />
+        <div class="columns">
+            <div class="column is-6">
+                <h1 class="title">Spiller</h1>
+                <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
+                <SearchPlayers :add-player="addPlayer" :club-id="team.club.id" :version="versionDate"/>
+            </div>
+            <div class="column is-6">
+                <h1 class="title">Holdet</h1>
+                <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
+                <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
+                    <p>
+                        <b-icon
+                            icon="users"
+                            size="is-large">
+                        </b-icon>
+                    </p>
+                    <p>Kom i gang med din næste holdkamp planlægning her</p>
+                    <b-button
+                        type="is-primary"
+                        @click="addTeam6">
+                        Tilføj 6 personers hold
+                    </b-button>
+                    <b-button
+                        type="is-primary"
+                        @click="addTeam8">
+                        Tilføj 8 personers hold
+                    </b-button>
+                    <b-button
+                        type="is-primary"
+                        @click="addTeam10">
+                        Tilføj 10 personers hold
+                    </b-button>
+                </div>
+                <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
+                    <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer"
+                               :move="move"
+                               :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
+                               :teams="team.squads" @end="validate" :teams-base-validations="validateBasicSquads"/>
+                </draggable>
+            </div>
         </div>
-        <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
-            <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer" :move="move"
-                       :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
-                       :teams="team.squads" @end="validate" :teams-base-validations="validateBasicSquads"/>
-        </draggable>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
             <div class="card">
                 <div class="card-content">
@@ -143,10 +147,22 @@ import omitDeep from 'omit-deep';
 import teams, {TeamFightHelper} from "../components/team-fight/teams";
 import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 import ValidationStatus from "./ValidationStatus";
+import SearchPlayers from "./SearchPlayers";
+import {
+    containsMen,
+    containsWomen,
+    isDoubleCategory,
+    isMensDouble,
+    isMensSingle,
+    isMixDouble,
+    isWomenDouble,
+    isWomensSingle
+} from "../helpers";
 
 export default {
     name: "TeamFight",
     components: {
+        SearchPlayers,
         ValidationStatus,
         RankingVersionSelect,
         TeamTable,
@@ -439,7 +455,52 @@ export default {
             this.clubId = id
         },
         addPlayer(player) {
-            this.players.push(player);
+            let foundPlace = false;
+            outside:
+            for (let squad of this.team.squads) {
+                for (let category of squad.categories) {
+                    if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'K') {
+                        category.players.push(player)
+                        foundPlace = true;
+                        break outside;
+                    } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'M') {
+                        category.players.push(player)
+                        foundPlace = true;
+                        break outside;
+                    } else if (isMixDouble(category) && category.players.length < 2) {
+                        if(category.players.length === 0){
+                            category.players.push(player)
+                            foundPlace = true;
+                            break outside;
+                        }else if (containsWomen(category) && player.gender === 'M') {
+                            category.players.push(player)
+                            foundPlace = true;
+                            break outside;
+                        } else if (containsMen(category) && player.gender === 'K') {
+                            category.players.push(player)
+                            foundPlace = true;
+                            break outside;
+                        }
+                    } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'M') {
+                        category.players.push(player)
+                        foundPlace = true;
+                        break outside;
+                    } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'K') {
+                        category.players.push(player)
+                        foundPlace = true;
+                        break outside;
+                    }
+                }
+            }
+            if(foundPlace === false){
+                this.$buefy.snackbar.open(
+                    {
+                        duration: 3000,
+                        type: 'is-success',
+                        queue: false,
+                        message: `Kunne ikke finde en ledig plads på nogle hold`
+                    })
+            }
         },
         move(index, offset) {
             let teams = this.team.squads.slice()

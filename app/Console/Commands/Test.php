@@ -56,11 +56,15 @@ class Test extends Command
      */
     public function handle(TeamValidator $teamValidator)
     {
-        $squads = require __DIR__.'/skovbakken-data.php';
-        $squads = new Collection($squads['input']);
-        $squads = $squads->pluck('squad');
-        $squads = SerializerHelper::getSerializer()->denormalize($squads->toArray(), Squad::class . '[]');
-        dd($teamValidator->validateCrossSquadsV2($squads));
+        /** @var Member[] $members */
+        $members = Member::query()->join('points', 'members.id', '=', 'points.member_id')->whereNull('points.category')->where(
+            'points.version',
+            '=',
+            '2021-08-01'
+        )->orderBy('points.points')->with('points')->get();
+        foreach ($members as $member){
+            $this->line($member->points.$member->name);
+        }
 
         return 0;
     }

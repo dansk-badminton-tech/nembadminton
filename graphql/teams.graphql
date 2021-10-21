@@ -2,6 +2,7 @@ extend type Query {
     team(id: ID! @eq) : Teams @find
     teams(order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
+    cancellations(teamId: String! @eq) : [Cancellation] @guard @all
 }
 
 extend type Mutation {
@@ -10,6 +11,14 @@ extend type Mutation {
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
     updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
+    createCancellation(refId: String!, teamId: ID!) : Cancellation @create @guard
+    deleteCancellation(id: ID!) : Cancellation @delete @guard
+}
+
+type Cancellation {
+    id: ID
+    refId: String!
+    teamId: String!
 }
 
 input CreateTeamInput {
