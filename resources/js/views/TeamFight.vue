@@ -536,6 +536,9 @@ export default {
                         mutation ($input: UpdateTeamInput!){
                           updateTeam(input: $input){
                             id
+                            name
+                            gameDate
+                            version
                           }
                         }
                     `,
