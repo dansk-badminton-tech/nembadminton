@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-        <b-button :loading="saving" icon-left="save" @click="saveTeams">Gem</b-button>
+        <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon" @click="saveTeams">Gem</b-button>
         <b-button icon-left="share-alt" @click="publish">Del</b-button>
         <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
         <b-dropdown aria-role="list">
@@ -75,12 +75,13 @@
         </div>
         <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
                           :invalid-level="resolveInvalidLevel"/>
-        <hr />
+        <hr/>
         <div class="columns">
             <div class="column is-6">
                 <h1 class="title">Spiller</h1>
                 <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
-                <SearchPlayers :add-player="addPlayer" :club-id="team.club.id" :version="versionDate"/>
+                <PlayersListSearch :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
+                                   :version="versionDate" />
             </div>
             <div class="column is-6">
                 <h1 class="title">Holdet</h1>
@@ -109,12 +110,16 @@
                         Tilføj 10 personers hold
                     </b-button>
                 </div>
-                <draggable :list="team.squads" class="columns is-multiline" handle=".handle">
-                    <TeamTable :confirm-delete="deleteTeam" :copy-player="copyPlayer" :delete-player="deletePlayer"
-                               :move="move"
-                               :playing-to-high="playingToHighList" :playing-to-high-in-squad="playingToHighSquadList"
-                               :teams="team.squads" @end="validate" :teams-base-validations="validateBasicSquads"/>
-                </draggable>
+                <TeamTable :confirm-delete="deleteTeam"
+                           :copy-player="copyPlayer"
+                           :delete-player="deletePlayer"
+                           :move="move"
+                           :playing-to-high="playingToHighList"
+                           :playing-to-high-in-squad="playingToHighSquadList"
+                           :teams="team.squads" @end="validate"
+                           :teams-base-validations="validateBasicSquads"
+                           :version="new Date(version)"
+                           :club-id="team.club.id"/>
             </div>
         </div>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
@@ -147,11 +152,10 @@ import omitDeep from 'omit-deep';
 import teams, {TeamFightHelper} from "../components/team-fight/teams";
 import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 import ValidationStatus from "./ValidationStatus";
-import SearchPlayers from "./SearchPlayers";
+import PlayersListSearch from "./PlayersListSearch";
 import {
     containsMen,
     containsWomen,
-    isDoubleCategory,
     isMensDouble,
     isMensSingle,
     isMixDouble,
@@ -162,7 +166,7 @@ import {
 export default {
     name: "TeamFight",
     components: {
-        SearchPlayers,
+        PlayersListSearch,
         ValidationStatus,
         RankingVersionSelect,
         TeamTable,
@@ -210,6 +214,7 @@ export default {
             gameDate: new Date(),
             version: null,
             versionDate: null,
+            savingIcon: 'save',
             team: {
                 squads: [],
                 club: {}
@@ -265,7 +270,21 @@ export default {
             }
         }
     },
+    mounted() {
+        this.$root.$on('playersearch.addMemberToCategory', () => {
+            this.saveTeams()
+        })
+        this.$root.$on('teamfight.deletedMemberFromCategory', () => {
+            this.saveTeams()
+        })
+    },
     methods: {
+        wrapInTeamAndSquads(squads){
+            return omitDeep(squads, ['__typename', 'cancellations']).map((squad) => ({
+                name: 'Team X',
+                squad: squad
+            }))
+        },
         updateToRankingList() {
             this.updating = true;
             let version = this.version;
@@ -323,10 +342,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(teamsClone.squads, ['__typename', 'league']).map((squad) => ({
-                            name: 'Team X',
-                            squad: squad
-                        }))
+                        input: omitDeep(this.wrapInTeamAndSquads(teamsClone.squads), ['league'])
                     }
                 })
                 .then(({data}) => {
@@ -362,10 +378,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(crossSquads.squads, ['__typename']).map((squad) => ({
-                            name: 'Team X',
-                            squad: squad
-                        }))
+                        input: this.wrapInTeamAndSquads(crossSquads.squads)
                     }
                 })
                 .then(({data}) => {
@@ -395,10 +408,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(teamsClone.squads, ['__typename']).map((squad) => ({
-                            name: 'Team X',
-                            squad: squad
-                        }))
+                        input: this.wrapInTeamAndSquads(teamsClone.squads)
                     }
                 })
                 .then(({data}) => {
@@ -437,6 +447,7 @@ export default {
             this.showShareLink = !this.showShareLink
         },
         deletePlayer(category, player) {
+            this.$root.$emit('teamfight.deletedMemberFromCategory')
             category.players.splice(category.players.indexOf(player), 1)
         },
         copyPlayer(category, player) {
@@ -454,52 +465,70 @@ export default {
         selectClub(id) {
             this.clubId = id
         },
+        addedPlayerNotification(squadIndex, category){
+            this.$buefy.snackbar.open(
+                {
+                    duration: 3000,
+                    type: 'is-success',
+                    queue: false,
+                    message: 'Tilføjet til Hold '+(squadIndex+1)+' i '+category
+                })
+        },
         addPlayer(player) {
             let foundPlace = false;
             outside:
-            for (let squad of this.team.squads) {
-                for (let category of squad.categories) {
-                    if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'K') {
-                        category.players.push(player)
-                        foundPlace = true;
-                        break outside;
-                    } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'M') {
-                        category.players.push(player)
-                        foundPlace = true;
-                        break outside;
-                    } else if (isMixDouble(category) && category.players.length < 2) {
-                        if(category.players.length === 0){
+                for (const [index, squad] of this.team.squads.entries()) {
+                    for (const category of squad.categories) {
+                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'K') {
+                            this.addedPlayerNotification(index, category.name)
                             category.players.push(player)
                             foundPlace = true;
                             break outside;
-                        }else if (containsWomen(category) && player.gender === 'M') {
+                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'M') {
+                            this.addedPlayerNotification(index, category.name)
                             category.players.push(player)
                             foundPlace = true;
                             break outside;
-                        } else if (containsMen(category) && player.gender === 'K') {
+                        } else if (isMixDouble(category) && category.players.length < 2) {
+                            if (category.players.length === 0) {
+                                this.addedPlayerNotification(index, category.name)
+                                category.players.push(player)
+                                foundPlace = true;
+                                break outside;
+                            } else if (containsWomen(category) && player.gender === 'M') {
+                                this.addedPlayerNotification(index, category.name)
+                                category.players.push(player)
+                                foundPlace = true;
+                                break outside;
+                            } else if (containsMen(category) && player.gender === 'K') {
+                                this.addedPlayerNotification(index, category.name)
+                                category.players.push(player)
+                                foundPlace = true;
+                                break outside;
+                            }
+                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'M') {
+                            this.addedPlayerNotification(index, category.name)
+                            category.players.push(player)
+                            foundPlace = true;
+                            break outside;
+                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'K') {
+                            this.addedPlayerNotification(index, category.name)
                             category.players.push(player)
                             foundPlace = true;
                             break outside;
                         }
-                    } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'M') {
-                        category.players.push(player)
-                        foundPlace = true;
-                        break outside;
-                    } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'K') {
-                        category.players.push(player)
-                        foundPlace = true;
-                        break outside;
                     }
                 }
-            }
-            if(foundPlace === false){
+            if (foundPlace === false) {
                 this.$buefy.snackbar.open(
                     {
                         duration: 3000,
-                        type: 'is-success',
+                        type: 'is-danger',
                         queue: false,
                         message: `Kunne ikke finde en ledig plads på nogle hold`
                     })
+            }else{
+                this.saveTeams()
             }
         },
         move(index, offset) {
@@ -524,11 +553,7 @@ export default {
             players.id = this.teamCount++
             this.team.squads.push(players)
         },
-        loadTeamFromCache() {
-            this.team.squads = JSON.parse(localStorage.getItem('teams'));
-        },
         saveTeams() {
-            localStorage.setItem('teams', JSON.stringify(this.teams));
             this.saving = true;
             this.$apollo.mutate(
                 {
@@ -549,18 +574,17 @@ export default {
                                 name: this.team.name,
                                 version: this.version,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                                squads: omitDeep(this.team.squads, ['__typename'])
+                                squads: this.wrapInTeamAndSquads(this.team.squads).map(o => o['squad'])
                             }
                         }
                 })
                 .then(({data}) => {
+                    this.$root.$emit('teamfight.teamSaved')
                     this.saving = false;
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 2000,
-                            type: 'is-success',
-                            message: `Dit hold er gemt`
-                        })
+                    this.savingIcon = 'check';
+                    setTimeout(() => {
+                        this.savingIcon = 'save';
+                    }, 2000);
                 })
                 .catch((error) => {
                     this.saving = false;

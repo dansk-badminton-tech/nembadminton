@@ -42,7 +42,7 @@
                 <tr v-for="category in team.categories" :key="category.name">
                     <th>{{ category.name }}</th>
                     <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td"
-                               @end="$emit('end')">
+                               @end="$emit('end')" >
                         <div v-for="player in category.players" class="is-clearfix mt-1">
                             <b-tooltip
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
@@ -66,11 +66,22 @@
                                 </p>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
-                                <b-button size="is-small" title="Slet" icon-right="times-circle" @click="deletePlayer(category, player)"></b-button>
-                                <b-button size="is-small" title="Kopier spiller" icon-right="copy" @click="copyPlayer(category, player)"></b-button>
+                                <b-button size="is-small" title="Slet" icon-right="times-circle"
+                                          @click="deletePlayer(category, player)"></b-button>
+                                <b-button size="is-small" title="Kopier spiller" icon-right="copy"
+                                          @click="copyPlayer(category, player)"></b-button>
                             </div>
                         </div>
-                        <p v-if="!category.players.length">---------------</p>
+                        <player-search v-if="category.players.length === 0"
+                            :club-id="clubId" :exclude-players="[]"
+                            :version="new Date(version)" :category="category"
+                        ></player-search>
+                        <player-search
+                            class="mt-1"
+                            v-if="isDouble(category) && category.players.length <= 1"
+                            :club-id="clubId" :exclude-players="[]"
+                            :version="new Date(version)" :category="category"
+                        ></player-search>
                     </draggable>
                 </tr>
                 </tbody>
@@ -84,13 +95,17 @@ import {
     findPositions,
     highlight as simpleHighlight,
     resolveToolTip,
-    isPlayingToHighByBadmintonPlayerId
+    isPlayingToHighByBadmintonPlayerId, isDoubleCategory
 } from "../helpers";
+import PlayerSearch from "../components/search-player/PlayerSearch";
+import PlayersListSearch from "./PlayersListSearch";
 
 export default {
     name: 'TeamTable',
-    components: {Draggable},
+    components: {PlayerSearch, PlayersListSearch, Draggable},
     props: {
+        version: Date,
+        clubId: String,
         viewMode: Boolean,
         confirmDelete: Function,
         move: Function,
@@ -118,6 +133,9 @@ export default {
         }
     },
     methods: {
+        isDouble(category) {
+            return isDoubleCategory(category)
+        },
         hasEmptySpots(index) {
             if (this.teamsBaseValidations.length === 0) {
                 return false;

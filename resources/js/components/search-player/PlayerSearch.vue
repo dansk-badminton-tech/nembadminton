@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-field :label="$t('roundsGenerator.findPlayer')">
+        <b-field>
             <b-autocomplete
                 v-model="querySearchName"
                 :clear-on-select="true"
@@ -38,12 +38,12 @@ export default {
     methods: {
         findPositions,
         addMember(option) {
-            if (!option) {
-                return
+            this.category.players.push(option);
+            const inputs = document.querySelectorAll(".autocomplete input");
+            if(inputs.length > 1){
+                inputs[1].focus();
             }
-            if (typeof this.addPlayer === 'function') {
-                this.addPlayer(option)
-            }
+            this.$root.$emit('playersearch.addMemberToCategory');
         },
         searchMembers: debounce(function (name) {
             if (!name.length) {
@@ -56,7 +56,7 @@ export default {
     },
     props: {
         clubId: String,
-        addPlayer: Function,
+        category: Object,
         excludePlayers: Array,
         version: Date
     },
@@ -93,6 +93,9 @@ export default {
                     }
                 `,
             fetchPolicy: "network-only",
+            skip() {
+                return this.searchName === ''
+            },
             update: data => data.membersSearch,
             variables() {
                 let params = {

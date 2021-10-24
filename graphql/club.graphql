@@ -10,7 +10,8 @@ extend type Query{
         version: String
         gender: String @eq
         name: String @where(operator: "like")
-        includeCancellations: Boolean!
+        hasCancellation: _ @whereHasConditions(relation: "cancellations", columns: ["teamId"])
+        onTeamSquad: String
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder")
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
@@ -39,6 +40,7 @@ type Member {
     gender: String!
     points(version: String @eq): [Point!] @hasMany
     clubs: [Club!]! @belongsToMany
+    cancellations(teamId: String @eq): [Cancellation!]! @hasMany
 }
 
 type Point {

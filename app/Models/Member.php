@@ -39,6 +39,10 @@ class Member extends Model
         return $this->hasMany(Cancellation::class, 'refId', 'refId');
     }
 
+    public function squadMember() : HasMany{
+        return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
+    }
+
     public function scopeHasPoints(Builder $builder): Builder
     {
         return $builder->has('points');

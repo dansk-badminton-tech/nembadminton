@@ -7,6 +7,8 @@ namespace FlyCompany\Members;
 use App\Models\Member;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MemberSearch
@@ -25,10 +27,12 @@ class MemberSearch
                     '=',
                     $version
                 )->orderBy('points.points', 'desc');
-
-            if (!$args['includeCancellations']) {
-                $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($args) {
-                    $builder->where('teamId', '=', $args['hasClubs']['value']);
+            if(!Arr::has($args, 'hasCancellation')){
+                $builder->whereDoesntHave('cancellations');
+            }
+            if(Arr::has($args, 'onTeamSquad')){
+                $builder->whereDoesntHave('squadMember.category.squad', function(Builder $builder) use ($args) {
+                    $builder->where('teams_id', '=', $args['onTeamSquad']);
                 });
             }
         }

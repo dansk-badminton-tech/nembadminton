@@ -8,11 +8,11 @@
                     <option value="M">Mand</option>
                     <option value="K">Kvinde</option>
                 </b-select>
-                <b-checkbox-button v-model="hideHidden">
-                    <b-icon size="is-small" v-if="!hideHidden" icon="user-alt"></b-icon>
-                    <span v-if="!hideHidden">Skjul afbud</span>
-                    <b-icon size="is-small" v-if="hideHidden" icon="user-slash"></b-icon>
-                    <span v-if="hideHidden">Vis afbud</span>
+                <b-checkbox-button v-model="hideCancellation">
+                    <b-icon size="is-small" v-if="!hideCancellation" icon="user-alt"></b-icon>
+                    <span v-if="!hideCancellation">Skjul afbud</span>
+                    <b-icon size="is-small" v-if="hideCancellation" icon="user-slash"></b-icon>
+                    <span v-if="hideCancellation">Vis afbud</span>
                 </b-checkbox-button>
             </b-field>
         </section>
@@ -32,7 +32,7 @@
                 {{ findLevel(props.row, null) }}
             </b-table-column>
             <b-table-column field="name" label="Navn" v-slot="props">
-                {{ props.row.name }}
+                <p>{{ props.row.name }}</p>
             </b-table-column>
             <b-table-column field="name" v-slot="props">
                 <div class="buttons">
@@ -44,9 +44,18 @@
                               @click="addPlayer(props.row)"></b-button>
                 </div>
             </b-table-column>
+            <template #empty>
+                <div class="has-text-centered">Ingen spiller</div>
+            </template>
         </b-table>
     </fragment>
 </template>
+
+<style>
+    .lineThrough{
+        text-decoration: line-through;
+    }
+</style>
 
 <script>
 
@@ -55,9 +64,10 @@ import {debounce, findLevel} from "../helpers";
 
 
 export default {
-    name: 'SearchPlayers',
+    name: 'PlayersListSearch',
     props: {
         clubId: String,
+        teamId: String,
         addPlayer: Function,
         version: Date
     },
@@ -65,6 +75,11 @@ export default {
         memberSearchPointsFiltered() {
             return this.memberSearchPoints.data
         }
+    },
+    mounted(){
+        this.$root.$on('teamfight.teamSaved', () => {
+            this.$apollo.queries.memberSearchPoints.refresh()
+        })
     },
     data() {
         return {
@@ -74,14 +89,12 @@ export default {
                     total: 0
                 }
             },
-            hideHidden: true,
-            hiddenPlayers: [],
+            hideCancellation: true,
             gender: null,
             perPage: 30,
             currentPage: 1,
             total: 0,
-            searchName: '',
-            cancellations: []
+            searchName: ''
         }
     },
     methods: {
@@ -99,11 +112,10 @@ export default {
                     `,
                     variables: {
                         refId: player.refId,
-                        teamId: this.clubId
+                        teamId: this.teamId
                     }
                 })
                 .then(() => {
-                    this.$apollo.queries.cancellations.refresh()
                     this.$apollo.queries.memberSearchPoints.refresh()
                 })
                 .catch(() => {
@@ -115,10 +127,8 @@ export default {
                 })
         },
         deleteCancellation(player) {
-            const cancellation = this.cancellations.find(function(cancellation){
-                return cancellation.refId === player.refId
-            })
-
+            // If delete cancellation is called its garantied that only one cancellation exists
+            const cancellation = player.cancellations[0];
             this.$apollo
                 .mutate({
                     mutation: gql`
@@ -133,7 +143,6 @@ export default {
                     }
                 })
                 .then(() => {
-                    this.$apollo.queries.cancellations.refresh()
                     this.$apollo.queries.memberSearchPoints.refresh()
                 })
                 .catch(() => {
@@ -143,12 +152,9 @@ export default {
                         message: `Kunne ikke annuller afbud :(`
                     })
                 })
-            this.hiddenPlayers.splice(this.hiddenPlayers.indexOf(player), 1)
         },
         hasCancellation(player){
-            return this.cancellations.some(function(cancellation){
-                return cancellation.refId === player.refId
-            })
+            return player.cancellations.length > 0;
         },
         search: debounce(function (name) {
             this.searchName = name;
@@ -159,28 +165,9 @@ export default {
         },
     },
     apollo: {
-        cancellations: {
-            query: gql`
-                query cancellations($teamId: String!){
-                    cancellations(teamId: $teamId){
-                        id
-                        refId
-                    }
-                }
-            `,
-            fetchPolicy: "network-only",
-            skip(){
-                return !this.clubId;
-            },
-            variables(){
-                return {
-                    teamId: this.clubId
-                }
-            }
-        },
         memberSearchPoints: {
-            query: gql`query MembersSearch($hasClubs: MemberSearchPointsHasClubsWhereConditions, $version: String, $page: Int, $first: Int, $gender: String, $name: String, $includeCancellations: Boolean!){
-                      memberSearchPoints(hasClubs: $hasClubs, version: $version, gender: $gender, page: $page, name: $name, first: $first, includeCancellations: $includeCancellations) {
+            query: gql`query MembersSearch($hasClubs: MemberSearchPointsHasClubsWhereConditions, $version: String, $page: Int, $first: Int, $gender: String, $name: String, $teamId: String, $hasCancellation: MemberSearchPointsHasCancellationWhereConditions, $onTeamSquad: String){
+                      memberSearchPoints(hasClubs: $hasClubs, version: $version, gender: $gender, page: $page, name: $name, first: $first, hasCancellation: $hasCancellation, onTeamSquad: $onTeamSquad) {
                         data {
                           id
                           name
@@ -191,6 +178,11 @@ export default {
                             position
                             category
                             vintage
+                          }
+                          cancellations(teamId: $teamId){
+                            id
+                            refId
+                            teamId
                           }
                         }
                         paginatorInfo {
@@ -205,7 +197,7 @@ export default {
                 let params = {
                     page: this.currentPage,
                     first: this.perPage,
-                    includeCancellations: !this.hideHidden
+                    onTeamSquad: this.teamId
                 }
                 if (this.searchName.trim() !== '') {
                     params.name = '%' + this.searchName + '%'
@@ -221,6 +213,13 @@ export default {
                         column: "ID",
                         operator: "EQ",
                         value: this.clubId
+                    }
+                }
+                if(!this.hideCancellation){
+                    params.hasCancellation = {
+                        column: 'TEAM_ID',
+                        operator: 'EQ',
+                        value: this.teamId
                     }
                 }
                 return params
