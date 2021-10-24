@@ -3,9 +3,10 @@ declare(strict_types = 1);
 
 namespace App\Console\Commands;
 
+use App\Jobs\BadmintonPlayerImportMembers;
+use App\Jobs\BadmintonPlayerImportPoints;
 use App\Models\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Arr;
 
 class UpdateAllPoints extends Command
 {
@@ -15,14 +16,14 @@ class UpdateAllPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'xml-import:update-members {date : ranking to import format \'yyyy-mm-dd\'}';
+    protected $signature = 'badmintonplayer-import:update-all-clubs';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update all points in the system from XML';
+    protected $description = 'Dispatches update jobs for all clubs';
 
     /**
      * Execute the console command.
@@ -31,17 +32,12 @@ class UpdateAllPoints extends Command
      */
     public function handle()
     {
-        $date = $this->argument('date');
-        $clubs = User::query()->groupBy(['organization_id'])->get(['organization_id'])->toArray();
-        $clubIds = Arr::pluck($clubs, 'organization_id');
-
-        $clubIdsChunks = array_chunk($clubIds, 5);
-
-        foreach ($clubIdsChunks as $clubIdsChunk) {
-            $this->info('Queuing clubId: ' . implode(',', $clubIdsChunk));
-            \App\Jobs\ImportMembers::dispatch($date, $clubIdsChunk);
+        $usersWithClubId = User::query()->groupBy('organization_id')->get(['organization_id']);
+        foreach ($usersWithClubId as $item){
+            BadmintonPlayerImportMembers::withChain([
+                new BadmintonPlayerImportPoints($item->organization_id)
+            ])->dispatch([(string)$item->organization_id]);
         }
-
         return 0;
     }
 }
