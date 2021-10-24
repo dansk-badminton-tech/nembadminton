@@ -33,10 +33,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(ImportDownloadRanking::class)
-                 ->appendOutputTo(storage_path('logs/cron.log'))
-                 ->dailyAt('01:10');
-
         $schedule->command(UpdateAllPoints::class)
                  ->appendOutputTo(storage_path('logs/cron.log'))
                  ->dailyAt('01:30');
