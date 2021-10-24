@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 
 namespace App\Models;
@@ -13,8 +14,9 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class Member
  *
- * @property string  refId
- * @property string  gender
+ * @property string refId
+ * @property string name
+ * @property string gender
  * @property Point[] points
  * @package App\Models
  */
@@ -23,22 +25,30 @@ class Member extends Model
 
     protected $fillable = ['refId', 'name', 'gender', 'birthday'];
 
-    public function clubs() : BelongsToMany
+    public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class);
     }
 
-    public function points() : HasMany
+    public function points(): HasMany
     {
         return $this->hasMany(Point::class);
     }
 
-    public function scopeHasPoints(Builder $builder) : Builder
+    public function cancellations() : HasMany{
+        return $this->hasMany(Cancellation::class, 'refId', 'refId');
+    }
+
+    public function squadMember() : HasMany{
+        return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
+    }
+
+    public function scopeHasPoints(Builder $builder): Builder
     {
         return $builder->has('points');
     }
 
-    public function scopeMyClub(Builder $builder) : Builder
+    public function scopeMyClub(Builder $builder): Builder
     {
         return $builder->whereHas('clubs', function (Builder $builder) {
             $builder->where('id', Auth::user()->organization_id);

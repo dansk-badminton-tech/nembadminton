@@ -5,6 +5,14 @@ extend type Query{
         excludeMembers: [Int!] @notIn(key: "id"),
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
+    memberSearchPoints(
+        hasClubs: _ @whereHasConditions(columns: ["id"]),
+        version: String
+        gender: String @eq
+        name: String @where(operator: "like")
+        hasCancellation: _ @whereHasConditions(relation: "cancellations", columns: ["teamId"])
+        onTeamSquad: String
+    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder")
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
         orderBy: _ @orderBy(columns: ["name1"])
@@ -32,6 +40,7 @@ type Member {
     gender: String!
     points(version: String @eq): [Point!] @hasMany
     clubs: [Club!]! @belongsToMany
+    cancellations(teamId: String @eq): [Cancellation!]! @hasMany
 }
 
 type Point {

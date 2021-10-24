@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 
 namespace FlyCompany\TeamFight;
@@ -18,12 +19,12 @@ class SquadManager
 {
 
     /**
-     * @param Squad[] $squads
-     * @param Teams   $team
+     * @param  Squad[]  $squads
+     * @param  Teams  $team
      *
      * @throws \Throwable
      */
-    public function addSquads(array $squads, Teams $team) : void
+    public function addSquads(array $squads, Teams $team): void
     {
         foreach ($squads as $squadInput) {
             $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league]);
@@ -34,12 +35,12 @@ class SquadManager
     }
 
     /**
-     * @param Category[] $categories
-     * @param SquadModel $squad
+     * @param  Category[]  $categories
+     * @param  SquadModel  $squad
      *
      * @throws \Throwable
      */
-    private function createCategories(array $categories, SquadModel $squad) : void
+    private function createCategories(array $categories, SquadModel $squad): void
     {
         foreach ($categories as $category) {
             $categoryModel = new SquadCategory(['name' => $category->name, 'category' => $category->category]);
@@ -50,15 +51,20 @@ class SquadManager
     }
 
     /**
-     * @param Player[]      $players
-     * @param SquadCategory $category
+     * @param  Player[]  $players
+     * @param  SquadCategory  $category
      */
-    private function createPlayers(array $players, SquadCategory $category) : void
+    private function createPlayers(array $players, SquadCategory $category): void
     {
         foreach ($players as $player) {
             /** @var SquadMember $member */
             $member = SquadMember::query()->updateOrCreate(
-                ['gender' => $player->gender, 'name' => $player->name, 'member_ref_id' => $player->refId, 'squad_category_id' => $category->id],
+                [
+                    'gender' => $player->gender,
+                    'name' => $player->name,
+                    'member_ref_id' => $player->refId,
+                    'squad_category_id' => $category->id
+                ],
                 ['member_ref_id' => $player->refId, 'squad_category_id' => $category->id]
             );
             $this->createPoints($player->points, $member);
@@ -66,17 +72,22 @@ class SquadManager
     }
 
     /**
-     * @param Point[]     $points
-     * @param SquadMember $member
+     * @param  Point[]  $points
+     * @param  SquadMember  $member
      */
-    private function createPoints(array $points, SquadMember $member) : void
+    private function createPoints(array $points, SquadMember $member): void
     {
+        $values = [];
         foreach ($points as $point) {
-            SquadPoint::query()->updateOrCreate(
-                ['points' => $point->points, 'category' => $point->category, 'position' => $point->position, 'squad_member_id' => $member->id, 'vintage' => $point->vintage],
-                ['squad_member_id' => $member->id]
-            );
+            $values[] = [
+                'points' => $point->points,
+                'category' => $point->category,
+                'position' => $point->position,
+                'vintage' => $point->vintage,
+                'squad_member_id' => $member->id
+            ];
         }
+        SquadPoint::query()->insert($values);
     }
 
 }
