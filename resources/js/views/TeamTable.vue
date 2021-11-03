@@ -64,6 +64,7 @@
                                     {{ player.name }}
                                     ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
                                 </p>
+                                <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button size="is-small" title="Slet" icon-right="times-circle"
@@ -95,7 +96,7 @@ import {
     findPositions,
     highlight as simpleHighlight,
     resolveToolTip,
-    isPlayingToHighByBadmintonPlayerId, isDoubleCategory
+    isPlayingToHighByBadmintonPlayerId, isDoubleCategory, isYoungPlayer
 } from "../helpers";
 import PlayerSearch from "../components/search-player/PlayerSearch";
 import PlayersListSearch from "./PlayersListSearch";
@@ -133,6 +134,7 @@ export default {
         }
     },
     methods: {
+        isYoungPlayer,
         isDouble(category) {
             return isDoubleCategory(category)
         },

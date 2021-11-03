@@ -155,34 +155,19 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
     let base = {}
+
     if (isPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
-            }
-        } else {
-            base = {
-                ...{
-                    'has-background-warning': true
-                }, ...base
-            }
+        base = {
+            ...{
+                'has-background-warning': true
+            }, ...base
         }
     }
     if (isPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
-            }
-        } else {
-            base = {
-                ...{
-                    'has-background-danger': true
-                }, ...base
-            }
+        base = {
+            ...{
+                'has-background-danger': true
+            }, ...base
         }
     }
     return base;

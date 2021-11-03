@@ -134,7 +134,9 @@
                                 <span v-html="resolveLabel(player, props.row.category, team.squad.league)"></span>
                             </template>
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
-                                ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})</p>
+                                ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})
+                            </p>
+                            <b-tag v-if="isYoungPlayer(player, null)" >U17/U19</b-tag>
                         </b-tooltip>
                     </b-table-column>
                 </b-table>
@@ -151,7 +153,7 @@ import omitDeep from "omit-deep";
 import {
     findPositions,
     highlight as simpleHighlight,
-    isPlayingToHighByBadmintonPlayerId,
+    isPlayingToHighByBadmintonPlayerId, isYoungPlayer,
     resolveToolTip,
     swapObject
 } from "../../helpers";
@@ -200,6 +202,7 @@ export default {
         }
     },
     methods: {
+        isYoungPlayer,
         maybeMoveDown(index) {
             return this.castToArray(this.selectedTeamMatches).length - 1 === index
         },

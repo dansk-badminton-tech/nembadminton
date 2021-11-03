@@ -27,18 +27,22 @@ class CategoryFactory
         $levelPoint->position = 1;
         $levelPoint->category = null;
         $levelPoint->version = '2020-08-01';
+        $levelPoint->vintage = null;
 
         $categoryPoint = new Point();
         $categoryPoint->points = $category1Points;
         $categoryPoint->position = 1;
         $categoryPoint->category = $category1PointName;
         $categoryPoint->version = '2020-08-01';
+        $categoryPoint->vintage = null;
 
         $category2Point = new Point();
         $category2Point->points = $category2Points;
         $category2Point->position = 1;
         $category2Point->category = $category2PointName;
         $category2Point->version = '2020-08-01';
+        $category2Point->vintage = null;
+
 
         $player = new Player();
         $player->name = "Player-$category1PointName-$category2PointName";
