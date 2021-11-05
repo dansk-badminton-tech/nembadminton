@@ -154,38 +154,36 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
-    let base = {}
-    if (isPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
+    const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category);
+    const playerInfoInSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category);
+
+    if (playerInfoCrossSquads !== undefined) {
+        if (playerInfoCrossSquads.isYouthPlayer) {
+            return {
+                'has-background-success': true
+            }
+        }
+        return {
+            'has-background-warning': true
+        }
+    }
+    if (playerInfoInSquad !== undefined) {
+        if (playerInfoInSquad.isYouthPlayer) {
+            return {
+                'has-background-success': true
             }
         } else {
-            base = {
-                ...{
-                    'has-background-warning': true
-                }, ...base
+            if (playerInfoInSquad.hasYouthPlayerPartner) {
+                return {
+                    'has-background-success': true
+                }
+            }
+            return {
+                'has-background-danger': true
             }
         }
     }
-    if (isPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)) {
-        if (isYoungPlayer(player, null)) {
-            base = {
-                ...{
-                    'has-background-success': true
-                }, ...base
-            }
-        } else {
-            base = {
-                ...{
-                    'has-background-danger': true
-                }, ...base
-            }
-        }
-    }
-    return base;
+    return {};
 }
 
 export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
@@ -209,6 +207,9 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
         }
     }
     if (playerWithBelowPlayersSquad !== undefined) {
+        if(!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner){
+            msg.push("OBS: Har U17/U19 makker")
+        }
         msg.push("Bedre spiller i kategorien: " + resolveNames(playerWithBelowPlayersSquad))
     }
     return msg.join("<br />--------<br />");

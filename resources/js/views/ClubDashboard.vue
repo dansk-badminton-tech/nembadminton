@@ -9,13 +9,13 @@
                     <div class="title">{{ clubStats.players }}</div>
                     <div class="level">
                         <div class="level-item">
-                            <div class="">
+                            <div class="has-text-centered">
                                 <div class="heading">Mand</div>
                                 <div class="title is-5">{{ clubStats.menPlayers }}</div>
                             </div>
                         </div>
                         <div class="level-item">
-                            <div class="">
+                            <div class="has-text-centered">
                                 <div class="heading">Kvinder</div>
                                 <div class="title is-5">{{ clubStats.womenPlayers }}</div>
                             </div>
