@@ -22,7 +22,6 @@
                 10 personer
             </b-dropdown-item>
         </b-dropdown>
-        <ValidateTeams ref="validateTeams" :teams="team.squads"/>
         <b-dropdown aria-role="list">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                 <span>Indstillinger</span>
@@ -189,13 +188,16 @@ export default {
             if (!this.canValidateSquads) {
                 return null
             }
-            return this.playingToHighSquadList.length > 0
+            const playersWithoutYouth = this.playingToHighSquadList.filter((playerInfo)=>{return !playerInfo.isYouthPlayer})
+            const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo)=>{return !playerInfo.hasYouthPlayerPartner})
+            return playersWithoutYouthPartner.length > 0
         },
         resolveInvalidLevel() {
             if (!this.canValidateCrossSquads) {
                 return null
             }
-            return this.playingToHighList.length > 0
+            const playersWithoutYouth = this.playingToHighList.filter((playerInfo)=>{return !playerInfo.isYouthPlayer})
+            return playersWithoutYouth.length > 0
         }
     },
     data() {
@@ -333,6 +335,8 @@ export default {
                             refId
                             category
                             gender
+                            isYouthPlayer
+                            hasYouthPlayerPartner
                             belowPlayer {
                                 name
                                 id
@@ -369,6 +373,7 @@ export default {
                             id
                             category
                             refId
+                            isYouthPlayer
                             belowPlayer {
                                 name
                                 id

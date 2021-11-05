@@ -321,6 +321,7 @@ export default {
                             gender
                             category
                             refId
+                            isYouthPlayer
                             belowPlayer {
                                 name
                                 id
@@ -353,6 +354,8 @@ export default {
                     gender
                     category
                     refId
+                    isYouthPlayer
+                    hasYouthPlayerPartner
                     belowPlayer {
                         name
                         id

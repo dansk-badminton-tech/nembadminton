@@ -154,23 +154,36 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
-    let base = {}
+    const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category);
+    const playerInfoInSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category);
 
-    if (isPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)) {
-        base = {
-            ...{
-                'has-background-warning': true
-            }, ...base
+    if (playerInfoCrossSquads !== undefined) {
+        if (playerInfoCrossSquads.isYouthPlayer) {
+            return {
+                'has-background-success': true
+            }
+        }
+        return {
+            'has-background-warning': true
         }
     }
-    if (isPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)) {
-        base = {
-            ...{
+    if (playerInfoInSquad !== undefined) {
+        if (playerInfoInSquad.isYouthPlayer) {
+            return {
+                'has-background-success': true
+            }
+        } else {
+            if (playerInfoInSquad.hasYouthPlayerPartner) {
+                return {
+                    'has-background-success': true
+                }
+            }
+            return {
                 'has-background-danger': true
-            }, ...base
+            }
         }
     }
-    return base;
+    return {};
 }
 
 export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
@@ -194,6 +207,9 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
         }
     }
     if (playerWithBelowPlayersSquad !== undefined) {
+        if(!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner){
+            msg.push("OBS: Har U17/U19 makker")
+        }
         msg.push("Bedre spiller i kategorien: " + resolveNames(playerWithBelowPlayersSquad))
     }
     return msg.join("<br />--------<br />");

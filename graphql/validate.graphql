@@ -60,5 +60,7 @@ type PlayingToHigh{
     refId: String!
     category: String!
     gender: String!
+    isYouthPlayer: Boolean!
+    hasYouthPlayerPartner: Boolean!
     belowPlayer: [BelowPlayer!]
 }
