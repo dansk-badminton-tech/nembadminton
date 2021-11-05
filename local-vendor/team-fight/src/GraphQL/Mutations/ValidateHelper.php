@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use Illuminate\Support\Collection;
@@ -20,8 +22,8 @@ class ValidateHelper
         $firstDivisionSearchName = 'FIRSTDIVISION';
         $firstDivisionAndBelowTeamPair = self::getPair($teams, $firstDivisionSearchName);
 
-        $rest = $teams->filter(static function(array $team) use ($leagueSearchName, $firstDivisionSearchName) {
-            return !isset($team['league']) || !Str::contains($team['league'], [$leagueSearchName, $firstDivisionSearchName]);
+        $rest = $teams->filter(static function(array $team) {
+            return Str::contains($team['squad']['league'], 'OTHER');
         });
 
         return [$leagueAndBelowTeamPair, $firstDivisionAndBelowTeamPair, $rest];

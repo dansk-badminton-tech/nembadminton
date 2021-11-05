@@ -18,7 +18,37 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCaseSome()
+    public function useCase2()
+    {
+        // abc Aalborg - 2021-10-30
+        $data = require __DIR__.'/CrossSquadsUseCases/usecase2.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateCrossSquads(input: $input) {
+                refId
+                category
+                gender
+                belowPlayer{
+                    name
+                    refId
+                }
+              }
+            }
+        ',
+            $data
+        )->assertExactJson([
+            'data' => [
+                'validateCrossSquads' => []
+            ]
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function useCase1()
     {
         $data = require __DIR__.'/CrossSquadsUseCases/usecase1.php';
 
@@ -37,7 +67,7 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
             }
         ',
             $data
-        )->assertJson([
+        )->assertExactJson([
             'data' => [
                 'validateCrossSquads' => [
                     [
