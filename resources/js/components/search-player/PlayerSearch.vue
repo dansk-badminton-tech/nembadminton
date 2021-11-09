@@ -37,11 +37,15 @@ export default {
     name: "PlayerSearch",
     methods: {
         findPositions,
-        addMember(option) {
+        addMember(option, event) {
+            if(option === null){
+                return;
+            }
             this.category.players.push(option);
-            const inputs = document.querySelectorAll(".autocomplete input");
-            if(inputs.length > 1){
-                inputs[1].focus();
+            const inputs = document.querySelectorAll('input')
+            const index = Array.from(inputs).indexOf(event.target) + 1
+            if(inputs[index] !== undefined){
+                inputs[index].focus()
             }
             this.$root.$emit('playersearch.addMemberToCategory');
         },

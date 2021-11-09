@@ -68,6 +68,27 @@ export function isYoungPlayer(player, category) {
     return false;
 }
 
+export function convertRankingToCategory(categoryEnum){
+    if(categoryEnum === 'LEVEL'){
+        return null
+    }
+    if(categoryEnum === 'WOMEN_SINGLE'){
+        return 'DS'
+    }
+    if(categoryEnum === 'WOMENS_DOUBLE'){
+        return 'DD'
+    }
+    if(categoryEnum === 'WOMEN_MIX' || categoryEnum === 'MEN_MIX'){
+        return 'MD'
+    }
+    if(categoryEnum === 'MEN_SINGLE'){
+        return 'HS'
+    }
+    if(categoryEnum === 'MENS_DOUBLE'){
+        return 'HD'
+    }
+}
+
 export function findLevel(member, category) {
     if (!member.points) {
         return 0
