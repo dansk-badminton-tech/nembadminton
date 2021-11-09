@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div class="sticky">
         <section>
             <b-field label="Filter" grouped>
                 <b-input @input="search" placeholder="Søg på navn"></b-input>
@@ -48,12 +48,15 @@
                 <div class="has-text-centered">Ingen spiller</div>
             </template>
         </b-table>
-    </fragment>
+    </div>
 </template>
 
 <style>
-    .lineThrough{
-        text-decoration: line-through;
+    .sticky {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        max-height: 100vh;
     }
 </style>
 
@@ -91,7 +94,7 @@ export default {
             },
             hideCancellation: true,
             gender: null,
-            perPage: 30,
+            perPage: 15,
             currentPage: 1,
             total: 0,
             searchName: ''
