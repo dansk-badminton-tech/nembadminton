@@ -73,7 +73,8 @@
                                           @click="copyPlayer(category, player)"></b-button>
                             </div>
                         </div>
-                        <player-search v-if="category.players.length === 0"
+                        <player-search
+                            v-if="category.players.length === 0"
                             :club-id="clubId" :exclude-players="[]"
                             :version="new Date(version)" :category="category"
                         ></player-search>

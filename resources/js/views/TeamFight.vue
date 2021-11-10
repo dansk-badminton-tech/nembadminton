@@ -2,7 +2,7 @@
     <div>
         <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
         <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon" @click="saveTeams">Gem</b-button>
-        <b-button icon-left="share-alt" @click="publish">Del</b-button>
+<!--        <b-button icon-left="share-alt" @click="publish">Del</b-button>-->
         <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
         <b-dropdown aria-role="list">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
@@ -80,7 +80,7 @@
                 <h1 class="title">Spiller</h1>
                 <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
                 <PlayersListSearch :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
-                                   :version="versionDate" />
+                                   :version="new Date(version)" />
             </div>
             <div class="column is-6">
                 <h1 class="title">Holdet</h1>
@@ -215,7 +215,6 @@ export default {
             shareUrl: '',
             gameDate: new Date(),
             version: null,
-            versionDate: null,
             savingIcon: 'save',
             team: {
                 squads: [],
@@ -267,7 +266,6 @@ export default {
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
                 this.version = data.team.version;
-                this.versionDate = new Date(data.team.version);
                 this.validate()
             }
         }
