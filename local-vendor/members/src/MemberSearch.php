@@ -42,7 +42,25 @@ class MemberSearch
 
     private function applyRankingList(Builder $builder, string $rankingList, string $version)
     {
-        if ($rankingList === 'LEVEL') {
+        if ($rankingList === 'ALL_LEVEL') {
+            $builder->whereNull('points.category')
+                ->where(
+                    'points.version',
+                    '=',
+                    $version
+                );
+        }
+        if ($rankingList === 'MEN_LEVEL') {
+            $builder->where('members.gender', '=', 'M');
+            $builder->whereNull('points.category')
+                ->where(
+                    'points.version',
+                    '=',
+                    $version
+                );
+        }
+        if ($rankingList === 'WOMEN_LEVEL') {
+            $builder->where('members.gender', '=', 'K');
             $builder->whereNull('points.category')
                 ->where(
                     'points.version',

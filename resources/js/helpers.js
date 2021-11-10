@@ -69,7 +69,7 @@ export function isYoungPlayer(player, category) {
 }
 
 export function convertRankingToCategory(categoryEnum){
-    if(categoryEnum === 'LEVEL'){
+    if(categoryEnum === 'MEN_LEVEL' || categoryEnum === 'WOMEN_LEVEL'){
         return null
     }
     if(categoryEnum === 'WOMEN_SINGLE'){

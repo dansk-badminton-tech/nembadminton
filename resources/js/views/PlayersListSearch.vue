@@ -1,26 +1,26 @@
 <template>
     <div class="sticky">
-        <section>
-            <b-field label="Filter" grouped>
-                <b-input @input="search" placeholder="Søg på navn"></b-input>
-                <b-select v-model="rankingList">
-                    <option value="LEVEL">Niveau</option>
-                    <option value="WOMEN_SINGLE">Dame Single</option>
-                    <option value="WOMENS_DOUBLE">Dame Double</option>
-                    <option value="WOMEN_MIX">Dame Mix</option>
-                    <option value="MEN_SINGLE">Herre Single</option>
-                    <option value="MENS_DOUBLE">Herre Double</option>
-                    <option value="MEN_MIX">Herre Mix</option>
-                </b-select>
-                <b-checkbox-button v-model="hideCancellation">
-                    <b-icon size="is-small" v-if="!hideCancellation" icon="user-alt"></b-icon>
-                    <span v-if="!hideCancellation">Skjul afbud</span>
-                    <b-icon size="is-small" v-if="hideCancellation" icon="user-slash"></b-icon>
-                    <span v-if="hideCancellation">Vis afbud</span>
-                </b-checkbox-button>
-            </b-field>
-        </section>
+        <b-field label="Filter" grouped group-multiline>
+            <b-input @input="search" placeholder="Søg på navn"></b-input>
+            <b-select v-model="rankingList">
+                <option value="WOMEN_LEVEL">Dame Niveau</option>
+                <option value="WOMEN_SINGLE">Dame Single</option>
+                <option value="WOMENS_DOUBLE">Dame Double</option>
+                <option value="WOMEN_MIX">Dame Mix</option>
+                <option value="MEN_LEVEL">Herre Niveau</option>
+                <option value="MEN_SINGLE">Herre Single</option>
+                <option value="MENS_DOUBLE">Herre Double</option>
+                <option value="MEN_MIX">Herre Mix</option>
+            </b-select>
+            <b-checkbox-button v-model="hideCancellation">
+                <b-icon size="is-small" v-if="!hideCancellation" icon="user-alt"></b-icon>
+                <span v-if="!hideCancellation">Skjul afbud</span>
+                <b-icon size="is-small" v-if="hideCancellation" icon="user-slash"></b-icon>
+                <span v-if="hideCancellation">Vis afbud</span>
+            </b-checkbox-button>
+        </b-field>
         <b-table
+            class="mt-5"
             :data="memberSearchPointsFiltered"
             :paginated="true"
             :backend-pagination="true"
@@ -50,19 +50,23 @@
                 </div>
             </b-table-column>
             <template #empty>
-                <div class="has-text-centered">Ingen spiller. Husk at sætte ranglisten til "Niveau", hvis du vil se alle</div>
+                <div class="has-text-centered">Ingen spiller. Husk at sætte ranglisten til "Niveau", hvis du vil se
+                    alle
+                </div>
             </template>
         </b-table>
     </div>
 </template>
 
 <style>
+@media only screen and (min-width: 769px) {
     .sticky {
         position: sticky;
         top: 0;
         align-self: start;
         max-height: 100vh;
     }
+}
 </style>
 
 <script>
@@ -98,7 +102,7 @@ export default {
                 }
             },
             hideCancellation: true,
-            rankingList: 'LEVEL',
+            rankingList: 'WOMEN_LEVEL',
             perPage: 15,
             currentPage: 1,
             total: 0,
@@ -242,6 +246,7 @@ export default {
                     }
                 }
                 if (!this.hideCancellation) {
+                    params.rankingList = 'ALL_LEVEL';
                     params.hasCancellation = {
                         column: 'TEAM_ID',
                         operator: 'EQ',

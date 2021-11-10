@@ -11,7 +11,7 @@ extend type Query{
         name: String @where(operator: "like")
         hasCancellation: _ @whereHasConditions(relation: "cancellations", columns: ["teamId"])
         onTeamSquad: String
-        rankingList: MemberSearchOrderBy = LEVEL
+        rankingList: MemberSearchOrderBy = WOMEN_LEVEL
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder")
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
@@ -24,10 +24,12 @@ extend type Query{
 }
 
 enum MemberSearchOrderBy {
-    LEVEL @enum(value: "LEVEL")
+    ALL_LEVEL @enum(value: "ALL_LEVEL")
+    WOMEN_LEVEL @enum(value: "WOMEN_LEVEL")
     WOMEN_SINGLE @enum(value: "WOMEN_SINGLE")
     WOMENS_DOUBLE @enum(value: "WOMENS_DOUBLE")
     WOMEN_MIX @enum(value: "WOMEN_MIX")
+    MEN_LEVEL @enum(value: "MEN_LEVEL")
     MEN_SINGLE @enum(value: "MEN_SINGLE")
     MENS_DOUBLE @enum(value: "MENS_DOUBLE")
     MEN_MIX @enum(value: "MEN_MIX")
