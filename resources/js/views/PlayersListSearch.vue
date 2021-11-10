@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div class="sticky">
         <section>
             <b-field label="Filter" grouped>
                 <b-input @input="search" placeholder="Søg på navn"></b-input>
@@ -53,8 +53,17 @@
                 <div class="has-text-centered">Ingen spiller. Husk at sætte ranglisten til "Niveau", hvis du vil se alle</div>
             </template>
         </b-table>
-    </fragment>
+    </div>
 </template>
+
+<style>
+    .sticky {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        max-height: 100vh;
+    }
+</style>
 
 <script>
 
@@ -90,7 +99,7 @@ export default {
             },
             hideCancellation: true,
             rankingList: 'LEVEL',
-            perPage: 30,
+            perPage: 15,
             currentPage: 1,
             total: 0,
             searchName: ''
