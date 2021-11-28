@@ -22,9 +22,9 @@
         <template slot="end">
             <b-navbar-item v-if="!$apollo.loading && !me" tag="div">
                 <div class="buttons">
-                    <router-link :to="{ name: 'new-user-create' }" class="button">
-                        <strong>Kom i gang</strong>
-                    </router-link>
+<!--                    <router-link :to="{ name: 'new-user-create' }" class="button">-->
+<!--                        <strong>Kom i gang</strong>-->
+<!--                    </router-link>-->
                     <router-link :to="{ name: 'login' }" class="button">
                         Login
                     </router-link>

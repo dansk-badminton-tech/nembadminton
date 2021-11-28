@@ -11,7 +11,7 @@ const router = new VueRouter(
                 name: 'home',
                 component: () => import("./views/Home"),
                 meta: {
-                    allowAnonymous: true,
+                    allowAnonymous: false,
                     title: 'Forside'
                 }
             },
@@ -72,7 +72,7 @@ const router = new VueRouter(
                         name: 'new-user-create',
                         component: () => import("./views/CreateUser"),
                         meta: {
-                            allowAnonymous: true,
+                            allowAnonymous: false,
                             title: 'Ny bruger'
                         }
                     },
@@ -91,7 +91,7 @@ const router = new VueRouter(
                         component: () => import("./views/TeamFightPublic"),
                         props: route => ({teamFightId: route.params.teamUUID}),
                         meta: {
-                            allowAnonymous: true,
+                            allowAnonymous: false,
                             title: 'Holdkamp'
                         }
                     },
@@ -119,7 +119,7 @@ const router = new VueRouter(
                         name: 'check-team-fight',
                         component: () => import("./views/check-team-fight/CheckTeamFight"),
                         meta: {
-                            allowAnonymous: true,
+                            allowAnonymous: false,
                             title: 'Tjek holdkamps runde'
                         }
                     }
