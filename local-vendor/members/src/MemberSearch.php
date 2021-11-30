@@ -21,7 +21,7 @@ class MemberSearch
         if ($version !== null) {
             $builder->select(['members.*'])
                 ->join('points', 'members.id', '=', 'points.member_id')
-                ->where('points.position', '!=', 0)
+                ->where('points.points', '!=', 0)
                 ->orderBy('points.points', 'desc');
             if (!Arr::has($args, 'hasCancellation')) {
                 $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($args) {

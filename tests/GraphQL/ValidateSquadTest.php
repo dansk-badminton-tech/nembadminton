@@ -17,6 +17,37 @@ class ValidateSquadTest extends BaseTestCase
 
     /**
      * @test
+     */
+    public function useCase1()
+    {
+        // abc Aalborg - 2021-10-30
+        $data = require __DIR__.'/SquadsUseCases/usecase1.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateSquads(input: $input) {
+                refId
+                category
+                gender
+              }
+            }
+        ',
+            $data
+        )->assertExactJson([
+            'data' => [
+                'validateSquads' => [
+                    ["category"=>"HD","gender"=>"M","refId"=>"020202-1011"],
+                    ["category"=>"HD","gender"=>"M","refId"=>"030610-05"],
+                    ["category"=>"DD","gender"=>"K","refId"=>"040201-01"],
+                    ["category"=>"DD","gender"=>"K","refId"=>"970512-21"]
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @test
      * @throws \JsonException
      */
     public function playingToHighInMixValidateSquad(): void
