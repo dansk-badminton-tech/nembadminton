@@ -271,12 +271,12 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('playersearch.addMemberToCategory', () => {
-            this.saveTeams()
-        })
-        this.$root.$on('teamfight.deletedMemberFromCategory', () => {
-            this.saveTeams()
-        })
+        // this.$root.$on('playersearch.addMemberToCategory', () => {
+        //     this.saveTeams()
+        // })
+        // this.$root.$on('teamfight.deletedMemberFromCategory', () => {
+        //     this.saveTeams()
+        // })
     },
     methods: {
         wrapInTeamAndSquads(squads){
@@ -531,7 +531,7 @@ export default {
                         message: `Kunne ikke finde en ledig plads på nogle hold`
                     })
             }else{
-                this.saveTeams()
+                //this.saveTeams()
             }
         },
         move(index, offset) {
