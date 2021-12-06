@@ -72,7 +72,7 @@ const router = new VueRouter(
                         name: 'new-user-create',
                         component: () => import("./views/CreateUser"),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Ny bruger'
                         }
                     },

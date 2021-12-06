@@ -199,8 +199,6 @@ class TeamValidator
             }
         }
 
-        // Removed duplicates and merge below players
-
         return $playingToHigh;
     }
 
@@ -445,6 +443,15 @@ class TeamValidator
     }
 
     /**
+     * @param  Player  $player
+     * @return bool
+     */
+    private function isYoungPlayer(Player $player): bool
+    {
+        return $this->hasYoungPlayer([$player]);
+    }
+
+    /**
      * @param  Squad  $squad
      * @param $category
      * @param  int  $limitDouble
@@ -459,16 +466,16 @@ class TeamValidator
             $belowPairsPoints = $this->getPairPoints($belowPair, $category);
             foreach ($pairsInCategory as $abovePair) {
                 $abovePairsPoints = $this->getPairPoints($abovePair, $category);
-                if (($belowPairsPoints > $abovePairsPoints + $limitDouble)) {
-                    [$player1, $player2] = $abovePair;
+                [$player1, $player2] = $abovePair;
+                if (($belowPairsPoints > $abovePairsPoints + $limitDouble) && (!$this->hasYoungPlayer([$belowPair[0], $belowPair[1]]) || $this->hasYoungPlayer([$player1, $player2]))) {
                     $playingToHigh = $this->addOrAppend($playingToHigh, [
                         'id' => $player1->id ?? 0,
                         'refId' => $player1->refId,
                         'name' => $player1->name,
                         'gender' => $player1->gender,
                         'category' => $category,
-                        'isYouthPlayer' => $this->hasYoungPlayer([$player1]),
-                        'hasYouthPlayerPartner' => $this->hasYoungPlayer([$player2]),
+                        'isYouthPlayer' => $this->isYoungPlayer($player1),
+                        'hasYouthPlayerPartner' => $this->isYoungPlayer($player2),
                         'belowPlayer' => [
                             [
                                 'id' => $belowPair[0]->id ?? 0,
@@ -492,8 +499,8 @@ class TeamValidator
                         'name' => $player2->name,
                         'gender' => $player2->gender,
                         'category' => $category,
-                        'isYouthPlayer' => $this->hasYoungPlayer([$player2]),
-                        'hasYouthPlayerPartner' => $this->hasYoungPlayer([$player1]),
+                        'isYouthPlayer' => $this->isYoungPlayer($player2),
+                        'hasYouthPlayerPartner' => $this->isYoungPlayer($player1),
                         'belowPlayer' => [
                             [
                                 'id' => $belowPair[0]->id ?? 0,
@@ -534,14 +541,14 @@ class TeamValidator
                 /** @var Player $belowPlayer */
                 foreach ($playersInCategory as $abovePlayer) {
                     $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
-                    if ($belowPlayerPoints > $abovePlayerPoints + $limit) {
+                    if ($belowPlayerPoints > $abovePlayerPoints + $limit && (!$this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
                         $playingToHigh = $this->addOrAppend($playingToHigh, [
                             'id' => $abovePlayer->id ?? 0,
                             'refId' => $abovePlayer->refId,
                             'name' => $abovePlayer->name,
                             'category' => $category,
                             'gender' => $abovePlayer->gender,
-                            'isYouthPlayer' => $this->hasYoungPlayer([$abovePlayer]),
+                            'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
                             'hasYouthPlayerPartner' => false, // Always false because its single and you don't have a partner in singles
                             'belowPlayer' => [
                                 [
