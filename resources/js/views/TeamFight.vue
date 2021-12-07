@@ -4,25 +4,7 @@
         <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon" @click="saveTeams">Gem</b-button>
 <!--        <b-button icon-left="share-alt" @click="publish">Del</b-button>-->
         <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
-        <b-dropdown aria-role="list">
-            <button slot="trigger" slot-scope="{ active }" class="button is-primary">
-                <span>Tilføj hold</span>
-                <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
-            </button>
-            <b-dropdown-item aria-role="listitem" @click="addTeam6">
-                <b-icon icon="users" size="is-small"></b-icon>
-                6 personer
-            </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="addTeam8">
-                <b-icon icon="users" size="is-small"></b-icon>
-                8 personer
-            </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="addTeam10">
-                <b-icon icon="users" size="is-small"></b-icon>
-                10 personer
-            </b-dropdown-item>
-        </b-dropdown>
-        <b-dropdown aria-role="list">
+        <b-dropdown aria-role="list" class="ml-2">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
@@ -85,6 +67,17 @@
             <div class="column is-6">
                 <h1 class="title">Holdet</h1>
                 <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
+                <TeamTable :confirm-delete="deleteTeam"
+                           :copy-player="copyPlayer"
+                           :delete-player="deletePlayer"
+                           :move="move"
+                           @end="saveAndValidate"
+                           :playing-to-high="playingToHighList"
+                           :playing-to-high-in-squad="playingToHighSquadList"
+                           :teams="team.squads"
+                           :teams-base-validations="validateBasicSquads"
+                           :version="new Date(version)"
+                           :club-id="team.club.id"/>
                 <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
                     <p>
                         <b-icon
@@ -92,33 +85,51 @@
                             size="is-large">
                         </b-icon>
                     </p>
-                    <p>Kom i gang med din næste holdkamp planlægning her</p>
-                    <b-button
-                        type="is-primary"
-                        @click="addTeam6">
-                        Tilføj 6 personers hold
-                    </b-button>
-                    <b-button
-                        type="is-primary"
-                        @click="addTeam8">
-                        Tilføj 8 personers hold
-                    </b-button>
-                    <b-button
-                        type="is-primary"
-                        @click="addTeam10">
-                        Tilføj 10 personers hold
-                    </b-button>
+                    <p>Tilføj dit første hold</p>
+                    <div class="buttons">
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam6">
+                            Tilføj 6 personers hold
+                        </b-button>
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam8">
+                            Tilføj 8 personers hold
+                        </b-button>
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam10">
+                            Tilføj 10 personers hold
+                        </b-button>
+                    </div>
                 </div>
-                <TeamTable :confirm-delete="deleteTeam"
-                           :copy-player="copyPlayer"
-                           :delete-player="deletePlayer"
-                           :move="move"
-                           :playing-to-high="playingToHighList"
-                           :playing-to-high-in-squad="playingToHighSquadList"
-                           :teams="team.squads" @end="validate"
-                           :teams-base-validations="validateBasicSquads"
-                           :version="new Date(version)"
-                           :club-id="team.club.id"/>
+                <div v-if="team.squads.length > 0" class="content has-text-grey has-text-centered">
+                    <p>
+                        <b-icon
+                            icon="users"
+                            size="is-large">
+                        </b-icon>
+                    </p>
+                    <p>Tilføj et nyt hold</p>
+                    <div class="buttons">
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam6">
+                            Tilføj 6 personers hold
+                        </b-button>
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam8">
+                            Tilføj 8 personers hold
+                        </b-button>
+                        <b-button
+                            type="is-primary"
+                            @click="addTeam10">
+                            Tilføj 10 personers hold
+                        </b-button>
+                    </div>
+                </div>
             </div>
         </div>
         <b-modal v-model="showShareLink" :width="640" scroll="keep">
@@ -148,7 +159,7 @@ import gql from "graphql-tag"
 import ValidateTeams from "./ValidateTeams";
 import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
-import teams, {TeamFightHelper} from "../components/team-fight/teams";
+import {TeamFightHelper} from "../components/team-fight/teams";
 import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 import ValidationStatus from "./ValidationStatus";
 import PlayersListSearch from "./PlayersListSearch";
@@ -224,7 +235,7 @@ export default {
     },
     apollo: {
         team: {
-            query: gql` query ($id: ID!){
+            query: gql` query team($id: ID!){
                   team(id: $id){
                     id
                     squads{
@@ -262,7 +273,7 @@ export default {
                     id: this.teamFightId
                 }
             },
-            fetchPolicy: "network-only",
+            fetchPolicy: "no-cache", // Needs to be "no-cache" because of https://github.com/vuejs/vue-apollo/discussions/492
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
                 this.version = data.team.version;
@@ -271,12 +282,14 @@ export default {
         }
     },
     mounted() {
-        // this.$root.$on('playersearch.addMemberToCategory', () => {
-        //     this.saveTeams()
-        // })
-        // this.$root.$on('teamfight.deletedMemberFromCategory', () => {
-        //     this.saveTeams()
-        // })
+        this.$root.$on('playersearch.addMemberToCategory', () => {
+            this.saveTeams()
+            this.validate()
+        })
+        this.$root.$on('teamfight.deletedMemberFromCategory', () => {
+            this.saveTeams()
+            this.validate()
+        })
     },
     methods: {
         wrapInTeamAndSquads(squads){
@@ -326,7 +339,7 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: [ValidateTeam!]!){
+                        mutation validateSquads($input: [ValidateTeam!]!){
                           validateSquads(input: $input){
                             name
                             id
@@ -365,7 +378,7 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: [ValidateTeam!]!){
+                        mutation validateCrossSquads($input: [ValidateTeam!]!){
                           validateCrossSquads(input: $input){
                             name
                             id
@@ -397,12 +410,16 @@ export default {
                         })
                 })
         },
+        saveAndValidate(){
+            this.saveTeams()
+            this.validate()
+        },
         validate() {
             const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: [ValidateTeam!]!){
+                        mutation validateBasicSquads($input: [ValidateTeam!]!){
                           validateBasicSquads(input: $input){
                             index
                             missingPlayerInCategory
@@ -450,11 +467,12 @@ export default {
             this.showShareLink = !this.showShareLink
         },
         deletePlayer(category, player) {
-            this.$root.$emit('teamfight.deletedMemberFromCategory')
             category.players.splice(category.players.indexOf(player), 1)
+            this.$root.$emit('teamfight.deletedMemberFromCategory')
         },
         copyPlayer(category, player) {
             category.players.push(Object.assign({}, player))
+            this.saveTeams()
         },
         deleteTeam(team) {
             this.$buefy.dialog.confirm(
@@ -462,6 +480,7 @@ export default {
                     message: 'Sikker på du vil slette hold ' + (this.team.squads.indexOf(team) + 1) + '?',
                     onConfirm: () => {
                         this.team.squads.splice(this.team.squads.indexOf(team), 1)
+                        this.saveTeams()
                     }
                 })
         },
@@ -531,7 +550,7 @@ export default {
                         message: `Kunne ikke finde en ledig plads på nogle hold`
                     })
             }else{
-                //this.saveTeams()
+                this.saveTeams()
             }
         },
         move(index, offset) {
@@ -540,28 +559,32 @@ export default {
             teams[index] = teams[index + offset]
             teams[index + offset] = temp
             this.team.squads = teams
+            this.saveTeams()
         },
         addTeam10() {
             let players = TeamFightHelper.generate10Players()
             players.id = this.teamCount++
             this.team.squads.push(players)
+            this.saveTeams()
         },
         addTeam8() {
             let players = TeamFightHelper.generate8Players()
             players.id = this.teamCount++
             this.team.squads.push(players)
+            this.saveTeams()
         },
         addTeam6() {
             let players = TeamFightHelper.generate6Players()
             players.id = this.teamCount++
             this.team.squads.push(players)
+            this.saveTeams()
         },
         saveTeams() {
             this.saving = true;
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation ($input: UpdateTeamInput!){
+                        mutation updateTeam($input: UpdateTeamInput!){
                           updateTeam(input: $input){
                             id
                             name

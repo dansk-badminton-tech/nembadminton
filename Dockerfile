@@ -1,4 +1,4 @@
-FROM composer:2 as build
+FROM smartweb/composer:2-latest as build
 ADD . .
 RUN composer install --no-dev
 
