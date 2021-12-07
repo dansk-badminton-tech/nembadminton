@@ -17,6 +17,7 @@ use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Symfony\Component\Serializer\Serializer;
@@ -96,7 +97,6 @@ class UpdateTeams
                            })->get();
             foreach ($points as $point) {
                 $squadPoint = new SquadPoint();
-                $squadPoint->points = $point->points;
                 $squadPoint->position = $point->position;
                 $squadPoint->category = $point->category;
                 $squadPoint->points = $point->points;
@@ -120,21 +120,23 @@ class UpdateTeams
      */
     public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
     {
-        /** @var Teams $team */
-        $team = Teams::query()
-                     ->where('user_id', $context->user()->getAuthIdentifier())
-                     ->where('id', $args['id'])->firstOrFail();
-        $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
-        $team->saveOrFail();
+        return DB::transaction(function() use ($args, $context) {
+            /** @var Teams $team */
+            $team = Teams::query()
+                         ->where('user_id', $context->user()->getAuthIdentifier())
+                         ->where('id', $args['id'])->lockForUpdate()->firstOrFail();
+            $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
+            $team->saveOrFail();
 
-        // Clear all squads
-        $team->squads()->delete();
+            // Clear all squads
+            $team->squads()->delete();
 
-        $squads = $args['squads'] ?? [];
-        /** @var Squad[] $squads */
-        $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
-        $this->squadManager->addSquads($squads, $team);
+            $squads = $args['squads'] ?? [];
+            /** @var Squad[] $squads */
+            $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
+            $this->squadManager->addSquads($squads, $team);
 
-        return $team;
+            return $team;
+        });
     }
 }

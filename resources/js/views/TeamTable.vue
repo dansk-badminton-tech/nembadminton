@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <div>
         <div v-for="(team, index) in teams" :key="team.id" class="column is-full">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -42,7 +42,7 @@
                 <tr v-for="category in team.categories" :key="category.name">
                     <th>{{ category.name }}</th>
                     <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td"
-                               @end="$emit('end')" >
+                               @end="emitEnd">
                         <div v-for="player in category.players" class="is-clearfix mt-1">
                             <b-tooltip
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
@@ -89,7 +89,7 @@
                 </tbody>
             </table>
         </div>
-    </fragment>
+    </div>
 </template>
 <script>
 import Draggable from "vuedraggable"
@@ -111,6 +111,7 @@ export default {
         viewMode: Boolean,
         confirmDelete: Function,
         move: Function,
+        playerMove: Function,
         deletePlayer: Function,
         copyPlayer: Function,
         playingToHigh: {
@@ -135,6 +136,9 @@ export default {
         }
     },
     methods: {
+        emitEnd(evt){
+            this.$emit('end', evt)
+        },
         isYoungPlayer,
         isDouble(category) {
             return isDoubleCategory(category)

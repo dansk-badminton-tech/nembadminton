@@ -58,14 +58,13 @@ class SquadManager
     {
         foreach ($players as $player) {
             /** @var SquadMember $member */
-            $member = SquadMember::query()->updateOrCreate(
+            $member = SquadMember::query()->create(
                 [
                     'gender' => $player->gender,
                     'name' => $player->name,
                     'member_ref_id' => $player->refId,
                     'squad_category_id' => $category->id
-                ],
-                ['member_ref_id' => $player->refId, 'squad_category_id' => $category->id]
+                ]
             );
             $this->createPoints($player->points, $member);
         }
