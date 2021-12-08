@@ -22,6 +22,16 @@
                 Slet holdet
             </b-dropdown-item>
         </b-dropdown>
+        <b-dropdown aria-role="list" class="ml-2">
+            <button slot="trigger" slot-scope="{ active }" class="button is-primary">
+                <span>Export</span>
+                <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
+            </button>
+            <b-dropdown-item aria-role="listitem" @click="exportToCSV">
+                <b-icon icon="file-export"></b-icon>
+                CSV
+            </b-dropdown-item>
+        </b-dropdown>
         <div class="columns mt-2">
             <div class="column">
                 <b-field label="Navn">
@@ -292,6 +302,28 @@ export default {
         })
     },
     methods: {
+        exportToCSV(){
+            this.$apollo.query({
+                query: gql`
+                    query exportToCSV($teamId: ID!){
+                        export(teamId:$teamId)
+                    }
+                `,
+                variables: {
+                    teamId: this.teamFightId
+                },
+                fetchPolicy: "network-only"
+            }).then(({data}) => {
+                window.location.href = data.export;
+            }).catch((error) => {
+                this.$buefy.snackbar.open(
+                    {
+                        duration: 4000,
+                        type: 'is-danger',
+                        message: `Kunne ikke download CSV :(`
+                    })
+            })
+        },
         wrapInTeamAndSquads(squads){
             return omitDeep(squads, ['__typename', 'cancellations']).map((squad) => ({
                 name: 'Team X',
@@ -326,7 +358,7 @@ export default {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
-                            type: 'is-dagner',
+                            type: 'is-danger',
                             message: `Kunne ikke opdater points :(`
                         })
                 })

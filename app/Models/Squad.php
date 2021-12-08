@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use FlyCompany\Scraper\Models\Team;
+use FlyCompany\TeamFight\Models\Category;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int id
+ * @property Category[] categories
+ * @property Team team
  */
 class Squad extends Model
 {
