@@ -3,6 +3,7 @@ extend type Query {
     teams(order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"])) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     cancellations(teamId: String! @eq) : [Cancellation] @guard @all
+    export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
 }
 
 extend type Mutation {

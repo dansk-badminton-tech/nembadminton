@@ -36,7 +36,8 @@ import {
     faVenus,
     faUserPlus,
     faPlus,
-    faUserSlash
+    faUserSlash,
+    faFileExport
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
@@ -74,7 +75,8 @@ library.add(faBell,
     faVenus,
     faUserPlus,
     faPlus,
-    faUserSlash);
+    faUserSlash,
+    faFileExport);
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 Vue.use(Buefy, {
     defaultIconComponent: 'vue-fontawesome',
