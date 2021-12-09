@@ -234,7 +234,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => [
                         [
@@ -385,7 +385,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => [
                         [
@@ -560,7 +560,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => [
                         [
@@ -749,7 +749,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => [
                         [

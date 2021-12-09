@@ -52,6 +52,7 @@ type BelowPlayer {
     name: String!
     id: ID!
     refId: String
+    isYouthPlayer: Boolean!
 }
 
 type PlayingToHigh{

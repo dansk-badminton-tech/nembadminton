@@ -153,7 +153,7 @@ class TeamValidator
                     foreach ($allBelowPlayers as $belowPlayer) {
                         $belowPlayerPoints = $this->getPlayerLevel($belowPlayer);
                         $abovePlayerPoints = $this->getPlayerLevel($currentAbovePlayer);
-                        if ($belowPlayerPoints > ($abovePlayerPoints + $limit) && $currentAbovePlayer->gender === $belowPlayer->gender) {
+                        if ($belowPlayerPoints > ($abovePlayerPoints + $limit) && $currentAbovePlayer->gender === $belowPlayer->gender && !$this->isYoungPlayer($belowPlayer)) {
                             $hits->push([$categoryName, $currentAbovePlayer, $belowPlayer]);
                         }
                     }
@@ -367,7 +367,8 @@ class TeamValidator
                             'refId' => $currentBelowPlayer->refId,
                             'name' => $currentBelowPlayer->name,
                             'gender' => $currentBelowPlayer->gender,
-                            'category' => $currentCategory
+                            'category' => $currentCategory,
+                            'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer])
                         ]
                     ],
                 ])

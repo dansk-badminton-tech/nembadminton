@@ -100,7 +100,7 @@ class ValidateSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateSquads' => [
                         [
@@ -172,7 +172,7 @@ class ValidateSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateSquads' => [
                         [
@@ -249,7 +249,7 @@ class ValidateSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateSquads' => [
                         [
@@ -331,7 +331,7 @@ class ValidateSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateSquads' => [
                         [
