@@ -18,7 +18,7 @@ sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com php /var/www/
 sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com php /var/www/badminton.social/projects/holdkamp/artisan lighthouse:clear-cache
 
 echo "Building worker image"
-docker build -t ghcr.io/flycompanytech/holdkamp:latest .
+docker build --pull -t ghcr.io/flycompanytech/holdkamp:latest .
 docker push ghcr.io/flycompanytech/holdkamp:latest
 
 echo "Updating worker"
