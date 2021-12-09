@@ -37,8 +37,8 @@ class Exporter
         $csvData = $this->exporter->exportToCSV($team);
 
         $randomNumber = date('d-m-Y_H-i-s');
-        $filePath = "team-fight/exports/$teamId.$randomNumber.csv";
-        Storage::disk('public')->put($filePath, $csvData);
+        $filePath = "team-fight/exports/$teamId-$randomNumber.csv";
+        Storage::disk('public')->put($filePath, (chr(0xEF).chr(0xBB).chr(0xBF)).$csvData);
 
         return Storage::disk('public')->url($filePath);
     }

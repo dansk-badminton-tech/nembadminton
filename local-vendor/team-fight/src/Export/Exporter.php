@@ -14,16 +14,16 @@ class Exporter
         $csv = [];
         foreach ($team->squads as $index => $squad){
             $i = $index + 1;
-            $csv[] = "Hold $i";
+            $csv[] = '"'."Hold $i".'"';
             foreach ($squad->categories as $category){
                 foreach ($category->players as $playerIndex => $player){
                     $data = [];
                     if($playerIndex === 0){
-                        $data[] = $category->name;
+                        $data[] = '"'.$category->name.'"';
                     }else{
                         $data[] = "";
                     }
-                    $data[] = $player->name;
+                    $data[] = '"'.$player->name.'"';
                     $csv[] = implode(',', $data);
                 }
             }
