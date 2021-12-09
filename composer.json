@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": "^8.0",
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
@@ -23,15 +23,15 @@
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
         "imangazaliev/didom": "^1.16",
-        "joselfonseca/lighthouse-graphql-passport-auth": "^5.1",
+        "joselfonseca/lighthouse-graphql-passport-auth": "^6.0",
         "laravel-notification-channels/webpush": "^5.1",
         "laravel/framework": "^8.0",
         "laravel/horizon": "^5.0",
         "laravel/passport": "^10.0",
         "laravel/tinker": "^2.0",
-        "mll-lab/graphql-php-scalars": "^3.1",
+        "mll-lab/graphql-php-scalars": "^4.0",
         "mll-lab/laravel-graphql-playground": "^2.4",
-        "nuwave/lighthouse": "^4.17",
+        "nuwave/lighthouse": "^5.30",
         "phpdocumentor/reflection-docblock": "^5.2",
         "symfony/property-access": "^5.2",
         "symfony/property-info": "^5.2",
@@ -52,7 +52,7 @@
         "sort-packages": true,
         "platform": {
             "ext-pcntl": "1.0",
-            "php": "7.4"
+            "php": "8.1"
         }
     },
     "extra": {

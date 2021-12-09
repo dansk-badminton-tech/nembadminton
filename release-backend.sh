@@ -24,6 +24,6 @@ docker push ghcr.io/flycompanytech/holdkamp:latest
 echo "Updating worker"
 ssh root@185.134.28.88 podman pull --authfile /root/.podmanauth ghcr.io/flycompanytech/holdkamp:latest
 ssh root@185.134.28.88 podman rm --force "worker"
-ssh root@185.134.28.88 podman run -d --name "worker" --env-file .env ghcr.io/flycompanytech/holdkamp:latest php artisan -vvv queue:listen --memory 256 --timeout 300
+ssh root@185.134.28.88 podman run -d --name "worker" --env-file .env ghcr.io/flycompanytech/holdkamp:latest php -d memory_limit=256M artisan -vvv queue:listen --memory 256 --timeout 300
 ssh root@185.134.28.88 podman container prune
 ssh root@185.134.28.88 podman image prune

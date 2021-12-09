@@ -50,9 +50,7 @@
                 </div>
             </b-table-column>
             <template #empty>
-                <div class="has-text-centered">Ingen spiller. Husk at sætte ranglisten til "Niveau", hvis du vil se
-                    alle
-                </div>
+                <div class="has-text-centered">Ingen afbud.</div>
             </template>
         </b-table>
     </div>
@@ -181,13 +179,13 @@ export default {
         memberSearchPoints: {
             query: gql`
                     query MembersSearch(
-                        $hasClubs: MemberSearchPointsHasClubsWhereConditions,
+                        $hasClubs: QueryMemberSearchPointsHasClubsWhereHasConditions,
                         $version: String,
                         $page: Int,
                         $first: Int,
                         $name: String,
                         $teamId: String,
-                        $hasCancellation: MemberSearchPointsHasCancellationWhereConditions,
+                        $hasCancellation: QueryMemberSearchPointsHasCancellationWhereHasConditions,
                         $rankingList: MemberSearchOrderBy){
                       memberSearchPoints(
                       hasClubs: $hasClubs,

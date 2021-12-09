@@ -474,7 +474,7 @@ class BadmintonPlayer
         $request = $this->client->get('/');
         $response = $request->getBody();
 
-        $result = preg_replace("/((\r?\n)|(\r\n?))/", ',', $response);
+        $result = preg_replace("/((\r?\n)|(\r\n?))/", ',', $response->getContents());
         $result = explode(",", $result);
         foreach ($result as $value) {
             if (strpos($value, 'SR_CallbackContext') !== false) {
