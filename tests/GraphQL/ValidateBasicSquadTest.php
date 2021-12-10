@@ -68,7 +68,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -133,7 +133,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -198,7 +198,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -296,7 +296,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -431,7 +431,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -506,7 +506,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [
@@ -572,7 +572,7 @@ class ValidateBasicSquadTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertJson([
+            ->assertExactJson([
                 'data' => [
                     'validateBasicSquads' => [
                         [

@@ -36,7 +36,7 @@ export default {
                 return {
                     input: {
                         clubId: this.clubId,
-                        season: this.season
+                        season: parseInt(this.season)
                     }
                 }
             },

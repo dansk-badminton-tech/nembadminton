@@ -39,9 +39,9 @@ export default {
                 return {
                     input: {
                         clubId: this.clubId,
-                        season: this.season,
-                        ageGroupId: this.playerTeam.ageGroupId,
-                        leagueGroupId: this.playerTeam.leagueGroupId,
+                        season: parseInt(this.season),
+                        ageGroupId: parseInt(this.playerTeam.ageGroupId),
+                        leagueGroupId: parseInt(this.playerTeam.leagueGroupId),
                         clubName: this.playerTeam.name
                     }
                 }

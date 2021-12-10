@@ -19,7 +19,7 @@ input ValidateTeam{
 }
 
 input ValidateSquad{
-    id: String
+    id: ID
     playerLimit: Int!
     league: LeagueType
     categories: [ValidateCategory]
@@ -32,7 +32,7 @@ input ValidateCategory {
 }
 
 input ValidateMember {
-    id: String
+    id: ID
     refId: String!
     name: String!
     gender: String!
@@ -52,6 +52,7 @@ type BelowPlayer {
     name: String!
     id: ID!
     refId: String
+    isYouthPlayer: Boolean!
 }
 
 type PlayingToHigh{

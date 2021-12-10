@@ -75,7 +75,7 @@ export default {
     },
     apollo: {
         members: {
-            query: gql`query MembersSearch($name: String, $hasClubs: MembersSearchHasClubsWhereConditions, $excludeMembers: [Int!], $version: String){
+            query: gql`query MembersSearch($name: String, $hasClubs: QueryMembersSearchHasClubsWhereHasConditions, $excludeMembers: [Int!], $version: String){
                       membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }) {
                         data {
                           id
