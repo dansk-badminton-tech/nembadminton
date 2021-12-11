@@ -12,6 +12,7 @@ use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -38,11 +39,13 @@ class BadmintonPlayer
      * @var Parser
      */
     private Parser $parser;
+    private Repository $cache;
 
-    public function __construct(Parser $parser)
+    public function __construct(Parser $parser, Repository $cache)
     {
         $this->client = new Client($this->clientConfig);
         $this->parser = $parser;
+        $this->cache = $cache;
     }
 
     /**
@@ -145,17 +148,18 @@ class BadmintonPlayer
     }
 
     /**
-     * @param int    $rankingListId
-     * @param int    $season
-     * @param string $clubId
-     * @param Carbon $rankingVersion
+     * @param  int  $rankingListId
+     * @param  int  $season
+     * @param  string  $clubId
+     * @param  Carbon  $rankingVersion
      * @param        $pageIndex
-     * @param string $param
-     * @param string $gender
-     * @param string $playerId
+     * @param  string  $param
+     * @param  string  $gender
+     * @param  string  $playerId
      *
      * @return string
      * @throws \JsonException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     private function getRankingListPlayersHtml(int $rankingListId, int $season, string $clubId, Carbon $rankingVersion, $pageIndex, string $param, string $gender, string $playerId = "") : string
     {
@@ -190,11 +194,8 @@ class BadmintonPlayer
         $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayers";
         Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
-        $response = $this->client->post($url, [
-            'json' => $params,
-        ]);
-
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $body = $this->sendRequestAndGetBody($url, $params);
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
@@ -203,6 +204,30 @@ class BadmintonPlayer
 
         //Log::debug("HTML: $html");
         return $html;
+    }
+
+    /**
+     * @param  string  $url
+     * @param  array  $json
+     * @return string
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function sendRequestAndGetBody(string $url, array $json) : string{
+        $cacheBody = $this->cache->get($this->resolveCacheKey($json));
+        if($cacheBody === null){
+            $response = $this->client->post($url, [
+                'json' => $json,
+            ]);
+
+            $cacheBody = $response->getBody()->getContents();
+            $this->cache->put($this->resolveCacheKey($json), $cacheBody, 120);
+        }
+        return $cacheBody;
+    }
+
+    private function resolveCacheKey(array $postParams) : string{
+        unset($postParams['callbackcontextkey']);
+        return md5(implode('-', $postParams));
     }
 
     public function getPlayerByBadmintonPlayerId(int $badmintonPlayerId, Carbon $rankingVersion, int $season) : Player
@@ -305,10 +330,18 @@ class BadmintonPlayer
             Log::debug("Fetching page: $i");
             try {
                 $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
+                /** @var Player[] $playersCollection */
                 $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
-            } catch (NoPlayersException $exception) {
+            } catch (NoPlayersException) {
                 Log::debug("No players found on page: $i");
                 break;
+            }
+        }
+
+        // Apply version to scraped points
+        foreach ($playersCollection as $player){
+            foreach ($player->points as $point) {
+                $point->version = $rankingVersion;
             }
         }
 
@@ -383,13 +416,14 @@ class BadmintonPlayer
     }
 
     /**
-     * @param string $clubId
-     * @param string $leagueMatchId
-     * @param string $season
+     * @param  string  $clubId
+     * @param  string  $leagueMatchId
+     * @param  string  $season
      *
      * @return TeamMatch
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getTeamMatch(string $clubId, string $leagueMatchId, string $season) : TeamMatch
     {
@@ -409,12 +443,8 @@ class BadmintonPlayer
         $url = 'SportsResults/Components/WebService1.asmx/GetLeagueStanding';
 
         Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
-
-        $response = $this->client->post($url, [
-            'json' => $params,
-        ]);
-
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $body = $this->sendRequestAndGetBody($url, $params);
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
@@ -424,9 +454,9 @@ class BadmintonPlayer
     }
 
     /**
-     * @param string $name
-     *
-     * @return array|PlayerSearch[]
+     * @param  string  $name
+     * @param  string  $badmintonId
+     * @return array
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
      */

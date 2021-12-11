@@ -89,7 +89,7 @@ export default {
         },
         members: {
             query: gql`
-                query($page: Int!, $name: String, $orderBy: [MembersOrderByOrderByClause!]){
+                query($page: Int!, $name: String, $orderBy: [QueryMembersOrderByOrderByClause!]){
                     members(page: $page, name: $name, orderBy: $orderBy){
                         paginatorInfo{
                           total
