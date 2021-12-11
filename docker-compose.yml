@@ -24,6 +24,8 @@ services:
     image: flycompany/holdkamp
     entrypoint: "php artisan queue:work --timeout 600 --memory 512"
     user: "33:33"
+    environment:
+      TELESCOPE_ENABLED: "false"
     build:
       context: .
       dockerfile: Dockerfile
