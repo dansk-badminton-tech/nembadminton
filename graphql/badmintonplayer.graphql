@@ -12,7 +12,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    "Schedule a team match import job"
+    "Get team matches information from badmintonplayer.dk"
     badmintonPlayerTeamMatchesImport(input: BadmintonPlayerTeamMatchInput!) : [ImportTeam!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchesImport")
     "Team Match Import"
     badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
@@ -60,6 +60,7 @@ input BadmintonPlayerLeagueMatchInput {
     id: Int!
     teamNameHint: String!
     league: String!
+    version: Date
 }
 
 

@@ -80,76 +80,15 @@ class BadmintonPlayerTeamMatchesImport
             if (Str::contains($guest->name, $badmintonPlayerTeamMatch['teamNameHint'])) {
                 $guest->leagueMatchId = $leagueMatchId;
                 $guest->squad->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
-                $teams[] = $guest;
+                $teams[] = $this->enricher->teamMatch($guest, $clubId, $season, $badmintonPlayerTeamMatch['version'] ?? $version);
             } else {
                 $home = $teamMatch->home;
                 $home->leagueMatchId = $leagueMatchId;
                 $home->squad->league = Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
-                $teams[] = $home;
-            }
-        }
-
-        $playersWithPoints = [];
-        foreach ($this->resolveClubs($clubId) as $clubId) {
-            $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string)$clubId, $version);
-            $playersWithPoints += BadmintonPlayerHelper::collapseRankingLists($rankingLists);
-        }
-
-        // Enrich players with points
-        foreach ($teams as $team) {
-            foreach ($team->squad->categories as $category) {
-                foreach ($category->players as &$player) {
-                    if (isset($playersWithPoints[$player->name])) {
-                        $player = $playersWithPoints[$player->name];
-                        foreach ($player->points as $point) {
-                            $point->version = $version;
-                        }
-                    } else {
-                        try {
-                            if (!$player->isNoBody()) {
-                                $player = $this->scraper->getPlayerByBadmintonPlayerId(
-                                    $player->badmintonPlayerId,
-                                    $version,
-                                    $season
-                                );
-                            } else {
-                                $player = null;
-                            }
-                        } catch (MultiplePlayersFoundException $exception) {
-                            throw new \RuntimeException("Multiple players named $player->name");
-                        }
-                    }
-                }
-                unset($player);
-                $category->players = array_filter($category->players, static function ($player) {
-                    return $player !== null;
-                });
+                $teams[] = $this->enricher->teamMatch($home, $clubId, $season, $badmintonPlayerTeamMatch['version'] ?? $version);
             }
         }
 
         return $teams;
-    }
-
-    private function resolveClubs(int $clubId) : array
-    {
-        $clubIds = [$clubId];
-        if ($clubId < 0) {
-            switch ($clubId) {
-                case -473: // RSL ODENSE OBK
-                    $clubIds = [1392];
-                    break;
-                case -2: // Team Skælskør-Slagelse
-                    $clubIds = [327, 1157];
-                    break;
-                case -439: // Højbjerg/Via Biler
-                    $clubIds = [25];
-                    break;
-                case -3: // Vendsyssel
-                    $clubIds = [1494, 1500, 1497];
-                    break;
-            }
-        }
-
-        return $clubIds;
     }
 }

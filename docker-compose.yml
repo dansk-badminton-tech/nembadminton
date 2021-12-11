@@ -22,7 +22,10 @@ services:
 
   worker:
     image: flycompany/holdkamp
-    entrypoint: "php artisan horizon"
+    entrypoint: "php artisan queue:work --timeout 600 --memory 512"
+    user: "33:33"
+    environment:
+      TELESCOPE_ENABLED: "false"
     build:
       context: .
       dockerfile: Dockerfile
@@ -37,7 +40,7 @@ services:
 
   artisan:
     image: flycompany/holdkamp
-    user: "1000:1000"
+    user: "1000:33"
     entrypoint: "php artisan"
     build:
       context: .

@@ -37,6 +37,8 @@
                                  :label="team.name">
                             <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId"
                                                        :player-team="team" :season="season"/>
+                            <OptionalRanking
+                            v-model="selectedVersionsForTeamMatches[index]" :season="season"></OptionalRanking>
                         </b-field>
                     </b-step-item>
                     <b-step-item label="Bekræft">
@@ -159,10 +161,12 @@ import {
 } from "../../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
+import OptionalRanking from "./OptionalRanking";
 
 export default {
     name: "CheckTeamFight",
     components: {
+        OptionalRanking,
         RankingListDropdown,
         BadmintonPlayerTeamsMultiSelect,
         BadmintonPlayerTeamFights,
@@ -181,6 +185,7 @@ export default {
             season: null,
             teamFight: null,
             selectedTeamMatches: {},
+            selectedVersionsForTeamMatches: [],
             teams: [],
             playingToHigh: [],
             playingToHighInSquad: [],
@@ -285,13 +290,16 @@ export default {
                     variables: {
                         input: {
                             clubId: parseInt(this.clubId),
-                            leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch) => ({
-                                id: teamMatch.teamMatch.matchId,
-                                teamNameHint: teamMatch.team.name,
-                                league: teamMatch.team.league
-                            })),
+                            leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch, index) => {
+                                return {
+                                    id: teamMatch.teamMatch.matchId,
+                                    teamNameHint: teamMatch.team.name,
+                                    league: teamMatch.team.league,
+                                    version: (typeof this.selectedVersionsForTeamMatches[index] === 'undefined' ? null : this.selectedVersionsForTeamMatches[index])
+                                }
+                            }),
                             season: parseInt(this.season),
-                            version: this.rankingList//"2020-08-01"
+                            version: this.rankingList
                         }
                     }
                 }
@@ -385,7 +393,11 @@ export default {
         },
         clearTeams() {
             this.clearTeamFights()
+            this.clearSelectedVersionsForTeamMatches()
             this.playerTeams = [];
+        },
+        clearSelectedVersionsForTeamMatches(){
+            this.selectedVersionsForTeamMatches = [];
         },
         clearTeamFights() {
             this.selectedTeamMatches = {};
