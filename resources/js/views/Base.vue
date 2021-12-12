@@ -1,12 +1,12 @@
 <template>
-    <fragment>
+    <div>
         <TopMenu/>
         <section class="section">
             <div class="container">
                 <router-view></router-view>
             </div>
         </section>
-    </fragment>
+    </div>
 </template>
 
 <script>
