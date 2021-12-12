@@ -1,8 +1,8 @@
 <template>
-    <fragment>
+    <div>
         <ChangeProfile/>
         <ChangePassword/>
-    </fragment>
+    </div>
 </template>
 
 <script>
