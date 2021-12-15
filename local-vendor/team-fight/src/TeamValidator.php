@@ -43,8 +43,10 @@ class TeamValidator
         $totalHits = new Collection();
         /** @var Player[] $firstDivPlayers */
         foreach ($firstDivPlayers as $divPlayer) {
-            $hits = $this->compareEveryPlayerInEveryCategory($leagueTeamSquad, $divPlayer);
-            $totalHits->put($divPlayer->refId, $hits);
+            if(!$this->isYoungPlayer($divPlayer)){
+                $hits = $this->compareEveryPlayerInEveryCategory($leagueTeamSquad, $divPlayer);
+                $totalHits->put($divPlayer->refId, $hits);
+            }
         }
 
         $conflicts = new Collection();
@@ -80,7 +82,7 @@ class TeamValidator
         $hit = new Collection();
         foreach ($leagueSquad->categories as $leagueCategory) {
             foreach ($leagueCategory->players as $leaguePlayer) {
-                if ($leaguePlayer->gender !== $divPlayer->gender) {
+                if ($leaguePlayer->gender !== $divPlayer->gender || $this->isYoungPlayer($leaguePlayer)) {
                     continue;
                 }
                 try {

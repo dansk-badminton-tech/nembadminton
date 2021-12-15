@@ -18,7 +18,37 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase3()
+    public function useCase4(): void
+    {
+        // https://github.com/flycompanytech/holdkamp-project/issues/30
+        $data = require __DIR__.'/CrossSquadsUseCases/usecase4.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateCrossSquads(input: $input) {
+                refId
+                name
+                category
+              }
+            }
+        ',
+            $data
+        )->assertJsonMissing(
+            [
+                [
+                    'category' => 'DD',
+                    'name' => 'Signe Schulz Terp-Nielsen',
+                    'refId' => '010626-02'
+                ]
+            ]
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function useCase3(): void
     {
         // abc Aalborg - 2021-10-30
         $data = require __DIR__.'/CrossSquadsUseCases/usecase3.php';
@@ -51,7 +81,7 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase2()
+    public function useCase2(): void
     {
         // abc Aalborg - 2021-10-30
         $data = require __DIR__.'/CrossSquadsUseCases/usecase2.php';
