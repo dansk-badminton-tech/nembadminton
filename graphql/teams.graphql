@@ -35,17 +35,17 @@ input CreateTeamBelongsTo {
 
 input UpdateTeamInput {
     id: ID!
-    name: String
-    version: Date
-    gameDate: Date @rename(attribute: "game_date")
+    name: String!
+    version: Date!
+    gameDate: Date! @rename(attribute: "game_date")
     squads: [UpdateSquadInput!]!
 }
 
 input UpdateSquadInput {
     id: ID
     playerLimit: Int!
-    league: LeagueType
-    categories: [UpdateCatagoryInput!]!
+    league: LeagueType!
+    categories: [UpdateCategoryInput!]!
 }
 
 enum LeagueType{
@@ -54,17 +54,18 @@ enum LeagueType{
     OTHER @enum(value: "OTHER")
 }
 
-input UpdateCatagoryInput {
-    category: String
-    name: String
+input UpdateCategoryInput {
+    id: ID
+    category: String!
+    name: String!
     players: [UpdatePlayerInput!]!
 }
 
 input UpdatePlayerInput {
     id: ID
-    gender: String
-    name: String
-    refId: String
+    gender: String!
+    name: String!
+    refId: String!
     points: [UpdatePointInput!]!
 }
 
@@ -81,6 +82,7 @@ type SquadMember {
     refId: String! @rename(attribute: "member_ref_id")
     name: String!
     gender: String!
+    isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
 }
 
@@ -92,6 +94,7 @@ type SquadPoint {
 }
 
 type SquadCategory {
+    id: ID
     category: String!
     name: String!
     players: [SquadMember!]!
@@ -99,7 +102,7 @@ type SquadCategory {
 
 type Squad {
     "ID"
-    id: Int!
+    id: ID!
     "Number of players on the team"
     playerLimit: Int!
     "What league the squad plays in"

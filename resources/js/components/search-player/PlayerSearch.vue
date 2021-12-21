@@ -3,19 +3,27 @@
         <b-field>
             <b-autocomplete
                 v-model="querySearchName"
+                :open-on-focus="true"
                 :clear-on-select="true"
                 :clearable="true"
-                :data="this.members.data"
+                :data="searchResult"
                 :keep-first="true"
-                :loading="$apollo.queries.members.loading"
+                :loading="$apollo.queries.membersSearch.loading || $apollo.queries.memberSearchTeamFight.loading "
                 :placeholder="$t('roundsGenerator.findPlayerPlaceholder')"
                 field="name"
+                @focus="focusedFlag = true"
+                @blur="focusedFlag = false"
                 @select="addMember"
                 @typing="searchMembers">
                 <template slot-scope="props">
                     <div class="media">
                         <div class="media-content">
                             {{ props.option.name }}
+                            <b-icon
+                                v-show="props.option.isInSquad"
+                                icon="users"
+                                size="is-small">
+                            </b-icon>
                             <br>
                             <small>
                                 {{ findPositions(props.option) }}
@@ -23,15 +31,16 @@
                         </div>
                     </div>
                 </template>
-                <template slot="empty">No results for {{ querySearchName }}</template>
+                <template slot="empty">Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
     </div>
 </template>
 
 <script>
-import {debounce, findPositions} from "../../helpers";
+import {debounce, findPositions, resolveGenderFromCategory} from "../../helpers";
 import gql from 'graphql-tag'
+import {groupBy} from "lodash/collection";
 
 export default {
     name: "PlayerSearch",
@@ -42,41 +51,88 @@ export default {
                 return;
             }
             this.category.players.push(option);
-            const inputs = document.querySelectorAll('input')
-            const index = Array.from(inputs).indexOf(event.target) + 1
-            if(inputs[index] !== undefined){
-                inputs[index].focus()
+
+            if(event instanceof KeyboardEvent){
+                const inputs = document.querySelectorAll('input')
+                const index = Array.from(inputs).indexOf(event.target) + 1
+                if(inputs[index] !== undefined){
+                    inputs[index].focus()
+                }
             }
             this.$root.$emit('playersearch.addMemberToCategory');
         },
         searchMembers: debounce(function (name) {
-            if (!name.length) {
-                this.members.data = []
-                return
-            }
-            this.searchName = name;
-            this.$apollo.queries.members.refresh();
-        }, 200)
+            this.querySearchName = name
+        }, 300)
     },
     props: {
         clubId: String,
         category: Object,
         excludePlayers: Array,
-        version: Date
+        version: Date,
+        squad: Object,
+    },
+    mounted() {
+        this.$root.$on('teamfight.teamSaved', () => {
+            this.$apollo.queries.memberSearchTeamFight.refresh()
+        })
+    },
+    computed: {
+        searchResult(){
+            let removeDuplicates = Object.values(groupBy(this.memberSearchTeamFightResult, 'refId')).filter((v) => v.length === 1).flat()
+            let allPlayers = removeDuplicates.concat(this.memberSearchResult)
+            allPlayers = allPlayers.filter((v,i,a)=>a.findIndex(t=>(t.refId===v.refId))===i)
+
+            return allPlayers
+        }
     },
     data() {
         return {
+            memberSearchTeamFightResult: [],
+            memberSearchResult: [],
             querySearchName: '',
-            searchName: '',
-            members: {
-                data: []
-            }
+            focusedFlag: false
         }
     },
     apollo: {
-        members: {
-            query: gql`query MembersSearch($name: String, $hasClubs: QueryMembersSearchHasClubsWhereHasConditions, $excludeMembers: [Int!], $version: String){
-                      membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }) {
+        memberSearchTeamFight: {
+            query: gql`
+                query memberSearchTeamFight($name: String!, $squadId: Int!, $gender : [Gender!]){
+                    memberSearchTeamFight(name: $name, squadId: $squadId, gender: $gender){
+                        data{
+                            id
+                            name
+                            gender
+                            refId
+                            isInSquad
+                            points{
+                                points
+                                position
+                                category
+                                vintage
+                            }
+                        }
+                    }
+                }
+            `,
+            variables(){
+                return {
+                    name: '%' + this.querySearchName + '%',
+                    squadId: parseInt(this.squad.id),
+                    gender: resolveGenderFromCategory(this.category.category)
+                }
+            },
+            fetchPolicy: "network-only",
+            result({data}){
+                 this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
+            },
+            skip() {
+                return !this.focusedFlag
+            }
+        },
+        membersSearch: {
+            query: gql`query membersSearch($name: String, $hasClubs: QueryMembersSearchHasClubsWhereHasConditions, $excludeMembers: [Int!], $version: String, $gender: [Gender!]){
+                      membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }, gender: $gender) {
                         data {
                           id
                           name
@@ -89,22 +145,18 @@ export default {
                             vintage
                           }
                         }
-                        paginatorInfo {
-                          count
-                          total
-                        }
                       }
                     }
                 `,
             fetchPolicy: "network-only",
             skip() {
-                return this.searchName === ''
+                return !this.focusedFlag
             },
-            update: data => data.membersSearch,
             variables() {
                 let params = {
-                    name: '%' + this.searchName + '%',
+                    name: '%' + this.querySearchName + '%',
                     excludeMembers: this.excludePlayers.map(member => member.id),
+                    gender: resolveGenderFromCategory(this.category.category)
                 }
                 if (!!this.version) {
                     params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
@@ -117,20 +169,11 @@ export default {
                     }
                 }
                 return params
+            },
+            result({data}){
+                this.memberSearchResult = data.membersSearch.data
             }
         }
     }
 }
 </script>
-
-<style scoped>
-.round-concers {
-    border-radius: 25px;
-    border: 2px solid #73AD21;
-    padding: 20px;
-}
-
-.border {
-    border: 2px solid #73AD21;
-}
-</style>

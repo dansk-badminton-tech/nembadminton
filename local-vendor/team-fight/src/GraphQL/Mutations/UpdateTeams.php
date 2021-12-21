@@ -128,10 +128,7 @@ class UpdateTeams
             $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
             $team->saveOrFail();
 
-            // Clear all squads
-            $team->squads()->delete();
-
-            $squads = $args['squads'] ?? [];
+            $squads = $args['squads'];
             /** @var Squad[] $squads */
             $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
             $this->squadManager->addSquads($squads, $team);

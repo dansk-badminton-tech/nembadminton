@@ -3,6 +3,7 @@ extend type Query{
         name: String @where(operator: "like"),
         hasClubs: _ @whereHasConditions(columns: ["id"]),
         excludeMembers: [Int!] @notIn(key: "id"),
+        gender: [Gender!] @in,
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
     memberSearchPoints(
@@ -13,6 +14,11 @@ extend type Query{
         onTeamSquad: String
         rankingList: MemberSearchOrderBy = WOMEN_LEVEL
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder")
+    memberSearchTeamFight(
+        name: String!
+        squadId: Int!
+        gender: [Gender!]
+    ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder")
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
         orderBy: _ @orderBy(columns: ["name1"])
@@ -21,6 +27,11 @@ extend type Query{
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
     clubs: [Club!]! @all(scopes: ["OrderByName"])
     logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
+}
+
+enum Gender {
+    MEN @enum(value: "M")
+    WOMEN @enum(value: "K")
 }
 
 enum MemberSearchOrderBy {

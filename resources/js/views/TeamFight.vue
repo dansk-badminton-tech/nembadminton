@@ -84,7 +84,7 @@
                            @end="saveAndValidate"
                            :playing-to-high="playingToHighList"
                            :playing-to-high-in-squad="playingToHighSquadList"
-                           :teams="team.squads"
+                           :squads="team.squads"
                            :teams-base-validations="validateBasicSquads"
                            :version="new Date(version)"
                            :club-id="team.club.id"/>
@@ -253,11 +253,12 @@ export default {
                         playerLimit
                         league
                         categories{
+                            id
                             category
                             name
                             players{
-                                gender
                                 id
+                                gender
                                 name
                                 refId
                                 points{
@@ -332,7 +333,8 @@ export default {
             })
         },
         wrapInTeamAndSquads(squads){
-            return omitDeep(squads, ['__typename', 'cancellations']).map((squad) => ({
+            const squadsClone = JSON.parse(JSON.stringify(squads));
+            return omitDeep(squadsClone, ['__typename', 'cancellations', 'isInSquad']).map((squad) => ({
                 name: 'Team X',
                 squad: squad
             }))
@@ -629,6 +631,28 @@ export default {
                             name
                             gameDate
                             version
+                            squads{
+                                id
+                                playerLimit
+                                league
+                                categories{
+                                    id
+                                    category
+                                    name
+                                    players{
+                                        gender
+                                        id
+                                        name
+                                        refId
+                                        points{
+                                            category
+                                            points
+                                            position
+                                            vintage
+                                        }
+                                    }
+                                }
+                            }
                           }
                         }
                     `,

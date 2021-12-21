@@ -38,4 +38,9 @@ class SquadMember extends Model
     {
         return $this->belongsTo(SquadCategory::class, 'squad_category_id');
     }
+
+    public function getIsInSquad(): bool
+    {
+        return true;
+    }
 }

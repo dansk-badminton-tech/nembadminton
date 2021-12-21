@@ -24,7 +24,7 @@
             <b-input v-model="searchPlayer"></b-input>
         </b-field>
         <div class="columns is-multiline">
-            <TeamTable :search="this.searchPlayer" :teams="this.team.squads" :viewMode="true"/>
+            <TeamTable :search="this.searchPlayer" :squads="this.team.squads" :viewMode="true"/>
         </div>
 
     </fragment>
