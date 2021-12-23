@@ -32,7 +32,7 @@ class SquadMemberSearch
 
         $gender = $args['gender'] ?? null;
         if ($gender !== null){
-            $builder->where('gender', '=', $gender);
+            $builder->whereIn('gender', $gender);
         }
 
         return $builder;

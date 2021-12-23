@@ -14,6 +14,7 @@ use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
+use Illuminate\Support\Arr;
 
 class SquadManager
 {
@@ -37,6 +38,22 @@ class SquadManager
             }
             $squad->categories()->delete();
             $this->createCategories($squadInput->categories, $squad);
+        }
+    }
+
+    /**
+     * @param  Squad[]  $squads
+     * @param  Teams  $team
+     *
+     * @throws \Throwable
+     */
+    public function removeSquads(array $squads, Teams $team): void
+    {
+        $shouldExistsIds = array_map('intval', Arr::pluck($squads, 'id'));
+        foreach ($team->squads as $squad){
+            if(!in_array($squad->id, $shouldExistsIds, true)){
+                $squad->deleteOrFail();
+            }
         }
     }
 

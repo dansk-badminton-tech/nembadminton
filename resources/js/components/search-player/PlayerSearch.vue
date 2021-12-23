@@ -2,7 +2,7 @@
     <div>
         <b-field>
             <b-autocomplete
-                v-model="querySearchName"
+                @input="searchMembers"
                 :open-on-focus="true"
                 :clear-on-select="true"
                 :clearable="true"

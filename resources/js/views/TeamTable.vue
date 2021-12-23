@@ -17,14 +17,14 @@
                                 <b-button
                                     :icon-right="active ? 'angle-up' : 'angle-down'"/>
                             </template>
-                            <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="squad.league = 'OTHER'"
+                            <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
                                              aria-role="listitem">Sæt som "andet" hold
                             </b-dropdown-item>
                             <b-dropdown-item :disabled="squad.league === 'FIRSTDIVISION'"
-                                             @click="squad.league = 'FIRSTDIVISION'" aria-role="listitem">Sæt som 1.
+                                             @click="setSquadLeague(squad,'FIRSTDIVISION')" aria-role="listitem">Sæt som 1.
                                 division hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="squad.league = 'LIGA'"
+                            <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
                             <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt
@@ -136,6 +136,10 @@ export default {
         }
     },
     methods: {
+        setSquadLeague(squad, league){
+            squad.league = league
+            this.$root.$emit('teamtable.changedSquadLeague');
+        },
         emitEnd(evt) {
             this.$emit('end', evt)
         },

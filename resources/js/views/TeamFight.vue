@@ -293,6 +293,10 @@ export default {
         }
     },
     mounted() {
+        this.$root.$on('teamtable.changedSquadLeague', () => {
+            this.saveTeams()
+            this.validate()
+        })
         this.$root.$on('playersearch.addMemberToCategory', () => {
             this.saveTeams()
             this.validate()
