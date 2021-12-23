@@ -35,6 +35,9 @@
                  backend-pagination
                  paginated
                  @page-change="onPageChange">
+            <b-table-column v-slot="props" field="points" label="Points">
+                {{ props.row.latestLevelPoints }}
+            </b-table-column>
             <b-table-column v-slot="props" field="points" label="Position">
                 {{ props.row.latestLevelPosition }}
             </b-table-column>
@@ -43,9 +46,6 @@
             </b-table-column>
             <b-table-column v-slot="props" field="refId" label="Badminton ID">
                 {{ props.row.refId }}
-            </b-table-column>
-            <b-table-column v-slot="props" field="points" label="Points">
-                {{ props.row.latestLevelPoints }}
             </b-table-column>
             <b-table-column v-slot="props" label="">
                 <b-button :to="'/player-stats/'+props.row.refId" size="is-small" tag="router-link" type="is-link">Stats</b-button>
