@@ -35,8 +35,8 @@
                  backend-pagination
                  paginated
                  @page-change="onPageChange">
-            <b-table-column v-slot="props" field="id" label="ID" width="40">
-                {{ props.row.id }}
+            <b-table-column v-slot="props" field="points" label="Position">
+                {{ props.row.latestLevelPosition }}
             </b-table-column>
             <b-table-column v-slot="props" field="name" label="Navn">
                 {{ props.row.name }}
@@ -44,8 +44,8 @@
             <b-table-column v-slot="props" field="refId" label="Badminton ID">
                 {{ props.row.refId }}
             </b-table-column>
-            <b-table-column v-slot="props" field="points" label="Niveau Position">
-                {{ levelPoints(props.row.points, 'category')["null"][0].position }}
+            <b-table-column v-slot="props" field="points" label="Points">
+                {{ props.row.latestLevelPoints }}
             </b-table-column>
             <b-table-column v-slot="props" label="">
                 <b-button :to="'/player-stats/'+props.row.refId" size="is-small" tag="router-link" type="is-link">Stats</b-button>
@@ -67,7 +67,7 @@ export default {
     apollo: {
         clubStats: {
             query: gql`
-                query{
+                query clubStats{
                     clubStats{
                         players
                         womenPlayers
@@ -78,7 +78,7 @@ export default {
         },
         me: {
             query: gql`
-                query{
+                query me{
                     me{
                         id
                         club{
@@ -89,7 +89,7 @@ export default {
         },
         members: {
             query: gql`
-                query($page: Int!, $name: String, $orderBy: [QueryMembersOrderByOrderByClause!]){
+                query members($page: Int, $name: String, $orderBy: [QueryMembersOrderByOrderByClause!]){
                     members(page: $page, name: $name, orderBy: $orderBy){
                         paginatorInfo{
                           total
@@ -98,11 +98,9 @@ export default {
                           id
                           name
                           refId
-                          points{
-                            points
-                            position
-                            category
-                          }
+                          latestLevelPoints
+                          latestLevelPosition
+                          latestLevelVersion
                         }
                       }
                 }
@@ -110,7 +108,7 @@ export default {
             variables() {
                 return {
                     name: '%' + this.name + '%',
-                    orderBy: [{column: 'NAME', order: 'ASC'}],
+                    orderBy: [{column: 'LATEST_LEVEL_POINTS', order: 'DESC'}],
                     page: this.page
                 }
             }

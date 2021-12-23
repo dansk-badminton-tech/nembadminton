@@ -131,8 +131,8 @@ export default {
             }
         },
         membersSearch: {
-            query: gql`query membersSearch($name: String, $hasClubs: QueryMembersSearchHasClubsWhereHasConditions, $excludeMembers: [Int!], $version: String, $gender: [Gender!]){
-                      membersSearch(name: $name, hasClubs: $hasClubs, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }, gender: $gender) {
+            query: gql`query membersSearch($name: String, $excludeMembers: [Int!], $version: String, $gender: [Gender!]){
+                      membersSearch(name: $name, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }, gender: $gender) {
                         data {
                           id
                           name
@@ -160,13 +160,6 @@ export default {
                 }
                 if (!!this.version) {
                     params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
-                }
-                if (this.clubId) {
-                    params.hasClubs = {
-                        column: "ID",
-                        operator: "EQ",
-                        value: this.clubId
-                    }
                 }
                 return params
             },

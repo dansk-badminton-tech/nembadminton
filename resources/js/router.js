@@ -38,7 +38,7 @@ const router = new VueRouter(
                         name: 'team-fight-dashboard',
                         component: () => import("./views/TeamFightList"),
                         meta: {
-                            title: 'Holdkamps oversigt'
+                            title: 'Holdkampe'
                         }
                     },
                     {
@@ -120,7 +120,7 @@ const router = new VueRouter(
                         component: () => import("./views/check-team-fight/CheckTeamFight"),
                         meta: {
                             allowAnonymous: false,
-                            title: 'Tjek holdkamps runde'
+                            title: 'Tidligere holdkampe'
                         }
                     }
                 ]

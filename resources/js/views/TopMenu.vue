@@ -1,22 +1,22 @@
 <template>
     <b-navbar class="container">
-        <template slot="brand">
+        <template v-if="!$apollo.loading && me === undefined" slot="brand">
             <b-navbar-item :to="{ path: '/' }" tag="router-link">
                 <b-icon icon="home" size="is-large"></b-icon>
             </b-navbar-item>
         </template>
-        <template slot="start">
+        <template slot="start" v-if="!$apollo.loading && me !== undefined">
             <b-navbar-item :to="{ path: '/my-club' }" tag="router-link">
-                <b-icon icon="hand-rock"></b-icon>
-                <span class="nav-item-span">Klubben</span>
+                <b-icon icon="home" size="is-medium"></b-icon>
+                <span class="nav-item-span">Min klub</span>
             </b-navbar-item>
             <b-navbar-item :to="{ path: '/team-fight/dashboard' }" tag="router-link">
-                <b-icon icon="hand-rock"></b-icon>
+                <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
             <b-navbar-item :to="{ path: '/team-fight/check' }" tag="router-link">
-                <b-icon icon="hand-rock"></b-icon>
-                <span class="nav-item-span">Tidligere Holdkampe</span>
+                <b-icon icon="step-backward" size="is-medium"></b-icon>
+                <span class="nav-item-span">Tidligere holdkampe</span>
             </b-navbar-item>
         </template>
         <template slot="end">
