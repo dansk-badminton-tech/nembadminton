@@ -109,6 +109,8 @@ type Squad {
     league: LeagueType
     "Categories"
     categories: [SquadCategory!]!
+    "Order"
+    order: Int!
 }
 
 type Teams {

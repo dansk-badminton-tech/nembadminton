@@ -78,7 +78,6 @@
                 <h1 class="title">Holdet</h1>
                 <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
                 <TeamTable :confirm-delete="deleteTeam"
-                           :copy-player="copyPlayer"
                            :delete-player="deletePlayer"
                            :move="move"
                            @end="saveAndValidate"
@@ -295,15 +294,12 @@ export default {
     mounted() {
         this.$root.$on('teamtable.changedSquadLeague', () => {
             this.saveTeams()
-            this.validate()
         })
         this.$root.$on('playersearch.addMemberToCategory', () => {
             this.saveTeams()
-            this.validate()
         })
         this.$root.$on('teamfight.deletedMemberFromCategory', () => {
             this.saveTeams()
-            this.validate()
         })
     },
     methods: {
@@ -515,10 +511,6 @@ export default {
             category.players.splice(category.players.indexOf(player), 1)
             this.$root.$emit('teamfight.deletedMemberFromCategory')
         },
-        copyPlayer(category, player) {
-            category.players.push(Object.assign({}, player))
-            this.saveTeams()
-        },
         deleteTeam(team) {
             this.$buefy.dialog.confirm(
                 {
@@ -673,6 +665,7 @@ export default {
                 })
                 .then(({data}) => {
                     this.$root.$emit('teamfight.teamSaved')
+                    this.validate()
                     this.saving = false;
                     this.savingIcon = 'check';
                     setTimeout(() => {

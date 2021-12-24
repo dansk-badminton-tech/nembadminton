@@ -25,16 +25,16 @@ class SquadManager
      *
      * @throws \Throwable
      */
-    public function addSquads(array $squads, Teams $team): void
+    public function addOrUpdateSquads(array $squads, Teams $team): void
     {
-        foreach ($squads as $squadInput) {
+        foreach ($squads as $index => $squadInput) {
             $squad = SquadModel::query()->find($squadInput->id);
             if($squad === null){
-                $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league]);
+                $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
                 $squad->forceFill(['teams_id' => $team->id]);
                 $squad->saveOrFail();
             }else{
-                $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league]);
+                $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
             }
             $squad->categories()->delete();
             $this->createCategories($squadInput->categories, $squad);

@@ -69,8 +69,6 @@
                             <div class="buttons is-pulled-right">
                                 <b-button size="is-small" title="Slet" icon-right="times-circle"
                                           @click="deletePlayer(category, player)"></b-button>
-                                <b-button size="is-small" title="Kopier spiller" icon-right="copy"
-                                          @click="copyPlayer(category, player)"></b-button>
                             </div>
                         </div>
                         <PlayerSearch
@@ -113,7 +111,6 @@ export default {
         move: Function,
         playerMove: Function,
         deletePlayer: Function,
-        copyPlayer: Function,
         playingToHigh: {
             type: Array,
             default: []

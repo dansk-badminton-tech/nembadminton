@@ -132,7 +132,7 @@ class UpdateTeams
             /** @var Squad[] $squads */
             $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
             $this->squadManager->removeSquads($squads, $team);
-            $this->squadManager->addSquads($squads, $team);
+            $this->squadManager->addOrUpdateSquads($squads, $team);
 
             return $team;
         });

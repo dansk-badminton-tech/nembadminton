@@ -51,7 +51,7 @@ class Teams extends Model
 
     public function squads() : hasMany
     {
-        return $this->hasMany(Squad::class);
+        return $this->hasMany(Squad::class)->orderBy('order');
     }
 
 }
