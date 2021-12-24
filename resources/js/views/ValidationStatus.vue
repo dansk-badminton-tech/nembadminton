@@ -47,13 +47,13 @@ export default {
             return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Fejl' : 'OK'))
         },
         invalidCategoryTip() {
-            return (this.invalidCategory === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidCategory ? 'Overholder § 38. stk. 4-5. i Holdturneringsreglement' : 'Bryder § 38. stk. 4-5. i Holdturneringsreglement'))
+            return this.invalidCategory === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidCategory ? 'Bryder § 38. stk. 4-5. i Holdturneringsreglement' : 'Overholder § 38. stk. 4-5. i Holdturneringsreglement')
         },
         invalidCategoryText() {
             return (this.invalidCategory === null ? '-' : (this.invalidCategory ? 'Fejl' : 'OK'))
         },
         invalidLevelTip() {
-            return (this.invalidLevel === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidLevel ? 'Overholder § 38. stk. 1-3. i Holdturneringsreglement' : 'Bryder § 38. stk. 1-3. i Holdturneringsreglement'))
+            return (this.invalidLevel === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidLevel ? 'Bryder § 38. stk. 1-3. i Holdturneringsreglement' : 'Overholder § 38. stk. 1-3. i Holdturneringsreglement'))
         },
         invalidLevelText() {
             return (this.invalidLevel === null ? '-' : (this.invalidLevel ? 'Fejl' : 'OK'))
