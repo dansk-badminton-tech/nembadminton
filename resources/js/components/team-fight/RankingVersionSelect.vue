@@ -1,5 +1,5 @@
 <template>
-    <b-select v-model="version" :expanded="expanded" placeholder="Vælge rangliste">
+    <b-select @focus="onFocus" v-model="version" :expanded="expanded" placeholder="Vælge rangliste">
         <option
             v-for="version in rankingVersions"
             :key="version"
@@ -15,7 +15,12 @@ import gql from 'graphql-tag'
 
 export default {
     name: "RankingVersionSelect",
-    props: ['value', 'expanded'],
+    props: ['value', 'expanded', 'afterChange'],
+    methods: {
+        onFocus(){
+            this.$emit('focus')
+        }
+    },
     computed: {
         version: {
             get() {
@@ -23,6 +28,7 @@ export default {
             },
             set(newValue) {
                 this.$emit('input', newValue);
+                this.$emit('change', newValue, this.value)
             }
         }
     },

@@ -13,10 +13,6 @@
                 <b-icon icon="brain"></b-icon>
                 Validere hold
             </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                <b-icon icon="brain"></b-icon>
-                Update player points
-            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                 <b-icon icon="trash"></b-icon>
                 Slet holdet
@@ -52,7 +48,7 @@
             </div>
             <div class="column">
                 <b-field label="Rangliste">
-                    <RankingVersionSelect v-model="version" expanded></RankingVersionSelect>
+                    <RankingVersionSelect @focus="oldVersion = version" v-model="version" @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
                 </b-field>
             </div>
             <div class="column">
@@ -235,6 +231,7 @@ export default {
             shareUrl: '',
             gameDate: new Date(),
             version: null,
+            oldVersion: null,
             savingIcon: 'save',
             team: {
                 squads: [],
@@ -339,10 +336,23 @@ export default {
                 squad: squad
             }))
         },
+        confirmChangeOfRankingList(newVersion){
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene skal opdateres til den nye rangliste.',
+                    confirmText: 'Skift og opdater spillere',
+                    onConfirm: () => {
+                        this.updateToRankingList()
+                    },
+                    onCancel: () => {
+                        this.version = this.oldVersion
+                    }
+                })
+        },
         updateToRankingList() {
             this.updating = true;
             let version = this.version;
-            this.$apollo.mutate(
+            return this.$apollo.mutate(
                 {
                     mutation: gql`
                         mutation ($id: ID!, $version: String!){
