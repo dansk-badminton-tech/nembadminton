@@ -18,6 +18,32 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
+    public function useCase5(): void
+    {
+        // https://github.com/flycompanytech/holdkamp-project/issues/31
+        $data = require __DIR__.'/CrossSquadsUseCases/usecase5.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateCrossSquads(input: $input) {
+                refId
+                name
+                category
+              }
+            }
+        ',
+            $data
+        )->assertExactJson([
+            'data' => [
+                'validateCrossSquads' => []
+            ]
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function useCase4(): void
     {
         // https://github.com/flycompanytech/holdkamp-project/issues/30

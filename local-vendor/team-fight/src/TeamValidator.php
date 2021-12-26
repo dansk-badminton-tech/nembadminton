@@ -34,22 +34,24 @@ class TeamValidator
         if ($count !== 2) {
             throw new \RuntimeException('There must be two teams for league + 1 div validation');
         }
-        [$leagueTeamSquad, $firstDivSquad] = $squads;
-        $firstDivSquad = new Collection($firstDivSquad);
-        $firstDivPlayers = (new Collection($firstDivSquad->get('categories')))->pluck('players')->flatten(1)->unique(
+        [$upperTeam, $lowerTeam] = $squads;
+        $lowerTeam = new Collection($lowerTeam);
+        $lowerTeamPlayers = (new Collection($lowerTeam->get('categories')))->pluck('players')->flatten(1)->unique(
             'refId'
         );
 
         $totalHits = new Collection();
-        /** @var Player[] $firstDivPlayers */
-        foreach ($firstDivPlayers as $divPlayer) {
-            if(!$this->isYoungPlayer($divPlayer)){
-                $hits = $this->compareEveryPlayerInEveryCategory($leagueTeamSquad, $divPlayer);
-                $totalHits->put($divPlayer->refId, $hits);
+        /** @var Player[] $lowerTeamPlayers */
+        foreach ($lowerTeamPlayers as $lowerPlayer) {
+            if (!$this->isYoungPlayer($lowerPlayer)) {
+                $hits = $this->compareEveryPlayerInEveryCategory($upperTeam, $lowerPlayer);
+                $totalHits->put($lowerPlayer->refId, $hits);
             }
         }
 
         $conflicts = new Collection();
+
+        //dd($totalHits);
 
         /** @var Collection[] $totalHits */
         foreach ($totalHits as $hits) {
@@ -76,44 +78,48 @@ class TeamValidator
         return $conflicts;
     }
 
-    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $divPlayer): Collection
+    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $belowPlayer): Collection
     {
         $limit = 50;
         $hit = new Collection();
         foreach ($leagueSquad->categories as $leagueCategory) {
-            foreach ($leagueCategory->players as $leaguePlayer) {
-                if ($leaguePlayer->gender !== $divPlayer->gender || $this->isYoungPlayer($leaguePlayer)) {
+            foreach ($leagueCategory->players as $abovePlayer) {
+                if ($abovePlayer->gender !== $belowPlayer->gender || $this->isYoungPlayer($abovePlayer)) {
                     continue;
                 }
+
                 try {
-                    $divPlayerCategoryPoint = $this->getPlayerCategoryPoint($divPlayer, $leagueCategory->category);
-                    $leaguePlayerCategoryPoint = $this->getPlayerCategoryPoint(
-                        $leaguePlayer,
-                        $leagueCategory->category
-                    );
-                    $balance = $leaguePlayerCategoryPoint - $divPlayerCategoryPoint + $limit;
-                    if ($hit->has($leaguePlayer->refId)) {
-                        $hit->get($leaguePlayer->refId)->push([
-                            'balance' => $balance,
-                            'category' => $leagueCategory->category,
-                            'source' => $divPlayer,
-                            'target' => $leaguePlayer
-                        ]);
-                    } else {
-                        $hit->put(
-                            $leaguePlayer->refId,
-                            new Collection([
-                                [
-                                    'balance' => $balance,
-                                    'category' => $leagueCategory->category,
-                                    'source' => $divPlayer,
-                                    'target' => $leaguePlayer
-                                ]
-                            ])
-                        );
-                    }
+                    $belowPlayerCategoryPoint = $this->getPlayerCategoryPoint($belowPlayer, $leagueCategory->category);
                 } catch (PointNotFoundInCategoryException $categoryException) {
-                    // We will allow a player is not placed on the ranking list
+                    $belowPlayerCategoryPoint = null;
+                }
+                    $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($abovePlayer, $leagueCategory->category);
+
+                // If below player is not placed in the category ranking it is marked as valid
+                if ($belowPlayerCategoryPoint === null) {
+                    $balance = 0;
+                } else {
+                    $balance = $abovePlayerCategoryPoint - $belowPlayerCategoryPoint + $limit;
+                }
+                if ($hit->has($abovePlayer->refId)) {
+                    $hit->get($abovePlayer->refId)->push([
+                        'balance' => $balance,
+                        'category' => $leagueCategory->category,
+                        'source' => $belowPlayer,
+                        'target' => $abovePlayer
+                    ]);
+                } else {
+                    $hit->put(
+                        $abovePlayer->refId,
+                        new Collection([
+                            [
+                                'balance' => $balance,
+                                'category' => $leagueCategory->category,
+                                'source' => $belowPlayer,
+                                'target' => $abovePlayer
+                            ]
+                        ])
+                    );
                 }
             }
         }
@@ -381,42 +387,42 @@ class TeamValidator
     /**
      * @param  array|Squad[]  $squads
      */
-    public function validateBasicSquads(array $squads) : Collection
+    public function validateBasicSquads(array $squads): Collection
     {
         $entries = new Collection();
         foreach ($squads as $index => $squad) {
             $validt = true;
             foreach ($squad->categories as $category) {
                 if ($category->isMixDouble()) {
-                    if($category->amountOfMenPlayers() !== 1 || $category->amountOfWomenPlayers() !== 1){
+                    if ($category->amountOfMenPlayers() !== 1 || $category->amountOfWomenPlayers() !== 1) {
                         $validt = false;
                     }
                 } elseif ($category->isMensDouble()) {
-                    if($category->amountOfMenPlayers() !== 2){
+                    if ($category->amountOfMenPlayers() !== 2) {
                         $validt = false;
                     }
                 } elseif ($category->isWomensDouble()) {
-                    if($category->amountOfWomenPlayers() !== 2){
+                    if ($category->amountOfWomenPlayers() !== 2) {
                         $validt = false;
                     }
                 } elseif ($category->isMenSingle()) {
-                    if($category->amountOfMenPlayers() !== 1){
+                    if ($category->amountOfMenPlayers() !== 1) {
                         $validt = false;
                     }
                 } elseif ($category->isWomenSingle()) {
-                    if($category->amountOfWomenPlayers() !== 1){
+                    if ($category->amountOfWomenPlayers() !== 1) {
                         $validt = false;
                     }
-                }else{
+                } else {
                     throw new \RuntimeException('Unknown category');
                 }
             }
 
             $foundOnlyOne = null;
-            if(in_array($squad->playerLimit, [10, 8])){
+            if (in_array($squad->playerLimit, [10, 8])) {
                 $players = (new Collection(Arr::pluck($squad->categories, 'players')))->flatten(1);
                 $playersByRefId = $players->groupBy('refId');
-                $foundOnlyOne = $playersByRefId->first(static function(Collection $players){
+                $foundOnlyOne = $playersByRefId->first(static function (Collection $players) {
                     return $players->count() !== 2;
                 });
             }
@@ -435,9 +441,10 @@ class TeamValidator
      */
     private function hasYoungPlayer(array $players): bool
     {
-        foreach ($players as $player){
-            foreach ($player->points as $point){
-                if($point->vintage !== null && $point->vintage !== '' && in_array(strtoupper($point->vintage), ['U17', 'U19'])){
+        foreach ($players as $player) {
+            foreach ($player->points as $point) {
+                if ($point->vintage !== null && $point->vintage !== '' && in_array(strtoupper($point->vintage),
+                        ['U17', 'U19'])) {
                     return true;
                 }
             }
@@ -470,7 +477,10 @@ class TeamValidator
             foreach ($pairsInCategory as $abovePair) {
                 $abovePairsPoints = $this->getPairPoints($abovePair, $category);
                 [$player1, $player2] = $abovePair;
-                if (($belowPairsPoints > $abovePairsPoints + $limitDouble) && (!$this->hasYoungPlayer([$belowPair[0], $belowPair[1]]) || $this->hasYoungPlayer([$player1, $player2]))) {
+                if (($belowPairsPoints > $abovePairsPoints + $limitDouble) && (!$this->hasYoungPlayer([
+                            $belowPair[0],
+                            $belowPair[1]
+                        ]) || $this->hasYoungPlayer([$player1, $player2]))) {
                     $playingToHigh = $this->addOrAppend($playingToHigh, [
                         'id' => $player1->id ?? 0,
                         'refId' => $player1->refId,
@@ -552,7 +562,8 @@ class TeamValidator
                             'category' => $category,
                             'gender' => $abovePlayer->gender,
                             'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
-                            'hasYouthPlayerPartner' => false, // Always false because its single and you don't have a partner in singles
+                            'hasYouthPlayerPartner' => false,
+                            // Always false because its single and you don't have a partner in singles
                             'belowPlayer' => [
                                 [
                                     'id' => $belowPlayer->id ?? 0,
