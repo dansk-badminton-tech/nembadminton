@@ -41,7 +41,7 @@ export default {
     apollo: {
         logs: {
             query: gql`
-                query($page: Int!){
+                query logs($page: Int!){
                     logs(page: $page){
                         paginatorInfo{
                             total

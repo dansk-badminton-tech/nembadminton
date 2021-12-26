@@ -68,6 +68,26 @@ export function isYoungPlayer(player, category) {
     return false;
 }
 
+export function resolveGenderFromCategoryShort(category){
+    if(['HS', 'HD'].includes(category.toUpperCase())){
+        return 'M'
+    }
+    if(['DS', 'DD'].includes(category.toUpperCase())){
+        return 'K'
+    }
+    return null
+}
+
+export function resolveGenderFromCategory(category){
+    if(['HS', 'HD'].includes(category.toUpperCase())){
+        return ['MEN']
+    }
+    if(['DS', 'DD'].includes(category.toUpperCase())){
+        return ['WOMEN']
+    }
+    return ['MEN', 'WOMEN']
+}
+
 export function convertRankingToCategory(categoryEnum){
     if(categoryEnum === 'MEN_LEVEL' || categoryEnum === 'WOMEN_LEVEL' || categoryEnum === 'ALL_LEVEL'){
         return null

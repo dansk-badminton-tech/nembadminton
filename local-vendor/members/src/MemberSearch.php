@@ -7,14 +7,20 @@ namespace FlyCompany\Members;
 use App\Models\Member;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MemberSearch
 {
 
-    public function searchBuilder($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    /**
+     * @param $root
+     * @param  array  $args
+     * @param  GraphQLContext  $context
+     * @param  ResolveInfo  $resolveInfo
+     * @return Builder
+     */
+    public function searchBuilder($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Builder
     {
         $version = $args['version'] ?? null;
         $builder = Member::query();

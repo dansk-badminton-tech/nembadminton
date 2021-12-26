@@ -81,30 +81,36 @@ class UpdateTeams
         $teamId = $args['id'];
         $version = $args['version'];
 
-        /** @var SquadMember[] $members */
-        $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($context, $teamId) {
-            $builder->where('id', $teamId);
-            $builder->where('user_id', $context->user()->getAuthIdentifier());
-        })->get();
+        DB::transaction(function() use ($teamId, $version, $context) {
+            $team = $this->getTeamOrFail($context, $teamId);
+            $team->fill(['version' => $version]);
+            $team->saveOrFail();
 
-        foreach ($members as $member) {
-            $member->points()->delete();
-            /** @var Point[] $points */
-            $points = Point::query()
-                           ->where('version', $version)
-                           ->whereHas('member', function (Builder $query) use ($member) {
-                               $query->where('refId', $member->member_ref_id);
-                           })->get();
-            foreach ($points as $point) {
-                $squadPoint = new SquadPoint();
-                $squadPoint->position = $point->position;
-                $squadPoint->category = $point->category;
-                $squadPoint->points = $point->points;
-                $squadPoint->vintage = $point->vintage;
-                $squadPoint->squad_member_id = $member->id;
-                $squadPoint->saveOrFail();
+            /** @var SquadMember[] $members */
+            $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($context, $teamId) {
+                $builder->where('id', $teamId);
+                $builder->where('user_id', $context->user()->getAuthIdentifier());
+            })->get();
+
+            foreach ($members as $member) {
+                $member->points()->delete();
+                /** @var Point[] $points */
+                $points = Point::query()
+                               ->where('version', $version)
+                               ->whereHas('member', function (Builder $query) use ($member) {
+                                   $query->where('refId', $member->member_ref_id);
+                               })->get();
+                foreach ($points as $point) {
+                    $squadPoint = new SquadPoint();
+                    $squadPoint->position = $point->position;
+                    $squadPoint->category = $point->category;
+                    $squadPoint->points = $point->points;
+                    $squadPoint->vintage = $point->vintage;
+                    $squadPoint->squad_member_id = $member->id;
+                    $squadPoint->saveOrFail();
+                }
             }
-        }
+        });
 
         return true;
     }
@@ -121,22 +127,29 @@ class UpdateTeams
     public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
     {
         return DB::transaction(function() use ($args, $context) {
-            /** @var Teams $team */
-            $team = Teams::query()
-                         ->where('user_id', $context->user()->getAuthIdentifier())
-                         ->where('id', $args['id'])->lockForUpdate()->firstOrFail();
+            $team = $this->getTeamOrFail($context, $args['id']);
             $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
             $team->saveOrFail();
 
-            // Clear all squads
-            $team->squads()->delete();
-
-            $squads = $args['squads'] ?? [];
+            $squads = $args['squads'];
             /** @var Squad[] $squads */
             $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
-            $this->squadManager->addSquads($squads, $team);
+            $this->squadManager->removeSquads($squads, $team);
+            $this->squadManager->addOrUpdateSquads($squads, $team);
 
             return $team;
         });
+    }
+
+    /**
+     * @param  GraphQLContext  $context
+     * @param  mixed  $teamId
+     * @return Teams
+     */
+    private function getTeamOrFail(GraphQLContext $context, string $teamId): Teams
+    {
+        return Teams::query()
+            ->where('user_id', $context->user()->getAuthIdentifier())
+            ->where('id', $teamId)->lockForUpdate()->firstOrFail();
     }
 }

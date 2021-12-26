@@ -10,6 +10,7 @@
                     icon="calendar-alt"
                     placeholder="Klik for at vælge dato..."
                     locale="da-DK"
+                    :first-day-of-week="1"
                     trap-focus>
                 </b-datepicker>
             </b-field>

@@ -14,6 +14,7 @@ use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
+use Illuminate\Support\Arr;
 
 class SquadManager
 {
@@ -24,13 +25,35 @@ class SquadManager
      *
      * @throws \Throwable
      */
-    public function addSquads(array $squads, Teams $team): void
+    public function addOrUpdateSquads(array $squads, Teams $team): void
     {
-        foreach ($squads as $squadInput) {
-            $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league]);
-            $squad->forceFill(['teams_id' => $team->id]);
-            $squad->saveOrFail();
+        foreach ($squads as $index => $squadInput) {
+            $squad = SquadModel::query()->find($squadInput->id);
+            if($squad === null){
+                $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
+                $squad->forceFill(['teams_id' => $team->id]);
+                $squad->saveOrFail();
+            }else{
+                $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
+            }
+            $squad->categories()->delete();
             $this->createCategories($squadInput->categories, $squad);
+        }
+    }
+
+    /**
+     * @param  Squad[]  $squads
+     * @param  Teams  $team
+     *
+     * @throws \Throwable
+     */
+    public function removeSquads(array $squads, Teams $team): void
+    {
+        $shouldExistsIds = array_map('intval', Arr::pluck($squads, 'id'));
+        foreach ($team->squads as $squad){
+            if(!in_array($squad->id, $shouldExistsIds, true)){
+                $squad->deleteOrFail();
+            }
         }
     }
 

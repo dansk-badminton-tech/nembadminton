@@ -1,26 +1,35 @@
 extend type Query{
     membersSearch(
         name: String @where(operator: "like"),
-        hasClubs: _ @whereHasConditions(columns: ["id"]),
         excludeMembers: [Int!] @notIn(key: "id"),
+        gender: [Gender!] @in,
         orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints", "myClub"])
     memberSearchPoints(
-        hasClubs: _ @whereHasConditions(columns: ["id"]),
         version: String
         name: String @where(operator: "like")
         hasCancellation: _ @whereHasConditions(relation: "cancellations", columns: ["teamId"])
         onTeamSquad: String
         rankingList: MemberSearchOrderBy = WOMEN_LEVEL
-    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder")
+    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchBuilder", scopes: ["myClub"])
+    memberSearchTeamFight(
+        name: String!
+        squadId: Int!
+        gender: [Gender!]
+    ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder", scopes: ["myClub"])
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
         orderBy: _ @orderBy(columns: ["name1"])
     ): [Club!]! @paginate(defaultCount: 10)
-    members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name"])): [Member!]! @guard @paginate(defaultCount: 20, scopes: ["myClub"])
+    members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name", "latest_level_points"])): [MemberWithLatestPoints!]! @guard @paginate(defaultCount: 20, model: "FlyCompany\\Members\\Models\\MemberWithLatestPoints", scopes: ["myClub"])
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
     clubs: [Club!]! @all(scopes: ["OrderByName"])
     logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
+}
+
+enum Gender {
+    MEN @enum(value: "M")
+    WOMEN @enum(value: "K")
 }
 
 enum MemberSearchOrderBy {
@@ -43,6 +52,16 @@ type Log {
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
     createdAt: DateTime @rename(attribute: "created_at")
+}
+
+type MemberWithLatestPoints {
+    id: ID!
+    refId: String!
+    name: String!
+    gender: String!
+    latestLevelPoints: Int @rename(attribute: "latest_level_points")
+    latestLevelPosition: Int @rename(attribute: "latest_level_position")
+    latestLevelVersion: Date @rename(attribute: "latest_level_version")
 }
 
 type Member {

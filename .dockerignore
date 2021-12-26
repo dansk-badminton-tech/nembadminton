@@ -1,5 +1,7 @@
 node_modules
-release.sh
+release-backend.sh
+release-frontend.sh
+resources/js
 public
 storage/framework/cache/data
 !storage/framework/cache/data/.gitignore

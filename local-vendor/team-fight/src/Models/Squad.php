@@ -8,6 +8,11 @@ class Squad
 {
 
     /**
+     * @var string|null
+     */
+    public ?string $id = null;
+
+    /**
      * @var int
      */
     public int $playerLimit;

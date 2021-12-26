@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="title">Holdkampe du planlægger</h1>
+        <h1 class="title">Holdkampe</h1>
         <b-button v-if="!$apollo.loading && teams.data.length !== 0" :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
         <ListTeamFights v-if="!$apollo.loading && teams.data.length !== 0" :loading="$apollo.loading" :teams="teams.data"/>
         <CreateTeamFightAction v-if="!$apollo.loading && teams.data.length === 0"></CreateTeamFightAction>

@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div v-for="(team, index) in teams" :key="team.id" class="column is-full">
+        <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
                 <tr>
                     <th colspan="2">
                         <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
-                            <b-tag>{{ team.league }}</b-tag>
+                            <b-tag>{{ squad.league }}</b-tag>
                             <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
                                 Ugyldig hold
                             </b-tag>
@@ -17,29 +17,29 @@
                                 <b-button
                                     :icon-right="active ? 'angle-up' : 'angle-down'"/>
                             </template>
-                            <b-dropdown-item :disabled="team.league === 'OTHER'" @click="team.league = 'OTHER'"
+                            <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
                                              aria-role="listitem">Sæt som "andet" hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="team.league === 'FIRSTDIVISION'"
-                                             @click="team.league = 'FIRSTDIVISION'" aria-role="listitem">Sæt som 1.
+                            <b-dropdown-item :disabled="squad.league === 'FIRSTDIVISION'"
+                                             @click="setSquadLeague(squad,'FIRSTDIVISION')" aria-role="listitem">Sæt som 1.
                                 division hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="team.league === 'LIGA'" @click="team.league = 'LIGA'"
+                            <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
                             <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt
                                 hold op
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === teams.length-1" @click="move(index, 1)"
+                            <b-dropdown-item :disabled="index === squads.length-1" @click="move(index, 1)"
                                              aria-role="listitem">Flyt hold ned
                             </b-dropdown-item>
-                            <b-dropdown-item aria-role="listitem" @click="confirmDelete(team)">Slet</b-dropdown-item>
+                            <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
                         </b-dropdown>
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="category in team.categories" :key="category.name">
+                <tr v-for="category in squad.categories" :key="category.name">
                     <th>{{ category.name }}</th>
                     <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td"
                                @end="emitEnd">
@@ -48,7 +48,7 @@
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
-                                    <span v-html="resolveLabel(player, category.category, team.league)"></span>
+                                    <span v-html="resolveLabel(player, category.category, squad.league)"></span>
                                 </template>
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
@@ -69,21 +69,19 @@
                             <div class="buttons is-pulled-right">
                                 <b-button size="is-small" title="Slet" icon-right="times-circle"
                                           @click="deletePlayer(category, player)"></b-button>
-                                <b-button size="is-small" title="Kopier spiller" icon-right="copy"
-                                          @click="copyPlayer(category, player)"></b-button>
                             </div>
                         </div>
-                        <player-search
+                        <PlayerSearch
                             v-if="category.players.length === 0"
+                            :squad="squad"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"
-                        ></player-search>
-                        <player-search
+                            :version="new Date(version)" :category="category"></PlayerSearch>
+                        <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
+                            :squad="squad"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"
-                        ></player-search>
+                            :version="new Date(version)" :category="category"></PlayerSearch>
                     </draggable>
                 </tr>
                 </tbody>
@@ -113,7 +111,6 @@ export default {
         move: Function,
         playerMove: Function,
         deletePlayer: Function,
-        copyPlayer: Function,
         playingToHigh: {
             type: Array,
             default: []
@@ -122,7 +119,7 @@ export default {
             type: Array,
             default: []
         },
-        teams: {
+        squads: {
             type: Array,
             default: []
         },
@@ -136,7 +133,11 @@ export default {
         }
     },
     methods: {
-        emitEnd(evt){
+        setSquadLeague(squad, league){
+            squad.league = league
+            this.$root.$emit('teamtable.changedSquadLeague');
+        },
+        emitEnd(evt) {
             this.$emit('end', evt)
         },
         isYoungPlayer,

@@ -13,10 +13,6 @@
                 <b-icon icon="brain"></b-icon>
                 Validere hold
             </b-dropdown-item>
-            <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                <b-icon icon="brain"></b-icon>
-                Update player points
-            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                 <b-icon icon="trash"></b-icon>
                 Slet holdet
@@ -52,7 +48,7 @@
             </div>
             <div class="column">
                 <b-field label="Rangliste">
-                    <RankingVersionSelect v-model="version" expanded></RankingVersionSelect>
+                    <RankingVersionSelect @focus="oldVersion = version" v-model="version" @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
                 </b-field>
             </div>
             <div class="column">
@@ -78,13 +74,12 @@
                 <h1 class="title">Holdet</h1>
                 <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
                 <TeamTable :confirm-delete="deleteTeam"
-                           :copy-player="copyPlayer"
                            :delete-player="deletePlayer"
                            :move="move"
                            @end="saveAndValidate"
                            :playing-to-high="playingToHighList"
                            :playing-to-high-in-squad="playingToHighSquadList"
-                           :teams="team.squads"
+                           :squads="team.squads"
                            :teams-base-validations="validateBasicSquads"
                            :version="new Date(version)"
                            :club-id="team.club.id"/>
@@ -236,6 +231,7 @@ export default {
             shareUrl: '',
             gameDate: new Date(),
             version: null,
+            oldVersion: null,
             savingIcon: 'save',
             team: {
                 squads: [],
@@ -253,11 +249,12 @@ export default {
                         playerLimit
                         league
                         categories{
+                            id
                             category
                             name
                             players{
-                                gender
                                 id
+                                gender
                                 name
                                 refId
                                 points{
@@ -292,13 +289,14 @@ export default {
         }
     },
     mounted() {
+        this.$root.$on('teamtable.changedSquadLeague', () => {
+            this.saveTeams()
+        })
         this.$root.$on('playersearch.addMemberToCategory', () => {
             this.saveTeams()
-            this.validate()
         })
         this.$root.$on('teamfight.deletedMemberFromCategory', () => {
             this.saveTeams()
-            this.validate()
         })
     },
     methods: {
@@ -332,15 +330,29 @@ export default {
             })
         },
         wrapInTeamAndSquads(squads){
-            return omitDeep(squads, ['__typename', 'cancellations']).map((squad) => ({
+            const squadsClone = JSON.parse(JSON.stringify(squads));
+            return omitDeep(squadsClone, ['__typename', 'cancellations', 'isInSquad']).map((squad) => ({
                 name: 'Team X',
                 squad: squad
             }))
         },
+        confirmChangeOfRankingList(newVersion){
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene skal opdateres til den nye rangliste.',
+                    confirmText: 'Skift og opdater spillere',
+                    onConfirm: () => {
+                        this.updateToRankingList()
+                    },
+                    onCancel: () => {
+                        this.version = this.oldVersion
+                    }
+                })
+        },
         updateToRankingList() {
             this.updating = true;
             let version = this.version;
-            this.$apollo.mutate(
+            return this.$apollo.mutate(
                 {
                     mutation: gql`
                         mutation ($id: ID!, $version: String!){
@@ -509,10 +521,6 @@ export default {
             category.players.splice(category.players.indexOf(player), 1)
             this.$root.$emit('teamfight.deletedMemberFromCategory')
         },
-        copyPlayer(category, player) {
-            category.players.push(Object.assign({}, player))
-            this.saveTeams()
-        },
         deleteTeam(team) {
             this.$buefy.dialog.confirm(
                 {
@@ -629,6 +637,28 @@ export default {
                             name
                             gameDate
                             version
+                            squads{
+                                id
+                                playerLimit
+                                league
+                                categories{
+                                    id
+                                    category
+                                    name
+                                    players{
+                                        gender
+                                        id
+                                        name
+                                        refId
+                                        points{
+                                            category
+                                            points
+                                            position
+                                            vintage
+                                        }
+                                    }
+                                }
+                            }
                           }
                         }
                     `,
@@ -645,6 +675,7 @@ export default {
                 })
                 .then(({data}) => {
                     this.$root.$emit('teamfight.teamSaved')
+                    this.validate()
                     this.saving = false;
                     this.savingIcon = 'check';
                     setTimeout(() => {

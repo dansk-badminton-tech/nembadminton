@@ -179,7 +179,6 @@ export default {
         memberSearchPoints: {
             query: gql`
                     query MembersSearch(
-                        $hasClubs: QueryMemberSearchPointsHasClubsWhereHasConditions,
                         $version: String,
                         $page: Int,
                         $first: Int,
@@ -188,7 +187,6 @@ export default {
                         $hasCancellation: QueryMemberSearchPointsHasCancellationWhereHasConditions,
                         $rankingList: MemberSearchOrderBy){
                       memberSearchPoints(
-                      hasClubs: $hasClubs,
                       version: $version,
                       name: $name,
                       hasCancellation: $hasCancellation,
@@ -235,13 +233,6 @@ export default {
                 }
                 if (!!this.version) {
                     params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
-                }
-                if (this.clubId) {
-                    params.hasClubs = {
-                        column: "ID",
-                        operator: "EQ",
-                        value: this.clubId
-                    }
                 }
                 if (!this.hideCancellation) {
                     params.rankingList = 'ALL_LEVEL';

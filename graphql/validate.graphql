@@ -26,6 +26,7 @@ input ValidateSquad{
 }
 
 input ValidateCategory {
+    id: ID
     category: String!
     name: String!
     players: [ValidateMember!]!
