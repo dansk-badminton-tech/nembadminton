@@ -92,6 +92,11 @@ return [
         'enable' => env('LIGHTHOUSE_CACHE_ENABLE', env('APP_ENV') !== 'local'),
 
         /*
+         * This will store the compiled schema as a PHP file on your disk, allowing OPcache to pick it up.
+         */
+        'version' => env('LIGHTHOUSE_CACHE_VERSION', 2),
+
+        /*
          * The name of the cache item for the schema cache.
          */
         'key' => env('LIGHTHOUSE_CACHE_KEY', 'lighthouse-schema'),

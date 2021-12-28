@@ -12,14 +12,15 @@ extend type Mutation {
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
     updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
-    createCancellation(refId: String!, teamId: ID!) : Cancellation @create @guard
+    updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
+    createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
     deleteCancellation(id: ID!) : Cancellation @delete @guard
 }
 
 type Cancellation {
     id: ID
     refId: String!
-    teamId: String!
+    teamId: String
 }
 
 input CreateTeamInput {

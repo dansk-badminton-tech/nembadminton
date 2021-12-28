@@ -43,6 +43,28 @@ class Member extends Model
         return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
     }
 
+    public function scopeHasCancellations(Builder $builder, array $args)
+    {
+        $teamId = $args['teamId'];
+        return $builder->whereHas('cancellations', static function (Builder $builder) use ($teamId) {
+            $builder->where('teamId', '=', $teamId)->orWhereNull('teamId');
+        });
+    }
+
+    public function scopeNotCancelled(Builder $builder, string $teamId): Builder
+    {
+        return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamId) {
+            $builder->where('teamId', '=', $teamId)->orWhereNull('teamId');
+        });
+    }
+
+    public function scopeNotOnSquad(Builder $builder, string $teamId): Builder
+    {
+        return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamId) {
+            $builder->where('teams_id', '=', $teamId);
+        });
+    }
+
     public function scopeHasPoints(Builder $builder): Builder
     {
         return $builder->has('points');
