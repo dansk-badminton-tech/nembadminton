@@ -135,6 +135,11 @@ export default {
                 })
                 .then(() => {
                     this.$apollo.queries.memberSearch.refresh()
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Permanent afbud registret`
+                    })
                 })
                 .catch(() => {
                     this.$buefy.snackbar.open({
@@ -162,6 +167,11 @@ export default {
                 })
                 .then(() => {
                     this.$apollo.queries.memberSearch.refresh()
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Permanent afbud slettet`
+                    })
                 })
                 .catch(() => {
                     this.$buefy.snackbar.open({
