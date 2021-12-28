@@ -20,25 +20,18 @@ class MemberSearch
      * @param  ResolveInfo  $resolveInfo
      * @return Builder
      */
-    public function searchBuilder($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Builder
+    public function searchPoints($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Builder
     {
         $version = $args['version'] ?? null;
         $builder = Member::query();
+        $teamId = $args['teamId'];
         if ($version !== null) {
             $builder->select(['members.*'])
                 ->join('points', 'members.id', '=', 'points.member_id')
                 ->where('points.points', '!=', 0)
                 ->orderBy('points.points', 'desc');
-            if (!Arr::has($args, 'hasCancellation')) {
-                $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($args) {
-                    $builder->where('teamId', '=', $args['onTeamSquad']);
-                });
-            }
-            if (Arr::has($args, 'onTeamSquad')) {
-                $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($args) {
-                    $builder->where('teams_id', '=', $args['onTeamSquad']);
-                });
-            }
+            $builder->notCancelled($teamId);
+            $builder->notOnSquad($teamId);
             if (Arr::has($args, 'rankingList')) {
                 $this->applyRankingList($builder, $args['rankingList'], $version);
             }

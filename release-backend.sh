@@ -22,6 +22,7 @@ EOF
 
 sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com php81 /var/www/badminton.social/projects/holdkamp/artisan migrate --force
 sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com php81 /var/www/badminton.social/projects/holdkamp/artisan lighthouse:clear-cache
+sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com php81 /var/www/badminton.social/projects/holdkamp/artisan lighthouse:cache
 
 echo "Building worker image"
 docker build --pull -t ghcr.io/flycompanytech/holdkamp:latest .

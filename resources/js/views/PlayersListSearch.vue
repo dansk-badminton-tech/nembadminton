@@ -24,8 +24,8 @@
             :data="memberSearchPointsFiltered"
             :paginated="true"
             :backend-pagination="true"
-            :loading="$apollo.queries.memberSearchPoints.loading"
-            :total="memberSearchPoints.paginatorInfo.total"
+            :loading="$apollo.queries.memberSearch.loading"
+            :total="memberSearch.paginatorInfo.total"
             :per-page="perPage"
             @page-change="onPageChange"
             :pagination-rounded="true">
@@ -40,10 +40,14 @@
             </b-table-column>
             <b-table-column field="name" v-slot="props">
                 <div class="buttons">
-                    <b-button size="is-small" type="is-danger" v-if="hasCancellation(props.row)"
-                              title="Annuller afbud" icon-right="user-alt"
+                    <b-button size="is-small" type="is-danger" v-show="!hideCancellation && !hasPermanentCancellation(props.row)"
+                              title="Annuller afbud (Denne holdkamp)" icon-right="user-alt"
                               @click="deleteCancellation(props.row)"></b-button>
-                    <b-button size="is-small" v-if="!hasCancellation(props.row)" title="Afbud"
+                    <b-button size="is-small" v-show="!hideCancellation && !hasPermanentCancellation(props.row)" title="Lav afbud permanent (Alle holdkampe)"
+                              icon-right="user-clock" @click="makeCancellationPermanent(props.row)"></b-button>
+                    <b-button size="is-small" type="is-danger" v-show="!hideCancellation && hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
+                              icon-right="user-clock" @click="removePermanentCancellation(props.row)"></b-button>
+                    <b-button size="is-small" v-show="hideCancellation" title="Afbud"
                               icon-right="user-slash" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
                               @click="addPlayer(props.row)"></b-button>
@@ -83,17 +87,17 @@ export default {
     },
     computed: {
         memberSearchPointsFiltered() {
-            return this.memberSearchPoints.data
+            return this.memberSearch.data
         }
     },
     mounted() {
         this.$root.$on('teamfight.teamSaved', () => {
-            this.$apollo.queries.memberSearchPoints.refresh()
+            this.$apollo.queries.memberSearch.refresh()
         })
     },
     data() {
         return {
-            memberSearchPoints: {
+            memberSearch: {
                 data: [],
                 paginatorInfo: {
                     total: 0
@@ -109,6 +113,64 @@ export default {
     },
     methods: {
         convertRankingToCategory,
+        findPermanentCancellation(cancellations){
+            return cancellations.find((c) => {return c.teamId === null})
+        },
+        makeCancellationPermanent(player){
+            this.$apollo
+                .mutate({
+                    mutation: gql`
+                        mutation createCancellation($refId : String!, $teamId: ID){
+                            createCancellation(refId: $refId, teamId: $teamId){
+                                id
+                                refId
+                                teamId
+                            }
+                        }
+                    `,
+                    variables: {
+                        refId: player.refId,
+                        teamId: null
+                    }
+                })
+                .then(() => {
+                    this.$apollo.queries.memberSearch.refresh()
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-danger',
+                        message: `Kunne ikke lave permanent afbud :(`
+                    })
+                })
+        },
+        removePermanentCancellation(player){
+            const cancellation = this.findPermanentCancellation(player.cancellations)
+
+            this.$apollo
+                .mutate({
+                    mutation: gql`
+                        mutation deleteCancellation($id : ID!){
+                            deleteCancellation(id: $id){
+                                id
+                            }
+                        }
+                    `,
+                    variables: {
+                        id: cancellation.id
+                    }
+                })
+                .then(() => {
+                    this.$apollo.queries.memberSearch.refresh()
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-danger',
+                        message: `Kunne ikke annuller permanent afbud :(`
+                    })
+                })
+        },
         makeCancellation(player) {
             this.$apollo
                 .mutate({
@@ -127,7 +189,12 @@ export default {
                     }
                 })
                 .then(() => {
-                    this.$apollo.queries.memberSearchPoints.refresh()
+                    this.$apollo.queries.memberSearch.refresh()
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Afbud registret`
+                    })
                 })
                 .catch(() => {
                     this.$buefy.snackbar.open({
@@ -154,7 +221,12 @@ export default {
                     }
                 })
                 .then(() => {
-                    this.$apollo.queries.memberSearchPoints.refresh()
+                    this.$apollo.queries.memberSearch.refresh()
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Afbud slettet`
+                    })
                 })
                 .catch(() => {
                     this.$buefy.snackbar.open({
@@ -164,8 +236,8 @@ export default {
                     })
                 })
         },
-        hasCancellation(player) {
-            return player.hasOwnProperty('cancellations') && player.cancellations.length > 0;
+        hasPermanentCancellation(player) {
+            return player.hasOwnProperty('cancellations') && this.findPermanentCancellation(player.cancellations) !== undefined;
         },
         search: debounce(function (name) {
             this.searchName = name;
@@ -176,48 +248,74 @@ export default {
         },
     },
     apollo: {
-        memberSearchPoints: {
-            query: gql`
-                    query MembersSearch(
-                        $version: String,
-                        $page: Int,
-                        $first: Int,
-                        $name: String,
-                        $teamId: String,
-                        $hasCancellation: QueryMemberSearchPointsHasCancellationWhereHasConditions,
-                        $rankingList: MemberSearchOrderBy){
-                      memberSearchPoints(
-                      version: $version,
-                      name: $name,
-                      hasCancellation: $hasCancellation,
-                      page: $page,
-                      first: $first,
-                      onTeamSquad: $teamId,
-                      rankingList: $rankingList) {
-                        data {
-                          id
-                          name
-                          gender
-                          refId
-                          points(version: $version){
-                            points
-                            position
-                            category
-                            vintage
-                          }
-                          cancellations(teamId: $teamId){
-                            id
-                            refId
-                            teamId
+        memberSearch: {
+            query() {
+                if (this.hideCancellation) {
+                    return gql`
+                        query memberSearchPoints(
+                            $version: String!,
+                            $page: Int,
+                            $first: Int,
+                            $name: String,
+                            $teamId: String!,
+                            $rankingList: MemberSearchOrderBy!){
+                          memberSearchPoints(
+                          version: $version,
+                          name: $name,
+                          page: $page,
+                          first: $first,
+                          teamId: $teamId,
+                          rankingList: $rankingList) {
+                            data {
+                              id
+                              name
+                              gender
+                              refId
+                              points(version: $version){
+                                points
+                                position
+                                category
+                                vintage
+                              }
+                            }
+                            paginatorInfo {
+                              count
+                              total
+                            }
                           }
                         }
-                        paginatorInfo {
-                          count
-                          total
+                    `
+                } else {
+                    return gql`
+                        query memberSearchCancellation($teamId: String!, $version: String){
+                            memberSearchCancellation(teamId: $teamId){
+                                data {
+                                  id
+                                  name
+                                  gender
+                                  refId
+                                  points(version: $version){
+                                    points
+                                    position
+                                    category
+                                    vintage
+                                  }
+                                  cancellations(teamId: $teamId){
+                                    id
+                                    refId
+                                    teamId
+                                  }
+                                }
+                                paginatorInfo {
+                                  count
+                                  total
+                                }
+                            }
                         }
-                      }
-                    }
-                `,
+                    `
+                }
+            },
+            update: data => data.memberSearchPoints || data.memberSearchCancellation,
             fetchPolicy: "network-only",
             variables() {
                 let params = {
@@ -236,11 +334,6 @@ export default {
                 }
                 if (!this.hideCancellation) {
                     params.rankingList = 'ALL_LEVEL';
-                    params.hasCancellation = {
-                        column: 'TEAM_ID',
-                        operator: 'EQ',
-                        value: this.teamId
-                    }
                 }
                 return params
             }
