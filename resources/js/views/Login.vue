@@ -51,7 +51,7 @@ export default {
                 if (this.afterLogin instanceof Function) {
                     this.afterLogin()
                 } else {
-                    this.$router.push({name: 'team-fight-dashboard'})
+                    this.$router.push({name: 'my-club'})
                 }
             }).catch(({graphQLErrors}) => {
                 this.$buefy.snackbar.open(
