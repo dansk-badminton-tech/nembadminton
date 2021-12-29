@@ -41,7 +41,7 @@
                 <tbody>
                 <tr v-for="category in squad.categories" :key="category.name">
                     <th>{{ category.name }}</th>
-                    <draggable :disabled="viewMode" :list="category.players" group="players" handle=".handle" tag="td"
+                    <draggable :list="category.players" group="players" handle=".handle" tag="td"
                                @end="emitEnd">
                         <div v-for="player in category.players" class="is-clearfix mt-1">
                             <b-tooltip
@@ -94,8 +94,10 @@ import Draggable from "vuedraggable"
 import {
     findPositions,
     highlight as simpleHighlight,
-    resolveToolTip,
-    isPlayingToHighByBadmintonPlayerId, isDoubleCategory, isYoungPlayer
+    isDoubleCategory,
+    isPlayingToHighByBadmintonPlayerId,
+    isYoungPlayer,
+    resolveToolTip
 } from "../helpers";
 import PlayerSearch from "../components/search-player/PlayerSearch";
 import PlayersListSearch from "./PlayersListSearch";
@@ -106,7 +108,6 @@ export default {
     props: {
         version: Date,
         clubId: String,
-        viewMode: Boolean,
         confirmDelete: Function,
         move: Function,
         playerMove: Function,
@@ -125,11 +126,7 @@ export default {
         },
         teamsBaseValidations: {
             type: Array,
-            default: () => ([])
-        },
-        search: {
-            type: String,
-            default: ''
+            default: []
         }
     },
     methods: {
@@ -175,21 +172,7 @@ export default {
         },
         findPositions,
         highlight: function (player, category) {
-            let base = {}
-            if (this.viewMode) {
-                base = {'pointer': false};
-                if (this.search.trim() !== '') {
-                    base = {
-                        ...{
-                            'has-text-white': player.name.toLowerCase().includes(this.search.toLowerCase()),
-                            'has-background-black': player.name.toLowerCase().includes(this.search.toLowerCase())
-                        }, ...base
-                    }
-                }
-            } else {
-                base = simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category)
-            }
-            return base;
+            return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
         }
     }
 }

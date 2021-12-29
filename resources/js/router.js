@@ -86,12 +86,12 @@ const router = new VueRouter(
                         }
                     },
                     {
-                        path: '/team-fight/:teamUUID/view',
-                        name: 'team-fight-view',
+                        path: '/team-fight/:teamUUID/public-view',
+                        name: 'team-fight-public-view',
                         component: () => import("./views/TeamFightPublic"),
-                        props: route => ({teamFightId: route.params.teamUUID}),
+                        props: route => ({teamId: route.params.teamUUID}),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Holdkamp'
                         }
                     },
