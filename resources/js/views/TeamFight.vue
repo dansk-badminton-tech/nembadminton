@@ -1,8 +1,12 @@
 <template>
     <div>
         <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-        <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon" @click="saveTeams">Gem</b-button>
-<!--        <b-button icon-left="share-alt" @click="publish">Del</b-button>-->
+        <b-tooltip label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
+                   position="is-bottom">
+            <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
+                      @click="saveTeams">Gem
+            </b-button>
+        </b-tooltip>
         <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
         <b-dropdown aria-role="list" class="ml-2">
             <button slot="trigger" slot-scope="{ active }" class="button is-primary">
@@ -27,6 +31,10 @@
                 <b-icon icon="file-export"></b-icon>
                 CSV
             </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="showLinkSharing = true">
+                <b-icon icon="share-alt"></b-icon>
+                <share-link-modal v-model="showLinkSharing" :team-id="teamFightId"></share-link-modal>
+            </b-dropdown-item>
         </b-dropdown>
         <div class="columns mt-2">
             <div class="column">
@@ -48,7 +56,8 @@
             </div>
             <div class="column">
                 <b-field label="Rangliste">
-                    <RankingVersionSelect @focus="oldVersion = version" v-model="version" @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
+                    <RankingVersionSelect @focus="oldVersion = version" v-model="version"
+                                          @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
                 </b-field>
             </div>
             <div class="column">
@@ -68,7 +77,7 @@
                 <h1 class="title">Spiller</h1>
                 <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
                 <PlayersListSearch :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
-                                   :version="new Date(version)" />
+                                   :version="new Date(version)"/>
             </div>
             <div class="column is-6">
                 <h1 class="title">Holdet</h1>
@@ -137,22 +146,6 @@
                 </div>
             </div>
         </div>
-        <b-modal v-model="showShareLink" :width="640" scroll="keep">
-            <div class="card">
-                <div class="card-content">
-                    <div class="content">
-                        <p>Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for
-                            at se holdet.</p>
-                        <pre>{{ shareUrl }}</pre>
-                    </div>
-                </div>
-                <footer class="card-footer">
-                    <a :href="shareUrl" class="card-footer-item" target="_blank">Vis (Nyt vindue)</a>
-                    <a class="card-footer-item" @click.prevent="copyShareLink">Kopier</a>
-                    <a class="card-footer-item" @click.prevent="showShareLink = !showShareLink">Luk</a>
-                </footer>
-            </div>
-        </b-modal>
     </div>
 </template>
 
@@ -177,10 +170,12 @@ import {
     isWomenDouble,
     isWomensSingle
 } from "../helpers";
+import ShareLinkModal from "../components/team-fight/ShareLinkModal";
 
 export default {
     name: "TeamFight",
     components: {
+        ShareLinkModal,
         PlayersListSearch,
         ValidationStatus,
         RankingVersionSelect,
@@ -204,15 +199,21 @@ export default {
             if (!this.canValidateSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighSquadList.filter((playerInfo)=>{return !playerInfo.isYouthPlayer})
-            const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo)=>{return !playerInfo.hasYouthPlayerPartner})
+            const playersWithoutYouth = this.playingToHighSquadList.filter((playerInfo) => {
+                return !playerInfo.isYouthPlayer
+            })
+            const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo) => {
+                return !playerInfo.hasYouthPlayerPartner
+            })
             return playersWithoutYouthPartner.length > 0
         },
         resolveInvalidLevel() {
             if (!this.canValidateCrossSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighList.filter((playerInfo)=>{return !playerInfo.isYouthPlayer})
+            const playersWithoutYouth = this.playingToHighList.filter((playerInfo) => {
+                return !playerInfo.isYouthPlayer
+            })
             return playersWithoutYouth.length > 0
         }
     },
@@ -225,14 +226,13 @@ export default {
             canValidateSquads: false,
             teamCount: 1,
             players: [],
-            showShareLink: false,
             saving: false,
             updating: false,
-            shareUrl: '',
             gameDate: new Date(),
             version: null,
             oldVersion: null,
             savingIcon: 'save',
+            showLinkSharing: false,
             team: {
                 squads: [],
                 club: {}
@@ -300,7 +300,7 @@ export default {
         })
     },
     methods: {
-        exportToCSV(){
+        exportToCSV() {
             this.$apollo.query({
                 query: gql`
                     query exportToCSV($teamId: ID!){
@@ -329,14 +329,14 @@ export default {
                     })
             })
         },
-        wrapInTeamAndSquads(squads){
+        wrapInTeamAndSquads(squads) {
             const squadsClone = JSON.parse(JSON.stringify(squads));
             return omitDeep(squadsClone, ['__typename', 'cancellations', 'isInSquad']).map((squad) => ({
                 name: 'Team X',
                 squad: squad
             }))
         },
-        confirmChangeOfRankingList(newVersion){
+        confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
                     message: 'Du er ved at skifte rangliste. Alle spillere på holdene skal opdateres til den nye rangliste.',
@@ -461,7 +461,7 @@ export default {
                         })
                 })
         },
-        saveAndValidate(){
+        saveAndValidate() {
             this.saveTeams()
             this.validate()
         },
@@ -504,19 +504,6 @@ export default {
                         })
                 })
         },
-        copyShareLink() {
-            this.$copyText(this.shareUrl).then((e) => {
-                this.$buefy.snackbar.open(`Kopiret til udklipsholder`)
-                this.showShareLink = false;
-            }, (e) => {
-                this.$buefy.snackbar.open(`Kunne ikke kopir til udklipsholder. :(`)
-            })
-        },
-        publish() {
-            let getUrl = window.location;
-            this.shareUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/" + this.teamFightId + '/view';
-            this.showShareLink = !this.showShareLink
-        },
         deletePlayer(category, player) {
             category.players.splice(category.players.indexOf(player), 1)
             this.$root.$emit('teamfight.deletedMemberFromCategory')
@@ -534,13 +521,13 @@ export default {
         selectClub(id) {
             this.clubId = id
         },
-        addedPlayerNotification(squadIndex, category){
+        addedPlayerNotification(squadIndex, category) {
             this.$buefy.snackbar.open(
                 {
                     duration: 3000,
                     type: 'is-success',
                     queue: false,
-                    message: 'Tilføjet til Hold '+(squadIndex+1)+' i '+category
+                    message: 'Tilføjet til Hold ' + (squadIndex + 1) + ' i ' + category
                 })
         },
         addPlayer(player) {
@@ -596,7 +583,7 @@ export default {
                         queue: false,
                         message: `Kunne ikke finde en ledig plads på nogle hold`
                     })
-            }else{
+            } else {
                 this.saveTeams()
             }
         },

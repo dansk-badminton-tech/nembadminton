@@ -34,7 +34,7 @@
         "vue-apollo": "^3.0.4",
         "vue-chartjs": "^3.5.1",
         "vue-clipboard2": "^0.3.1",
-        "vue-fragment": "^1.5.1",
+        "vue-frag": "^1.4.0",
         "vue-i18n": "^8.21.1",
         "vue-router": "^3.4.3",
         "vue-template-compiler": "^2.6.12",
