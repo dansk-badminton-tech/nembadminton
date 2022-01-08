@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Club\GraphQL\Queries;
 
-use App\Models\Member;
 use App\Models\Point;
 use App\Models\User;
 use GraphQL\Type\Definition\ResolveInfo;
