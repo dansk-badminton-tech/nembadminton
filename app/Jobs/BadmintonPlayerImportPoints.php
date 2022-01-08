@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Log;
 class BadmintonPlayerImportPoints implements ShouldQueue
 {
 
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private int $clubId;
 
@@ -35,40 +38,50 @@ class BadmintonPlayerImportPoints implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param BadmintonPlayer $scraper
-     * @param PointsManager   $pointsManager
+     * @param  BadmintonPlayer  $scraper
+     * @param  PointsManager  $pointsManager
      *
      * @return int
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager) : int
     {
         $rankingLists = BadmintonPlayer::rankingLists();
-        $now = Carbon::now();
-        $season = 2020;
-        foreach ($rankingLists as $rankingList) {
-            \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season til nu", 'points-importer');
-            $starting = Carbon::create($season, 7)->setTime(0, 0);
-            while ($starting < $now) {
-                $season = BadmintonPlayer::calculateSeason($starting);
-                $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
 
-                foreach ($playersCollection as $player) {
-                    $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
-                    foreach ($player->points as $point) {
-                        try {
-                            $pointsManager->addPointsByName($player->name, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
-                        } catch (ModelNotFoundException $exception) {
-                            Log::info("Skipping: $player->name could not find player");
+        $seasons = $this->generateSeasons();
+        foreach ($rankingLists as $rankingList) {
+            foreach ($seasons as $season){
+                \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season", 'points-importer');
+                /** @var Carbon[] $rankingMonths */
+                $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($scraper->getVersions($season));
+                foreach ($rankingMonths as $starting){
+                    $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
+                    foreach ($playersCollection as $player) {
+                        $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
+                        foreach ($player->points as $point) {
+                            try {
+                                $pointsManager->addPointsByName($player->name, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
+                            } catch (ModelNotFoundException) {
+                                Log::info("Skipping: $player->name could not find player");
+                            }
                         }
                     }
                 }
-                $starting->addMonth();
+                \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList fuldført. Fra sæson: $season", 'points-importer');
             }
-            \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList fuldført", 'points-importer');
         }
 
         return 0;
+    }
+
+    private function generateSeasons() : array{
+        $now = Carbon::now();
+        $currentSeason = BadmintonPlayer::calculateSeason($now);
+        for ($season = 2020; $season <= $currentSeason; $season++){
+            $seasons[] = $season;
+        }
+        return $seasons;
     }
 }

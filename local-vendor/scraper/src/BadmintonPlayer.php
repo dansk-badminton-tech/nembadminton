@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 class BadmintonPlayer
 {
 
+    const LEVEL_RANKING_NUMBER = 287;
     private $clientConfig = [
         'headers'  => [
             'User-Agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
@@ -371,12 +372,12 @@ class BadmintonPlayer
     {
         $mapping = [
             'DL'  => [
-                287,
+                self::LEVEL_RANKING_NUMBER,
                 '',
                 'K',
             ],
             'HL'  => [
-                287,
+                self::LEVEL_RANKING_NUMBER,
                 '',
                 'M',
             ],
@@ -493,6 +494,51 @@ class BadmintonPlayer
     }
 
     /**
+     * @return Carbon[]
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws \JsonException
+     */
+    public function getVersions(int $season): array
+    {
+        $params = [
+            'callbackcontextkey' => $this->getToken(),
+            'rankinglistagegroupid' => '',
+            'rankinglistid' => self::LEVEL_RANKING_NUMBER,
+            'seasonid' => $season,
+            'rankinglistversiondate' => '',
+            'agegroupid' => '',
+            'classid' => '',
+            'gender' => '',
+            'clubid' => '',
+            'searchall' => false,
+            'regionid' => '',
+            'pointsfrom' => '',
+            'pointsto' => '',
+            'rankingfrom' => '',
+            'rankingto' => '',
+            'birthdatefromstring' => '',
+            'birthdatetostring' => '',
+            'agefrom' => '',
+            'ageto' => '',
+            'playerid' => '',
+            'param' => '',
+            'pageindex' => 0,
+            'sortfield' => 0,
+            'getversions' => true,
+            'getplayer' => true,
+        ];
+
+        $url = 'SportsResults/Components/WebService1.asmx/GetRankingListPlayers';
+        $body = $this->sendRequestAndGetBody($url, $params);
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+        return BadmintonPlayerHelper::convertToCarbonObjects($data["d"]['Versions']);
+    }
+
+    /**
      * @return string
      */
     private function getToken() : string
@@ -507,7 +553,7 @@ class BadmintonPlayer
         $result = preg_replace("/((\r?\n)|(\r\n?))/", ',', $response->getContents());
         $result = explode(",", $result);
         foreach ($result as $value) {
-            if (strpos($value, 'SR_CallbackContext') !== false) {
+            if (str_contains($value, 'SR_CallbackContext')) {
                 $key = $value;
             }
         }
