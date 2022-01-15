@@ -15,6 +15,7 @@ use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Parser;
 use FlyCompany\TeamFight\Enricher;
+use FlyCompany\TeamFight\MassTester;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\SquadManager;
@@ -54,17 +55,9 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamValidator $teamValidator)
+    public function handle(MassTester $massTester)
     {
-        /** @var Member[] $members */
-        $members = Member::query()->join('points', 'members.id', '=', 'points.member_id')->whereNull('points.category')->where(
-            'points.version',
-            '=',
-            '2021-08-01'
-        )->orderBy('points.points')->with('points')->get();
-        foreach ($members as $member){
-            $this->line($member->points.$member->name);
-        }
+        $massTester->checkRound(1124, 2021, 1);
 
         return 0;
     }

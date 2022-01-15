@@ -51,15 +51,6 @@ const router = new VueRouter(
                         }
                     },
                     {
-                        path: '/team-fight/:teamUUID/import',
-                        name: 'team-fight-import',
-                        component: () => import("./views/TeamFightImport"),
-                        props: route => ({teamFightId: route.params.teamUUID}),
-                        meta: {
-                            title: 'Importer fra badmintonplayer.dk'
-                        }
-                    },
-                    {
                         path: '/team-fight/create',
                         name: 'team-fight-create',
                         component: () => import("./views/TeamFightCreate"),

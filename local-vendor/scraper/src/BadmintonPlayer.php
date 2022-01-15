@@ -10,6 +10,7 @@ use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Team;
+use FlyCompany\Scraper\Models\TeamFight;
 use FlyCompany\Scraper\Models\TeamMatch;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Cache\Repository;
@@ -48,6 +49,33 @@ class BadmintonPlayer
         $this->cache = $cache;
     }
 
+    public function getLeagueScoreboard(int $season, int $clubId, int $ageGroupID, int $leagueGroupId): LeagueScoreboard
+    {
+        $params = [
+            "callbackcontextkey" => $this->getToken(),
+            "ageGroupID"         => (string)$ageGroupID,
+            "clubID"             => (string)$clubId,
+            "leagueGroupID"      => (string)$leagueGroupId,
+            "leagueGroupTeamID"  => "",
+            "leagueMatchID"      => "",
+            "playerID"           => "",
+            "regionID"           => "",
+            "seasonID"           => (string)$season,
+            "subPage"            => "2",
+        ];
+
+        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
+            'json' => $params,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        if (!isset($data['d'])) {
+            throw new \RuntimeException('Did not get any data back');
+        }
+
+        return $this->parser->leagueScoreboard($data["d"]['html']);
+    }
+
     /**
      * @return array
      * @throws \JsonException
@@ -81,6 +109,15 @@ class BadmintonPlayer
         return $responseJson;
     }
 
+    /**
+     * @param  int  $season
+     * @param  int  $clubId
+     * @param  int  $ageGroupID
+     * @param  int  $leagueGroupId
+     * @param  string  $clubName
+     * @return array|TeamFight[]
+     * @throws \JsonException
+     */
     public function getTeamFights(int $season, int $clubId, int $ageGroupID, int $leagueGroupId, string $clubName) : array
     {
         $params = [
@@ -106,11 +143,9 @@ class BadmintonPlayer
         }
         $teamFights = $this->parser->teamFights($data["d"]['html']);
 
-        $teamFights = array_filter($teamFights, static function ($teamFight) use ($clubName) {
-            return in_array($clubName, $teamFight['teams']);
+        return array_filter($teamFights, static function (TeamFight $teamFight) use ($clubName) {
+            return in_array($clubName, $teamFight->teams);
         });
-
-        return $teamFights;
     }
 
     /**

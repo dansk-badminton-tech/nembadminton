@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper;
 
@@ -8,11 +9,14 @@ use DiDom\Element;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
+use FlyCompany\Scraper\Models\LeagueScoreboardEntry;
+use FlyCompany\Scraper\Models\LeagueScoreboardTeam;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Squad;
 use FlyCompany\Scraper\Models\Team;
+use FlyCompany\Scraper\Models\TeamFight;
 use FlyCompany\Scraper\Models\TeamMatch;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
@@ -20,7 +24,49 @@ use Psr\Log\LoggerInterface;
 class Parser
 {
 
-    public function teamFights(string $html) : array
+    public function leagueScoreboard(string $html): LeagueScoreboard
+    {
+        $document = new Document($html);
+        $leagueName = $document->find('h3');
+        if (!isset($leagueName[0])) {
+            throw new \RuntimeException('Could not find league name');
+        }
+
+        $trs = $document->find('table.groupstandings tr');
+
+        // remove table header
+        array_shift($trs);
+
+        $leagueScoreboard = new LeagueScoreboard($leagueName[0]->text());
+        foreach ($trs as $tr) {
+            $teamName = $tr->find('td.team')[0]->text();
+
+            $onClick = $tr->find('td.team a')[0]->attr('onclick');
+            preg_match_all('/\d+/', $onClick, $ids);
+            [, , $leagueGroupId, $ageGroupId, , $leagueGroupTeamId] = $ids[0];
+
+            $scoresTd = $tr->find('td.score');
+            $scoresResolved = array_map(static function (Element $e) {
+                return $e->text();
+            }, $scoresTd);
+            [$numberOfFights, $numberOfFightWins, $numberOfWinSets, $numberOfLostSets, $totalPoints] = $scoresResolved;
+
+            $leagueScoreboardEntry = new LeagueScoreboardEntry(new LeagueScoreboardTeam($teamName,
+                (int)$leagueGroupId, (int)$ageGroupId, (int)$leagueGroupTeamId), (int)$numberOfFights,
+                (int)$numberOfFightWins, (int)$numberOfWinSets, (int)$numberOfLostSets, (int)$totalPoints);
+
+            $leagueScoreboard->addLeagueScoreboardEntry($leagueScoreboardEntry);
+        }
+
+        return $leagueScoreboard;
+    }
+
+    /**
+     * @param  string  $html
+     * @return TeamFight[]|array
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     */
+    public function teamFights(string $html): array
     {
         $document = new Document($html);
         $trs = $document->find('table.matchlist tr');
@@ -29,24 +75,32 @@ class Parser
         array_shift($trs);
 
         $teams = [];
+        $currentRound = '';
+        $currentRoundDate = '';
         foreach ($trs as $tr) {
+            if($tr->attr('class') === 'roundheader'){
+                preg_match('/(\d+) (\d\d-\d\d-\d\d\d\d)/', $tr->text(), $matches);
+                [,$currentRound,$currentRoundDate] = $matches;
+            }
             if ($tr->attr('class') !== 'roundheader') {
-                $data = [];
+                $teamFightEntry = new TeamFight();
                 foreach ($tr->find('td.team') as $td) {
-                    $data['teams'][] = $td->text();
+                    $teamFightEntry->teams[] = $td->text();
                 }
                 foreach ($tr->find('td.matchno') as $td) {
-                    $data['matchId'] = $td->text();
+                    $teamFightEntry->matchId = $td->text();
                 }
-                $data['gameTime'] = $this->findTime((string)$tr->find('td.time')[0]);
-                $teams[] = $data;
+                $teamFightEntry->gameTime = $this->findTime((string)$tr->find('td.time')[0]);
+                $teamFightEntry->round = $currentRound;
+                $teamFightEntry->roundDate = $currentRoundDate;
+                $teams[] = $teamFightEntry;
             }
         }
 
         return $teams;
     }
 
-    public function clubTeams(string $html) : array
+    public function clubTeams(string $html): array
     {
         $document = new Document($html);
         $trs = $document->find('table.clubgrouplist tr.grouprow');
@@ -70,12 +124,12 @@ class Parser
     }
 
     /**
-     * @param string $html
+     * @param  string  $html
      *
      * @return array|PlayerSearch[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function searchPlayer(string $html) : array
+    public function searchPlayer(string $html): array
     {
         $document = new Document($html);
         $trs = $document->find('table tr');
@@ -102,7 +156,7 @@ class Parser
         return $players;
     }
 
-    public static function parseFunction(string $function) : array
+    public static function parseFunction(string $function): array
     {
         /** @var string[] $parts */
         $parts = preg_match_all("/'(.+)'/", $function, $out);
@@ -114,7 +168,7 @@ class Parser
         }, $arguments);
     }
 
-    private function findTime(string $text) : string
+    private function findTime(string $text): string
     {
         $normalizedStr = \str_replace('‑', '-', $text);
         preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches);
@@ -122,19 +176,19 @@ class Parser
         preg_match('/(\d\d:\d\d)/', $normalizedStr, $timeMatches);
 
         if (!empty($timeMatches)) {
-            $date .= ' ' . $timeMatches[0];
+            $date .= ' '.$timeMatches[0];
         }
 
         return $date;
     }
 
     /**
-     * @param string $html
+     * @param  string  $html
      *
      * @return Player[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function rankingListPlayers(string $html, string $rankingList) : array
+    public function rankingListPlayers(string $html, string $rankingList): array
     {
         $document = new Document($html);
         $trs = $document->find('table.RankingListGrid tr');
@@ -153,7 +207,6 @@ class Parser
 
         $playersCollection = [];
         foreach ($trs as $tr) {
-
             // Will continue if name is not set
             $aTagName = $tr->find('td.name a')[0] ?? false;
             if ($aTagName) {
@@ -184,18 +237,18 @@ class Parser
     }
 
     /**
-     * @param string $html
+     * @param  string  $html
      *
      * @return TeamMatch
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function teamMatch(string $html) : TeamMatch
+    public function teamMatch(string $html): TeamMatch
     {
         $document = new Document($html);
         $trs = $document->find('table.matchresultschema.showmatch tr');
 
         $playersTrs = array_shift($trs);
-        if($playersTrs === null){
+        if ($playersTrs === null) {
             throw new NoPlayersFoundInTeamMatchException('Could not find any players on match');
         }
         $topRow = $playersTrs->find('td');
@@ -275,13 +328,13 @@ class Parser
     }
 
     /**
-     * @param Element $aElement
+     * @param  Element  $aElement
      *
      * @return array
      */
-    private function extractNameAndId(?Element $aElement) : array
+    private function extractNameAndId(?Element $aElement): array
     {
-        if($aElement === null){
+        if ($aElement === null) {
             return ['Ikke fremmødt', 0];
         }
         $href = $aElement->getAttribute('href');
@@ -289,7 +342,7 @@ class Parser
         return [$aElement->text(), (int)$badmintonPlayerId];
     }
 
-    private function findCategoryByName(string $categoryName) : string
+    private function findCategoryByName(string $categoryName): string
     {
         $category = null;
         $MD = 'MD';
@@ -318,7 +371,7 @@ class Parser
         }
 
         if ($category === null) {
-            throw new \RuntimeException('Unknown category ' . $category);
+            throw new \RuntimeException('Unknown category '.$category);
         }
 
         return $category;

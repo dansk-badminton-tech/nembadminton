@@ -1,25 +1,15 @@
 extend type Query {
-    "Clubs from badmintonplayer.dk. (Requesting badmintonplayer.dk directly)"
-    badmintonPlayerClubs: [OptionClub] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions")
     "Teams from a club. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeams(input: BadmintonPlayerTeamsInput @spread): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams")
     "Team fights for a team. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
     "Team macth. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
-    "Team matchs (from badmintonPlayerTeamMatchsImport)"
-    badmintonPlayerTeamMatches(jobId: Int!) : [ImportTeamMatch!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatches")
 }
 
 extend type Mutation {
     "Get team matches information from badmintonplayer.dk"
     badmintonPlayerTeamMatchesImport(input: BadmintonPlayerTeamMatchInput!) : [ImportTeam!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchesImport")
-    "Team Match Import"
-    badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
-}
-
-type BadmintonPlayerTeamMatchesImportResponse{
-    jobId: Int!
 }
 
 type BadmintonPlayerTeamFight {
@@ -63,18 +53,6 @@ input BadmintonPlayerLeagueMatchInput {
     version: Date
 }
 
-
-input TeamMatchImportInput {
-    team: ID!
-    badmintonPlayerTeamMatch: BadmintonPlayerTeamMatchInput!
-    side: Side!
-}
-
-enum Side {
-    HOME @enum(value: "home")
-    GUEST @enum(value: "guest")
-}
-
 type ImportTeamMatch {
     home: ImportTeam
     guest: ImportTeam
@@ -112,9 +90,4 @@ type ImportCategory{
     category: String!
     name: String!
     players: [ImportMember!]!
-}
-
-type OptionClub {
-    id: ID!
-    name: String!
 }

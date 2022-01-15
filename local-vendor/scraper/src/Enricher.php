@@ -18,6 +18,17 @@ class Enricher
         $this->scraper = $scraper;
     }
 
+    /**
+     * Enrich the players on the team with points
+     *
+     * @param  Team  $team
+     * @param  int  $clubId
+     * @param  int  $season
+     * @param  Carbon  $version
+     * @return Team
+     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws \JsonException
+     */
     public function teamMatch(Team $team, int $clubId, int $season, Carbon $version) : Team{
 
         $playersWithPoints = [];
