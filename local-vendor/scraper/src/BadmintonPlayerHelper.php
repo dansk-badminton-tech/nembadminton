@@ -4,11 +4,45 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Scraper;
 
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\Point;
+use Illuminate\Support\Collection;
 
 class BadmintonPlayerHelper
 {
+
+    /**
+     * @param  array|Carbon[]  $versions
+     * @return Collection
+     */
+    public static function filterToRankingMonths(array $versions): Collection
+    {
+        $versions = new Collection($versions);
+        return $versions->groupBy('month')->map(static function(Collection $dates){
+            return $dates->shift();
+        });
+
+    }
+
+    /**
+     * @param  array  $versions
+     * @return Carbon[]
+     */
+    public static function convertToCarbonObjects(array $versions): array
+    {
+        $carbons = array_values(array_filter(array_map(static function ($version) {
+            try {
+                $carbon = Carbon::createFromFormat('m/d/Y', $version['Value'])->setHour(0)->setMinutes(0)->setSecond(0);
+            } catch (InvalidFormatException) {
+                $carbon = null;
+            }
+            return $carbon;
+        }, $versions), 'is_object'));
+        sort($carbons);
+        return $carbons;
+    }
 
     /**
      * @param array $rankingLists
