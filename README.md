@@ -17,6 +17,7 @@ sudo chmod -R g+w storage
 docker-compose up -d app
 docker-compose run --rm artisan key:generate
 docker-compose run --rm artisan migrate
+docker-compose run --rm artisan badmintonplayer-import:clubs
 yarn install
 yarn run dev
 ```
