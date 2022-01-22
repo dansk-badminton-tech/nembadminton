@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\Scraper;
 
+use FlyCompany\Scraper\Enum\LeagueType;
 use Illuminate\Support\Str;
 
 class Helper
@@ -11,17 +12,17 @@ class Helper
 
     /**
      * @param  string  $league
-     * @return string
+     * @return LeagueType
      */
-    public static function convertToLeagueType(string $league) : string
+    public static function convertToLeagueType(string $league) : LeagueType
     {
         if(Str::contains($league, 'liga')){
-            return 'LIGA';
+            return LeagueType::LIGA;
         }
         if(Str::contains($league, '1. division')){
-            return 'FIRSTDIVISION';
+            return LeagueType::FIRSTDIVISION;
         }
-        return 'OTHER';
+        return LeagueType::OTHER;
     }
 
 }

@@ -134,11 +134,11 @@ class BadmintonPlayer
             "subPage"            => "4",
         ];
 
-        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
-            'json' => $params,
-        ]);
+        $url = 'SportsResults/Components/WebService1.asmx/GetLeagueStanding';
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $body = $this->sendRequestAndGetBody($url, $params);
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
@@ -171,11 +171,11 @@ class BadmintonPlayer
             "subPage"            => "6",
         ];
 
-        $response = $this->client->post('SportsResults/Components/WebService1.asmx/GetLeagueStanding', [
-            'json' => $params,
-        ]);
+        $url = 'SportsResults/Components/WebService1.asmx/GetLeagueStanding';
+        Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $body = $this->sendRequestAndGetBody($url, $params);
+        $data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
         if (!isset($data['d'])) {
             throw new \RuntimeException('Did not get any data back');
         }
