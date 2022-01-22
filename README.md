@@ -9,11 +9,11 @@
 
 ## Projekt management
 
-**Forslår en feature(new issue):** https://github.com/dansk-badminton-tech/nembadminton/issues
+**Forslår en feature:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
 
-**Fundet en fejl?:** https://github.com/dansk-badminton-tech/nembadminton/issues
+**Fundet en fejl?:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
 
-**Project:** https://github.com/dansk-badminton-tech/nembadminton/issues
+**Project:** https://github.com/dansk-badminton-tech/nembadminton/projects/2
 
 ## Roadmap
 

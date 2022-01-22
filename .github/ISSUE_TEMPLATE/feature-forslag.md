@@ -7,8 +7,6 @@ assignees: ''
 
 ---
 
-ENG: The feature request can also be in english
-
 **Er din feature relateret til et problem? Prøv beskriv det.**
 En klar beskrivelse af hvad problemet er. fx Det er altid frustrerende nå [...]
 
