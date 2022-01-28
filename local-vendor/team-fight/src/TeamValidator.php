@@ -301,7 +301,7 @@ class TeamValidator
         throw new \RuntimeException('Bad lucky');
     }
 
-    private function getPlayerCategoryPoint(Player $player, string $category)
+    private function getPlayerCategoryPoint(Player $player, string $category): int
     {
         $points = $player->points;
         foreach ($points as $point) {
@@ -315,7 +315,12 @@ class TeamValidator
         );
     }
 
-    private function getRankingCategory(string $category, string $gender)
+    /**
+     * @param  string  $category
+     * @param  string  $gender
+     * @return string
+     */
+    private function getRankingCategory(string $category, string $gender) : string
     {
         if ($category === 'MD' && $gender === 'M') {
             return 'MxH';

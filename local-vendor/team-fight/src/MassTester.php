@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Enricher as ScraperEnricher;
-use FlyCompany\Scraper\Enum\LeagueType;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamFight;
 use Illuminate\Support\Collection;
@@ -25,7 +24,7 @@ class MassTester
 
     public function __construct(
         BadmintonPlayer $badmintonPlayer,
-        ScraperEnricher $enricher
+        ScraperEnricher $enricher,
     ){
         $this->badmintonPlayer = $badmintonPlayer;
         $this->enricher = $enricher;
@@ -35,15 +34,16 @@ class MassTester
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \JsonException
+     * @return Team[]
      */
-    public function checkRound(int $clubId, int $season, int $round)
+    public function checkRound(int $clubId, int $season, int $round) : array
     {
         /** @var Club $club */
         $club = Club::query()->findOrFail($clubId);
 
         $teams = $this->badmintonPlayer->getClubTeams($season, $clubId);
         $teams = array_filter($teams, static function (Team $team){
-            return $team->isDenmarkSeriesOrAbove();
+            return $team->isRegionSeriesOrAbove();
         });
 
         $allTeamFights = [];
@@ -53,16 +53,16 @@ class MassTester
         }
 
         $teamFightsByRounds = (new Collection($allTeamFights))->groupBy('round');
-
         $teamFightsByRounds = new Collection([$teamFightsByRounds->get($round)]);
 
-        $teams = $this->getTeamFights($teamFightsByRounds, $club, $season);
+        return $this->getTeamFights($teamFightsByRounds, $club, $season);
     }
 
     /**
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      * @throws \JsonException
+     * @return Team[]
      */
     private function getTeamFights(Collection $teamFightsByRounds, Club $club, int $season): array
     {
@@ -75,13 +75,15 @@ class MassTester
                 $teamMatch = $this->badmintonPlayer->getTeamMatch((string)$club->id, $teamFight->matchId, (string)$season);
                 $guest = $teamMatch->guest;
                 if (Str::contains($guest->name, $club->name1)) {
+                    $guest->teamFight = $teamFight;
                     $guest->leagueMatchId = $teamFight->matchId;
-                    $guest->squad->league = LeagueType::OTHER->value; //Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                    $guest->squad->league = $guest->getLeagueType()->value;
                     $teams[] = $this->enricher->teamMatch($guest, $club->id, $season, $version);
                 } else {
                     $home = $teamMatch->home;
+                    $home->teamFight = $teamFight;
                     $home->leagueMatchId = $teamFight->matchId;
-                    $home->squad->league = LeagueType::OTHER->value; //Helper::convertToLeagueType($badmintonPlayerTeamMatch['league']); // Kind of a hack because we just forward from client. TODO: Make request to badmintonplayer.dk to finde the league based on leagueMatchId
+                    $home->squad->league = $home->getLeagueType()->value;
                     $teams[] = $this->enricher->teamMatch($home, $club->id, $season, $version);
                 }
             }
@@ -89,7 +91,7 @@ class MassTester
         return $teams;
     }
 
-    private function resolveRankingListVersion(TeamFight $teamFight, int $season) : Carbon
+    public function resolveRankingListVersion(TeamFight $teamFight, int $season) : Carbon
     {
         $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($this->badmintonPlayer->getVersions($season));
         return $rankingMonths->first(static function(Carbon $rankingMonth) use ($teamFight){

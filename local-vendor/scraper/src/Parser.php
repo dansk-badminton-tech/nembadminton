@@ -322,7 +322,10 @@ class Parser
         }
 
         $team1 = new Team($club1, $squad1);
+        $leagueName = $document->find('h3')[0]->text();
+        $team1->league = $leagueName;
         $team2 = new Team($club2, $squad2);
+        $team2->league = $leagueName;
 
         return new TeamMatch($team1, $team2);
     }
