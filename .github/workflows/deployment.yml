@@ -8,11 +8,11 @@ on:
 jobs:
   deployment:
     runs-on: ubuntu-latest
+    environment: production
     steps:
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
-        environment: production
         with:
           host: ${{ secrets.SIMPLY_SSH_HOST }}
           username: ${{ secrets.SIMPLY_SSH_USERNAME }}
