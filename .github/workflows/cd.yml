@@ -38,10 +38,10 @@ jobs:
         with:
           node-version: '16.x'
           cache: 'yarn'
-          - name: Frontend build
-            run: |
-              yarn install --frozen-lockfile
-              yarn run prod
+      - name: Frontend build
+        run: |
+          yarn install --frozen-lockfile
+          yarn run prod
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
