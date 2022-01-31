@@ -2,7 +2,6 @@ node_modules
 release-backend.sh
 release-frontend.sh
 resources/js
-public
 storage/framework/cache/data
 !storage/framework/cache/data/.gitignore
 storage/framework/cache/sessions
@@ -11,3 +10,4 @@ storage/framework/cache/views
 !storage/framework/cache/views/.gitignore
 storage/framework/logs
 !storage/framework/logs/.gitignore
+.git

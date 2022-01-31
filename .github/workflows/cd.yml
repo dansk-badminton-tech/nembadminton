@@ -38,6 +38,7 @@ jobs:
         with:
           node-version: '16.x'
           cache: 'yarn'
+
       - name: Frontend build
         run: |
           yarn install --frozen-lockfile
