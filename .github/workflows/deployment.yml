@@ -9,6 +9,11 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
+      - name: Test
+        env:
+          TEST_SECRET: ${{ secrets.SIMPLY_SSH_HOST }}
+        run: echo $TEST_SECRET
+
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
