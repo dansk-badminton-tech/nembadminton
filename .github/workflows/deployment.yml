@@ -16,4 +16,5 @@ jobs:
           username: ${{ secrets.SIMPLY_SSH_USERNAME }}
           password: ${{ secrets.SIMPLY_SSH_PASSWORD }}
           key: ${{ secrets.SIMPLY_SSH_KEY }}
+          debug: true
           script: whoami
