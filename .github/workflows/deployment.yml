@@ -1,0 +1,19 @@
+name: Deployment
+
+on:
+  push:
+    branchs:
+      - master
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_USERNAME }}
+          password: ${{ secrets.SIMPLY_SSH_PASSWORD }}
+          key: ${{ secrets.SIMPLY_SSH_KEY }}
+          script: whoami
