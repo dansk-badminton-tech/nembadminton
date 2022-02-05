@@ -1,0 +1,629 @@
+[
+    {
+        "match": {
+            "leagueMatchId": 405771,
+            "divisionName": "1. division (grundspil)",
+            "ageGroupId": "1",
+            "teamName1": "Skovshoved",
+            "teamNumber1": 2,
+            "clubId1": 1099,
+            "leagueTeamId1": null,
+            "teamName2": "V\u00e6rl\u00f8se",
+            "clubId2": 42,
+            "leagueTeamId2": null,
+            "teamNumber2": 2,
+            "matchTime": "2021-09-11T13:00:00",
+            "venueName": "Kr\u00f8yersvej",
+            "score1": 9,
+            "score2": 0,
+            "groupName": "Pulje 1",
+            "seasonId": 2021
+        },
+        "combinedTeamMatches": [
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 81989,
+                            "playerIndex": 0,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Tobias Holst-Christensen",
+                                "active": true,
+                                "playerNumber": "971022-01",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 78754,
+                            "playerIndex": 1,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Claudia Paredes",
+                                "active": true,
+                                "playerNumber": "970310-06",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 94651,
+                            "playerIndex": 0,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "David Brandt",
+                                "active": true,
+                                "playerNumber": "020521-04",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 132196,
+                            "playerIndex": 1,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Amalie Cecilie Kudsk",
+                                "active": true,
+                                "playerNumber": "010927-06",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 1311,
+                            "playerIndex": 0,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Daniel Lundgaard",
+                                "active": true,
+                                "playerNumber": "000802-01",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 69978,
+                            "playerIndex": 1,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Isabella Nielsen",
+                                "active": true,
+                                "playerNumber": "950821-02",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 212330,
+                            "playerIndex": 0,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Kristian Weber",
+                                "active": true,
+                                "playerNumber": "030304-04",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MixedDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 13837,
+                            "playerIndex": 1,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Maria Alm",
+                                "active": true,
+                                "playerNumber": "830708-01",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "WomensSingles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 212343,
+                            "playerIndex": 0,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Nele Swerts Knudsen",
+                                "active": true,
+                                "playerNumber": "020224-09",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "WomensSingles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 68029,
+                            "playerIndex": 0,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Susan Ekelund",
+                                "active": true,
+                                "playerNumber": "950511-03",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "WomensSingles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 80364,
+                            "playerIndex": 0,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Amalie Hertz",
+                                "active": true,
+                                "playerNumber": "970630-04",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "WomensSingles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 212095,
+                            "playerIndex": 0,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Ida Terreni",
+                                "active": true,
+                                "playerNumber": "040712-02",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MensSingles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 2976,
+                            "playerIndex": 0,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Axel Henrik Parkh\u00f8i",
+                                "active": true,
+                                "playerNumber": "020205-02",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MensSingles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 88741,
+                            "playerIndex": 0,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Andreas Fleischer",
+                                "active": true,
+                                "playerNumber": "990827-01",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MensSingles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 3127,
+                            "playerIndex": 0,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Marcus Viscovich",
+                                "active": true,
+                                "playerNumber": "020618-01",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MensSingles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 74650,
+                            "playerIndex": 0,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Rasmus Hjalgrim",
+                                "active": true,
+                                "playerNumber": "960610-07",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "WomensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 78754,
+                            "playerIndex": 0,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Claudia Paredes",
+                                "active": true,
+                                "playerNumber": "970310-06",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "WomensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 69978,
+                            "playerIndex": 1,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "K",
+                                "name": "Isabella Nielsen",
+                                "active": true,
+                                "playerNumber": "950821-02",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "WomensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 68029,
+                            "playerIndex": 0,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Susan Ekelund",
+                                "active": true,
+                                "playerNumber": "950511-03",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "WomensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 132196,
+                            "playerIndex": 1,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "K",
+                                "name": "Amalie Cecilie Kudsk",
+                                "active": true,
+                                "playerNumber": "010927-06",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 1311,
+                            "playerIndex": 0,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Daniel Lundgaard",
+                                "active": true,
+                                "playerNumber": "000802-01",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 12057,
+                            "playerIndex": 1,
+                            "rankingPoints": 260,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Joachim Fischer",
+                                "active": true,
+                                "playerNumber": "781123-01",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 88741,
+                            "playerIndex": 0,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Andreas Fleischer",
+                                "active": true,
+                                "playerNumber": "990827-01",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 1,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 94651,
+                            "playerIndex": 1,
+                            "rankingPoints": 104,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "David Brandt",
+                                "active": true,
+                                "playerNumber": "020521-04",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "teamPlayers": {
+                    "92098": [
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 81989,
+                            "playerIndex": 0,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Tobias Holst-Christensen",
+                                "active": true,
+                                "playerNumber": "971022-01",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92098,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 2976,
+                            "playerIndex": 1,
+                            "rankingPoints": 208,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 1099,
+                                "gender": "M",
+                                "name": "Axel Henrik Parkh\u00f8i",
+                                "active": true,
+                                "playerNumber": "020205-02",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ],
+                    "92101": [
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 74650,
+                            "playerIndex": 0,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Rasmus Hjalgrim",
+                                "active": true,
+                                "playerNumber": "960610-07",
+                                "disciplinePoints": null
+                            }
+                        },
+                        {
+                            "disciplineCode": "MensDoubles",
+                            "disciplineRanking": 2,
+                            "leagueGroupTeamId": 92101,
+                            "noShow": false,
+                            "unknown": false,
+                            "playerId": 212330,
+                            "playerIndex": 1,
+                            "rankingPoints": 83,
+                            "rankingPointsCount": 0,
+                            "player": {
+                                "clubId": 42,
+                                "gender": "M",
+                                "name": "Kristian Weber",
+                                "active": true,
+                                "playerNumber": "030304-04",
+                                "disciplinePoints": null
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]

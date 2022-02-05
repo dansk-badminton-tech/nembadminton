@@ -1,0 +1,20 @@
+[
+    {
+        "leagueMatchId": 405771,
+        "divisionName": "1. division (grundspil)",
+        "ageGroupId": "1",
+        "teamName1": "Skovshoved",
+        "clubId1": 1099,
+        "leagueTeamId1": null,
+        "teamName2": "V\u00e6rl\u00f8se",
+        "clubId2": 42,
+        "leagueTeamId2": null,
+        "teamNumber2": 2,
+        "matchTime": "2021-09-11T13:00:00",
+        "venueName": "Kr\u00f8yersvej",
+        "score1": 9,
+        "score2": 0,
+        "groupName": "Pulje 1",
+        "seasonId": 2021
+    }
+]
