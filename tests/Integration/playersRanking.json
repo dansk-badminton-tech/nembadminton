@@ -1,0 +1,172 @@
+{
+    "current": {
+        "versionDate": "2022-02-01T00:00:00.3330521+01:00",
+        "playerRankings": [
+            {
+                "playerNumber": "000101-03",
+                "name": "Jette Borresen",
+                "gender": "K",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-100",
+                "name": "Kristian Kroer Madsen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "610614-03",
+                "name": "Helle Svaneberg",
+                "gender": "K",
+                "singlePoints": 2090,
+                "doublePoints": 2152,
+                "mixPoints": 2152
+            },
+            {
+                "playerNumber": "000101-28",
+                "name": "Andreas Lau Hansen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-32",
+                "name": "Mie Rasmussen",
+                "gender": "K",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-35",
+                "name": "Niklas Spilcker Jacobsen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-36",
+                "name": "Joakim Duc Derby",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-40",
+                "name": "Gaidjurgis Martynas",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-41",
+                "name": "Raisis Laurynas",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-45",
+                "name": "Martin Andersen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            }
+        ]
+    },
+    "previous": {
+        "versionDate": "2022-01-03T00:00:00.3330521+01:00",
+        "playerRankings": [
+            {
+                "playerNumber": "000101-03",
+                "name": "Jette Borresen",
+                "gender": "K",
+                "singlePoints": 1000,
+                "doublePoints": 1000,
+                "mixPoints": 1000
+            },
+            {
+                "playerNumber": "000101-100",
+                "name": "Kristian Kroer Madsen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "610614-03",
+                "name": "Helle Svaneberg",
+                "gender": "K",
+                "singlePoints": 2090,
+                "doublePoints": 2152,
+                "mixPoints": 2152
+            },
+            {
+                "playerNumber": "000101-28",
+                "name": "Andreas Lau Hansen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-32",
+                "name": "Mie Rasmussen",
+                "gender": "K",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-35",
+                "name": "Niklas Spilcker Jacobsen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-36",
+                "name": "Joakim Duc Derby",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-40",
+                "name": "Gaidjurgis Martynas",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-41",
+                "name": "Raisis Laurynas",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            },
+            {
+                "playerNumber": "000101-45",
+                "name": "Martin Andersen",
+                "gender": "M",
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0
+            }
+        ]
+    }
+}

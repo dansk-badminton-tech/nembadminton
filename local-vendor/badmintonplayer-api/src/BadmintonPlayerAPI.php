@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
+use FlyCompany\BadmintonPlayerAPI\Models\PlayersRanking;
+use FlyCompany\BadmintonPlayerAPI\Models\RankingPair;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use FlyCompany\TeamFight\Models\SerializerHelper;
@@ -102,10 +104,34 @@ class BadmintonPlayerAPI
     }
 
     /**
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     */
+    public function getPlayerRanking(RankingPeriodType $periodType, ?int $numberOfRows = null): PlayersRanking
+    {
+        $serializer = SerializerHelper::getSerializer();
+        $response = $this->client->get('Player/ranking',[
+            'query' => array_filter([
+                'rankingType' => $periodType->value,
+                'numberOfrows' => $numberOfRows
+            ])
+        ]);
+        $contents = $response->getBody()->getContents();
+
+        /** @var RankingPair $rankingPair */
+        $rankingPair = $serializer->deserialize($contents, RankingPair::class, 'json');
+
+        if ($periodType === RankingPeriodType::CURRENT) {
+            return $rankingPair->current;
+        }
+
+        return $rankingPair->previous;
+    }
+
+    /**
      * @param $data
      * @return array
      */
-    protected function fixTeamPlayersToBeArray(&$data): array
+    private function fixTeamPlayersToBeArray(&$data): array
     {
         foreach ($data as &$teamMatchLineup) {
             if (isset($teamMatchLineup['combinedTeamMatches'])) {
