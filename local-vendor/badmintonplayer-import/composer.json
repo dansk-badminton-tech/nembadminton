@@ -1,0 +1,17 @@
+{
+    "name": "flycompany/local-badmintonplayer-import",
+    "type": "library",
+    "description": "Importing data from badmintonplayer",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\BadmintonPlayerImport\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\FlyCompany\\BadmintonPlayerImport\\MainServiceProvider"
+            ]
+        }
+    }
+}

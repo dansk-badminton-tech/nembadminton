@@ -16,6 +16,7 @@
         "doctrine/dbal": "^3.2",
         "fideloper/proxy": "^4.2",
         "flycompany/local-badmintonplayer-api": "dev-master",
+        "flycompany/local-badmintonplayer-import": "dev-issue-32-change-to-badmintonplayer-api",
         "flycompany/local-club": "dev-master",
         "flycompany/local-import": "dev-master",
         "flycompany/local-members": "dev-master",

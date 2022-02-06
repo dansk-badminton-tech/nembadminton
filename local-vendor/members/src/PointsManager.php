@@ -18,7 +18,7 @@ class PointsManager
      * @param string|null $category
      * @param string      $vintage
      */
-    public function addPointsByMember(Member $member, int $points, int $position, Carbon $version, ?string $category, $vintage = 'SEN') : void
+    public function addPointsByMember(Member $member, int $points, int $position, Carbon $version, ?string $category, string $vintage = 'SEN') : void
     {
         Point::query()->updateOrCreate([
             'category'  => $category,
@@ -41,7 +41,7 @@ class PointsManager
      * @param string|null $category
      * @param string      $vintage
      */
-    public function addPointsByName(string $name, int $points, int $position, Carbon $version, ?string $category, $vintage = 'SEN') : void
+    public function addPointsByName(string $name, int $points, int $position, Carbon $version, ?string $category, string $vintage = 'SEN') : void
     {
         /** @var Member $member */
         $member = Member::query()->where('name', $name)->firstOrFail();

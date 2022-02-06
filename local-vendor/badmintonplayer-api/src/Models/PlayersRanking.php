@@ -2,6 +2,9 @@
 
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
 class PlayersRanking
 {
 
@@ -15,5 +18,9 @@ class PlayersRanking
      * @var PlayerRanking[]
      */
     public array $playerRankings;
+
+    public function getVersionDateCarbon() : Carbon{
+        return Carbon::createFromFormat('Y-m-d', Str::substr($this->versionDate, 0, 10));
+    }
 
 }

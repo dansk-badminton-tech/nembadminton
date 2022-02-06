@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class Member
  *
+ * @property int id
  * @property string refId
  * @property string name
  * @property string gender

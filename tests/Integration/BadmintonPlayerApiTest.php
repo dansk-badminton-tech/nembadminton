@@ -11,6 +11,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Support\Facades\Cache;
 use Tests\CreatesApplication;
 
 class BadmintonPlayerApiTest extends TestCase
@@ -26,7 +27,7 @@ class BadmintonPlayerApiTest extends TestCase
 
     public function getClient(): BadmintonPlayerAPI
     {
-        return $this->client ?? ($this->client = BadmintonPlayerAPI::make(env('BADMINTONPLAYER_API_EMAIL'), env('BADMINTONPLAYER_API_PASSWORD')));
+        return $this->client ?? ($this->client = BadmintonPlayerAPI::make(env('BADMINTONPLAYER_API_EMAIL'), env('BADMINTONPLAYER_API_PASSWORD'), Cache::store()));
     }
 
     /**

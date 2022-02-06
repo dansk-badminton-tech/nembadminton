@@ -6,5 +6,12 @@
         "psr-4": {
             "FlyCompany\\BadmintonPlayerAPI\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\FlyCompany\\BadmintonPlayerAPI\\MainServiceProvider"
+            ]
+        }
     }
 }

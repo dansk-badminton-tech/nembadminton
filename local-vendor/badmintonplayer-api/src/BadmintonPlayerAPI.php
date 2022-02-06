@@ -10,7 +10,11 @@ use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Arr;
+use JsonException;
+use Psr\SimpleCache\InvalidArgumentException;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 /**
  * api: https://badmintonplayer.dk/publicapi/swagger/index.html
@@ -22,23 +26,18 @@ class BadmintonPlayerAPI
 {
     private static $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
 
-    private Client $client;
-
-    /**
-     * @param Client $client
-     */
-    public function __construct(Client $client)
+    public function __construct(private Client $client, private Repository $cache)
     {
-        $this->client = $client;
     }
 
     /**
      * @param string $email
      * @param string $password
+     * @param Repository $cache
      * @return BadmintonPlayerAPI
-     * @throws \JsonException
+     * @throws JsonException
      */
-    public static function make(string $email, string $password): BadmintonPlayerAPI
+    public static function make(string $email, string $password, Repository $cache): BadmintonPlayerAPI
     {
         $client = new Client([
             'base_uri' => self::$base_url,
@@ -46,7 +45,7 @@ class BadmintonPlayerAPI
 
         $client = self::auth($client, $email, $password);
 
-        return new self($client);
+        return new self($client, $cache);
     }
 
     /**
@@ -54,7 +53,7 @@ class BadmintonPlayerAPI
      * @param string $email
      * @param string $password
      * @return Client
-     * @throws \JsonException
+     * @throws JsonException
      */
     private static function auth(Client $client, string $email, string $password): Client
     {
@@ -72,13 +71,22 @@ class BadmintonPlayerAPI
      * Get all team matches for current season
      *
      * @return TeamMatch[]
+     * @throws InvalidArgumentException
      */
     public function getCurrentLeagueMatches(): array
     {
-        $response = $this->client->get('LeagueMatch');
+        $cacheKey = 'badmintonplayer-api:leagueMatch';
+        $contents = $this->cache->get($cacheKey);
+        if($contents === null){
+            $response = $this->client->get('LeagueMatch');
+            $contents = $response->getBody()->getContents();
+            $this->cache->put($cacheKey, $contents, 3600);
+        }
+
+
         $serializer = SerializerHelper::getSerializer();
         /** @var TeamMatch[] $teamMatches */
-        $teamMatches = $serializer->deserialize($response->getBody()->getContents(), TeamMatch::class . '[]', 'json');
+        $teamMatches = $serializer->deserialize($contents, TeamMatch::class . '[]', 'json');
         return $teamMatches;
     }
 
@@ -86,37 +94,50 @@ class BadmintonPlayerAPI
      * Team matches information with lineups of allowed League divisions for current season. Lineup will be available when match was happen.
      *
      * @return TeamMatchLineup[]
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
-     * @throws \JsonException
+     * @throws ExceptionInterface
+     * @throws JsonException
+     * @throws InvalidArgumentException
      */
     public function getPlayedLeagueMatches(): array
     {
+        $cacheKey = 'badmintonplayer-api:leagueMatch-lineup';
+        $contents = $this->cache->get($cacheKey);
+        if($contents === null){
+            $response = $this->client->get('LeagueMatch/lineup');
+            $contents = $response->getBody()->getContents();
+            $this->cache->put($cacheKey, $contents, 3600);
+        }
+
         $serializer = SerializerHelper::getSerializer();
-        $response = $this->client->get('LeagueMatch/lineup');
-        $contents = $response->getBody()->getContents();
         $data = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
-
         $data = $this->fixTeamPlayersToBeArray($data);
-
         /** @var TeamMatchLineup[] $playedTeamMatches */
         $playedTeamMatches = $serializer->denormalize($data, TeamMatchLineup::class . '[]');
         return $playedTeamMatches;
     }
 
     /**
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
+     * @param RankingPeriodType $periodType
+     * @param int|null $numberOfRows
+     * @return PlayersRanking
+     * @throws InvalidArgumentException
      */
     public function getPlayerRanking(RankingPeriodType $periodType, ?int $numberOfRows = null): PlayersRanking
     {
-        $serializer = SerializerHelper::getSerializer();
-        $response = $this->client->get('Player/ranking',[
-            'query' => array_filter([
-                'rankingType' => $periodType->value,
-                'numberOfrows' => $numberOfRows
-            ])
-        ]);
-        $contents = $response->getBody()->getContents();
+        $cacheKey = "badmintonplayer-api:player-ranking:".md5($periodType->value.$numberOfRows);
+        $contents = $this->cache->get($cacheKey);
+        if($contents === null){
+            $response = $this->client->get('Player/ranking',[
+                'query' => array_filter([
+                    'rankingType' => $periodType->value,
+                    'numberOfrows' => $numberOfRows
+                ])
+            ]);
+            $contents = $response->getBody()->getContents();
+            $this->cache->put($cacheKey, $contents, 3600);
+        }
 
+        $serializer = SerializerHelper::getSerializer();
         /** @var RankingPair $rankingPair */
         $rankingPair = $serializer->deserialize($contents, RankingPair::class, 'json');
 

@@ -2,6 +2,8 @@
 
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
+use FlyCompany\Members\Enums\Category;
+
 class PlayerRanking
 {
     /**
@@ -40,5 +42,19 @@ class PlayerRanking
      */
     public ?int $mixPoints;
 
+    public function getSingleCategory(): Category
+    {
+        if (strtolower($this->gender) === 'm') {
+            return Category::MENS_SINGLE;
+        }
+        return Category::WOMENS_SINGLE;
+    }
+
+    public function getDoubleCategory(): Category {
+        if (strtolower($this->gender) === 'm') {
+            return Category::MENS_DOUBLE;
+        }
+        return Category::WOMENS_DOUBLE;
+    }
 
 }
