@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  */
 class BadmintonPlayerAPI
 {
-    private const CACHE_TTL = 14400;
+    private const CACHE_TTL = 86400;
 
     private static $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
 

@@ -1,14 +1,12 @@
 <template>
     <div>
-        <b-field v-for="team in badmintonPlayerApiTeams" :key="team.divisionName"
+        <b-field v-for="(team, index) in badmintonPlayerApiTeams" :key="team.divisionName"
                  :label="team.divisionName">
-            <h1>{{ team.divisionName }}</h1>
-            <b-select placeholder="Kampe">
-                <option v-for="lineup in team.lineups">
-                    {{lineup.match.}}
+            <b-select v-model="value[index]" placeholder="Kampe" expanded>
+                <option :value="lineup" v-for="(lineup, index) in team.lineups">
+                    {{index+1}} {{lineup.match.matchTime}} - {{lineup.match.teamName1}} - {{lineup.match.teamName2}}
                 </option>
             </b-select>
-            <h2 v-for="lineup in team.lineups">{{lineup.match.divisionName}} - {{lineup.match.groupName}}</h2>
             <!--        <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId"-->
             <!--                                   :player-team="team" :season="season"/>-->
         </b-field>
@@ -20,7 +18,10 @@ import gql from "graphql-tag";
 
 export default {
     name: "Teams",
-    props: ['clubId'],
+    props: {
+        clubId: Number,
+        value: Array
+    },
     apollo: {
         badmintonPlayerApiTeams: {
             query: gql`
@@ -29,8 +30,12 @@ export default {
                         divisionName
                         lineups {
                             match {
+                                leagueMatchId
                                 divisionName
                                 groupName
+                                teamName1
+                                teamName2
+                                matchTime
                             }
                         }
                     }
