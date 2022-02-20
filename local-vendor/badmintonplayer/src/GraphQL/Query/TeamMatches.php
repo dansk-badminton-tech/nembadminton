@@ -10,7 +10,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class Teams
+class TeamMatches
 {
     private BadmintonPlayerAPI $badmintonPlayerAPI;
 

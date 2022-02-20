@@ -1,6 +1,8 @@
 extend type Query {
     "Teams for a club"
-    badmintonPlayerApiTeams(input: BadmintonPlayerApiTeamsInput @spread) : [Division!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\Teams")
+    badmintonPlayerApiTeamMatches(input: BadmintonPlayerApiTeamsInput @spread) : [Division!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatches")
+    "TBA"
+    teamMatchesFormattedForValidation(matchIds: [Int!]) : ImportTeam @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatchesValidationFormat")
 }
 
 input BadmintonPlayerApiTeamsInput {

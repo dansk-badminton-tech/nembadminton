@@ -32,7 +32,7 @@
                             rundt via Drag&Drop eller via knapperne)
                         </b-checkbox>
                     </b-field>
-                    <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport"
+                    <b-button size="is-large mt-2"
                               :disabled="!sortingConfirmed">Tjek spillerunden
                     </b-button>
                 </b-step-item>
@@ -47,6 +47,7 @@ import Teams from "./Teams";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
 import {getCurrentSeason, swapObject} from "../../helpers";
 import SortMatches from "./SortMatches";
+import gql from "graphql-tag";
 
 export default {
     name: "CheckTeamFight",
@@ -67,6 +68,41 @@ export default {
             selectedMatchesSorted: [],
             rankingList: null,
             sortingConfirmed: false
+        }
+    },
+    methods: {
+        validate(){
+            const matchIds = this.selectedMatchesSorted.map(o => o.match.leagueMatchId);
+            this.$apollo.query({
+                query: gql`
+                    query teamMatchesFormattedForValidation($matchIds: [Int!]){
+                        teamMatchesFormattedForValidation(matchIds: $matchIds){
+                            leagueMatchId
+                            name
+                            squad {
+                                playerLimit
+                                league
+                                categories {
+                                    name
+                                    category
+                                    players {
+                                        name
+                                        gender
+                                        points {
+                                            points
+                                            category
+                                            id
+                                            position
+                                            version
+                                            vintage
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                `
+            })
         }
     }
 }

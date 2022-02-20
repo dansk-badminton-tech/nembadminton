@@ -21,4 +21,14 @@ class TeamMatchLineupCollection extends Collection
         });
     }
 
+    /**
+     * @param array|integer[] $matchIds
+     * @return $this
+     */
+    public function getByMatchIds(array $matchIds) : static{
+        return $this->filter(static function(TeamMatchLineup $lineup) use ($matchIds) {
+            return in_array($lineup->match->leagueMatchId, $matchIds, true);
+        });
+    }
+
 }

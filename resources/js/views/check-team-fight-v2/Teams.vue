@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-field v-for="(team, index) in badmintonPlayerApiTeams" :key="team.divisionName"
+        <b-field v-for="(team, index) in badmintonPlayerApiTeamMatches" :key="team.divisionName"
                  :label="team.divisionName">
             <b-select v-model="value[index]" placeholder="Kampe" expanded>
                 <option :value="lineup" v-for="(lineup, index) in team.lineups">
@@ -23,10 +23,10 @@ export default {
         value: Array
     },
     apollo: {
-        badmintonPlayerApiTeams: {
+        badmintonPlayerApiTeamMatches: {
             query: gql`
-                query badmintonPlayerApiTeams($input: BadmintonPlayerApiTeamsInput){
-                    badmintonPlayerApiTeams(input: $input){
+                query badmintonPlayerApiTeamMatches($input: BadmintonPlayerApiTeamsInput){
+                    badmintonPlayerApiTeamMatches(input: $input){
                         divisionName
                         lineups {
                             match {
