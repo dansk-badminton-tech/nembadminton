@@ -13,4 +13,5 @@ type Mutation
 #import subscription.graphql
 #import stats.graphql
 #import badmintonplayer.graphql
+#import badmintonplayer-api.graphql
 #import validate.graphql

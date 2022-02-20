@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
 class TeamMatch
 {
     /**
@@ -101,5 +104,10 @@ class TeamMatch
      * @var int
      */
     public int $seasonId;
+
+    public function getMatchTimeCarbon(): ?Carbon
+    {
+        return $this->matchTime !== null ? Carbon::createFromFormat('Y-m-d\TH:i:s', $this->matchTime ) : null;
+    }
 
 }

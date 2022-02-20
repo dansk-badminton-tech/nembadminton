@@ -15,15 +15,15 @@ class Player
 
     /**
      * Gender
-     * @var string
+     * @var string|null
      */
-    public string $gender;
+    public ?string $gender;
 
     /**
      * Name
-     * @var string
+     * @var string|null
      */
-    public string $name;
+    public ?string $name;
 
     /**
      * Represents value if this person is active player
@@ -33,9 +33,9 @@ class Player
 
     /**
      * Player Number fx. 900910-24
-     * @var string
+     * @var string|null
      */
-    public string $playerNumber;
+    public ?string $playerNumber;
 
     /**
      * Discipline points

@@ -57,4 +57,11 @@ class PlayerRanking
         return Category::WOMENS_DOUBLE;
     }
 
+    public function getMixCategory(): Category {
+        if (strtolower($this->gender) === 'm') {
+            return Category::MEN_MIX;
+        }
+        return Category::WOMEN_MIX;
+    }
+
 }

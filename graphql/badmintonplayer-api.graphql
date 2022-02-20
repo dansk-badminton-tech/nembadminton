@@ -1,0 +1,36 @@
+extend type Query {
+    "Teams for a club"
+    badmintonPlayerApiTeams(input: BadmintonPlayerApiTeamsInput @spread) : [Division!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\Teams")
+}
+
+input BadmintonPlayerApiTeamsInput {
+    clubId: Int!
+}
+
+type Division {
+    divisionName: String!
+    lineups: [Lineup!]!
+}
+
+type Lineup {
+    match: TeamMatch
+}
+
+type TeamMatch {
+    leagueMatchId: Int!
+    divisionName: String
+    ageGroupId: Int
+    teamName1: String
+    clubId1: Int
+    leagueTeamId1: Int
+    teamName2: String
+    clubId2: Int
+    leagueTeamId2: Int
+    teamNumber2: Int
+    matchTime: DateTime @method(name: "getMatchTimeCarbon")
+    venueName: String
+    score1: Int
+    score2: Int
+    groupName: String
+    seasonId: Int!
+}

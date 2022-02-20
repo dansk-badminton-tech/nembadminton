@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
+use FlyCompany\BadmintonPlayerAPI\Collections\TeamMatchLineupCollection;
 use FlyCompany\BadmintonPlayerAPI\Models\PlayersRanking;
 use FlyCompany\BadmintonPlayerAPI\Models\RankingPair;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
@@ -24,6 +25,8 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  */
 class BadmintonPlayerAPI
 {
+    private const CACHE_TTL = 14400;
+
     private static $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
 
     public function __construct(private Client $client, private Repository $cache)
@@ -80,7 +83,7 @@ class BadmintonPlayerAPI
         if($contents === null){
             $response = $this->client->get('LeagueMatch');
             $contents = $response->getBody()->getContents();
-            $this->cache->put($cacheKey, $contents, 3600);
+            $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
         }
 
 
@@ -93,27 +96,26 @@ class BadmintonPlayerAPI
     /**
      * Team matches information with lineups of allowed League divisions for current season. Lineup will be available when match was happen.
      *
-     * @return TeamMatchLineup[]
+     * @return TeamMatchLineupCollection|TeamMatchLineup[]
      * @throws ExceptionInterface
      * @throws JsonException
      * @throws InvalidArgumentException
      */
-    public function getPlayedLeagueMatches(): array
+    public function getPlayedLeagueMatches(): TeamMatchLineupCollection
     {
         $cacheKey = 'badmintonplayer-api:leagueMatch-lineup';
         $contents = $this->cache->get($cacheKey);
         if($contents === null){
             $response = $this->client->get('LeagueMatch/lineup');
             $contents = $response->getBody()->getContents();
-            $this->cache->put($cacheKey, $contents, 3600);
+            $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
         }
 
         $serializer = SerializerHelper::getSerializer();
         $data = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
         $data = $this->fixTeamPlayersToBeArray($data);
-        /** @var TeamMatchLineup[] $playedTeamMatches */
         $playedTeamMatches = $serializer->denormalize($data, TeamMatchLineup::class . '[]');
-        return $playedTeamMatches;
+        return new TeamMatchLineupCollection($playedTeamMatches);
     }
 
     /**
@@ -134,7 +136,7 @@ class BadmintonPlayerAPI
                 ])
             ]);
             $contents = $response->getBody()->getContents();
-            $this->cache->put($cacheKey, $contents, 3600);
+            $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
         }
 
         $serializer = SerializerHelper::getSerializer();

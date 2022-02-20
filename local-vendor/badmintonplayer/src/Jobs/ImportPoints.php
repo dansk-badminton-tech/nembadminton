@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyCompany\BadmintonPlayerImport\Jobs;
+namespace FlyCompany\BadmintonPlayer\Jobs;
 
 use App\Models\Member;
 use Carbon\Carbon;
@@ -46,6 +46,8 @@ class ImportPoints implements ShouldQueue
      */
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI, PointsManager $pointsManager): int
     {
+        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
+        $this->updateMemberPoints($rankingList, $pointsManager);
         $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
         $this->updateMemberPoints($rankingList, $pointsManager);
 
@@ -65,15 +67,20 @@ class ImportPoints implements ShouldQueue
             $playersByRefId[$playerRanking->playerNumber] = $playerRanking;
         }
 
+        \FlyCompany\Club\Log::createLog($this->clubId, "Starting updating members points with ranking version: {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'points-importer');
         Member::query()->chunk(100, static function (Collection $members) use ($rankingList, $pointsManager, $playersByRefId) {
             foreach ($members as $member) {
                 $player = $playersByRefId[$member->refId] ?? null;
-                if ($player !== null) {
+                if ($player !== null && $player->playerNumber === '900910-17') {
+                    Log::info("Updating $player->name($player->gender) single points");
                     $pointsManager->addPointsByMember($member, $player->singlePoints, 0, $rankingList->getVersionDateCarbon(), $player->getSingleCategory()->value);
-                    echo "Found $player->name ($player->playerNumber)" . PHP_EOL;
-                    exit();
+                    Log::info("Updating $player->name($player->gender) double points");
+                    $pointsManager->addPointsByMember($member, $player->doublePoints, 0, $rankingList->getVersionDateCarbon(), $player->getDoubleCategory()->value);
+                    Log::info("Updating $player->name($player->gender) mix points");
+                    $pointsManager->addPointsByMember($member, $player->singlePoints, 0, $rankingList->getVersionDateCarbon(), $player->getMixCategory()->value);
                 }
             }
         });
+        \FlyCompany\Club\Log::createLog($this->clubId, "Done updating members points", 'points-importer');
     }
 }

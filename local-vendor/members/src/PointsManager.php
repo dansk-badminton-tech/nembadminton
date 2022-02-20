@@ -26,7 +26,7 @@ class PointsManager
             'member_id' => $member->id,
         ], [
             'points'   => $points,
-            'position' => $position,
+            //'position' => $position,
             'cll'      => null,
             'vintage'  => $vintage,
             'clh'      => null,

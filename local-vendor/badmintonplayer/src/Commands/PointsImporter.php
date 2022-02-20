@@ -1,9 +1,9 @@
 <?php
 
-namespace FlyCompany\BadmintonPlayerImport\Commands;
+namespace FlyCompany\BadmintonPlayer\Commands;
 
 use App\Jobs\BadmintonPlayerImportPoints;
-use FlyCompany\BadmintonPlayerImport\Jobs\ImportPoints;
+use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use Illuminate\Console\Command;
@@ -33,7 +33,7 @@ class PointsImporter extends Command
      */
     public function handle() : int
     {
-        ImportPoints::dispatchSync($this->argument('club-id'));
+        ImportPoints::dispatch($this->argument('club-id'));
 
         return 0;
     }
