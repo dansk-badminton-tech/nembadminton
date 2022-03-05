@@ -4,21 +4,34 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
+use Carbon\Carbon;
+
 class Util
 {
 
     /**
-     * @throws \JsonException
+     * @param Carbon $birthday
+     * @return Vintage
      */
-    public static function decodeUnicode(?string $str): ?string
+    public static function calculateVintage(Carbon $birthday): Vintage
     {
-        if($str === null){
-            return null;
+        $diffYears = $birthday->diffInYears(Carbon::now());
+        if ($diffYears <= 13) {
+            return Vintage::U13;
         }
-        return preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', static function ($match) {
-            var_dump($match[1]);
-            return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UTF-16BE');
-        }, $str);
+
+        if ($diffYears <= 15) {
+            return Vintage::U15;
+        }
+
+        if ($diffYears <= 17) {
+            return Vintage::U17;
+        }
+
+        if ($diffYears <= 19) {
+            return Vintage::U19;
+        }
+        return Vintage::SENIOR;
     }
 
 }

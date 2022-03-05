@@ -4,6 +4,7 @@ namespace FlyCompany\BadmintonPlayerAPI;
 
 use FlyCompany\BadmintonPlayerAPI\Commands\LeagueMatch;
 use FlyCompany\BadmintonPlayerAPI\Commands\LeagueMatchLineup;
+use FlyCompany\BadmintonPlayerAPI\Commands\RankingPoints;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +18,8 @@ class MainServiceProvider extends ServiceProvider
 
         $this->commands([
             LeagueMatch::class,
-            LeagueMatchLineup::class
+            LeagueMatchLineup::class,
+            RankingPoints::class
         ]);
     }
 

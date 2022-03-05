@@ -105,9 +105,21 @@ class TeamMatch
      */
     public int $seasonId;
 
+    /**
+     * Number of points in niveau
+     * @var int|null
+     */
+    public ?int $niveauPoints;
+
+    /**
+     * Club identifier
+     * @var int|null
+     */
+    public ?int $clubID;
+
     public function getMatchTimeCarbon(): ?Carbon
     {
-        return $this->matchTime !== null ? Carbon::createFromFormat('Y-m-d\TH:i:s', $this->matchTime ) : null;
+        return $this->matchTime !== null ? Carbon::createFromFormat('Y-m-d\TH:i:s.vZ', $this->matchTime ) : null;
     }
 
 }

@@ -4,6 +4,7 @@ namespace FlyCompany\BadmintonPlayer\Commands;
 
 use App\Jobs\BadmintonPlayerImportPoints;
 use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
+use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use Illuminate\Console\Command;
@@ -33,7 +34,8 @@ class PointsImporter extends Command
      */
     public function handle() : int
     {
-        ImportPoints::dispatch($this->argument('club-id'));
+        ImportPoints::dispatch((int)$this->argument('club-id'), RankingPeriodType::CURRENT);
+        ImportPoints::dispatch((int)$this->argument('club-id'), RankingPeriodType::PREVIOUS);
 
         return 0;
     }
