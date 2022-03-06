@@ -1,5 +1,5 @@
 export class TeamFightHelper {
-    static generate10Players() {
+    static generateSquadWith10Players() {
         return {
             playerLimit: 10,
             league: 'OTHER',
@@ -60,7 +60,7 @@ export class TeamFightHelper {
         }
     }
 
-    static generate8Players() {
+    static generateSquadWith8Players() {
         return {
             playerLimit: 8,
             league: 'OTHER',
@@ -113,7 +113,7 @@ export class TeamFightHelper {
         }
     }
 
-    static generate6Players() {
+    static generateSquadWith6Players() {
         return {
             playerLimit: 6,
             league: 'OTHER',

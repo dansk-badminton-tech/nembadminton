@@ -1,0 +1,34 @@
+query team($id: ID!){
+    team(id: $id){
+        id
+        squads{
+            id
+            playerLimit
+            league
+            categories{
+                id
+                category
+                name
+                players{
+                    id
+                    gender
+                    name
+                    refId
+                    points{
+                        category
+                        points
+                        position
+                        vintage
+                    }
+                }
+            }
+        }
+        name
+        gameDate
+        version
+        club {
+            id
+            name1
+        }
+    }
+}

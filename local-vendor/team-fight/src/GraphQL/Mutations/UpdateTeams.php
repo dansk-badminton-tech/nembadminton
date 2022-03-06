@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
-use App\Models\Member;
 use App\Models\Point;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
@@ -18,7 +17,6 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Symfony\Component\Serializer\Serializer;
 
@@ -134,10 +132,10 @@ class UpdateTeams
             $squads = $args['squads'];
             /** @var Squad[] $squads */
             $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
-            $this->squadManager->removeSquads($squads, $team);
+            $this->squadManager->removeDeletedSquads($squads, $team);
             $this->squadManager->addOrUpdateSquads($squads, $team);
 
-            return $team;
+            return $this->getTeamOrFail($context, $args['id']);
         });
     }
 

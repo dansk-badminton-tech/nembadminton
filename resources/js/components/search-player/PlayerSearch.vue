@@ -127,7 +127,7 @@ export default {
                  this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
             },
             skip() {
-                return !this.focusedFlag
+                return !this.focusedFlag || this.squad.id == null
             }
         },
         membersSearch: {
