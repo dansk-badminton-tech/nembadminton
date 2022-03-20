@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayer\GraphQL\Query;
 
+use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class TeamMatches
@@ -31,7 +31,7 @@ class TeamMatches
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $matches = $this->badmintonPlayerAPI->getPlayedLeagueMatches()->getByClubId($args['clubId']);
+        $matches = $this->badmintonPlayerAPI->getPlayedLeagueMatches()->getByClubId($args['clubId'])->onlyAfter(Carbon::now()->subMonth(1));
         $matches = $matches->groupBy(function(TeamMatchLineup $matchLineup){
             return $matchLineup->match->divisionName.' '.$matchLineup->match->groupName;
         });

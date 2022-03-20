@@ -131,6 +131,15 @@ const router = new VueRouter(
                             allowAnonymous: false,
                             title: 'Tidligere holdkampe'
                         }
+                    },
+                    {
+                        path: '/playground',
+                        name: 'playground',
+                        component: () => import("./views/playground/Playground"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Playground'
+                        }
                     }
                 ]
             }

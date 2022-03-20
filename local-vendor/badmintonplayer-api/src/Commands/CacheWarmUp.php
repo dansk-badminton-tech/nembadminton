@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FlyCompany\BadmintonPlayerAPI\Commands;
 
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
+use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use Illuminate\Console\Command;
 
 class CacheWarmUp extends Command
@@ -31,12 +32,15 @@ class CacheWarmUp extends Command
      */
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
     {
-        $matches = $badmintonPlayerAPI->getCurrentLeagueMatches();
-        $limit = $this->option('limit');
-        if($limit !== null){
-            $matches = array_slice($matches, 0, (int)$limit);
-        }
-        echo json_encode($matches, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        $this->getOutput()->writeln('Warming up cache');
+        $badmintonPlayerAPI->overrideCache();
+        $this->getOutput()->writeln('Fetching coming league matches');
+        $badmintonPlayerAPI->getCurrentLeagueMatches();
+        $this->getOutput()->writeln('Fetching played league matches');
+        $badmintonPlayerAPI->getPlayedLeagueMatches();
+        $this->getOutput()->writeln('Fetching current and previous month ranking');
+        $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
+        $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
         return 0;
     }
 

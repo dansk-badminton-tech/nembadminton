@@ -172,6 +172,7 @@ import {
 } from "../helpers";
 import ShareLinkModal from "../components/team-fight/ShareLinkModal";
 import TeamQuery from "../queries/team.graphql"
+import {hasInvalidCategory, hasInvalidLevel} from "./team-fight/helper";
 
 export default {
     name: "TeamFight",
@@ -200,22 +201,13 @@ export default {
             if (!this.canValidateSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighSquadList.filter((playerInfo) => {
-                return !playerInfo.isYouthPlayer
-            })
-            const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo) => {
-                return !playerInfo.hasYouthPlayerPartner
-            })
-            return playersWithoutYouthPartner.length > 0
+            return hasInvalidCategory(this.playingToHighSquadList)
         },
         resolveInvalidLevel() {
             if (!this.canValidateCrossSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighList.filter((playerInfo) => {
-                return !playerInfo.isYouthPlayer
-            })
-            return playersWithoutYouth.length > 0
+            return hasInvalidLevel(this.playingToHighList)
         }
     },
     data() {

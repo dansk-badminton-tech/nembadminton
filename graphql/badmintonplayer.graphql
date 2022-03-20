@@ -9,6 +9,8 @@ extend type Query {
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
     "Team matchs (from badmintonPlayerTeamMatchsImport)"
     badmintonPlayerTeamMatches(jobId: Int!) : [ImportTeamMatch!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatches")
+    "Ranking versions directly from badmintonplayer.dk"
+    rankingVersionsBP: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersionsBP")
 }
 
 extend type Mutation {
@@ -100,7 +102,6 @@ type ImportMember{
 }
 
 type ImportPoint{
-    id: Int,
     points: Int
     position: Int
     category: String

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI\Collections;
 
+use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use Illuminate\Support\Collection;
 
@@ -18,6 +19,12 @@ class TeamMatchLineupCollection extends Collection
     public function getByClubId(int $clubId) : static {
         return $this->filter(static function(TeamMatchLineup $lineup) use ($clubId) {
             return $lineup->match->clubId1 === $clubId || $lineup->match->clubId2 === $clubId;
+        });
+    }
+
+    public function onlyAfter(Carbon $after){
+        return $this->filter(static function(TeamMatchLineup $lineup) use ($after){
+            return $lineup->match->getMatchTimeCarbon() > $after;
         });
     }
 

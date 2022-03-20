@@ -3,3 +3,7 @@
 .pointer {
     cursor: grab;
 }
+
+// https://github.com/buefy/buefy/issues/3675
+// DateTimePicker + FA6 is broken
+.icon svg { width: 1em; height: 1em; max-width: 80%; max-height: 80%; }

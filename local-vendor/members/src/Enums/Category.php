@@ -10,4 +10,5 @@ enum Category: string
     case WOMENS_DOUBLE = 'DD';
     case MEN_MIX = 'MxH';
     case WOMEN_MIX = 'MxD';
+
 }

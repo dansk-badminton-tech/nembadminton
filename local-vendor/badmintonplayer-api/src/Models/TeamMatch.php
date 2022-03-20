@@ -119,7 +119,7 @@ class TeamMatch
 
     public function getMatchTimeCarbon(): ?Carbon
     {
-        return $this->matchTime !== null ? Carbon::createFromFormat('Y-m-d\TH:i:s.vZ', $this->matchTime ) : null;
+        return $this->matchTime !== null ? Carbon::createFromFormat('Y-m-d\TH:i:s', $this->matchTime ) : null;
     }
 
 }

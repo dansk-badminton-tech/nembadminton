@@ -26,9 +26,9 @@ extend type Query{
     members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name", "latest_level_points"])): [MemberWithLatestPoints!]! @guard @paginate(defaultCount: 20, model: "FlyCompany\\Members\\Models\\MemberWithLatestPoints", scopes: ["myClub"])
     "Ranking versions based on the data from this system."
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
-    "Ranking versions directly from badmintonplayer.dk"
-    rankingVersionsBP: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersionsBP")
+    "Clubs"
     clubs: [Club!]! @all(scopes: ["OrderByName"])
+    "Event log"
     logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
 }
 

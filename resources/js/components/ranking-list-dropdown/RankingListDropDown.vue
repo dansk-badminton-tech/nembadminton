@@ -1,7 +1,7 @@
 <template>
     <b-select expanded placeholder="Vælge rangliste" @input="handleInput">
         <option
-            v-for="version in rankingVersionsBP"
+            v-for="version in rankingVersionsApi"
             :key="version"
             :value="version">
             {{ version }}
@@ -21,10 +21,10 @@ export default {
         }
     },
     apollo: {
-        rankingVersionsBP: {
+        rankingVersionsApi: {
             query: gql`
-                    query rankingVersionsBP{
-                        rankingVersionsBP
+                    query rankingVersionsApi{
+                        rankingVersionsApi
                     }
                 `
         }

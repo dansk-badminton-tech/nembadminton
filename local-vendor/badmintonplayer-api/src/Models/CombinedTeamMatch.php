@@ -12,4 +12,14 @@ class CombinedTeamMatch
      */
     public ?array $teamPlayers;
 
+    /**
+     * @param int $clubId
+     * @return MatchPlayerMeta[]
+     */
+    public function getPlayersByClubId(int $clubId) : array{
+        return array_filter($this->teamPlayers, static function(MatchPlayerMeta $matchPlayerMeta) use ($clubId){
+            return $matchPlayerMeta->player->clubId === $clubId;
+        });
+    }
+
 }

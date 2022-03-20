@@ -25,9 +25,12 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  */
 class BadmintonPlayerAPI
 {
-    private const CACHE_TTL = 86400;
+    private const CACHE_TTL = 129600;
+    private const CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH = 'badmintonplayer-api:leagueMatch';
+    private const CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP = 'badmintonplayer-api:leagueMatch-lineup';
 
-    private static $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
+    private static string $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
+    private bool $overrideCache = false;
 
     public function __construct(private Client $client, private Repository $cache)
     {
@@ -70,6 +73,11 @@ class BadmintonPlayerAPI
         ]);
     }
 
+    public function overrideCache(): void
+    {
+        $this->overrideCache = true;
+    }
+
     /**
      * Get all team matches for current season
      *
@@ -78,14 +86,12 @@ class BadmintonPlayerAPI
      */
     public function getCurrentLeagueMatches(): array
     {
-        $cacheKey = 'badmintonplayer-api:leagueMatch';
-        $contents = $this->cache->get($cacheKey);
-        if($contents === null){
+        $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH);
+        if($contents === null || $this->overrideCache){
             $response = $this->client->get('LeagueMatch');
             $contents = $response->getBody()->getContents();
-            $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
+            $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH, $contents, self::CACHE_TTL);
         }
-
 
         $serializer = SerializerHelper::getSerializer();
         /** @var TeamMatch[] $teamMatches */
@@ -103,12 +109,11 @@ class BadmintonPlayerAPI
      */
     public function getPlayedLeagueMatches(): TeamMatchLineupCollection
     {
-        $cacheKey = 'badmintonplayer-api:leagueMatch-lineup';
-        $contents = $this->cache->get($cacheKey);
-        if($contents === null){
+        $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP);
+        if($contents === null || $this->overrideCache){
             $response = $this->client->get('LeagueMatch/lineup');
             $contents = $response->getBody()->getContents();
-            $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
+            $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP, $contents, self::CACHE_TTL);
         }
 
         $serializer = SerializerHelper::getSerializer();
@@ -128,7 +133,7 @@ class BadmintonPlayerAPI
     {
         $cacheKey = "badmintonplayer-api:player-ranking:".md5($periodType->value.$numberOfRows);
         $contents = $this->cache->get($cacheKey);
-        if($contents === null){
+        if($contents === null || $this->overrideCache){
             $response = $this->client->get('Player/ranking',[
                 'query' => array_filter([
                     'rankingType' => $periodType->value,

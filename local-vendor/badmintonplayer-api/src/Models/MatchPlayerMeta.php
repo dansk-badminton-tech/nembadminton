@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
+use FlyCompany\Members\Enums\Category;
+
 /**
  * Class MatchPlayerMeta
  * @package FlyCompany\BadmintonPlayerAPI\Models
@@ -70,5 +72,13 @@ class MatchPlayerMeta
      * @var Player
      */
     public Player $player;
+
+    public function getShortDiscipline() : string{
+        return $this->disciplineRanking.". ".Discipline::from($this->disciplineCode)->shortName();
+    }
+
+    public function getDiscipline() : Discipline {
+        return Discipline::from($this->disciplineCode);
+    }
 
 }

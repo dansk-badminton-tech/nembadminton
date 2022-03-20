@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace FlyCompany\BadmintonPlayerAPI;
 
 use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Models\PlayerRanking;
+use FlyCompany\Members\Enums\Category;
+use FlyCompany\TeamFight\Models\Point;
 
 class Util
 {
@@ -15,6 +18,7 @@ class Util
      */
     public static function calculateVintage(Carbon $birthday): Vintage
     {
+        $birthday->setDay(1)->setMonth(1);
         $diffYears = $birthday->diffInYears(Carbon::now());
         if ($diffYears <= 13) {
             return Vintage::U13;
@@ -32,6 +36,38 @@ class Util
             return Vintage::U19;
         }
         return Vintage::SENIOR;
+    }
+
+    /**
+     * @param PlayerRanking $playerRanking
+     * @param Carbon $version
+     * @return array
+     */
+    public static function convertToPointsList(PlayerRanking $playerRanking, Carbon $version) : array{
+        $points = [];
+        $points[] = self::makePoint($playerRanking, $version, $playerRanking->niveauPoints, null);
+        $points[] = self::makePoint($playerRanking, $version, $playerRanking->mixPoints, $playerRanking->getMixCategory()->value);
+        $points[] = self::makePoint($playerRanking, $version, $playerRanking->doublePoints, $playerRanking->getDoubleCategory()->value);
+        $points[] = self::makePoint($playerRanking, $version, $playerRanking->singlePoints, $playerRanking->getSingleCategory()->value);
+        return $points;
+    }
+
+    /**
+     * @param PlayerRanking $playerRanking
+     * @param Carbon $version
+     * @param int $points
+     * @param string|null $category
+     * @return Point
+     */
+    private static function makePoint(PlayerRanking $playerRanking, Carbon $version, int $points, ?string $category): Point
+    {
+        $point = new Point();
+        $point->vintage = $playerRanking->getVintage()->value;
+        $point->points = $points;
+        $point->category = $category;
+        $point->position = 0;
+        $point->version = $version->format('Y-m-d');
+        return $point;
     }
 
 }
