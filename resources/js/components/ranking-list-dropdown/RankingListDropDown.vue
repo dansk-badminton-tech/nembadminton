@@ -1,7 +1,7 @@
 <template>
     <b-select expanded placeholder="Vælge rangliste" @input="handleInput">
         <option
-            v-for="version in rankingVersionsApi"
+            v-for="version in rankingVersions"
             :key="version"
             :value="version">
             {{ version }}
@@ -14,19 +14,30 @@ import gql from "graphql-tag";
 
 export default {
     name: 'RankingListDropdown',
-    props: ['value', 'season'],
+    props: ['value', 'season', 'useSystemRankings'],
     methods: {
         handleInput(value) {
             this.$emit('input', value)
         }
     },
     apollo: {
-        rankingVersionsApi: {
-            query: gql`
-                    query rankingVersionsApi{
-                        rankingVersionsApi
-                    }
-                `
+        rankingVersions: {
+            query(){
+                if(this.useSystemRankings){
+                    return gql`
+                        query rankingVersionsBP{
+                            rankingVersionsBP
+                        }
+                    `
+                }else{
+                    return gql`
+                        query rankingVersionsApi{
+                            rankingVersionsApi
+                        }
+                    `
+                }
+            },
+            update: data => data.rankingVersionsBP || data.rankingVersionsApi,
         }
     }
 };

@@ -28,7 +28,7 @@
                             holdsætning fra den 10. i den pågældende måned til og med den 9. i den efterfølgende
                             måned. </h2>
                         <b-field>
-                            <ranking-list-dropdown v-model="rankingList" :season="season"></ranking-list-dropdown>
+                            <ranking-list-dropdown v-model="rankingList" :use-system-rankings="true" :season="season"></ranking-list-dropdown>
                         </b-field>
                         <h1 class="title">Hold kampe</h1>
                         <h2 class="subtitle">Vælge den specifikke hold kamp. Husk ranglisten skal passe med holdkamps
