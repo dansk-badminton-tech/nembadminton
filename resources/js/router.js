@@ -133,6 +133,15 @@ const router = new VueRouter(
                         }
                     },
                     {
+                        path: '/team-fight/choice',
+                        name: 'check-team-choice',
+                        component: () => import("./views/check-team-fight-choice/TeamFightChoice"),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Vælge version'
+                        }
+                    },
+                    {
                         path: '/playground',
                         name: 'playground',
                         component: () => import("./views/playground/Playground"),
