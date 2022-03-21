@@ -131,7 +131,7 @@ class BadmintonPlayerAPI
      */
     public function getPlayerRanking(RankingPeriodType $periodType, ?int $numberOfRows = null): PlayersRanking
     {
-        $cacheKey = "badmintonplayer-api:player-ranking:".md5($periodType->value.$numberOfRows);
+        $cacheKey = "badmintonplayer-api:player-ranking-".md5($periodType->value.$numberOfRows);
         $contents = $this->cache->get($cacheKey);
         if($contents === null || $this->overrideCache){
             $response = $this->client->get('Player/ranking',[
