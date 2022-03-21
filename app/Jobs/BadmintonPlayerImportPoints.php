@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
+use FlyCompany\Scraper\Enums\RankingList;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,16 +24,18 @@ class BadmintonPlayerImportPoints implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private int $clubId;
+    private readonly int $clubId;
+    private readonly ?RankingList $rankingList;
 
     /**
      * Create a new job instance.
      *
      * @param int $clubId
      */
-    public function __construct(int $clubId)
+    public function __construct(int $clubId, RankingList $rankingList = null)
     {
         $this->clubId = $clubId;
+        $this->rankingList = $rankingList;
     }
 
     /**
@@ -48,7 +51,11 @@ class BadmintonPlayerImportPoints implements ShouldQueue
      */
     public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager) : int
     {
-        $rankingLists = BadmintonPlayer::rankingLists();
+        if($this->rankingList !== null){
+            $rankingLists = [$this->rankingList->value];
+        }else{
+            $rankingLists = BadmintonPlayer::rankingLists();
+        }
 
         $seasons = $this->generateSeasons();
         foreach ($rankingLists as $rankingList) {

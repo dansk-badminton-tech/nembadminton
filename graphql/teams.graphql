@@ -115,7 +115,7 @@ type Squad {
 }
 
 type Teams {
-    id: ID,
+    id: ID!,
     "Squads"
     squads: [Squad!]! @hasMany,
     "Name of the team"

@@ -1,6 +1,6 @@
 <template>
     <div class="field is-grouped is-grouped-multiline">
-        <div class="control">
+        <div class="control" v-show="!hideIncompleteTeam">
             <div class="tags has-addons">
                 <b-tooltip
                     :label="incompleteTeamTip">
@@ -13,7 +13,7 @@
         </div>
         <div class="control">
             <b-tooltip
-                :label="invalidCategoryTip">
+                :label="invalidLevelTip">
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller på et forkert hold</span>
                     <span
@@ -24,7 +24,7 @@
         </div>
         <div class="control">
             <b-tooltip
-                :label="invalidLevelTip">
+                :label="invalidCategoryTip">
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
                     <span
@@ -38,7 +38,17 @@
 <script>
 export default {
     name: 'ValidationStatus',
-    props: ['incompleteTeam', 'invalidCategory', 'invalidLevel'],
+    props: {
+        incompleteTeam: Boolean,
+        invalidCategory: Boolean,
+        invalidLevel: Boolean,
+        hideIncompleteTeam: {
+            type: Boolean,
+            default(){
+                return false
+            }
+        }
+    },
     computed: {
         incompleteTeamTip() {
             return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Der findes et eller flere ugyldig hold. Skal være OK før de andre tjeks kører' : 'Alle kategorier er udfyldt korrekt.'))

@@ -1,0 +1,46 @@
+extend type Query {
+    "Team matches for a club"
+    badmintonPlayerApiTeamMatches(input: BadmintonPlayerApiTeamsInput @spread) : [Division!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatches")
+    "Converts team matches into validation structure"
+    teamMatchesFormattedForValidation(input: TeamMatchesFormattedForValidationInput! @spread) : [ImportTeam!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatchesValidationFormat")
+    "Available ranking versions. Limit to previous and current month"
+    rankingVersionsApi: [Date!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\RankingVersions")
+}
+
+input TeamMatchesFormattedForValidationInput{
+    matchIds: [Int!]
+    clubId: Int!
+    version: Date!
+}
+
+input BadmintonPlayerApiTeamsInput {
+    clubId: Int!
+}
+
+type Division {
+    divisionName: String!
+    lineups: [Lineup!]!
+}
+
+type Lineup {
+    match: TeamMatch
+}
+
+type TeamMatch {
+    leagueMatchId: Int!
+    divisionName: String
+    ageGroupId: Int
+    teamName1: String
+    clubId1: Int
+    leagueTeamId1: Int
+    teamName2: String
+    clubId2: Int
+    leagueTeamId2: Int
+    teamNumber2: Int
+    matchTime: DateTime @method(name: "getMatchTimeCarbon")
+    venueName: String
+    score1: Int
+    score2: Int
+    groupName: String
+    seasonId: Int!
+}

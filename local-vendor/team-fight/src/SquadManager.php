@@ -14,6 +14,7 @@ use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 class SquadManager
@@ -28,7 +29,9 @@ class SquadManager
     public function addOrUpdateSquads(array $squads, Teams $team): void
     {
         foreach ($squads as $index => $squadInput) {
-            $squad = SquadModel::query()->find($squadInput->id);
+            $squad = SquadModel::query()->whereHas('team', function(Builder $builder) use ($team){
+                $builder->where('id', $team->id);
+            })->find($squadInput->id);
             if($squad === null){
                 $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
                 $squad->forceFill(['teams_id' => $team->id]);
@@ -47,7 +50,7 @@ class SquadManager
      *
      * @throws \Throwable
      */
-    public function removeSquads(array $squads, Teams $team): void
+    public function removeDeletedSquads(array $squads, Teams $team): void
     {
         $shouldExistsIds = array_map('intval', Arr::pluck($squads, 'id'));
         foreach ($team->squads as $squad){

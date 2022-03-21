@@ -6,8 +6,10 @@ namespace FlyCompany\Members\Models;
 
 use App\Models\Club;
 use App\Models\Point;
-use App\Models\SquadMember;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use FlyCompany\BadmintonPlayerAPI\Util;
+use FlyCompany\BadmintonPlayerAPI\Vintage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -48,6 +50,14 @@ class MemberWithLatestPoints extends Model
         return $builder->whereHas('clubs', function (Builder $builder) {
             $builder->where('id', Auth::user()->organization_id);
         });
+    }
+
+    public function getVintage() : string{
+        return Util::calculateVintage($this->getBirthday())->value;
+    }
+
+    public function getBirthday() : Carbon {
+        return Carbon::createFromFormat('ymd', substr($this->refId, 0, 6));
     }
 
 }

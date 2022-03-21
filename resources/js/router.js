@@ -122,6 +122,33 @@ const router = new VueRouter(
                             allowAnonymous: false,
                             title: 'Tidligere holdkampe'
                         }
+                    },
+                    {
+                        path: '/team-fight-v2/check',
+                        name: 'check-team-fight-v2',
+                        component: () => import("./views/check-team-fight-v2/CheckTeamFight"),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Tidligere holdkampe'
+                        }
+                    },
+                    {
+                        path: '/team-fight/choice',
+                        name: 'check-team-choice',
+                        component: () => import("./views/check-team-fight-choice/TeamFightChoice"),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Vælge version'
+                        }
+                    },
+                    {
+                        path: '/playground',
+                        name: 'playground',
+                        component: () => import("./views/playground/Playground"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Playground'
+                        }
                     }
                 ]
             }

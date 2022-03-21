@@ -171,6 +171,8 @@ import {
     isWomensSingle
 } from "../helpers";
 import ShareLinkModal from "../components/team-fight/ShareLinkModal";
+import TeamQuery from "../queries/team.graphql"
+import {hasInvalidCategory, hasInvalidLevel} from "./team-fight/helper";
 
 export default {
     name: "TeamFight",
@@ -199,22 +201,13 @@ export default {
             if (!this.canValidateSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighSquadList.filter((playerInfo) => {
-                return !playerInfo.isYouthPlayer
-            })
-            const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo) => {
-                return !playerInfo.hasYouthPlayerPartner
-            })
-            return playersWithoutYouthPartner.length > 0
+            return hasInvalidCategory(this.playingToHighSquadList)
         },
         resolveInvalidLevel() {
             if (!this.canValidateCrossSquads) {
                 return null
             }
-            const playersWithoutYouth = this.playingToHighList.filter((playerInfo) => {
-                return !playerInfo.isYouthPlayer
-            })
-            return playersWithoutYouth.length > 0
+            return hasInvalidLevel(this.playingToHighList)
         }
     },
     data() {
@@ -241,40 +234,7 @@ export default {
     },
     apollo: {
         team: {
-            query: gql` query team($id: ID!){
-                  team(id: $id){
-                    id
-                    squads{
-                        id
-                        playerLimit
-                        league
-                        categories{
-                            id
-                            category
-                            name
-                            players{
-                                id
-                                gender
-                                name
-                                refId
-                                points{
-                                    category
-                                    points
-                                    position
-                                    vintage
-                                }
-                            }
-                        }
-                    }
-                    name
-                    gameDate
-                    version
-                    club {
-                        id
-                        name1
-                    }
-                  }
-                }`,
+            query: TeamQuery,
             variables: function () {
                 return {
                     id: this.teamFightId
@@ -339,7 +299,7 @@ export default {
         confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
-                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene skal opdateres til den nye rangliste.',
+                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste.',
                     confirmText: 'Skift og opdater spillere',
                     onConfirm: () => {
                         this.updateToRankingList()
@@ -596,21 +556,18 @@ export default {
             this.saveTeams()
         },
         addTeam10() {
-            let players = TeamFightHelper.generate10Players()
-            players.id = this.teamCount++
-            this.team.squads.push(players)
+            let squad = TeamFightHelper.generateSquadWith10Players()
+            this.team.squads.push(squad)
             this.saveTeams()
         },
         addTeam8() {
-            let players = TeamFightHelper.generate8Players()
-            players.id = this.teamCount++
-            this.team.squads.push(players)
+            let squad = TeamFightHelper.generateSquadWith8Players()
+            this.team.squads.push(squad)
             this.saveTeams()
         },
         addTeam6() {
-            let players = TeamFightHelper.generate6Players()
-            players.id = this.teamCount++
-            this.team.squads.push(players)
+            let squad = TeamFightHelper.generateSquadWith6Players()
+            this.team.squads.push(squad)
             this.saveTeams()
         },
         saveTeams() {
@@ -649,20 +606,22 @@ export default {
                           }
                         }
                     `,
-                    variables:
-                        {
-                            input: {
-                                id: this.teamFightId,
-                                name: this.team.name,
-                                version: this.version,
-                                gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                                squads: this.wrapInTeamAndSquads(this.team.squads).map(o => o['squad'])
-                            }
+                    variables: {
+                        input: {
+                            id: this.teamFightId,
+                            name: this.team.name,
+                            version: this.version,
+                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
+                            squads: this.wrapInTeamAndSquads(this.team.squads).map(o => o['squad'])
                         }
+                    },
+                    refetchQueries: [
+                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                    ]
                 })
                 .then(({data}) => {
                     this.$root.$emit('teamfight.teamSaved')
-                    this.validate()
+                    this.$apollo.queries.team.refresh();
                     this.saving = false;
                     this.savingIcon = 'check';
                     setTimeout(() => {

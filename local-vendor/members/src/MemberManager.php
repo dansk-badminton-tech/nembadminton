@@ -27,7 +27,6 @@ class MemberManager
                 'gender' => $gender,
             ]);
         } else {
-//            Log::info('Adding '.$name);
             $memberModel = \App\Models\Member::create([
                 'refId'  => $refId,
                 'name'   => $name,

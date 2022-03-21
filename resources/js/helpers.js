@@ -319,3 +319,11 @@ export function swapObject(obj, from, to) {
     obj[to] = fromItem
     obj[from] = toItem
 }
+
+export function getCurrentSeason(){
+        const now = new Date()
+        if (now.getMonth()+1 > 6) {
+            return now.getFullYear();
+        }
+        return now.getFullYear() - 1;
+}

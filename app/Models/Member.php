@@ -5,6 +5,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Util;
+use FlyCompany\BadmintonPlayerAPI\Vintage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class Member
  *
+ * @property int id
  * @property string refId
  * @property string name
  * @property string gender
@@ -70,11 +74,26 @@ class Member extends Model
         return $builder->has('points');
     }
 
+    public function scopeClub(Builder $builder, int $clubId): Builder
+    {
+        return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
+            $builder->where('id', $clubId);
+        });
+    }
+
     public function scopeMyClub(Builder $builder): Builder
     {
         return $builder->whereHas('clubs', function (Builder $builder) {
             $builder->where('id', Auth::user()->organization_id);
         });
+    }
+
+    public function getVintage() : string{
+        return Util::calculateVintage($this->getBirthday())->value;
+    }
+
+    public function getBirthday() : Carbon {
+        return Carbon::createFromFormat('ymd', substr($this->refId, 0, 6));
     }
 
 }

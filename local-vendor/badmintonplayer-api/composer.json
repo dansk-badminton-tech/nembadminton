@@ -1,0 +1,17 @@
+{
+    "name": "flycompany/local-badmintonplayer-api",
+    "type": "library",
+    "description": "SDK for BadmintonPlayer API",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\BadmintonPlayerAPI\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\FlyCompany\\BadmintonPlayerAPI\\MainServiceProvider"
+            ]
+        }
+    }
+}

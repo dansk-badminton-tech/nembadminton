@@ -14,7 +14,7 @@
                 <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
-            <b-navbar-item :to="{ path: '/team-fight/check' }" tag="router-link">
+            <b-navbar-item :to="{ path: '/team-fight/choice' }" tag="router-link">
                 <b-icon icon="step-backward" size="is-medium"></b-icon>
                 <span class="nav-item-span">Tidligere holdkampe</span>
             </b-navbar-item>

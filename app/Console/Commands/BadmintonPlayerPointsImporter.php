@@ -5,8 +5,10 @@ namespace App\Console\Commands;
 
 use App\Jobs\BadmintonPlayerImportPoints;
 use Carbon\Carbon;
+use FlyCompany\Import\Ranking;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\Enums\RankingList;
 use Illuminate\Console\Command;
 
 class BadmintonPlayerPointsImporter extends Command
@@ -17,7 +19,7 @@ class BadmintonPlayerPointsImporter extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-import:points {club-id : BadmintonPlayer club id}';
+    protected $signature = 'badmintonplayer-import:points {club-id : BadmintonPlayer club id} {--rankingList= : Limit import to one RankingList}';
 
     /**
      * The console command description.
@@ -29,15 +31,16 @@ class BadmintonPlayerPointsImporter extends Command
     /**
      * Execute the console command.
      *
-     * @param BadmintonPlayer $scraper
-     * @param PointsManager   $pointsManager
-     *
      * @return int
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager) : int
+    public function handle() : int
     {
-        BadmintonPlayerImportPoints::dispatchNow($this->argument('club-id'));
+        $rankingList = $this->option('rankingList');
+        if($rankingList !== null){
+            $rankingList = RankingList::from($rankingList);
+        }
+        BadmintonPlayerImportPoints::dispatchNow($this->argument('club-id'), $rankingList);
 
         return 0;
     }

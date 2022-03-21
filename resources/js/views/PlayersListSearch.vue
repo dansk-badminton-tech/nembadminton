@@ -35,6 +35,9 @@
             <b-table-column field="points" label="Points" v-slot="props">
                 {{ findLevel(props.row, convertRankingToCategory(rankingList)) }}
             </b-table-column>
+            <b-table-column field="vintage" label="" v-slot="props">
+                <p>{{ props.row.vintage }}</p>
+            </b-table-column>
             <b-table-column field="name" label="Navn" v-slot="props">
                 <p>{{ props.row.name }}</p>
             </b-table-column>
@@ -281,6 +284,7 @@ export default {
                               name
                               gender
                               refId
+                              vintage
                               points(version: $version){
                                 points
                                 position
