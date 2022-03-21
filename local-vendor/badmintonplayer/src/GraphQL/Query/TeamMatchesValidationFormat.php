@@ -6,6 +6,7 @@ namespace FlyCompany\BadmintonPlayer\GraphQL\Query;
 
 use App\Models\Member;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
+use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\TeamFight\LeagueType;
@@ -45,14 +46,18 @@ class TeamMatchesValidationFormat
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
     {
-        $matches = $this->badmintonPlayerAPI->getPlayedLeagueMatches()->getByMatchIds($args['matchIds']);
+        $matchIds = $args['matchIds'];
+        $matches = $this->badmintonPlayerAPI->getPlayedLeagueMatches()->getByMatchIds($matchIds);
         $version = $args['version'];
         $players = $this->badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::fromDate($version));
         $clubId = $args['clubId'];
         $playersInClub = $players->getPlayerRankingCollection()->getByClubId($clubId);
 
         $matchesData = [];
-        foreach ($matches as $match) {
+        foreach ($matchIds as $matchId) {
+            $match = $matches->firstOrFail(static function(TeamMatchLineup $matchLineup) use ($matchId) {
+                return $matchLineup->match->leagueMatchId === $matchId;
+            });
             $matchData = [
                 'name' => $match->match->divisionName,
                 'leagueMatchId' => (string)$match->match->leagueMatchId
