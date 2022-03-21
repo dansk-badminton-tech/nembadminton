@@ -64,9 +64,21 @@ type MemberWithLatestPoints {
     refId: String!
     name: String!
     gender: String!
+    vintage: Vintage! @method(name: "getVintage")
+    birthday: Date! @method(name: "getBirthday")
     latestLevelPoints: Int @rename(attribute: "latest_level_points")
     latestLevelPosition: Int @rename(attribute: "latest_level_position")
     latestLevelVersion: Date @rename(attribute: "latest_level_version")
+}
+
+enum Vintage {
+    U9 @enum(value: "U9")
+    U11 @enum(value: "U11")
+    U13 @enum(value: "U13")
+    U15 @enum(value: "U15")
+    U17 @enum(value: "U17")
+    U19 @enum(value: "U19")
+    SEN @enum(value: "SEN")
 }
 
 type Member {
@@ -74,6 +86,8 @@ type Member {
     refId: String!
     name: String!
     gender: String!
+    vintage: Vintage! @method(name: "getVintage")
+    birthday: Date! @method(name: "getBirthday")
     points(version: String @eq): [Point!] @hasMany
     clubs: [Club!]! @belongsToMany
     cancellations(teamId: String): [Cancellation!]! @hasMany(scopes: ["cancellationsByTeamId"])

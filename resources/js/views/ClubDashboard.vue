@@ -38,6 +38,9 @@
             <b-table-column v-slot="props" field="points" label="Points">
                 {{ props.row.latestLevelPoints }}
             </b-table-column>
+            <b-table-column v-slot="props" field="vintage" label="Aldersgruppe">
+                {{ props.row.vintage }}
+            </b-table-column>
             <b-table-column v-slot="props" field="name" label="Navn">
                 {{ props.row.name }}
             </b-table-column>
@@ -95,6 +98,7 @@ export default {
                           id
                           name
                           refId
+                          vintage
                           latestLevelPoints
                           latestLevelPosition
                           latestLevelVersion

@@ -6,9 +6,12 @@
         <div class="columns is-multiline">
             <div v-for="team in teamMatches" v-if="playingToHighInSquad !== null && playingToHigh !== null" class="column is-4">
                 <h1 class="title">{{ team.name }}
-                    <b-button class="is-pulled-right" tag="a" target="_blank"
+                    <b-button class="is-pulled-right"
+                              tag="a"
+                              target="_blank"
+                              icon-right="external-link-square-alt"
                               :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+currentSeason+',,,,,'+team.leagueMatchId+',,'"
-                              type="is-link is-light">Se på BP
+                              type="is-light">Se på BP
                     </b-button>
                 </h1>
                 <b-table :data="team.squad.categories">
