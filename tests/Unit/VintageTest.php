@@ -19,18 +19,6 @@ class VintageTest extends TestCase
      * @test
      * @return void
      */
-    public function firstTest(): void
-    {
-        Carbon::setTestNow(Carbon::createFromFormat('Y-m-d', '2022-03-15'));
-        $vintage = Util::calculateVintage(Carbon::createFromFormat('Y-m-d', '2002-06-21'));
-        $this->assertEquals(Vintage::SENIOR, $vintage);
-        Carbon::setTestNow();
-    }
-
-    /**
-     * @test
-     * @return void
-     */
     public function calculateU19(): void
     {
         Carbon::setTestNow(Carbon::createFromFormat('Y-m-d', '2022-03-15'));

@@ -95,7 +95,7 @@ class Util
 
     public static function getCurrentSeasonStart(): Carbon
     {
-        return Carbon::createFromDate(BadmintonPlayerHelper::getCurrentSeason(), 6, 1);
+        return Carbon::createFromDate(BadmintonPlayerHelper::getCurrentSeason()+1, 1, 1);
     }
 
 }
