@@ -4,9 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Listeners;
 
-use App\Jobs\BadmintonPlayerImportMembers;
-use App\Jobs\BadmintonPlayerImportPoints;
 use App\Models\User;
+use FlyCompany\BadmintonPlayer\Jobs\ImportMembers;
+use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
+use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Bus;
 
@@ -26,8 +27,8 @@ class ImportClubMembers
         $user = $event->user;
         $clubId = $user->club->id;
         Bus::chain([
-            new BadmintonPlayerImportMembers([(string)$clubId]),
-            new BadmintonPlayerImportPoints($clubId),
+            new ImportMembers([$clubId]),
+            new ImportPoints($clubId, RankingPeriodType::CURRENT),
         ])->dispatch();
     }
 }

@@ -106,4 +106,5 @@ type Club {
     name1: String!
     name2: String!
     badmintonPlayerId: Int!
+    initialized: Boolean!
 }

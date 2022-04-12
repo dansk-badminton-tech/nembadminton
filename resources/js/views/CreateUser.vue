@@ -1,10 +1,10 @@
 <template>
     <div class="mb-2">
         <b-field label="Navn">
-            <b-input v-model="name" icon="user-alt" placeholder="Viktor Axelsen"></b-input>
+            <b-input v-model="name" icon="user-alt" placeholder="Maria Jensen"></b-input>
         </b-field>
         <b-field label="Email">
-            <b-input v-model="email" icon="envelope" placeholder="viktor@gmail.com" type="email"></b-input>
+            <b-input v-model="email" icon="envelope" placeholder="maria@jensen.dk" type="email"></b-input>
         </b-field>
         <b-field label="Badminton Player Klub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>

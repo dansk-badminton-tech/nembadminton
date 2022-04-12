@@ -5,12 +5,12 @@
                 <b-icon icon="home" size="is-large"></b-icon>
             </b-navbar-item>
         </template>
-        <template slot="start" v-if="!$apollo.loading && me !== undefined">
-            <b-navbar-item :to="{ path: '/my-club' }" tag="router-link">
+        <template slot="start" v-if="!$apollo.loading">
+            <b-navbar-item v-if="me !== undefined" :to="{ path: '/my-club' }" tag="router-link">
                 <b-icon icon="home" size="is-medium"></b-icon>
                 <span class="nav-item-span">Min klub</span>
             </b-navbar-item>
-            <b-navbar-item :to="{ path: '/team-fight/dashboard' }" tag="router-link">
+            <b-navbar-item v-if="me !== undefined" :to="{ path: '/team-fight/dashboard' }" tag="router-link">
                 <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
@@ -22,9 +22,9 @@
         <template slot="end">
             <b-navbar-item v-if="!$apollo.loading && !me" tag="div">
                 <div class="buttons">
-<!--                    <router-link :to="{ name: 'new-user-create' }" class="button">-->
-<!--                        <strong>Kom i gang</strong>-->
-<!--                    </router-link>-->
+                    <router-link :to="{ name: 'new-user-create' }" class="button">
+                        <strong>Kom i gang</strong>
+                    </router-link>
                     <router-link :to="{ name: 'login' }" class="button">
                         Login
                     </router-link>

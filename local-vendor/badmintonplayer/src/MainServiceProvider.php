@@ -2,6 +2,7 @@
 
 namespace FlyCompany\BadmintonPlayer;
 
+use FlyCompany\BadmintonPlayer\Commands\ClubImporter;
 use FlyCompany\BadmintonPlayer\Commands\MembersImporter;
 use FlyCompany\BadmintonPlayer\Commands\PointsImporter;
 use FlyCompany\BadmintonPlayer\Commands\Test;
@@ -17,6 +18,7 @@ class MainServiceProvider extends ServiceProvider
                 PointsImporter::class,
                 MembersImporter::class,
                 UpdateAllClubs::class,
+                ClubImporter::class,
                 Test::class
             ]);
         }
