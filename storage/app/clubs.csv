@@ -1,0 +1,734 @@
+ClubId,Name
+16,Badminton Esbjerg
+18,Greve
+19,Haderslev
+20,Havdrup
+22,Lillerød
+23,Holbæk
+24,Hornslet
+25,Højbjerg
+27,KMB2010
+28,KBK Kbh.
+30,Hillerød
+31,Mørkøv
+32,Nr. Broby
+34,NBK Amager
+36,Ringsted
+39,Solrød Strand
+41,Viby J
+42,Værløse
+327,Skælskør
+385,Stenløse
+461,Albertslund
+481,Køge
+609,Nr. Lyndelse
+778,Ejby
+978,Badminton Danmark
+1087,BC37 Amager
+1089,Charlottenlund
+1090,Dragør
+1091,Drive Kbh.
+1092,Gentofte
+1093,Gladsaxe Søborg
+1094,Hvidovre
+1095,Lyngby
+1096,Rødovre
+1097,Valby BC
+1098,Vanløse
+1099,Skovshoved
+1100,Pan Kbh.
+1101,BKPOINT Kbh.
+1102,BC KVIK Kbh.
+1103,BK36 Kbh.
+1105,Posten Kbh.
+1106,Sct. Jørgen Kbh.
+1109,Stefan Kbh.
+1110,VLI Badminton Kbh.
+1111,FKIF Frederiksberg
+1112,Frederiksberg
+1116,Peder Lykke Kbh.
+1119,KFUM Badminton Kbh.
+1120,Hvidovre HB2000
+1121,PI København
+1123,Ryparken
+1124,SAIF Kbh.
+1125,Sporvejenes IF
+1127,Søvang
+1128,Søværnet Kbh.
+1129,Tingbjerg
+1131,KSI Badmintonklub Kbh.
+1133,ØBK/BK Kbh.
+1138,CBS Sport Badminton
+1141,Gentofte Motionist BK
+1142,Ballerup BC58
+1143,Birkerød BK13
+1144,Farum
+1145,Frederikssund
+1146,Glostrup
+1147,Helsinge
+1148,Herlev/Hjorten
+1149,Holte
+1150,Humlebæk
+1151,Hørsholm
+1152,Karlslunde
+1153,Nivå-Kokkedal
+1155,Ishøj SB 50
+1157,Slagelse
+1158,Taastrup TIK
+1159,Vordingborg
+1160,Ølstykke
+1161,Tuse Næs
+1162,Dianalund
+1163,Skovlunde
+1164,Ledøje-Smørum
+1165,Skibby
+1166,Frem - Hellebæk
+1167,Sorø
+1168,Brøndby Strand
+1169,Jyllinge
+1170,Vipperød
+1171,Asnæs
+1172,Frederiksværk
+1173,Vallensbæk
+1174,Lynge Uggeløse
+1175,Fredensborg
+1176,Blistrup
+1177,Bagsværd
+1178,Helsingør
+1179,Køge Nord Badminton
+1180,Sengeløse
+1181,Nykøbing Sj.
+1183,Ganløse
+1184,Espergærde
+1185,Virum
+1186,Måløv
+1187,Jyderup
+1188,Osted
+1189,Herfølge
+1190,Strøby AIK65
+1191,Faxe
+1192,Haslev
+1193,Nyråd
+1194,Jægerspris
+1195,Kirke Hyllinge
+1196,Slangerup
+1197,Ålholm
+1199,Grantoften
+1200,DTU
+1201,Alsønderup
+1202,Nordbyens Badmintonklub
+1203,Borup
+1204,Brøndby BK
+1206,Fladså
+1207,Gilleleje
+1208,Græsted
+1209,Gørlev
+1210,Hareskov
+1211,Hornbæk
+1212,Hundested
+1213,Hvalsø
+1214,Høng
+1215,Bjæverskov
+1216,Jernløse
+1217,Kalundborg
+1218,Karlebo Idrætsforening
+1221,Lejre
+1222,Lille Næstved
+1223,Lundtofte
+1224,Melby
+1225,Nordrup-Farendløse
+1226,Ramløse
+1228,Rønnede
+1229,Snekkersten
+1230,St. Lyngby
+1231,Svinninge
+1232,Søborg
+1234,Såby Badminton
+1235,Toksværd
+1236,Tune
+1237,Tølløse
+1238,Vallekilde-Hørve
+1239,Vemmelev
+1240,Viby S
+1242,Viskinge
+1243,Herlufmagle
+1245,Ishøj Badminton Klub
+1246,Dalby G&IF
+1247,Føllenslev
+1248,Gislinge
+1250,Holmegaard
+1251,Gundsømagle G77
+1252,Orø
+1253,Rørby
+1255,Vallø
+1256,Vemmedrup
+1261,Raklev
+1266,St. Merløse
+1268,Kundby
+1271,Annisse
+1272,Tisvilde
+1273,Blovstrød Badmintonklub
+1274,Alsted-Fjenneslev G & I
+1277,Sandved Tornemark
+1278,Kværkeby IF
+1281,Terslev
+1286,Skensved Badminton
+1287,Torslunde-Ishøj
+1288,Idrætsforeningen Svend Gønge
+1292,St. Heddinge
+1293,Sydstevns
+1296,Vor Frue
+1297,Hvidebæk
+1305,Hellested Idrætsforening
+1306,Bogø
+1307,Lynge-Broby
+1311,Grønsund
+1314,Vindinge
+1317,Ørslev Solbj.
+1320,Høje Tåstrups Idrætsforening Badmintonafdelingen
+1323,Højby BK
+1325,Antvorskov Badmintonklub
+1329,Fuglebjerg Badmintonklub
+1330,"Sørbymagle IF, Badminton"
+1331,IF Skjold Skævinge Badminton
+1334,Gevninge IF Badminton
+1335,Faxe Ladeplads
+1338,Glumsø
+1339,Nykøbing F
+1340,Stubbekøbing
+1341,Ønslev-Eskildstrup
+1342,Bandholm
+1345,Fanefjord IF
+1346,Holeby
+1349,Idestrup
+1350,Kraghave
+1351,Maribo
+1353,Nakskov
+1354,Nysted
+1357,Rudbjerg
+1358,Rødby
+1359,Sakskøbing
+1362,Storstrømmen-Kippinge
+1364,Søllested
+1365,Tingsted
+1366,V. Ulslev
+1367,Væggerløse
+1368,Østfalster
+1370,Møn
+1372,6. kr. Ny Vest
+1373,Allinge-S.G. Badminton
+1374,Hasle IF
+1375,Toreby Sundby GF
+1376,Klemensker
+1377,Knudsker
+1378,Nexø
+1379,Nyker
+1381,Rønne
+1382,Svaneke
+1383,Østermarie
+1384,Aakirkeby
+1387,Odense BK77
+1388,Bolbro
+1389,Korup
+1390,Langeskov
+1391,Middelfart
+1392,Odense OBK
+1393,Svendborg
+1394,Tarup-Pårup
+1396,Ullerslev Langtved
+1397,Allesø
+1398,Aunslev
+1399,Stige
+1400,Bogense
+1402,Brylle
+1403,Nr. Åby
+1404,Dalum Papir
+1405,Dalum Hjallese BK
+1407,"EIK, Ejby"
+1408,Fjelsted-Harndrup
+1409,Fjordager
+1410,Glamsbjerg
+1411,Herrested
+1413,Højby S&G
+1414,Hårslev
+1415,Aarup Badmintonklub
+1416,Kerteminde
+1417,Krogsbølle
+1418,Kølstrup-Rynkeby
+1419,Lundby
+1420,Munkebo BK69
+1421,Nyborg
+1422,Næsby
+1423,Oure/Gudme
+1424,Ringe
+1425,Rising
+1426,Ryslinge
+1427,Rolfsted
+1428,Sanderum
+1429,Skt Klemens
+1430,Strib
+1431,Søhus
+1432,Ubberud
+1433,Morud
+1435,Vissenbjerg
+1436,Assens
+1437,Faaborg
+1438,Horne FS
+1439,Tommerup
+1440,FGH Badminton
+1444,Rudkøbing Badmintonklub
+1445,"Ollerup/Skerninge G & IF, Badminton"
+1447,Fraugde G & IF. Badmintonafdeling
+1451,Egense/Rantzausminde Idrætsforening
+1452,Krarup-Espe
+1453,Otterup
+1455,Søndersø
+1456,Gislev
+1457,Kullerup/Refsvindinge
+1458,Rise
+1461,Bøgebjerg
+1462,Fyn
+1463,Brenderup
+1464,Glamsdalen
+1472,Vindinge Fyn
+1476,Veflinge
+1481,Kværndrup
+1485,Strib Idrætsefterskole
+1488,Hjemly Idrætsefterskole
+1489,"Bellinge IF, Badminton"
+1491,abc Aalborg
+1492,Aalborg Triton
+1493,Brønderslev
+1494,Frederikshavn
+1495,Gug
+1496,Hadsund
+1497,Hjørring
+1498,Lindholm
+1499,Klarup RKG
+1500,Skagen
+1501,Asdal
+1502,Astrup-Sønderskov
+1504,Biersted
+1505,Bindslev-Tversted
+1506,BNB Nibe
+1507,Blenstrup
+1508,Bælum-Solbjerg
+1509,Dall-Ferslev
+1510,Dronninglund
+1512,Farsø
+1513,Fjerritslev
+1514,Flauenskjold
+1515,Skørping
+1519,Grindsted SK
+1520,Hals
+1521,Halvrimmen
+1522,Hasseris
+1523,Haverslev
+1525,Hjallerup
+1526,Hobro
+1527,Sønderup-S. Frem
+1528,Rosendal
+1529,Simested KVIK
+1530,Nørhalne
+1531,Jarl Arden
+1532,Jerslev-Sterup
+1533,Jetsmark
+1534,Klejtrup
+1536,Kongerslev
+1537,Langholt
+1538,Løgstør LBK
+1539,Gistrup LKB
+1540,Løgstør
+1541,Mariager
+1542,Mou
+1543,Nr. Sundby Bank
+1545,Overlade
+1547,St. Restrup
+1549,Sejlflod
+1550,Ålborg Semin.
+1551,Skalborg SK
+1552,Skelund-Veddum
+1553,Skovsgård/Brovst
+1554,Strandby/Elling
+1555,Støvring
+1556,Sulsted
+1557,Svenstrup
+1558,Sæby
+1559,Terndrup
+1561,Tylstrup
+1562,Vadum
+1563,Vedsted GF
+1564,Vejgaard
+1565,Vestbjerg
+1566,Vester Hassing
+1567,Vester Hornum
+1568,Vodskov
+1569,Vrå
+1570,Vaarst-Fjellerad
+1571,Ø. Brønderslev
+1572,Øster Hornum
+1573,Øster Hurup
+1574,Østervrå
+1575,Aabybro
+1576,Aalborg Student
+1578,Aars
+1579,Ullits
+1580,Taars Ugilt
+1581,Hvalpsund
+1582,Ravnkilde Sylvia
+1583,Assens IF
+1584,Doense-Vebbestrup IF
+1591,Bjergby-Mygdal
+1594,Skallerup/Vennebj.
+1595,Løkken
+1596,Poulstrup Vrejlev
+1597,Gjøl
+1598,Saltum
+1604,Tolstrup/Stenum
+1607,Stidsholt IF
+1611,Strandby
+1615,Rebild Efterskole
+1616,"Ulsted Boldklub, Badmintonafd."
+1617,Aarhus AB
+1618,Tranbjerg AIA
+1619,Beder-Malling
+1620,Hasle BK
+1621,Horsens
+1622,Skovbakken
+1623,IF Alliancen
+1624,Lystrup
+1625,Randers BK
+1627,Silkeborg BK
+1628,"Tst, Tilst"
+1629,Vejle
+1630,Viborg
+1631,Kolding BK
+1632,Århus Akademisk
+1634,Bjerringbro
+1635,Brabrand
+1636,Bramdrupdam BG IF
+1637,"Bredballe Idrætsforening, Badmintonafd."
+1638,Christiansbjerg
+1639,Erritsø
+1640,Bjerregrav
+1641,Fredericia
+1642,Grenå
+1644,Stavtrup
+1645,Hammel
+1646,"IF Hasle KFUM, Badminton"
+1647,Hinnerup
+1648,Horn/Fårvang
+1650,Hørning IF
+1651,Juelsminde
+1652,Kolding KFUM
+1653,Kolt-Hasselager
+1655,Langaa
+1656,Odder
+1657,Ry
+1659,Sejs-Svejbæk
+1661,Skødstrup
+1662,Solbjerg
+1663,Spentrup
+1664,Stensballe
+1665,Stilling
+1666,Vejlby IK
+1667,Vejlby Risskov
+1669,Virring
+1670,Voel KFUM
+1672,Ørsted IF
+1673,Børkop
+1674,Vamdrup
+1675,Elbohallen
+1676,Søften
+1677,Virklund
+1678,Mårslet Badminton
+1679,Thorsager Rønde
+1682,Gedved
+1683,Rårup
+1686,Låsby
+1687,Sorring
+1688,Auning
+1690,Midtdjurs
+1692,IF Ådalen
+1693,Kolind
+1694,Mørke
+1695,Nielstrup-Voldum
+1697,SIF Assentoft
+1698,Harlev
+1703,Hatting
+1704,Lund
+1706,Hovedgård
+1708,Østbirk
+1709,Skanderborg Badminton
+1710,Højderyggens Badmintonklub
+1711,Lindved
+1714,Ølholm
+1719,Alminde Viuf
+1720,Ammitsbøl
+1721,Bredsten
+1722,Firehøje
+1723,Fynslund
+1724,Give
+1725,Grønbjerg Langel.
+1726,Jelling
+1727,Lunderskov
+1728,Nr. Bjert
+1730,Skibet
+1733,Øster Nykirke
+1734,Riis Tebstrup
+1740,Hadsten BK
+1741,Gårslev GF
+1742,Hou
+1743,Houlbjerg/Laurbjerg
+1744,Rønde Efterskole
+1745,"Stjær Boldklub, Badminton afdelingen"
+1746,Samsø UI
+1747,Gadbjerg
+1751,Højen
+1757,Tirstrup Idrætsefterskole
+1758,Egebjerg IF
+1761,Vonsild
+1763,Fårup - Sønderbæk IF
+1767,Galten FS
+1768,Faster
+1770,Glud Spss Skjold
+1772,Ejstrupholm
+1774,Bøvling
+1775,Egtved IF
+1776,TMIF Motion
+1779,Hodsager IUF
+1783,Herskind Boldklub
+1784,Bispehavens Badminton Club
+1786,Silkeborg IF
+1787,Vinding Sportsforening (VSF)
+1789,Bredballe Badmintonklub
+1791,Mejrup G og UF
+1793,Troldhede IF
+1794,Them Badmintonklub
+1795,Hover IF
+1796,Midtmors GIF
+1797,Holstebro
+1798,Kvaglund
+1800,Skive-Resen
+1801,Herning
+1802,Hjortshøj Egå
+1803,Badt 72 Sjørring
+1804,Balling-Volling
+1805,Bording T&B
+1806,Bramming
+1807,Brande
+1808,Brørup
+1811,Gesten IF
+1813,Grindsted BK
+1815,Hejnsvig
+1816,Hjerting IF
+1819,Ikast
+1820,Lind KLG
+1821,Langhøj
+1822,Mejdal
+1824,Nykøbing M BK
+1825,Ribe
+1826,Ringkøbing
+1827,Roslev
+1828,Rønbjerg
+1829,Skjern
+1830,Snedsted
+1831,Snejbjerg
+1832,Sunds
+1833,Thisted
+1834,Tjørring
+1835,Varde
+1836,Vejen
+1838,Spøttrup
+1839,Videbæk
+1840,Sabro
+1841,Brædstrup
+1842,Ørslevkloster
+1846,Tarp
+1848,Haderup FS
+1849,Vinding UIF
+1850,Aulum Gymnastikforening
+1851,Ans
+1853,Fanø
+1854,Gjellerup
+1857,Lemvig
+1858,Naur-Sir-Krunderup
+1860,Søndermarken
+1861,Tarm
+1862,Thyholm
+1863,Trabjerg
+1864,Vildbjerg
+1866,Vestjylland
+1869,Thorup/Klim
+1872,Vridsted
+1874,Vemb
+1875,Grønbjerg
+1877,Rindum
+1878,Sdr. Nissum
+1879,Tim
+1880,Ulfborg
+1882,Spjald
+1884,Borris G og U
+1895,Struer KFUM
+1900,Isenvad
+1901,Kibæk
+1902,SFGIF
+1907,Rødkærsbro
+1908,Stoholm BK
+1909,Mønsted
+1910,Ulstrup
+1911,Alheden
+1912,Møldrup
+1915,Bryrup
+1916,Engesvang
+1917,Gjern
+1918,"Gødvad, Silkeborg"
+1919,HA85 Silkeborg
+1922,ØBG Silkeborg
+1923,Vorbasse
+1926,Hunderup/Sejstrup UG
+1927,Vejrup
+1929,Andrup
+1931,Tjæreborg
+1932,Sdr. Omme
+1935,Glejbjerg
+1939,Bække
+1940,Ansager Idrætsforening (AIF)
+1941,Ølgod
+1942,Andst
+1943,Kjellerup
+1948,Ørnhøj
+1951,Tistrup-Hodde GU
+1952,Janderup
+1955,Gl. Rye
+1956,Løgstrup Gymnastik & IF
+1959,Gudum Nissum IF
+1960,Mammen
+1966,Bruunshåb-Tapdrup IF
+1967,Sig
+1968,Ramme – Lomborg IF
+1970,Højslev
+1973,Nr. Nebel
+1976,Karup-Kølvrå
+1977,Hedensted Badmintonklub
+1984,Vinderup Badmintonklub
+1987,"Hover UIF, Badminton"
+1993,IF Centrum
+1996,Motionsklubben 88-Thise
+1997,Blans Sundeved
+1998,Bolderslev/Vollerup
+1999,Bov
+2000,Broager
+2001,Dybbøl
+2002,Gram
+2003,Graasten
+2004,Hjordkær
+2006,Lundtoft IF
+2007,Lysabild/Tandslet
+2008,Løgum
+2009,Løjt
+2010,Notmark
+2011,Over Jerstal
+2012,Rødding
+2013,Rødekro
+2014,Starup
+2016,Tinglev
+2017,Tønder
+2018,Ulkebøl
+2019,Vojens
+2020,Aabenraa
+2021,Augustenborg
+2022,Sportsefterskolen SINE
+2024,Nordals
+2025,Jels
+2026,Christiansfeld
+2027,Sdr. Hygum
+2028,Skodborg
+2029,Nordenskov UIF
+2030,Brøruphus Efterskole
+2031,Ringive-Lindeballe IF
+2032,Sdr. Stenderup Idrætsforening
+2034,"Kværs/Tørsbøl IF, Badmintonafd."
+2038,Ensted
+2039,Hammelev
+2040,Hellevad
+2045,Bylderup og Omegns GF
+2049,Toftlund Idrætsfore.
+2051,Hoptrup-Marstrup
+2052,Genner
+2055,Højer
+2059,Nustrup Ungdomsforening
+2062,Smiff Badminton
+2063,Sundeved Efterskole
+2068,"SS Skjold, Badminton"
+2080,Flensborg-Sporskifte UF
+2081,Slesvig IF
+2088,Harreslev - Kobbermølle UF
+2095,FYNFGH
+2096,BADNDRJ
+2097,BADBORN
+2098,BADFYN
+2099,BADSDRJ
+2100,BADKBH
+2101,BADLF
+2102,BADSJ
+2104,BADMIDJ
+2119,Sverige
+2120,Tyskland
+3471,Årslev
+4407,Vojens GI
+5454,Hårby IK 81
+5956,Islands Brygge
+6592,Harboøre
+6876,Nørre Nissum Efterskole
+7062,Badminton Roskilde
+7069,Bråby if
+7074,Skals Gymnastikforening
+7101,Drop 83
+7113,Motionister i Solrød
+7114,Gadstrup Snoldelev Badminton Sammenslutning (GSBS)
+7141,Roskilde Motions Badminton Klub
+7145,Søndermarkens GF
+7152,Lisbjerg Fritids Liv
+7165,Gørlev Idrætsefterskole
+7188,Efterskolen Solgården
+7198,"BC 80, Sønderborg"
+7212,Vivild Idrætsefterskole
+7231,Borbjerg GU
+7243,Østmøn Sg & I
+7314,ST70
+7315,Voldby
+7340,Blåkilde Efterskole
+7351,Nødebo Badminton
+7355,Farum Badminton Club af 1979
+7358,Valby Gymnastik & idrætsforening
+7359,"Ølsted IF, badminton"
+7371,Rudersdal
+7426,Kvissel Ravnshøj IF
+7432,Tyskland slet
+7507,Midtsjællands BK
+7550,Team Salling
+7561,Dianalund BK
+7579,Aulby Kultur og Idrætsforening
+7611,Voerladegård IF
+7680,Idrætsforeningen GVL
+7713,NØG Badminton
+7724,Bork FK
+7732,Sdr. Rind/Vinkel IF
+7736,Himmerlands Ungdomsskole
+7744,NIK
+7766,FK 73
+7842,Badminton i indre By
+7851,Sjælsølund SES
+7881,Føvling Stenderup
+7915,Gyrstinge
+7933,Haarby Efterskole
+7950,Taastrup BC
+7953,Oversidderklub
+7965,Vedersø Idrætsefterskole
+7979,Haarby IF
+7980,Dit hjertes Motionsklub
+7981,Stokkemarke Badmintonklub
+7984,Hårlev Ældrebadminton
+7985,Nøvlingskov Efterskole
+7987,Næstved-Herlufsholm Badmintonafdeling

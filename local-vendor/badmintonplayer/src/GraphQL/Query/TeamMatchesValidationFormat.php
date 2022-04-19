@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayer\GraphQL\Query;
 
-use App\Models\Member;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
@@ -12,11 +11,8 @@ use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\TeamFight\LeagueType;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
-use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use JsonException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;

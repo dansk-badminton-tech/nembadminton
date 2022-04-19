@@ -60,6 +60,7 @@
 import gql from 'graphql-tag';
 import {debounce} from "../helpers";
 import MemberList from "./MemberList";
+import MeQuery from '../queries/me.gql'
 
 export default {
     name: "ClubDashboard",
@@ -77,15 +78,7 @@ export default {
             `
         },
         me: {
-            query: gql`
-                query me{
-                    me{
-                        id
-                        club{
-                            name1
-                        }
-                    }
-                }`,
+            query: MeQuery,
         },
         members: {
             query: gql`
@@ -147,16 +140,6 @@ export default {
         setName: debounce(function (name) {
             this.name = name
         }, 200),
-        levelPoints(points, key) {
-            //console.log(points)
-            return this.groupBy(points, key)
-        },
-        groupBy(xs, key) {
-            return xs.reduce(function (rv, x) {
-                (rv[x[key]] = rv[x[key]] || []).push(x);
-                return rv;
-            }, {});
-        },
         onPageChange(page) {
             this.page = page
         }

@@ -142,6 +142,15 @@ const router = new VueRouter(
                         }
                     },
                     {
+                        path: '/onboarding',
+                        name: 'onboarding',
+                        component: () => import('./views/onboarding/Onboarding'),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Klargør din klub'
+                        }
+                    },
+                    {
                         path: '/playground',
                         name: 'playground',
                         component: () => import("./views/playground/Playground"),

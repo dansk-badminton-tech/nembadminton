@@ -14,7 +14,7 @@ class AddKlubInitialization extends Migration
     public function up()
     {
         Schema::table('clubs', function (Blueprint $table) {
-            $table->boolean('initialized');
+            $table->boolean('initialized')->default(false);
         });
     }
 
