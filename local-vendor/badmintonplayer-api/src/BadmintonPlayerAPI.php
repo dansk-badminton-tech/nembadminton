@@ -47,6 +47,7 @@ class BadmintonPlayerAPI
     {
         $client = new Client([
             'base_uri' => self::$base_url,
+            'timeout' => 600
         ]);
 
         $client = self::auth($client, $email, $password);
