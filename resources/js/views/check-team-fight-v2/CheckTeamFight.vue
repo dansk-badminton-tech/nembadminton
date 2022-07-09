@@ -7,6 +7,18 @@
                     <b-field label="Klub">
                         <BadmintonPlayerClubs @input="nextStep" v-model="clubId"/>
                     </b-field>
+                    <article class="message is-info">
+                        <div class="message-header">
+                            <p>Begrænsninger (indtil videre)</p>
+                        </div>
+                        <div class="content message-body">
+                            <ul>
+                                <li>Viser kun holdkampe som er maximum 1 måned</li>
+                                <li>Du kan kun tjekke hold fra danmarksserien og op (Begrænsning som Badminton Danmark sætter. Krydser fingre for de vil lukke op for mere)</li>
+                                <li>Kun en rangliste</li>
+                            </ul>
+                        </div>
+                    </article>
                 </b-step-item>
                 <b-step-item label="Hold">
                     <h1 class="title">Hold</h1>

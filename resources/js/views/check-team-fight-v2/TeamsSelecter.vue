@@ -6,7 +6,7 @@
         :loading="$apollo.queries.badmintonPlayerApiTeamMatches.loading"
         checkable>
         <template #empty>
-            <div class="has-text-centered">Ingen hold fundet. Har du valgt den rigtige sæson og klub?</div>
+            <div class="has-text-centered">Ingen hold fundet. Understøtter kun fra Danmarks serien og op</div>
         </template>
     </b-table>
 </template>
