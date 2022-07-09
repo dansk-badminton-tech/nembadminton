@@ -31,6 +31,7 @@ jobs:
         with:
           php_version: 8.1
           version: 2
+          dev: no
           args: --ignore-platform-reqs
 
       - name: Setup NodeJS
