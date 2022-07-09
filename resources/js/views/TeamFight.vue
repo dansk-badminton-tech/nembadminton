@@ -378,7 +378,7 @@ export default {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
-                            type: 'is-dagner',
+                            type: 'is-danger',
                             queue: false,
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
@@ -415,7 +415,7 @@ export default {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
-                            type: 'is-dagner',
+                            type: 'is-danger',
                             queue: false,
                             message: `Noget gik galt under valideringen af holdet (validate)`
                         })
@@ -458,7 +458,7 @@ export default {
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
-                            type: 'is-dagner',
+                            type: 'is-danger',
                             queue: false,
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
@@ -633,7 +633,7 @@ export default {
                     this.$buefy.snackbar.open(
                         {
                             duration: 2000,
-                            type: 'is-dagner',
+                            type: 'is-danger',
                             message: `Kunne ikke gemme dit hold :(`
                         })
                 })
@@ -689,7 +689,7 @@ export default {
                                 this.$buefy.snackbar.open(
                                     {
                                         duration: 2000,
-                                        type: 'is-dagner',
+                                        type: 'is-danger',
                                         message: `Kunne ikke notificer spillerne`
                                     })
                             })

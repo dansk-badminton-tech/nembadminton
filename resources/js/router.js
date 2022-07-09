@@ -11,7 +11,7 @@ const router = new VueRouter(
                 name: 'home',
                 component: () => import("./views/Home"),
                 meta: {
-                    allowAnonymous: false,
+                    allowAnonymous: true,
                     title: 'Forside'
                 }
             },
