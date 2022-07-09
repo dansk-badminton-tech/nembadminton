@@ -24,7 +24,7 @@ yarn run dev
 Opsætning af auth via password
 ```
 docker-compose run --rm artisan passport:keys
-docker-compose run --rm artisan client --password
+docker-compose run --rm artisan passport:client --password
 
 Ændre i .env, variablerne PASSPORT_CLIENT_ID og PASSPORT_CLIENT_SECRET
 ```
