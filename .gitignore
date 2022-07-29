@@ -1,5 +1,6 @@
 .idea
 /node_modules
+/public/images
 /public/hot
 /public/storage
 /public/js

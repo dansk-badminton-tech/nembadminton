@@ -3,14 +3,9 @@
 
 namespace App\Console;
 
-use App\Console\Commands\ImportClubs;
-use App\Console\Commands\ImportDownloadRanking;
-use App\Console\Commands\ImportMembers;
 use App\Console\Commands\UpdateAllPoints;
-use App\Models\Watch;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Cache;
 
 class Kernel extends ConsoleKernel
 {

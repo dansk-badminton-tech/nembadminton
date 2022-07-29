@@ -1,6 +1,13 @@
 <template>
     <fragment>
         <b-loading v-model="isLoading"></b-loading>
+        <b-message v-if="!hasErrors" title="Fandt ingen overtrædelser" type="is-success">
+            Fandt ingen fejl. :)
+        </b-message>
+        <b-message v-if="hasErrors" title="Fandt mulige overtrædelser" type="is-warning">
+            Der er fundet en eller flere fejl.
+            OBS. Husk altid at tjekke igennem selv før du sender en protest til Badminton Danmark.
+        </b-message>
         <ValidationStatus :invalid-level="resolveInvalidLevel" :invalid-category="resolveInvalidCategory"
                           :hide-incomplete-team="true"/>
         <div class="columns is-multiline">
@@ -59,6 +66,9 @@ export default {
     computed: {
         isLoading(){
             return this.loadingSquad || this.loadingCrossSquads
+        },
+        hasErrors(){
+            return this.resolveInvalidLevel === true || this.resolveInvalidLevel === true;
         },
         currentSeason: getCurrentSeason,
         resolveInvalidCategory() {

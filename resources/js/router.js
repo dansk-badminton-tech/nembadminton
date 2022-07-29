@@ -11,7 +11,7 @@ const router = new VueRouter(
                 name: 'home',
                 component: () => import("./views/Home"),
                 meta: {
-                    allowAnonymous: false,
+                    allowAnonymous: true,
                     title: 'Forside'
                 }
             },
@@ -119,7 +119,7 @@ const router = new VueRouter(
                         name: 'check-team-fight',
                         component: () => import("./views/check-team-fight/CheckTeamFight"),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Tidligere holdkampe'
                         }
                     },
@@ -128,7 +128,7 @@ const router = new VueRouter(
                         name: 'check-team-fight-v2',
                         component: () => import("./views/check-team-fight-v2/CheckTeamFight"),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Tidligere holdkampe'
                         }
                     },
@@ -137,8 +137,17 @@ const router = new VueRouter(
                         name: 'check-team-choice',
                         component: () => import("./views/check-team-fight-choice/TeamFightChoice"),
                         meta: {
-                            allowAnonymous: false,
+                            allowAnonymous: true,
                             title: 'Vælge version'
+                        }
+                    },
+                    {
+                        path: '/onboarding',
+                        name: 'onboarding',
+                        component: () => import('./views/onboarding/Onboarding'),
+                        meta: {
+                            allowAnonymous: false,
+                            title: 'Klargør din klub'
                         }
                     },
                     {

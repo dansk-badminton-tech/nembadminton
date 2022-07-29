@@ -68,6 +68,7 @@ input UpdatePlayerInput {
     name: String!
     refId: String!
     points: [UpdatePointInput!]!
+    vintage: Vintage
 }
 
 input UpdatePointInput {
@@ -75,7 +76,7 @@ input UpdatePointInput {
     category: String
     points: Int
     position: Int
-    vintage: String
+    vintage: Vintage
 }
 
 type SquadMember {

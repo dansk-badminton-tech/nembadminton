@@ -7,12 +7,24 @@
             <div class="container">
                 <div class="columns is-vcentered">
                     <div class="column is-two-fifths">
+                        <h1 class="title is-1">Planlæg din holdkamp nemt og bekymringsfrit.</h1>
+                        <h2 class="subtitle">Spiller og ranglister fra badmintonplayer.dk. Tjekker løbene om du overholder reglerne</h2>
+                    </div>
+                    <div class="column">
+                        <figure class="image">
+                            <img alt="" src="../../assets/teamfight-planning-landing-2.png">
+                        </figure>
+                    </div>
+                </div>
+                <hr>
+                <div class="columns is-vcentered">
+                    <div class="column is-two-fifths">
                         <h1 class="title is-1">Tjek din modstander</h1>
                         <h2 class="subtitle">På få minutter kan du tjekke om din modstanders holdopstilling overholder
-                            rangliste reglerne. Hold kan importeres direkte fra badmintonpeople.dk</h2>
+                            rangliste reglerne.</h2>
                         <b-button
                             tag="router-link"
-                            to="/team-fight/check"
+                            to="/team-fight-v2/check"
                             type="is-success is-light is-link">
                             Tjek modstanders holdopstilling nu!
                         </b-button>
@@ -23,6 +35,7 @@
                         </figure>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>

@@ -1,5 +1,5 @@
 <template>
-    <div class="content has-text-grey has-text-centered">
+    <div class="box content has-text-grey has-text-centered">
         <p>
             <b-icon
                 icon="users"

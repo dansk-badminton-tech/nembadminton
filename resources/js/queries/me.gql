@@ -5,6 +5,7 @@ query me{
         email
         club{
             name1
+            initialized
         }
         organization_id
     }

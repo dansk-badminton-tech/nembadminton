@@ -1,26 +1,23 @@
 <template>
     <div>
         <h1 v-if="!$apollo.queries.me.loading" class="title">{{ me.club.name1 }}</h1>
-        <h2 class="subtitle">Stamdata omkring klubben</h2>
-        <div v-if="!$apollo.queries.clubStats.loading" class="columns is-multiline">
-            <div class="column">
-                <div class="box notification is-primary">
-                    <div class="heading">Spiller</div>
-                    <div class="title">{{ clubStats.players }}</div>
-                    <div class="level">
-                        <div class="level-item">
-                            <div class="has-text-centered">
-                                <div class="heading">Mand</div>
-                                <div class="title is-5">{{ clubStats.menPlayers }}</div>
-                            </div>
-                        </div>
-                        <div class="level-item">
-                            <div class="has-text-centered">
-                                <div class="heading">Kvinder</div>
-                                <div class="title is-5">{{ clubStats.womenPlayers }}</div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Spiller total</p>
+                    <p class="title">{{ clubStats.players }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Mænd</p>
+                    <p class="title">{{ clubStats.menPlayers }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Kvinder</p>
+                    <p class="title">{{ clubStats.womenPlayers }}</p>
                 </div>
             </div>
         </div>
@@ -47,9 +44,6 @@
             <b-table-column v-slot="props" field="refId" label="Badminton ID">
                 {{ props.row.refId }}
             </b-table-column>
-            <b-table-column v-slot="props" label="">
-                <b-button :to="'/player-stats/'+props.row.refId" size="is-small" tag="router-link" type="is-link">Stats</b-button>
-            </b-table-column>
         </b-table>
         <MemberList/>
     </div>
@@ -60,6 +54,7 @@
 import gql from 'graphql-tag';
 import {debounce} from "../helpers";
 import MemberList from "./MemberList";
+import MeQuery from '../queries/me.gql'
 
 export default {
     name: "ClubDashboard",
@@ -77,15 +72,7 @@ export default {
             `
         },
         me: {
-            query: gql`
-                query me{
-                    me{
-                        id
-                        club{
-                            name1
-                        }
-                    }
-                }`,
+            query: MeQuery,
         },
         members: {
             query: gql`
@@ -147,16 +134,6 @@ export default {
         setName: debounce(function (name) {
             this.name = name
         }, 200),
-        levelPoints(points, key) {
-            //console.log(points)
-            return this.groupBy(points, key)
-        },
-        groupBy(xs, key) {
-            return xs.reduce(function (rv, x) {
-                (rv[x[key]] = rv[x[key]] || []).push(x);
-                return rv;
-            }, {});
-        },
         onPageChange(page) {
             this.page = page
         }

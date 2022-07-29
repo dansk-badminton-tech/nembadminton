@@ -22,7 +22,7 @@ services:
 
   worker:
     image: flycompany/holdkamp
-    entrypoint: "php artisan queue:listen --timeout 600 --memory 512"
+    entrypoint: "php artisan queue:listen -vvv --timeout 600 --memory 512"
     user: "33:33"
     environment:
       TELESCOPE_ENABLED: "false"
