@@ -23,6 +23,7 @@ export default {
         me: {
             query: MeQuery,
             pollInterval: 2000,
+            fetchPolicy: "network-only",
             result({data}){
                 if(data.me.club.initialized){
                     setTimeout(() => {

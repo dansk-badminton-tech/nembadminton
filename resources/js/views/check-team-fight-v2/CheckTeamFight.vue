@@ -14,8 +14,8 @@
                         <div class="content message-body">
                             <ul>
                                 <li>Viser kun holdkampe som er maximum 1 måned</li>
-                                <li>Du kan kun tjekke hold fra danmarksserien og op (Begrænsning som Badminton Danmark sætter. Krydser fingre for de vil lukke op for mere)</li>
-                                <li>Kun en rangliste</li>
+                                <li>Du kan kun tjekke hold fra danmarksserien og op (Der arbejds på at få alle senior rækker med)</li>
+                                <li>Kun en rangliste, så holdkampesrunder som overlapper med to ranglister er ikke understøttet endnu.</li>
                             </ul>
                         </div>
                     </article>

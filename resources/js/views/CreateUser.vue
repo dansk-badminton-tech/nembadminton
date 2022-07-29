@@ -1,10 +1,10 @@
 <template>
     <div class="mb-2">
         <b-field label="Navn">
-            <b-input v-model="name" icon="user-alt" placeholder="Maria Jensen"></b-input>
+            <b-input v-model="name" icon="user-alt" placeholder="Dit navn"></b-input>
         </b-field>
         <b-field label="Email">
-            <b-input v-model="email" icon="envelope" placeholder="maria@jensen.dk" type="email"></b-input>
+            <b-input v-model="email" icon="envelope" placeholder="din@email.dk" type="email"></b-input>
         </b-field>
         <b-field label="Badminton Player Klub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
@@ -14,10 +14,10 @@
 <!--        </b-field>-->
 <!--        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>-->
         <b-field label="Adgangskode">
-            <b-input v-model="password" icon="lock" placeholder="******" type="password"></b-input>
+            <b-input v-model="password" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
         <b-field label="Gentag adgangskode">
-            <b-input v-model="password_confirmation" icon="lock" placeholder="******" type="password"></b-input>
+            <b-input v-model="password_confirmation" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
         <b-button :loading="loading" @click="create">Opret</b-button>
     </div>

@@ -16,7 +16,7 @@
             </b-navbar-item>
             <b-navbar-item :to="{ path: '/team-fight-v2/check' }" tag="router-link">
                 <b-icon icon="step-backward" size="is-medium"></b-icon>
-                <span class="nav-item-span">Tidligere holdkampe</span>
+                <span class="nav-item-span">Tjek spillet holdkampe</span>
             </b-navbar-item>
         </template>
         <template slot="end">
