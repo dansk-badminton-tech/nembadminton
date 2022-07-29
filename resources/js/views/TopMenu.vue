@@ -36,7 +36,7 @@
                     <b-icon icon="user-alt"></b-icon>
                 </a>
                 <b-dropdown-item aria-role="menuitem" custom>
-                    Logged ind som <b>{{ me.name }}</b>
+                    Logget ind som <b>{{ me.name }}</b>
                 </b-dropdown-item>
                 <hr class="dropdown-divider">
                 <b-dropdown-item aria-role="menuitem" has-link>
