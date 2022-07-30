@@ -22,6 +22,7 @@
             </div>
         </div>
         <h1 class="title">Medlemmer</h1>
+        <h2 class="subtitle">Viser niveau ranglisten for indeværende måned</h2>
         <b-field label="Søg på navn">
             <b-input expanded @input="setName"></b-input>
         </b-field>
