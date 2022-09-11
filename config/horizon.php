@@ -170,10 +170,11 @@ return [
                 'connection' => 'redis',
                 'queue'      => ['default'],
                 'balance'    => 'simple',
-                'processes'  => 10,
-                'tries'      => 1,
+                'processes'  => 2,
+                'tries'      => 2,
                 'nice'       => 0,
-                'memory' => 128,
+                'memory' => 512,
+                'timeout' => 1800
             ],
         ],
 
