@@ -23,7 +23,7 @@
         "flycompany/local-stats": "dev-master",
         "flycompany/local-team-fight": "dev-master",
         "fruitcake/laravel-cors": "^3.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7.0",
         "imangazaliev/didom": "^1.16",
         "joselfonseca/lighthouse-graphql-passport-auth": "^6.0",
         "laravel-notification-channels/webpush": "^7.0",
