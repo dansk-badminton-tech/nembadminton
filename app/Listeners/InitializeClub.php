@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Listeners;
 
+use App\Jobs\BridgeToHorizon;
 use App\Models\Club;
 use App\Models\User;
 use FlyCompany\BadmintonPlayer\Jobs\ImportMembers;
@@ -30,13 +31,7 @@ class InitializeClub
         /** @var Club $club */
         $club = Club::query()->findOrFail($clubId);
         if(!$club->initialized){
-            Bus::chain([
-                new ImportMembers([$clubId]),
-                new ImportPoints($clubId, RankingPeriodType::CURRENT),
-                static function() use ($clubId) {
-                    Club::query()->where('id', '=', $clubId)->update(['initialized' => true]);
-                }
-            ])->dispatch();
+            BridgeToHorizon::dispatch($clubId)->onConnection('database');
         }
     }
 }
