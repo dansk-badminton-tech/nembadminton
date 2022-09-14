@@ -5,19 +5,19 @@
             <div class="level-item has-text-centered">
                 <div>
                     <p class="heading">Spiller total</p>
-                    <p class="title">{{ clubStats.players }}</p>
+                    <p class="title">{{ clubStats?.players }}</p>
                 </div>
             </div>
             <div class="level-item has-text-centered">
                 <div>
                     <p class="heading">Mænd</p>
-                    <p class="title">{{ clubStats.menPlayers }}</p>
+                    <p class="title">{{ clubStats?.menPlayers }}</p>
                 </div>
             </div>
             <div class="level-item has-text-centered">
                 <div>
                     <p class="heading">Kvinder</p>
-                    <p class="title">{{ clubStats.womenPlayers }}</p>
+                    <p class="title">{{ clubStats?.womenPlayers }}</p>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                 {{ props.row.refId }}
             </b-table-column>
         </b-table>
-        <MemberList/>
+        <ActivityLog/>
     </div>
 </template>
 
@@ -54,12 +54,12 @@
 
 import gql from 'graphql-tag';
 import {debounce} from "../helpers";
-import MemberList from "./MemberList";
+import ActivityLog from "./ActivityLog";
 import MeQuery from '../queries/me.gql'
 
 export default {
     name: "ClubDashboard",
-    components: {MemberList},
+    components: {ActivityLog},
     apollo: {
         clubStats: {
             query: gql`

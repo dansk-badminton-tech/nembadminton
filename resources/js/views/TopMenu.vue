@@ -14,9 +14,9 @@
                 <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
-            <b-navbar-item :to="{ path: '/team-fight-v2/check' }" tag="router-link">
-                <b-icon icon="step-backward" size="is-medium"></b-icon>
-                <span class="nav-item-span">Tjek spillet holdkampe</span>
+            <b-navbar-item :to="{ path: '/faq' }" tag="router-link">
+                <b-icon icon="circle-info" size="is-medium"></b-icon>
+                <span class="nav-item-span">Hjælp</span>
             </b-navbar-item>
         </template>
         <template slot="end">

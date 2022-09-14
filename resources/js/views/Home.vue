@@ -16,26 +16,6 @@
                         </figure>
                     </div>
                 </div>
-                <hr>
-                <div class="columns is-vcentered">
-                    <div class="column is-two-fifths">
-                        <h1 class="title is-1">Tjek din modstander</h1>
-                        <h2 class="subtitle">På få minutter kan du tjekke om din modstanders holdopstilling overholder
-                            rangliste reglerne.</h2>
-                        <b-button
-                            tag="router-link"
-                            to="/team-fight-v2/check"
-                            type="is-success is-light is-link">
-                            Tjek modstanders holdopstilling nu!
-                        </b-button>
-                    </div>
-                    <div class="column">
-                        <figure class="image">
-                            <img alt="" src="../../assets/teamfight-landing-1.png">
-                        </figure>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>

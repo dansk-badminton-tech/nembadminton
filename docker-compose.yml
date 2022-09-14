@@ -19,6 +19,7 @@ services:
       - smtp
       - redis
       - worker
+      - db-worker
 
   db-worker:
     image: flycompany/holdkamp

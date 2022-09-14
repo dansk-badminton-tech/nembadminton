@@ -19,7 +19,16 @@
         <b-field label="Gentag adgangskode">
             <b-input v-model="password_confirmation" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
-        <b-button :loading="loading" @click="create">Opret</b-button>
+        <label class="label">Vigtig info</label>
+        <article class="message is-danger">
+            <div class="message-body">Værktøjet er udviklet som et personligt bidrag til badminton sporten i Danmark. Badminton Danmark har ikke valideret og kontrolleret beregningerne.
+                Alle udregninger er lavet på baggrund af reglementet for DH turneringen.
+                Det er altid jer som klub og brugere, der har ansvaret for at opstillingerne er korrekte og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH reglementet.</div>
+        </article>
+        <b-field>
+            <b-checkbox v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
+        </b-field>
+        <b-button :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
     </div>
 </template>
 
@@ -44,7 +53,8 @@ export default {
             password_confirmation: null,
             clubId: null,
             loading: false,
-            playerId: null
+            playerId: null,
+            accepted: false
         }
     },
     methods: {

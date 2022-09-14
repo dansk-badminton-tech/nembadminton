@@ -27,7 +27,7 @@
 import gql from "graphql-tag"
 
 export default {
-    name: 'MemberList',
+    name: 'ActivityLog',
     data() {
         return {
             page: 1,

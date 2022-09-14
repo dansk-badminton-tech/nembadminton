@@ -50,7 +50,7 @@
                               icon-right="user-clock" @click="makeCancellationPermanent(props.row)"></b-button>
                     <b-button size="is-small" type="is-danger" v-show="!hideCancellation && hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
                               icon-right="user-clock" @click="removePermanentCancellation(props.row)"></b-button>
-                    <b-button size="is-small" v-show="hideCancellation" title="Afbud"
+                    <b-button size="is-small" v-show="hideCancellation" title="Afbud (Denne holdkamp)"
                               icon-right="user-slash" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
                               @click="addPlayer(props.row)"></b-button>

@@ -42,7 +42,7 @@ import {
     faFistRaised,
     faUserMinus,
     faUserClock,
-    faExternalLinkSquareAlt
+    faExternalLinkSquareAlt, faCircleInfo
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
@@ -86,7 +86,8 @@ library.add(faBell,
     faFistRaised,
     faUserMinus,
     faUserClock,
-    faExternalLinkSquareAlt);
+    faExternalLinkSquareAlt,
+    faCircleInfo);
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 Vue.use(Buefy, {
     defaultIconComponent: 'vue-fontawesome',

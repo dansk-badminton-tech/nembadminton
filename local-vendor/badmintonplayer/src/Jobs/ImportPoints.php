@@ -68,7 +68,7 @@ class ImportPoints implements ShouldQueue
             $playersByRefId[$playerRanking->playerNumber] = $playerRanking;
         }
 
-        \FlyCompany\Club\Log::createLog($this->clubId, "Starting updating members points with ranking version: {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'points-importer');
+        \FlyCompany\Club\Log::createLog($this->clubId, "Opdater spillers point med point fra ranglisten: {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'points-importer');
         Member::query()->club($this->clubId)->chunk(100, function (Collection $members) use ($rankingList, $pointsManager, $playersByRefId) {
             foreach ($members as $member) {
                 $player = $playersByRefId[$member->refId] ?? null;
@@ -87,6 +87,6 @@ class ImportPoints implements ShouldQueue
                 }
             }
         });
-        \FlyCompany\Club\Log::createLog($this->clubId, "Done updating points from ranking version: {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'points-importer');
+        \FlyCompany\Club\Log::createLog($this->clubId, "Færdig med at opdater spillers point fra ranglisten: {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'points-importer');
     }
 }

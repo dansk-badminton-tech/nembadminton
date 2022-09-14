@@ -158,6 +158,15 @@ const router = new VueRouter(
                             allowAnonymous: true,
                             title: 'Playground'
                         }
+                    },
+                    {
+                        path: '/faq',
+                        name: 'faq',
+                        component: () => import("./views/faq/Faq"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Playground'
+                        }
                     }
                 ]
             }
