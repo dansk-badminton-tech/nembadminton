@@ -54,7 +54,7 @@ export default {
                 {
                     title: 'Der mangler en spiller i min klub',
                     text: 'nembadminton.dk henter data fra badmintonplayer.dk. Hvis spilleren ikke findes på den seneste måneds rangliste så findes spilleren heller ikke på nembadminton.dk.<br>'
-                          + 'Hvis spilleren er på ranglisten, men stadig ikke findes på nembadminton.dk, send en mail til info@nembadminton.dk med oplysninger om klubben og spilleren.'
+                          + 'Hvis spilleren er på ranglisten, men stadig ikke findes på nembadminton.dk, send en mail til <a href="mailto:info@nembadminton.dk">info@nembadminton.dk</a> med oplysninger om klubben og spilleren.'
                 },
                 {
                     title: 'Jeg har et forslag til forbedringer eller en ny feature',
