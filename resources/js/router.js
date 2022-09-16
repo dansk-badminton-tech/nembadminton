@@ -174,7 +174,7 @@ const router = new VueRouter(
                         component: () => import("./views/about/About"),
                         meta: {
                             allowAnonymous: true,
-                            title: 'Om us'
+                            title: 'Om os'
                         }
                     }
                 ]
