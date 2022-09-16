@@ -45,7 +45,7 @@ class ImportMembers implements ShouldQueue
         $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
 
         foreach ($this->clubIds as $clubId){
-            \FlyCompany\Club\Log::createLog($clubId, "Importer medlemmer fra niveau ranglisten {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'member-importer');
+            \FlyCompany\Club\Log::createLog($clubId, "Importerer medlemmer fra niveau ranglisten {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'member-importer');
             /** @var Club $clubModel */
             $clubModel = Club::query()->where(['id' => $clubId])->firstOrFail();
 
@@ -60,7 +60,7 @@ class ImportMembers implements ShouldQueue
             }
             $membersIds = array_unique($membersIds);
             $clubModel->members()->sync($membersIds);
-            \FlyCompany\Club\Log::createLog($clubId, "Medlems import færdig", 'member-importer');
+            \FlyCompany\Club\Log::createLog($clubId, "Medlemsimport færdig", 'member-importer');
             Log::info("Added ".count($membersIds)." to $clubModel->name1");
         }
         return 0;

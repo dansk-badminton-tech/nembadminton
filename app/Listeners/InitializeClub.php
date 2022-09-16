@@ -31,7 +31,7 @@ class InitializeClub
         /** @var Club $club */
         $club = Club::query()->findOrFail($clubId);
         if(!$club->initialized){
-            \FlyCompany\Club\Log::createLog($clubId, "Klub oprettet og import starter... vent venligst", 'system');
+            \FlyCompany\Club\Log::createLog($clubId, "Klub oprettet og import startet. Vent venligst...", 'system');
             BridgeToHorizon::dispatch($clubId)->onConnection('database');
         }
     }

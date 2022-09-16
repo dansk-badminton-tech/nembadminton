@@ -165,7 +165,16 @@ const router = new VueRouter(
                         component: () => import("./views/faq/Faq"),
                         meta: {
                             allowAnonymous: true,
-                            title: 'Playground'
+                            title: 'FAQ'
+                        }
+                    },
+                    {
+                        path: '/about-us',
+                        name: 'about-us',
+                        component: () => import("./views/about/About"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Om us'
                         }
                     }
                 ]

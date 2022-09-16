@@ -14,9 +14,13 @@
                 <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
+            <b-navbar-item :to="{ path: '/about-us' }" tag="router-link">
+                <b-icon icon="users" size="is-medium"></b-icon>
+                <span class="nav-item-span">Om os</span>
+            </b-navbar-item>
             <b-navbar-item :to="{ path: '/faq' }" tag="router-link">
                 <b-icon icon="circle-info" size="is-medium"></b-icon>
-                <span class="nav-item-span">Hjælp</span>
+                <span class="nav-item-span">FAQ</span>
             </b-navbar-item>
         </template>
         <template slot="end">

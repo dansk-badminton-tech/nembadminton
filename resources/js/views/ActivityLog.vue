@@ -1,7 +1,7 @@
 <template>
     <fragment>
         <h1 class="title">Hændelseslog</h1>
-        <h2 class="subtitle">Følge med i hvordan systemet synkroniser med data fra badmintonplayer.dk</h2>
+        <h2 class="subtitle">Følg med i hvordan systemet synkroniserer med badmintonplayer.dk</h2>
         <b-table
             :data="logs.data"
             :loading="$apollo.queries.logs.loading"

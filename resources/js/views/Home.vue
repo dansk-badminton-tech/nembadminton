@@ -7,11 +7,11 @@
             <div class="container">
                 <div class="columns is-vcentered">
                     <div class="column">
-                        <h1 class="title is-1">Hej og velkommen!</h1>
-                        <article class="message is-warning-passive">
+                        <h1 class="title is-1">Velkommen</h1>
+                            <article class="message is-warning-passive">
                             <div class="message-body">Værktøjet nembadminton.dk er udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig. Badminton Danmark har hverken valideret eller kontrolleret beregningerne.
-                                Alle udregninger er lavet på baggrund af reglementet for <a href="https://badminton.dk/om-badminton-danmark/love-regler/reglementer/holdturneringer">DH turneringen</a>. Det er altid jer som klub og bruger, der har ansvaret for, at opstillingerne er korrekte og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH reglementet.
-                                Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint, hvis spillere f.eks. har karantæne ses det ikke her.</div>
+                                Alle udregninger er lavet på baggrund af reglementet for <a href="https://badminton.dk/om-badminton-danmark/love-regler/reglementer/holdturneringer">DH-turneringen</a>. Det er altid jer som klub og bruger, der har ansvaret for, at opstillingerne er korrekte, og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH-reglementet.
+                                Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint. Hvis spillere f.eks. har karantæne, ses det ikke her.</div>
                         </article>
                     </div>
                 </div>
@@ -21,8 +21,8 @@
             <div class="container">
                 <div class="columns is-vcentered">
                     <div class="column is-two-fifths">
-                        <h1 class="title is-1">Planlæg din holdkamp nemt og bekymringsfrit.</h1>
-                        <h2 class="subtitle">Spiller og ranglister fra badmintonplayer.dk. Tjekker løbene om du overholder reglerne</h2>
+                        <h1 class="title is-1">Planlæg din holdkamp nemt og bekymringsfrit</h1>
+                        <h2 class="subtitle">Spillerer og ranglister fra badmintonplayer.dk. Tjekker løbende om du overholder reglerne.</h2>
                     </div>
                     <div class="column">
                         <figure class="image">

@@ -6,7 +6,7 @@
         <b-field label="Email">
             <b-input v-model="email" icon="envelope" placeholder="din@email.dk" type="email"></b-input>
         </b-field>
-        <b-field label="Badminton Player Klub">
+        <b-field label="Badmintonklub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
         </b-field>
 <!--        <b-field label="Badminton Player ID (Valgfrit)">-->
