@@ -15,7 +15,7 @@
                 </b-datepicker>
             </b-field>
             <b-field label="Rangliste">
-                <RankingVersionSelect v-model="version" expanded/>
+                <RankingVersionSelect v-model="version" :playing-date="gameDate" expanded/>
             </b-field>
             <b-field label="Klub">
                 <b-input v-model="me.club.name1" disabled="true"></b-input>
