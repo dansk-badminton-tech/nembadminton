@@ -128,21 +128,21 @@
                         </b-icon>
                     </p>
                     <p>Tilføj et nyt hold</p>
-                    <div class="buttons">
+                    <div class="buttons is-centered">
                         <b-button
                             type="is-primary"
                             @click="addTeam6">
-                            Tilføj 6 personers hold
+                            9-kamps hold
                         </b-button>
                         <b-button
                             type="is-primary"
                             @click="addTeam8">
-                            Tilføj 8 personers hold
+                            11-kamps hold
                         </b-button>
                         <b-button
                             type="is-primary"
                             @click="addTeam10">
-                            Tilføj 10 personers hold
+                            13-kamps hold
                         </b-button>
                     </div>
                 </div>
