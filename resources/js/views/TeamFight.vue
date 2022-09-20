@@ -94,33 +94,7 @@
                            :club-id="team.club.id"
                            :loading="saving"
                 />
-                <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
-                    <p>
-                        <b-icon
-                            icon="users"
-                            size="is-large">
-                        </b-icon>
-                    </p>
-                    <p>Tilføj dit første hold</p>
-                    <div class="buttons">
-                        <b-button
-                            type="is-primary"
-                            @click="addTeam6">
-                            Tilføj 6 personers hold
-                        </b-button>
-                        <b-button
-                            type="is-primary"
-                            @click="addTeam8">
-                            Tilføj 8 personers hold
-                        </b-button>
-                        <b-button
-                            type="is-primary"
-                            @click="addTeam10">
-                            Tilføj 10 personers hold
-                        </b-button>
-                    </div>
-                </div>
-                <div v-if="team.squads.length > 0" class="content has-text-grey has-text-centered">
+                <div v-if="team.squads.length >= 0" class="content has-text-grey has-text-centered">
                     <p>
                         <b-icon
                             icon="users"
