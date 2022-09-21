@@ -67,19 +67,21 @@
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
-                                <b-button size="is-small" title="Slet" icon-right="times-circle"
+                                <b-button :disabled="loading" size="is-small" title="Slet" icon-right="times-circle"
                                           @click="deletePlayer(category, player)"></b-button>
                             </div>
                         </div>
                         <PlayerSearch
                             v-if="category.players.length === 0"
                             :squad="squad"
+                            :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
                             :version="new Date(version)" :category="category"></PlayerSearch>
                         <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
                             :squad="squad"
+                            :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
                             :version="new Date(version)" :category="category"></PlayerSearch>
                     </draggable>
@@ -127,7 +129,8 @@ export default {
         teamsBaseValidations: {
             type: Array,
             default: []
-        }
+        },
+        loading: Boolean
     },
     methods: {
         setSquadLeague(squad, league){

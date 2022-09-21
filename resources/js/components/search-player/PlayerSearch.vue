@@ -3,12 +3,13 @@
         <b-field>
             <b-autocomplete
                 @input="searchMembers"
-                :open-on-focus="true"
+                :readonly="disabled"
+                :open-on-focus="!disabled"
                 :clear-on-select="true"
                 :clearable="true"
                 :data="searchResult"
                 :keep-first="true"
-                :loading="$apollo.queries.membersSearch.loading || $apollo.queries.memberSearchTeamFight.loading "
+                :loading="$apollo.queries.membersSearch.loading || $apollo.queries.memberSearchTeamFight.loading"
                 :placeholder="$t('roundsGenerator.findPlayerPlaceholder')"
                 field="name"
                 @focus="focusedFlag = true"
@@ -71,6 +72,7 @@ export default {
         excludePlayers: Array,
         version: Date,
         squad: Object,
+        disabled: Boolean
     },
     mounted() {
         this.$root.$on('teamfight.teamSaved', () => {

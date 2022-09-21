@@ -76,7 +76,7 @@
             <div class="column is-6">
                 <h1 class="title">Spiller</h1>
                 <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
-                <PlayersListSearch :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
+                <PlayersListSearch :loading="saving" :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
                                    :version="new Date(version)"/>
             </div>
             <div class="column is-6">
@@ -91,7 +91,9 @@
                            :squads="team.squads"
                            :teams-base-validations="validateBasicSquads"
                            :version="new Date(version)"
-                           :club-id="team.club.id"/>
+                           :club-id="team.club.id"
+                           :loading="saving"
+                />
                 <div v-if="team.squads.length === 0" class="content has-text-grey has-text-centered">
                     <p>
                         <b-icon
@@ -571,6 +573,9 @@ export default {
             this.saveTeams()
         },
         saveTeams() {
+            if(this.saving === true){
+                return
+            }
             this.saving = true;
             this.$apollo.mutate(
                 {
@@ -622,20 +627,21 @@ export default {
                 .then(({data}) => {
                     this.$root.$emit('teamfight.teamSaved')
                     this.$apollo.queries.team.refresh();
-                    this.saving = false;
                     this.savingIcon = 'check';
                     setTimeout(() => {
                         this.savingIcon = 'save';
                     }, 2000);
                 })
                 .catch((error) => {
-                    this.saving = false;
                     this.$buefy.snackbar.open(
                         {
                             duration: 2000,
                             type: 'is-danger',
                             message: `Kunne ikke gemme dit hold :(`
                         })
+                })
+                .finally(() => {
+                    this.saving = false;
                 })
         },
         deleteTeamFight() {

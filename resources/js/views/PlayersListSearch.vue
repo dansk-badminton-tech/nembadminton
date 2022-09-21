@@ -24,7 +24,7 @@
             :data="memberSearchPointsFiltered"
             :paginated="true"
             :backend-pagination="true"
-            :loading="$apollo.queries.memberSearch.loading"
+            :loading="$apollo.queries.memberSearch.loading || loading"
             :total="memberSearch.paginatorInfo.total"
             :per-page="perPage"
             @page-change="onPageChange"
@@ -86,7 +86,8 @@ export default {
         clubId: String,
         teamId: String,
         addPlayer: Function,
-        version: Date
+        version: Date,
+        loading: Boolean
     },
     computed: {
         memberSearchPointsFiltered() {
