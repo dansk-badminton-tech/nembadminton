@@ -17,6 +17,12 @@
                 <b-icon icon="brain"></b-icon>
                 Validere hold
             </b-dropdown-item>
+            <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
+                <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
+                    <b-icon icon="rotate"></b-icon>
+                    Opdater spiller point
+                </b-tooltip>
+            </b-dropdown-item>
             <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                 <b-icon icon="trash"></b-icon>
                 Slet holdet
