@@ -13,6 +13,7 @@ use FlyCompany\TeamFight\Models\SerializerHelper;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use JsonException;
 use Psr\SimpleCache\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -47,7 +48,9 @@ class BadmintonPlayerAPI
     {
         $client = new Client([
             'base_uri' => self::$base_url,
-            'timeout' => 600
+            'timeout' => 600,
+            'connect_timeout' => 60,
+            'read_timeout' => 300
         ]);
 
         $client = self::auth($client, $email, $password);
@@ -132,9 +135,11 @@ class BadmintonPlayerAPI
      */
     public function getPlayerRanking(RankingPeriodType $periodType, ?int $numberOfRows = null): PlayersRanking
     {
+        Log::info("Fetching ranking list '{$periodType->value}'");
         $cacheKey = "badmintonplayer-api:player-ranking-".md5($periodType->value.$numberOfRows);
         $contents = $this->cache->get($cacheKey);
         if($contents === null || $this->overrideCache){
+            Log::info("No cache found. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('Player/ranking',[
                 'query' => array_filter([
                     'rankingType' => $periodType->value,
@@ -143,6 +148,9 @@ class BadmintonPlayerAPI
             ]);
             $contents = $response->getBody()->getContents();
             $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
+            Log::info("Putting ranking list into cache");
+        }else{
+            Log::info("Ranking list found in cache");
         }
 
         $serializer = SerializerHelper::getSerializer();
