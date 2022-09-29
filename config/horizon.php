@@ -174,7 +174,7 @@ return [
                 'tries'      => 2,
                 'nice'       => 0,
                 'memory' => 512,
-                'timeout' => 1800
+                'timeout' => 1100
             ],
         ],
 
