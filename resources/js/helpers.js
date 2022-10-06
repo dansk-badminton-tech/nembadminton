@@ -170,6 +170,9 @@ export function extractErrors(graphqlErrors) {
                 }
             }
         }
+        if (graphqlError.extensions.category === 'notifications') {
+            errors.push(graphqlError.extensions.reason)
+        }
     }
     return errors;
 }

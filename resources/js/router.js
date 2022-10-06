@@ -176,6 +176,25 @@ const router = new VueRouter(
                             allowAnonymous: true,
                             title: 'Om os'
                         }
+                    },
+                    {
+                        path: '/forgot-password',
+                        name: 'forgot-password',
+                        component: () => import("./views/forgot-password/ForgotPassword"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Glemt adgangskode'
+                        }
+                    },
+                    {
+                        path: '/forgot-password-finish',
+                        name: 'forgot-password-finish',
+                        component: () => import("./views/forgot-password/FinishForgotPassword"),
+                        meta: {
+                            allowAnonymous: true,
+                            title: 'Opret ny adgangskode'
+                        },
+                        props: route => ({ token: route.query.token, email: route.query.email })
                     }
                 ]
             }

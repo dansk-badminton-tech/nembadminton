@@ -6,7 +6,8 @@
         <b-field label="Adgangskode">
             <b-input v-model="password" type="password"></b-input>
         </b-field>
-        <b-button :loading="loading" native-type="submit">Login</b-button>
+        <router-link class="is-clearfix" to="/forgot-password">Glemt adgangskode?</router-link>
+        <b-button class="mt-2" :loading="loading" native-type="submit">Login</b-button>
     </form>
 </template>
 
