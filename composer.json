@@ -16,6 +16,7 @@
         "doctrine/dbal": "^3.2",
         "flycompany/local-badmintonplayer": "dev-master",
         "flycompany/local-badmintonplayer-api": "dev-master",
+        "flycompany/local-calendar-feed": "dev-master",
         "flycompany/local-club": "dev-master",
         "flycompany/local-import": "dev-master",
         "flycompany/local-members": "dev-master",
@@ -35,6 +36,7 @@
         "mll-lab/laravel-graphql-playground": "^2.4",
         "nuwave/lighthouse": "^5.30",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "spatie/icalendar-generator": "^2.5",
         "symfony/property-access": "^6.0",
         "symfony/property-info": "^6.0",
         "symfony/serializer": "^6.0"

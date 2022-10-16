@@ -1,0 +1,17 @@
+{
+    "name": "flycompany/local-calendar-feed",
+    "type": "library",
+    "description": "ical calendar feed for team matches",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\CalendarFeed\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\FlyCompany\\CalendarFeed\\MainServiceProvider"
+            ]
+        }
+    }
+}
