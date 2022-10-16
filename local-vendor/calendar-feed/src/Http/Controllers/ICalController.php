@@ -30,7 +30,7 @@ class ICalController extends Controller
         $calendar = Calendar::create()->name('Skovbakken');
         foreach ($matches as $match) {
             $event = Event::create()
-                          ->name($match->divisionName . ': ' . $match->teamName1 . ' vs ' . $match->teamName2)
+                          ->name($match->divisionName . ' - '.$match->groupName.': ' . $match->teamName1 . ' vs ' . $match->teamName2)
                           ->addressName($match->venueName)
                             ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$match->seasonId.',,,,,'.$match->leagueMatchId.',,')
                           ->startsAt(Carbon::createFromTimeString($match->matchTime));
