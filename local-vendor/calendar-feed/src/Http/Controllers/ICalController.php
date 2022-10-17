@@ -3,6 +3,7 @@
 
 namespace FlyCompany\CalendarFeed\Http\Controllers;
 
+use App\Models\Club;
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
@@ -27,7 +28,10 @@ class ICalController extends Controller
         /** @var TeamMatch[] $matches */
         $matches = (new Collection($matches))->unique('leagueMatchId');
 
-        $calendar = Calendar::create()->name('Skovbakken');
+        /** @var Club $club */
+        $club = Club::query()->where('id', '=', $clubId)->firstOrFail();
+
+        $calendar = Calendar::create()->name($club->name1);
         foreach ($matches as $match) {
             $event = Event::create()
                           ->name($match->divisionName . ' - '.$match->groupName.': ' . $match->teamName1 . ' vs ' . $match->teamName2)
