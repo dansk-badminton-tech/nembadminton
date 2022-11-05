@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1 class="title">Tilknyttet klubber</h1>
-        <h2 class="subtitle">Tilknyt flere klubber til din profil</h2>
+        <h1 class="title">Mine klubber</h1>
+        <h2 class="subtitle">Tilknyt flere klubber til din profil og sammensæt holdkampe på tværs af klubber</h2>
         <b-button type="is-success" @click="showModal = true">Tilføj klub</b-button>
         <b-table :data="me?.clubs">
             <b-table-column field="id" label="ID" width="40" numeric v-slot="props">
@@ -12,7 +12,10 @@
             </b-table-column>
             <b-table-column field="initialized" label="Klar til brug" v-slot="props">
                 <b-icon v-if="props.row.initialized" icon="check"></b-icon>
-                <b-icon v-else icon="spinner" class="fa-spin"></b-icon>
+                <fragment v-else>
+                    <b-icon icon="spinner" class="fa-spin"></b-icon>
+                    (Import igang. ETA: 3-5 min)
+                </fragment>
             </b-table-column>
             <b-table-column field="id" width="40" numeric v-slot="props">
                 <b-button :disabled="me?.club?.id === props.row.id" @click="deleteClubConnection(props.row)" type="is-danger">Fjern tilknytning</b-button>
@@ -127,7 +130,7 @@ export default {
         deleteClubConnection(club) {
             this.$buefy.dialog.confirm(
                 {
-                    message: 'Sikker på du vil slette tilknytningen? Ingen af dine holdkampe vil blive ændret',
+                    message: 'Sikker på du vil slette tilknytningen? <br /><br /> Ingen af dine holdkampe vil blive ændret',
                     onConfirm: () => {
                         this.$apollo.mutate(
                             {
