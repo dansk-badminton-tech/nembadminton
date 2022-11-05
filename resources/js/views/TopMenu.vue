@@ -44,6 +44,12 @@
                 </b-dropdown-item>
                 <hr class="dropdown-divider">
                 <b-dropdown-item aria-role="menuitem" has-link>
+                    <router-link :to="{ name: 'my-clubs'}">
+                        <b-icon icon="home"></b-icon>
+                        Mine klubber
+                    </router-link>
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="menuitem" has-link>
                     <router-link :to="{ name: 'my-profile'}">
                         <b-icon icon="user-alt"></b-icon>
                         Min profil

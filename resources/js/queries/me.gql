@@ -4,6 +4,12 @@ query me{
         name
         email
         club{
+            id
+            name1
+            initialized
+        }
+        clubs{
+            id
             name1
             initialized
         }

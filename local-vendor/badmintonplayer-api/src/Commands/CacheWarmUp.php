@@ -34,9 +34,8 @@ class CacheWarmUp extends Command
     {
         $this->getOutput()->writeln('Warming up cache');
         $badmintonPlayerAPI->overrideCache();
-        $this->getOutput()->writeln('Fetching current and previous month ranking');
+        $this->getOutput()->writeln('Fetching current month ranking');
         $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
-        $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
         $this->getOutput()->writeln('Fetching coming league matches');
         $badmintonPlayerAPI->getCurrentLeagueMatches();
         $this->getOutput()->writeln('Fetching played league matches');

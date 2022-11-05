@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use phpseclib\Crypt\Hash;
 
 /**
- * @property int id
+ * @property int   id
+ * @property Squad $squad
  */
 class SquadCategory extends Model
 {

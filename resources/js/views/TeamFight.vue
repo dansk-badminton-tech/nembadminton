@@ -80,8 +80,14 @@
         <hr/>
         <div class="columns">
             <div class="column is-6">
-                <h1 class="title">Spiller</h1>
-                <h1 class="subtitle">Søg på spiller og sæt afbud</h1>
+                <h1 class="title">Søg på spiller</h1>
+                <h1 class="subtitle">{{
+                        hasMultipleClubs
+                        ? 'Klubber:'
+                        : 'Klub:'
+                    }} {{ clubsNames }}
+                    <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ny klub)</router-link>
+                </h1>
                 <PlayersListSearch :loading="saving" :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
                                    :version="new Date(version)"/>
             </div>
@@ -155,6 +161,7 @@ import {
 import ShareLinkModal from "../components/team-fight/ShareLinkModal";
 import TeamQuery from "../queries/team.graphql"
 import {hasInvalidCategory, hasInvalidLevel} from "./team-fight/helper";
+import ME from "../queries/me.gql";
 
 export default {
     name: "TeamFight",
@@ -173,6 +180,14 @@ export default {
         teamFightId: String
     },
     computed: {
+        hasMultipleClubs() {
+            return this.me?.clubs.length > 1;
+        },
+        clubsNames() {
+            return this.me?.clubs.map((club) => {
+                return club.name1
+            }).join(', ')
+        },
         resolveIncompleteTeam() {
             if (this.validateBasicSquads.length === 0) {
                 return null
@@ -215,6 +230,9 @@ export default {
         }
     },
     apollo: {
+        me: {
+            query: ME
+        },
         team: {
             query: TeamQuery,
             variables: function () {
@@ -244,16 +262,16 @@ export default {
     methods: {
         exportToCSV() {
             this.$apollo.query({
-                query: gql`
+                                   query: gql`
                     query exportToCSV($teamId: ID!){
                         export(teamId:$teamId)
                     }
                 `,
-                variables: {
-                    teamId: this.teamFightId
-                },
-                fetchPolicy: "network-only"
-            }).then(({data}) => {
+                                   variables: {
+                                       teamId: this.teamFightId
+                                   },
+                                   fetchPolicy: "network-only"
+                               }).then(({data}) => {
                 var file_path = data.export;
                 var a = document.createElement('A');
                 a.href = file_path;
@@ -306,26 +324,26 @@ export default {
                         version: version
                     }
                 })
-                .then(({data}) => {
-                    this.$apollo.queries.team.refresh()
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-success',
-                            message: `Points er nu ` + version + ' ranglisten'
-                        })
-                })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            message: `Kunne ikke opdater points :(`
-                        })
-                })
-                .finally(() => {
-                    this.updating = false;
-                })
+                       .then(({data}) => {
+                           this.$apollo.queries.team.refresh()
+                           this.$buefy.snackbar.open(
+                               {
+                                   duration: 4000,
+                                   type: 'is-success',
+                                   message: `Points er nu ` + version + ' ranglisten'
+                               })
+                       })
+                       .catch((error) => {
+                           this.$buefy.snackbar.open(
+                               {
+                                   duration: 4000,
+                                   type: 'is-danger',
+                                   message: `Kunne ikke opdater points :(`
+                               })
+                       })
+                       .finally(() => {
+                           this.updating = false;
+                       })
         },
         validateSquads() {
             const teamsClone = JSON.parse(JSON.stringify(this.team));
@@ -553,7 +571,7 @@ export default {
             this.saveTeams()
         },
         saveTeams() {
-            if(this.saving === true){
+            if (this.saving === true) {
                 return
             }
             this.saving = true;
