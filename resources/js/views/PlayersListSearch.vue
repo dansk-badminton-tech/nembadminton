@@ -1,6 +1,6 @@
 <template>
     <div class="sticky">
-        <b-field label="Filter" grouped group-multiline>
+        <b-field grouped group-multiline>
             <b-input @input="search" placeholder="Søg på navn"></b-input>
             <b-select v-model="rankingList">
                 <option value="WOMEN_LEVEL">Dame Niveau</option>

@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Events\UserUpdate;
+use App\Listeners\AddedClubConnection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,6 +61,11 @@ class User extends Authenticatable
     public function club() : BelongsTo
     {
         return $this->belongsTo(Club::class, 'organization_id', 'id');
+    }
+
+    public function clubs() : BelongsToMany
+    {
+        return $this->belongsToMany(Club::class);
     }
 
     public function subscriptionSettings() : HasOne

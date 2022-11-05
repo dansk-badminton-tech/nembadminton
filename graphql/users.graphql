@@ -3,7 +3,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateMe(input: UpdateMe! @spread) : User! @update @inject(context: "user.id", name: "id") @guard
+    updateMe(input: UpdateMe! @spread) : User! @update @guard @inject(context: "user.id", name: "id") @event(dispatch: "App\\Events\\UserUpdate")
 }
 
 input UpsertSubscriptionSettingBelongTo {
@@ -20,6 +20,12 @@ input UpdateMe {
     email: String
     player_id: String
     subscriptionSettings: UpsertSubscriptionSettingBelongTo
+    clubs: ConnectClubs
+}
+
+input ConnectClubs {
+    connect: [ID!]
+    disconnect: [ID!]
 }
 
 type User {
@@ -28,6 +34,7 @@ type User {
     email: String!
     player_id: String
     club: Club!
+    clubs: [Club!]! @hasMany
     organization_id: Int!
     subscriptionSettings: SubscriptionSetting
     created_at: DateTime!

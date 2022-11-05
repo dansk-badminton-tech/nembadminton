@@ -41,6 +41,7 @@ class BridgeToHorizon implements ShouldQueue
         Bus::chain([
             new ImportMembers([$this->clubId]),
             new ImportPoints($this->clubId, RankingPeriodType::CURRENT),
+            new ImportPoints($this->clubId, RankingPeriodType::PREVIOUS),
             function() use ($clubId) {
                 Club::query()->where('id', '=', $clubId)->update(['initialized' => true]);
             }

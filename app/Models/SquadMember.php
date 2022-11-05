@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Auth;
 /**
  * Class SquadMember
  *
- * @property String       member_ref_id
- * @property int          id
- * @property SquadPoint[] points
+ * @property String        member_ref_id
+ * @property int           id
+ * @property SquadPoint[]  points
+ * @property SquadCategory $category
  * @package App\Models
  */
 class SquadMember extends Model
@@ -41,15 +42,9 @@ class SquadMember extends Model
         return $this->belongsTo(SquadCategory::class, 'squad_category_id');
     }
 
-    public function getIsInSquad(): bool
+    public function getIsInSquad() : bool
     {
         return true;
     }
 
-    public function scopeMyClub(Builder $builder): Builder
-    {
-        return $builder->whereHas('category.squad.team.club', function (Builder $builder) {
-            $builder->where('id', Auth::user()->organization_id);
-        });
-    }
 }

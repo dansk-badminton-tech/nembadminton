@@ -29,6 +29,14 @@ const router = new VueRouter(
                         }
                     },
                     {
+                        path: '/my-clubs',
+                        name: 'my-clubs',
+                        component: () => import("./views/my-clubs/MyClubs"),
+                        meta: {
+                            title: 'Mine klubber'
+                        }
+                    },
+                    {
                         path: '/rounds-generator',
                         name: 'rounds-generator',
                         component: () => import("./views/RoundsGenerator")

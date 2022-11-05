@@ -17,13 +17,14 @@ use Illuminate\Support\Facades\Auth;
  * @property string  id
  * @property Carbon  version
  * @property Squad[] squads
+ * @property integer $user_id
  */
 class Teams extends Model
 {
 
     public    $incrementing = false;
 
-    protected $fillable = ['teams', 'name', 'game_date', 'version', 'user_id'];
+    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'user_id'];
 
     protected static function booted()
     {

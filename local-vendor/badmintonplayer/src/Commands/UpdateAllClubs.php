@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayer\Commands;
 
+use App\Models\Club;
 use App\Models\User;
 use FlyCompany\BadmintonPlayer\Jobs\ImportMembers;
 use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
@@ -35,12 +36,12 @@ class UpdateAllClubs extends Command
      */
     public function handle(): int
     {
-        $usersWithClubId = User::query()->groupBy('organization_id')->get(['organization_id']);
-        foreach ($usersWithClubId as $item){
+        $clubs = Club::query()->where('initialized', '=', 1)->get();
+        foreach ($clubs as $club){
             ImportMembers::withChain([
-                new ImportPoints($item->organization_id, RankingPeriodType::CURRENT),
-                new ImportPoints($item->organization_id, RankingPeriodType::PREVIOUS)
-            ])->dispatch([$item->organization_id]);
+                new ImportPoints($club->id, RankingPeriodType::CURRENT),
+                new ImportPoints($club->id, RankingPeriodType::PREVIOUS)
+            ])->dispatch([$club->id]);
         }
         return 0;
     }

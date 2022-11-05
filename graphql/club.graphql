@@ -4,21 +4,21 @@ extend type Query{
         excludeMembers: [Int!] @notIn(key: "id"),
         gender: [Gender!] @in,
         orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints", "myClub"]) @guard
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints", "myClubs"]) @guard
     memberSearchCancellation(
         teamId: String!
-    ): [Member!]! @paginate(defaultCount: 20, scopes: ["myClub", "hasCancellations"]) @guard
+    ): [Member!]! @paginate(defaultCount: 20, scopes: ["myClubs", "hasCancellations"]) @guard
     memberSearchPoints(
         teamId: String!
         version: String!
         name: String @where(operator: "like")
         rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
-    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClub"]) @guard
+    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
     memberSearchTeamFight(
         name: String!
         squadId: Int!
         gender: [Gender!]
-    ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder", scopes: ["myClub"]) @guard
+    ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder") @guard @can(ability: "view", resolved: true)
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
         orderBy: _ @orderBy(columns: ["name1"])

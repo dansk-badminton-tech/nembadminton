@@ -88,6 +88,13 @@ class Member extends Model
         });
     }
 
+    public function scopeMyClubs(Builder $builder): Builder
+    {
+        return $builder->whereHas('clubs.users', function (Builder $builder) {
+            $builder->where('id', Auth::user()->getAuthIdentifier());
+        });
+    }
+
     public function getVintage() : string{
         return Util::calculateVintage($this->getBirthday())->value;
     }
