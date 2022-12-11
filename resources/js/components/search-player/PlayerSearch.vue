@@ -48,14 +48,14 @@ export default {
     methods: {
         findPositions,
         addMember(player, event) {
-            if(player === null){
+            if (player === null) {
                 return;
             }
 
-            if(event instanceof KeyboardEvent){
+            if (event instanceof KeyboardEvent) {
                 const inputs = document.querySelectorAll('input')
                 const index = Array.from(inputs).indexOf(event.target) + 1
-                if(inputs[index] !== undefined){
+                if (inputs[index] !== undefined) {
                     inputs[index].focus()
                 }
             }
@@ -65,9 +65,28 @@ export default {
             this.querySearchName = name
         }, 300)
     },
+    mounted() {
+//        this.$root.$on('player-added-from-category', (player) => {
+//            if(this.focusedFlag){
+//                console.log(this.$apollo.queries.memberSearchTeamFight)
+//                if(this.$apollo.queries.memberSearchTeamFight.loading){
+//                    setTimeout(() => {
+//                        this.$apollo.queries.memberSearchTeamFight.refresh()
+//                    }, 500)
+//                }
+//            }
+//        })
+    },
     watch: {
-        squad: function(){
-            this.$apollo.queries.memberSearchTeamFight.refresh()
+        squad: {
+            deep: true,
+            handler(newVal, oldVal) {
+                if(this.focusedFlag){
+                    setTimeout(() => {
+                        this.$apollo.queries.memberSearchTeamFight.refresh()
+                    }, 50)
+                }
+            }
         }
     },
     props: {
@@ -79,10 +98,10 @@ export default {
         disabled: Boolean
     },
     computed: {
-        searchResult(){
+        searchResult() {
             let removeDuplicates = Object.values(groupBy(this.memberSearchTeamFightResult, 'refId')).filter((v) => v.length === 1).flat()
             let allPlayers = removeDuplicates.concat(this.memberSearchResult)
-            allPlayers = allPlayers.filter((v,i,a)=>a.findIndex(t=>(t.refId===v.refId))===i)
+            allPlayers = allPlayers.filter((v, i, a) => a.findIndex(t => (t.refId === v.refId)) === i)
             return allPlayers
         }
     },
@@ -115,7 +134,7 @@ export default {
                     }
                 }
             `,
-            variables(){
+            variables() {
                 return {
                     name: '%' + this.querySearchName + '%',
                     squadId: parseInt(this.squad.id),
@@ -123,8 +142,8 @@ export default {
                 }
             },
             fetchPolicy: "network-only",
-            result({data}){
-                 this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
+            result({data}) {
+                this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
             },
             skip() {
                 return !this.focusedFlag || this.squad.id == null
@@ -163,7 +182,7 @@ export default {
                 }
                 return params
             },
-            result({data}){
+            result({data}) {
                 this.memberSearchResult = data.membersSearch.data
             }
         }

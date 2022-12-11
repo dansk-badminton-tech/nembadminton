@@ -355,6 +355,7 @@ export default {
                     }
                 })
                        .then(({data}) => {
+                            this.$root.$emit('player-added-from-category', data.createSquadMember)
                        })
                        .catch(() => {
                            this.$buefy.snackbar.open(
@@ -370,42 +371,44 @@ export default {
         },
         deletePlayerFromCategory(squad, category, player) {
             this.saving = true
-            return this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation deleteSquadMember($id: ID!){
-                            deleteSquadMember(id: $id){
-                                id
-                            }
-                        }
-                    `,
-                    variables: {
-                        id: player.id
-                    },
-                    update: (store, {data: {deleteSquadMember}}) => {
-                        let variables = {id: this.teamFightId};
-                        let data = store.readQuery({query: TeamQuery, variables: variables})
-                        let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-                        let squadCache = data.team.squads[squadIndex]
-                        let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-                        let categoryCache = squadCache.categories[categoryIndex]
-                        let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
-                        data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
-                        store.writeQuery({query: TeamQuery, data, variables})
-                    },
-                }).then(({data}) => {
-            })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Kunne ikke fjerne spilleren fra holdet :(`
-                        })
-                }).finally(() => {
-                this.saving = false
-            })
+            return this.$apollo
+                       .mutate({
+                                   mutation: gql`
+                                    mutation deleteSquadMember($id: ID!){
+                                        deleteSquadMember(id: $id){
+                                            id
+                                        }
+                                    }
+                                `,
+                                   variables: {
+                                       id: player.id
+                                   },
+                                   update: (store, {data: {deleteSquadMember}}) => {
+                                       let variables = {id: this.teamFightId};
+                                       let data = store.readQuery({query: TeamQuery, variables: variables})
+                                       let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
+                                       let squadCache = data.team.squads[squadIndex]
+                                       let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
+                                       let categoryCache = squadCache.categories[categoryIndex]
+                                       let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
+                                       data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
+                                       store.writeQuery({query: TeamQuery, data, variables})
+                                   },
+                               })
+                       .then(({data}) => {
+                           this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
+                       })
+                       .catch((error) => {
+                           this.$buefy.snackbar.open(
+                               {
+                                   duration: 4000,
+                                   type: 'is-danger',
+                                   queue: false,
+                                   message: `Kunne ikke fjerne spilleren fra holdet :(`
+                               })
+                       }).finally(() => {
+                    this.saving = false
+                })
         },
         updateToRankingList() {
             this.updating = true;

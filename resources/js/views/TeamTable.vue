@@ -41,22 +41,16 @@
                 <tbody>
                 <tr v-for="category in squad.categories" :key="category.name">
                     <th>{{ category.name }}</th>
-<!--                    <draggable :list="category.players" group="players" handle=".handle" tag="td"-->
-<!--                               @change="playerChange($event, squad, category)"-->
-<!--                               @update="playerMoved"-->
-<!--                               @add="playerMoved"-->
-<!--                    >-->
                     <td @drop="onDrop($event, squad, category)"
                         @dragover.prevent
                         @dragenter.prevent>
                         <div draggable="true"
                              v-for="player in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
-                             @dragend="endDrag"
                              :key="player.id"
                              class="is-clearfix mt-1">
                             <b-tooltip
-                                :active="(isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)) && !hideTooltip"
+                                :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
@@ -97,7 +91,6 @@
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
                             :version="new Date(version)" :category="category"></PlayerSearch>
-<!--                    </draggable>-->
                     </td>
                 </tr>
                 </tbody>
@@ -148,18 +141,8 @@ export default {
         },
         loading: Boolean
     },
-    data(){
-        return {
-            hideTooltip: false
-        }
-    },
     methods: {
-        endDrag() {
-            console.log("start")
-            this.hideTooltip = false
-        },
         startDrag(evt, squad, category, player) {
-            this.hideTooltip = true
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
             evt.dataTransfer.setData('squad', JSON.stringify(squad))
