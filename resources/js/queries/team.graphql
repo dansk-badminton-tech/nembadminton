@@ -5,6 +5,7 @@ query team($id: ID!){
             id
             playerLimit
             league
+            order
             categories{
                 id
                 category

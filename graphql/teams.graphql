@@ -7,7 +7,13 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updateTeams")
+    deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
+    createSquadMember(input: CreatePlayerInput! @spread) : SquadMember @create @guard
+    updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
+    deleteSquad(id: ID! @eq) : Squad @guard @delete
+    createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
+    updateSquad(input: UpdateSquadInput! @spread) : Squad @update @guard
+    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
@@ -15,6 +21,63 @@ extend type Mutation {
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
     deleteCancellation(id: ID!) : Cancellation @delete @guard
+}
+
+input UpdateCategoryInputNew {
+    id: ID
+    category: String
+    name: String
+}
+
+input CreatePlayerInput {
+    category: CreateCategoryBelongsTo!
+    gender: String!
+    name: String!
+    refId: String! @rename(attribute: "member_ref_id")
+    points: CreatePointHasManyInput!
+}
+
+input CreateCategoryBelongsTo {
+    connect: ID!
+}
+
+input CreatePointHasManyInput {
+    create: [CreatePointInput!]!
+}
+
+input CreatePointInput {
+    category: String
+    points: Int
+    position: Int
+    vintage: Vintage
+}
+
+input UpdateSquadInput {
+    id: ID!
+    playerLimit: Int!
+    league: LeagueType!
+    order: Int!
+}
+
+input CreateSquadInput {
+    team: SquadBelongsTo!
+    playerLimit: Int!
+    league: LeagueType!
+    categories: CreateCategoryHasManyInput!
+    order: Int!
+}
+
+input SquadBelongsTo {
+    connect: ID!
+}
+
+input CreateCategoryHasManyInput {
+    create: [CreateCategoryInput!]!
+}
+
+input CreateCategoryInput {
+    category: String!
+    name: String!
 }
 
 type Cancellation {
@@ -39,44 +102,12 @@ input UpdateTeamInput {
     name: String!
     version: Date!
     gameDate: Date! @rename(attribute: "game_date")
-    squads: [UpdateSquadInput!]!
-}
-
-input UpdateSquadInput {
-    id: ID
-    playerLimit: Int!
-    league: LeagueType!
-    categories: [UpdateCategoryInput!]!
 }
 
 enum LeagueType{
     LIGA @enum(value: "LIGA")
     FIRSTDIVISION @enum(value: "FIRSTDIVISION")
     OTHER @enum(value: "OTHER")
-}
-
-input UpdateCategoryInput {
-    id: ID
-    category: String!
-    name: String!
-    players: [UpdatePlayerInput!]!
-}
-
-input UpdatePlayerInput {
-    id: ID
-    gender: String!
-    name: String!
-    refId: String!
-    points: [UpdatePointInput!]!
-    vintage: Vintage
-}
-
-input UpdatePointInput {
-    id: ID
-    category: String
-    points: Int
-    position: Int
-    vintage: Vintage
 }
 
 type SquadMember {

@@ -47,11 +47,10 @@ export default {
     name: "PlayerSearch",
     methods: {
         findPositions,
-        addMember(option, event) {
-            if(option === null){
+        addMember(player, event) {
+            if(player === null){
                 return;
             }
-            this.category.players.push(option);
 
             if(event instanceof KeyboardEvent){
                 const inputs = document.querySelectorAll('input')
@@ -60,11 +59,16 @@ export default {
                     inputs[index].focus()
                 }
             }
-            this.$root.$emit('playersearch.addMemberToCategory');
+            this.$emit('select-player', player)
         },
         searchMembers: debounce(function (name) {
             this.querySearchName = name
         }, 300)
+    },
+    watch: {
+        squad: function(){
+            this.$apollo.queries.memberSearchTeamFight.refresh()
+        }
     },
     props: {
         clubId: String,
@@ -74,17 +78,11 @@ export default {
         squad: Object,
         disabled: Boolean
     },
-    mounted() {
-        this.$root.$on('teamfight.teamSaved', () => {
-            this.$apollo.queries.memberSearchTeamFight.refresh()
-        })
-    },
     computed: {
         searchResult(){
             let removeDuplicates = Object.values(groupBy(this.memberSearchTeamFightResult, 'refId')).filter((v) => v.length === 1).flat()
             let allPlayers = removeDuplicates.concat(this.memberSearchResult)
             allPlayers = allPlayers.filter((v,i,a)=>a.findIndex(t=>(t.refId===v.refId))===i)
-
             return allPlayers
         }
     },
