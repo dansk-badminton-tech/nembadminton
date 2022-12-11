@@ -53,7 +53,7 @@
                     <b-button size="is-small" v-show="hideCancellation" title="Afbud (Denne holdkamp)"
                               icon-right="user-slash" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
-                              @click="addPlayer(props.row)"></b-button>
+                              @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>
             <template #empty>
@@ -95,7 +95,10 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('teamfight.teamSaved', () => {
+        this.$root.$on('player-added-to-category', (player) => {
+            this.$apollo.queries.memberSearch.refresh()
+        })
+        this.$root.$on('player-deleted-from-category', (player) => {
             this.$apollo.queries.memberSearch.refresh()
         })
     },
@@ -116,6 +119,11 @@ export default {
         }
     },
     methods: {
+        addPlayerCustom(player){
+            this.addPlayer(player).then(() => {
+                this.$apollo.queries.memberSearch.refresh()
+            })
+        },
         convertRankingToCategory,
         findPermanentCancellation(cancellations){
             return cancellations.find((c) => {return c.teamId === null})

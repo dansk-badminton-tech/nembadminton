@@ -1,5 +1,6 @@
 <template>
     <div>
+        <b-loading :is-full-page="false" v-model="loading" :can-cancel="true"></b-loading>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -9,7 +10,7 @@
                         <b-taglist class="ml-2 is-pulled-left">
                             <b-tag>{{ squad.league }}</b-tag>
                             <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
-                                Ugyldig hold
+                                Ugyldigt hold
                             </b-tag>
                         </b-taglist>
                         <b-dropdown aria-role="list" class="is-pulled-right">
@@ -27,10 +28,10 @@
                             <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="move(index, -1)" aria-role="listitem">Flyt
+                            <b-dropdown-item :disabled="index === 0" @click="changeOrder(squad, squads[index-1])" aria-role="listitem">Flyt
                                 hold op
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="move(index, 1)"
+                            <b-dropdown-item :disabled="index === squads.length-1" @click="changeOrder(squad, squads[index+1])"
                                              aria-role="listitem">Flyt hold ned
                             </b-dropdown-item>
                             <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
@@ -41,9 +42,16 @@
                 <tbody>
                 <tr v-for="category in squad.categories" :key="category.name">
                     <th>{{ category.name }}</th>
-                    <draggable :list="category.players" group="players" handle=".handle" tag="td"
-                               @end="emitEnd">
-                        <div v-for="player in category.players" class="is-clearfix mt-1">
+                    <td @drop="onDrop($event, squad, category)"
+                        @dragover.prevent
+                        @dragenter.prevent>
+                        <div draggable="true"
+                             v-for="player in category.players"
+                             @dragstart="startDrag($event, squad, category, player)"
+                             :key="player.id"
+                             :data-player-id="player.id"
+                             class="is-clearfix mt-1">
+                            <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
@@ -68,23 +76,25 @@
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="times-circle"
-                                          @click="deletePlayer(category, player)"></b-button>
+                                          @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
                         </div>
                         <PlayerSearch
                             v-if="category.players.length === 0"
+                            @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"></PlayerSearch>
+                            :version="new Date(version)" :category="category" />
                         <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
+                            @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"></PlayerSearch>
-                    </draggable>
+                            :version="new Date(version)" :category="category" />
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -111,9 +121,11 @@ export default {
         version: Date,
         clubId: String,
         confirmDelete: Function,
-        move: Function,
+        changeOrder: Function,
         playerMove: Function,
         deletePlayer: Function,
+        addPlayer: Function,
+        updateSquad: Function,
         playingToHigh: {
             type: Array,
             default: []
@@ -133,12 +145,24 @@ export default {
         loading: Boolean
     },
     methods: {
-        setSquadLeague(squad, league){
-            squad.league = league
-            this.$root.$emit('teamtable.changedSquadLeague');
+        startDrag(evt, squad, category, player) {
+            evt.dataTransfer.dropEffect = 'move'
+            evt.dataTransfer.effectAllowed = 'move'
+            evt.dataTransfer.setData('squad', JSON.stringify(squad))
+            evt.dataTransfer.setData('category', JSON.stringify(category))
+            evt.dataTransfer.setData('player', JSON.stringify(player))
         },
-        emitEnd(evt) {
-            this.$emit('end', evt)
+        onDrop(evt, targetSquad, targetCategory) {
+            let sourceSquad = JSON.parse(evt.dataTransfer.getData('squad'))
+            let sourceCategory = JSON.parse(evt.dataTransfer.getData('category'))
+            let player = JSON.parse(evt.dataTransfer.getData('player'))
+            if(sourceSquad.id !== targetSquad.id || targetCategory.id !== sourceCategory.id){
+                this.playerMove(evt, player, sourceSquad, sourceCategory, targetSquad, targetCategory)
+            }
+        },
+        setSquadLeague(squad, league) {
+            squad.league = league
+            this.updateSquad(squad)
         },
         isYoungPlayer,
         isDouble(category) {

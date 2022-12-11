@@ -43,24 +43,17 @@ import {debounce, findPositions, resolveGenderFromCategory} from "../../helpers"
 import gql from 'graphql-tag'
 import {groupBy} from "lodash/collection";
 
+import MemberSearchTeamFight from "../../queries/memberSearchTeamFight.gql";
+
 export default {
     name: "PlayerSearch",
     methods: {
         findPositions,
-        addMember(option, event) {
-            if(option === null){
+        addMember(player, event) {
+            if (player === null) {
                 return;
             }
-            this.category.players.push(option);
-
-            if(event instanceof KeyboardEvent){
-                const inputs = document.querySelectorAll('input')
-                const index = Array.from(inputs).indexOf(event.target) + 1
-                if(inputs[index] !== undefined){
-                    inputs[index].focus()
-                }
-            }
-            this.$root.$emit('playersearch.addMemberToCategory');
+            this.$emit('select-player', player)
         },
         searchMembers: debounce(function (name) {
             this.querySearchName = name
@@ -74,17 +67,11 @@ export default {
         squad: Object,
         disabled: Boolean
     },
-    mounted() {
-        this.$root.$on('teamfight.teamSaved', () => {
-            this.$apollo.queries.memberSearchTeamFight.refresh()
-        })
-    },
     computed: {
-        searchResult(){
+        searchResult() {
             let removeDuplicates = Object.values(groupBy(this.memberSearchTeamFightResult, 'refId')).filter((v) => v.length === 1).flat()
             let allPlayers = removeDuplicates.concat(this.memberSearchResult)
-            allPlayers = allPlayers.filter((v,i,a)=>a.findIndex(t=>(t.refId===v.refId))===i)
-
+            allPlayers = allPlayers.filter((v, i, a) => a.findIndex(t => (t.refId === v.refId)) === i)
             return allPlayers
         }
     },
@@ -98,26 +85,8 @@ export default {
     },
     apollo: {
         memberSearchTeamFight: {
-            query: gql`
-                query memberSearchTeamFight($name: String!, $squadId: Int!, $gender : [Gender!]){
-                    memberSearchTeamFight(name: $name, squadId: $squadId, gender: $gender){
-                        data{
-                            id
-                            name
-                            gender
-                            refId
-                            isInSquad
-                            points{
-                                points
-                                position
-                                category
-                                vintage
-                            }
-                        }
-                    }
-                }
-            `,
-            variables(){
+            query: MemberSearchTeamFight,
+            variables() {
                 return {
                     name: '%' + this.querySearchName + '%',
                     squadId: parseInt(this.squad.id),
@@ -125,8 +94,8 @@ export default {
                 }
             },
             fetchPolicy: "network-only",
-            result({data}){
-                 this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
+            result({data}) {
+                this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
             },
             skip() {
                 return !this.focusedFlag || this.squad.id == null
@@ -165,7 +134,7 @@ export default {
                 }
                 return params
             },
-            result({data}){
+            result({data}) {
                 this.memberSearchResult = data.membersSearch.data
             }
         }
