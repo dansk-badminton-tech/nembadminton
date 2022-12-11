@@ -92,6 +92,7 @@ class BadmintonPlayerAPI
     {
         $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH);
         if($contents === null || $this->overrideCache){
+            Log::info("No cache found with key '" . self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH . "'. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('LeagueMatch');
             $contents = $response->getBody()->getContents();
             $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH, $contents, self::CACHE_TTL);
@@ -115,6 +116,7 @@ class BadmintonPlayerAPI
     {
         $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP);
         if($contents === null || $this->overrideCache){
+            Log::info("No cache found with key '" . self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP . "'. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('LeagueMatch/lineup');
             $contents = $response->getBody()->getContents();
             $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP, $contents, self::CACHE_TTL);
@@ -139,7 +141,7 @@ class BadmintonPlayerAPI
         $cacheKey = "badmintonplayer-api:player-ranking-".md5($periodType->value.$numberOfRows);
         $contents = $this->cache->get($cacheKey);
         if($contents === null || $this->overrideCache){
-            Log::info("No cache found. Fetching from badmintonplayer.dk....");
+            Log::info("No cache found with key '$cacheKey'. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('Player/ranking',[
                 'query' => array_filter([
                     'rankingType' => $periodType->value,

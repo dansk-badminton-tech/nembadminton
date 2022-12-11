@@ -1,5 +1,6 @@
 <template>
     <div>
+        <b-loading :is-full-page="false" v-model="loading" :can-cancel="true"></b-loading>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -27,10 +28,10 @@
                             <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="changeOrder(index, -1)" aria-role="listitem">Flyt
+                            <b-dropdown-item :disabled="index === 0" @click="changeOrder(squad, squads[index-1])" aria-role="listitem">Flyt
                                 hold op
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="changeOrder(index, 1)"
+                            <b-dropdown-item :disabled="index === squads.length-1" @click="changeOrder(squad, squads[index+1])"
                                              aria-role="listitem">Flyt hold ned
                             </b-dropdown-item>
                             <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
@@ -48,7 +49,9 @@
                              v-for="player in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
                              :key="player.id"
+                             :data-player-id="player.id"
                              class="is-clearfix mt-1">
+                            <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
                                 :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
@@ -82,7 +85,7 @@
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"></PlayerSearch>
+                            :version="new Date(version)" :category="category" />
                         <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
@@ -90,7 +93,7 @@
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"></PlayerSearch>
+                            :version="new Date(version)" :category="category" />
                     </td>
                 </tr>
                 </tbody>

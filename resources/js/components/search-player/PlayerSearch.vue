@@ -43,6 +43,8 @@ import {debounce, findPositions, resolveGenderFromCategory} from "../../helpers"
 import gql from 'graphql-tag'
 import {groupBy} from "lodash/collection";
 
+import MemberSearchTeamFight from "../../queries/memberSearchTeamFight.gql";
+
 export default {
     name: "PlayerSearch",
     methods: {
@@ -51,43 +53,11 @@ export default {
             if (player === null) {
                 return;
             }
-
-            if (event instanceof KeyboardEvent) {
-                const inputs = document.querySelectorAll('input')
-                const index = Array.from(inputs).indexOf(event.target) + 1
-                if (inputs[index] !== undefined) {
-                    inputs[index].focus()
-                }
-            }
             this.$emit('select-player', player)
         },
         searchMembers: debounce(function (name) {
             this.querySearchName = name
         }, 300)
-    },
-    mounted() {
-//        this.$root.$on('player-added-from-category', (player) => {
-//            if(this.focusedFlag){
-//                console.log(this.$apollo.queries.memberSearchTeamFight)
-//                if(this.$apollo.queries.memberSearchTeamFight.loading){
-//                    setTimeout(() => {
-//                        this.$apollo.queries.memberSearchTeamFight.refresh()
-//                    }, 500)
-//                }
-//            }
-//        })
-    },
-    watch: {
-        squad: {
-            deep: true,
-            handler(newVal, oldVal) {
-                if(this.focusedFlag){
-                    setTimeout(() => {
-                        this.$apollo.queries.memberSearchTeamFight.refresh()
-                    }, 50)
-                }
-            }
-        }
     },
     props: {
         clubId: String,
@@ -115,25 +85,7 @@ export default {
     },
     apollo: {
         memberSearchTeamFight: {
-            query: gql`
-                query memberSearchTeamFight($name: String!, $squadId: Int!, $gender : [Gender!]){
-                    memberSearchTeamFight(name: $name, squadId: $squadId, gender: $gender){
-                        data{
-                            id
-                            name
-                            gender
-                            refId
-                            isInSquad
-                            points{
-                                points
-                                position
-                                category
-                                vintage
-                            }
-                        }
-                    }
-                }
-            `,
+            query: MemberSearchTeamFight,
             variables() {
                 return {
                     name: '%' + this.querySearchName + '%',

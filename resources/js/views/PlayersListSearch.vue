@@ -95,7 +95,10 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('teamfight.teamSaved', () => {
+        this.$root.$on('player-added-to-category', (player) => {
+            this.$apollo.queries.memberSearch.refresh()
+        })
+        this.$root.$on('player-deleted-from-category', (player) => {
             this.$apollo.queries.memberSearch.refresh()
         })
     },

@@ -1,0 +1,17 @@
+query memberSearchTeamFight($name: String!, $squadId: Int!, $gender : [Gender!]){
+    memberSearchTeamFight(name: $name, squadId: $squadId, gender: $gender){
+        data{
+            id
+            name
+            gender
+            refId
+            isInSquad
+            points{
+                points
+                position
+                category
+                vintage
+            }
+        }
+    }
+}

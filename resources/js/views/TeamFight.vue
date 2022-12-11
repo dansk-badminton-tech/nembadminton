@@ -13,7 +13,7 @@
                 <span>Indstillinger</span>
                 <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
             </button>
-            <b-dropdown-item aria-role="listitem" @click="validate">
+            <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
                 <b-icon icon="brain"></b-icon>
                 Validere hold
             </b-dropdown-item>
@@ -88,15 +88,15 @@
                     }} {{ clubsNames }}
                     <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ny klub)</router-link>
                 </h1>
-                <PlayersListSearch :loading="saving" :add-player="addPlayer" :team-id="this.teamFightId" :club-id="team.club.id"
+                <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
                                    :version="new Date(version)"/>
             </div>
-            <div class="column is-6">
+            <div class="column is-6 container">
                 <h1 class="title">Holdet</h1>
                 <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
                 <TeamTable :confirm-delete="deleteTeam"
                            :delete-player="deletePlayerFromCategory"
-                           :add-player="addPlayerToCategory"
+                           :add-player="addPlayer"
                            :update-squad="updateSquad"
                            :change-order="changeOrder"
                            :player-move="playerMove"
@@ -123,7 +123,6 @@ import gql from "graphql-tag"
 import ValidateTeams from "./ValidateTeams";
 import TeamTable from "./TeamTable";
 import omitDeep from 'omit-deep';
-import {TeamFightHelper} from "../components/team-fight/teams";
 import RankingVersionSelect from "../components/team-fight/RankingVersionSelect";
 import ValidationStatus from "./ValidationStatus";
 import PlayersListSearch from "./PlayersListSearch";
@@ -141,6 +140,7 @@ import TeamQuery from "../queries/team.graphql"
 import {hasInvalidCategory, hasInvalidLevel} from "./team-fight/helper";
 import ME from "../queries/me.gql";
 import AddTeamsButtons from "./team-fight/AddTeamsButtons";
+import MemberSearchTeamFight from "../queries/memberSearchTeamFight.gql";
 
 export default {
     name: "TeamFight",
@@ -267,8 +267,8 @@ export default {
                                    },
                                    fetchPolicy: "network-only"
                                }).then(({data}) => {
-                var file_path = data.export;
-                var a = document.createElement('A');
+                let file_path = data.export;
+                let a = document.createElement('A');
                 a.href = file_path;
                 a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
                 document.body.appendChild(a);
@@ -302,6 +302,22 @@ export default {
                     onCancel: () => {
                         this.version = this.oldVersion
                     }
+                })
+        },
+        focusNext(player) {
+            const element = document.querySelector('[data-player-id-input="' + player.id + '"]')
+            const inputs = document.querySelectorAll('input')
+            const index = Array.from(inputs).indexOf(element) + 1
+            if (inputs[index] !== undefined) {
+                inputs[index].focus()
+            }
+        },
+        addPlayer(squad, category, player) {
+            this.addPlayerToCategory(squad, category, player)
+                .then(({data}) => {
+                    setTimeout(() => {
+                        this.focusNext(data.createSquadMember)
+                    }, 20);
                 })
         },
         addPlayerToCategory(squad, category, player) {
@@ -354,8 +370,9 @@ export default {
                         store.writeQuery({query: TeamQuery, data, variables})
                     }
                 })
-                       .then(({data}) => {
-                            this.$root.$emit('player-added-from-category', data.createSquadMember)
+                       .then((data) => {
+                           this.$root.$emit('player-added-to-category', data.data.createSquadMember)
+                           return data
                        })
                        .catch(() => {
                            this.$buefy.snackbar.open(
@@ -406,9 +423,10 @@ export default {
                                    queue: false,
                                    message: `Kunne ikke fjerne spilleren fra holdet :(`
                                })
-                       }).finally(() => {
-                    this.saving = false
-                })
+                       })
+                       .finally(() => {
+                           this.saving = false
+                       })
         },
         updateToRankingList() {
             this.updating = true;
@@ -529,6 +547,15 @@ export default {
                         })
                 })
         },
+        validateWithSnackbar(){
+            this.validate()
+            this.$buefy.snackbar.open(
+                {
+                    duration: 10000,
+                    type: 'is-success',
+                    message: `Hold valideret. Tjek om nogle spiller er markeret. Husk valideringen køre automatisk når der sker ændringer på holdet.`
+                })
+        },
         validate() {
             const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
@@ -607,7 +634,7 @@ export default {
                     message: 'Tilføjet til Hold ' + (squadIndex + 1) + ' i ' + category
                 })
         },
-        addPlayer(player) {
+        addPlayerToNextCategory(player) {
             let foundPlace = false;
             let addPlayerPromise;
             outside:
@@ -665,13 +692,65 @@ export default {
                 return addPlayerPromise
             }
         },
-        changeOrder(index, offset) {
+        changeOrder(fromSquad, toSquad) {
+            this.saving = true
+            this.$apollo.mutate({
+                                    mutation: gql`
+                                        mutation updateSquad($input: UpdateSquadInput!){
+                                            updateSquad(input: $input){
+                                                id
+                                                order
+                                            }
+                                        }
+                                    `,
+                                    variables: {
+                                        input: {
+                                            id: fromSquad.id,
+                                            order: toSquad.order
+                                        }
+                                    }
+                                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Kunne ikke ændre sortering`
+                        })
+                })
             this.$apollo
-            let teams = this.team.squads.slice()
-            let temp = teams[index]
-            teams[index] = teams[index + offset]
-            teams[index + offset] = temp
-            this.team.squads = teams
+                .mutate({
+                            mutation: gql`
+                                mutation updateSquad($input: UpdateSquadInput!){
+                                    updateSquad(input: $input){
+                                        id
+                                        order
+                                    }
+                                }
+                            `,
+                            variables: {
+                                input: {
+                                    id: toSquad.id,
+                                    order: fromSquad.order
+                                }
+                            },
+                            refetchQueries: [
+                                {query: TeamQuery, variables: {id: this.teamFightId}}
+                            ]
+                        })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Kunne ikke ændre sortering`
+                        })
+                })
+                .finally(() => {
+                    this.saving = false
+                })
         },
         saveTeams() {
             if (this.saving === true) {

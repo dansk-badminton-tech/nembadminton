@@ -12,7 +12,7 @@ extend type Mutation {
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
     deleteSquad(id: ID! @eq) : Squad @guard @delete
     createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
-    updateSquad(input: UpdateSquadInput! @spread) : Squad @update @guard
+    updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
     updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
@@ -54,9 +54,9 @@ input CreatePointInput {
 
 input UpdateSquadInput {
     id: ID!
-    playerLimit: Int!
-    league: LeagueType!
-    order: Int!
+    playerLimit: Int
+    league: LeagueType
+    order: Int
 }
 
 input CreateSquadInput {
