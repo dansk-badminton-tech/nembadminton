@@ -73,17 +73,25 @@ class ImportPoints implements ShouldQueue
             foreach ($members as $member) {
                 $player = $playersByRefId[$member->refId] ?? null;
                 if ($player !== null && $player->clubID === $this->clubId) {
-                    Log::info("Updating $player->name($player->gender) single points to {$player->singlePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
-                    $pointsManager->addPointsByMember($member, $player->singlePoints, 0, $rankingList->getVersionDateCarbon(), $player->getSingleCategory()->value, $player->getVintage()->value);
+                    if($player->singlePoints !== 0 && $player->singlePoints !== null){
+                        Log::info("Updating $player->name($player->gender) single points to {$player->singlePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
+                        $pointsManager->addPointsByMember($member, $player->singlePoints, 0, $rankingList->getVersionDateCarbon(), $player->getSingleCategory()->value, $player->getVintage()->value);
+                    }
 
-                    Log::info("Updating $player->name($player->gender) double points to {$player->doublePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
-                    $pointsManager->addPointsByMember($member, $player->doublePoints, 0, $rankingList->getVersionDateCarbon(), $player->getDoubleCategory()->value, $player->getVintage()->value);
+                    if($player->doublePoints !== 0 && $player->doublePoints !== null){
+                        Log::info("Updating $player->name($player->gender) double points to {$player->doublePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
+                        $pointsManager->addPointsByMember($member, $player->doublePoints, 0, $rankingList->getVersionDateCarbon(), $player->getDoubleCategory()->value, $player->getVintage()->value);
+                    }
 
-                    Log::info("Updating $player->name($player->gender) mix points to {$player->mixPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
-                    $pointsManager->addPointsByMember($member, $player->mixPoints, 0, $rankingList->getVersionDateCarbon(), $player->getMixCategory()->value, $player->getVintage()->value);
+                    if($player->mixPoints !== 0 && $player->mixPoints !== null) {
+                        Log::info("Updating $player->name($player->gender) mix points to {$player->mixPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
+                        $pointsManager->addPointsByMember($member, $player->mixPoints, 0, $rankingList->getVersionDateCarbon(), $player->getMixCategory()->value, $player->getVintage()->value);
+                    }
 
-                    Log::info("Updating $player->name($player->gender) level points to {$player->niveauPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
-                    $pointsManager->addPointsByMember($member, $player->niveauPoints, 0, $rankingList->getVersionDateCarbon(), null, $player->getVintage()->value);
+                    if($player->niveauPoints !== 0 && $player->niveauPoints !== null) {
+                        Log::info("Updating $player->name($player->gender) level points to {$player->niveauPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
+                        $pointsManager->addPointsByMember($member, $player->niveauPoints, 0, $rankingList->getVersionDateCarbon(), null, $player->getVintage()->value);
+                    }
                 }
             }
         });
