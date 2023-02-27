@@ -36,7 +36,7 @@ class RankingVersions
 
         $points = Point::query()->whereHas('member.clubs', function (Builder $builder) use ($user) {
             $builder->where('id', $user->organization_id);
-        })->groupBy('version')->get(['version']);
+        })->distinct()->get(['version']);
 
         return array_reverse(Arr::sort($points->pluck('version')));
     }

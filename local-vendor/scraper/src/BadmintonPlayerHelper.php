@@ -41,7 +41,7 @@ class BadmintonPlayerHelper
             return $carbon;
         }, $versions), 'is_object'));
         sort($carbons);
-        return $carbons;
+        return array_filter($carbons, static function(Carbon $carbon){return $carbon > BadmintonPlayerHelper::getCurrentSeasonStart(); });
     }
 
     /**
@@ -95,6 +95,17 @@ class BadmintonPlayerHelper
             --$season;
         }
         return $season;
+    }
+
+    public static function getCurrentSeasonStart() : Carbon
+    {
+        $now = Carbon::now();
+        $season = $now->year;
+        if ($now->month < 6){
+            $now->subYear();
+        }
+        $now->setMonth(6);
+        return $now;
     }
 
 }
