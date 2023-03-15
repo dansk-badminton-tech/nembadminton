@@ -6,6 +6,7 @@ namespace FlyCompany\Club\GraphQL\Queries;
 
 use App\Models\Point;
 use App\Models\User;
+use FlyCompany\Club\RankingVersionUtil;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -30,15 +31,10 @@ class RankingVersions
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-
         /** @var User $user */
         $user = $context->user();
 
-        $points = Point::query()->whereHas('member.clubs', function (Builder $builder) use ($user) {
-            $builder->where('id', $user->organization_id);
-        })->distinct()->get(['version']);
-
-        return array_reverse(Arr::sort($points->pluck('version')));
+        return RankingVersionUtil::getRankingVersionByClub($user->organization_id);
     }
 
 }

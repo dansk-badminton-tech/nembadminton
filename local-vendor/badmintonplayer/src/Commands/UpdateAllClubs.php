@@ -10,6 +10,7 @@ use FlyCompany\BadmintonPlayer\Jobs\ImportMembers;
 use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\Club\Log;
+use FlyCompany\Club\RankingVersionUtil;
 use Illuminate\Console\Command;
 
 class UpdateAllClubs extends Command
@@ -38,10 +39,14 @@ class UpdateAllClubs extends Command
     {
         $clubs = Club::query()->where('initialized', '=', 1)->get();
         foreach ($clubs as $club){
+            $clubId = $club->id;
             ImportMembers::withChain([
-                new ImportPoints($club->id, RankingPeriodType::CURRENT),
-                new ImportPoints($club->id, RankingPeriodType::PREVIOUS)
-            ])->dispatch([$club->id]);
+                new ImportPoints($clubId, RankingPeriodType::CURRENT),
+                new ImportPoints($clubId, RankingPeriodType::PREVIOUS),
+                static function() use ($clubId) {
+                    RankingVersionUtil::updateRankingVersionCache($clubId);
+                }
+            ])->dispatch([$clubId]);
         }
         return 0;
     }
