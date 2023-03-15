@@ -20,7 +20,7 @@
             <b-field label="Klub">
                 <b-input v-model="me.club.name1" disabled="true"></b-input>
             </b-field>
-            <b-button class="mt-2" icon-left="save" @click="createTeam">Opret</b-button>
+            <b-button class="mt-2" icon-left="save" :loading="loading" @click="createTeam">Opret</b-button>
         </div>
     </div>
 </template>
@@ -39,7 +39,8 @@ export default {
             name: null,
             gameDate: null,
             clubId: null,
-            version: null
+            version: null,
+            loading: false
         }
     },
     apollo: {
@@ -52,6 +53,7 @@ export default {
             this.clubId = id
         },
         createTeam() {
+            this.loading = true
             const createTeamGQL = gql`
                         mutation ($input: CreateTeamInput!){
                           createTeam(input: $input){
@@ -84,7 +86,9 @@ export default {
                             message: `Dit hold er gemt`
                         })
                     this.$router.push({name: 'team-fight-edit', params: {teamUUID: data.createTeam.id}})
-                })
+                }).finally(() => {
+                    this.loading = false
+            })
         }
     }
 }
