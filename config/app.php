@@ -1,5 +1,7 @@
 <?php
 
+use Arquivei\LaravelPrometheusExporter\PrometheusServiceProvider;
+
 return [
 
     /*
@@ -162,6 +164,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         \Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider::class,
+        PrometheusServiceProvider::class,
         /*
          * Package Service Providers...
          */

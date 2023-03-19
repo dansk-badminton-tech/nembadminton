@@ -13,6 +13,7 @@
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "ext-zip": "*",
+        "arquivei/laravel-prometheus-exporter": "^3.0",
         "doctrine/dbal": "^3.2",
         "flycompany/local-badmintonplayer": "dev-master",
         "flycompany/local-badmintonplayer-api": "dev-master",
