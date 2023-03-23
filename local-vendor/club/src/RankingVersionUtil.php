@@ -5,6 +5,7 @@ namespace FlyCompany\Club;
 
 use App\Models\Point;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
