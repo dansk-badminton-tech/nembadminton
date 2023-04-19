@@ -174,7 +174,7 @@ return [
                 'tries'      => 2,
                 'nice'       => 0,
                 'memory' => 512,
-                'timeout' => 1100
+                'timeout' => 2300
             ],
         ],
 
@@ -183,11 +183,11 @@ return [
                 'connection' => 'redis',
                 'queue'      => ['default'],
                 'balance'    => 'simple',
-                'processes'  => 2,
+                'processes'  => 4,
                 'tries'      => 1,
                 'nice'       => 0,
-                'timeout'    => 120,
-                'memory' => 128,
+                'timeout'    => 2300,
+                'memory' => 512,
             ],
         ],
     ],

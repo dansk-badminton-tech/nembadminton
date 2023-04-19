@@ -9,7 +9,7 @@
                     <div class="column">
                         <h1 class="title is-1">Velkommen</h1>
                         <article class="message is-danger">
-                            <div class="message-body">April ranglisten er desværre ikke tilgængelig pga. teknisk fejl i integrationen mellem Badminton Danmark og Nembadminton.dk. Vi satser, på at fejlen bliver rettet i løbet af uge 15</div>
+                            <div class="message-body">April ranglisten er desværre ikke tilgængelig pga. teknisk fejl i integrationen mellem Badminton Danmark og Nembadminton.dk.</div>
                         </article>
                         <article class="message is-warning-passive">
                             <div class="message-body">Værktøjet nembadminton.dk er udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig. Badminton Danmark har hverken valideret eller kontrolleret beregningerne.

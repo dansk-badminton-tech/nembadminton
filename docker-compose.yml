@@ -24,7 +24,7 @@ services:
   db-worker:
     image: flycompany/holdkamp
     entrypoint: "php artisan queue:work database"
-    user: "33:33"
+    user: "1000:33"
     environment:
       TELESCOPE_ENABLED: "false"
     build:
@@ -43,7 +43,7 @@ services:
   worker:
     image: flycompany/holdkamp
     entrypoint: "php artisan horizon"
-    user: "33:33"
+    user: "1000:33"
     environment:
       TELESCOPE_ENABLED: "false"
     build:

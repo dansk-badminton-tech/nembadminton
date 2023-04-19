@@ -8,6 +8,8 @@ use App\Models\Member;
 use App\Models\User;
 use Carbon\Carbon;
 use DiDom\Document;
+use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
+use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
@@ -21,7 +23,8 @@ use FlyCompany\TeamFight\SquadManager;
 use FlyCompany\TeamFight\TeamManager;
 use FlyCompany\TeamFight\TeamValidator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -54,17 +57,21 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamValidator $teamValidator)
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI, BadmintonPlayer $badmintonPlayer)
     {
-        /** @var Member[] $members */
-        $members = Member::query()->join('points', 'members.id', '=', 'points.member_id')->whereNull('points.category')->where(
-            'points.version',
-            '=',
-            '2021-08-01'
-        )->orderBy('points.points')->with('points')->get();
-        foreach ($members as $member){
-            $this->line($member->points.$member->name);
+        $clubId = 1124;
+        $season = 2022;
+        $teams = $badmintonPlayer->getClubTeams($season, $clubId);
+        foreach ($teams as $team){
+            if(in_array((int)$team->ageGroupId, [1, 6, 7])){
+                dump($badmintonPlayer->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name));
+            }
         }
+        #DB::delete('delete from cache where expiration = ?', []);
+//        $playerRanking = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
+//        foreach ($playerRanking->playerRankings as $index => $playerRanking){
+//            dump($playerRanking);
+//        }
 
         return 0;
     }

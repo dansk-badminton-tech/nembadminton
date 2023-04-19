@@ -1,0 +1,11 @@
+extend type Query {
+    calendarEvents: [Event!]! @guard @field(resolver: "FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar")
+}
+
+type Event {
+    start: DateTime
+    end: DateTime
+    title: String
+    content: String
+    contentFull: String
+}

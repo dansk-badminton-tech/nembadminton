@@ -15,3 +15,4 @@ type Mutation
 #import badmintonplayer.graphql
 #import badmintonplayer-api.graphql
 #import validate.graphql
+#import calendar.graphql

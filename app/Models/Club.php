@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int    id
  * @property string name1
  * @property boolean initialized
+ * @property int badmintonPlayerId
  */
 class Club extends Model
 {

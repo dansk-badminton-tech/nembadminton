@@ -16,7 +16,7 @@ class RankingPoints extends Command
     protected $description = 'Fetch all ranking points';
 
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int{
-        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::from($this->argument('ranking-period')), (int)($this->option('limit') ?? 100000));
+        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::from($this->argument('ranking-period')));
 
         $name = $this->option('name');
         if($name !== null){

@@ -4,19 +4,55 @@
 namespace FlyCompany\CalendarFeed\Http\Controllers;
 
 use App\Models\Club;
+use App\Models\User;
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
+use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Psr\SimpleCache\InvalidArgumentException;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 
 class ICalController extends Controller
 {
 
-    public function ical(int $clubId, BadmintonPlayerAPI $badmintonPlayerAPI)
+    /**
+     * @throws \JsonException
+     */
+    public function icalClassic(int $clubId, BadmintonPlayer $badmintonPlayerAPI) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        /** @var Club $club */
+        $club = Club::query()->where('id', '=', $clubId)->firstOrFail();
+
+        $calendar = Calendar::create()->name($club->name1);
+
+        $season = BadmintonPlayerHelper::getCurrentSeason();
+        $teams = $badmintonPlayerAPI->getClubTeams($season, $clubId);
+        foreach ($teams as $team){
+            if(in_array((int)$team->ageGroupId, [1, 6, 7])){
+                $teamFights = $badmintonPlayerAPI->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
+                foreach ($teamFights as $teamFight){
+                    $event = Event::create()
+                                  ->name($this->generateTitle($teamFight["teams"]))
+                                  ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight["matchId"].',,')
+                                  ->startsAt(Carbon::parse($teamFight["gameTime"]));
+                    $calendar->event($event);
+                }
+            }
+        }
+        return response($calendar->get())
+            ->header('Content-Type', 'text/calendar; charset=utf-8');
+
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function ical(int $clubId, BadmintonPlayerAPI $badmintonPlayerAPI) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $matches = $badmintonPlayerAPI->getCurrentLeagueMatches();
 
@@ -39,11 +75,19 @@ class ICalController extends Controller
                             ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$match->seasonId.',,,,,'.$match->leagueMatchId.',,')
                           ->startsAt(Carbon::createFromTimeString($match->matchTime));
             $calendar->event($event);
-
         }
 
         return response($calendar->get())
             ->header('Content-Type', 'text/calendar; charset=utf-8');
     }
+
+    public function generateTitle(array $teams1) : string
+    {
+        $team1Name = $teams1[0] ?? '';
+        $team2Name = $teams1[1] ?? '';
+
+        return sprintf("%s VS %s", $team1Name, $team2Name);
+    }
+
 
 }

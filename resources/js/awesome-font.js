@@ -90,7 +90,8 @@ library.add(faBell,
             faCircleInfo,
             faCircleQuestion,
             faSpinner,
-            faRotate);
+            faRotate,
+            faCalendarAlt);
 Vue.component('vue-fontawesome', FontAwesomeIcon);
 Vue.use(Buefy, {
     defaultIconComponent: 'vue-fontawesome',

@@ -5,6 +5,7 @@ namespace FlyCompany\BadmintonPlayerAPI\Models;
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Collections\PlayersRankingCollection;
 use Illuminate\Support\Str;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 class PlayersRanking
 {
@@ -16,9 +17,9 @@ class PlayersRanking
     public ?string $versionDate;
 
     /**
-     * @var PlayerRanking[]
+     * @var PlayerRankingIterator|PlayerRanking[]
      */
-    public array $playerRankings;
+    public PlayerRankingIterator $playerRankings;
 
     public function getVersionDateCarbon() : Carbon{
         return Carbon::parse($this->versionDate );

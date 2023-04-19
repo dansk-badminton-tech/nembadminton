@@ -14,6 +14,10 @@
                 <b-icon icon="fist-raised" size="is-medium"></b-icon>
                 <span class="nav-item-span">Holdkamp</span>
             </b-navbar-item>
+<!--            <b-navbar-item v-if="me !== undefined" :to="{ path: '/calendar' }" tag="router-link">-->
+<!--                <b-icon icon="calendar-alt" size="is-medium"></b-icon>-->
+<!--                <span class="nav-item-span">Kalender</span>-->
+<!--            </b-navbar-item>-->
             <b-navbar-item :to="{ path: '/about-us' }" tag="router-link">
                 <b-icon icon="users" size="is-medium"></b-icon>
                 <span class="nav-item-span">Om os</span>

@@ -29,6 +29,14 @@ const router = new VueRouter(
                         }
                     },
                     {
+                        path: '/calendar',
+                        name: 'calendar',
+                        component: () => import("./views/calendar/Calendar"),
+                        meta: {
+                            title: 'Min profil'
+                        }
+                    },
+                    {
                         path: '/my-clubs',
                         name: 'my-clubs',
                         component: () => import("./views/my-clubs/MyClubs"),
