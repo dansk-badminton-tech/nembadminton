@@ -10,7 +10,7 @@ sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com echo "Testing
 
 echo "Building frontend"
 yarn install --frozen-lockfile --no-progress
-yarn run prod
+yarn run production
 
 echo "Deploying frontend"
 sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com rm -rf /var/www/badminton.social/projects/holdkamp/public/css

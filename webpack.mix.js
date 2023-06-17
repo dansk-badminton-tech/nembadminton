@@ -11,9 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css')
-   .sourceMaps(false, 'source-map')
+mix.js('resources/js/app.js', 'public/js').vue({ version: 2 });
+mix.sass('resources/sass/app.scss', 'public/css');
+mix.sourceMaps(false, 'source-map')
    .webpackConfig({
                       module: {
                           rules: [
@@ -26,13 +26,17 @@ mix.js('resources/js/app.js', 'public/js')
                       }
                   });
 
+//mix.alias({
+//              '@': path.join(__dirname, 'resources/admin-v2')
+//          });
+
 if (mix.inProduction()) {
-    mix.webpackConfig(
-        {
-            output: {
-                chunkFilename: "js/chunks/[name].[chunkhash].js"
-            }
-        }
-    )
+//    mix.webpackConfig(
+//        {
+//            output: {
+//                chunkFilename: "js/chunks/[name].[chunkhash].js"
+//            }
+//        }
+//    )
     mix.version();
 }
