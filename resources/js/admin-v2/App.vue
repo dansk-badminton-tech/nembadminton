@@ -40,7 +40,6 @@ export default defineComponent(
                                    query: ME
                                })
                 .then(({data}) => {
-                    console.log(data)
                     this.$store.commit('user', {
                         name: data.me.name,
                         email: data.me.email,

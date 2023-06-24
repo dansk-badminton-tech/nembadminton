@@ -57,6 +57,7 @@ import { defineComponent } from 'vue'
 import CardComponent from '@/components/CardComponent.vue'
 import gql from "graphql-tag";
 import {setAuthToken} from "../../../auth";
+import ME from "../../../queries/me.gql";
 
 export default defineComponent({
   name: 'LoginView',
@@ -71,6 +72,18 @@ export default defineComponent({
     }
   },
   methods: {
+      fetchUser(){
+          this.$apollo.query({
+                                 query: ME
+                             })
+              .then(({data}) => {
+                  this.$store.commit('user', {
+                      name: data.me.name,
+                      email: data.me.email,
+                      avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'
+                  })
+              })
+      },
     submit () {
       this.isLoading = true
         this.$apollo.mutate(
@@ -91,7 +104,8 @@ export default defineComponent({
             }
         ).then(({data}) => {
             setAuthToken(data.login.access_token)
-            this.$router.push({name: '/'})
+            this.fetchUser()
+            this.$router.push({path: '/'})
         }).catch(({graphQLErrors}) => {
             this.$buefy.snackbar.open(
                 {
