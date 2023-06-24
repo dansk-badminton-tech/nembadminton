@@ -1,0 +1,12 @@
+/* Buefy & Bulma */
+
+// We need buefy-build, but it has relative paths
+//@import "node_modules/buefy/src/scss/buefy-build";
+
+// This is fixed version of buefy-build
+@import "node_modules/bulma/sass/utilities/functions";
+@import "node_modules/bulma/sass/utilities/initial-variables";
+@import "node_modules/buefy/src/scss/utils/_all";
+@import "node_modules/bulma/bulma";
+@import "node_modules/buefy/src/scss/utils/variables-ext";
+@import "node_modules/buefy/src/scss/buefy";
