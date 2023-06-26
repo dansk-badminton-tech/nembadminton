@@ -14,6 +14,8 @@ import App from './App.vue'
 import apolloProvider from "../graphql";
 import VueApollo from "vue-apollo";
 
+import { Fragment } from 'vue-frag'
+
 /* Default title tag */
 const defaultDocumentTitle = 'Admin One Bulma Buefy'
 
@@ -33,6 +35,7 @@ Vue.config.productionTip = false
 
 Vue.use(Buefy)
 Vue.use(VueApollo)
+Vue.component('Fragment', Fragment)
 
 new Vue({
   router,

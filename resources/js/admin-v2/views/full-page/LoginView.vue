@@ -3,14 +3,6 @@
     title="Login"
     icon="lock"
   >
-    <router-link
-      slot="button"
-      to="/"
-      class="button is-small"
-    >
-      Dashboard
-    </router-link>
-
     <form
       method="POST"
       @submit.prevent="submit"
@@ -105,7 +97,7 @@ export default defineComponent({
         ).then(({data}) => {
             setAuthToken(data.login.access_token)
             this.fetchUser()
-            this.$router.push({path: '/'})
+            this.$router.push({name: 'home'})
         }).catch(({graphQLErrors}) => {
             this.$buefy.snackbar.open(
                 {
