@@ -36,6 +36,15 @@ const routes = [
     },
     {
         meta: {
+            title: 'Rediger holdkamp'
+        },
+        path: '/team-fight/:teamUUID/edit',
+        name: 'team-fight-edit',
+        component: () => import("../views/team-fight/TeamFight.vue"),
+        props: route => ({teamFightId: route.params.teamUUID})
+    },
+    {
+        meta: {
             title: 'Tables'
         },
         path: '/tables',
