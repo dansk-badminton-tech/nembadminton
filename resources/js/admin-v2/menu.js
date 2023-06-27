@@ -10,6 +10,11 @@ export default [
             to: '/team-fight/dashboard',
             icon: 'desktop-mac',
             label: 'Holdkamp'
+        },
+        {
+            to: '/calendar',
+            icon: 'desktop-mac',
+            label: 'Kalender'
         }
     ],
     'Hjælp',

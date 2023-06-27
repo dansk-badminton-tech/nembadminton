@@ -44,6 +44,14 @@ const routes = [
         props: route => ({teamFightId: route.params.teamUUID})
     },
     {
+        path: '/calendar',
+        name: 'calendar',
+        component: () => import("../views/calendar/Calendar.vue"),
+        meta: {
+            title: 'Kalender'
+        }
+    },
+    {
         meta: {
             title: 'Tables'
         },
@@ -131,6 +139,21 @@ const routes = [
                 path: '/sign-up',
                 name: 'sign-up',
                 component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUser.vue')
+            },
+        ]
+    },
+    {
+        path: '/full-width-page',
+        component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullWidthView.vue'),
+        children: [
+            {
+                path: '/team-fight/:teamUUID/public-view',
+                name: 'team-fight-public-view',
+                component: () => import("../views/team-fight/TeamFightPublic"),
+                props: route => ({teamId: route.params.teamUUID}),
+                meta: {
+                    title: 'Holdkamp'
+                }
             }
         ]
     },
