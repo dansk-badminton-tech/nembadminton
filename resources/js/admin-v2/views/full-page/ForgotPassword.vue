@@ -13,7 +13,20 @@
             aria-close-label="Luk">
             Vi har sendt dig en email!
         </b-message>
-        <b-button :loading="loading" @click="resetPassword">Send email</b-button>
+        <b-field grouped>
+            <div class="control">
+                <b-button :loading="loading" @click="resetPassword">Send email</b-button>
+            </div>
+            <div class="control">
+                <b-button
+                    tag="router-link"
+                    to="/login"
+                    type="is-link"
+                >
+                    Tilbage
+                </b-button>
+            </div>
+        </b-field>
     </card-component>
 </template>
 

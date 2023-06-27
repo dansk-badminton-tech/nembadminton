@@ -32,7 +32,17 @@
         <b-field>
             <b-checkbox v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
         </b-field>
-        <b-button :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
+        <b-field grouped>
+            <b-button class="control" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
+            <b-button
+                class="control"
+                tag="router-link"
+                to="/login"
+                type="is-link"
+            >
+                Tilbage
+            </b-button>
+        </b-field>
     </div>
     </card-component>
 </template>
