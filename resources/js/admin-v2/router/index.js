@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import ClubDashboard from '@/views/dashboard/ClubDashboard.vue'
 
 Vue.use(VueRouter)
 
@@ -13,7 +12,27 @@ const routes = [
         },
         path: '/',
         name: 'home',
-        component: ClubDashboard
+        component: () => import('@/views/dashboard/ClubDashboard.vue')
+    },
+    {
+        // Document title tag
+        // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
+        meta: {
+            title: 'Holdkamp'
+        },
+        path: '/team-fight/dashboard',
+        name: 'team-fight-dashboard',
+        component: () => import("../views/team-fight/TeamFightList.vue")
+    },
+    {
+        // Document title tag
+        // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
+        meta: {
+            title: 'Opret Holdkamp'
+        },
+        path: '/team-fight/create',
+        name: 'team-fight-create',
+        component: () => import("../views/team-fight/TeamFightCreate.vue")
     },
     {
         meta: {

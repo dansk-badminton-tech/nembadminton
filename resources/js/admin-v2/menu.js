@@ -5,40 +5,11 @@ export default [
             to: '/',
             icon: 'desktop-mac',
             label: 'Dashboard'
-        }
-    ],
-    'Examples',
-    [
-        {
-            to: '/tables',
-            label: 'Tables',
-            icon: 'table',
-            updateMark: true
         },
         {
-            to: '/forms',
-            label: 'Forms',
-            icon: 'square-edit-outline'
-        },
-        {
-            to: '/login',
-            label: 'Login',
-            icon: 'lock'
-        },
-        {
-            label: 'Submenus',
-            subLabel: 'Submenus Example',
-            icon: 'view-list',
-            menu: [
-                {
-                    href: '#void',
-                    label: 'Sub-item One'
-                },
-                {
-                    href: '#void',
-                    label: 'Sub-item Two'
-                }
-            ]
+            to: '/team-fight/dashboard',
+            icon: 'desktop-mac',
+            label: 'Holdkamp'
         }
     ],
     'Hjælp',
@@ -54,4 +25,38 @@ export default [
             icon: 'help'
         },
     ]
+//    'Examples',
+//    [
+//        {
+//            to: '/tables',
+//            label: 'Tables',
+//            icon: 'table',
+//            updateMark: true
+//        },
+//        {
+//            to: '/forms',
+//            label: 'Forms',
+//            icon: 'square-edit-outline'
+//        },
+//        {
+//            to: '/login',
+//            label: 'Login',
+//            icon: 'lock'
+//        },
+//        {
+//            label: 'Submenus',
+//            subLabel: 'Submenus Example',
+//            icon: 'view-list',
+//            menu: [
+//                {
+//                    href: '#void',
+//                    label: 'Sub-item One'
+//                },
+//                {
+//                    href: '#void',
+//                    label: 'Sub-item Two'
+//                }
+//            ]
+//        }
+//    ],
 ]
