@@ -71,9 +71,9 @@ class BadmintonPlayerAPI
 
         $client = new Client([
             'base_uri'        => self::$base_url,
-            'timeout'         => 900,
+            'timeout'         => 1500,
             'connect_timeout' => 60,
-            'read_timeout'    => 600,
+            'read_timeout'    => 1200,
         ]);
 
         $handler = new CurlHandler();
@@ -83,9 +83,9 @@ class BadmintonPlayerAPI
         }));
         $client = new Client([
             'base_uri'        => self::$base_url,
-            'timeout'         => 600,
+            'timeout'         => 1500,
             'connect_timeout' => 60,
-            'read_timeout'    => 300,
+            'read_timeout'    => 1200,
             'handler'         => $stack,
         ]);
 

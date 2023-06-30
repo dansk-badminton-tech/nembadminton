@@ -10,13 +10,13 @@
                 :data="searchResult"
                 :keep-first="true"
                 :loading="$apollo.queries.membersSearch.loading || $apollo.queries.memberSearchTeamFight.loading"
-                :placeholder="$t('roundsGenerator.findPlayerPlaceholder')"
+                placeholder="Søg på spiller..."
                 field="name"
                 @focus="focusedFlag = true"
                 @blur="focusedFlag = false"
                 @select="addMember"
                 @typing="searchMembers">
-                <template slot-scope="props">
+                <template v-slot="props">
                     <div class="media">
                         <div class="media-content">
                             {{ props.option.name }}
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </template>
-                <template slot="empty">Ingen spiller fundet.</template>
+                <template v-slot="empty">Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
     </div>
