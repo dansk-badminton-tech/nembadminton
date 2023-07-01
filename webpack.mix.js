@@ -12,9 +12,9 @@ const path = require("path");
  |
  */
 
-//mix.js('resources/js/app.js', 'public/js').vue({ version: 2 });
-//mix.sass('resources/sass/app.scss', 'public/css');
-mix.js('resources/js/admin-v2/main.js', 'public/js').vue({ version: 2 });
+mix.js('resources/js/app.js', 'public/js/v1').vue({ version: 2 });
+mix.sass('resources/sass/app.scss', 'public/css/v1');
+mix.js('resources/js/admin-v2/main.js', 'public/js/v2').vue({ version: 2 });
 //mix.sass('resources/sass/app.scss', 'public/css');
 mix.sourceMaps(false, 'source-map')
    .webpackConfig({

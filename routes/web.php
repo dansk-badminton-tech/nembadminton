@@ -21,4 +21,5 @@ Route::get('php-info', function () {
         phpinfo();
     }
 });
-Route::get('/{any}', 'SpaController@index')->where('any', '.*');
+Route::get('/v1/{any}', 'SpaController@index')->where('any', '.*');
+Route::get('/{any}', 'Spa2Controller@index')->where('any', '.*');

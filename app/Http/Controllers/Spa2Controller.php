@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers;
 
-class SpaController extends Controller
+class Spa2Controller extends Controller
 {
     public function index()
     {
-        return view('spa');
+        return view('spa2');
     }
 }
