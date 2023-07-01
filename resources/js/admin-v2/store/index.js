@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import {clearAuthToken} from "../../auth";
+import {ApolloClientInstance} from "../../graphql";
 
 Vue.use(Vuex)
 
@@ -43,10 +45,12 @@ const store = new Vuex.Store({
       }
     },
 
-      userClear(state, payload) {
+      logout(state, payload) {
         state.userName = null
         state.userEmail = null
         state.userAvatar = null
+          clearAuthToken()
+          ApolloClientInstance.cache.reset()
       },
 
     /* Aside Mobile */

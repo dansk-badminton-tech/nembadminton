@@ -94,7 +94,6 @@ import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
 import NavBarMenu from '@/components/NavBarMenu.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
-import {clearAuthToken} from "../../auth";
 
 export default defineComponent({
   name: 'NavBar',
@@ -136,8 +135,7 @@ export default defineComponent({
       this.isMenuActive = !this.isMenuActive
     },
     logout () {
-        this.$store.commit('userClear')
-        clearAuthToken()
+        this.$store.commit('logout')
         this.$router.push('/login')
       this.$buefy.snackbar.open({
         message: 'Vi ses!',
