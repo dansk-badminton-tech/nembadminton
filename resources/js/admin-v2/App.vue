@@ -24,12 +24,6 @@ export default defineComponent(
             AsideMenu,
             NavBar
         },
-//        apollo: {
-//            me: {
-//                query: ME,
-//                skip: () => !isLoggedIn()
-//            }
-//        },
         data() {
             return {
                 menu
@@ -45,7 +39,18 @@ export default defineComponent(
                         email: data.me.email,
                         avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'
                     })
-                })
+                }).catch(({message}) => {
+                    if(message.match(/Unauthenticated/i)){
+                        //this.$router.push({name: 'login'})
+                    }else{
+                        this.$buefy.snackbar.open(
+                            {
+                                duration: 6000,
+                                type: 'is-danger',
+                                message: `Kunne ikke hente din profil`
+                            })
+                    }
+            })
         }
     })
 </script>

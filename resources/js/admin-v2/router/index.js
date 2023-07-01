@@ -1,34 +1,32 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import {isLoggedIn} from "../../auth";
 
 Vue.use(VueRouter)
 
 const routes = [
     {
-        // Document title tag
-        // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
         meta: {
-            title: 'Dashboard'
+            title: 'Dashboard',
+            requiresAuth: true
         },
         path: '/',
         name: 'home',
         component: () => import('@/views/dashboard/ClubDashboard.vue')
     },
     {
-        // Document title tag
-        // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
         meta: {
-            title: 'Holdkamp'
+            title: 'Holdkamp',
+            requiresAuth: true
         },
         path: '/team-fight/dashboard',
         name: 'team-fight-dashboard',
         component: () => import("../views/team-fight/TeamFightList.vue")
     },
     {
-        // Document title tag
-        // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
         meta: {
-            title: 'Opret Holdkamp'
+            title: 'Opret Holdkamp',
+            requiresAuth: true
         },
         path: '/team-fight/create',
         name: 'team-fight-create',
@@ -36,7 +34,8 @@ const routes = [
     },
     {
         meta: {
-            title: 'Rediger holdkamp'
+            title: 'Rediger holdkamp',
+            requiresAuth: true
         },
         path: '/team-fight/:teamUUID/edit',
         name: 'team-fight-edit',
@@ -48,31 +47,14 @@ const routes = [
         name: 'calendar',
         component: () => import("../views/calendar/Calendar.vue"),
         meta: {
-            title: 'Kalender'
+            title: 'Kalender',
+            requiresAuth: true
         }
     },
     {
         meta: {
-            title: 'Tables'
-        },
-        path: '/tables',
-        name: 'tables',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "tables" */ '@/views/TablesView.vue')
-    },
-    {
-        meta: {
-            title: 'Forms'
-        },
-        path: '/forms',
-        name: 'forms',
-        component: () => import(/* webpackChunkName: "forms" */ '@/views/FormsView.vue')
-    },
-    {
-        meta: {
-            title: 'Profile'
+            title: 'Profile',
+            requiresAuth: true
         },
         path: '/profile',
         name: 'profile',
@@ -80,28 +62,12 @@ const routes = [
     },
     {
         meta: {
-            title: 'Profile'
+            title: 'Mine klubber',
+            requiresAuth: true
         },
         path: '/my-clubs',
         name: 'my-clubs',
         component: () => import(/* webpackChunkName: "profile" */ '@/views/my-club/MyClubs.vue')
-    },
-    {
-        meta: {
-            title: 'New Client'
-        },
-        path: '/client/new',
-        name: 'client.new',
-        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue')
-    },
-    {
-        meta: {
-            title: 'Edit Client'
-        },
-        path: '/client/:id',
-        name: 'client.edit',
-        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue'),
-        props: true
     },
     {
         path: '/full-page',
@@ -173,6 +139,42 @@ const routes = [
         name: 'about-us',
         component: () => import('@/views/about/About.vue')
     }
+    //    {
+//        meta: {
+//            title: 'Tables'
+//        },
+//        path: '/tables',
+//        name: 'tables',
+//        // route level code-splitting
+//        // this generates a separate chunk (about.[hash].js) for this route
+//        // which is lazy-loaded when the route is visited.
+//        component: () => import(/* webpackChunkName: "tables" */ '@/views/TablesView.vue')
+//    },
+//    {
+//        meta: {
+//            title: 'Forms'
+//        },
+//        path: '/forms',
+//        name: 'forms',
+//        component: () => import(/* webpackChunkName: "forms" */ '@/views/FormsView.vue')
+//    },
+//    {
+//        meta: {
+//            title: 'New Client'
+//        },
+//        path: '/client/new',
+//        name: 'client.new',
+//        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue')
+//    },
+//    {
+//        meta: {
+//            title: 'Edit Client'
+//        },
+//        path: '/client/:id',
+//        name: 'client.edit',
+//        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue'),
+//        props: true
+//    },
 ]
 
 const router = new VueRouter({
@@ -186,6 +188,17 @@ const router = new VueRouter({
                                      }
                                  }
                              })
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth && !isLoggedIn()) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath },
+        })
+    }else{
+        next()
+    }
+})
 
 export default router
 

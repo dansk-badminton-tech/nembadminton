@@ -18,7 +18,7 @@ import { Fragment } from 'vue-frag'
 import VueClipboard from "vue-clipboard2";
 
 /* Default title tag */
-const defaultDocumentTitle = 'Admin One Bulma Buefy'
+const defaultDocumentTitle = 'Nembadminton'
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
