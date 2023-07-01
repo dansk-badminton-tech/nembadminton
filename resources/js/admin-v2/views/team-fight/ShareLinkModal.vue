@@ -59,7 +59,7 @@ export default {
         },
         publish() {
             let getUrl = window.location;
-            this.shareUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/" + this.teamId + '/public-view';
+            this.shareUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/team-fight/" + this.teamId + '/public-view';
             this.openModal()
         },
         copyToClipboard() {
