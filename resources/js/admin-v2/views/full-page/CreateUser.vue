@@ -5,10 +5,10 @@
     >
     <div class="mb-2">
         <b-field label="Navn">
-            <b-input v-model="name" icon="user-alt" placeholder="Dit navn"></b-input>
+            <b-input v-model="name" icon="account" placeholder="Dit navn"></b-input>
         </b-field>
         <b-field label="Email">
-            <b-input v-model="email" icon="envelope" placeholder="din@email.dk" type="email"></b-input>
+            <b-input v-model="email" icon="email" placeholder="din@email.dk" type="email"></b-input>
         </b-field>
         <b-field label="Badmintonklub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>

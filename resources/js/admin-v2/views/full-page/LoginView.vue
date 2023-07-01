@@ -12,6 +12,7 @@
                     v-model="form.email"
                     name="email"
                     type="email"
+                    icon="email"
                     placeholder="daniel@gmail.com"
                     required
                 />
@@ -22,6 +23,7 @@
                     v-model="form.password"
                     type="password"
                     name="password"
+                    icon="lock"
                     placeholder="********"
                     required
                 />

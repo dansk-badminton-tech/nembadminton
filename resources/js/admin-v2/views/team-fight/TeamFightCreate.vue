@@ -12,7 +12,7 @@
                 <b-field label="Spille dato">
                     <b-datepicker
                         v-model="gameDate"
-                        icon="calendar-alt"
+                        icon="calendar"
                         placeholder="Klik for at vælge dato..."
                         locale="da-DK"
                         :first-day-of-week="1"

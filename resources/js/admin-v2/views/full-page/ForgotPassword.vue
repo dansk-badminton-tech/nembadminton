@@ -4,7 +4,7 @@
         icon="lock"
     >
         <b-field label="Email">
-            <b-input v-model="email" icon="envelope" placeholder="info@nembadminton.dk" type="email"></b-input>
+            <b-input v-model="email" icon="email" placeholder="info@nembadminton.dk" type="email"></b-input>
         </b-field>
         <b-message
             v-if="showSuccess"
