@@ -3,10 +3,11 @@ import Services from "./views/Services.vue";
 import Skills from "./views/Skills.vue";
 import WorkContent from "./views/WorkContent.vue";
 import Contact from "./views/Contact.vue";
+import FAQ from "./views/FAQ.vue";
 
 export default {
     name: "App",
-    components: {Contact, WorkContent, Skills, Services}
+    components: {FAQ, Contact, WorkContent, Skills, Services}
 }
 </script>
 
@@ -97,8 +98,8 @@ export default {
                 </div>
             </div>
             <Services />
-            <!--            <Skills />-->
-            <!--            <WorkContent />-->
+            <FAQ />
+<!--            <WorkContent />-->
 <!--            <Contact/>-->
         </div>
         <!-- End Main Content -->

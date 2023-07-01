@@ -35,12 +35,12 @@ mix.alias({
           });
 
 if (mix.inProduction()) {
-//    mix.webpackConfig(
-//        {
-//            output: {
-//                chunkFilename: "js/chunks/[name].[chunkhash].js"
-//            }
-//        }
-//    )
+    mix.webpackConfig(
+        {
+            output: {
+                chunkFilename: "js/chunks/[name].[chunkhash].js"
+            }
+        }
+    )
     mix.version();
 }
