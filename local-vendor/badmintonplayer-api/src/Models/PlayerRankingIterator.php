@@ -26,6 +26,8 @@ class PlayerRankingIterator implements \Iterator
 
     private int   $position  = 0;
 
+    private bool $overrideCache = false;
+
     private const CACHE_TTL = 129600;
 
     public function __construct(
@@ -90,7 +92,7 @@ class PlayerRankingIterator implements \Iterator
         $cacheKey = md5("{$this->periodType->name}-$start-$this->chunkSize-$date");
         $contents = Cache::lock("$cacheKey-lock", 600)->block(600, function () use ($start, $cacheKey) {
             $content = $this->cache->get($cacheKey);
-            if ($content === null) {
+            if ($content === null || $this->overrideCache) {
                 Log::info("Player-ranking {$this->periodType->value} from $start not found in cache");
                 $response = $this->client->post('Player/ranking', [
                     'query' => [
@@ -116,5 +118,13 @@ class PlayerRankingIterator implements \Iterator
         $fillerArr = array_fill(0, $start, null);
         $arr = array_merge($fillerArr, $items);
         $this->items = $arr;
+    }
+
+    /**
+     * @param bool $overrideCache
+     */
+    public function setOverrideCache(bool $overrideCache) : void
+    {
+        $this->overrideCache = $overrideCache;
     }
 }
