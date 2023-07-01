@@ -10,7 +10,7 @@ const routes = [
             title: 'Dashboard',
             requiresAuth: true
         },
-        path: '/',
+        path: '/home',
         name: 'home',
         component: () => import('@/views/dashboard/ClubDashboard.vue')
     },
@@ -188,6 +188,7 @@ const routes = [
 
 const router = new VueRouter({
                                  mode: 'history',
+    base: '/app',
                                  routes,
                                  scrollBehavior(to, from, savedPosition) {
                                      if (savedPosition) {

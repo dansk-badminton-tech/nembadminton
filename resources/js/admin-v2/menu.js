@@ -2,7 +2,7 @@ export default [
     'General',
     [
         {
-            to: '/',
+            to: '/home',
             icon: 'monitor-dashboard',
             label: 'Dashboard'
         },

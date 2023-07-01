@@ -48,7 +48,7 @@
                         type="is-link"
                         :loading="isLoading"
                     >
-                        Sign up
+                        Opret dig
                     </b-button>
                 </div>
             </b-field>

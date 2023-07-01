@@ -53,7 +53,7 @@
             class="navbar-dropdown"
           >
             <router-link
-              to="/profile"
+                :to="{name: 'profile'}"
               class="navbar-item"
               exact-active-class="is-active"
             >
@@ -64,7 +64,7 @@
               <span>Min Profil</span>
             </router-link>
               <router-link
-                  to="/my-clubs"
+                  :to="{name: 'my-clubs'}"
                   class="navbar-item"
                   exact-active-class="is-active"
               >
@@ -94,6 +94,7 @@ import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
 import NavBarMenu from '@/components/NavBarMenu.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
+import {clearAuthToken} from "../../auth";
 
 export default defineComponent({
   name: 'NavBar',
@@ -136,6 +137,7 @@ export default defineComponent({
     },
     logout () {
         this.$store.commit('userClear')
+        clearAuthToken()
         this.$router.push('/login')
       this.$buefy.snackbar.open({
         message: 'Vi ses!',
