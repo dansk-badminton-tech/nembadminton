@@ -16,13 +16,13 @@
                 @blur="focusedFlag = false"
                 @select="addMember"
                 @typing="searchMembers">
-                <template v-slot="props">
+                <template slot-scope="props">
                     <div class="media">
                         <div class="media-content">
                             {{ props.option.name }}
                             <b-icon
                                 v-show="props.option.isInSquad"
-                                icon="users"
+                                icon="account-group"
                                 size="is-small">
                             </b-icon>
                             <br>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </template>
-                <template v-slot="empty">Ingen spiller fundet.</template>
+                <template slot="empty">Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
     </div>

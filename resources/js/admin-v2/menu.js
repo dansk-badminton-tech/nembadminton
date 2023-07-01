@@ -3,31 +3,31 @@ export default [
     [
         {
             to: '/',
-            icon: 'desktop-mac',
+            icon: 'monitor-dashboard',
             label: 'Dashboard'
         },
         {
             to: '/team-fight/dashboard',
-            icon: 'desktop-mac',
+            icon: 'account-group',
             label: 'Holdkamp'
         },
-        {
-            to: '/calendar',
-            icon: 'desktop-mac',
-            label: 'Kalender'
-        }
+//        {
+//            to: '/calendar',
+//            icon: 'calendar',
+//            label: 'Kalender'
+//        }
     ],
     'Hjælp',
     [
         {
             to: '/about-us',
             label: 'Om os',
-            icon: 'help'
+            icon: 'information'
         },
         {
             to: '/faq',
             label: 'FAQ',
-            icon: 'help'
+            icon: 'information'
         },
     ]
 //    'Examples',

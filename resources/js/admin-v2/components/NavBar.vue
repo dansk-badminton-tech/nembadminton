@@ -17,14 +17,14 @@
       >
         <b-icon icon="menu" />
       </a>
-      <div class="navbar-item has-control no-left-space-touch no-left-space-desktop-only">
-        <div class="control">
-          <input
-            class="input"
-            placeholder="Search everywhere..."
-          >
-        </div>
-      </div>
+<!--      <div class="navbar-item has-control no-left-space-touch no-left-space-desktop-only">-->
+<!--        <div class="control">-->
+<!--          <input-->
+<!--            class="input"-->
+<!--            placeholder="Search everywhere..."-->
+<!--          >-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <div class="navbar-brand is-right">
       <a

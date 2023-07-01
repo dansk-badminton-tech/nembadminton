@@ -20,7 +20,7 @@
     <strong>We're sorry but admin-one-vue-bulma-dashboard doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
 </noscript>
 <div id="app"></div>
-<link href="https://cdn.materialdesignicons.com/4.9.95/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
 
 <script src="{{ mix('js/v2/main.js') }}"></script>
 </body>

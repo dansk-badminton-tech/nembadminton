@@ -5,7 +5,7 @@
             Holdkamp
         </hero-bar>
         <section class="section is-main-section">
-        <b-button v-if="!$apollo.loading && teams.data.length !== 0" :to="{name: 'team-fight-create'}" icon-left="save" tag="router-link">Opret holdkamp</b-button>
+        <b-button v-if="!$apollo.loading && teams.data.length !== 0" :to="{name: 'team-fight-create'}" icon-left="plus" tag="router-link">Opret holdkamp</b-button>
         <ListTeamFights v-if="!$apollo.loading && teams.data.length !== 0" :loading="$apollo.loading" :teams="teams.data"/>
         <CreateTeamFightAction v-if="!$apollo.loading && teams.data.length === 0"></CreateTeamFightAction>
         </section>

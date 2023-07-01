@@ -13,9 +13,9 @@
                 <option value="MEN_MIX">Herre Mix</option>
             </b-select>
             <b-checkbox-button v-model="hideCancellation">
-                <b-icon size="is-small" v-if="!hideCancellation" icon="user-alt"></b-icon>
+                <b-icon size="is-small" v-if="!hideCancellation" icon="account"></b-icon>
                 <span v-if="!hideCancellation">Skjul afbud</span>
-                <b-icon size="is-small" v-if="hideCancellation" icon="user-slash"></b-icon>
+                <b-icon size="is-small" v-if="hideCancellation" icon="account-off"></b-icon>
                 <span v-if="hideCancellation">Vis afbud</span>
             </b-checkbox-button>
         </b-field>
@@ -44,15 +44,15 @@
             <b-table-column field="name" v-slot="props">
                 <div class="buttons">
                     <b-button size="is-small" type="is-danger" v-show="!hideCancellation && !hasPermanentCancellation(props.row)"
-                              title="Annuller afbud (Denne holdkamp)" icon-right="user-alt"
+                              title="Annuller afbud (Denne holdkamp)" icon-right="account-remove"
                               @click="deleteCancellation(props.row)"></b-button>
                     <b-button size="is-small" v-show="!hideCancellation && !hasPermanentCancellation(props.row)" title="Lav afbud permanent (Alle holdkampe)"
-                              icon-right="user-clock" @click="makeCancellationPermanent(props.row)"></b-button>
+                              icon-right="account-injury" @click="makeCancellationPermanent(props.row)"></b-button>
                     <b-button size="is-small" type="is-danger" v-show="!hideCancellation && hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
-                              icon-right="user-clock" @click="removePermanentCancellation(props.row)"></b-button>
+                              icon-right="account-injury" @click="removePermanentCancellation(props.row)"></b-button>
                     <b-button size="is-small" v-show="hideCancellation" title="Afbud (Denne holdkamp)"
-                              icon-right="user-slash" @click="makeCancellation(props.row)"></b-button>
-                    <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
+                              icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
+                    <b-button size="is-small" v-show="hideCancellation" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
                               @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>

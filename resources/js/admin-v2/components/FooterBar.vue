@@ -8,10 +8,7 @@
         <div class="level-left">
           <div class="level-item">
             <div class="footer-copyright">
-              <b>&copy; {{ year }}, JustBoil.me</b>. <a
-                href="https://github.com/vikdiesel/admin-one-vue-bulma-dashboard"
-                target="_blank"
-              >GitHub</a>
+              <b>&copy; {{ year }}, Nembadminton</b>.
             </div>
           </div>
         </div>

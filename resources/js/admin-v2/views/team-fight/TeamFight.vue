@@ -16,7 +16,7 @@
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                     <span>Indstillinger</span>
-                    <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
+                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
                     <b-icon icon="brain"></b-icon>
@@ -24,26 +24,26 @@
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
                     <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
-                        <b-icon icon="rotate"></b-icon>
+                        <b-icon icon="update"></b-icon>
                         Opdater spiller point
                     </b-tooltip>
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
-                    <b-icon icon="trash"></b-icon>
+                    <b-icon icon="trash-can"></b-icon>
                     Slet holdet
                 </b-dropdown-item>
             </b-dropdown>
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                     <span>Export</span>
-                    <b-icon :icon="active ? 'angle-up' : 'angle-down'"></b-icon>
+                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
                     <b-icon icon="file-export"></b-icon>
                     CSV
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="showLinkSharing = true">
-                    <b-icon icon="share-alt"></b-icon>
+                    <b-icon icon="share"></b-icon>
                     <share-link-modal v-model="showLinkSharing" :team-id="teamFightId"></share-link-modal>
                 </b-dropdown-item>
             </b-dropdown>
@@ -57,7 +57,7 @@
                     <b-field label="Spilledato">
                         <b-datepicker
                             v-model="gameDate"
-                            icon="calendar-alt"
+                            icon="calendar"
                             locale="da-DK"
                             placeholder="Klik for at vælge dato..."
                             :first-day-of-week="1"
@@ -211,7 +211,7 @@ export default {
             gameDate: new Date(),
             version: null,
             oldVersion: null,
-            savingIcon: 'save',
+            savingIcon: 'content-save',
             showLinkSharing: false,
             team: {
                 squads: [],

@@ -16,7 +16,7 @@
                         <b-dropdown aria-role="list" class="is-pulled-right">
                             <template #trigger="{ active }">
                                 <b-button
-                                    :icon-right="active ? 'angle-up' : 'angle-down'"/>
+                                    :icon-right="active ? 'arrow-up' : 'arrow-down'"/>
                             </template>
                             <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
                                              aria-role="listitem">Sæt som "andet" hold
@@ -61,12 +61,12 @@
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
                                         v-show="player.gender === 'M'"
-                                        icon="mars"
+                                        icon="gender-male"
                                         size="is-small">
                                     </b-icon>
                                     <b-icon
                                         v-show="player.gender === 'K'"
-                                        icon="venus"
+                                        icon="gender-female"
                                         size="is-small">
                                     </b-icon>
                                     {{ player.name }}
@@ -75,7 +75,7 @@
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
-                                <b-button :disabled="loading" size="is-small" title="Slet" icon-right="times-circle"
+                                <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
                         </div>
