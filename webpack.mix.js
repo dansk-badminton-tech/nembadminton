@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const path = require("path");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,9 +12,12 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css')
-   .sourceMaps(false, 'source-map')
+mix.js('resources/js/app.js', 'public/js/v1').vue({ version: 2 });
+mix.sass('resources/sass/app.scss', 'public/css/v1');
+mix.js('resources/js/admin-v2/main.js', 'public/js/v2').vue({ version: 2 });
+mix.js('resources/js/marketing/main.js', 'public/js/marketing').vue({ version: 2 });
+//mix.sass('resources/sass/app.scss', 'public/css');
+mix.sourceMaps(false, 'source-map')
    .webpackConfig({
                       module: {
                           rules: [
@@ -25,6 +29,10 @@ mix.js('resources/js/app.js', 'public/js')
                           ]
                       }
                   });
+
+mix.alias({
+              '@': path.join(__dirname, 'resources/js/admin-v2')
+          });
 
 if (mix.inProduction()) {
     mix.webpackConfig(

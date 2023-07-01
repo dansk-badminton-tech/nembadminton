@@ -1,0 +1,156 @@
+@use "sass:math";
+
+aside.aside {
+  @include transition(left);
+  @include scrollbars($aside-scrollbar-track, $aside-scrollbar-thumb);
+  overflow-y: auto;
+  width: $aside-mobile-width;
+  position: fixed;
+  top: 0;
+  left: $aside-mobile-width * -1;
+  z-index: 40;
+  height: 100vh;
+  padding: 0;
+  box-shadow: $aside-box-shadow;
+  background: $aside-background-color;
+
+  .aside-tools {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: $aside-tools-background-color;
+    color: $aside-tools-color;
+    line-height: $navbar-height;
+    height: $navbar-height;
+    padding-left: $default-padding * .5;
+    flex: 1;
+
+    .icon {
+      color: $white;
+      //margin-right: $default-padding * .5;
+    }
+  }
+
+  .menu-list {
+    @include icon-with-update-mark($aside-icon-width);
+
+    span.menu-item-label {
+      display: inline-block;
+    }
+
+    li.is-active {
+      ul {
+        display: block;
+      }
+    }
+
+    li {
+      a {
+        &.has-dropdown-icon {
+          position: relative;
+          padding-right: $aside-icon-width;
+
+          .dropdown-icon {
+            position: absolute;
+            top: $size-base * .5;
+            right: 0;
+          }
+        }
+      }
+      ul {
+        display: none;
+        border-left: 0;
+        background-color: darken($base-color, 2.5%);
+        padding-left: 0;
+        margin: 0 0 $default-padding * .5;
+
+        li {
+          a {
+            padding: $default-padding * .5 0 $default-padding * .5 $default-padding * .5;
+            font-size: $aside-submenu-font-size;
+
+            &.has-icon {
+              padding-left: 0;
+            }
+            &.is-active {
+              &:not(:hover) {
+                background: transparent;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .menu-label {
+    padding: 0 $default-padding * .5;
+    margin-top: $default-padding * .5;
+    margin-bottom: $default-padding * .5;
+  }
+
+}
+
+@include touch {
+  #app, nav.navbar {
+    @include transition(margin-left);
+  }
+  aside.aside {
+    @include transition(left);
+  }
+  html.has-aside-mobile-transition {
+    body {
+      overflow-x: hidden;
+    }
+    body, #app, nav.navbar {
+      width: 100vw;
+    }
+  }
+  html.has-aside-mobile-expanded {
+    #app, nav.navbar {
+      margin-left: $aside-mobile-width;
+    }
+    aside.aside {
+      left: 0;
+    }
+  }
+}
+
+@include desktop-only {
+  aside.aside {
+    display: none;
+
+    .aside-tools {
+      padding-left: math.div($default-padding, 6);
+    }
+  }
+  html.has-aside-desktop-only-visible {
+    aside.aside {
+      display: block;
+    }
+  }
+}
+
+@include desktop {
+  html {
+    &.has-aside-left {
+      aside.aside {
+        width: $aside-width;
+        left: 0;
+      }
+    }
+  }
+}
+
+@include widescreen {
+  html {
+    &.has-aside-left {
+      nav.navbar, body {
+        padding-left: $aside-width;
+      }
+      nav.navbar, body {
+        @include transition(padding-left);
+      }
+    }
+  }
+}

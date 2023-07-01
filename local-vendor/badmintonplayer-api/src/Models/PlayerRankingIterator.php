@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Cache\Lock;
 use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -39,11 +40,16 @@ class PlayerRankingIterator implements \Iterator
         return $this->items[$this->position];
     }
 
+    /**
+     * @throws ExceptionInterface
+     * @throws GuzzleException
+     * @throws \JsonException
+     */
     public function next() : void
     {
         if ($this->position === ($this->offset + $this->chunkSize) - 1) {
             $this->offset += $this->chunkSize;
-            $this->updateItems($this->offset, $this->offset + $this->chunkSize);
+            $this->updateItems($this->offset);
         }
         ++$this->position;
     }
@@ -59,38 +65,38 @@ class PlayerRankingIterator implements \Iterator
     }
 
     /**
+     * @throws ExceptionInterface
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function rewind() : void
     {
-        $this->updateItems($this->offset, $this->offset + $this->chunkSize);
+        $this->updateItems($this->offset);
 
         $this->position = 0;
     }
 
     /**
      * @param int $start
-     * @param int $end
      *
      * @return void
-     * @throws GuzzleException
-     * @throws \JsonException
      * @throws ExceptionInterface
      */
-    public function updateItems(int $start, int $end) : void
+    public function updateItems(int $start) : void
     {
+        $end = $this->offset + $this->chunkSize;
         Log::info("Requesting player-ranking {$this->periodType->name} from $start to $end");
         $date = Carbon::now()->format('Y-m-d');
-        $cacheKey = md5("{$this->periodType->name}-$start-$end-$date");
-        $contents = Cache::lock("$cacheKey-lock", 600)->block(600, function () use ($end, $start, $cacheKey) {
+        $cacheKey = md5("{$this->periodType->name}-$start-$this->chunkSize-$date");
+        $contents = Cache::lock("$cacheKey-lock", 600)->block(600, function () use ($start, $cacheKey) {
             $content = $this->cache->get($cacheKey);
             if ($content === null) {
-                Log::info("Player-ranking {$this->periodType->value} from $start to $end not found in cache");
+                Log::info("Player-ranking {$this->periodType->value} from $start not found in cache");
                 $response = $this->client->post('Player/ranking', [
                     'query' => [
                         'rankingType' => $this->periodType->value,
                         'start'       => $start,
-                        'stop'        => $end,
+                        'stop'        => $this->chunkSize,
                     ],
                     'json'  => [1, 6, 7],
                 ]);
@@ -106,6 +112,9 @@ class PlayerRankingIterator implements \Iterator
             $players = $contents["previous"]["playerRankings"];
         }
         $serializer = SerializerHelper::getSerializer();
-        $this->items = $serializer->denormalize($players, PlayerRanking::class . '[]');
+        $items = $serializer->denormalize($players, PlayerRanking::class . '[]');
+        $fillerArr = array_fill(0, $start, null);
+        $arr = array_merge($fillerArr, $items);
+        $this->items = $arr;
     }
 }

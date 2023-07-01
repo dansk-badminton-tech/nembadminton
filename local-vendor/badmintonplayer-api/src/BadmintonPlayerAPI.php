@@ -83,9 +83,9 @@ class BadmintonPlayerAPI
         }));
         $client = new Client([
             'base_uri'        => self::$base_url,
-            'timeout'         => 600,
+            'timeout'         => 900,
             'connect_timeout' => 60,
-            'read_timeout'    => 300,
+            'read_timeout'    => 600,
             'handler'         => $stack,
         ]);
 

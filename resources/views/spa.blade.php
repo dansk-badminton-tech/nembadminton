@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title></title>
-    <link rel="stylesheet" type="text/css" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/v1/app.css') }}">
     <!-- Scripts -->
     <script>
         window.Laravel = {!! json_encode([
@@ -18,6 +18,6 @@
     <app></app>
 </div>
 
-<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ mix('js/v1/app.js') }}"></script>
 </body>
 </html>

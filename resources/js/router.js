@@ -4,6 +4,7 @@ import Vue from "vue";
 
 const router = new VueRouter(
     {
+        base: '/app/v1',
         mode: 'history',
         routes: [
             {
