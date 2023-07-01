@@ -91,7 +91,7 @@
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ny klub)</router-link>
+                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj extra klub)</router-link>
                     </h1>
                     <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
                                        :version="new Date(version)"/>

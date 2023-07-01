@@ -2,7 +2,7 @@
     <div class="box content has-text-grey has-text-centered">
         <p>
             <b-icon
-                icon="users"
+                icon="account-group"
                 size="is-large">
             </b-icon>
         </p>

@@ -138,7 +138,16 @@ const routes = [
         },
         name: 'about-us',
         component: () => import('@/views/about/About.vue')
-    }
+    },
+    {
+        path: '/onboarding',
+        name: 'onboarding',
+        component: () => import('../views/onboarding/Onboarding'),
+        meta: {
+            requiresAuth: true,
+            title: 'Klargør din klub'
+        }
+    },
     //    {
 //        meta: {
 //            title: 'Tables'

@@ -99,11 +99,7 @@ export default {
                 .then(({data}) => {
                     setAuthToken(data.register.tokens.access_token)
                     this.$root.$emit('loggedIn')
-                    if (this.afterRegister instanceof Function) {
-                        this.afterRegister()
-                    } else {
-                        this.$router.push({name: 'onboarding'})
-                    }
+                    this.$router.push({name: 'onboarding'})
                 })
                 .catch(({graphQLErrors}) => {
                     let errors = extractErrors(graphQLErrors)

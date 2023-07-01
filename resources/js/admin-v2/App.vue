@@ -29,17 +29,26 @@ export default defineComponent(
                 menu
             }
         },
+        mounted() {
+            this.$root.$on('loggedIn', () => {
+                this.fetchMe()
+            })
+        },
         created() {
-            this.$apollo.query({
-                                   query: ME
-                               })
-                .then(({data}) => {
-                    this.$store.commit('user', {
-                        name: data.me.name,
-                        email: data.me.email,
-                        avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'
-                    })
-                }).catch(({message}) => {
+            this.fetchMe()
+        },
+        methods: {
+            fetchMe(){
+                this.$apollo.query({
+                                       query: ME
+                                   })
+                    .then(({data}) => {
+                        this.$store.commit('user', {
+                            name: data.me.name,
+                            email: data.me.email,
+                            avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'
+                        })
+                    }).catch(({message}) => {
                     if(message.match(/Unauthenticated/i)){
                         //this.$router.push({name: 'login'})
                     }else{
@@ -50,7 +59,8 @@ export default defineComponent(
                                 message: `Kunne ikke hente din profil`
                             })
                     }
-            })
+                })
+            }
         }
     })
 </script>
