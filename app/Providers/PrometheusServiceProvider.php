@@ -49,7 +49,7 @@ class PrometheusServiceProvider extends ServiceProvider
          * Uncomment this line if you want to export
          * all Horizon metrics to prometheus
          */
-        $this->registerHorizonCollectors();
+        //$this->registerHorizonCollectors();
     }
 
     public function registerHorizonCollectors(): self
