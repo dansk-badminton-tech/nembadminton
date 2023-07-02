@@ -164,7 +164,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         \Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider::class,
-        PrometheusServiceProvider::class,
+        //PrometheusServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -178,6 +178,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\HorizonServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\PrometheusServiceProvider::class
         //App\Providers\TelescopeServiceProvider::class,
 
     ],
