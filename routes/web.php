@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('notifications/{id}/dismiss', [NotificationController::class, 'dismiss']);
-Route::get('forgot-password-finish', 'SpaController@index')->name('password.reset');
+Route::get('forgot-password-finish', 'Spa2Controller@index')->name('password.reset');
 Route::get('php-info', function () {
     if (app()->environment('local')) {
         phpinfo();
