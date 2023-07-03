@@ -97,6 +97,9 @@ export default {
                                     <li>
                                         <a href="#faq">FAQ</a>
                                     </li>
+                                    <li>
+                                        <a href="/app/login">Login</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
