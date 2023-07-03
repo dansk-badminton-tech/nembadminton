@@ -38,30 +38,30 @@ export default {
                         </div>
                     </div>
                     <!-- End Burger Menu -->
-                    <div id="mobile-nav" class="navbar-menu">
-                        <div class="navbar-end">
-                            <div class="navbar-item">
-                                <a class="navbar-item" href="#about-me">
-                                    Om værktøjet
-                                </a>
-                            </div>
-                            <div class="navbar-item">
-                                <a class="navbar-item" href="#services">
-                                    Services
-                                </a>
-                            </div>
-                            <div class="navbar-item">
-                                <a class="navbar-item" href="#skills">
-                                    Skills
-                                </a>
-                            </div>
-                            <div class="navbar-item">
-                                <a class="navbar-item" href="#my-work">
-                                    My Work
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div id="mobile-nav" class="navbar-menu">-->
+<!--                        <div class="navbar-end">-->
+<!--                            <div class="navbar-item">-->
+<!--                                <a class="navbar-item" href="#about-me">-->
+<!--                                    Om værktøjet-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                            <div class="navbar-item">-->
+<!--                                <a class="navbar-item" href="#services">-->
+<!--                                    Services-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                            <div class="navbar-item">-->
+<!--                                <a class="navbar-item" href="#skills">-->
+<!--                                    Skills-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                            <div class="navbar-item">-->
+<!--                                <a class="navbar-item" href="#my-work">-->
+<!--                                    My Work-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </nav>
                 <!-- End Mobile Nav -->
                 <!-- Begin Hero Content-->
