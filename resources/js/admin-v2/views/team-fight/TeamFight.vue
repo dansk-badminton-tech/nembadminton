@@ -43,10 +43,8 @@
                     </b-tooltip>
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
-                    <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
-                        <b-icon icon="content-copy"></b-icon>
-                        Kopier hele holdet
-                    </b-tooltip>
+                    <b-icon icon="content-copy"></b-icon>
+                    Kopier hele holdet
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                     <b-icon icon="trash-can"></b-icon>
