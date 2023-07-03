@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Models\Club;
 use App\Models\Member;
+use App\Models\Teams;
 use App\Models\User;
 use Carbon\Carbon;
 use DiDom\Document;
@@ -57,22 +58,15 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI, BadmintonPlayer $badmintonPlayer)
+    public function handle(TeamManager $teamManager, SquadManager $squadManager)
     {
-        $clubId = 1124;
-        $season = 2022;
-        $teams = $badmintonPlayer->getClubTeams($season, $clubId);
-        foreach ($teams as $team){
-            if(in_array((int)$team->ageGroupId, [1, 6, 7])){
-                dump($badmintonPlayer->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name));
-            }
+        /** @var Teams $sourceTeam */
+        $sourceTeam = Teams::query()->findOrFail("px5dVIQu4FaKrw8621E0YLZU");
+        $team = $teamManager->copyTeam($sourceTeam);
+        foreach ($sourceTeam->squads as $squad){
+            $squad = $squadManager->copySquad($squad, $team);
         }
-        #DB::delete('delete from cache where expiration = ?', []);
-//        $playerRanking = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
-//        foreach ($playerRanking->playerRankings as $index => $playerRanking){
-//            dump($playerRanking);
-//        }
-
+        dump($team);
         return 0;
     }
 }

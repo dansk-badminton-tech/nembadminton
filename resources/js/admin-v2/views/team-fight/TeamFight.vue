@@ -15,6 +15,20 @@
             <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-primary">
+                    <span>Export</span>
+                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                </button>
+                <b-dropdown-item aria-role="listitem" @click="exportToCSV">
+                    <b-icon icon="file-export"></b-icon>
+                    CSV
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="showLinkSharing = true">
+                    <b-icon icon="share"></b-icon>
+                    <share-link-modal v-model="showLinkSharing" :team-id="teamFightId"></share-link-modal>
+                </b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown aria-role="list" class="ml-2">
+                <button slot="trigger" slot-scope="{ active }" class="button is-primary">
                     <span>Indstillinger</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
@@ -28,23 +42,15 @@
                         Opdater spiller point
                     </b-tooltip>
                 </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
+                    <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
+                        <b-icon icon="content-copy"></b-icon>
+                        Kopier hele holdet
+                    </b-tooltip>
+                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                     <b-icon icon="trash-can"></b-icon>
                     Slet holdet
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-primary">
-                    <span>Export</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
-                <b-dropdown-item aria-role="listitem" @click="exportToCSV">
-                    <b-icon icon="file-export"></b-icon>
-                    CSV
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="showLinkSharing = true">
-                    <b-icon icon="share"></b-icon>
-                    <share-link-modal v-model="showLinkSharing" :team-id="teamFightId"></share-link-modal>
                 </b-dropdown-item>
             </b-dropdown>
             <div class="columns mt-2">
@@ -807,6 +813,36 @@ export default {
                 })
                 .finally(() => {
                     this.saving = false;
+                })
+        },
+        copyTeamFight() {
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Sikker på du vil kopier helt holdet? <br><br> Holdet kommer til at hedde "Kopi af ...." og du kan altid skifte ranglisten på det kopiret hold',
+                    onConfirm: () => {
+                        this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                    mutation ($id: ID!){
+                                        copyTeam(id: $id){
+                                            id
+                                            name
+                                        }
+                                    }
+                                `,
+                                variables: {
+                                    id: this.teamFightId
+                                }
+                            }).then(({data}) => {
+                            this.$buefy.snackbar.open(
+                                {
+                                    duration: 5000,
+                                    type: 'is-success',
+                                    message: "Dit nye hold hedder \""+data?.copyTeam?.name+"\""
+                                })
+                            this.$router.push({name: 'team-fight-dashboard'})
+                        })
+                    }
                 })
         },
         deleteTeamFight() {

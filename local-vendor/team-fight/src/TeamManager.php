@@ -22,4 +22,12 @@ class TeamManager
         return new Teams(compact('name', 'game_date', 'version'));
     }
 
+    public function copyTeam(Teams $team) : Teams
+    {
+        $copyTeam = $team->replicate();
+        $copyTeam->name = "Kopi af $team->name";
+        $copyTeam->save();
+        return $copyTeam;
+    }
+
 }

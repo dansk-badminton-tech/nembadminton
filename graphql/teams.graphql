@@ -15,6 +15,7 @@ extend type Mutation {
     updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
     updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
+    copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
     updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")

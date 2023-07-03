@@ -115,4 +115,28 @@ class SquadManager
         SquadPoint::query()->insert($values);
     }
 
+    public function copySquad(SquadModel $sourceSquad, Teams $targetTeam) : SquadModel
+    {
+        $newSquad = $sourceSquad->replicate();
+        $targetTeam->squads()->save($newSquad);
+
+        // Copy category
+        foreach ($sourceSquad->categories as $sourceCategory){
+            $newCategory = $sourceCategory->replicate();
+            $newSquad->categories()->save($newCategory);
+
+            foreach ($sourceCategory->players as $sourcePlayer){
+                $newPlayer = $sourcePlayer->replicate();
+                $newCategory->players()->save($newPlayer);
+
+                foreach ($sourcePlayer->points as $point){
+                    $newPoint = $point->replicate();
+                    $newPlayer->points()->save($newPoint);
+                }
+            }
+        }
+
+        return $newSquad;
+    }
+
 }

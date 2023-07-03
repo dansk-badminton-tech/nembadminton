@@ -14,6 +14,7 @@ use phpseclib\Crypt\Hash;
 /**
  * @property int   id
  * @property Squad $squad
+ * @property SquadMember[] $players
  */
 class SquadCategory extends Model
 {
