@@ -5,7 +5,7 @@ const faqsArr = faqs
 </script>
 
 <template>
-    <div class="section-light skills" id="skills">
+    <div class="section-light skills" id="faq">
         <div class="container">
             <div class="columns is-multiline">
                 <div class="column is-12 about-me">
