@@ -2,7 +2,7 @@ FROM composer:2 as build
 ADD . .
 RUN composer install --no-dev
 
-FROM php:8.1-apache as base
+FROM php:8.2-apache as base
 RUN apt-get update && apt-get install -y libzip-dev zip libgmp-dev
 RUN pecl install redis && docker-php-ext-enable redis
 RUN docker-php-ext-install pdo_mysql gettext zip pcntl gmp
