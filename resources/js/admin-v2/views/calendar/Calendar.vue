@@ -5,6 +5,28 @@
             Kalender
         </hero-bar>
         <section class="section is-main-section">
+            <div class="buttons">
+                <b-button>2022/2023</b-button>
+                <b-button>2023/2024</b-button>
+            </div>
+            <div class="columns is-multiline" v-for="event in calendarEvents">
+                <div class="column is-full">
+                    <div class="columns">
+                        <div class="column is-one-fifth is-flex is-justify-content-center is-align-items-center is-flex-direction-column is-gapless">
+                            <span class="is-size-5">{{toDateObject(event.start).toLocaleString('da-dk', {  weekday: 'short' })}}</span>
+                            <span class="is-size-2">{{toDateObject(event.start).toLocaleString('da-dk', {  day: '2-digit' })}}</span>
+                        </div>
+                        <div class="column is-one-quarter is-flex is-justify-content-space-evenly is-flex-direction-column">
+                            <div><p><b-icon icon="clock-time-four" size="is-small"></b-icon>{{toTimeStr(event.start)}} - {{toTimeStr(event.end)}}</p></div>
+                            <div><p><b-icon icon="map-marker" size="is-small"></b-icon> At valby hallen</p></div>
+                        </div>
+                        <div class="column is-flex is-justify-content-space-evenly is-flex-direction-column">
+                            <p>{{event.title}}</p>
+                            <p v-html="event.contentFull"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <b-loading v-model="$apollo.queries.calendarEvents.loading" :can-cancel="true"></b-loading>
             <vue-cal style="min-height: 500px" :events="calendarEvents" :on-event-click="onEventClick"/>
             <b-modal v-model="showModal">
@@ -64,6 +86,12 @@ export default {
         }
     },
     methods: {
+        toTimeStr(str){
+            return str.substring(10, 16);
+        },
+        toDateObject(str){
+            return new Date(str.substring(0,10))
+        },
         onEventClick(event, e) {
             this.selectedEvent = event
             this.showModal = true
