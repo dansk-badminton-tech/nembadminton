@@ -10,7 +10,6 @@ extend type Mutation {
 type BaseValidation {
     index: Int!
     spotsFulfilled: Boolean!
-    missingPlayerInCategory: Boolean!
 }
 
 input ValidateTeam{

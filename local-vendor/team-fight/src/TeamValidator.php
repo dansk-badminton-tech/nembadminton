@@ -418,18 +418,9 @@ class TeamValidator
                 }
             }
 
-            $foundOnlyOne = null;
-            if (in_array($squad->playerLimit, [10, 8])) {
-                $players = (new Collection(Arr::pluck($squad->categories, 'players')))->flatten(1);
-                $playersByRefId = $players->groupBy('refId');
-                $foundOnlyOne = $playersByRefId->first(static function (Collection $players) {
-                    return $players->count() !== 2;
-                });
-            }
             $entries->push([
                 'index' => $index,
-                'spotsFulfilled' => $validt,
-                'missingPlayerInCategory' => $foundOnlyOne !== null
+                'spotsFulfilled' => $validt
             ]);
         }
         return $entries;

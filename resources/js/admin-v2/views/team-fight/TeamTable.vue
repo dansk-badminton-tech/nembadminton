@@ -9,7 +9,7 @@
                         <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
                             <b-tag>{{ squad.league }}</b-tag>
-                            <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
+                            <b-tag type="is-danger" v-if="hasEmptySpots(index)">
                                 Ugyldigt hold
                             </b-tag>
                         </b-taglist>
@@ -174,16 +174,6 @@ export default {
             } else {
                 const found = this.teamsBaseValidations.find((base) => {
                     return index === base.index && base.spotsFulfilled === false
-                })
-                return found !== undefined;
-            }
-        },
-        hasMissingPlayerInCategory(index) {
-            if (this.teamsBaseValidations.length === 0) {
-                return false;
-            } else {
-                const found = this.teamsBaseValidations.find((base) => {
-                    return index === base.index && base.missingPlayerInCategory === true
                 })
                 return found !== undefined;
             }

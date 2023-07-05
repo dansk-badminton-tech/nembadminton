@@ -578,7 +578,6 @@ export default {
                         mutation validateBasicSquads($input: [ValidateTeam!]!){
                           validateBasicSquads(input: $input){
                             index
-                            missingPlayerInCategory
                             spotsFulfilled
                           }
                         }
