@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb51efe3b01a47fc7d4b66c92cc925d3",
+    "content-hash": "b7a9a6d3f47e82c7f69b4245ac420613",
     "packages": [
         {
             "name": "brick/math",
@@ -2506,20 +2506,20 @@
         },
         {
             "name": "lcobucci/clock",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/clock.git",
-                "reference": "039ef98c6b57b101d10bd11d8fdfda12cbd996dc"
+                "reference": "30a854ceb22bd87d83a7a4563b3f6312453945fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/clock/zipball/039ef98c6b57b101d10bd11d8fdfda12cbd996dc",
-                "reference": "039ef98c6b57b101d10bd11d8fdfda12cbd996dc",
+                "url": "https://api.github.com/repos/lcobucci/clock/zipball/30a854ceb22bd87d83a7a4563b3f6312453945fc",
+                "reference": "30a854ceb22bd87d83a7a4563b3f6312453945fc",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.0 || ~8.2.0",
+                "php": "~8.2.0",
                 "psr/clock": "^1.0"
             },
             "provide": {
@@ -2527,13 +2527,13 @@
             },
             "require-dev": {
                 "infection/infection": "^0.26",
-                "lcobucci/coding-standard": "^9.0",
+                "lcobucci/coding-standard": "^10.0.0",
                 "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan": "^1.9.4",
-                "phpstan/phpstan-deprecation-rules": "^1.1.1",
-                "phpstan/phpstan-phpunit": "^1.3.2",
-                "phpstan/phpstan-strict-rules": "^1.4.4",
-                "phpunit/phpunit": "^9.5.27"
+                "phpstan/phpstan": "^1.10.7",
+                "phpstan/phpstan-deprecation-rules": "^1.1.3",
+                "phpstan/phpstan-phpunit": "^1.3.10",
+                "phpstan/phpstan-strict-rules": "^1.5.0",
+                "phpunit/phpunit": "^10.0.17"
             },
             "type": "library",
             "autoload": {
@@ -2554,7 +2554,7 @@
             "description": "Yet another clock abstraction",
             "support": {
                 "issues": "https://github.com/lcobucci/clock/issues",
-                "source": "https://github.com/lcobucci/clock/tree/3.0.0"
+                "source": "https://github.com/lcobucci/clock/tree/3.1.0"
             },
             "funding": [
                 {
@@ -2566,7 +2566,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2022-12-19T15:00:24+00:00"
+            "time": "2023-03-20T19:12:25+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -3553,16 +3553,16 @@
         },
         {
             "name": "mll-lab/laravel-graphiql",
-            "version": "v3.0.2",
+            "version": "v3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mll-lab/laravel-graphiql.git",
-                "reference": "8e4a6d6a70abe1ab696f5299e3b3c04a643f9d9d"
+                "reference": "54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mll-lab/laravel-graphiql/zipball/8e4a6d6a70abe1ab696f5299e3b3c04a643f9d9d",
-                "reference": "8e4a6d6a70abe1ab696f5299e3b3c04a643f9d9d",
+                "url": "https://api.github.com/repos/mll-lab/laravel-graphiql/zipball/54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c",
+                "reference": "54d7dbe5376ab87a6ea83be11b1431d0af9e2f6c",
                 "shasum": ""
             },
             "require": {
@@ -3613,9 +3613,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mll-lab/laravel-graphiql/issues",
-                "source": "https://github.com/mll-lab/laravel-graphiql/tree/v3.0.2"
+                "source": "https://github.com/mll-lab/laravel-graphiql/tree/v3.1.0"
             },
-            "time": "2023-06-26T07:04:16+00:00"
+            "time": "2023-07-04T13:58:40+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6169,16 +6169,16 @@
         },
         {
             "name": "spatie/laravel-prometheus",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-prometheus.git",
-                "reference": "980fd2773ac0892797854d6e6516970bbd85321d"
+                "reference": "bcd299c7e1bdc124d675b96cfdc1c133852fc17b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-prometheus/zipball/980fd2773ac0892797854d6e6516970bbd85321d",
-                "reference": "980fd2773ac0892797854d6e6516970bbd85321d",
+                "url": "https://api.github.com/repos/spatie/laravel-prometheus/zipball/bcd299c7e1bdc124d675b96cfdc1c133852fc17b",
+                "reference": "bcd299c7e1bdc124d675b96cfdc1c133852fc17b",
                 "shasum": ""
             },
             "require": {
@@ -6238,9 +6238,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-prometheus/issues",
-                "source": "https://github.com/spatie/laravel-prometheus/tree/1.0.2"
+                "source": "https://github.com/spatie/laravel-prometheus/tree/1.0.3"
             },
-            "time": "2023-06-28T12:03:19+00:00"
+            "time": "2023-07-04T09:21:04+00:00"
         },
         {
             "name": "spatie/regex",
@@ -12541,7 +12541,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
@@ -12550,7 +12550,7 @@
     "platform-dev": [],
     "platform-overrides": {
         "ext-pcntl": "1.0",
-        "php": "8.1"
+        "php": "8.2"
     },
     "plugin-api-version": "2.3.0"
 }
