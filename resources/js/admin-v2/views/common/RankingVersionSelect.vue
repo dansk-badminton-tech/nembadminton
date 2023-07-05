@@ -4,7 +4,7 @@
             v-for="version in rankingVersions"
             :key="version"
             :value="version">
-            {{ version }}
+            {{ timeToMonth(version) }}
             {{ hintText(version) }}
         </option>
     </b-select>
@@ -20,6 +20,11 @@ export default {
     methods: {
         onFocus(){
             this.$emit('focus')
+        },
+        timeToMonth(currentVersion){
+            let date = new Date(Date.parse(currentVersion))
+            let dateString = date.toLocaleString("da-DK", {month: "long"});
+            return dateString.charAt(0).toUpperCase() + dateString.slice(1) + " "+date.toLocaleString("da-DK", {year: "numeric"})
         },
         hintText(currentVersion){
             if(this.playingDate === null || this.playingDate === undefined){
