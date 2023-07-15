@@ -16,11 +16,11 @@ const faqsArr = faqs
                     data-aos="fade-in"
                     data-aos-easing="linear"
                 >
-                    <fragment v-for="faq in faqsArr" :key="faq.title">
+                    <template v-for="faq in faqsArr">
                         <strong>{{faq.title}}</strong>
                         <p v-html="faq.text"></p>
                         <hr>
-                    </fragment>
+                    </template>
 <!--                    <h1>Hvordan tjekker jeg en opstilling?</h1>-->
 <!--                    <p></p>-->
                 </div>

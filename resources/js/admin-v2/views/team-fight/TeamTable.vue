@@ -13,10 +13,10 @@
                                 Ugyldigt hold
                             </b-tag>
                         </b-taglist>
-                        <b-dropdown aria-role="list" class="is-pulled-right">
+                        <b-dropdown position="is-bottom-left" aria-role="list" class="is-pulled-right">
                             <template #trigger="{ active }">
                                 <b-button
-                                    :icon-right="active ? 'arrow-up' : 'arrow-down'"/>
+                                    :icon-right="active ? 'arrow-up' : 'cog'"/>
                             </template>
                             <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
                                              aria-role="listitem">Sæt som "andet" hold

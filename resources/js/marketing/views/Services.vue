@@ -14,8 +14,6 @@
                 >
                     <h1 class="title has-text-centered section-title">Features</h1>
 
-<!--                    <h2 class="subtitle">Få e</h2>-->
-                    <br/>
                 </div>
                 <div class="column is-12">
                     <div class="columns is-12">
