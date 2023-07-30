@@ -53,7 +53,7 @@
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
-                                :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
+                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
@@ -181,8 +181,8 @@ export default {
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
-        isPlayingToHigh(player, category) {
-            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
+        isPlayingToHigh(player) {
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player);
         },
         isPlayingToHighInSquad(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);

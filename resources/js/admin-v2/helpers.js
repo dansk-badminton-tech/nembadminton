@@ -190,7 +190,11 @@ export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player,
 }
 
 export function getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) {
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category === category)
+    if(category === undefined){
+        return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId)
+    }else{
+        return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category === category)
+    }
 }
 
 export function getPlayingToHigh(playingToHighPlayers, player, category) {
@@ -198,7 +202,7 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
-    const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category);
+    const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player);
     const playerInfoInSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category);
 
     if (playerInfoCrossSquads !== undefined) {
@@ -236,7 +240,7 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
         let names = playerWithBelowPlayers.belowPlayer.map(x => x.name)
         return names.join(', ')
     }
-    let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player, category)
+    let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player)
     let playerWithBelowPlayersSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)
     if (playerWithBelowPlayersSquad !== undefined || playerWithBelowPlayersCrossSquads !== undefined) {
         if (isYoungPlayer(player, null)) {

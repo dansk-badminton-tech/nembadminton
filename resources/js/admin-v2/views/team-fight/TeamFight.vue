@@ -533,7 +533,6 @@ export default {
                           validateCrossSquads(input: $input){
                             name
                             id
-                            category
                             refId
                             isYouthPlayer
                             belowPlayer {

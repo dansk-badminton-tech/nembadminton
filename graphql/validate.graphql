@@ -59,7 +59,7 @@ type PlayingToHigh{
     name: String!
     id: ID!
     refId: String!
-    category: String!
+    category: String
     gender: String!
     isYouthPlayer: Boolean!
     hasYouthPlayerPartner: Boolean!

@@ -56,7 +56,7 @@ class Validate
 
         $squads = $rest->pluck('squad');
         $squads = $this->serializer->denormalize($squads->toArray(), Squad::class . '[]');
-        $playingToHighBelowFirstDiv = $this->teamValidator->validateCrossSquads($squads);
+        $playingToHighBelowFirstDiv = $this->teamValidator->validateCrossSquadsV2($squads);
 
         return $playingToHighLeague->merge($playingToHighFirstDivision)->merge($playingToHighBelowFirstDiv);
     }
