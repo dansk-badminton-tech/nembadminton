@@ -51,8 +51,6 @@ class TeamValidator
 
         $conflicts = new Collection();
 
-        //dd($totalHits);
-
         /** @var Collection[] $totalHits */
         foreach ($totalHits as $hits) {
             foreach ($hits as $hit) {
@@ -158,8 +156,6 @@ class TeamValidator
         };
         $findPlayersPlayingInSameCategory = static function (Collection $categories, Collection $players) {
             return $players->filter(fn(Player $player) => $categories->intersect($player->getPlayingIn())->count() === $categories->count());
-//            return $players->filter(fn(Player $value) => $categories->count() === count($value->playingIn) && !array_diff($categories->toArray(), $value->playingIn));
-//            return $players->filter(fn(Player $value) => array_count_values($categories->toArray()) == array_count_values($value->playingIn));
         };
         $compare = function (Player $player, Collection $players) {
             $playerPoints = $this->getPlayerLevel($player);
@@ -206,10 +202,8 @@ class TeamValidator
         };
 
         $playerAndConflict = new Collection();
-        $restSquadsCategories = $groupByCategory($restSquads);
-        $restPlayersWithCategories = $appendCategoriesToPlayers($restSquadsCategories);
-        $currentSquadCollection = (new Collection())->push($currentSquad);
-        $currentSquadCategories = $groupByCategory($currentSquadCollection);
+        $restPlayersWithCategories = $appendCategoriesToPlayers($groupByCategory($restSquads));
+        $currentSquadCategories = $groupByCategory((new Collection())->push($currentSquad));
         $players = $currentSquadCategories->flatten()->unique('refId');
         /** @var Player $player */
         foreach ($players as $player) {
