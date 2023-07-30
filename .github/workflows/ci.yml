@@ -26,4 +26,4 @@ jobs:
       - name: Generate passport keys
         run: php artisan passport:keys
       - name: Execute tests (GraphQL tests) via PHPUnit
-        run: php vendor/bin/phpunit --exclude remote
+        run: php vendor/bin/phpunit --exclude-group remote
