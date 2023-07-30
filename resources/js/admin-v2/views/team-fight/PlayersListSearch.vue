@@ -67,7 +67,7 @@
 @media only screen and (min-width: 769px) {
     .sticky {
         position: sticky;
-        top: 0;
+        top: 55px;
         align-self: start;
         max-height: 100vh;
     }

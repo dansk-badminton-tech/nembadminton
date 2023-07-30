@@ -227,7 +227,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
-                category
                 gender
               }
             }
@@ -239,24 +238,12 @@ class ValidateCrossSquadsTest extends BaseTestCase
                     'validateCrossSquads' => [
                         [
                             'refId' => $squad1Women1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'category' => 'DD',
                             'gender' => 'K'
                         ],
                         [
                             'refId' => $squad1Women2->refId,
-                            'category' => 'MD',
                             'gender' => 'K'
                         ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ]
                     ]
                 ]
             ]);
@@ -378,7 +365,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
-                category
                 gender
               }
             }
@@ -390,42 +376,18 @@ class ValidateCrossSquadsTest extends BaseTestCase
                     'validateCrossSquads' => [
                         [
                             'refId' => $squad1Women1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'category' => 'DD',
                             'gender' => 'K'
                         ],
                         [
                             'refId' => $squad1Women2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'category' => 'DD',
                             'gender' => 'K'
                         ],
                         [
                             'refId' => $squad2Women1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad2Women1->refId,
-                            'category' => 'DD',
                             'gender' => 'K'
                         ],
                         [
                             'refId' => $squad2Women2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad2Women2->refId,
-                            'category' => 'DD',
                             'gender' => 'K'
                         ]
                     ]
@@ -549,7 +511,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
-                category
                 gender
                 belowPlayer{
                     name
@@ -565,18 +526,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
                     'validateCrossSquads' => [
                         [
                             'refId' => $squad1Women1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'category' => 'DD',
                             'gender' => 'K',
                             'belowPlayer' => [
                                 [
@@ -587,18 +536,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
                         ],
                         [
                             'refId' => $squad1Women2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'category' => 'DD',
                             'gender' => 'K',
                             'belowPlayer' => [
                                 [
@@ -609,18 +546,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
                         ],
                         [
                             'refId' => $squad2Women1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad2Women1->refId,
-                            'category' => 'DD',
                             'gender' => 'K',
                             'belowPlayer' => [
                                 [
@@ -631,18 +556,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
                         ],
                         [
                             'refId' => $squad2Women2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad2Women2->refId,
-                            'category' => 'DD',
                             'gender' => 'K',
                             'belowPlayer' => [
                                 [
@@ -738,7 +651,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
-                category
                 gender
                 belowPlayer{
                     name
@@ -754,7 +666,6 @@ class ValidateCrossSquadsTest extends BaseTestCase
                     'validateCrossSquads' => [
                         [
                             'refId' => $specialMen2->refId,
-                            'category' => 'MD',
                             'gender' => 'M',
                             'belowPlayer' => [
                                 [
@@ -766,25 +677,127 @@ class ValidateCrossSquadsTest extends BaseTestCase
                                     'refId' => $men2->refId,
                                 ],
                             ]
-                        ],
-                        [
-                            'refId' => $specialMen2->refId,
-                            'category' => 'HD',
-                            'gender' => 'M',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $men1->name,
-                                    'refId' => $men1->refId,
-                                ],
-                                [
-                                    'name' => $men2->name,
-                                    'refId' => $men2->refId,
-                                ],
-                            ]
-                        ],
-
+                        ]
                     ]
                 ]
             ]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function useCase6()
+    {
+        $data = require __DIR__.'/CrossSquadsUseCases/usecase6.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateCrossSquads(input: $input) {
+                refId
+                gender
+                belowPlayer{
+                    name
+                    refId
+                }
+              }
+            }
+        ',
+            $data
+        )->assertExactJson([
+            'data' => [
+                'validateCrossSquads' => [
+                    [
+                        'refId' => '000511-04',
+                        'gender' => 'M',
+                        'belowPlayer' => [
+                            [
+                                "name" => "Peter Philipsen",
+                                "refId" => "960606-06"
+                            ],
+                            [
+                                "name" => "Stephan Hjelmdal Nielsen",
+                                "refId" => "830421-01"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function useCase7()
+    {
+        $data = require __DIR__.'/CrossSquadsUseCases/usecase7.php';
+
+        $this->graphQL(
+        /** @lang GraphQL */ '
+            mutation ($input: [ValidateTeam!]!) {
+              validateCrossSquads(input: $input) {
+                refId
+                gender
+                belowPlayer{
+                    name
+                    refId
+                }
+              }
+            }
+        ',
+            $data
+        )->assertExactJson([
+            'data' => [
+                'validateCrossSquads' => [
+                    [
+                        'refId' => '000511-04',
+                        'gender' => 'M',
+                        'belowPlayer' => [
+                            [
+                                "name" => "Peter Philipsen",
+                                "refId" => "960606-06"
+                            ],
+                            [
+                                "name" => "Stephan Hjelmdal Nielsen",
+                                "refId" => "830421-01"
+                            ]
+                        ]
+                    ],
+                    [
+                        'refId' => '930120-04',
+                        'gender' => 'M',
+                        'belowPlayer' => [
+                            [
+                                "name" => "Andreas Berthelsen",
+                                "refId" => "931114-01"
+                            ],
+                            [
+                                "name" => "Kasper B. Hansen",
+                                "refId" => "920213-11"
+                            ],
+                            [
+                                "name" => "Rasmus Jakobsen",
+                                "refId" => "970610-05"
+                            ],
+                            [
+                                "name" => "Lasse Qvistgaard Andersen",
+                                "refId" => "961002-10"
+                            ],
+                            [
+                                "name" => "Peter Philipsen",
+                                "refId" => "960606-06"
+                            ],
+                            [
+                                "name" => "Stephan Hjelmdal Nielsen",
+                                "refId" => "830421-01"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
     }
 }

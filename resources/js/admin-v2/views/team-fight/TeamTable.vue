@@ -9,14 +9,14 @@
                         <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
                             <b-tag>{{ squad.league }}</b-tag>
-                            <b-tag type="is-danger" v-if="hasMissingPlayerInCategory(index) || hasEmptySpots(index)">
+                            <b-tag type="is-danger" v-if="hasEmptySpots(index)">
                                 Ugyldigt hold
                             </b-tag>
                         </b-taglist>
-                        <b-dropdown aria-role="list" class="is-pulled-right">
+                        <b-dropdown position="is-bottom-left" aria-role="list" class="is-pulled-right">
                             <template #trigger="{ active }">
                                 <b-button
-                                    :icon-right="active ? 'arrow-up' : 'arrow-down'"/>
+                                    :icon-right="active ? 'arrow-up' : 'cog'"/>
                             </template>
                             <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
                                              aria-role="listitem">Sæt som "andet" hold
@@ -53,7 +53,7 @@
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
-                                :active="isPlayingToHigh(player, category.category) || isPlayingToHighInSquad(player, category.category)"
+                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
@@ -178,21 +178,11 @@ export default {
                 return found !== undefined;
             }
         },
-        hasMissingPlayerInCategory(index) {
-            if (this.teamsBaseValidations.length === 0) {
-                return false;
-            } else {
-                const found = this.teamsBaseValidations.find((base) => {
-                    return index === base.index && base.missingPlayerInCategory === true
-                })
-                return found !== undefined;
-            }
-        },
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
-        isPlayingToHigh(player, category) {
-            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
+        isPlayingToHigh(player) {
+            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player);
         },
         isPlayingToHighInSquad(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);

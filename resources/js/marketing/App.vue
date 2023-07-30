@@ -16,58 +16,20 @@ export default {
     <div id="app">
         <!-- Begin Scroll Up Button -->
 
-        <form action="#home">
-            <button id="toTop" title="Go to top">
-                <i class="fas fa-angle-up"></i>
-            </button>
-        </form>
+<!--        <form action="#home">-->
+<!--            <button id="toTop" title="Go to top">-->
+<!--                <i class="fas fa-angle-up"></i>-->
+<!--            </button>-->
+<!--        </form>-->
         <!-- End Scroll Up Button -->
 
         <!-- Begin Header -->
         <div class="header-wrapper" id="home">
             <!-- Begin Hero -->
             <section class="hero is-large">
-                <!-- Begin Mobile Nav -->
-                <nav class="navbar is-fixed-top is-transparent is-hidden-desktop">
-                    <!-- Begin Burger Menu -->
-                    <div class="navbar-brand">
-                        <div class="navbar-burger burger" data-target="mobile-nav">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                    <!-- End Burger Menu -->
-<!--                    <div id="mobile-nav" class="navbar-menu">-->
-<!--                        <div class="navbar-end">-->
-<!--                            <div class="navbar-item">-->
-<!--                                <a class="navbar-item" href="#about-me">-->
-<!--                                    Om værktøjet-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                            <div class="navbar-item">-->
-<!--                                <a class="navbar-item" href="#services">-->
-<!--                                    Services-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                            <div class="navbar-item">-->
-<!--                                <a class="navbar-item" href="#skills">-->
-<!--                                    Skills-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                            <div class="navbar-item">-->
-<!--                                <a class="navbar-item" href="#my-work">-->
-<!--                                    My Work-->
-<!--                                </a>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-                </nav>
-                <!-- End Mobile Nav -->
                 <!-- Begin Hero Content-->
                 <div class="hero-body">
                     <div class="container has-text-centered">
-                        <h1 class="subtitle"></h1>
                         <h2 class="title">Nembadminton</h2>
                         <h1 class="subtitle profession">Holdturnering - nemt og bekymringsfrit</h1>
                         <a href="/app/home" class="button is-medium">
@@ -140,25 +102,23 @@ export default {
                     </div>
                 </div>
             </div>
-            <!-- End About Me Content -->
-            <div class="section-dark" id="about-the-tool">
-                <div class="container">
-                    <div
-                        class="columns is-multiline"
-                    >
+<!--             End About Me Content -->
+            <div class="section section-dark resume" id="about-the-tool">
+<!--                <div class="container">-->
+                    <div class="columns is-multiline">
                         <div class="column is-12 about-me">
                             <h1 class="title has-text-centered section-title">
                                 Om værktøjet
                             </h1>
                         </div>
-                        <div class="column is-10 has-text-centered is-offset-1">
+                        <div class="column is-12 has-text-centered">
                             <p>Værktøjet nembadminton.dk er udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig. Badminton Danmark har hverken valideret eller kontrolleret beregningerne. Alle udregninger er lavet på baggrund af reglementet for DH-turneringen. Det er altid jer som klub og bruger, der har ansvaret for, at opstillingerne er korrekte, og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH-reglementet. Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint. Hvis spillere f.eks. har karantæne, ses det ikke her.</p>
                             <a href="/app/login" class="mt-2 button">
                                 Forstået - Kom i gang
                             </a>
                         </div>
                     </div>
-                </div>
+<!--                </div>-->
             </div>
             <Services />
             <AboutUS />

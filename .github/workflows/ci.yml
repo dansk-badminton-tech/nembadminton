@@ -13,12 +13,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.1
+          php-version: 8.2
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - uses: php-actions/composer@v5
         with:
-          php_version: 8.1
+          php_version: 8.2
           version: 2
           args: --ignore-platform-reqs
       - name: Generate key
@@ -26,4 +26,4 @@ jobs:
       - name: Generate passport keys
         run: php artisan passport:keys
       - name: Execute tests (GraphQL tests) via PHPUnit
-        run: php vendor/bin/phpunit --exclude remote
+        run: php vendor/bin/phpunit --exclude-group remote

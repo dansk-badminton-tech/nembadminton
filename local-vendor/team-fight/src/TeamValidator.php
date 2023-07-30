@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 
 namespace FlyCompany\TeamFight;
@@ -23,9 +23,9 @@ class TeamValidator
     ];
 
     /**
-     * @param  array|Squad[]  $squads
+     * @param array|Squad[] $squads
      */
-    public function validateCrossSquadsLeague(array $squads): Collection
+    public function validateCrossSquadsLeague(array $squads) : Collection
     {
         $count = count($squads);
         if (empty($squads) || $count === 1) {
@@ -50,8 +50,6 @@ class TeamValidator
         }
 
         $conflicts = new Collection();
-
-        //dd($totalHits);
 
         /** @var Collection[] $totalHits */
         foreach ($totalHits as $hits) {
@@ -78,7 +76,7 @@ class TeamValidator
         return $conflicts;
     }
 
-    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $belowPlayer): Collection
+    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $belowPlayer) : Collection
     {
         $limit = 50;
         $hit = new Collection();
@@ -93,7 +91,7 @@ class TeamValidator
                 } catch (PointNotFoundInCategoryException $categoryException) {
                     $belowPlayerCategoryPoint = null;
                 }
-                    $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($abovePlayer, $leagueCategory->category);
+                $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($abovePlayer, $leagueCategory->category);
 
                 // If below player is not placed in the category ranking it is marked as valid
                 if ($belowPlayerCategoryPoint === null) {
@@ -103,34 +101,173 @@ class TeamValidator
                 }
                 if ($hit->has($abovePlayer->refId)) {
                     $hit->get($abovePlayer->refId)->push([
-                        'balance' => $balance,
+                        'balance'  => $balance,
                         'category' => $leagueCategory->category,
-                        'source' => $belowPlayer,
-                        'target' => $abovePlayer
+                        'source'   => $belowPlayer,
+                        'target'   => $abovePlayer,
                     ]);
                 } else {
                     $hit->put(
                         $abovePlayer->refId,
                         new Collection([
                             [
-                                'balance' => $balance,
+                                'balance'  => $balance,
                                 'category' => $leagueCategory->category,
-                                'source' => $belowPlayer,
-                                'target' => $abovePlayer
-                            ]
+                                'source'   => $belowPlayer,
+                                'target'   => $abovePlayer,
+                            ],
                         ])
                     );
                 }
             }
         }
+
         return $hit;
     }
 
+    private function validateSquadV2(Squad $currentSquad, Collection $restSquads) : Collection
+    {
+        // Making a list of players grouped by squad and category
+        $groupByCategory = static function (Collection $squads) {
+            $teamCategories = $squads->pluck('categories');
+            $categories = new Collection();
+            foreach ($teamCategories as $teamCategory) {
+                $teamCategory = new Collection($teamCategory);
+                $groupedByCategory = $teamCategory->groupBy('category');
+                foreach ($groupedByCategory as $category => $players) {
+                    if (!$categories->has($category)) {
+                        $categories->put($category, new Collection());
+                    }
+                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
+                }
+            }
+
+            return $categories;
+        };
+
+        $categoriesIAmPlayer = static function (Player $player, Collection $categories) {
+            return $categories->map(static function (Collection $collection, $category) use ($player) {
+                $found = $collection->flatten()->first(static function (Player $loopPlayer) use ($player) {
+                    return $loopPlayer->refId === $player->refId;
+                });
+
+                return $found !== null;
+            })->filter(fn($value) => $value)->keys();
+        };
+        $findPlayersPlayingInSameCategory = static function (Collection $categories, Collection $players) {
+            return $players->filter(fn(Player $player) => $categories->intersect($player->getPlayingIn())->count() === $categories->count());
+        };
+        $compare = function (Player $player, Collection $players) {
+            $playerPoints = $this->getPlayerLevel($player);
+
+            return $players->filter(function (Player $currentPlayer) use ($playerPoints, $player) {
+                $limit = 50;
+                $currentPlayerPoints = $this->getPlayerLevel($currentPlayer);
+
+                return ($playerPoints + $limit) < $currentPlayerPoints && $currentPlayer->gender === $player->gender && !$this->isYoungPlayer($currentPlayer);
+            });
+        };
+
+        $appendCategoriesToPlayers = static function (Collection $categories) : Collection {
+            $enrichPlayers = new Collection();
+            //Enrich player with categories
+            foreach ($categories as $category => $players) {
+                /** @var Player $player */
+                foreach ($players->flatten() as $player) {
+                    // Cloning is needed because we are altering objects and doing it multiple times.
+                    // This is messy
+                    $clonedPlayer = clone $player;
+                    $array = $clonedPlayer->getPlayingIn();
+                    $array[] = $category;
+                    $clonedPlayer->setPlayingIn($array);
+                    $enrichPlayers->add($clonedPlayer);
+                }
+            }
+
+            // Merge players and append categories and remove duplicates
+            $cleanedPlayers = new Collection();
+            foreach ($enrichPlayers as $player) {
+                /** @var Player $playerExisting */
+                $playerExisting = $cleanedPlayers->firstWhere(function ($value) use ($player) {
+                    return $value->refId === $player->refId;
+                });
+                if ($playerExisting === null) {
+                    $cleanedPlayers->add($player);
+                } else {
+                    $playerExisting->setPlayingIn(array_merge($player->getPlayingIn(), $playerExisting->getPlayingIn()));
+                }
+            }
+
+            return $cleanedPlayers;
+        };
+
+        $playerAndConflict = new Collection();
+        $restPlayersWithCategories = $appendCategoriesToPlayers($groupByCategory($restSquads));
+        $currentSquadCategories = $groupByCategory((new Collection())->push($currentSquad));
+        $players = $currentSquadCategories->flatten()->unique('refId');
+        /** @var Player $player */
+        foreach ($players as $player) {
+            $categoriesIPlayIn = $categoriesIAmPlayer($player, $currentSquadCategories);
+            $playersToCompareWith = $findPlayersPlayingInSameCategory($categoriesIPlayIn, $restPlayersWithCategories);
+            $conflict = $compare($player, $playersToCompareWith);
+            if ($conflict->isNotEmpty()) {
+                $playerAndConflict->push([
+                    $player,
+                    $conflict,
+                ]);
+            }
+        }
+
+        return $playerAndConflict;
+    }
+
     /**
-     * @param  array|Squad[]  $squads
+     * @param array|Squad[] $squads
+     *
      * @return Collection
      */
-    public function validateCrossSquads(array $squads): Collection
+    public function validateCrossSquadsV2(array $squads) : Collection
+    {
+        $squads = new Collection($squads);
+
+        $conflicts = new Collection();
+        while ($currentSquad = $squads->shift()) {
+            if (!$squads->isEmpty()) {
+                $conflicts = $conflicts->merge($this->validateSquadV2($currentSquad, $squads));
+            }
+        }
+
+        return $conflicts->map(function (array $playerAndConflict) {
+            /** @var Collection $conflicts */
+            /** @var Player $player */
+            [$player, $conflicts] = $playerAndConflict;
+
+            return new Collection([
+                'id'                  => $player->id ?? 0,
+                'refId'               => $player->refId,
+                'name'                => $player->name,
+                'category'            => "Dummy-stuff",
+                'gender'              => $player->gender,
+                'isYouthPlayer'       => $this->hasYoungPlayer([$player]),
+                'belowPlayer'         => $conflicts->map(function (Player $player) {
+                    return [
+                        'id'            => $player->id ?? 0,
+                        'refId'         => $player->refId,
+                        'name'          => $player->name,
+                        'gender'        => $player->gender,
+                        'isYouthPlayer' => $this->hasYoungPlayer([$player]),
+                    ];
+                }),
+            ]);
+        });
+    }
+
+    /**
+     * @param array|Squad[] $squads
+     *
+     * @return Collection
+     */
+    public function validateCrossSquads(array $squads) : Collection
     {
         $limit = 50;
 
@@ -176,6 +313,7 @@ class TeamValidator
             $playerInOtherCategory = $hits->first(
                 static function (array $players) use ($currentAbovePlayer, $currentBelowPlayer) {
                     [, $abovePlayer, $belowPlayer] = $players;
+
                     return $abovePlayer->refId === $currentAbovePlayer->refId && $belowPlayer->refId === $currentBelowPlayer->refId;
                 }
             );
@@ -190,11 +328,11 @@ class TeamValidator
     }
 
     /**
-     * @param  Squad  $squad
+     * @param Squad $squad
      *
      * @return array
      */
-    public function validateSquad(Squad $squad): array
+    public function validateSquad(Squad $squad) : array
     {
         $limit = 50;
         $limitDouble = 100;
@@ -210,7 +348,7 @@ class TeamValidator
         return $playingToHigh;
     }
 
-    private function addOrAppend(array $playingToHigh, array $item): array
+    private function addOrAppend(array $playingToHigh, array $item) : array
     {
         foreach ($playingToHigh as &$player) {
             if ($player['refId'] === $item['refId'] && $player['category'] === $item['category']) {
@@ -226,31 +364,31 @@ class TeamValidator
     }
 
     /**
-     * @param  array  $pair
-     * @param  string  $category
+     * @param array  $pair
+     * @param string $category
      *
      * @return int
      */
-    private function getPairPoints(array $pair, string $category): int
+    private function getPairPoints(array $pair, string $category) : int
     {
         return array_reduce($pair, function ($points, Player $player) use ($category) {
             return $points + $this->getPlayerCategoryPoint($player, $category);
         });
     }
 
-    private function isDoubles(string $category): bool
+    private function isDoubles(string $category) : bool
     {
         return in_array($category, ['MD', 'HD', 'DD'], false);
     }
 
     /**
-     * @param  array|Category[]  $categories
-     * @param  string  $category
-     * @param  string|null  $gender
+     * @param array|Category[] $categories
+     * @param string           $category
+     * @param string|null      $gender
      *
      * @return Collection|Player[]
      */
-    private function getPlayersByCategory(array $categories, string $category, ?string $gender = null): Collection
+    private function getPlayersByCategory(array $categories, string $category, ?string $gender = null) : Collection
     {
         $categoriesGrouped = (new Collection($categories))->groupBy('category');
         /** @var Collection $category */
@@ -268,12 +406,12 @@ class TeamValidator
     }
 
     /**
-     * @param  array|Category[]  $categories
-     * @param  string  $category
+     * @param array|Category[] $categories
+     * @param string           $category
      *
      * @return Collection
      */
-    private function getPairByCategory(array $categories, string $category): Collection
+    private function getPairByCategory(array $categories, string $category) : Collection
     {
         $categoriesGrouped = (new Collection($categories))->groupBy('category');
         $pairs = [];
@@ -286,11 +424,11 @@ class TeamValidator
     }
 
     /**
-     * @param  Player  $player
+     * @param Player $player
      *
      * @return int
      */
-    private function getPlayerLevel(Player $player): int
+    private function getPlayerLevel(Player $player) : int
     {
         $points = $player->points;
         foreach ($points as $point) {
@@ -328,34 +466,35 @@ class TeamValidator
     }
 
     /**
-     * @param  Collection  $conflict
-     * @param $currentAbovePlayer
-     * @param $currentCategory
-     * @param $currentBelowPlayer
+     * @param Collection $conflict
+     * @param            $currentAbovePlayer
+     * @param            $currentCategory
+     * @param            $currentBelowPlayer
      */
     private function addOrUpdateBelowPlayers(
         Collection $conflict,
         $currentAbovePlayer,
         $currentCategory,
         $currentBelowPlayer
-    ): void {
+    ) : void {
         /** @var Collection $currentConflictPlayer */
         $currentConflictPlayer = $conflict->first(function (Collection $player) use (
             $currentAbovePlayer,
             $currentCategory
         ) {
-            return $player->get('category') === $currentCategory && $player->get(
+            return $player->get('category') === $currentCategory
+                   && $player->get(
                     'refId'
                 ) === $currentAbovePlayer->refId;
         });
         if ($currentConflictPlayer !== null) {
             $currentConflictBelowPlayers = $currentConflictPlayer->get('belowPlayer');
             $array = [
-                'id' => $currentBelowPlayer->id ?? 0,
-                'refId' => $currentBelowPlayer->refId,
-                'name' => $currentBelowPlayer->name,
-                'gender' => $currentBelowPlayer->gender,
-                'category' => $currentCategory,
+                'id'            => $currentBelowPlayer->id ?? 0,
+                'refId'         => $currentBelowPlayer->refId,
+                'name'          => $currentBelowPlayer->name,
+                'gender'        => $currentBelowPlayer->gender,
+                'category'      => $currentCategory,
                 'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer]),
             ];
             $currentConflictBelowPlayers[] = $array;
@@ -363,21 +502,21 @@ class TeamValidator
         } else {
             $conflict->push(
                 new Collection([
-                    'id' => $currentAbovePlayer->id ?? 0,
-                    'refId' => $currentAbovePlayer->refId,
-                    'name' => $currentAbovePlayer->name,
-                    'category' => $currentCategory,
-                    'gender' => $currentAbovePlayer->gender,
+                    'id'            => $currentAbovePlayer->id ?? 0,
+                    'refId'         => $currentAbovePlayer->refId,
+                    'name'          => $currentAbovePlayer->name,
+                    'category'      => $currentCategory,
+                    'gender'        => $currentAbovePlayer->gender,
                     'isYouthPlayer' => $this->hasYoungPlayer([$currentAbovePlayer]),
-                    'belowPlayer' => [
+                    'belowPlayer'   => [
                         [
-                            'id' => $currentBelowPlayer->id ?? 0,
-                            'refId' => $currentBelowPlayer->refId,
-                            'name' => $currentBelowPlayer->name,
-                            'gender' => $currentBelowPlayer->gender,
-                            'category' => $currentCategory,
-                            'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer])
-                        ]
+                            'id'            => $currentBelowPlayer->id ?? 0,
+                            'refId'         => $currentBelowPlayer->refId,
+                            'name'          => $currentBelowPlayer->name,
+                            'gender'        => $currentBelowPlayer->gender,
+                            'category'      => $currentCategory,
+                            'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer]),
+                        ],
                     ],
                 ])
             );
@@ -385,9 +524,9 @@ class TeamValidator
     }
 
     /**
-     * @param  array|Squad[]  $squads
+     * @param array|Squad[] $squads
      */
-    public function validateBasicSquads(array $squads): Collection
+    public function validateBasicSquads(array $squads) : Collection
     {
         $entries = new Collection();
         foreach ($squads as $index => $squad) {
@@ -418,57 +557,53 @@ class TeamValidator
                 }
             }
 
-            $foundOnlyOne = null;
-            if (in_array($squad->playerLimit, [10, 8])) {
-                $players = (new Collection(Arr::pluck($squad->categories, 'players')))->flatten(1);
-                $playersByRefId = $players->groupBy('refId');
-                $foundOnlyOne = $playersByRefId->first(static function (Collection $players) {
-                    return $players->count() !== 2;
-                });
-            }
             $entries->push([
-                'index' => $index,
+                'index'          => $index,
                 'spotsFulfilled' => $validt,
-                'missingPlayerInCategory' => $foundOnlyOne !== null
             ]);
         }
+
         return $entries;
     }
 
     /**
      *
-     * @param  array|Player[]  $players
+     * @param array|Player[] $players
      */
-    private function hasYoungPlayer(array $players): bool
+    private function hasYoungPlayer(array $players) : bool
     {
         foreach ($players as $player) {
             foreach ($player->points as $point) {
-                if ($point->vintage !== null && $point->vintage !== '' && in_array(strtoupper($point->vintage),
+                if ($point->vintage !== null && $point->vintage !== ''
+                    && in_array(strtoupper($point->vintage),
                         ['U17', 'U19'])) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
     /**
-     * @param  Player  $player
+     * @param Player $player
+     *
      * @return bool
      */
-    private function isYoungPlayer(Player $player): bool
+    private function isYoungPlayer(Player $player) : bool
     {
         return $this->hasYoungPlayer([$player]);
     }
 
     /**
-     * @param  Squad  $squad
-     * @param $category
-     * @param  int  $limitDouble
-     * @param  array  $playingToHigh
+     * @param Squad $squad
+     * @param       $category
+     * @param int   $limitDouble
+     * @param array $playingToHigh
+     *
      * @return array
      */
-    private function handleDouble(Squad $squad, $category, int $limitDouble, array $playingToHigh): array
+    private function handleDouble(Squad $squad, $category, int $limitDouble, array $playingToHigh) : array
     {
         $pairsInCategory = $this->getPairByCategory($squad->categories, $category);
         while ($pairsInCategory->count() > 1) {
@@ -477,71 +612,75 @@ class TeamValidator
             foreach ($pairsInCategory as $abovePair) {
                 $abovePairsPoints = $this->getPairPoints($abovePair, $category);
                 [$player1, $player2] = $abovePair;
-                if (($belowPairsPoints > $abovePairsPoints + $limitDouble) && (!$this->hasYoungPlayer([
+                if (($belowPairsPoints > $abovePairsPoints + $limitDouble)
+                    && (!$this->hasYoungPlayer([
                             $belowPair[0],
-                            $belowPair[1]
-                        ]) || $this->hasYoungPlayer([$player1, $player2]))) {
+                            $belowPair[1],
+                        ])
+                        || $this->hasYoungPlayer([$player1, $player2]))) {
                     $playingToHigh = $this->addOrAppend($playingToHigh, [
-                        'id' => $player1->id ?? 0,
-                        'refId' => $player1->refId,
-                        'name' => $player1->name,
-                        'gender' => $player1->gender,
-                        'category' => $category,
-                        'isYouthPlayer' => $this->isYoungPlayer($player1),
+                        'id'                    => $player1->id ?? 0,
+                        'refId'                 => $player1->refId,
+                        'name'                  => $player1->name,
+                        'gender'                => $player1->gender,
+                        'category'              => $category,
+                        'isYouthPlayer'         => $this->isYoungPlayer($player1),
                         'hasYouthPlayerPartner' => $this->isYoungPlayer($player2),
-                        'belowPlayer' => [
+                        'belowPlayer'           => [
                             [
-                                'id' => $belowPair[0]->id ?? 0,
-                                'refId' => $belowPair[0]->refId,
-                                'name' => $belowPair[0]->name,
-                                'gender' => $belowPair[0]->gender,
-                                'category' => $category
+                                'id'       => $belowPair[0]->id ?? 0,
+                                'refId'    => $belowPair[0]->refId,
+                                'name'     => $belowPair[0]->name,
+                                'gender'   => $belowPair[0]->gender,
+                                'category' => $category,
                             ],
                             [
-                                'id' => $belowPair[1]->id ?? 0,
-                                'refId' => $belowPair[1]->refId,
-                                'name' => $belowPair[1]->name,
-                                'gender' => $belowPair[1]->gender,
-                                'category' => $category
+                                'id'       => $belowPair[1]->id ?? 0,
+                                'refId'    => $belowPair[1]->refId,
+                                'name'     => $belowPair[1]->name,
+                                'gender'   => $belowPair[1]->gender,
+                                'category' => $category,
                             ],
                         ],
                     ]);
                     $playingToHigh = $this->addOrAppend($playingToHigh, [
-                        'id' => $player2->id ?? 0,
-                        'refId' => $player2->refId,
-                        'name' => $player2->name,
-                        'gender' => $player2->gender,
-                        'category' => $category,
-                        'isYouthPlayer' => $this->isYoungPlayer($player2),
+                        'id'                    => $player2->id ?? 0,
+                        'refId'                 => $player2->refId,
+                        'name'                  => $player2->name,
+                        'gender'                => $player2->gender,
+                        'category'              => $category,
+                        'isYouthPlayer'         => $this->isYoungPlayer($player2),
                         'hasYouthPlayerPartner' => $this->isYoungPlayer($player1),
-                        'belowPlayer' => [
+                        'belowPlayer'           => [
                             [
-                                'id' => $belowPair[0]->id ?? 0,
-                                'refId' => $belowPair[0]->refId,
-                                'name' => $belowPair[0]->name,
+                                'id'       => $belowPair[0]->id ?? 0,
+                                'refId'    => $belowPair[0]->refId,
+                                'name'     => $belowPair[0]->name,
                                 'category' => $category,
-                                'gender' => $belowPair[0]->gender
+                                'gender'   => $belowPair[0]->gender,
                             ],
                             [
-                                'id' => $belowPair[1]->id ?? 0,
-                                'refId' => $belowPair[1]->refId,
-                                'name' => $belowPair[1]->name,
-                                'gender' => $belowPair[1]->gender,
-                                'category' => $category
+                                'id'       => $belowPair[1]->id ?? 0,
+                                'refId'    => $belowPair[1]->refId,
+                                'name'     => $belowPair[1]->name,
+                                'gender'   => $belowPair[1]->gender,
+                                'category' => $category,
                             ],
                         ],
                     ]);
                 }
             }
         }
+
         return $playingToHigh;
     }
 
     /**
-     * @param  Squad  $squad
-     * @param $category
-     * @param  int  $limit
-     * @param $playingToHigh
+     * @param Squad $squad
+     * @param       $category
+     * @param int   $limit
+     * @param       $playingToHigh
+     *
      * @return array|mixed
      */
     private function handleSingle(Squad $squad, $category, int $limit, $playingToHigh)
@@ -556,21 +695,21 @@ class TeamValidator
                     $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
                     if ($belowPlayerPoints > $abovePlayerPoints + $limit && (!$this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
                         $playingToHigh = $this->addOrAppend($playingToHigh, [
-                            'id' => $abovePlayer->id ?? 0,
-                            'refId' => $abovePlayer->refId,
-                            'name' => $abovePlayer->name,
-                            'category' => $category,
-                            'gender' => $abovePlayer->gender,
-                            'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
+                            'id'                    => $abovePlayer->id ?? 0,
+                            'refId'                 => $abovePlayer->refId,
+                            'name'                  => $abovePlayer->name,
+                            'category'              => $category,
+                            'gender'                => $abovePlayer->gender,
+                            'isYouthPlayer'         => $this->isYoungPlayer($abovePlayer),
                             'hasYouthPlayerPartner' => false,
                             // Always false because its single and you don't have a partner in singles
-                            'belowPlayer' => [
+                            'belowPlayer'           => [
                                 [
-                                    'id' => $belowPlayer->id ?? 0,
-                                    'refId' => $belowPlayer->refId,
-                                    'name' => $belowPlayer->name,
+                                    'id'       => $belowPlayer->id ?? 0,
+                                    'refId'    => $belowPlayer->refId,
+                                    'name'     => $belowPlayer->name,
                                     'category' => $category,
-                                    'gender' => $belowPlayer->gender
+                                    'gender'   => $belowPlayer->gender,
                                 ],
                             ],
                         ]);
@@ -580,6 +719,7 @@ class TeamValidator
                 continue;
             }
         }
+
         return $playingToHigh;
     }
 

@@ -3,36 +3,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Club;
-use App\Models\Member;
-use App\Models\Teams;
-use App\Models\User;
-use Carbon\Carbon;
-use DiDom\Document;
-use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
-use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
-use FlyCompany\Members\PointsManager;
-use FlyCompany\Scraper\BadmintonPlayer;
-use FlyCompany\Scraper\BadmintonPlayerHelper;
-use FlyCompany\Scraper\Exception\NoPlayersException;
-use FlyCompany\Scraper\Models\Point;
-use FlyCompany\Scraper\Parser;
-use FlyCompany\TeamFight\Enricher;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
-use FlyCompany\TeamFight\SquadManager;
-use FlyCompany\TeamFight\TeamManager;
 use FlyCompany\TeamFight\TeamValidator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
-use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
-use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Illuminate\Support\Collection;
 
 class Test extends Command
 {
@@ -58,15 +33,22 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamManager $teamManager, SquadManager $squadManager)
+    public function handle(TeamValidator $teamValidator)
     {
-        /** @var Teams $sourceTeam */
-        $sourceTeam = Teams::query()->findOrFail("px5dVIQu4FaKrw8621E0YLZU");
-        $team = $teamManager->copyTeam($sourceTeam);
-        foreach ($sourceTeam->squads as $squad){
-            $squad = $squadManager->copySquad($squad, $team);
-        }
-        dump($team);
+        $serializer = SerializerHelper::getSerializer();
+        $data = require __DIR__.'/cross-team-check-two-wrong-players-in-two-categories.php';
+        $data1 = require __DIR__.'/squads-cross-team-player-in-one-categories.php';
+        $data2 = require __DIR__.'/squads-cross-team-player-in-two-categories.php';
+        $run = function($data) use ($teamValidator, $serializer) {
+            $this->info("Running ...");
+            $squads = (new Collection($data))->pluck('squad');
+            $squads = $serializer->denormalize($squads->toArray(), Squad::class . '[]');
+            $oldResult = $teamValidator->validateCrossSquads($squads);
+            dump($teamValidator->validateCrossSquadsV2($squads));
+        };
+        $run($data);
+        $run($data1);
+        $run($data2);
         return 0;
     }
 }

@@ -15,8 +15,28 @@ class Player
 
     public ?string $refId;
 
+    // This is only used when we calculate cross teams
+    private array $playingIn = [];
+
     /**
      * @var Point[]
      */
     public array $points = [];
+
+    /**
+     * @return array
+     */
+    public function getPlayingIn() : array
+    {
+        return $this->playingIn;
+    }
+
+    /**
+     * @param array $playingIn
+     */
+    public function setPlayingIn(array $playingIn) : void
+    {
+        $this->playingIn = $playingIn;
+    }
+
 }

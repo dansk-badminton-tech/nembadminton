@@ -533,7 +533,6 @@ export default {
                           validateCrossSquads(input: $input){
                             name
                             id
-                            category
                             refId
                             isYouthPlayer
                             belowPlayer {
@@ -578,7 +577,6 @@ export default {
                         mutation validateBasicSquads($input: [ValidateTeam!]!){
                           validateBasicSquads(input: $input){
                             index
-                            missingPlayerInCategory
                             spotsFulfilled
                           }
                         }
