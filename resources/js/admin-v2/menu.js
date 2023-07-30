@@ -27,7 +27,13 @@ export default [
         {
             to: '/faq',
             label: 'FAQ',
-            icon: 'information'
+            icon: 'frequently-asked-questions'
+        },
+        {
+            href: 'https://nembadminton.nolt.io/',
+            label: 'Forslå ide',
+            icon: 'lightbulb',
+            target: '_blank'
         },
     ]
 //    'Examples',
