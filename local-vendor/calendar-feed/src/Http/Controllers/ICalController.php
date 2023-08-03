@@ -13,6 +13,7 @@ use FlyCompany\Scraper\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Psr\SimpleCache\InvalidArgumentException;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
@@ -35,8 +36,9 @@ class ICalController extends Controller
 
         if($request->has('only')){
             $onlys = explode(",",$request->input('only'));
+            $onlys = array_map(static fn($value) => Str::replace('_', ' ', $value), $onlys);
             $onlys = array_map('strtolower', $onlys);
-            $teams = array_filter($teams, function (Team $team) use ($onlys) {
+            $teams = array_filter($teams, static function (Team $team) use ($onlys) {
                 return in_array(strtolower($team->name), $onlys,true);
             });
         }
