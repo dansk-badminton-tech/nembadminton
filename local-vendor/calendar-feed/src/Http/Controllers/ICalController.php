@@ -4,14 +4,14 @@
 namespace FlyCompany\CalendarFeed\Http\Controllers;
 
 use App\Models\Club;
-use App\Models\User;
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
+use FlyCompany\Scraper\Models\Team;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Psr\SimpleCache\InvalidArgumentException;
 use Spatie\IcalendarGenerator\Components\Calendar;
@@ -23,7 +23,7 @@ class ICalController extends Controller
     /**
      * @throws \JsonException
      */
-    public function icalClassic(int $clubId, BadmintonPlayer $badmintonPlayerAPI) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    public function icalClassic(int $clubId, BadmintonPlayer $badmintonPlayerAPI, Request $request) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         /** @var Club $club */
         $club = Club::query()->where('id', '=', $clubId)->firstOrFail();
@@ -32,6 +32,15 @@ class ICalController extends Controller
 
         $season = BadmintonPlayerHelper::getCurrentSeason();
         $teams = $badmintonPlayerAPI->getClubTeams($season, $clubId);
+
+        if($request->has('only')){
+            $onlys = explode(",",$request->input('only'));
+            $onlys = array_map('strtolower', $onlys);
+            $teams = array_filter($teams, function (Team $team) use ($onlys) {
+                return in_array(strtolower($team->name), $onlys,true);
+            });
+        }
+
         foreach ($teams as $team){
             if(in_array((int)$team->ageGroupId, [1, 6, 7])){
                 $teamFights = $badmintonPlayerAPI->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
