@@ -120,6 +120,15 @@ const routes = [
                 meta: {
                     title: 'Holdkamp'
                 }
+            },
+            {
+                path: '/calendar-generator/:teamUUID',
+                name: 'calendar-generator-public-view',
+                component: () => import("../views/calendar/CalendarGenerator.vue"),
+                props: route => ({teamId: route.params.teamUUID}),
+                meta: {
+                    title: 'Holdkamp'
+                }
             }
         ]
     },
