@@ -30,7 +30,7 @@ export default [
             icon: 'frequently-asked-questions'
         },
         {
-            href: 'https://nembadminton.nolt.io/',
+            href: 'https://nembadminton.voteboards.com/',
             label: 'Forslå ide',
             icon: 'lightbulb',
             target: '_blank'
