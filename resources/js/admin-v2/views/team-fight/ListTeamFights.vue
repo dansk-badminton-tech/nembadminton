@@ -17,7 +17,7 @@
             <b-table-column v-slot="props" sortable field="gameDate" label="Spilledato">
                 {{ props.row.gameDate }}
             </b-table-column>
-            <b-table-column v-slot="props" sortable field="version" label="Rangliste">
+            <b-table-column v-slot="props" field="version" label="Rangliste">
                 {{ props.row.version }}
             </b-table-column>
             <b-table-column v-slot="props" sortable field="updatedAt" label="Oprettet">
