@@ -34,27 +34,30 @@ class ICalController extends Controller
         $season = BadmintonPlayerHelper::getCurrentSeason();
         $teams = $badmintonPlayerAPI->getClubTeams($season, $clubId);
 
-        if($request->has('only')){
-            $onlys = explode(",",$request->input('only'));
+        if ($request->has('only')) {
+            $onlys = explode(",", $request->input('only'));
             $onlys = array_map(static fn($value) => Str::replace('_', ' ', $value), $onlys);
             $onlys = array_map('strtolower', $onlys);
             $teams = array_filter($teams, static function (Team $team) use ($onlys) {
-                return in_array(strtolower($team->name), $onlys,true);
+                return in_array(strtolower($team->name), $onlys, true);
             });
         }
 
-        foreach ($teams as $team){
-            if(in_array((int)$team->ageGroupId, [1, 6, 7])){
+        foreach ($teams as $team) {
+            if (in_array((int)$team->ageGroupId, [1, 6, 7])) {
                 $teamFights = $badmintonPlayerAPI->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
-                foreach ($teamFights as $teamFight){
+                foreach ($teamFights as $teamFight) {
+                    $url = 'https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $season . ',,,,,' . $teamFight["matchId"] . ',,';
                     $event = Event::create()
                                   ->name($this->generateTitle($teamFight["teams"]))
-                                  ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight["matchId"].',,')
+                                  ->url($url)
+                                  ->description($url)
                                   ->startsAt(Carbon::parse($teamFight["gameTime"]));
                     $calendar->event($event);
                 }
             }
         }
+
         return response($calendar->get())
             ->header('Content-Type', 'text/calendar; charset=utf-8');
 
@@ -81,9 +84,9 @@ class ICalController extends Controller
         $calendar = Calendar::create()->name($club->name1);
         foreach ($matches as $match) {
             $event = Event::create()
-                          ->name($match->divisionName . ' - '.$match->groupName.': ' . $match->teamName1 . ' vs ' . $match->teamName2)
+                          ->name($match->divisionName . ' - ' . $match->groupName . ': ' . $match->teamName1 . ' vs ' . $match->teamName2)
                           ->addressName($match->venueName)
-                            ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$match->seasonId.',,,,,'.$match->leagueMatchId.',,')
+                          ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $match->seasonId . ',,,,,' . $match->leagueMatchId . ',,')
                           ->startsAt(Carbon::createFromTimeString($match->matchTime));
             $calendar->event($event);
         }
@@ -99,6 +102,5 @@ class ICalController extends Controller
 
         return sprintf("%s VS %s", $team1Name, $team2Name);
     }
-
 
 }
