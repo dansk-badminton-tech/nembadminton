@@ -1,5 +1,13 @@
 <template>
     <fragment>
+        <div class="notification">
+            <div class="buttons has-addons">
+                <b-button @click="setGameDate(currentSeason)">{{currentSeasonButtonName}}</b-button>
+                <b-button @click="setGameDate(previousSeason)">{{previousSeasonButtonName}}</b-button>
+                <b-button @click="setGameDateToRest">Tidligere sæsoner</b-button>
+                <p class="ml-4">Viser kampe med spille datoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b></p>
+            </div>
+        </div>
         <b-table
             :data="teams?.data"
             :loading="$apollo.loading"
@@ -38,25 +46,63 @@
 <script>
 import gql from "graphql-tag";
 import CreateTeamFightAction from "./CreateTeamFightAction.vue";
+import {subAYear, getCurrentSeasonStart, addAYear} from "../../helpers";
+
+const generateGameDate = (seasonStartDate)=>{
+    return {
+        from: seasonStartDate.toISOString().substring(0,10),
+        to: addAYear(seasonStartDate, 1).toISOString().substring(0,10)
+    }
+}
 
 export default {
     name: 'ListTeamFights',
     components: {CreateTeamFightAction},
     props: {
-        loading: Boolean
+        loading: Boolean,
+    },
+    computed: {
+        currentSeason: getCurrentSeasonStart,
+        previousSeason(){
+            let date = getCurrentSeasonStart()
+            return subAYear(date, 1)
+        },
+        currentSeasonButtonName(){
+            let currentYear = this.currentSeason.getFullYear();
+            return currentYear+"/"+(currentYear+1)
+        },
+        previousSeasonButtonName(){
+            let year = this.previousSeason.getFullYear()
+            return year+"/"+(year+1)
+        }
     },
     data(){
         return {
             teams: [],
             currentPage: 0,
-            perPage: 20,
+            perPage: 3,
             order: [{
                 column: 'GAME_DATE',
                 order: 'DESC'
-            }]
+            }],
+            gameDate: generateGameDate(getCurrentSeasonStart())
         }
     },
     methods: {
+        setGameDateToRest(){
+            let date = new Date(this.previousSeason.getTime())
+            this.gameDate = {
+                from: "2020-01-01", // Magic number because nembadminton existed after this date
+                to: date.toISOString().substring(0,10)
+            }
+        },
+        setGameDate(seasonStartDate){
+            let date = new Date(seasonStartDate.getTime())
+            this.gameDate = {
+                from: date.toISOString().substring(0,10),
+                to: addAYear(date, 1).toISOString().substring(0,10)
+            }
+        },
         onPageChange(page){
             this.currentPage = page
         },
@@ -74,8 +120,8 @@ export default {
     apollo: {
         teams: {
             query: gql`
-                query Teams($first: Int!, $page: Int, $order: [QueryTeamsOrderOrderByClause!]){
-                    teams(order: $order, first: $first, page: $page){
+                query Teams($first: Int!, $page: Int, $order: [QueryTeamsOrderOrderByClause!], $gameDate: DateRange){
+                    teams(order: $order, first: $first, page: $page, gameDate: $gameDate){
                         data{
                             id,
                             name,
@@ -95,7 +141,8 @@ export default {
                 return {
                     first: this.perPage,
                     page: this.currentPage,
-                    order: this.order
+                    order: this.order,
+                    gameDate: this.gameDate
                 }
             },
             fetchPolicy: 'network-only'

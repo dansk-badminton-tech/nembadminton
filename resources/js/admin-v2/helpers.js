@@ -334,3 +334,26 @@ export function getCurrentSeason(){
         }
         return now.getFullYear() - 1;
 }
+
+export function getCurrentSeasonStart(){
+    const currentYear = getCurrentSeason()
+    return new Date(currentYear, 6)
+}
+
+export function subAYear(date, year){
+    date.setFullYear(date.getFullYear() - year);
+    return date
+}
+
+export function addAYear(date, year) {
+    date.setFullYear(date.getFullYear() + year);
+    return date
+}
+
+export function getCurrentSeasonInterval(){
+    const now = new Date()
+    if (now.getMonth()+1 > 6) {
+        return now.getFullYear();
+    }
+    return now.getFullYear() - 1;
+}
