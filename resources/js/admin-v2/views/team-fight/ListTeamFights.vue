@@ -80,7 +80,7 @@ export default {
         return {
             teams: [],
             currentPage: 0,
-            perPage: 3,
+            perPage: 10,
             order: [{
                 column: 'GAME_DATE',
                 order: 'DESC'
