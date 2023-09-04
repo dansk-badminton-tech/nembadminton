@@ -47,11 +47,12 @@ class ICalController extends Controller
             if (in_array((int)$team->ageGroupId, [1, 6, 7])) {
                 $teamFights = $badmintonPlayerAPI->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
                 foreach ($teamFights as $teamFight) {
-                    $url = 'https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $season . ',,,,,' . $teamFight["matchId"] . ',,';
+                    $badmintonPlayerUrl = 'https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $season . ',,,,,' . $teamFight["matchId"] . ',,';
+                    $url = $request->schemeAndHttpHost() . '/redirect?to=' . urlencode($badmintonPlayerUrl);
                     $event = Event::create()
                                   ->name($this->generateTitle($teamFight["teams"]))
                                   ->url($url)
-                                  ->description($url)
+                                  ->description('Link til badmintonplayer.dk (igennem nembadminton.dk): ' . $url)
                                   ->startsAt(Carbon::parse($teamFight["gameTime"]));
                     $calendar->event($event);
                 }
