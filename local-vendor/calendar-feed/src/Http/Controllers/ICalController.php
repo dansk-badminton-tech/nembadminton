@@ -52,7 +52,7 @@ class ICalController extends Controller
                     $event = Event::create()
                                   ->name($this->generateTitle($teamFight["teams"]))
                                   ->url($url)
-                                  ->description('Link til badmintonplayer.dk (igennem nembadminton.dk): ' . $url)
+                                  ->description('Link til badmintonplayer (igennem nembadminton): ' . $url)
                                   ->startsAt(Carbon::parse($teamFight["gameTime"]));
                     $calendar->event($event);
                 }
