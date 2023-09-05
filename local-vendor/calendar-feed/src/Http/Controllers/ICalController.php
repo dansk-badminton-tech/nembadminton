@@ -52,8 +52,13 @@ class ICalController extends Controller
                     $event = Event::create()
                                   ->name($this->generateTitle($teamFight["teams"]))
                                   ->url($url)
-                                  ->description('Link til badmintonplayer (igennem nembadminton): ' . $url)
-                                  ->startsAt(Carbon::parse($teamFight["gameTime"]));
+                                  ->description('Link til badmintonplayer (igennem nembadminton): ' . $url);
+                    $playingTime = Carbon::parse($teamFight["gameTime"]);
+                    if($playingTime->isMidnight()){
+                        $event->fullDay();
+                    }else{
+                        $event->startsAt($playingTime);
+                    }
                     $calendar->event($event);
                 }
             }
