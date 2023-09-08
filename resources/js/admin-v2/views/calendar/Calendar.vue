@@ -80,6 +80,7 @@ export default {
                     title
                     content
                     contentFull
+                    matchId
                   }
                 }
             `

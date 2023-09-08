@@ -5,8 +5,11 @@ namespace FlyCompany\BadmintonPlayer\Commands;
 use App\Jobs\BadmintonPlayerImportPoints;
 use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
 use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
+use FlyCompany\BadmintonPlayerAPI\Models\PlayerRanking;
+use FlyCompany\BadmintonPlayerAPI\Models\PlayersRanking;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
+use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use Illuminate\Console\Command;
@@ -19,7 +22,7 @@ class Test extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-api-import:test {club-id : BadmintonPlayer club id}';
+    protected $signature = 'badmintonplayer-api-import:test {player-number : xxxxxx-xx player number}';
 
     /**
      * The console command description.
@@ -36,15 +39,16 @@ class Test extends Command
      */
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
     {
-        $matches = $badmintonPlayerAPI->getPlayedLeagueMatches()->getByClubId($this->argument('club-id'));
-        $matches = $matches->groupBy(function(TeamMatchLineup $matchLineup){
-            return $matchLineup->match->divisionName.' '.$matchLineup->match->groupName;
-        });
-        /** @var TeamMatchLineup[] $groupMatches */
-        foreach ($matches as $group => $groupMatches){
-            $this->line($group);
-            foreach ($groupMatches as $match){
-                $this->line("     {$match->match->getMatchTimeCarbon()} {$match->match->teamName1} - {$match->match->teamName2}");
+        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
+        $this->line($rankingList->getVersionDateCarbon());
+        /** @var PlayerRanking[] $playersByRefId */
+        $playersByRefId = [];
+        foreach ($rankingList->playerRankings as $index => $playerRanking) {
+            if($index % 5000 === 0){
+                $this->line('Processed '.$index);
+            }
+            if($playerRanking->playerNumber == $this->argument('player-number')){
+                dump($playerRanking);
             }
         }
 

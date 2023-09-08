@@ -43,6 +43,7 @@ class Calendar
                         'start' => $startFormat,
                         'end' => $endFormat,
                         'content' => 'Klik for info',
+                        'matchId' => $teamFight['matchId'],
                         'contentFull' => '<a target="_blank" href="https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight["matchId"].',,">Link til kampen på badmintonplayer.dk</a>'
                     ];
                 }

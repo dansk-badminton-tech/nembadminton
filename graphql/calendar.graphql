@@ -8,4 +8,5 @@ type Event {
     title: String
     content: String
     contentFull: String
+    matchId: Int
 }
