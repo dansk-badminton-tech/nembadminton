@@ -21,7 +21,7 @@ extend type Mutation {
     updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
-    deleteCancellation(id: ID!) : Cancellation @delete @guard
+    deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
 }
 
 input DateRange {
