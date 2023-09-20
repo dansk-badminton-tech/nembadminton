@@ -15,25 +15,32 @@ class RankingVersionUtil
 
     public static function getRankingVersionByClub(int $clubId) : array
     {
-        $expires = Carbon::now()->addDay();
-        /** @var Collection $rankingVersions */
-        $rankingVersions = Cache::remember(self::getCacheKey($clubId), $expires, static function () use ($clubId) {
-            return static::fetchVersions($clubId);
-        });
+//        $expires = Carbon::now()->addDay();
+//        /** @var Collection $rankingVersions */
+        $rankingVersions = static::fetchVersions($clubId);
 
-        if ($rankingVersions->isEmpty()){
-            Cache::forget(self::getCacheKey($clubId));
-            $rankingVersions = static::fetchVersions($clubId);
-        }
+//            Cache::remember(self::getCacheKey($clubId), $expires, static function () use ($clubId) {
+//            return static::fetchVersions($clubId);
+//        });
+
+//        if ($rankingVersions->isEmpty()){
+//            Cache::forget(self::getCacheKey($clubId));
+//            $rankingVersions = static::fetchVersions($clubId);
+//        }
 
         return array_reverse(Arr::sort($rankingVersions->pluck('version')));
     }
 
     private static function fetchVersions(int $clubId) : Collection|array
     {
-        return Point::query()->whereHas('member.clubs', function (Builder $builder) use ($clubId) {
-            $builder->where('id', $clubId);
-        })->distinct()->get(['version']);
+        return Point::select('version')
+                    ->distinct()
+                    ->join('members', 'points.member_id', '=', 'members.id')
+                    ->join('club_member', 'members.id', '=', 'club_member.member_id')
+                    ->join('clubs', function($join) use ($clubId) {
+                        $join->on('clubs.id', '=', 'club_member.club_id')
+                             ->where('clubs.id', '=', $clubId);
+                    })->get();
     }
 
     public static function updateRankingVersionCache(int $clubId) : void
