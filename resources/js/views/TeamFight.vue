@@ -332,6 +332,7 @@ export default {
                                 name
                                 gender
                                 points {
+                                    id
                                     category
                                     points
                                     position

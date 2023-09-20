@@ -75,6 +75,8 @@
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
+                                          @click="openEditPlayerModal(squad, category, player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
@@ -113,6 +115,8 @@ import {
 } from "../../helpers";
 import PlayersListSearch from "./PlayersListSearch";
 import PlayerSearch from "../common/PlayerSearch.vue";
+import EditPlayerModal from "./EditPlayerModal.vue";
+import gql from "graphql-tag";
 
 export default {
     name: 'TeamTable',
@@ -190,6 +194,21 @@ export default {
         findPositions,
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
+        },
+        openEditPlayerModal(squad, category, player){
+            this.$buefy.modal.open({
+                parent: this,
+                props: {
+                    value: player
+                },
+                events: {
+                    close(){}
+                },
+                canCancel: ["x"],
+                component: EditPlayerModal,
+                hasModalCard: true,
+                trapFocus: true
+            })
         }
     }
 }

@@ -94,6 +94,7 @@ type Member {
 }
 
 type Point {
+    id: ID!
     points: Int
     position: Int
     category: String

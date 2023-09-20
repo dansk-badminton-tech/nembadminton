@@ -7,6 +7,7 @@ extend type Query {
 }
 
 extend type Mutation {
+    updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
     deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
     createSquadMember(input: CreatePlayerInput! @spread) : SquadMember @create @guard
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
@@ -22,6 +23,14 @@ extend type Mutation {
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+}
+
+input UpdateSquadPointInput {
+    id: ID!
+    category: String
+    points: Int
+    position: Int
+    vintage: Vintage
 }
 
 input DateRange {
@@ -126,6 +135,7 @@ type SquadMember {
 }
 
 type SquadPoint {
+    id: ID!
     points: Int
     position: Int
     category: String

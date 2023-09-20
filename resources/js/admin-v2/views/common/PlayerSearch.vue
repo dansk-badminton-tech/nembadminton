@@ -110,6 +110,7 @@ export default {
                           gender
                           refId
                           points(version: $version){
+                            id
                             points
                             position
                             category

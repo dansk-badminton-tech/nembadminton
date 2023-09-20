@@ -16,6 +16,7 @@ query team($id: ID!){
                     name
                     refId
                     points{
+                        id
                         category
                         points
                         position

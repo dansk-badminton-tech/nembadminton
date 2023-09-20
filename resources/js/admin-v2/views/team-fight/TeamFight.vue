@@ -128,7 +128,6 @@
 <script>
 import Draggable from "vuedraggable"
 import gql from "graphql-tag"
-import omitDeep from 'omit-deep';
 import {
     containsMen,
     containsWomen,
@@ -139,7 +138,7 @@ import {
     isWomensSingle
 } from "../../helpers";
 import TeamQuery from "../../../queries/team.graphql"
-import {hasInvalidCategory, hasInvalidLevel} from "./helper";
+import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
 import ME from "../../../queries/me.gql";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
@@ -298,13 +297,6 @@ export default {
                     })
             })
         },
-        wrapInTeamAndSquads(squads) {
-            const squadsClone = JSON.parse(JSON.stringify(squads));
-            return omitDeep(squadsClone, ['__typename', 'cancellations', 'isInSquad', 'order']).map((squad) => ({
-                name: 'Team X',
-                squad: squad
-            }))
-        },
         confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
@@ -346,6 +338,7 @@ export default {
                                 name
                                 gender
                                 points {
+                                    id
                                     category
                                     points
                                     position
@@ -374,15 +367,17 @@ export default {
                             }
                         }
                     },
-                    update: (store, {data: {createSquadMember}}) => {
-                        let variables = {id: this.teamFightId};
-                        let data = store.readQuery({query: TeamQuery, variables: variables})
-                        let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-                        let squadCache = data.team.squads[squadIndex]
-                        let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-                        data.team.squads[squadIndex].categories[categoryIndex].players.push(createSquadMember)
-                        store.writeQuery({query: TeamQuery, data, variables})
-                    }
+//                    update: (store, {data: {createSquadMember}}) => {
+//                        let variables = {id: this.teamFightId};
+//                        console.log(variables)
+//                        console.log(createSquadMember)
+//                        let data = store.readQuery({query: TeamQuery, variables: variables})
+//                        let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
+//                        let squadCache = data.team.squads[squadIndex]
+//                        let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
+//                        data.team.squads[squadIndex].categories[categoryIndex].players.push(createSquadMember)
+//                        store.writeQuery({query: TeamQuery, data, variables})
+//                    }
                 })
                        .then((data) => {
                            this.$root.$emit('player-added-to-category', data.data.createSquadMember)
@@ -414,17 +409,17 @@ export default {
                                    variables: {
                                        id: player.id
                                    },
-                                   update: (store, {data: {deleteSquadMember}}) => {
-                                       let variables = {id: this.teamFightId};
-                                       let data = store.readQuery({query: TeamQuery, variables: variables})
-                                       let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-                                       let squadCache = data.team.squads[squadIndex]
-                                       let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-                                       let categoryCache = squadCache.categories[categoryIndex]
-                                       let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
-                                       data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
-                                       store.writeQuery({query: TeamQuery, data, variables})
-                                   },
+//                                   update: (store, {data: {deleteSquadMember}}) => {
+//                                       let variables = {id: this.teamFightId};
+//                                       let data = store.readQuery({query: TeamQuery, variables: variables})
+//                                       let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
+//                                       let squadCache = data.team.squads[squadIndex]
+//                                       let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
+//                                       let categoryCache = squadCache.categories[categoryIndex]
+//                                       let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
+//                                       data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
+//                                       store.writeQuery({query: TeamQuery, data, variables})
+//                                   },
                                })
                        .then(({data}) => {
                            this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
@@ -486,7 +481,6 @@ export default {
                        })
         },
         validateSquads() {
-            const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -508,7 +502,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(this.wrapInTeamAndSquads(teamsClone.squads), ['league'])
+                        input: wrapSquadsInTeamWithoutLeague(this.team.squads)
                     }
                 })
                 .then(({data}) => {
@@ -525,7 +519,6 @@ export default {
                 })
         },
         validateCrossSquads() {
-            const crossSquads = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -544,7 +537,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: this.wrapInTeamAndSquads(crossSquads.squads)
+                        input: wrapInTeamAndSquads(this.team.squads)
                     }
                 })
                 .then(({data}) => {
@@ -570,7 +563,7 @@ export default {
                 })
         },
         validate() {
-            const teamsClone = JSON.parse(JSON.stringify(this.team));
+            //const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -582,7 +575,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: this.wrapInTeamAndSquads(teamsClone.squads)
+                        input: wrapInTeamAndSquads(this.team.squads)
                     }
                 })
                 .then(({data}) => {
