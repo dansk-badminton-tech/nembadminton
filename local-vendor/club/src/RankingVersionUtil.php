@@ -15,18 +15,7 @@ class RankingVersionUtil
 
     public static function getRankingVersionByClub(int $clubId) : array
     {
-//        $expires = Carbon::now()->addDay();
-//        /** @var Collection $rankingVersions */
         $rankingVersions = static::fetchVersions($clubId);
-
-//            Cache::remember(self::getCacheKey($clubId), $expires, static function () use ($clubId) {
-//            return static::fetchVersions($clubId);
-//        });
-
-//        if ($rankingVersions->isEmpty()){
-//            Cache::forget(self::getCacheKey($clubId));
-//            $rankingVersions = static::fetchVersions($clubId);
-//        }
 
         return array_reverse(Arr::sort($rankingVersions->pluck('version')));
     }
@@ -41,22 +30,6 @@ class RankingVersionUtil
                         $join->on('clubs.id', '=', 'club_member.club_id')
                              ->where('clubs.id', '=', $clubId);
                     })->get();
-    }
-
-    public static function updateRankingVersionCache(int $clubId) : void
-    {
-        Cache::forget(self::getCacheKey($clubId));
-        self::getRankingVersionByClub($clubId);
-    }
-
-    /**
-     * @param int $clubId
-     *
-     * @return string
-     */
-    public static function getCacheKey(int $clubId) : string
-    {
-        return "ranking-versions-{$clubId}";
     }
 
 }
