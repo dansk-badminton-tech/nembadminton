@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\EloquentSortable\Sortable;
+use Spatie\EloquentSortable\SortableTrait;
 
 /**
  * @property int $id
@@ -16,10 +18,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $teams_id
  * @property int $order
  */
-class Squad extends Model
+class Squad extends Model implements Sortable
 {
 
     use HasFactory;
+    use SortableTrait;
+
+    public array $sortable = [
+        'order_column_name' => 'order',
+        'sort_when_creating' => true
+    ];
 
     protected $fillable = ['playerLimit', 'league', 'order', 'teams_id'];
 

@@ -2,7 +2,7 @@
     <div class="content has-text-grey has-text-centered">
         <p>
             <b-icon
-                icon="users"
+                icon="account-group"
                 size="is-large">
             </b-icon>
         </p>
@@ -11,19 +11,19 @@
             <b-button
                 :loading="loading"
                 type="is-primary"
-                @click="addTeam6">
+                @click="addSquad6">
                 9-kamps hold
             </b-button>
             <b-button
                 :loading="loading"
                 type="is-primary"
-                @click="addTeam8">
+                @click="addSquad8">
                 11-kamps hold
             </b-button>
             <b-button
                 :loading="loading"
                 type="is-primary"
-                @click="addTeam10">
+                @click="addSquad10">
                 13-kamps hold
             </b-button>
         </div>
@@ -37,14 +37,14 @@ import TeamQuery from "../../../queries/team.graphql";
 
 export default {
     name: "AddTeamsButtons",
-    props: ['teamId', 'nextOrder'],
+    props: ['teamId'],
     data() {
         return {
             loading: false
         }
     },
     methods: {
-        addTeam(team){
+        addSquad(team){
             this.loading = true
             this.$apollo.mutate(
                 {
@@ -54,22 +54,11 @@ export default {
                                 id
                                 league
                                 playerLimit
+                                order
                                 categories {
                                     id
                                     category
                                     name
-                                    players {
-                                        id
-                                        gender
-                                        name
-                                        refId
-                                        points{
-                                            category
-                                            points
-                                            position
-                                            vintage
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -79,18 +68,14 @@ export default {
                             ...{
                                 team: {
                                     connect: this.teamId
-                                },
-                                order: this.nextOrder
+                                }
                             },
                             ...team
                         }
                     },
-                    update: (store, { data : { createSquad } }) => {
-                        let variables = {id: this.teamId};
-                        let data = store.readQuery({ query: TeamQuery, variables: variables })
-                        data.team.squads.push(createSquad)
-                        store.writeQuery({ query: TeamQuery, data, variables })
-                    },
+                    refetchQueries: [
+                        {query: TeamQuery, variables: {id: this.teamId}}
+                    ],
                 }).then(() => {
                 this.$emit('team-added')
             }).catch(() => {
@@ -104,14 +89,14 @@ export default {
                 this.loading = false
             })
         },
-        addTeam10() {
-            this.addTeam(TeamFightHelper.generateSquadWith10Players())
+        addSquad10() {
+            this.addSquad(TeamFightHelper.generateSquadWith10Players())
         },
-        addTeam8() {
-            this.addTeam(TeamFightHelper.generateSquadWith8Players())
+        addSquad8() {
+            this.addSquad(TeamFightHelper.generateSquadWith8Players())
         },
-        addTeam6() {
-            this.addTeam(TeamFightHelper.generateSquadWith6Players())
+        addSquad6() {
+            this.addSquad(TeamFightHelper.generateSquadWith6Players())
         },
     }
 }

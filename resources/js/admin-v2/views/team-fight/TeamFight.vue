@@ -107,7 +107,8 @@
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
                                :update-squad="updateSquad"
-                               :change-order="changeOrder"
+                               :move-squad-order-down="moveSquadOrderDown"
+                               :move-squad-order-up="moveSquadOrderUp"
                                :player-move="playerMove"
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
@@ -118,7 +119,7 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-id="teamFightId" :next-order="team?.squads?.length" @team-added="$apollo.queries.team.refresh()"/>
+                    <AddTeamsButtons :team-id="teamFightId"/>
                 </div>
             </div>
         </section>
@@ -320,11 +321,11 @@ export default {
         },
         addPlayer(squad, category, player) {
             this.addPlayerToCategory(squad, category, player)
-                .then(({data}) => {
-                    setTimeout(() => {
-                        this.focusNext(data.createSquadMember)
-                    }, 20);
-                })
+//                .then(({data}) => {
+//                    setTimeout(() => {
+//                        this.focusNext(data.createSquadMember)
+//                    }, 100);
+//                })
         },
         addPlayerToCategory(squad, category, player) {
             this.saving = true
@@ -367,17 +368,9 @@ export default {
                             }
                         }
                     },
-//                    update: (store, {data: {createSquadMember}}) => {
-//                        let variables = {id: this.teamFightId};
-//                        console.log(variables)
-//                        console.log(createSquadMember)
-//                        let data = store.readQuery({query: TeamQuery, variables: variables})
-//                        let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-//                        let squadCache = data.team.squads[squadIndex]
-//                        let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-//                        data.team.squads[squadIndex].categories[categoryIndex].players.push(createSquadMember)
-//                        store.writeQuery({query: TeamQuery, data, variables})
-//                    }
+                    refetchQueries: [
+                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                    ]
                 })
                        .then((data) => {
                            this.$root.$emit('player-added-to-category', data.data.createSquadMember)
@@ -409,17 +402,9 @@ export default {
                                    variables: {
                                        id: player.id
                                    },
-//                                   update: (store, {data: {deleteSquadMember}}) => {
-//                                       let variables = {id: this.teamFightId};
-//                                       let data = store.readQuery({query: TeamQuery, variables: variables})
-//                                       let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-//                                       let squadCache = data.team.squads[squadIndex]
-//                                       let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-//                                       let categoryCache = squadCache.categories[categoryIndex]
-//                                       let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
-//                                       data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
-//                                       store.writeQuery({query: TeamQuery, data, variables})
-//                                   },
+                                   refetchQueries: [
+                                       {query: TeamQuery, variables: {id: this.teamFightId}}
+                                   ]
                                })
                        .then(({data}) => {
                            this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
@@ -563,7 +548,6 @@ export default {
                 })
         },
         validate() {
-            //const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -697,23 +681,23 @@ export default {
                 return addPlayerPromise
             }
         },
-        changeOrder(fromSquad, toSquad) {
+        moveSquadOrderUp(squad) {
             this.saving = true
             this.$apollo.mutate({
                                     mutation: gql`
-                                        mutation updateSquad($input: UpdateSquadInput!){
-                                            updateSquad(input: $input){
+                                        mutation moveSquadOrderUp($input: ID!){
+                                            moveSquadOrderUp(id: $input){
                                                 id
                                                 order
                                             }
                                         }
                                     `,
                                     variables: {
-                                        input: {
-                                            id: fromSquad.id,
-                                            order: toSquad.order
-                                        }
-                                    }
+                                        input: squad.id
+                                    },
+                                    refetchQueries: [
+                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                    ]
                                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -724,26 +708,28 @@ export default {
                             message: `Kunne ikke ændre sortering`
                         })
                 })
-            this.$apollo
-                .mutate({
-                            mutation: gql`
-                                mutation updateSquad($input: UpdateSquadInput!){
-                                    updateSquad(input: $input){
-                                        id
-                                        order
-                                    }
-                                }
-                            `,
-                            variables: {
-                                input: {
-                                    id: toSquad.id,
-                                    order: fromSquad.order
-                                }
-                            },
-                            refetchQueries: [
-                                {query: TeamQuery, variables: {id: this.teamFightId}}
-                            ]
-                        })
+                .finally(() => {
+                    this.saving = false
+                })
+        },
+        moveSquadOrderDown(squad) {
+            this.saving = true
+            this.$apollo.mutate({
+                                    mutation: gql`
+                                        mutation moveSquadOrderDown($input: ID!){
+                                            moveSquadOrderDown(id: $input){
+                                                id
+                                                order
+                                            }
+                                        }
+                                    `,
+                                    variables: {
+                                        input: squad.id
+                                    },
+                                    refetchQueries: [
+                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                    ]
+                                })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {
@@ -827,7 +813,7 @@ export default {
                                 {
                                     duration: 5000,
                                     type: 'is-success',
-                                    message: "Dit nye hold hedder \""+data?.copyTeam?.name+"\""
+                                    message: "Dit nye hold hedder \"" + data?.copyTeam?.name + "\""
                                 })
                             this.$router.push({name: 'team-fight-dashboard'})
                         })

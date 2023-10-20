@@ -14,6 +14,8 @@ extend type Mutation {
     deleteSquad(id: ID! @eq) : Squad @guard @delete
     createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
     updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
+    moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp")
+    moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown")
     updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
@@ -79,7 +81,7 @@ input CreateSquadInput {
     playerLimit: Int!
     league: LeagueType!
     categories: CreateCategoryHasManyInput!
-    order: Int!
+    order: Int
 }
 
 input SquadBelongsTo {

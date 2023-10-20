@@ -28,10 +28,10 @@
                             <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="changeOrder(squad, squads[index-1])" aria-role="listitem">Flyt
+                            <b-dropdown-item :disabled="index === 0" @click="moveSquadOrderUp(squad)" aria-role="listitem">Flyt
                                 hold op
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="changeOrder(squad, squads[index+1])"
+                            <b-dropdown-item :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)"
                                              aria-role="listitem">Flyt hold ned
                             </b-dropdown-item>
                             <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
@@ -125,7 +125,8 @@ export default {
         version: Date,
         clubId: String,
         confirmDelete: Function,
-        changeOrder: Function,
+        moveSquadOrderUp: Function,
+        moveSquadOrderDown: Function,
         playerMove: Function,
         deletePlayer: Function,
         addPlayer: Function,
