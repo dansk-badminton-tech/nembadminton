@@ -61,7 +61,7 @@ export default {
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <p>Ændringerne er kun lokal. Så pointene ændres kun for denne spiller i denne kategori. Husk at opdater pointene for samme spiller i anden kategori. Manuel redigeret spiller er markeret med <b-icon icon="information" /></p>
+                <p>Ændringerne er kun lokale, så pointene ændres kun for denne spiller i denne kategori. Husk at opdatere pointene for samme spiller i anden kategori. En manuelt redigeret spiller er markeret med <b-icon type="is-info" icon="information" /></p>
                 <hr/>
                 <b-field v-for="points in value.points" :key="points.id" :label="resolveCategoryName(points.category)">
                     <b-input

@@ -75,7 +75,7 @@
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
-                            <b-tooltip class="is-pulled-left" label="Point er redigeret manuel">
+                            <b-tooltip class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
                                     v-show="hasCorrectedPoints(player.points)"
                                     icon="information"
