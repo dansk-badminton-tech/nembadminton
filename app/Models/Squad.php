@@ -31,6 +31,20 @@ class Squad extends Model implements Sortable
 
     protected $fillable = ['playerLimit', 'league', 'order', 'teams_id'];
 
+    protected static function boot() : void
+    {
+        parent::boot();
+
+        static::deleted(static function (Sortable $model) {
+            static::setNewOrder($model->buildSortQuery()->pluck($model->primaryKey)->toArray());
+        });
+    }
+
+    public function buildSortQuery() : \Illuminate\Database\Eloquent\Builder
+    {
+        return static::query()->where('teams_id', $this->teams_id)->orderBy('order');
+    }
+
     public function categories() : hasMany
     {
         return $this->hasMany(SquadCategory::class);
