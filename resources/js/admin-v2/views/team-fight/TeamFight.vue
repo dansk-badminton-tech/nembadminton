@@ -405,7 +405,8 @@ export default {
                                    },
                                    refetchQueries: [
                                        {query: TeamQuery, variables: {id: this.teamFightId}}
-                                   ]
+                                   ],
+                                   awaitRefetchQueries: true
                                })
                        .then(({data}) => {
                            this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
@@ -437,16 +438,12 @@ export default {
                                variables: {
                                    id: this.teamFightId,
                                    version: version
-                               }
+                               },
+                               refetchQueries: [
+                                   {query: TeamQuery, variables: {id: this.teamFightId}}
+                               ]
                            })
                        .then(({data}) => {
-                           this.$apollo.queries.team.setOptions({
-                                                                    fetchPolicy: 'network-only'
-                                                                })
-                           this.$apollo.queries.team.refresh()
-                           this.$apollo.queries.team.setOptions({
-                                                                    fetchPolicy: 'cache-first'
-                                                                })
                            this.$buefy.snackbar.open(
                                {
                                    duration: 4000,

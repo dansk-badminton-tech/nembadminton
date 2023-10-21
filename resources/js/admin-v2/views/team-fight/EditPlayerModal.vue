@@ -54,7 +54,7 @@ export default {
     <form action="">
         <div class="modal-card" style="width: auto">
             <header class="modal-card-head">
-                <p class="modal-card-title">Rediger <strong>{{ value.name }}</strong></p>
+                <p class="modal-card-title">Rediger <strong>{{ value.name }}</strong> points</p>
                 <button
                     type="button"
                     class="delete"
