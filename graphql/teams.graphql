@@ -7,12 +7,15 @@ extend type Query {
 }
 
 extend type Mutation {
+    updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
     deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
     createSquadMember(input: CreatePlayerInput! @spread) : SquadMember @create @guard
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
     deleteSquad(id: ID! @eq) : Squad @guard @delete
     createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
     updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
+    moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp")
+    moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown")
     updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
@@ -22,6 +25,15 @@ extend type Mutation {
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+}
+
+input UpdateSquadPointInput {
+    id: ID!
+    category: String
+    points: Int
+    position: Int
+    vintage: Vintage
+    corrected_manually: Boolean
 }
 
 input DateRange {
@@ -70,7 +82,7 @@ input CreateSquadInput {
     playerLimit: Int!
     league: LeagueType!
     categories: CreateCategoryHasManyInput!
-    order: Int!
+    order: Int
 }
 
 input SquadBelongsTo {
@@ -126,10 +138,12 @@ type SquadMember {
 }
 
 type SquadPoint {
+    id: ID!
     points: Int
     position: Int
     category: String
     vintage: String
+    corrected_manually: Boolean
 }
 
 type SquadCategory {

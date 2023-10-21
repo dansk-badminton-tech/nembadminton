@@ -102,12 +102,13 @@
                 </div>
                 <div class="column is-6 container">
                     <h1 class="title">Holdet</h1>
-                    <h1 class="subtitle">Træk spillerne rundt ved at drag-and-drop</h1>
+                    <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
                                :update-squad="updateSquad"
-                               :change-order="changeOrder"
+                               :move-squad-order-down="moveSquadOrderDown"
+                               :move-squad-order-up="moveSquadOrderUp"
                                :player-move="playerMove"
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
@@ -118,7 +119,7 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-id="teamFightId" :next-order="team?.squads?.length" @team-added="$apollo.queries.team.refresh()"/>
+                    <AddTeamsButtons :team-id="teamFightId"/>
                 </div>
             </div>
         </section>
@@ -128,7 +129,6 @@
 <script>
 import Draggable from "vuedraggable"
 import gql from "graphql-tag"
-import omitDeep from 'omit-deep';
 import {
     containsMen,
     containsWomen,
@@ -139,7 +139,7 @@ import {
     isWomensSingle
 } from "../../helpers";
 import TeamQuery from "../../../queries/team.graphql"
-import {hasInvalidCategory, hasInvalidLevel} from "./helper";
+import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
 import ME from "../../../queries/me.gql";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
@@ -298,13 +298,6 @@ export default {
                     })
             })
         },
-        wrapInTeamAndSquads(squads) {
-            const squadsClone = JSON.parse(JSON.stringify(squads));
-            return omitDeep(squadsClone, ['__typename', 'cancellations', 'isInSquad', 'order']).map((squad) => ({
-                name: 'Team X',
-                squad: squad
-            }))
-        },
         confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
@@ -331,7 +324,7 @@ export default {
                 .then(({data}) => {
                     setTimeout(() => {
                         this.focusNext(data.createSquadMember)
-                    }, 20);
+                    }, 100);
                 })
         },
         addPlayerToCategory(squad, category, player) {
@@ -346,6 +339,7 @@ export default {
                                 name
                                 gender
                                 points {
+                                    id
                                     category
                                     points
                                     position
@@ -374,15 +368,10 @@ export default {
                             }
                         }
                     },
-                    update: (store, {data: {createSquadMember}}) => {
-                        let variables = {id: this.teamFightId};
-                        let data = store.readQuery({query: TeamQuery, variables: variables})
-                        let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-                        let squadCache = data.team.squads[squadIndex]
-                        let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-                        data.team.squads[squadIndex].categories[categoryIndex].players.push(createSquadMember)
-                        store.writeQuery({query: TeamQuery, data, variables})
-                    }
+                    refetchQueries: [
+                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                    ],
+                    awaitRefetchQueries: true
                 })
                        .then((data) => {
                            this.$root.$emit('player-added-to-category', data.data.createSquadMember)
@@ -414,17 +403,10 @@ export default {
                                    variables: {
                                        id: player.id
                                    },
-                                   update: (store, {data: {deleteSquadMember}}) => {
-                                       let variables = {id: this.teamFightId};
-                                       let data = store.readQuery({query: TeamQuery, variables: variables})
-                                       let squadIndex = this.team.squads.findIndex(squadOriginal => squadOriginal.id === squad.id);
-                                       let squadCache = data.team.squads[squadIndex]
-                                       let categoryIndex = squadCache.categories.findIndex(categoryOriginal => categoryOriginal.id === category.id);
-                                       let categoryCache = squadCache.categories[categoryIndex]
-                                       let playerIndex = categoryCache.players.findIndex(playerOriginal => playerOriginal.id === player.id)
-                                       data.team.squads[squadIndex].categories[categoryIndex].players.splice(playerIndex, 1)
-                                       store.writeQuery({query: TeamQuery, data, variables})
-                                   },
+                                   refetchQueries: [
+                                       {query: TeamQuery, variables: {id: this.teamFightId}}
+                                   ],
+                                   awaitRefetchQueries: true
                                })
                        .then(({data}) => {
                            this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
@@ -456,16 +438,12 @@ export default {
                                variables: {
                                    id: this.teamFightId,
                                    version: version
-                               }
+                               },
+                               refetchQueries: [
+                                   {query: TeamQuery, variables: {id: this.teamFightId}}
+                               ]
                            })
                        .then(({data}) => {
-                           this.$apollo.queries.team.setOptions({
-                                                                    fetchPolicy: 'network-only'
-                                                                })
-                           this.$apollo.queries.team.refresh()
-                           this.$apollo.queries.team.setOptions({
-                                                                    fetchPolicy: 'cache-first'
-                                                                })
                            this.$buefy.snackbar.open(
                                {
                                    duration: 4000,
@@ -486,7 +464,6 @@ export default {
                        })
         },
         validateSquads() {
-            const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -508,7 +485,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: omitDeep(this.wrapInTeamAndSquads(teamsClone.squads), ['league'])
+                        input: wrapSquadsInTeamWithoutLeague(this.team.squads)
                     }
                 })
                 .then(({data}) => {
@@ -525,7 +502,6 @@ export default {
                 })
         },
         validateCrossSquads() {
-            const crossSquads = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -544,7 +520,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: this.wrapInTeamAndSquads(crossSquads.squads)
+                        input: wrapInTeamAndSquads(this.team.squads)
                     }
                 })
                 .then(({data}) => {
@@ -570,7 +546,6 @@ export default {
                 })
         },
         validate() {
-            const teamsClone = JSON.parse(JSON.stringify(this.team));
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -582,7 +557,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: this.wrapInTeamAndSquads(teamsClone.squads)
+                        input: wrapInTeamAndSquads(this.team.squads)
                     }
                 })
                 .then(({data}) => {
@@ -704,23 +679,23 @@ export default {
                 return addPlayerPromise
             }
         },
-        changeOrder(fromSquad, toSquad) {
+        moveSquadOrderUp(squad) {
             this.saving = true
             this.$apollo.mutate({
                                     mutation: gql`
-                                        mutation updateSquad($input: UpdateSquadInput!){
-                                            updateSquad(input: $input){
+                                        mutation moveSquadOrderUp($input: ID!){
+                                            moveSquadOrderUp(id: $input){
                                                 id
                                                 order
                                             }
                                         }
                                     `,
                                     variables: {
-                                        input: {
-                                            id: fromSquad.id,
-                                            order: toSquad.order
-                                        }
-                                    }
+                                        input: squad.id
+                                    },
+                                    refetchQueries: [
+                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                    ]
                                 })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -731,26 +706,28 @@ export default {
                             message: `Kunne ikke ændre sortering`
                         })
                 })
-            this.$apollo
-                .mutate({
-                            mutation: gql`
-                                mutation updateSquad($input: UpdateSquadInput!){
-                                    updateSquad(input: $input){
-                                        id
-                                        order
-                                    }
-                                }
-                            `,
-                            variables: {
-                                input: {
-                                    id: toSquad.id,
-                                    order: fromSquad.order
-                                }
-                            },
-                            refetchQueries: [
-                                {query: TeamQuery, variables: {id: this.teamFightId}}
-                            ]
-                        })
+                .finally(() => {
+                    this.saving = false
+                })
+        },
+        moveSquadOrderDown(squad) {
+            this.saving = true
+            this.$apollo.mutate({
+                                    mutation: gql`
+                                        mutation moveSquadOrderDown($input: ID!){
+                                            moveSquadOrderDown(id: $input){
+                                                id
+                                                order
+                                            }
+                                        }
+                                    `,
+                                    variables: {
+                                        input: squad.id
+                                    },
+                                    refetchQueries: [
+                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                    ]
+                                })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {
@@ -834,7 +811,7 @@ export default {
                                 {
                                     duration: 5000,
                                     type: 'is-success',
-                                    message: "Dit nye hold hedder \""+data?.copyTeam?.name+"\""
+                                    message: "Dit nye hold hedder \"" + data?.copyTeam?.name + "\""
                                 })
                             this.$router.push({name: 'team-fight-dashboard'})
                         })

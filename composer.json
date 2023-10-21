@@ -35,6 +35,7 @@
         "mll-lab/laravel-graphiql": "^3.0",
         "nuwave/lighthouse": "^6.0",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "spatie/eloquent-sortable": "^4.0",
         "spatie/icalendar-generator": "^2.5",
         "spatie/laravel-ignition": "^2.0",
         "spatie/laravel-prometheus": "^1.0",

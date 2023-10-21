@@ -28,10 +28,10 @@
                             <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
                                              aria-role="listitem">Sæt som LIGA hold
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="changeOrder(squad, squads[index-1])" aria-role="listitem">Flyt
+                            <b-dropdown-item :disabled="index === 0" @click="moveSquadOrderUp(squad)" aria-role="listitem">Flyt
                                 hold op
                             </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="changeOrder(squad, squads[index+1])"
+                            <b-dropdown-item :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)"
                                              aria-role="listitem">Flyt hold ned
                             </b-dropdown-item>
                             <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
@@ -53,6 +53,7 @@
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
+                                class="is-pulled-left"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
@@ -74,7 +75,17 @@
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
+                            <b-tooltip class="is-pulled-left" label="Point er redigeret manuelt">
+                                <b-icon
+                                    v-show="hasCorrectedPoints(player.points)"
+                                    icon="information"
+                                    type="is-info"
+                                    size="is-small">
+                                </b-icon>
+                            </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
+                                          @click="openEditPlayerModal(squad, category, player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
@@ -113,6 +124,8 @@ import {
 } from "../../helpers";
 import PlayersListSearch from "./PlayersListSearch";
 import PlayerSearch from "../common/PlayerSearch.vue";
+import EditPlayerModal from "./EditPlayerModal.vue";
+import gql from "graphql-tag";
 
 export default {
     name: 'TeamTable',
@@ -121,7 +134,8 @@ export default {
         version: Date,
         clubId: String,
         confirmDelete: Function,
-        changeOrder: Function,
+        moveSquadOrderUp: Function,
+        moveSquadOrderDown: Function,
         playerMove: Function,
         deletePlayer: Function,
         addPlayer: Function,
@@ -188,8 +202,26 @@ export default {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         findPositions,
+        hasCorrectedPoints(points){
+            return points.some((point) => point.corrected_manually)
+        },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
+        },
+        openEditPlayerModal(squad, category, player){
+            this.$buefy.modal.open({
+                parent: this,
+                props: {
+                    value: player
+                },
+                events: {
+                    close(){}
+                },
+                canCancel: ["x"],
+                component: EditPlayerModal,
+                hasModalCard: true,
+                trapFocus: true
+            })
         }
     }
 }
