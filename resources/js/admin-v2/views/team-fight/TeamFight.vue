@@ -321,11 +321,11 @@ export default {
         },
         addPlayer(squad, category, player) {
             this.addPlayerToCategory(squad, category, player)
-//                .then(({data}) => {
-//                    setTimeout(() => {
-//                        this.focusNext(data.createSquadMember)
-//                    }, 100);
-//                })
+                .then(({data}) => {
+                    setTimeout(() => {
+                        this.focusNext(data.createSquadMember)
+                    }, 100);
+                })
         },
         addPlayerToCategory(squad, category, player) {
             this.saving = true
@@ -370,7 +370,8 @@ export default {
                     },
                     refetchQueries: [
                         {query: TeamQuery, variables: {id: this.teamFightId}}
-                    ]
+                    ],
+                    awaitRefetchQueries: true
                 })
                        .then((data) => {
                            this.$root.$emit('player-added-to-category', data.data.createSquadMember)

@@ -21,6 +21,7 @@ query team($id: ID!){
                         points
                         position
                         vintage
+                        corrected_manually
                     }
                 }
             }

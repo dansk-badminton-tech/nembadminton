@@ -33,6 +33,7 @@ input UpdateSquadPointInput {
     points: Int
     position: Int
     vintage: Vintage
+    corrected_manually: Boolean
 }
 
 input DateRange {
@@ -142,6 +143,7 @@ type SquadPoint {
     position: Int
     category: String
     vintage: String
+    corrected_manually: Boolean
 }
 
 type SquadCategory {

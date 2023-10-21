@@ -53,6 +53,7 @@
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id" />
                             <b-tooltip
+                                class="is-pulled-left"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
@@ -73,6 +74,14 @@
                                     ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
+                            </b-tooltip>
+                            <b-tooltip class="is-pulled-left" label="Point er redigeret manuel">
+                                <b-icon
+                                    v-show="hasCorrectedPoints(player.points)"
+                                    icon="information"
+                                    type="is-info"
+                                    size="is-small">
+                                </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
@@ -193,6 +202,9 @@ export default {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         findPositions,
+        hasCorrectedPoints(points){
+            return points.some((point) => point.corrected_manually)
+        },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
         },
