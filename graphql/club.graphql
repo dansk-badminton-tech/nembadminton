@@ -32,6 +32,43 @@ extend type Query{
     logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
 }
 
+extend type Mutation {
+    createMember(input: CreateMemberInput! @spread): Member @create @guard @inject(context: "user.id", name: "owner_id")
+}
+
+input CreateMemberInput {
+    gender: Gender!
+    name: String!
+    refId: String!
+    points: CreatePointMemberHasManyInput!
+    clubs: CreateMemberHasManyInput!
+}
+
+input CreateMemberHasManyInput {
+    connect: [ID!]
+}
+
+input CreatePointMemberHasManyInput {
+    create: [CreatePointMemberInput!]!
+}
+
+input CreatePointMemberInput {
+    category: Category
+    points: Int!
+    vintage: Vintage!
+    version: Date!
+}
+
+enum Category {
+    LEVEL @enum(value: null)
+    DD @enum(value: "DD")
+    DS @enum(value: "DS")
+    MxD @enum(value: "MxD")
+    HD @enum(value: "HD")
+    HS @enum(value: "HS")
+    MxH @enum(value: "MxH")
+}
+
 enum Gender {
     MEN @enum(value: "M")
     WOMEN @enum(value: "K")

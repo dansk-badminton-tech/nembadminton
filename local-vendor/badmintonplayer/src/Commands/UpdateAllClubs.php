@@ -42,10 +42,7 @@ class UpdateAllClubs extends Command
             $clubId = $club->id;
             ImportMembers::withChain([
                 new ImportPoints($clubId, RankingPeriodType::CURRENT),
-                new ImportPoints($clubId, RankingPeriodType::PREVIOUS),
-                static function() use ($clubId) {
-                    RankingVersionUtil::updateRankingVersionCache($clubId);
-                }
+                new ImportPoints($clubId, RankingPeriodType::PREVIOUS)
             ])->dispatch([$clubId]);
         }
         return 0;

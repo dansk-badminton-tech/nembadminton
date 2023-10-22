@@ -18,6 +18,9 @@
                 <b-icon size="is-small" v-if="hideCancellation" icon="account-off"></b-icon>
                 <span v-if="hideCancellation">Vis afbud</span>
             </b-checkbox-button>
+            <b-button icon-left="plus" @click="openAddMemberModal">
+                Tilføj spiller
+            </b-button>
         </b-field>
         <b-table
             class="mt-5"
@@ -78,6 +81,8 @@
 
 import gql from 'graphql-tag'
 import {convertRankingToCategory, debounce, findLevel} from "../../helpers";
+import EditPlayerModal from "./EditPlayerModal.vue";
+import AddMemberModal from "./AddMemberModal.vue";
 
 
 export default {
@@ -268,6 +273,22 @@ export default {
         onPageChange(page) {
             this.currentPage = page
         },
+        openAddMemberModal(){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       props: {
+                                           version: this.version
+                                       },
+                                       events: {
+                                           close(){}
+                                       },
+                                       canCancel: ["x"],
+                                       component: AddMemberModal,
+                                       hasModalCard: true,
+                                       trapFocus: true
+                                   })
+        }
+
     },
     apollo: {
         memberSearch: {
