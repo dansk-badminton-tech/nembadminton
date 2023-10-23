@@ -107,6 +107,17 @@ export function convertCategoryAndGenderToFinalCategory(category, gender){
     }
 }
 
+export function convertShortCategoryAndGenderToFinalCategory(shortCategory, gender){
+    if(shortCategory === "MD"){
+        if(gender === "MEN"){
+            return "MxH"
+        }else{
+            return "MxD"
+        }
+    }
+    return shortCategory
+}
+
 export function timeToMonth(currentVersion){
     let date = new Date(Date.parse(currentVersion))
     let dateString = date.toLocaleString("da-DK", {month: "long"});

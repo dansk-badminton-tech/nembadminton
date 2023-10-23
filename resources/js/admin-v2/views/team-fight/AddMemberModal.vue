@@ -1,5 +1,4 @@
 <script>
-import {debounce} from "../../helpers";
 import gql from "graphql-tag";
 import {convertCategoryAndGenderToFinalCategory, timeToMonth, vintageOptions} from "./helper";
 import ME from "../../../queries/me.gql";
@@ -96,7 +95,8 @@ export default {
             @click="$emit('close')"/>
       </header>
       <section class="modal-card-body">
-        <p>Spilleren bliver oprettet på ranglisten <strong>{{ timeToMonth(this.version.toISOString().substring(0, 10)) }}</strong>, spilleren kan ses af alle som har klubben tilknyttet.</p>
+          <b-message type="is-info">Brug kun denne funktion hvis spilleren ikke findes på nembadminton.dk men på badmintonplayer.dk.</b-message>
+          <p>Spilleren bliver oprettet på ranglisten <strong>{{ timeToMonth(this.version.toISOString().substring(0, 10)) }}</strong>, spilleren kan ses af <strong>alle</strong> som har klubben tilknyttet.</p>
         <hr/>
         <b-field label="Navn">
           <b-input
@@ -117,7 +117,7 @@ export default {
         <b-field label="Køn">
           <b-select v-model="gender" required expanded>
             <option value="MEN">Mand</option>
-            <option value="WOMEN">Kvinde</option>
+            <option value="WOMEN">Dame</option>
           </b-select>
         </b-field>
         <b-field label="Årgang">
@@ -140,7 +140,11 @@ export default {
         <b-button
             :loading="this.loading"
             native-type="submit"
-            label="Gem og luk"/>
+            label="Gem"/>
+          <b-button
+              :loading="this.loading"
+              @click="$emit('close')"
+              label="Luk"/>
       </footer>
     </div>
   </form>

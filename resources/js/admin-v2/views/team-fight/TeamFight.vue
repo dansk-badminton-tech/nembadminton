@@ -332,7 +332,7 @@ export default {
             return this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation createSquadMember($input: CreatePlayerInput!){
+                        mutation createSquadMember($input: CreateSquadMemberInput!){
                             createSquadMember(input: $input){
                                 id
                                 refId
