@@ -34,6 +34,7 @@ extend type Query{
 
 extend type Mutation {
     createMember(input: CreateMemberInput! @spread): Member @create @guard @inject(context: "user.id", name: "owner_id")
+    deleteMember(id: ID! @whereKey) : Member @delete @guard @can(ability: "delete", find: "id")
 }
 
 input CreateMemberInput {
@@ -123,6 +124,7 @@ type Member {
     refId: String!
     name: String!
     gender: String!
+    ownerId: Int @rename(attribute: "owner_id")
     vintage: Vintage! @method(name: "getVintage")
     birthday: Date! @method(name: "getBirthday")
     points(version: String @eq): [Point!] @hasMany
