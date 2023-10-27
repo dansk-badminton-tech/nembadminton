@@ -14,6 +14,7 @@
 <script>
 
 import gql from 'graphql-tag'
+import {timeToMonth} from "../team-fight/helper";
 
 export default {
     name: "RankingVersionSelect",
@@ -22,11 +23,7 @@ export default {
         onFocus(){
             this.$emit('focus')
         },
-        timeToMonth(currentVersion){
-            let date = new Date(Date.parse(currentVersion))
-            let dateString = date.toLocaleString("da-DK", {month: "long"});
-            return dateString.charAt(0).toUpperCase() + dateString.slice(1) + " "+date.toLocaleString("da-DK", {year: "numeric"})
-        },
+        timeToMonth: timeToMonth,
         hintText(currentVersion){
             if(this.playingDate === null || this.playingDate === undefined){
                 return ''

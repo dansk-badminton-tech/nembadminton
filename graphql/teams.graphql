@@ -9,7 +9,7 @@ extend type Query {
 extend type Mutation {
     updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
     deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
-    createSquadMember(input: CreatePlayerInput! @spread) : SquadMember @create @guard
+    createSquadMember(input: CreateSquadMemberInput! @spread) : SquadMember @create @guard
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
     deleteSquad(id: ID! @eq) : Squad @guard @delete
     createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
@@ -47,7 +47,7 @@ input UpdateCategoryInputNew {
     name: String
 }
 
-input CreatePlayerInput {
+input CreateSquadMemberInput {
     category: CreateCategoryBelongsTo!
     gender: String!
     name: String!
@@ -68,6 +68,7 @@ input CreatePointInput {
     points: Int
     position: Int
     vintage: Vintage
+    corrected_manually: Boolean
 }
 
 input UpdateSquadInput {
