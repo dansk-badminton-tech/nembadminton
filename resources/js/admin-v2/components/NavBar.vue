@@ -42,16 +42,16 @@
         :class="{ 'is-active': isMenuActive }"
     >
       <div class="navbar-end">
-        <!--                <a-->
-        <!--                    href="#"-->
-        <!--                    class="navbar-item has-divider is-desktop-icon-only"-->
-        <!--                    title="Notificationer"-->
-        <!--                >-->
-        <!--                    <b-icon-->
-        <!--                        icon="bell-outline"-->
-        <!--                    />-->
-        <!--                    <span>GitHub</span>-->
-        <!--                </a>-->
+        <a
+            href="#"
+            class="navbar-item has-divider is-desktop-icon-only"
+            title="Notificationer"
+        >
+            <b-icon
+                icon="bell-outline"
+            />
+            <span>GitHub</span>
+        </a>
         <nav-bar-menu class="has-divider has-user-avatar">
           <user-avatar/>
           <div class="is-user-name">
@@ -60,7 +60,7 @@
 
           <div
               slot="dropdown"
-              class="navbar-dropdown"
+              class="navbar-dropdown is-right"
           >
             <router-link
                 :to="{name: 'profile'}"
