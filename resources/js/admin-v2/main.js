@@ -38,7 +38,7 @@ Vue.use(Buefy)
 Vue.use(VueApollo)
 Vue.use(VueClipboard)
 Vue.component('Fragment', Fragment)
-
+Vue.component('kustomer', require('./components/Kustomer/Kustomer.vue'));
 
 new Vue({
   router,
