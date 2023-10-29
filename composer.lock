@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d2d8e2024ea79ac6162d22c97965224",
+    "content-hash": "eef7a58a0a98a6f86108eb3657f74e49",
     "packages": [
         {
             "name": "brick/math",
@@ -1041,6 +1041,26 @@
                 }
             },
             "description": "Administration for members",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "flycompany/local-notification",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/notification",
+                "reference": "c06caa9257245b785240df9d6fdbff8df4736957"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\Notification\\": "src/"
+                }
+            },
+            "description": "Notification",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -3717,6 +3737,65 @@
                 }
             ],
             "time": "2023-06-21T08:46:11+00:00"
+        },
+        {
+            "name": "mydnic/laravel-kustomer",
+            "version": "v1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mydnic/laravel-feedback-component.git",
+                "reference": "6400314f1cfb80b4f09812e7e70cf1a9de5a3039"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mydnic/laravel-feedback-component/zipball/6400314f1cfb80b4f09812e7e70cf1a9de5a3039",
+                "reference": "6400314f1cfb80b4f09812e7e70cf1a9de5a3039",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^7.0|^8.0|^9.0|^10.0",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^3.7.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mydnic\\Kustomer\\KustomerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mydnic\\Kustomer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Clément Rigo",
+                    "email": "rigoclement@mydnic.be"
+                }
+            ],
+            "description": "Open Source Feedback Interface for Laravel",
+            "homepage": "https://github.com/mydnic/laravel-feedback-component",
+            "keywords": [
+                "customer",
+                "feedback",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/mydnic/laravel-feedback-component/issues",
+                "source": "https://github.com/mydnic/laravel-feedback-component/tree/v1.9.1"
+            },
+            "time": "2023-10-02T10:54:12+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -12607,6 +12686,7 @@
         "flycompany/local-club": 20,
         "flycompany/local-import": 20,
         "flycompany/local-members": 20,
+        "flycompany/local-notification": 20,
         "flycompany/local-scraper": 20,
         "flycompany/local-stats": 20,
         "flycompany/local-team-fight": 20,
@@ -12626,5 +12706,5 @@
         "ext-pcntl": "1.0",
         "php": "8.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

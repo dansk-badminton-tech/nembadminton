@@ -29,12 +29,12 @@ export default [
             label: 'FAQ',
             icon: 'frequently-asked-questions'
         },
-        {
-            href: 'https://nembadminton.voteboards.com/',
-            label: 'Forslå ide',
-            icon: 'lightbulb',
-            target: '_blank'
-        },
+//        {
+//            href: 'https://nembadminton.voteboards.com/',
+//            label: 'Forslå ide',
+//            icon: 'lightbulb',
+//            target: '_blank'
+//        },
     ]
 //    'Examples',
 //    [

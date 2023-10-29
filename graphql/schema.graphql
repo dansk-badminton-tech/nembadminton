@@ -10,7 +10,7 @@ type Mutation
 #import users.graphql
 #import club.graphql
 #import teams.graphql
-#import subscription.graphql
+#import notifications.graphql
 #import stats.graphql
 #import badmintonplayer.graphql
 #import badmintonplayer-api.graphql

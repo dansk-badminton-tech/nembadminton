@@ -2,6 +2,19 @@ extend type Mutation {
     subscribeWebPush(input: SubscribeWebPushInput!) : PushSubscription @field(resolver: "App\\GraphQL\\Mutations\\Subscription@subscribe")
     unsubscribeWebPush(input: UnsubscribeWebPushInput!) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@unsubscribe")
     sendNotification : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@sendNotification")
+    notificationRead : Boolean @field(resolver: "FlyCompany\\Notification\\GraphQL\\Mutation\\Notification@read")
+}
+
+extend type Query {
+    notifications: [Notification!]! @all(scopes: ["myNotifications"]) @where(key: "read_at", value: null)
+}
+
+type Notification {
+    id: ID!
+    data: String!
+    type: String!
+    readAt: DateTime @rename(attribute: "read_at")
+    createdAt: DateTime @rename(attribute: "created_at")
 }
 
 input UnsubscribeWebPushInput {

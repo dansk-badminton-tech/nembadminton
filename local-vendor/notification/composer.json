@@ -1,0 +1,10 @@
+{
+    "name": "flycompany/local-notification",
+    "type": "library",
+    "description": "Notification",
+    "autoload": {
+        "psr-4": {
+            "FlyCompany\\Notification\\": "src/"
+        }
+    }
+}
