@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6a9069178d97a1bd5dbf6156dfa707c8",
+    "content-hash": "eef7a58a0a98a6f86108eb3657f74e49",
     "packages": [
         {
             "name": "brick/math",
@@ -1041,6 +1041,26 @@
                 }
             },
             "description": "Administration for members",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "flycompany/local-notification",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "local-vendor/notification",
+                "reference": "c06caa9257245b785240df9d6fdbff8df4736957"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FlyCompany\\Notification\\": "src/"
+                }
+            },
+            "description": "Notification",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -12666,6 +12686,7 @@
         "flycompany/local-club": 20,
         "flycompany/local-import": 20,
         "flycompany/local-members": 20,
+        "flycompany/local-notification": 20,
         "flycompany/local-scraper": 20,
         "flycompany/local-stats": 20,
         "flycompany/local-team-fight": 20,

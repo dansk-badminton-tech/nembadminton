@@ -20,6 +20,7 @@
         "flycompany/local-club": "dev-master",
         "flycompany/local-import": "dev-master",
         "flycompany/local-members": "dev-master",
+        "flycompany/local-notification": "dev-master",
         "flycompany/local-scraper": "dev-master",
         "flycompany/local-stats": "dev-master",
         "flycompany/local-team-fight": "dev-master",
