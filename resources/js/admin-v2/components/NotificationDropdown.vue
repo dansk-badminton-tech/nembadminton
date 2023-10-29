@@ -74,7 +74,6 @@ export default {
     >
         <template #trigger>
             <a
-                href="#"
                 class="navbar-item has-divider"
                 title="Notificationer">
                 <b-icon
@@ -94,7 +93,7 @@ export default {
             scrollable
             max-height="300px"
         >
-            <div v-if="parsedNotification?.length === 0" class="dropdown-item">
+            <div v-show="parsedNotification?.length === 0" class="dropdown-item">
                 Ingen notifikationer
             </div>
             <div class="dropdown-item" v-for="notification in parsedNotification">
