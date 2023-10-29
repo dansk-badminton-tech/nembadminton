@@ -40,5 +40,7 @@ class Test extends Command
         /** @var User $user */
         $user = User::query()->find(1);
         $user->notifyNow(new Release('Ny feature', 'Du kan nu rediger'));
+        $user = User::query()->find(2);
+        $user->notifyNow(new Release('Stop', 'Du kan nu rediger'));
     }
 }

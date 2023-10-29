@@ -6,7 +6,7 @@ extend type Mutation {
 }
 
 extend type Query {
-    notifications: [Notification!]! @all @inject(context: "user.id", name: "notifiable_id") @where(key: "read_at", value: null)
+    notifications: [Notification!]! @all(scopes: ["myNotifications"]) @where(key: "read_at", value: null)
 }
 
 type Notification {
