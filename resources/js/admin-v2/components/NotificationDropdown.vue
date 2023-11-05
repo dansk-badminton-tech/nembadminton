@@ -108,7 +108,7 @@ export default {
                             <p>
                                 <strong>{{notification.dataParsed.title}}</strong> <small>{{timeAgo(notification.createdAt)}}</small>
                                 <br>
-                                {{notification.dataParsed.message}}
+                                <span style="white-space: pre-wrap;">{{notification.dataParsed.message}}</span>
                             </p>
                         </div>
                     </div>
