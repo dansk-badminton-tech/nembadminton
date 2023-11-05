@@ -3,10 +3,32 @@ extend type Mutation {
     unsubscribeWebPush(input: UnsubscribeWebPushInput!) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@unsubscribe")
     sendNotification : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@sendNotification")
     notificationRead : Boolean @field(resolver: "FlyCompany\\Notification\\GraphQL\\Mutation\\Notification@read")
+    notificationSend(input: NotificationSendInput!) : Boolean! @field(resolver: "FlyCompany\\Notification\\GraphQL\\Mutation\\Notification@send") @guard
 }
 
 extend type Query {
     notifications: [Notification!]! @all(scopes: ["myNotifications"]) @where(key: "read_at", value: null)
+    notificationReceivers: [User!]! @all @guard @can(ability: "admin")
+}
+
+input NotificationSendInput {
+    receivers: NotificationReceiversInput!
+    message: NotificationMessageInput!
+}
+
+input NotificationMessageInput {
+    title: String!
+    body: String!
+    type: NotificationType!
+}
+
+enum NotificationType {
+    Release @enum(value: "Release")
+}
+
+input NotificationReceiversInput {
+    all: Boolean
+    users: [ID!]
 }
 
 type Notification {

@@ -5,21 +5,6 @@
             {{ me?.club?.name1 }}
         </hero-bar>
         <section class="section is-main-section">
-            <notification-bar class="is-info">
-                Nembadminton er ændret til at understøtte reglementsændringerne for 2023/2024-sæsonen, så du forsat kan sætte hold nemt og bekymringsfrit.
-                <a
-                    slot="right"
-                    href="https://badminton.dk/2023/07/10/reglementsaendringer-til-2023-2024-saesonen/"
-                    target="_blank"
-                    class="button is-white is-small"
-                >
-                    <b-icon
-                        icon="open-in-new"
-                        custom-size="default"
-                    />
-                    <span>Læs nyheden her</span>
-                </a>
-            </notification-bar>
             <tiles-block>
                 <card-widget
                     class="tile is-child"

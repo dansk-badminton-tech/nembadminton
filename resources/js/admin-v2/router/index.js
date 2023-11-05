@@ -70,6 +70,15 @@ const routes = [
         component: () => import(/* webpackChunkName: "profile" */ '@/views/my-club/MyClubs.vue')
     },
     {
+        path: '/superadmin/notification',
+        name: 'superadmin-notification',
+        component: () => import('../views/superadmin/Notification.vue'),
+        meta: {
+            title: 'Send Notification',
+            requiresAuth: true
+        },
+    },
+    {
         path: '/full-page',
         component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPageView.vue'),
         children: [
