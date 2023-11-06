@@ -37,7 +37,7 @@
                     Validere hold
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
-                    <b-tooltip label="Slå 'fuldendt hold'-check fra. Kan bruges hvis du mangler en herre eller dame">
+                    <b-tooltip label="Kan bruges hvis du ikke kan stille et fuld hold">
                         <b-icon icon="cancel"></b-icon>
                         {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
                     </b-tooltip>
