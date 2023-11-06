@@ -120,7 +120,7 @@ export default {
             <hr v-show="parsedNotification?.length !== 0" class="dropdown-divider">
             <a v-show="parsedNotification?.length !== 0" @click.prevent="readAll" href="#" class="dropdown-item">
                 <b-icon size="is-small" icon="check"></b-icon>
-                Marker alle some læst
+                Marker alle som læst
             </a>
         </b-dropdown-item>
     </b-dropdown>
