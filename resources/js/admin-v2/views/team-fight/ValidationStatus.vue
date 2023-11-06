@@ -51,7 +51,7 @@ export default {
     },
     computed: {
         incompleteTeamTip() {
-            return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Der findes et eller flere ugyldig hold. Skal være OK før de andre tjeks kører' : 'Alle kategorier er udfyldt korrekt.'))
+            return (this.incompleteTeam === null ? 'Deaktiveret af bruger' : (this.incompleteTeam ? 'Der findes et eller flere ugyldig hold. Skal være OK før de andre tjeks kører' : 'Alle kategorier er udfyldt korrekt.'))
         },
         incompleteTeamText() {
             return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Fejl' : 'OK'))
