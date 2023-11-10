@@ -608,6 +608,9 @@ class TeamValidator
         $pairsInCategory = $this->getPairByCategory($squad->categories, $category);
         while ($pairsInCategory->count() > 1) {
             $belowPair = $pairsInCategory->pop();
+            if(count($belowPair) !== 2){
+                continue;
+            }
             $belowPairsPoints = $this->getPairPoints($belowPair, $category);
             foreach ($pairsInCategory as $abovePair) {
                 $abovePairsPoints = $this->getPairPoints($abovePair, $category);

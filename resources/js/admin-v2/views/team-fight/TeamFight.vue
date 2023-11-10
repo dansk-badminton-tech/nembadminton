@@ -36,6 +36,12 @@
                     <b-icon icon="brain"></b-icon>
                     Validere hold
                 </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
+                    <b-tooltip label="Kan bruges hvis du ikke kan stille et fuld hold">
+                        <b-icon icon="cancel"></b-icon>
+                        {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
+                    </b-tooltip>
+                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
                     <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
                         <b-icon icon="update"></b-icon>
@@ -182,6 +188,9 @@ export default {
             }).join(', ')
         },
         resolveIncompleteTeam() {
+            if(this.ignoreIncompleteTeam){
+                return null
+            }
             if (this.validateBasicSquads.length === 0) {
                 return null
             }
@@ -220,7 +229,8 @@ export default {
             team: {
                 squads: [],
                 club: {}
-            }
+            },
+            ignoreIncompleteTeam: false
         }
     },
     apollo: {
@@ -242,6 +252,10 @@ export default {
         }
     },
     methods: {
+        deactivateIncompleteCheck(){
+            this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
+            this.validate()
+        },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
             this.deletePlayerFromCategory(sourceSquad, sourceCategory, player).then(() => {
                 this.addPlayerToCategory(targetSquad, targetCategory, player)
@@ -562,7 +576,7 @@ export default {
                 })
                 .then(({data}) => {
                     this.validateBasicSquads = data.validateBasicSquads;
-                    if (!this.resolveIncompleteTeam) {
+                    if (!this.resolveIncompleteTeam || this.ignoreIncompleteTeam) {
                         this.canValidateCrossSquads = true
                         this.canValidateSquads = true
                         this.validateSquads()
