@@ -8,6 +8,11 @@ echo ""
 
 sshpass -p "${SSH_PASS}" ssh badminton.social@linux368.unoeuro.com echo "Testing SSH password"
 
+export MIX_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
+export MIX_PUSHER_HOST="ws.platform.nembadminton.dk"
+export MIX_PUSHER_PORT="443"
+export MIX_PUSHER_SCHEME="https"
+
 echo "Building frontend"
 yarn install --frozen-lockfile --no-progress
 yarn run production
