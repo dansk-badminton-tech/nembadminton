@@ -58,6 +58,7 @@ services:
       - phpmyadmin
       - smtp
       - redis
+      - soketi
 
   artisan:
     image: flycompany/holdkamp
@@ -117,6 +118,17 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+
+  soketi:
+    image: quay.io/soketi/soketi:1.4-16-debian
+    environment:
+      SOKETI_DEFAULT_APP_ID: nembadminton-app-id
+      SOKETI_DEFAULT_APP_KEY: nembadminton-app-key
+      SOKETI_DEFAULT_APP_SECRET: nembadminton-app-secret
+      SOKETI_DEBUG: 0
+    ports:
+      - 6001:6001
+      - 9601:9601
 
 volumes:
   db-data:

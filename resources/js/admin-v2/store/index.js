@@ -6,122 +6,129 @@ import {ApolloClientInstance} from "../../graphql";
 
 Vue.use(Vuex)
 
-const store = new Vuex.Store({
-  state: {
-    /* User */
-    userName: null,
-    userEmail: null,
-    userAvatar: null,
+const store = new Vuex.Store(
+    {
+        state: {
+            /* User */
+            userId: null,
+            userName: null,
+            userEmail: null,
+            userAvatar: null,
 
-    /* NavBar */
-    isNavBarVisible: true,
+            /* NavBar */
+            isNavBarVisible: true,
 
-    /* FooterBar */
-    isFooterBarVisible: true,
+            /* FooterBar */
+            isFooterBarVisible: true,
 
-    /* Aside */
-    isAsideVisible: true,
-    isAsideMobileExpanded: false,
+            /* Aside */
+            isAsideVisible: true,
+            isAsideMobileExpanded: false,
 
-    /* Sample data (commonly used) */
-    clients: []
-  },
-  mutations: {
-    /* A fit-them-all commit */
-    basic (state, payload) {
-      state[payload.key] = payload.value
-    },
+            /* Sample data (commonly used) */
+            clients: []
+        },
+        mutations: {
+            /* A fit-them-all commit */
+            basic(state, payload) {
+                state[payload.key] = payload.value
+            },
 
-    /* User */
-    user (state, payload) {
-      if (payload.name) {
-        state.userName = payload.name
-      }
-      if (payload.email) {
-        state.userEmail = payload.email
-      }
-      if (payload.avatar) {
-        state.userAvatar = payload.avatar
-      }
-    },
+            /* User */
+            user(state, payload) {
+                if (payload.id) {
+                    state.userId = parseInt(payload.id)
+                }
+                if (payload.name) {
+                    state.userName = payload.name
+                }
+                if (payload.email) {
+                    state.userEmail = payload.email
+                }
+                if (payload.avatar) {
+                    state.userAvatar = payload.avatar
+                }
+            },
 
-      logout(state, payload) {
-        state.userName = null
-        state.userEmail = null
-        state.userAvatar = null
-          clearAuthToken()
-          ApolloClientInstance.cache.reset()
-      },
+            logout(state, payload) {
+                state.userName = null
+                state.userEmail = null
+                state.userAvatar = null
+                clearAuthToken()
+                ApolloClientInstance.cache.reset()
+            },
 
-    /* Aside Mobile */
-    asideMobileStateToggle (state, payload = null) {
-      const htmlClassName = 'has-aside-mobile-expanded'
+            /* Aside Mobile */
+            asideMobileStateToggle(state, payload = null) {
+                const htmlClassName = 'has-aside-mobile-expanded'
 
-      let isShow
+                let isShow
 
-      if (payload !== null) {
-        isShow = payload
-      } else {
-        isShow = !state.isAsideMobileExpanded
-      }
+                if (payload !== null) {
+                    isShow = payload
+                } else {
+                    isShow = !state.isAsideMobileExpanded
+                }
 
-      if (isShow) {
-        document.documentElement.classList.add(htmlClassName)
-      } else {
-        document.documentElement.classList.remove(htmlClassName)
-      }
+                if (isShow) {
+                    document.documentElement.classList.add(htmlClassName)
+                } else {
+                    document.documentElement.classList.remove(htmlClassName)
+                }
 
-      state.isAsideMobileExpanded = isShow
-    },
+                state.isAsideMobileExpanded = isShow
+            },
 
-    /* Full Page mode */
-    fullPage (state, payload) {
-      state.isNavBarVisible = !payload
-      state.isAsideVisible = !payload
-      state.isFooterBarVisible = !payload
-    }
-  },
-  actions: {
-    asideDesktopOnlyToggle (store, payload = null) {
-      let method
+            /* Full Page mode */
+            fullPage(state, payload) {
+                state.isNavBarVisible = !payload
+                state.isAsideVisible = !payload
+                state.isFooterBarVisible = !payload
+            }
+        },
+        actions: {
+            asideDesktopOnlyToggle(store, payload = null) {
+                let method
 
-      switch (payload) {
-        case true:
-          method = 'add'
-          break
-        case false:
-          method = 'remove'
-          break
-        default:
-          method = 'toggle'
-      }
-      document.documentElement.classList[method]('has-aside-desktop-only-visible')
-    },
-    toggleFullPage ({ commit }, payload) {
-      commit('fullPage', payload)
+                switch (payload) {
+                    case true:
+                        method = 'add'
+                        break
+                    case false:
+                        method = 'remove'
+                        break
+                    default:
+                        method = 'toggle'
+                }
+                document.documentElement.classList[method]('has-aside-desktop-only-visible')
+            },
+            toggleFullPage({commit}, payload) {
+                commit('fullPage', payload)
 
-      document.documentElement.classList[!payload ? 'add' : 'remove']('has-aside-left', 'has-navbar-fixed-top')
-    },
-    fetch ({ commit }, payload) {
-      axios
-        .get(`data-sources/${payload}.json`)
-        .then((r) => {
-          if (r.data && r.data.data) {
-            commit('basic', {
-              key: payload,
-              value: r.data.data
-            })
-          }
-        })
-        .catch(error => {
-          alert(error.message)
-        })
-    }
-  }
-})
+                document.documentElement.classList[!payload
+                                                   ? 'add'
+                                                   : 'remove']('has-aside-left', 'has-navbar-fixed-top')
+            },
+            fetch({commit}, payload) {
+                axios
+                    .get(`data-sources/${payload}.json`)
+                    .then((r) => {
+                        if (r.data && r.data.data) {
+                            commit('basic', {
+                                key: payload,
+                                value: r.data.data
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        alert(error.message)
+                    })
+            }
+        }
+    })
 
 export default store
 
-export function useStore () {
-  return store
+export function useStore() {
+    return store
 }

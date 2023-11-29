@@ -11,6 +11,10 @@ extend type Query {
     notificationReceivers: [User!]! @all @guard @can(ability: "admin")
 }
 
+extend type Subscription {
+    notifications(userId: Int!): Notification @guard
+}
+
 input NotificationSendInput {
     receivers: NotificationReceiversInput!
     message: NotificationMessageInput!

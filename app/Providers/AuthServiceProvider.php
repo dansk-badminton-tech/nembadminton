@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Member;
 use App\Models\SquadMember;
+use App\Models\Teams;
 use App\Models\User;
 use App\Policies\MemberPolicy;
 use App\Policies\SquadMemberPolicy;
+use App\Policies\TeamsPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -19,7 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         SquadMember::class => SquadMemberPolicy::class,
-        Member::class => MemberPolicy::class
+        Member::class => MemberPolicy::class,
+        Teams::class => TeamsPolicy::class
     ];
 
     /**
