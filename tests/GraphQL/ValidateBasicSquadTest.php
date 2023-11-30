@@ -76,6 +76,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'spotsFulfilled' => true
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -141,6 +146,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'spotsFulfilled' => false
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -205,6 +215,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'index' => 0,
                             'spotsFulfilled' => false
                         ]
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -307,6 +322,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'index' => 1,
                             'spotsFulfilled' => false
                         ]
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -447,6 +467,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'spotsFulfilled' => true
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -512,6 +537,11 @@ class ValidateBasicSquadTest extends BaseTestCase
                             'index' => 0,
                             'spotsFulfilled' => true
                         ]
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);

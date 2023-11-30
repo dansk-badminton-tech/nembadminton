@@ -141,6 +141,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
             ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -244,6 +249,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             'refId' => $squad1Women2->refId,
                             'gender' => 'K'
                         ],
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -390,6 +400,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             'refId' => $squad2Women2->refId,
                             'gender' => 'K'
                         ]
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -565,6 +580,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             ]
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -679,6 +699,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             ]
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -722,6 +747,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             ]
                         ]
                     ]
+                ]
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
                 ]
             ]
         ]);
@@ -796,6 +826,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
                             ]
                         ]
                     ]
+                ]
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
                 ]
             ]
         ]);
