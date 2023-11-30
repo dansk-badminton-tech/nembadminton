@@ -78,6 +78,9 @@ export default {
     apollo: {
         notifications: {
             query: Notification,
+            skip(){
+                return this.userId === null
+            },
             subscribeToMore: {
                 document: gql`subscription notifications($userId: Int!){
                     notifications(userId: $userId){
