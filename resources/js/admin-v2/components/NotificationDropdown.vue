@@ -1,19 +1,28 @@
 <script>
 import gql from "graphql-tag";
 import Notification from "../../queries/notifications.graphql"
+import {mapState} from "vuex";
 
 export default {
     name: "NotificationDropdown",
     computed: {
-        parsedNotification(){
+        parsedNotification() {
             return this.notifications?.map((notification) => {
-                notification.dataParsed = JSON.parse(notification.data)
-                return notification
+                return {
+                    ...notification,
+                    dataParsed: JSON.parse(notification.data)
+                }
             })
-        }
+        },
+        ...mapState([
+                        'userId'
+                    ])
+    },
+    data() {
+        return {}
     },
     methods: {
-        readAll(){
+        readAll() {
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -38,7 +47,7 @@ export default {
                                               })
                 })
         },
-        timeAgo(date){
+        timeAgo(date) {
             const currentDate = new Date(date);
             const now = new Date();
             const seconds = Math.floor((now - currentDate) / 1000);
@@ -48,17 +57,58 @@ export default {
             const months = Math.floor(days / 30);
             const years = Math.floor(days / 365);
 
-            if (seconds < 60) return `${seconds} seconds ago`;
-            if (minutes < 60) return `${minutes} minutes ago`;
-            if (hours < 24) return `${hours} hours ago`;
-            if (days < 30) return `${days} days ago`;
-            if (months < 12) return `${months} months ago`;
+            if (seconds < 60) {
+                return `${seconds} seconds ago`;
+            }
+            if (minutes < 60) {
+                return `${minutes} minutes ago`;
+            }
+            if (hours < 24) {
+                return `${hours} hours ago`;
+            }
+            if (days < 30) {
+                return `${days} days ago`;
+            }
+            if (months < 12) {
+                return `${months} months ago`;
+            }
             return `${years} years ago`;
         }
     },
     apollo: {
         notifications: {
-            query: Notification
+            query: Notification,
+            skip(){
+                return this.userId === null
+            },
+            subscribeToMore: {
+                document: gql`subscription notifications($userId: Int!){
+                    notifications(userId: $userId){
+                        id
+                        type
+                        data
+                        createdAt
+                        readAt
+                    }
+                  }`,
+                skip () {
+                    return this.userId === null
+                },
+                variables () {
+                    return {
+                        userId: this.userId
+                    }
+                },
+                // Mutate the previous result
+                updateQuery: (previousResult, { subscriptionData }) => {
+                    return {
+                        notifications: [
+                            ...previousResult.notifications,
+                            subscriptionData.data.notifications
+                        ]
+                    }
+                },
+            }
         }
     }
 }
@@ -80,7 +130,7 @@ export default {
                     icon="bell-outline"
                     class="is-marginless"
                 />
-                <b-tag type="is-danger" v-show="parsedNotification?.length !== 0">{{parsedNotification?.length}}</b-tag>
+                <b-tag type="is-danger" v-show="parsedNotification?.length !== 0">{{ parsedNotification?.length }}</b-tag>
                 <span class="is-hidden-desktop">Notifikationer</span>
             </a>
         </template>
@@ -98,23 +148,23 @@ export default {
             </div>
             <div class="dropdown-item" v-for="notification in parsedNotification">
                 <article class="media notification-width">
-<!--                    <figure class="media-left">-->
-<!--                        <p class="image is-64x64">-->
-<!--                            <img src="https://bulma.io/images/placeholders/128x128.png">-->
-<!--                        </p>-->
-<!--                    </figure>-->
+                    <!--                    <figure class="media-left">-->
+                    <!--                        <p class="image is-64x64">-->
+                    <!--                            <img src="https://bulma.io/images/placeholders/128x128.png">-->
+                    <!--                        </p>-->
+                    <!--                    </figure>-->
                     <div class="media-content">
                         <div class="content is-marginless">
                             <p>
-                                <strong>{{notification.dataParsed.title}}</strong> <small>{{timeAgo(notification.createdAt)}}</small>
+                                <strong>{{ notification.dataParsed.title }}</strong> <small>{{ timeAgo(notification.createdAt) }}</small>
                                 <br>
-                                <span style="white-space: pre-wrap;">{{notification.dataParsed.message}}</span>
+                                <span style="white-space: pre-wrap;">{{ notification.dataParsed.message }}</span>
                             </p>
                         </div>
                     </div>
-<!--                    <div class="media-right">-->
-<!--                        <button class="delete"></button>-->
-<!--                    </div>-->
+                    <!--                    <div class="media-right">-->
+                    <!--                        <button class="delete"></button>-->
+                    <!--                    </div>-->
                 </article>
             </div>
             <hr v-show="parsedNotification?.length !== 0" class="dropdown-divider">
@@ -127,21 +177,21 @@ export default {
 </template>
 
 <style scoped>
-    .notification-item:hover {
-        background-color: hsl(0, 0%, 96%);
-        color: hsl(0, 0%, 4%);
-        cursor: pointer;
-    }
+.notification-item:hover {
+    background-color: hsl(0, 0%, 96%);
+    color: hsl(0, 0%, 4%);
+    cursor: pointer;
+}
 
-    @media only screen and (max-width: 600px) {
-        .notification-width {
-            min-width: 200px;
-        }
+@media only screen and (max-width: 600px) {
+    .notification-width {
+        min-width: 200px;
     }
+}
 
-    @media only screen and (min-width: 768px) {
-        .notification-width {
-            min-width: 400px;
-        }
+@media only screen and (min-width: 768px) {
+    .notification-width {
+        min-width: 400px;
     }
+}
 </style>

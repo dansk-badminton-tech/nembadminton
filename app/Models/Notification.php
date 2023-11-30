@@ -3,15 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
-class Notification extends Model
+class Notification extends DatabaseNotification
 {
     use HasFactory;
 
-    public $incrementing = false;
+    protected $casts = [
+        'read_at' => 'datetime',
+    ];
 
     public function scopeMyNotifications(Builder $builder) : Builder
     {

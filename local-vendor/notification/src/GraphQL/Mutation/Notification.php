@@ -9,6 +9,7 @@ use FlyCompany\Notification\Enum\NotificationType;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
+use Nuwave\Lighthouse\Execution\Utils\Subscription;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Notification
@@ -53,6 +54,7 @@ class Notification
         $title = $input['message']['title'];
         $message = $input['message']['body'];
 
+        /** @var User[] $receivers */
         if($all){
             $receivers = User::query()->get();
         }else{
@@ -64,6 +66,11 @@ class Notification
         };
 
         \Illuminate\Support\Facades\Notification::send($receivers, $notification);
+
+        foreach ($receivers as $receiver){
+            $notification = $receiver->notifications()->first();
+            Subscription::broadcast('notifications', $notification);
+        }
 
         return true;
     }

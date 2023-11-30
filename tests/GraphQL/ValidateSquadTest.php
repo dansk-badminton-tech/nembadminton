@@ -42,6 +42,11 @@ class ValidateSquadTest extends BaseTestCase
                     ["category"=>"DD","gender"=>"K","refId"=>"040201-01"],
                     ["category"=>"DD","gender"=>"K","refId"=>"970512-21"]
                 ]
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
+                ]
             ]
         ]);
     }
@@ -113,6 +118,11 @@ class ValidateSquadTest extends BaseTestCase
                             'category' => 'MD',
                             'gender' => 'M'
                         ]
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -190,6 +200,11 @@ class ValidateSquadTest extends BaseTestCase
                             'category' => 'HS',
                             'gender' => 'M'
                         ],
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -272,6 +287,11 @@ class ValidateSquadTest extends BaseTestCase
                             'category' => 'HD',
                             'gender' => 'M'
                         ],
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);
@@ -364,6 +384,11 @@ class ValidateSquadTest extends BaseTestCase
                             'category' => 'HD',
                             'gender' => 'M'
                         ],
+                    ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
                     ]
                 ]
             ]);

@@ -82,6 +82,7 @@ export default defineComponent({
                                                               })
                                                .then(({data}) => {
                                                    this.$store.commit('user', {
+                                                       id: data.me.id,
                                                        name: data.me.name,
                                                        email: data.me.email,
                                                        avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'

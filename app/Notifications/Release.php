@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -29,6 +30,13 @@ class Release extends Notification
         return ['database'];
     }
 
+    public function broadcastOn() : array
+    {
+        return [
+            'notifications'
+        ];
+    }
+
     /**
      * Get the mail representation of the notification.
      */
@@ -38,6 +46,17 @@ class Release extends Notification
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'title' => $this->title,
+            'message' => $this->message
+        ]);
     }
 
     /**

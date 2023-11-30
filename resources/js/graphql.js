@@ -1,22 +1,57 @@
-import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
 import {getAuthToken, isLoggedIn} from "./auth";
 
+import {ApolloClient, HttpLink, ApolloLink, InMemoryCache} from '@apollo/client/core';
+import Pusher from 'pusher-js';
+import PusherLink from "./pusher-link";
+
+window.Pusher = Pusher;
+
+const httpLink = new HttpLink({
+                                  uri: '/graphql'
+                              });
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+    if (isLoggedIn()) {
+        const token = getAuthToken();
+        operation.setContext(({headers = {}}) => ({
+            headers: {
+                ...headers,
+                authorization: token
+                               ? `Bearer ${token}`
+                               : '',
+            }
+        }));
+    }
+
+    return forward(operation);
+});
+
+const httpLinkWithAuth = authMiddleware.concat(httpLink);
+const pusherLink = new PusherLink({
+                                      pusher: new Pusher(process.env.MIX_PUSHER_APP_KEY, {
+                                          cluster: '',
+                                          wsHost: process.env.MIX_PUSHER_HOST,
+                                          wsPort: process.env.MIX_PUSHER_PORT,
+                                          forceTLS: process.env.MIX_PUSHER_SCHEME === 'https',
+                                          disableStats: true,
+                                          enabledTransports: ['ws', 'wss'],
+                                          channelAuthorization: {
+                                              endpoint: `/graphql/subscriptions/auth`,
+                                              headersProvider: () => {
+                                                  return {
+                                                      authorization: "Bearer "+getAuthToken(),
+                                                  }
+                                              },
+                                          },
+                                      }),
+                                  });
+
 const ApolloClientInstance = new ApolloClient(
     {
-        uri: '/graphql',
-        request: (operation) => {
-            if (isLoggedIn()) {
-                operation.setContext(
-                    {
-                        headers: {
-                            Authorization: 'Bearer ' + getAuthToken()
-                        }
-                    })
-            }
-        }
-    }
-)
+        link: ApolloLink.from([pusherLink, httpLinkWithAuth]),
+        cache: new InMemoryCache()
+    });
 
 const apolloProvider = new VueApollo({
                                          defaultClient: ApolloClientInstance,

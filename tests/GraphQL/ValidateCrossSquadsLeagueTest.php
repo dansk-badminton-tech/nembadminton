@@ -37,6 +37,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         )->assertExactJson([
             'data' => [
                 'validateCrossSquads' => []
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
+                ]
             ]
         ]);
     }
@@ -100,6 +105,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         )->assertExactJson([
             'data' => [
                 'validateCrossSquads' => []
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
+                ]
             ]
         ]);
     }
@@ -130,6 +140,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         )->assertExactJson([
             'data' => [
                 'validateCrossSquads' => []
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
+                ]
             ]
         ]);
     }
@@ -182,6 +197,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                             ]
                         ]
                     ]
+                ]
+            ],
+            'extensions' => [
+                'lighthouse_subscriptions' => [
+                    'channel' => null
                 ]
             ]
         ]);
@@ -338,6 +358,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                             'gender' => 'K'
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -439,6 +464,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                             'gender' => 'K'
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -519,6 +549,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
             ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -610,6 +645,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                             'gender' => 'K'
                         ]
                     ],
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -690,6 +730,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
             ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }
@@ -770,6 +815,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
             ->assertExactJson([
                 'data' => [
                     'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
             ]);
     }

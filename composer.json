@@ -37,6 +37,7 @@
         "mydnic/laravel-kustomer": "^1.9",
         "nuwave/lighthouse": "^6.0",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/eloquent-sortable": "^4.0",
         "spatie/icalendar-generator": "^2.5",
         "spatie/laravel-ignition": "^2.0",
