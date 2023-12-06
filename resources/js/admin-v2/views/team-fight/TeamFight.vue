@@ -613,12 +613,9 @@ export default {
                                 variables: {
                                     id: targetSquad.id
                                 },
-                                update: (store, {data: {deleteSquad}}) => {
-                                    let variables = {id: this.teamFightId};
-                                    let data = store.readQuery({query: TeamQuery, variables: variables})
-                                    data.team.squads.splice(this.team.squads.indexOf(targetSquad), 1)
-                                    store.writeQuery({query: TeamQuery, data, variables})
-                                },
+                                refetchQueries: [
+                                    {query: TeamQuery, variables: {id: this.teamFightId}}
+                                ]
                             })
                     }
                 })
