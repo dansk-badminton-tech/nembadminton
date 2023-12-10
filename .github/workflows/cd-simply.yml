@@ -37,4 +37,4 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           source: "public/css,public/js,public/images,public/mix-manifest.json"
-          target: "/var/www/badminton.social/projects/frontend-deploy/${{ envs.GITHUB_SHA }}"
+          target: "/var/www/badminton.social/projects/frontend-deploy/${{ env.GITHUB_SHA }}"
