@@ -32,14 +32,17 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn run production
+          ls -lah public/css
+          ls -lah public/js
+          ls -lah public/images
+          ls -lah public/mix-manifest.json
 
       - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SIMPLY_SSH_HOST }}
           username: ${{ secrets.SIMPLY_SSH_USERNAME }}
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
-          script: |
-            whoami
-            ls -lah
+          source: "public/css,public/js,public/images,public/mix-manifest.json"
+          target: /var/www/badminton.social/testing
