@@ -138,6 +138,14 @@ const routes = [
                 meta: {
                     title: 'Holdkamp'
                 }
+            },
+            {
+                path: '/team-fight/check',
+                name: 'team-fight-check',
+                component: () => import("../views/check-team-fight/CheckTeamFight.vue"),
+                meta: {
+                    title: 'Tidligere Holdkamp'
+                }
             }
         ]
     },

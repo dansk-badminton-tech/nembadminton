@@ -3,34 +3,37 @@
         <div class="control" v-show="!hideIncompleteTeam">
             <div class="tags has-addons">
                 <b-tooltip
+                    :active="!loadingIncompleteTeam"
                     :label="incompleteTeamTip">
-                    <span class="tag is-light is-medium">Fuldendt hold</span>
-                    <span
-                        v-bind:class="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}"
-                        class="tag is-medium">{{ incompleteTeamText }}</span>
+                    <b-taglist attached>
+                        <b-tag type="is-light" size="is-medium">Fuldendt hold</b-tag>
+                        <b-tag v-if="loadingIncompleteTeam"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
+                        <b-tag v-else :type="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}" size="is-medium">{{ incompleteTeamText }}</b-tag>
+                    </b-taglist>
                 </b-tooltip>
             </div>
         </div>
         <div class="control">
             <b-tooltip
+                :active="!loadingLevel"
                 :label="invalidLevelTip">
-                <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Spiller på et forkert hold</span>
-                    <span
-                        v-bind:class="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}"
-                        class="tag is-medium">{{ invalidLevelText }}</span>
-                </div>
+                <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">Spiller på et forkert hold</b-tag>
+                    <b-tag v-if="loadingLevel"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
+                    <b-tag v-else :type="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}" size="is-medium">{{ invalidLevelText }}</b-tag>
+                </b-taglist>
             </b-tooltip>
         </div>
         <div class="control">
             <b-tooltip
-                :label="invalidCategoryTip">
-                <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
-                    <span
-                        v-bind:class="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}"
-                        class="tag is-medium">{{ invalidCategoryText }}</span>
-                </div>
+                :label="invalidCategoryTip"
+                :active="!loadingCategory"
+            >
+                <b-taglist attached>
+                    <b-tag type="is-light" size="is-medium">Spiller for højt i kategorien</b-tag>
+                    <b-tag v-if="loadingCategory"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
+                    <b-tag v-else :type="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}" size="is-medium">{{ invalidCategoryText }}</b-tag>
+                </b-taglist>
             </b-tooltip>
         </div>
     </div>
@@ -42,6 +45,9 @@ export default {
         incompleteTeam: Boolean,
         invalidCategory: Boolean,
         invalidLevel: Boolean,
+        loadingIncompleteTeam: Boolean,
+        loadingCategory: Boolean,
+        loadingLevel: Boolean,
         hideIncompleteTeam: {
             type: Boolean,
             default(){

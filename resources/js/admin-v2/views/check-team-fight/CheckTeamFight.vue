@@ -40,7 +40,7 @@
                             <BadmintonPlayerTeamFights v-model="selectedTeamMatches[index]" :clubId="clubId"
                                                        :player-team="team" :season="season"/>
                             <OptionalRanking
-                            v-model="selectedVersionsForTeamMatches[index]" :season="season"></OptionalRanking>
+                                v-model="selectedVersionsForTeamMatches[index]" :season="season"></OptionalRanking>
                         </b-field>
                     </b-step-item>
                     <b-step-item label="Bekræft">
@@ -110,13 +110,14 @@
             </b-steps>
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
-<!--                <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>-->
-        <b-message v-if="done && !hasViolations" title="Fandt ingen overtrædelser" type="is-success">
-            Fandt ingen fejl.
-        </b-message>
-        <b-message v-if="done && hasViolations" title="Fandt mulige overtrædelser" type="is-warning">
-            Hold musen henover de farvede spillere for beskrivelse.
-        </b-message>
+        <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
+        <ValidationStatus v-if="done"
+                          :hide-incomplete-team="true"
+                          :invalid-category="errorSquadCheck"
+                          :invalid-level="errorCrossSquadCheck"
+                          :loading-category="validatingSquad"
+                          :loading-level="validatingCrossSquad"
+        ></ValidationStatus>
         <div v-if="done" class="columns is-multiline">
             <div v-for="team in teams" class="column is-4">
                 <h1 class="title">{{ team.name }}
@@ -140,7 +141,7 @@
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
                                 ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})
                             </p>
-                            <b-tag v-if="isYoungPlayer(player, null)" >U17/U19</b-tag>
+                            <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                         </b-tooltip>
                     </b-table-column>
                 </b-table>
@@ -153,7 +154,6 @@
 import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs";
 import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
-import omitDeep from "omit-deep";
 import {
     findPositions,
     highlight as simpleHighlight,
@@ -164,10 +164,13 @@ import {
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
 import OptionalRanking from "./OptionalRanking";
+import ValidationStatus from "../../../views/ValidationStatus.vue";
+import {wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {
     name: "CheckTeamFight",
     components: {
+        ValidationStatus,
         OptionalRanking,
         RankingListDropdown,
         BadmintonPlayerTeamsMultiSelect,
@@ -200,12 +203,17 @@ export default {
             draggingRowIndex: null,
             draggingColumn: null,
             draggingColumnIndex: null,
-            errorImporting: false
+            errorImporting: false,
+            validatingCrossSquad: false,
+            validatingSquad: false
         }
     },
     computed: {
-        hasViolations() {
-            return this.playingToHigh.length > 0 || this.playingToHighInSquad.length > 0;
+        errorSquadCheck() {
+            return this.playingToHighInSquad.length > 0
+        },
+        errorCrossSquadCheck() {
+            return this.playingToHigh.length > 0
         }
     },
     methods: {
@@ -245,7 +253,9 @@ export default {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
         isPlayingToHigh(player, category) {
-            return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player, category);
+            let b = isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player);
+            console.log(b, player.name, player.refId, category)
+            return b;
         },
         isPlayingToHighInSquad(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
@@ -297,7 +307,9 @@ export default {
                                     id: teamMatch.teamMatch.matchId,
                                     teamNameHint: teamMatch.team.name,
                                     league: teamMatch.team.league,
-                                    version: (typeof this.selectedVersionsForTeamMatches[index] === 'undefined' ? null : this.selectedVersionsForTeamMatches[index])
+                                    version: (typeof this.selectedVersionsForTeamMatches[index] === 'undefined'
+                                              ? null
+                                              : this.selectedVersionsForTeamMatches[index])
                                 }
                             }),
                             season: parseInt(this.season),
@@ -311,18 +323,17 @@ export default {
                 this.validate()
             }).catch(() => {
                 this.$buefy.toast.open({
-                    duration: 5000,
-                    message: `Et eller flere hold kunne ikke hentes`,
-                    position: 'is-bottom',
-                    type: 'is-danger'
-                })
+                                           duration: 5000,
+                                           message: `Et eller flere hold kunne ikke hentes`,
+                                           position: 'is-bottom',
+                                           type: 'is-danger'
+                                       })
                 this.errorImporting = true;
                 this.fetchingAndValidating = false;
             })
         },
         validateCrossSquads() {
-            let teamsClone = JSON.parse(JSON.stringify(this.teams));
-            teamsClone = omitDeep(teamsClone, ['__typename', 'leagueMatchId'])
+            this.validatingCrossSquad = true
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateCrossSquads($input: [ValidateTeam!]!){
@@ -342,19 +353,18 @@ export default {
                     }
                     `,
                     variables: {
-                        input: teamsClone
+                        input: wrapInTeamAndSquads(this.teams.map(team => team.squad))
                     }
                 }
             ).then(({data}) => {
                 this.playingToHigh = data.validateCrossSquads
             }).finally(() => {
                 this.fetchingAndValidating = false
+                this.validatingCrossSquad = false
             })
         },
         validateSquads() {
-            let teamsSquadCheck = JSON.parse(JSON.stringify(this.teams));
-            teamsSquadCheck = omitDeep(teamsSquadCheck, ['__typename', 'leagueMatchId', 'league'])
-
+            this.validatingSquad = true
             this.$apollo.mutate(
                 {
                     mutation: gql`mutation validateSquads($input: [ValidateTeam!]!){
@@ -375,13 +385,14 @@ export default {
                 }
                 `,
                     variables: {
-                        input: teamsSquadCheck
+                        input: wrapSquadsInTeamWithoutLeague(this.teams.map(team => team.squad))
                     }
                 }
             ).then(({data}) => {
                 this.playingToHighInSquad = data.validateSquads
             }).finally(() => {
                 this.fetchingAndValidating = false
+                this.validatingSquad = false
             })
         },
         validate() {
@@ -397,7 +408,7 @@ export default {
             this.clearSelectedVersionsForTeamMatches()
             this.playerTeams = [];
         },
-        clearSelectedVersionsForTeamMatches(){
+        clearSelectedVersionsForTeamMatches() {
             this.selectedVersionsForTeamMatches = [];
         },
         clearTeamFights() {

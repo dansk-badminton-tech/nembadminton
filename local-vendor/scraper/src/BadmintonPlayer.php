@@ -192,7 +192,7 @@ class BadmintonPlayer
             "sortfield"              => 0,
         ];
 
-        $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayers";
+        $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayersSenior";
         Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
         $body = $this->sendRequestAndGetBody($url, $params);
