@@ -4,6 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+
 echo "Deploying backend"
 ssh badminton.social@linux368.unoeuro.com bash <<EOF
 cd /var/www/badminton.social/projects/holdkamp
