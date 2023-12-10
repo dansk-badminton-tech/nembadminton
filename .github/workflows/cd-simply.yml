@@ -38,3 +38,17 @@ jobs:
           port: 22
           source: "public/css,public/js,public/images,public/mix-manifest.json"
           target: /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}
+          strip_components: 1
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_USERNAME }}
+          key: ${{ secrets.SIMPLY_SSH_KEY }}
+          port: 22
+          script: |
+            echo ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/public/images /var/www/badminton.social/projects/holdkamp/public/images
+            echo ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/public/css /var/www/badminton.social/projects/holdkamp/public/css
+            echo ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/public/js /var/www/badminton.social/projects/holdkamp/public/js
+            echo ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/public/mix-manifest.json /var/www/badminton.social/projects/holdkamp/public/mix-manifest.json
