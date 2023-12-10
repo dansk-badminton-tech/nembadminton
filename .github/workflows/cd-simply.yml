@@ -48,9 +48,9 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           script: |
-            ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/images /var/www/badminton.social/projects/holdkamp/public/images
-            ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/css /var/www/badminton.social/projects/holdkamp/public/css
-            ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/js /var/www/badminton.social/projects/holdkamp/public/js
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/images /var/www/badminton.social/projects/holdkamp/public/images
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/css /var/www/badminton.social/projects/holdkamp/public/css
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/js /var/www/badminton.social/projects/holdkamp/public/js
             ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/mix-manifest.json /var/www/badminton.social/projects/holdkamp/public/mix-manifest.json
 
       - name: Deploying newest backend of master
