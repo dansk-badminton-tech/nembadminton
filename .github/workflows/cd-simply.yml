@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          cache: 'yarn'
+
+      - name: Frontend build
+        run: |
+          yarn install --frozen-lockfile
+          yarn run production
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_KEY }}
+          port: 22
+          script: |
+            whoami
+            ls -lah
