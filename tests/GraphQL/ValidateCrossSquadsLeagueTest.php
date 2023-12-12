@@ -2,6 +2,8 @@
 
 namespace Tests\GraphQL;
 
+use Carbon\Carbon;
+use Closure;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -15,35 +17,43 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     use CreatesApplication;
     use MakesGraphQLRequests;
 
+    private function fixedInTime(Closure $callback) : void
+    {
+        $knownDate = Carbon::create(2021, 12, 15, 12);
+        Carbon::withTestNow($knownDate, $callback);
+    }
+
     /**
      * @test
      */
     public function useCase5(): void
     {
-        // https://github.com/flycompanytech/holdkamp-project/issues/31
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase5.php';
+        $this->fixedInTime(function(){
+            // https://github.com/flycompanytech/holdkamp-project/issues/31
+            $data = require __DIR__.'/CrossSquadsUseCases/usecase5.php';
 
-        $this->graphQL(
-        /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
-              validateCrossSquads(input: $input) {
-                refId
-                name
-                category
-              }
-            }
-        ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => []
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
+            $this->graphQL(
+            /** @lang GraphQL */ '
+                mutation ($input: [ValidateTeam!]!) {
+                  validateCrossSquads(input: $input) {
+                    refId
+                    name
+                    category
+                  }
+                }
+            ',
+                $data
+            )->assertExactJson([
+                'data' => [
+                    'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        });
     }
 
     /**
@@ -51,29 +61,30 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
      */
     public function useCase4(): void
     {
-        // https://github.com/flycompanytech/holdkamp-project/issues/30
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase4.php';
-
-        $this->graphQL(
-        /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
-              validateCrossSquads(input: $input) {
-                refId
-                name
-                category
-              }
-            }
-        ',
-            $data
-        )->assertJsonMissing(
-            [
+        $this->fixedInTime(function(){
+            // https://github.com/flycompanytech/holdkamp-project/issues/30
+            $data = require __DIR__.'/CrossSquadsUseCases/usecase4.php';
+            $this->graphQL(
+            /** @lang GraphQL */ '
+                mutation ($input: [ValidateTeam!]!) {
+                  validateCrossSquads(input: $input) {
+                    refId
+                    name
+                    category
+                  }
+                }
+            ',
+                $data
+            )->assertJsonMissing(
                 [
-                    'category' => 'DD',
-                    'name' => 'Signe Schulz Terp-Nielsen',
-                    'refId' => '010626-02'
+                    [
+                        'category' => 'DD',
+                        'name' => 'Signe Schulz Terp-Nielsen',
+                        'refId' => '010626-02'
+                    ]
                 ]
-            ]
-        );
+            );
+        });
     }
 
     /**
@@ -81,11 +92,12 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
      */
     public function useCase3(): void
     {
-        // abc Aalborg - 2021-10-30
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase3.php';
+        $this->fixedInTime(function() {
+            // abc Aalborg - 2021-10-30
+            $data = require __DIR__ . '/CrossSquadsUseCases/usecase3.php';
 
-        $this->graphQL(
-        /** @lang GraphQL */ '
+            $this->graphQL(
+            /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
@@ -101,17 +113,18 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
               }
             }
         ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => []
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
+                $data
+            )->assertExactJson([
+                'data'       => [
+                    'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        });
     }
 
     /**
@@ -119,11 +132,12 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
      */
     public function useCase2(): void
     {
-        // abc Aalborg - 2021-10-30
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase2.php';
+        $this->fixedInTime(function() {
+            // abc Aalborg - 2021-10-30
+            $data = require __DIR__ . '/CrossSquadsUseCases/usecase2.php';
 
-        $this->graphQL(
-        /** @lang GraphQL */ '
+            $this->graphQL(
+            /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
@@ -136,17 +150,18 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
               }
             }
         ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => []
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
+                $data
+            )->assertExactJson([
+                'data'       => [
+                    'validateCrossSquads' => []
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        });
     }
 
     /**
@@ -154,10 +169,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
      */
     public function useCase1()
     {
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase1.php';
+        $this->fixedInTime(function() {
+            $data = require __DIR__ . '/CrossSquadsUseCases/usecase1.php';
 
-        $this->graphQL(
-        /** @lang GraphQL */ '
+            $this->graphQL(
+            /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
                 refId
@@ -170,41 +186,42 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
               }
             }
         ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => [
-                    [
-                        'refId' => '951108-04',
-                        'category' => 'MD',
-                        'gender' => 'K',
-                        'belowPlayer' => [
-                            [
-                                "name" => "Maibritt Meldgaard",
-                                "refId" => "981105-05"
-                            ],
-                            [
-                                "name" => "Caroline Bohm Veng",
-                                "refId" => "000128-10"
-                            ],
-                            [
-                                "name" => "Louise Bolding Lund",
-                                "refId" => "990618-10"
-                            ],
-                            [
-                                "name" => "Anna Schøn",
-                                "refId" => "900216-01"
+                $data
+            )->assertExactJson([
+                'data'       => [
+                    'validateCrossSquads' => [
+                        [
+                            'refId'       => '951108-04',
+                            'category'    => 'MD',
+                            'gender'      => 'K',
+                            'belowPlayer' => [
+                                [
+                                    "name"  => "Maibritt Meldgaard",
+                                    "refId" => "981105-05"
+                                ],
+                                [
+                                    "name"  => "Caroline Bohm Veng",
+                                    "refId" => "000128-10"
+                                ],
+                                [
+                                    "name"  => "Louise Bolding Lund",
+                                    "refId" => "990618-10"
+                                ],
+                                [
+                                    "name"  => "Anna Schøn",
+                                    "refId" => "900216-01"
+                                ]
                             ]
                         ]
                     ]
+                ],
+                'extensions' => [
+                    'lighthouse_subscriptions' => [
+                        'channel' => null
+                    ]
                 ]
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
-                ]
-            ]
-        ]);
+            ]);
+        });
     }
 
     /**

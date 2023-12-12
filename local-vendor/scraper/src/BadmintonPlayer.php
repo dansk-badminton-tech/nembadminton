@@ -6,9 +6,11 @@ namespace FlyCompany\Scraper;
 
 use Carbon\Carbon;
 use FlyCompany\Scraper\Exception\MultiplePlayersFoundException;
+use FlyCompany\Scraper\Exception\NoPlayerPointsFound;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\PlayerSearch;
+use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
 use GuzzleHttp\Client;
@@ -16,11 +18,12 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class BadmintonPlayer
 {
 
-    const LEVEL_RANKING_NUMBER = 287;
+    public const LEVEL_RANKING_NUMBER = 287;
     private $clientConfig = [
         'headers'  => [
             'User-Agent' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13',
@@ -192,7 +195,11 @@ class BadmintonPlayer
             "sortfield"              => 0,
         ];
 
-        $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayersSenior";
+        if($rankingListId === self::LEVEL_RANKING_NUMBER){
+            $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayersSenior";
+        }else{
+            $url = "SportsResults/Components/WebService1.asmx/GetRankingListPlayers";
+        }
         Log::debug("Requesting {$url}: " . \json_encode($params, JSON_THROW_ON_ERROR));
 
         $body = $this->sendRequestAndGetBody($url, $params);
@@ -214,21 +221,21 @@ class BadmintonPlayer
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function sendRequestAndGetBody(string $url, array $json) : string{
-        $cacheBody = $this->cache->get($this->resolveCacheKey($json));
+        $cacheBody = $this->cache->get($this->resolveCacheKey($json, $url));
         if($cacheBody === null){
             $response = $this->client->post($url, [
                 'json' => $json,
             ]);
 
             $cacheBody = $response->getBody()->getContents();
-            $this->cache->put($this->resolveCacheKey($json), $cacheBody, 120);
+            $this->cache->put($this->resolveCacheKey($json, $url), $cacheBody, 120);
         }
         return $cacheBody;
     }
 
-    private function resolveCacheKey(array $postParams) : string{
+    private function resolveCacheKey(array $postParams, string $url) : string{
         unset($postParams['callbackcontextkey']);
-        return md5(implode('-', $postParams));
+        return md5(implode('-', $postParams).$url);
     }
 
     public function getPlayerByBadmintonPlayerId(int $badmintonPlayerId, Carbon $rankingVersion, int $season) : Player
@@ -273,12 +280,14 @@ class BadmintonPlayer
     }
 
     /**
-     * @param  array|Player[]  $players
-     * @param  Carbon  $rankingVersion
-     * @param  int  $season
+     * @param array|PlayerSearch[] $players
+     * @param Carbon               $rankingVersion
+     * @param int                  $season
+     *
      * @return Player
      * @throws \DiDom\Exceptions\InvalidSelectorException
      * @throws \JsonException
+     * @throws InvalidArgumentException
      */
     private function getRankingList(array $players, Carbon $rankingVersion, int $season) : Player
     {
@@ -294,16 +303,32 @@ class BadmintonPlayer
                 [$rankingListId, $param, $gender] = $this->getRankingListIdAndParams($rankingList);
                 try {
                     $html = $this->getRankingListPlayersHtml($rankingListId, $season, "", $rankingVersion, $i, $param, $gender, $player->badmintonPlayerInternalId);
-                    $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
-                } catch (NoPlayersException $exception) {
+                    $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList, $season));
+
+                    // We know that level points will never be returned by scraping because U17 and U19 is hidden on badmintonplayer.dk
+//                    if($rankingListId === self::LEVEL_RANKING_NUMBER){
+//                        $vintage = $player->calculateVintage(Util::makeSeason($season));
+//                        if(Util::isYoungPlayer($vintage)){
+//                            $playerNew = new Player();
+//                            $playerNew->name = $player->name;
+//                            $playerNew->refId = $player->refId;
+//                            $playerNew->gender = $player->gender;
+//                            $point = new Point(0, 0, $vintage->value);
+//                            $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
+//                            $playerNew->points = [$point];
+//                            $playersCollection = \array_merge($playersCollection, [$playerNew]);
+//                        }
+//                    }
+                } catch (NoPlayersException) {
                     break;
                 }
             }
         }
 
-        $points = Arr::pluck($playersCollection, 'points');
+        $pointsWrapped = Arr::pluck($playersCollection, 'points');
+        $points = array_reduce($pointsWrapped, 'array_merge', []);
         if(empty($playersCollection)){
-            throw new \RuntimeException("Found not points in any category for {$player->name}");
+            throw new NoPlayerPointsFound("Found no points in any category for {$player->name}");
         }
         $player = $playersCollection[0];
         $player->points = $points;
@@ -332,7 +357,7 @@ class BadmintonPlayer
             try {
                 $html = $this->getRankingListPlayersHtml($rankingListId, $season, $clubId, $rankingVersion, $i, $param, $gender);
                 /** @var Player[] $playersCollection */
-                $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList));
+                $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList, $season));
             } catch (NoPlayersException) {
                 Log::debug("No players found on page: $i");
                 break;
