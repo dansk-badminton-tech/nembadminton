@@ -304,21 +304,6 @@ class BadmintonPlayer
                 try {
                     $html = $this->getRankingListPlayersHtml($rankingListId, $season, "", $rankingVersion, $i, $param, $gender, $player->badmintonPlayerInternalId);
                     $playersCollection = \array_merge($playersCollection, $this->parser->rankingListPlayers($html, $rankingList, $season));
-
-                    // We know that level points will never be returned by scraping because U17 and U19 is hidden on badmintonplayer.dk
-//                    if($rankingListId === self::LEVEL_RANKING_NUMBER){
-//                        $vintage = $player->calculateVintage(Util::makeSeason($season));
-//                        if(Util::isYoungPlayer($vintage)){
-//                            $playerNew = new Player();
-//                            $playerNew->name = $player->name;
-//                            $playerNew->refId = $player->refId;
-//                            $playerNew->gender = $player->gender;
-//                            $point = new Point(0, 0, $vintage->value);
-//                            $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
-//                            $playerNew->points = [$point];
-//                            $playersCollection = \array_merge($playersCollection, [$playerNew]);
-//                        }
-//                    }
                 } catch (NoPlayersException) {
                     break;
                 }

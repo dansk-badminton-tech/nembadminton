@@ -169,7 +169,7 @@ class Parser
             $vintageText = $tr->find('td.clas')[0]->text();
 
             preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $vintageText, $matches);
-            $vintage = $matches[1][0] ?? Util::calculateVintageByRefId($refId, Util::makeSeason($season))->value ?? 'unknown';
+            $vintage = $matches[1][0] ?? Util::calculateVintageByRefId($refId, BadmintonPlayerHelper::makeSeasonStart($season))->value ?? 'unknown';
 
             $player = new Player();
             $player->name = $name;
