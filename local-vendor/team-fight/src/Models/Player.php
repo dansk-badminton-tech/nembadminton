@@ -4,6 +4,10 @@ declare(strict_types = 1);
 
 namespace FlyCompany\TeamFight\Models;
 
+use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Util;
+use FlyCompany\BadmintonPlayerAPI\Vintage;
+
 class Player
 {
 
@@ -37,6 +41,11 @@ class Player
     public function setPlayingIn(array $playingIn) : void
     {
         $this->playingIn = $playingIn;
+    }
+
+    public function calculateVintage(?Carbon $season = null) : Vintage
+    {
+        return Util::calculateVintageByRefId($this->refId, $season);
     }
 
 }

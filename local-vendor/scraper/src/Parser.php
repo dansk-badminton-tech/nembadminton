@@ -5,6 +5,7 @@ namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use DiDom\Element;
+use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
@@ -134,7 +135,7 @@ class Parser
      * @return Player[]
      * @throws \DiDom\Exceptions\InvalidSelectorException
      */
-    public function rankingListPlayers(string $html, string $rankingList) : array
+    public function rankingListPlayers(string $html, string $rankingList, int $season) : array
     {
         $document = new Document($html);
         $trs = $document->find('table.RankingListGrid tr');
@@ -168,15 +169,15 @@ class Parser
             $vintageText = $tr->find('td.clas')[0]->text();
 
             preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $vintageText, $matches);
-            $vintage = $matches[1][0] ?? '';
+            $vintage = $matches[1][0] ?? Util::calculateVintageByRefId($refId, BadmintonPlayerHelper::makeSeasonStart($season))->value ?? 'unknown';
 
             $player = new Player();
             $player->name = $name;
+            $player->refId = $refId;
             $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
             $point = new Point((int)$points, (int)$position, $vintage);
             $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
             $player->points = [$point];
-            $player->refId = $refId;
             $playersCollection[] = $player;
         }
 

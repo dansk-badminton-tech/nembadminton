@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Models\PlayerRanking;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\TeamFight\Models\Point;
+use Illuminate\Support\Str;
 
 class Util
 {
@@ -16,10 +17,16 @@ class Util
      * @param Carbon $birthday
      * @return Vintage
      */
-    public static function calculateVintage(Carbon $birthday): Vintage
+    public static function calculateVintage(Carbon $birthday, ?Carbon $seasonStart = null): Vintage
     {
-        $currentSeasonStartYear = static::getCurrentSeasonStart();
-        $diffYears = $birthday->diffInYears($currentSeasonStartYear);
+
+        if($seasonStart === null){
+            $seasonStart = BadmintonPlayerHelper::getCurrentSeasonStart();
+        }
+        $seasonStart->setMonth(1);
+        $seasonStart->addYear();
+
+        $diffYears = $birthday->diffInYears($seasonStart);
         if ($diffYears < 9) {
             return Vintage::U9;
         }
@@ -93,9 +100,16 @@ class Util
         return $point;
     }
 
-    public static function getCurrentSeasonStart(): Carbon
+    public static function isYoungPlayer(Vintage $vintage) : bool
     {
-        return Carbon::createFromDate(BadmintonPlayerHelper::getCurrentSeason()+1, 1, 1);
+        return in_array($vintage, [Vintage::U17, Vintage::U19], true);
+    }
+
+    public static function calculateVintageByRefId(string $refId, ?Carbon $season = null) : Vintage
+    {
+        $birthdayStr = Str::substr($refId, 0, 6);
+        $birthday = Carbon::createFromFormat('ymd', $birthdayStr);
+        return self::calculateVintage($birthday, $season);
     }
 
 }

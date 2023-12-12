@@ -111,6 +111,7 @@
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
         <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
+        <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatchesImport">Hent igen</b-button>
         <ValidationStatus v-if="done"
                           :hide-incomplete-team="true"
                           :invalid-category="errorSquadCheck"

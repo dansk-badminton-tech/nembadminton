@@ -2,6 +2,7 @@
 
 namespace Tests\GraphQL;
 
+use Carbon\Carbon;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -14,6 +15,17 @@ class ValidateBasicSquadTest extends BaseTestCase
 
     use CreatesApplication;
     use MakesGraphQLRequests;
+
+    public static function setUpBeforeClass() : void
+    {
+        $knownDate = Carbon::create(2021, 12, 15, 12);
+        Carbon::setTestNow($knownDate);
+    }
+
+    public static function tearDownAfterClass() : void
+    {
+        Carbon::setTestNow();
+    }
 
     /**
      * @test
