@@ -135,7 +135,7 @@
                         <b-tooltip
                             v-for="player in props.row.players"
                             :key="player.name+props.row.category"
-                            :active="isPlayingToHigh(player, props.row.category) || isPlayingToHighInSquad(player, props.row.category)">
+                            :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, props.row.category)">
                             <template v-slot:content>
                                 <span v-html="resolveLabel(player, props.row.category, team.squad.league)"></span>
                             </template>
@@ -155,18 +155,12 @@
 import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs";
 import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights";
 import gql from "graphql-tag";
-import {
-    findPositions,
-    highlight as simpleHighlight,
-    isPlayingToHighByBadmintonPlayerId, isYoungPlayer,
-    resolveToolTip,
-    swapObject
-} from "../../helpers";
+import {findPositions, highlight as simpleHighlight, isPlayingToHighByBadmintonPlayerId, isYoungPlayer, resolveToolTip, swapObject} from "../../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
 import OptionalRanking from "./OptionalRanking";
 import ValidationStatus from "../../../views/ValidationStatus.vue";
-import {wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
+import {filterYouthFromCategory, filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {
     name: "CheckTeamFight",
@@ -211,10 +205,10 @@ export default {
     },
     computed: {
         errorSquadCheck() {
-            return this.playingToHighInSquad.length > 0
+            return hasInvalidCategory(this.playingToHighInSquad)
         },
         errorCrossSquadCheck() {
-            return this.playingToHigh.length > 0
+            return hasInvalidLevel(this.playingToHigh)
         }
     },
     methods: {
@@ -253,19 +247,17 @@ export default {
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
-        isPlayingToHigh(player, category) {
-            let b = isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player);
-            console.log(b, player.name, player.refId, category)
-            return b;
+        isPlayingToHigh(player) {
+            return isPlayingToHighByBadmintonPlayerId(filterYouthFromLevel(this.playingToHigh), player);
         },
         isPlayingToHighInSquad(player, category) {
-            return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
+            return isPlayingToHighByBadmintonPlayerId(filterYouthFromCategory(this.playingToHighInSquad), player, category);
         },
         nextStep() {
             this.activeStep = 1;
         },
         highlight(player, category) {
-            return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category)
+            return simpleHighlight(filterYouthFromLevel(this.playingToHigh), filterYouthFromCategory(this.playingToHighInSquad), player, category)
         },
         findPositions,
         badmintonPlayerTeamMatchesImport() {
