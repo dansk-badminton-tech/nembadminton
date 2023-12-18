@@ -120,7 +120,7 @@
                           :loading-level="validatingCrossSquad"
         ></ValidationStatus>
         <div v-if="done" class="columns is-multiline">
-            <div v-for="team in teams" class="column is-4">
+            <div v-for="team in teams" class="column is-6">
                 <h1 class="title">{{ team.name }}
                     <b-button class="is-pulled-right" tag="a" target="_blank"
                               :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+team.leagueMatchId+',,'"
@@ -144,6 +144,9 @@
                             </p>
                             <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                         </b-tooltip>
+                    </b-table-column>
+                    <b-table-column width="30%" :td-attrs="(row, column) => resolveAttrs(row, column, team)" v-slot="props" field="results" label="Result">
+                        {{ resolveResultDisplay(props.row.results, team)?.join(" ") }}
                     </b-table-column>
                 </b-table>
             </div>
@@ -213,6 +216,49 @@ export default {
     },
     methods: {
         isYoungPlayer,
+        resolveAttrs(row, column, team){
+            if(this.resolveWinner(row.results) === team.side){
+                return {
+                    class: 'is-success'
+                }
+            }
+            return {
+                class: 'is-danger'
+            }
+        },
+        resolveResultDisplay(results, team){
+            return results.map((result) => {
+                if(result.homePoints === null){
+                    return ''
+                }
+                if(team.side === 'HOME'){
+                    return result.homePoints+'/'+result.guestPoints
+                }else{
+                    return result.guestPoints+'/'+result.homePoints
+                }
+            })
+        },
+        resolveWinner(results){
+            let homePoints = results.reduce((currentTotalPoints, currentPoints) => {
+                if(currentPoints.homePoints === null){
+                    return 0 + currentTotalPoints
+                }
+                return currentPoints.homePoints + currentTotalPoints
+            }, 0)
+
+            let guestPoints = results.reduce((currentTotalPoints, currentPoints) => {
+                if(currentPoints.guestPoints === null){
+                    return 0 + currentTotalPoints
+                }
+                return currentPoints.guestPoints + currentTotalPoints
+            }, 0)
+
+            if(homePoints > guestPoints){
+                return 'HOME'
+            }else{
+                return 'GUEST'
+            }
+        },
         maybeMoveDown(index) {
             return this.castToArray(this.selectedTeamMatches).length - 1 === index
         },
@@ -269,12 +315,17 @@ export default {
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
                             leagueMatchId
+                            side
                             squad{
                               playerLimit
                               league
                               categories{
                                 category
                                 name
+                                results {
+                                    homePoints
+                                    guestPoints
+                                }
                                 players{
                                   refId
                                   name
@@ -293,7 +344,33 @@ export default {
                         }
                     `,
                     variables: {
-                        input: {
+                        input:
+//                            {
+//                                "clubId": 1124,
+//                                "leagueMatches": [
+//                                    {
+//                                        "id": 444380,
+//                                        "teamNameHint": "SAIF Kbh.",
+//                                        "league": "3. division Pulje 3",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 444607,
+//                                        "teamNameHint": "SAIF Kbh. 2",
+//                                        "league": "Danmarksserien Pulje 7",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 445936,
+//                                        "teamNameHint": "SAIF Kbh. 3",
+//                                        "league": "Serie 1 Pulje 1",
+//                                        "version": null
+//                                    }
+//                                ],
+//                                "season": 2023,
+//                                "version": "2023-11-01"
+//                            }
+                            {
                             clubId: parseInt(this.clubId),
                             leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch, index) => {
                                 return {
