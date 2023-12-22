@@ -201,12 +201,12 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
     return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category)
 }
 
-export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category) {
+export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category, ignoreYouth = false) {
     const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player);
     const playerInfoInSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category);
 
     if (playerInfoCrossSquads !== undefined) {
-        if (playerInfoCrossSquads.isYouthPlayer) {
+        if (!ignoreYouth && playerInfoCrossSquads.isYouthPlayer) {
             return {
                 'has-background-success': true
             }
@@ -216,12 +216,12 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
         }
     }
     if (playerInfoInSquad !== undefined) {
-        if (playerInfoInSquad.isYouthPlayer) {
+        if (!ignoreYouth && playerInfoInSquad.isYouthPlayer) {
             return {
                 'has-background-success': true
             }
         } else {
-            if (playerInfoInSquad.hasYouthPlayerPartner) {
+            if (!ignoreYouth && playerInfoInSquad.hasYouthPlayerPartner) {
                 return {
                     'has-background-success': true
                 }
