@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Notifications\Release;
+use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\TeamValidator;
@@ -35,12 +36,8 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamValidator $teamValidator)
+    public function handle(BadmintonPlayer $badmintonPlayer)
     {
-        /** @var User $user */
-        $user = User::query()->find(1);
-        $user->notifyNow(new Release('Ny feature', 'Du kan nu rediger'));
-        $user = User::query()->find(2);
-        $user->notifyNow(new Release('Stop', 'Du kan nu rediger'));
+        $badmintonPlayer->getTeamMatch('25', '444203', '2023');
     }
 }

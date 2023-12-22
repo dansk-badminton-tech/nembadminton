@@ -8,7 +8,7 @@
                     <b-taglist attached>
                         <b-tag type="is-light" size="is-medium">Fuldendt hold</b-tag>
                         <b-tag v-if="loadingIncompleteTeam"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
-                        <b-tag v-else :type="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}" size="is-medium">{{ incompleteTeamText }}</b-tag>
+                        <b-tag v-else :type="tagTypeIncompleteTeam" size="is-medium">{{ incompleteTeamText }}</b-tag>
                     </b-taglist>
                 </b-tooltip>
             </div>
@@ -20,7 +20,7 @@
                 <b-taglist attached>
                     <b-tag type="is-light" size="is-medium">Spiller på et forkert hold</b-tag>
                     <b-tag v-if="loadingLevel"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
-                    <b-tag v-else :type="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}" size="is-medium">{{ invalidLevelText }}</b-tag>
+                    <b-tag v-else :type="tagTypeLevel" size="is-medium">{{ invalidLevelText }}</b-tag>
                 </b-taglist>
             </b-tooltip>
         </div>
@@ -32,7 +32,7 @@
                 <b-taglist attached>
                     <b-tag type="is-light" size="is-medium">Spiller for højt i kategorien</b-tag>
                     <b-tag v-if="loadingCategory"><b-icon icon="loading" custom-class="mdi-spin"/></b-tag>
-                    <b-tag v-else :type="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}" size="is-medium">{{ invalidCategoryText }}</b-tag>
+                    <b-tag v-else :type="tagTypeCategory" size="is-medium">{{ invalidCategoryText }}</b-tag>
                 </b-taglist>
             </b-tooltip>
         </div>
@@ -56,6 +56,33 @@ export default {
         }
     },
     computed: {
+        tagTypeIncompleteTeam(){
+            if(this.incompleteTeam === null){
+                return 'is-light'
+            }else if(this.incompleteTeam === true){
+                return 'is-danger'
+            }else{
+                return 'is-success'
+            }
+        },
+        tagTypeLevel(){
+            if(this.invalidLevel === null){
+                return 'is-light'
+            }else if(this.invalidLevel === true){
+                return 'is-danger'
+            }else{
+                return 'is-success'
+            }
+        },
+        tagTypeCategory(){
+            if(this.invalidCategory === null){
+                return 'is-light'
+            }else if(this.invalidCategory === true){
+                return 'is-danger'
+            }else{
+                return 'is-success'
+            }
+        },
         incompleteTeamTip() {
             return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Der findes et eller flere ugyldig hold. Skal være OK før de andre tjeks kører' : 'Alle kategorier er udfyldt korrekt.'))
         },

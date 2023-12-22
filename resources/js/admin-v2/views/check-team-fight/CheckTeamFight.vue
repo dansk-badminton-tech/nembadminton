@@ -112,6 +112,7 @@
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
         <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
         <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatchesImport">Hent igen</b-button>
+        <b-checkbox v-if="done" v-model="markYouthAsError">Marker ungdom som fejl (kategori)</b-checkbox>
         <ValidationStatus v-if="done"
                           :hide-incomplete-team="true"
                           :invalid-category="errorSquadCheck"
@@ -120,7 +121,7 @@
                           :loading-level="validatingCrossSquad"
         ></ValidationStatus>
         <div v-if="done" class="columns is-multiline">
-            <div v-for="team in teams" class="column is-4">
+            <div v-for="team in teams" class="column is-6">
                 <h1 class="title">{{ team.name }}
                     <b-button class="is-pulled-right" tag="a" target="_blank"
                               :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+season+',,,,,'+team.leagueMatchId+',,'"
@@ -135,7 +136,7 @@
                         <b-tooltip
                             v-for="player in props.row.players"
                             :key="player.name+props.row.category"
-                            :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, props.row.category)">
+                            :active="isPlayingToHighInLevel(player) || isPlayingToHighInCategory(player, props.row.category)">
                             <template v-slot:content>
                                 <span v-html="resolveLabel(player, props.row.category, team.squad.league)"></span>
                             </template>
@@ -144,6 +145,9 @@
                             </p>
                             <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                         </b-tooltip>
+                    </b-table-column>
+                    <b-table-column width="30%" :td-attrs="(row, column) => resolveAttrs(row, column, team)" v-slot="props" field="results" label="Result">
+                        {{ resolveResultDisplay(props.row.results, team)?.join(" ") }}
                     </b-table-column>
                 </b-table>
             </div>
@@ -187,8 +191,8 @@ export default {
             selectedTeamMatches: {},
             selectedVersionsForTeamMatches: [],
             teams: [],
-            playingToHigh: [],
-            playingToHighInSquad: [],
+            playingToHighInLevel: [],
+            playingToHighInCategory: [],
             rankingList: null,
             activeStep: 0,
             fetchingAndValidating: false,
@@ -200,19 +204,95 @@ export default {
             draggingColumnIndex: null,
             errorImporting: false,
             validatingCrossSquad: false,
-            validatingSquad: false
+            validatingSquad: false,
+            markYouthAsError: false
         }
     },
     computed: {
         errorSquadCheck() {
-            return hasInvalidCategory(this.playingToHighInSquad)
+            if(this.markYouthAsError){
+                return this.currentPlayingToHighInCategory?.length > 0
+            }
+            return hasInvalidCategory(this.playingToHighInCategory)
         },
         errorCrossSquadCheck() {
-            return hasInvalidLevel(this.playingToHigh)
+            return hasInvalidLevel(this.playingToHighInLevel)
+        },
+        currentPlayingToHighInCategory(){
+            if(this.markYouthAsError){
+              return this.playingToHighInCategory
+            }
+            return filterYouthFromCategory(this.playingToHighInCategory)
+        },
+        currentPlayingToHighInLevel(){
+            return filterYouthFromLevel(this.playingToHighInLevel)
         }
     },
     methods: {
         isYoungPlayer,
+        resolveAttrs(row, column, team){
+            let winnerSide = this.determineBadmintonMatchWinner(row.results);
+            if(winnerSide === team.side){
+                return {
+                    class: 'is-success'
+                }
+            }
+            if(winnerSide === 'UNKNOWN'){
+                return {
+                    class: 'is-info'
+                }
+            }
+            return {
+                class: 'is-danger'
+            }
+        },
+        resolveResultDisplay(results, team){
+            return results.map((result) => {
+                if(result.homePoints === null){
+                    return ''
+                }
+                if(team.side === 'HOME'){
+                    return result.homePoints+'/'+result.guestPoints
+                }else{
+                    return result.guestPoints+'/'+result.homePoints
+                }
+            })
+        },
+        determineBadmintonMatchWinner(games) {
+            let homeWins = 0;
+            let guestWins = 0;
+
+            for (let game of games) {
+                const { homePoints, guestPoints } = game;
+
+                // Skip if the game was not played
+                if (homePoints === null || guestPoints === null) {
+                    continue;
+                }
+
+                // Check for valid score
+                if (homePoints < 0 || guestPoints < 0 || homePoints > 30 || guestPoints > 30) {
+                    throw 'Invalid score found';
+                }
+
+                // Determine the winner of the game
+                if ((homePoints >= 21 && homePoints - guestPoints >= 2) || homePoints === 30) {
+                    homeWins++;
+                } else if ((guestPoints >= 21 && guestPoints - homePoints >= 2) || guestPoints === 30) {
+                    guestWins++;
+                }
+            }
+
+            // Check if match winner is already determined
+            if (homeWins === 2) {
+                return 'HOME';
+            } else if (guestWins === 2) {
+                return 'GUEST';
+            }
+
+            // In case all three games are played without a winner
+            return 'UNKNOWN';
+        },
         maybeMoveDown(index) {
             return this.castToArray(this.selectedTeamMatches).length - 1 === index
         },
@@ -245,19 +325,19 @@ export default {
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
         resolveLabel(player, category, league) {
-            return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
+            return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory)
         },
-        isPlayingToHigh(player) {
-            return isPlayingToHighByBadmintonPlayerId(filterYouthFromLevel(this.playingToHigh), player);
+        isPlayingToHighInLevel(player) {
+            return isPlayingToHighByBadmintonPlayerId(this.currentPlayingToHighInLevel, player);
         },
-        isPlayingToHighInSquad(player, category) {
-            return isPlayingToHighByBadmintonPlayerId(filterYouthFromCategory(this.playingToHighInSquad), player, category);
+        isPlayingToHighInCategory(player, category) {
+            return isPlayingToHighByBadmintonPlayerId(this.currentPlayingToHighInCategory, player, category);
         },
         nextStep() {
             this.activeStep = 1;
         },
         highlight(player, category) {
-            return simpleHighlight(filterYouthFromLevel(this.playingToHigh), filterYouthFromCategory(this.playingToHighInSquad), player, category)
+            return simpleHighlight(this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, player, category, this.markYouthAsError)
         },
         findPositions,
         badmintonPlayerTeamMatchesImport() {
@@ -269,12 +349,17 @@ export default {
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
                             leagueMatchId
+                            side
                             squad{
                               playerLimit
                               league
                               categories{
                                 category
                                 name
+                                results {
+                                    homePoints
+                                    guestPoints
+                                }
                                 players{
                                   refId
                                   name
@@ -293,7 +378,70 @@ export default {
                         }
                     `,
                     variables: {
-                        input: {
+                        input:
+//                            {
+//                                "clubId": 1124,
+//                                "leagueMatches": [
+//                                    {
+//                                        "id": 444380,
+//                                        "teamNameHint": "SAIF Kbh.",
+//                                        "league": "3. division Pulje 3",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 444607,
+//                                        "teamNameHint": "SAIF Kbh. 2",
+//                                        "league": "Danmarksserien Pulje 7",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 445936,
+//                                        "teamNameHint": "SAIF Kbh. 3",
+//                                        "league": "Serie 1 Pulje 1",
+//                                        "version": null
+//                                    }
+//                                ],
+//                                "season": 2023,
+//                                "version": "2023-11-01"
+//                            }
+//                            {
+//                                "clubId": 25,
+//                                "leagueMatches": [
+//                                    {
+//                                        "id": 444135,
+//                                        "teamNameHint": "Højbjerg 2",
+//                                        "league": "1. division Pulje 1",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 444206,
+//                                        "teamNameHint": "Højbjerg 3",
+//                                        "league": "2. division Pulje 1",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 444352,
+//                                        "teamNameHint": "Højbjerg 4",
+//                                        "league": "3. division Pulje 2",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 444465,
+//                                        "teamNameHint": "Højbjerg 5",
+//                                        "league": "Danmarksserien Pulje 2",
+//                                        "version": null
+//                                    },
+//                                    {
+//                                        "id": 446571,
+//                                        "teamNameHint": "Højbjerg 6",
+//                                        "league": "Kredsserien Vest Pulje 3",
+//                                        "version": null
+//                                    }
+//                                ],
+//                                "season": 2023,
+//                                "version": "2023-11-01"
+//                            }
+                            {
                             clubId: parseInt(this.clubId),
                             leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch, index) => {
                                 return {
@@ -350,7 +498,7 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.playingToHigh = data.validateCrossSquads
+                this.playingToHighInLevel = data.validateCrossSquads
             }).finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingCrossSquad = false
@@ -382,7 +530,7 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.playingToHighInSquad = data.validateSquads
+                this.playingToHighInCategory = data.validateSquads
             }).finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingSquad = false

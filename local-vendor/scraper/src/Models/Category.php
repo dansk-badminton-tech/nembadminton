@@ -12,6 +12,11 @@ class Category
     public string  $name;
 
     /**
+     * @var Result[]
+     */
+    public array $results = [];
+
+    /**
      * @var Player[]
      */
     public array $players = [];

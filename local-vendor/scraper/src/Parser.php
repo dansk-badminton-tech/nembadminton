@@ -1,17 +1,20 @@
 <?php
 declare(strict_types = 1);
 
+
 namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use DiDom\Element;
 use FlyCompany\BadmintonPlayerAPI\Util;
+use FlyCompany\Scraper\Enums\Side;
 use FlyCompany\Scraper\Exception\NoPlayersException;
 use FlyCompany\Scraper\Exception\NoPlayersFoundInTeamMatchException;
 use FlyCompany\Scraper\Models\Category;
 use FlyCompany\Scraper\Models\Player;
 use FlyCompany\Scraper\Models\PlayerSearch;
 use FlyCompany\Scraper\Models\Point;
+use FlyCompany\Scraper\Models\Result;
 use FlyCompany\Scraper\Models\Squad;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
@@ -196,7 +199,7 @@ class Parser
         $trs = $document->find('table.matchresultschema.showmatch tr');
 
         $playersTrs = array_shift($trs);
-        if($playersTrs === null){
+        if ($playersTrs === null) {
             throw new NoPlayersFoundInTeamMatchException('Could not find any players on match');
         }
         $topRow = $playersTrs->find('td');
@@ -232,10 +235,14 @@ class Parser
                 $club2Player2Name = null;
             }
 
+            $results = $match->find('td.result');
+            $results = $this->extractedResults($results);
+
             // Squad 1
             $categoryObj = new Category();
             $categoryObj->category = $category;
             $categoryObj->name = $categoryName;
+            $categoryObj->results = $results;
             $squad1->categories[] = $categoryObj;
 
             $player1 = new Player();
@@ -254,6 +261,7 @@ class Parser
             $categoryObj = new Category();
             $categoryObj->category = $category;
             $categoryObj->name = $categoryName;
+            $categoryObj->results = $results;
             $squad2->categories[] = $categoryObj;
 
             $player1 = new Player();
@@ -269,10 +277,10 @@ class Parser
             $categoryObj->players[] = $player1;
         }
 
-        $team1 = new Team($club1, $squad1);
-        $team2 = new Team($club2, $squad2);
+        $home = new Team($club1, $squad1, Side::HOME);
+        $guest = new Team($club2, $squad2, Side::GUEST);
 
-        return new TeamMatch($team1, $team2);
+        return new TeamMatch($home, $guest);
     }
 
     /**
@@ -282,11 +290,12 @@ class Parser
      */
     private function extractNameAndId(?Element $aElement) : array
     {
-        if($aElement === null){
+        if ($aElement === null) {
             return ['Ikke fremmødt', 0];
         }
         $href = $aElement->getAttribute('href');
         $badmintonPlayerId = Str::after($href, '#');
+
         return [$aElement->text(), (int)$badmintonPlayerId];
     }
 
@@ -323,6 +332,34 @@ class Parser
         }
 
         return $category;
+    }
+
+    /**
+     * @param array $resultsHtml
+     *
+     * @return Result[]
+     */
+    public function extractedResults(array $resultsHtml) : array
+    {
+        $results = [];
+        foreach ($resultsHtml as $result) {
+            $text = $result->text();
+
+            // Regular expression to match numbers separated by a hyphen
+            $pattern = '/(\d+).?.?-.?.?(\d+)/';
+
+            // Use preg_match_all to find all matches
+            preg_match_all($pattern, $text, $matches);
+            [, $squad1Points, $squad2Points] = $matches;
+            $result = new Result();
+            $squad1Points = $squad1Points[0] ?? null;
+            $squad2Points = $squad2Points[0] ?? null;
+            $result->homePoints = $squad1Points === null ? $squad1Points : (int)$squad1Points;
+            $result->guestPoints = $squad2Points === null ? $squad2Points : (int)$squad2Points;
+            $results[] = $result;
+        }
+
+        return $results;
     }
 
 }
