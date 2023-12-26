@@ -16,7 +16,7 @@ const routes = [
     },
     {
         meta: {
-            title: 'Holdkamp',
+            title: 'Holdrunde',
             requiresAuth: true
         },
         path: '/team-fight/dashboard',

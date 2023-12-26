@@ -40,6 +40,7 @@ export default {
             </header>
             <section class="modal-card-body">
                 <div class="content">
+                    <p>Valideringen af holdet foretages på basis af DH-reglementet. Det er værd at bemærke, at der ikke bliver taget hensyn til eventuelle unikke regler for hold, der befinder sig under Danmarksserien.</p>
                     <b-field label="Mix Doubles (MD)">
                         <b-input v-model.number="mix" type="number" min="0"></b-input>
                     </b-field>
