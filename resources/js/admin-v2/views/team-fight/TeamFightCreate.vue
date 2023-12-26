@@ -2,7 +2,7 @@
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Opret holdkamp
+            Opret holdrunde
         </hero-bar>
         <section class="section is-main-section">
             <div v-if="!$apollo.queries.me.loading" class="column">
@@ -25,7 +25,7 @@
                 <b-field label="Klub">
                     <b-input v-model="me.club.name1" disabled="true"></b-input>
                 </b-field>
-                <b-button class="mt-2" icon-left="save" :loading="loading" @click="createTeam">Opret</b-button>
+                <b-button class="mt-2" icon-left="plus" :loading="loading" @click="createTeam">Opret</b-button>
             </div>
         </section>
     </div>
@@ -44,7 +44,7 @@ export default {
     components: {HeroBar, TitleBar, RankingVersionSelect, RankingListDatePicker},
     data() {
         return {
-            titleStack: ['Admin', 'Holdkamp'],
+            titleStack: ['Admin', 'Holdrunde'],
             name: null,
             gameDate: null,
             clubId: null,

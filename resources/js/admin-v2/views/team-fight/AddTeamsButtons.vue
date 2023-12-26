@@ -26,6 +26,12 @@
                 @click="addSquad10">
                 13-kamps hold
             </b-button>
+            <b-button
+                :loading="loading"
+                type="is-primary"
+                @click="addCustomSquad">
+                Andet
+            </b-button>
         </div>
     </div>
 </template>
@@ -34,6 +40,8 @@
 import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
 import TeamQuery from "../../../queries/team.graphql";
+import AddSquadMemberModal from "./AddSquadMemberModal.vue";
+import AddCustomSquadModal from "./AddCustomSquadModal.vue";
 
 export default {
     name: "AddTeamsButtons",
@@ -46,7 +54,7 @@ export default {
     methods: {
         addSquad(team){
             this.loading = true
-            this.$apollo.mutate(
+            return this.$apollo.mutate(
                 {
                     mutation: gql`
                         mutation createSquad($input: CreateSquadInput!){
@@ -98,6 +106,21 @@ export default {
         addSquad6() {
             this.addSquad(TeamFightHelper.generateSquadWith6Players())
         },
+        addCustomSquad(){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       props: {
+                                           addSquad: this.addSquad
+                                       },
+                                       events: {
+                                           close(){}
+                                       },
+                                       canCancel: ["x"],
+                                       component: AddCustomSquadModal,
+                                       hasModalCard: true,
+                                       trapFocus: true
+                                   })
+        }
     }
 }
 </script>

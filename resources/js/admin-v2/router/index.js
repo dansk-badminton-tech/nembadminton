@@ -16,7 +16,7 @@ const routes = [
     },
     {
         meta: {
-            title: 'Holdkamp',
+            title: 'Holdrunde',
             requiresAuth: true
         },
         path: '/team-fight/dashboard',
@@ -25,7 +25,7 @@ const routes = [
     },
     {
         meta: {
-            title: 'Opret Holdkamp',
+            title: 'Opret Holdrunde',
             requiresAuth: true
         },
         path: '/team-fight/create',

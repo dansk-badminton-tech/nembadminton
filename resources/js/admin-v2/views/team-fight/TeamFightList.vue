@@ -2,14 +2,14 @@
     <div>
         <title-bar :title-stack="titleStack" />
         <hero-bar :has-right-visible="false">
-            Holdkamp
+            Holdrunde
         </hero-bar>
         <section class="section is-main-section">
             <div class="mb-3 mt-3">
-                <b-button :to="{name: 'team-fight-create'}" type="is-link" icon-left="plus" tag="router-link">Opret holdkamp</b-button>
+                <b-button :to="{name: 'team-fight-create'}" type="is-link" icon-left="plus" tag="router-link">Opret holdrunde</b-button>
             </div>
             <card-component
-                title="Holdkamp"
+                title="Holdrunde"
                 class="has-table has-mobile-sort-spaced"
             >
                 <ListTeamFights />
@@ -31,7 +31,7 @@ export default {
     components: {CardComponent, HeroBar, TitleBar, ListTeamFights, CreateTeamFightAction},
     data() {
         return {
-            titleStack: ['Admin', 'Holdkamp']
+            titleStack: ['Admin', 'Holdrunde']
         }
     }
 }

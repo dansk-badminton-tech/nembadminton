@@ -107,7 +107,7 @@
                                        :version="new Date(version)"/>
                 </div>
                 <div class="column is-6 container">
-                    <h1 class="title">Holdet</h1>
+                    <h1 class="title">Holdene i holdrunden</h1>
                     <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
@@ -211,7 +211,7 @@ export default {
     },
     data() {
         return {
-            titleStack: ['Admin', 'Holdkamp'],
+            titleStack: ['Admin', 'Holdrunde'],
             validateBasicSquads: [],
             playingToHighList: [],
             canValidateCrossSquads: false,
