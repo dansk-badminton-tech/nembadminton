@@ -1,11 +1,6 @@
 # Nembadminton
 
-[nembadminton](https://nembadminton.dk) er en GRATIS samling af IT værktøjer til at støtte op omkring badminton i Danmark.
-
-## Features
-
-* Holdkamp - Sammensæt en hel holdkamps runder som automatisk tjekker for gyldig opstilling
-* Tidligere holdkampe - Tjek om din modtagers holdopstilling er gyldig.
+[nembadminton](https://nembadminton.dk) udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig.
 
 ## Get started
 Kør følgende kommandoer i din terminal
@@ -38,7 +33,3 @@ Opret en bruger `http://localhost/new-user`
 **Fundet en fejl?:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
 
 **Project:** https://github.com/dansk-badminton-tech/nembadminton/projects/2
-
-## Roadmap
-
-Work in progress
