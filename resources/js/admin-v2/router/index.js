@@ -25,7 +25,7 @@ const routes = [
     },
     {
         meta: {
-            title: 'Opret Holdkamp',
+            title: 'Opret Holdrunde',
             requiresAuth: true
         },
         path: '/team-fight/create',
