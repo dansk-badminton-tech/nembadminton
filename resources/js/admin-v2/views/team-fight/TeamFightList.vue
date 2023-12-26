@@ -2,7 +2,7 @@
     <div>
         <title-bar :title-stack="titleStack" />
         <hero-bar :has-right-visible="false">
-            Holdrunde
+            Holdrunder
         </hero-bar>
         <section class="section is-main-section">
             <div class="mb-3 mt-3">
@@ -31,7 +31,7 @@ export default {
     components: {CardComponent, HeroBar, TitleBar, ListTeamFights, CreateTeamFightAction},
     data() {
         return {
-            titleStack: ['Admin', 'Holdrunde']
+            titleStack: ['Admin', 'Holdrunder']
         }
     }
 }

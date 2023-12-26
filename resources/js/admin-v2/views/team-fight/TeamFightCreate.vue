@@ -44,7 +44,7 @@ export default {
     components: {HeroBar, TitleBar, RankingVersionSelect, RankingListDatePicker},
     data() {
         return {
-            titleStack: ['Admin', 'Holdrunde'],
+            titleStack: ['Admin', 'Holdrunder'],
             name: null,
             gameDate: null,
             clubId: null,

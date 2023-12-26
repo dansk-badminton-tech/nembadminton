@@ -9,7 +9,7 @@ export default [
         {
             to: '/team-fight/dashboard',
             icon: 'account-group',
-            label: 'Holdrunde'
+            label: 'Holdrunder'
         },
 //        {
 //            to: '/calendar',
