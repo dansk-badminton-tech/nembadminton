@@ -392,7 +392,7 @@ class TeamValidator
     {
         $categoriesGrouped = (new Collection($categories))->groupBy('category');
         /** @var Collection $category */
-        $category = $categoriesGrouped->get($category);
+        $category = $categoriesGrouped->get($category, new Collection());
 
         $players = $category->pluck('players')->flatten(1);
 
@@ -416,7 +416,8 @@ class TeamValidator
         $categoriesGrouped = (new Collection($categories))->groupBy('category');
         $pairs = [];
         /** @var Category $specificCategory */
-        foreach ($categoriesGrouped->get($category) as $specificCategory) {
+        $currentCategory = $categoriesGrouped->get($category, new Collection());
+        foreach ($currentCategory as $specificCategory) {
             $pairs[] = $specificCategory->players;
         }
 
