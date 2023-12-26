@@ -5,8 +5,12 @@ declare(strict_types = 1);
 namespace FlyCompany\Scraper;
 
 use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\Scraper\Exception\MultiplePlayersFoundException;
+use FlyCompany\Scraper\Models\Player;
+use FlyCompany\Scraper\Models\Point;
 use FlyCompany\Scraper\Models\Team;
+use Illuminate\Support\Arr;
 
 class Enricher
 {
@@ -50,6 +54,16 @@ class Enricher
             $category->players = array_filter($category->players, static function ($player) {
                 return $player !== null;
             });
+            $category->players = array_map(static function(Player $player) use ($season) {
+                $vintage = $player->calculateVintage(BadmintonPlayerHelper::makeSeasonStart($season));
+                $hasLevelPoint = Arr::first($player->points, static fn(Point $point) => $point->category === null) !== null;
+                if(!$hasLevelPoint && Util::isYoungPlayer($vintage)){
+                    $point = new Point(0, 0, $vintage->value);
+                    $point->setCategory(null);
+                    $player->points[] = $point;
+                }
+                return $player;
+            }, $category->players);
         }
 
         return $team;

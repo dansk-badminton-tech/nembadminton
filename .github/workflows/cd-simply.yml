@@ -1,0 +1,74 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.x'
+          cache: 'yarn'
+
+      - name: Frontend build
+        run: |
+          export MIX_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
+          export MIX_PUSHER_HOST="ws.platform.nembadminton.dk"
+          export MIX_PUSHER_PORT="443"
+          export MIX_PUSHER_SCHEME="https"
+          yarn install --frozen-lockfile
+          yarn run production
+
+      - name: Upload new frontend
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_USERNAME }}
+          key: ${{ secrets.SIMPLY_SSH_KEY }}
+          port: 22
+          source: "public/css,public/js,public/images,public/mix-manifest.json"
+          target: /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}
+          strip_components: 1
+
+      - name: Switch to new version of frontend
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_USERNAME }}
+          key: ${{ secrets.SIMPLY_SSH_KEY }}
+          port: 22
+          script: |
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/images /var/www/badminton.social/projects/holdkamp/public/images
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/css /var/www/badminton.social/projects/holdkamp/public/css
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/js /var/www/badminton.social/projects/holdkamp/public/js
+            ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/mix-manifest.json /var/www/badminton.social/projects/holdkamp/public/mix-manifest.json
+
+      - name: Deploying newest backend of master
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SIMPLY_SSH_HOST }}
+          username: ${{ secrets.SIMPLY_SSH_USERNAME }}
+          key: ${{ secrets.SIMPLY_SSH_KEY }}
+          port: 22
+          script: |
+            cd /var/www/badminton.social/projects/holdkamp
+            git pull
+            php81 /usr/local/bin/composer install --ignore-platform-reqs
+            php81 artisan migrate --force
+            php81 artisan lighthouse:clear-cache
+            php81 artisan lighthouse:cache
+

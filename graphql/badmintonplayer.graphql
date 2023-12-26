@@ -73,8 +73,8 @@ input TeamMatchImportInput {
 }
 
 enum Side {
-    HOME @enum(value: "home")
-    GUEST @enum(value: "guest")
+    HOME @enum(value: "HOME")
+    GUEST @enum(value: "GUEST")
 }
 
 type ImportTeamMatch {
@@ -85,6 +85,7 @@ type ImportTeamMatch {
 type ImportTeam{
     name: String!
     leagueMatchId: String!
+    side: Side!
     squad: ImportSquad!
 }
 
@@ -113,6 +114,12 @@ type ImportCategory{
     category: String!
     name: String!
     players: [ImportMember!]!
+    results: [ImportResult!]!
+}
+
+type ImportResult {
+    homePoints: Int
+    guestPoints: Int
 }
 
 type OptionClub {

@@ -56,5 +56,4 @@ class VintageTest extends TestCase
         $this->assertEquals(Vintage::U15, $vintage);
         Carbon::setTestNow();
     }
-
 }

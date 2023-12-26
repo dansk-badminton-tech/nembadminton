@@ -1,20 +1,26 @@
-import omitDeep from "omit-deep";
-
 export function hasInvalidCategory(playingToHighSquadList) {
-    const playersWithoutYouth = playingToHighSquadList.filter((playerInfo) => {
-        return !playerInfo.isYouthPlayer
-    })
-    const playersWithoutYouthPartner = playersWithoutYouth.filter((playerInfo) => {
-        return !playerInfo.hasYouthPlayerPartner
-    })
+    const playersWithoutYouthPartner = filterYouthFromCategory(playingToHighSquadList)
     return playersWithoutYouthPartner.length > 0
 }
 
-export function hasInvalidLevel(playingToHighList) {
-    const playersWithoutYouth = playingToHighList.filter((playerInfo) => {
+export function filterYouthFromCategory(players){
+    const playersWithoutYouth = players.filter((playerInfo) => {
         return !playerInfo.isYouthPlayer
     })
+    return playersWithoutYouth.filter((playerInfo) => {
+        return !playerInfo.hasYouthPlayerPartner
+    })
+}
+
+export function hasInvalidLevel(playingToHighList) {
+    const playersWithoutYouth = filterYouthFromLevel(playingToHighList)
     return playersWithoutYouth.length > 0
+}
+
+export function filterYouthFromLevel(players){
+    return players.filter((playerInfo) => {
+        return !playerInfo.isYouthPlayer
+    });
 }
 
 export function wrapSquadsInTeamWithoutLeague(squads){

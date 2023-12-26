@@ -436,7 +436,8 @@ class TeamValidator
                 return (int)$point->points;
             }
         }
-        throw new \RuntimeException('Bad lucky');
+
+        throw new \RuntimeException('Bad lucky on '.$player->name);
     }
 
     private function getPlayerCategoryPoint(Player $player, string $category)

@@ -17,7 +17,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -29,13 +29,13 @@ jobs:
 
       - uses: php-actions/composer@v6
         with:
-          php_version: 8.1
+          php_version: 8.2
           version: 2
           dev: no
           args: --ignore-platform-reqs
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '16.x'
           cache: 'yarn'

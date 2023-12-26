@@ -4,6 +4,10 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Scraper\Models;
 
+use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Util;
+use FlyCompany\BadmintonPlayerAPI\Vintage;
+
 class Player
 {
 
@@ -28,6 +32,11 @@ class Player
      */
     public function isNoBody() : bool {
         return $this->badmintonPlayerId === 0;
+    }
+
+    public function calculateVintage(?Carbon $season = null) : Vintage
+    {
+        return Util::calculateVintageByRefId($this->refId, $season);
     }
 
 }
