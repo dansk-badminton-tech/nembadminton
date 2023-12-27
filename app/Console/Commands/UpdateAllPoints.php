@@ -16,7 +16,7 @@ class UpdateAllPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-import:update-all-clubs';
+    protected $signature = 'badmintonplayer-import:update-all-points';
 
     /**
      * The console command description.
@@ -34,9 +34,9 @@ class UpdateAllPoints extends Command
     {
         $usersWithClubId = User::query()->groupBy('organization_id')->get(['organization_id']);
         foreach ($usersWithClubId as $item){
-            BadmintonPlayerImportMembers::withChain([
-                new BadmintonPlayerImportPoints($item->organization_id)
-            ])->dispatch([(string)$item->organization_id]);
+            BadmintonPlayerImportPoints::dispatch($item->organization_id);
+//            BadmintonPlayerImportMembers::withChain([
+//            ])->dispatch([(string)$item->organization_id]);
         }
         return 0;
     }

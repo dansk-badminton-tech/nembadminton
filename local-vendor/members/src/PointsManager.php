@@ -46,11 +46,11 @@ class PointsManager
         /** @var Member $member */
         $member = Member::query()->where('name', $name)->firstOrFail();
 
-        Point::query()->updateOrCreate([
+        Point::query()->where([
             'category'  => $category,
             'version'   => $version,
             'member_id' => $member->id,
-        ],[
+        ])->update([
             'points'    => $points,
             'position'  => $position,
             'cll'       => null,

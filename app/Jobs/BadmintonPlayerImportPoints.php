@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class BadmintonPlayerImportPoints implements ShouldQueue
@@ -57,18 +58,21 @@ class BadmintonPlayerImportPoints implements ShouldQueue
             $rankingLists = BadmintonPlayer::rankingLists();
         }
 
-        $seasons = $this->generateSeasons();
+        $seasons = [BadmintonPlayerHelper::getCurrentSeason()];
+        //$seasons = $this->generateSeasons();
         foreach ($rankingLists as $rankingList) {
             foreach ($seasons as $season){
                 \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season", 'points-importer');
-                /** @var Carbon[] $rankingMonths */
+                /** @var Collection|Carbon[] $rankingMonths */
                 $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($scraper->getVersions($season));
+                $rankingMonths = $rankingMonths->pop(2);
                 foreach ($rankingMonths as $starting){
                     $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
                     foreach ($playersCollection as $player) {
                         $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
                         foreach ($player->points as $point) {
                             try {
+                                Log::info("Updating $player->name {$point->getVintage()} {$point->getPoints()}");
                                 $pointsManager->addPointsByName($player->name, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
                             } catch (ModelNotFoundException) {
                                 Log::info("Skipping: $player->name could not find player");

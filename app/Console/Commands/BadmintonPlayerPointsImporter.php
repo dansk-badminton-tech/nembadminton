@@ -40,7 +40,7 @@ class BadmintonPlayerPointsImporter extends Command
         if($rankingList !== null){
             $rankingList = RankingList::from($rankingList);
         }
-        BadmintonPlayerImportPoints::dispatchNow($this->argument('club-id'), $rankingList);
+        BadmintonPlayerImportPoints::dispatchSync($this->argument('club-id'), $rankingList);
 
         return 0;
     }
