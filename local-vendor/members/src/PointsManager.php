@@ -59,4 +59,30 @@ class PointsManager
         ]);
     }
 
+    /**
+     * @param string      $refId
+     * @param int         $points
+     * @param int         $position
+     * @param Carbon      $version
+     * @param string|null $category
+     * @param string      $vintage
+     */
+    public function addPointsByRefId(string $refId, int $points, int $position, Carbon $version, ?string $category, string $vintage = 'SEN') : void
+    {
+        /** @var Member $member */
+        $member = Member::query()->where('refId', $refId)->firstOrFail();
+
+        Point::query()->where([
+            'category'  => $category,
+            'version'   => $version,
+            'member_id' => $member->id,
+        ])->update([
+            'points'    => $points,
+            'position'  => $position,
+            'cll'       => null,
+            'vintage'   => $vintage,
+            'clh'       => null,
+        ]);
+    }
+
 }

@@ -197,12 +197,18 @@ export default {
             return this.validateBasicSquads.find(data => data.missingPlayerInCategory === true || data.spotsFulfilled === false) !== undefined
         },
         resolveInvalidCategory() {
+            if(this.errorValidatingCategory){
+                return null
+            }
             if (!this.canValidateSquads) {
                 return null
             }
             return hasInvalidCategory(this.playingToHighSquadList)
         },
         resolveInvalidLevel() {
+            if(this.errorValidatingLevel){
+                return null
+            }
             if (!this.canValidateCrossSquads) {
                 return null
             }
@@ -214,9 +220,7 @@ export default {
             titleStack: ['Admin', 'Holdrunde'],
             validateBasicSquads: [],
             playingToHighList: [],
-            canValidateCrossSquads: false,
             playingToHighSquadList: [],
-            canValidateSquads: false,
             teamCount: 1,
             players: [],
             saving: false,
@@ -230,7 +234,11 @@ export default {
                 squads: [],
                 club: {}
             },
-            ignoreIncompleteTeam: false
+            ignoreIncompleteTeam: false,
+            canValidateCrossSquads: false,
+            canValidateSquads: false,
+            errorValidatingCategory: false,
+            errorValidatingLevel: false
         }
     },
     apollo: {
@@ -478,6 +486,7 @@ export default {
                        })
         },
         validateSquads() {
+            this.errorValidatingCategory = false;
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -506,6 +515,7 @@ export default {
                     this.playingToHighSquadList = data.validateSquads;
                 })
                 .catch((error) => {
+                    this.errorValidatingCategory = true;
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
@@ -516,6 +526,7 @@ export default {
                 })
         },
         validateCrossSquads() {
+            this.errorValidatingLevel = false
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -541,6 +552,7 @@ export default {
                     this.playingToHighList = data.validateCrossSquads;
                 })
                 .catch((error) => {
+                    this.errorValidatingLevel = true
                     this.$buefy.snackbar.open(
                         {
                             duration: 4000,
