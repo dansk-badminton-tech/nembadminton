@@ -7,7 +7,7 @@ extend type Mutation {
 }
 
 extend type Query {
-    notifications: [Notification!]! @all(scopes: ["myNotifications"]) @where(key: "read_at", value: null) @guard
+    notifications: [Notification!]! @all(scopes: ["myNotifications"]) @where(key: "read_at", value: null) @orderBy(column: "created_at", direction: DESC) @guard
     notificationReceivers: [User!]! @all @guard @can(ability: "admin")
 }
 
