@@ -134,6 +134,9 @@ export default {
                 <span class="is-hidden-desktop">Notifikationer</span>
             </a>
         </template>
+        <div v-show="parsedNotification?.length === 0" class="dropdown-item">
+            Ingen notifikationer
+        </div>
         <b-dropdown-item
             aria-role="listitem"
             :focusable="false"
@@ -142,9 +145,6 @@ export default {
             max-height="300px"
             v-for="(notification, key, index) in parsedNotification"
         >
-            <div v-show="parsedNotification?.length === 0" class="dropdown-item">
-                Ingen notifikationer
-            </div>
             <div class="media">
                 <!--                    <figure class="media-left">-->
                 <!--                        <p class="image is-64x64">-->
