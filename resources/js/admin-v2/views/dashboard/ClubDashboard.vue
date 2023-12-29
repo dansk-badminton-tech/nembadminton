@@ -68,11 +68,10 @@ import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import TilesBlock from "../../components/TilesBlock.vue";
 import CardWidget from "../../components/CardWidget.vue";
-import NotificationBar from "../../components/NotificationBar.vue";
 
 export default {
     name: "ClubDashboard",
-    components: {NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
+    components: {CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
     apollo: {
         clubStats: {
             query: gql`

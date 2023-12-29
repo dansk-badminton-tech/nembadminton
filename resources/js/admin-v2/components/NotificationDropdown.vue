@@ -118,7 +118,7 @@ export default {
     <b-dropdown
         position="is-bottom-left"
         append-to-body
-        aria-role="menu"
+        aria-role="list"
         trap-focus
         class="navbar-item"
     >
@@ -135,63 +135,39 @@ export default {
             </a>
         </template>
         <b-dropdown-item
-            aria-role="menu-item"
+            aria-role="listitem"
             :focusable="false"
-            custom
-            paddingless
-            expanded
-            scrollable
+            :scrollable="true"
+            :custom="true"
             max-height="300px"
+            v-for="(notification, key, index) in parsedNotification"
         >
             <div v-show="parsedNotification?.length === 0" class="dropdown-item">
                 Ingen notifikationer
             </div>
-            <div class="dropdown-item" v-for="notification in parsedNotification">
-                <article class="media notification-width">
-                    <!--                    <figure class="media-left">-->
-                    <!--                        <p class="image is-64x64">-->
-                    <!--                            <img src="https://bulma.io/images/placeholders/128x128.png">-->
-                    <!--                        </p>-->
-                    <!--                    </figure>-->
-                    <div class="media-content">
-                        <div class="content is-marginless">
-                            <p>
-                                <strong>{{ notification.dataParsed.title }}</strong> <small>{{ timeAgo(notification.createdAt) }}</small>
-                                <br>
-                                <span style="white-space: pre-wrap;">{{ notification.dataParsed.message }}</span>
-                            </p>
-                        </div>
-                    </div>
-                    <!--                    <div class="media-right">-->
-                    <!--                        <button class="delete"></button>-->
-                    <!--                    </div>-->
-                </article>
+            <div class="media">
+                <!--                    <figure class="media-left">-->
+                <!--                        <p class="image is-64x64">-->
+                <!--                            <img src="https://bulma.io/images/placeholders/128x128.png">-->
+                <!--                        </p>-->
+                <!--                    </figure>-->
+                <div class="media-content">
+                    <h3><strong>{{ notification.dataParsed.title }}</strong> <small>{{ timeAgo(notification.createdAt) }}</small></h3>
+                    <small style="white-space: pre-wrap;">{{ notification.dataParsed.message }}</small>
+                </div>
+                <!--                    <div class="media-right">-->
+                <!--                        <button class="delete"></button>-->
+                <!--                    </div>-->
             </div>
-            <hr v-show="parsedNotification?.length !== 0" class="dropdown-divider">
-            <a v-show="parsedNotification?.length !== 0" @click.prevent="readAll" href="#" class="dropdown-item">
-                <b-icon size="is-small" icon="check"></b-icon>
-                Marker alle som læst
-            </a>
         </b-dropdown-item>
+        <hr v-show="parsedNotification?.length !== 0" class="dropdown-divider">
+        <a v-show="parsedNotification?.length !== 0" @click.prevent="readAll" href="#" class="dropdown-item">
+            <b-icon size="is-small" icon="check"></b-icon>
+            Marker alle som læst
+        </a>
     </b-dropdown>
 </template>
 
 <style scoped>
-.notification-item:hover {
-    background-color: hsl(0, 0%, 96%);
-    color: hsl(0, 0%, 4%);
-    cursor: pointer;
-}
 
-@media only screen and (max-width: 600px) {
-    .notification-width {
-        min-width: 200px;
-    }
-}
-
-@media only screen and (min-width: 768px) {
-    .notification-width {
-        min-width: 400px;
-    }
-}
 </style>
