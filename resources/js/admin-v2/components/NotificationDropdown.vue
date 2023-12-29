@@ -143,8 +143,8 @@ export default {
             :scrollable="true"
             :custom="true"
             max-height="300px"
-            v-for="(notification, key, index) in parsedNotification"
-        >
+            v-for="notification in parsedNotification"
+            :key="notification.id">
             <div class="media">
                 <!--                    <figure class="media-left">-->
                 <!--                        <p class="image is-64x64">-->
