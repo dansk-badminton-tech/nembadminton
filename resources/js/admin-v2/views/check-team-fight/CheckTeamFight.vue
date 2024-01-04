@@ -104,6 +104,8 @@
                         <b-message v-if="errorImporting" title="Fejl ved import" class="mt-2" type="is-danger">
                             En eller flere hold kunne ikke importeres. Prøv at tjek på badmintonplayer.dk om der er
                             indrapporteret spiller på alle holde?
+                            <br />
+                            Fejl: {{errorImportingErrors}}
                         </b-message>
                     </b-step-item>
                 </template>
@@ -203,6 +205,7 @@ export default {
             draggingColumn: null,
             draggingColumnIndex: null,
             errorImporting: false,
+            errorImportingErrors: [],
             validatingCrossSquad: false,
             validatingSquad: false,
             markYouthAsError: false
@@ -462,7 +465,7 @@ export default {
                 this.teams = data.badmintonPlayerTeamMatchesImport
                 this.done = true
                 this.validate()
-            }).catch(() => {
+            }).catch(({graphQLErrors}) => {
                 this.$buefy.toast.open({
                                            duration: 5000,
                                            message: `Et eller flere hold kunne ikke hentes`,
@@ -470,6 +473,7 @@ export default {
                                            type: 'is-danger'
                                        })
                 this.errorImporting = true;
+                this.errorImportingErrors = graphQLErrors.map((error) => {return error.message});
                 this.fetchingAndValidating = false;
             })
         },
