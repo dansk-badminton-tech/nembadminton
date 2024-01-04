@@ -55,7 +55,7 @@ class BadmintonPlayerImportPoints implements ShouldQueue
         if($this->rankingList !== null){
             $rankingLists = [$this->rankingList->value];
         }else{
-            $rankingLists = BadmintonPlayer::rankingLists();
+            $rankingLists = BadmintonPlayer::rankingLevelLists();
         }
 
         $seasons = [BadmintonPlayerHelper::getCurrentSeason()];

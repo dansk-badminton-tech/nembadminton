@@ -587,6 +587,28 @@ class BadmintonPlayer
         return static::calculateSeason(Carbon::now());
     }
 
+    public static function rankingLevelLists(?string $gender = null){
+        if ($gender === null) {
+            return [
+                'DL',
+                'HL'
+            ];
+        }
+
+        if ($gender === 'K') {
+            return [
+                'DL'
+            ];
+        }
+
+        if ($gender === 'M') {
+            return [
+                'HL'
+            ];
+        }
+        throw new \RuntimeException("Unknown gender '$gender'");
+    }
+
     /**
      *
      * @return string[]
@@ -597,30 +619,30 @@ class BadmintonPlayer
             return [
                 'DL',
                 'HL',
-//                'HS',
-//                'DS',
-//                'HD',
-//                'DD',
-//                'MxD',
-//                'MxH',
+                'HS',
+                'DS',
+                'HD',
+                'DD',
+                'MxD',
+                'MxH',
             ];
         }
 
         if ($gender === 'K') {
             return [
                 'DL',
-//                'DS',
-//                'DD',
-//                'MxD',
+                'DS',
+                'DD',
+                'MxD',
             ];
         }
 
         if ($gender === 'M') {
             return [
                 'HL',
-//                'HS',
-//                'HD',
-//                'MxH',
+                'HS',
+                'HD',
+                'MxH',
             ];
         }
         throw new \RuntimeException("Unknown gender '$gender'");
