@@ -4,7 +4,7 @@
             v-for="option in badmintonPlayerTeamFights"
             :key="option.matchId"
             :value="option">
-            {{ option.gameTime }} - {{ option.teams.join(' - ') }}
+            {{option.round}} - {{ option.gameTime }} - {{ option.teams.join(' - ') }}
         </option>
     </b-select>
 </template>
@@ -32,6 +32,8 @@ export default {
                         teams
                         matchId
                         gameTime
+                        round
+                        roundDate
                     }
                 }
             `,

@@ -33,8 +33,17 @@ class Parser
         array_shift($trs);
 
         $teams = [];
+        $currentRound = null;
+        $currentRoundDate = null;
         foreach ($trs as $tr) {
-            if ($tr->attr('class') !== 'roundheader') {
+            if ($tr->attr('class') === 'roundheader') {
+                foreach ($tr->find('td') as $td) {
+                    preg_match('/(\d) (.*)/', $td->text(), $output_array);
+                    $currentRound = $output_array[1] ?? null;
+                    $currentRound = is_int($currentRound) ?: (int)$currentRound;
+                    $currentRoundDate = $output_array[2] ?? null;
+                }
+            } else {
                 $data = [];
                 foreach ($tr->find('td.team') as $td) {
                     $data['teams'][] = $td->text();
@@ -43,6 +52,8 @@ class Parser
                     $data['matchId'] = $td->text();
                 }
                 $data['gameTime'] = $this->findTime((string)$tr->find('td.time')[0]);
+                $data['round'] = $currentRound;
+                $data['roundDate'] = $currentRoundDate;
                 $teams[] = $data;
             }
         }
@@ -354,8 +365,12 @@ class Parser
             $result = new Result();
             $squad1Points = $squad1Points[0] ?? null;
             $squad2Points = $squad2Points[0] ?? null;
-            $result->homePoints = $squad1Points === null ? $squad1Points : (int)$squad1Points;
-            $result->guestPoints = $squad2Points === null ? $squad2Points : (int)$squad2Points;
+            $result->homePoints = $squad1Points === null
+                ? $squad1Points
+                : (int)$squad1Points;
+            $result->guestPoints = $squad2Points === null
+                ? $squad2Points
+                : (int)$squad2Points;
             $results[] = $result;
         }
 

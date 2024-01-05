@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-button v-show="!showDropDown" @click.prevent="toggleRankingDropDown">Vælg anden rangliste</b-button>
-        <RankingListDropdown v-show="showDropDown" :season="season" @input="handleInput"></RankingListDropdown>
+        <RankingListDropdown v-show="showDropDown" :season="season" @input="handleInput" :use-system-rankings="true"></RankingListDropdown>
     </div>
 </template>
 

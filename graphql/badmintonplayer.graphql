@@ -28,6 +28,8 @@ type BadmintonPlayerTeamFight {
     teams: [String!]!
     matchId: Int!
     gameTime: String!
+    round: Int
+    roundDate: String
 }
 
 input BadmintonPlayerTeamFightsInput {
