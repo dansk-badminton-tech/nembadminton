@@ -11,7 +11,7 @@
             tag="router-link"
             to="/team-fight/create"
             type="is-primary">
-            Opret holdkamp
+            Opret holdrunde
         </b-button>
     </div>
 </template>
