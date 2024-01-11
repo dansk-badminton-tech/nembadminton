@@ -222,10 +222,7 @@ export default {
             return hasInvalidLevel(this.playingToHighInLevel)
         },
         currentPlayingToHighInCategory(){
-            if(this.markYouthAsError){
-              return this.playingToHighInCategory
-            }
-            return filterYouthFromCategory(this.playingToHighInCategory)
+            return this.playingToHighInCategory
         },
         currentPlayingToHighInLevel(){
             return filterYouthFromLevel(this.playingToHighInLevel)
