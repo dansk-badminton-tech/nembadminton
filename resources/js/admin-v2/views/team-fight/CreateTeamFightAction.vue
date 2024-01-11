@@ -6,7 +6,7 @@
                 size="is-large">
             </b-icon>
         </p>
-        <p>Kom i gang med din næste holdkamp planlægning her</p>
+        <p>Kom i gang med din næste holdrunde planlægning her</p>
         <b-button
             tag="router-link"
             to="/team-fight/create"

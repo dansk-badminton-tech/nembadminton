@@ -48,13 +48,13 @@
         <div class="buttons">
           <b-button size="is-small" type="is-danger" v-show="props.row.ownerId && hideCancellation" icon-right="delete" @click="deleteMember(props.row)"></b-button>
           <b-button size="is-small" type="is-danger" v-show="!hideCancellation && !hasPermanentCancellation(props.row)"
-                    title="Annuller afbud (Denne holdkamp)" icon-right="account-remove"
+                    title="Annuller afbud (Denne holdrunde)" icon-right="account-remove"
                     @click="deleteCancellation(props.row)"></b-button>
-          <b-button size="is-small" v-show="!hideCancellation && !hasPermanentCancellation(props.row)" title="Lav afbud permanent (Alle holdkampe)"
+          <b-button size="is-small" v-show="!hideCancellation && !hasPermanentCancellation(props.row)" title="Lav afbud permanent (Alle holdrunder)"
                     icon-right="account-injury" @click="makeCancellationPermanent(props.row)"></b-button>
           <b-button size="is-small" type="is-danger" v-show="!hideCancellation && hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
                     icon-right="account-injury" @click="removePermanentCancellation(props.row)"></b-button>
-          <b-button size="is-small" v-show="hideCancellation" title="Afbud (Denne holdkamp)"
+          <b-button size="is-small" v-show="hideCancellation" title="Afbud (Denne holdrunde)"
                     icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
           <b-button size="is-small" v-show="hideCancellation" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
                     @click="addPlayerCustom(props.row)"></b-button>

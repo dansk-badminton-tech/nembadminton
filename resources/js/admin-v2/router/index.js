@@ -34,7 +34,7 @@ const routes = [
     },
     {
         meta: {
-            title: 'Rediger holdkamp',
+            title: 'Rediger holdrunde',
             requiresAuth: true
         },
         path: '/team-fight/:teamUUID/edit',
