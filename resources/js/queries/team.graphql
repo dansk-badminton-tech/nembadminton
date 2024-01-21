@@ -6,6 +6,13 @@ query team($id: ID!){
             playerLimit
             league
             order
+            name
+            playingCity
+            playingZipCode
+            playingAddress
+            playingPlace
+            playingDatetime
+            externalTeamFightID
             categories{
                 id
                 category
@@ -29,6 +36,7 @@ query team($id: ID!){
         name
         gameDate
         version
+        round
         club {
             id
             name1

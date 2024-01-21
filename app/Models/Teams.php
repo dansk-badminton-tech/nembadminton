@@ -24,7 +24,7 @@ class Teams extends Model
 
     public    $incrementing = false;
 
-    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'user_id'];
+    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id'];
 
     protected static function booted()
     {

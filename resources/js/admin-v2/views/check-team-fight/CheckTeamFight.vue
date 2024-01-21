@@ -1,6 +1,6 @@
 <template>
     <section>
-        <b-loading v-model="this.fetchingAndValidating" :is-full-page="true"></b-loading>
+        <b-loading v-model="fetchingAndValidating" :is-full-page="true"></b-loading>
         <form v-if="!done">
             <b-steps v-model="activeStep">
                 <template>
@@ -9,7 +9,7 @@
                             <BadmintonPlayerClubs v-model="clubId" @input="clearTeams"/>
                         </b-field>
                         <b-field label="Sæson">
-                            <b-select v-model="season" expanded placeholder="Vælge sæson">
+                            <b-select v-model.number="season" expanded placeholder="Vælge sæson">
                                 <option value="2019">2019/2020</option>
                                 <option value="2020">2020/2021</option>
                                 <option value="2021">2021/2022</option>
@@ -98,7 +98,7 @@
                                 rundt via Drag&Drop eller via knapperne)
                             </b-checkbox>
                         </b-field>
-                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport"
+                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatches"
                                   :disabled="!sortingConfirmed">Tjek spillerunden
                         </b-button>
                         <b-message v-if="errorImporting" title="Fejl ved import" class="mt-2" type="is-danger">
@@ -113,7 +113,7 @@
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
         <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
-        <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatchesImport">Hent igen</b-button>
+        <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatches">Hent igen</b-button>
         <b-checkbox v-if="done" v-model="markYouthAsError">Marker ungdom som fejl (kategori)</b-checkbox>
         <ValidationStatus v-if="done"
                           :hide-incomplete-team="true"
@@ -340,13 +340,13 @@ export default {
             return simpleHighlight(this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, player, category, this.markYouthAsError)
         },
         findPositions,
-        badmintonPlayerTeamMatchesImport() {
+        badmintonPlayerTeamMatches() {
             this.fetchingAndValidating = true;
             this.errorImporting = false;
-            this.$apollo.mutate(
+            this.$apollo.query(
                 {
-                    mutation: gql`mutation ($input: BadmintonPlayerTeamMatchInput!){
-                        badmintonPlayerTeamMatchesImport(input: $input){
+                    query: gql`query ($input: BadmintonPlayerTeamMatchesInput!){
+                        badmintonPlayerTeamMatches(input: $input){
                             name
                             leagueMatchId
                             side
@@ -379,68 +379,6 @@ export default {
                     `,
                     variables: {
                         input:
-//                            {
-//                                "clubId": 1124,
-//                                "leagueMatches": [
-//                                    {
-//                                        "id": 444380,
-//                                        "teamNameHint": "SAIF Kbh.",
-//                                        "league": "3. division Pulje 3",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444607,
-//                                        "teamNameHint": "SAIF Kbh. 2",
-//                                        "league": "Danmarksserien Pulje 7",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 445936,
-//                                        "teamNameHint": "SAIF Kbh. 3",
-//                                        "league": "Serie 1 Pulje 1",
-//                                        "version": null
-//                                    }
-//                                ],
-//                                "season": 2023,
-//                                "version": "2023-11-01"
-//                            }
-//                            {
-//                                "clubId": 25,
-//                                "leagueMatches": [
-//                                    {
-//                                        "id": 444135,
-//                                        "teamNameHint": "Højbjerg 2",
-//                                        "league": "1. division Pulje 1",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444206,
-//                                        "teamNameHint": "Højbjerg 3",
-//                                        "league": "2. division Pulje 1",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444352,
-//                                        "teamNameHint": "Højbjerg 4",
-//                                        "league": "3. division Pulje 2",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444465,
-//                                        "teamNameHint": "Højbjerg 5",
-//                                        "league": "Danmarksserien Pulje 2",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 446571,
-//                                        "teamNameHint": "Højbjerg 6",
-//                                        "league": "Kredsserien Vest Pulje 3",
-//                                        "version": null
-//                                    }
-//                                ],
-//                                "season": 2023,
-//                                "version": "2023-11-01"
-//                            }
                             {
                             clubId: parseInt(this.clubId),
                             leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch, index) => {
@@ -459,10 +397,11 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.teams = data.badmintonPlayerTeamMatchesImport
+                this.teams = data.badmintonPlayerTeamMatches
                 this.done = true
                 this.validate()
-            }).catch(({graphQLErrors}) => {
+            }).catch((error) => {
+                this.fetchingAndValidating = false;
                 this.$buefy.toast.open({
                                            duration: 5000,
                                            message: `Et eller flere hold kunne ikke hentes`,
@@ -470,8 +409,9 @@ export default {
                                            type: 'is-danger'
                                        })
                 this.errorImporting = true;
-                this.errorImportingErrors = graphQLErrors.map((error) => {return error.message});
-                this.fetchingAndValidating = false;
+                if (error.graphQLErrors){
+                    this.errorImportingErrors = error.graphQLErrors.map((error) => {return error.message});
+                }
             })
         },
         validateCrossSquads() {

@@ -9,7 +9,7 @@ use GraphQL\Error\ClientAware;
 class NoPlayersFoundInTeamMatchException extends \RuntimeException implements ClientAware
 {
 
-    public function isClientSafe()
+    public function isClientSafe() : bool
     {
         return true;
     }

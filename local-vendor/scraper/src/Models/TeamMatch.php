@@ -16,6 +16,14 @@ class TeamMatch
 
     public Team $guest;
 
+    public string $playingPlace;
+
+    public string $playingAddress;
+
+    public string $playingZipCode;
+
+    public string $playingCity;
+
     public function __construct(Team $home, Team $guest)
     {
         $this->home = $home;

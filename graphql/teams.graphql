@@ -76,6 +76,20 @@ input UpdateSquadInput {
     playerLimit: Int
     league: LeagueType
     order: Int
+    "BadmintonPlayer match ID"
+    externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
+    "Playing team"
+    playingDatetime: DateTime @rename(attribute: "playing_datetime")
+    "Playing place"
+    playingPlace: String @rename(attribute: "playing_place")
+    "Playing Address"
+    playingAddress: String @rename(attribute: "playing_address")
+    "Playing Zip code"
+    playingZipCode: String @rename(attribute: "playing_zip_code")
+    "Playing City"
+    playingCity: String @rename(attribute: "playing_city")
+    "Name"
+    name: String
 }
 
 input CreateSquadInput {
@@ -84,6 +98,20 @@ input CreateSquadInput {
     league: LeagueType!
     categories: CreateCategoryHasManyInput!
     order: Int
+    "BadmintonPlayer match ID"
+    externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
+    "Playing team"
+    playingDatetime: DateTime @rename(attribute: "playing_datetime")
+    "Playing place"
+    playingPlace: String @rename(attribute: "playing_place")
+    "Playing Address"
+    playingAddress: String @rename(attribute: "playing_address")
+    "Playing Zip code"
+    playingZipCode: String @rename(attribute: "playing_zip_code")
+    "Playing City"
+    playingCity: String @rename(attribute: "playing_city")
+    "Name"
+    name: String
 }
 
 input SquadBelongsTo {
@@ -120,6 +148,7 @@ input UpdateTeamInput {
     id: ID!
     name: String!
     version: Date!
+    round: Int
     gameDate: Date! @rename(attribute: "game_date")
 }
 
@@ -161,6 +190,20 @@ type Squad {
     playerLimit: Int!
     "What league the squad plays in"
     league: LeagueType
+    "Name"
+    name: String
+    "BadmintonPlayer match ID"
+    externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
+    "Playing team"
+    playingDatetime: DateTime @rename(attribute: "playing_datetime")
+    "Playing place"
+    playingPlace: String @rename(attribute: "playing_place")
+    "Playing Address"
+    playingAddress: String @rename(attribute: "playing_address")
+    "Playing Zip code"
+    playingZipCode: String @rename(attribute: "playing_zip_code")
+    "Playing City"
+    playingCity: String @rename(attribute: "playing_city")
     "Categories"
     categories: [SquadCategory!]!
     "Order"
@@ -177,6 +220,8 @@ type Teams {
     club: Club
     "Version"
     version: Date
+    "Runde"
+    round: Int
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
     "Updated at"

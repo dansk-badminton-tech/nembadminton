@@ -32,6 +32,12 @@
                 @click="addCustomSquad">
                 Andet
             </b-button>
+<!--            <b-button-->
+<!--                :loading="loading"-->
+<!--                type="is-primary"-->
+<!--                @click="importSquad">-->
+<!--                Fra BadmintonPlayer-->
+<!--            </b-button>-->
         </div>
     </div>
 </template>
@@ -42,6 +48,7 @@ import {TeamFightHelper} from "./teams";
 import TeamQuery from "../../../queries/team.graphql";
 import AddSquadMemberModal from "./AddSquadMemberModal.vue";
 import AddCustomSquadModal from "./AddCustomSquadModal.vue";
+import ImportSquadModal from "./ImportSquadModal.vue";
 
 export default {
     name: "AddTeamsButtons",
@@ -117,6 +124,21 @@ export default {
                                        },
                                        canCancel: ["x"],
                                        component: AddCustomSquadModal,
+                                       hasModalCard: true,
+                                       trapFocus: true
+                                   })
+        },
+        importSquad(){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       props: {
+                                           addSquad: this.addSquad
+                                       },
+                                       events: {
+                                           close(){}
+                                       },
+                                       canCancel: ["x"],
+                                       component: ImportSquadModal,
                                        hasModalCard: true,
                                        trapFocus: true
                                    })

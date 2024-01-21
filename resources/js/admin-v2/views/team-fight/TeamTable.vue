@@ -6,36 +6,22 @@
                 <thead>
                 <tr>
                     <th colspan="2">
-                        <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
+                        <h2 class="is-pulled-left"><strong>Hold {{ index + 1 }}</strong> {{ squad.name || 'intet navn' }}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
-                            <b-tag>{{ squad.league }}</b-tag>
                             <b-tag type="is-danger" v-if="hasEmptySpots(index)">
                                 Ugyldigt hold
                             </b-tag>
                         </b-taglist>
-                        <b-dropdown position="is-bottom-left" aria-role="list" class="is-pulled-right">
-                            <template #trigger="{ active }">
-                                <b-button
-                                    :icon-right="active ? 'arrow-up' : 'cog'"/>
-                            </template>
-                            <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
-                                             aria-role="listitem">Sæt som "andet" hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="squad.league === 'FIRSTDIVISION'"
-                                             @click="setSquadLeague(squad,'FIRSTDIVISION')" aria-role="listitem">Sæt som 1.
-                                division hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
-                                             aria-role="listitem">Sæt som LIGA hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="moveSquadOrderUp(squad)" aria-role="listitem">Flyt
-                                hold op
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)"
-                                             aria-role="listitem">Flyt hold ned
-                            </b-dropdown-item>
-                            <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
-                        </b-dropdown>
+                        <div class="buttons is-pulled-right">
+                            <b-button title="Udfyld holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
+                            <b-button :disabled="index === 0" @click="moveSquadOrderUp(squad)" title="Flyt hold op" icon-left="arrow-up"></b-button>
+                            <b-button :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)" title="Flyt hold ned" icon-left="arrow-down"></b-button>
+                            <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kraver kamp nummer" :disabled="!!!squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
+                                      :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+squad.externalTeamFightID+',,'"
+                                      type="is-link">
+                            </b-button>
+                            <b-button type="is-danger" @click="confirmDelete(squad)" title="Slet" icon-left="delete"></b-button>
+                        </div>
                     </th>
                 </tr>
                 </thead>
@@ -51,7 +37,7 @@
                              :key="player.id"
                              :data-player-id="player.id"
                              class="is-clearfix mt-1">
-                            <input type="hidden" :data-player-id-input="player.id" />
+                            <input type="hidden" :data-player-id-input="player.id"/>
                             <b-tooltip
                                 class="is-pulled-left"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
@@ -96,7 +82,7 @@
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category" />
+                            :version="new Date(version)" :category="category"/>
                         <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
@@ -104,7 +90,7 @@
                             :squad="squad"
                             :disabled="loading"
                             :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category" />
+                            :version="new Date(version)" :category="category"/>
                     </td>
                 </tr>
                 </tbody>
@@ -115,7 +101,7 @@
 <script>
 import Draggable from "vuedraggable"
 import {
-    findPositions,
+    findPositions, getCurrentSeason,
     highlight as simpleHighlight,
     isDoubleCategory,
     isPlayingToHighByBadmintonPlayerId,
@@ -125,7 +111,7 @@ import {
 import PlayersListSearch from "./PlayersListSearch";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditPlayerModal from "./EditPlayerModal.vue";
-import gql from "graphql-tag";
+import EditSquadModal from "./EditSquadModal.vue";
 
 export default {
     name: 'TeamTable',
@@ -158,6 +144,9 @@ export default {
         },
         loading: Boolean
     },
+    computed: {
+        getCurrentSeason
+    },
     methods: {
         startDrag(evt, squad, category, player) {
             evt.dataTransfer.dropEffect = 'move'
@@ -170,7 +159,7 @@ export default {
             let sourceSquad = JSON.parse(evt.dataTransfer.getData('squad'))
             let sourceCategory = JSON.parse(evt.dataTransfer.getData('category'))
             let player = JSON.parse(evt.dataTransfer.getData('player'))
-            if(sourceSquad.id !== targetSquad.id || targetCategory.id !== sourceCategory.id){
+            if (sourceSquad.id !== targetSquad.id || targetCategory.id !== sourceCategory.id) {
                 this.playerMove(evt, player, sourceSquad, sourceCategory, targetSquad, targetCategory)
             }
         },
@@ -202,26 +191,46 @@ export default {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
         findPositions,
-        hasCorrectedPoints(points){
+        hasCorrectedPoints(points) {
             return points.some((point) => point.corrected_manually)
         },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
         },
-        openEditPlayerModal(squad, category, player){
-            this.$buefy.modal.open({
-                parent: this,
-                props: {
-                    value: player
-                },
-                events: {
-                    close(){}
-                },
-                canCancel: ["x"],
-                component: EditPlayerModal,
-                hasModalCard: true,
-                trapFocus: true
-            })
+        openEditPlayerModal(squad, category, player) {
+            this.$buefy.modal.open(
+                {
+                    parent: this,
+                    props: {
+                        value: player
+                    },
+                    events: {
+                        close() {
+                        }
+                    },
+                    canCancel: ["x"],
+                    component: EditPlayerModal,
+                    hasModalCard: true,
+                    trapFocus: true
+                })
+        },
+        openEditSquadModal(squad) {
+            this.$buefy.modal.open(
+                {
+                    parent: this,
+                    width: 1500,
+                    props: {
+                        squad: squad
+                    },
+                    events: {
+                        close() {
+                        }
+                    },
+                    canCancel: ["x"],
+                    component: EditSquadModal,
+                    hasModalCard: true,
+                    trapFocus: true
+                })
         }
     }
 }

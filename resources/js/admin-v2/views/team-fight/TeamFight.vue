@@ -60,9 +60,14 @@
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
-                        <b-input v-model="team.name" placeholder="fx. Runde 1"></b-input>
+                        <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                     </b-field>
                 </div>
+<!--                <div class="column">-->
+<!--                    <b-field label="Runde">-->
+<!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
+<!--                    </b-field>-->
+<!--                </div>-->
                 <div class="column">
                     <b-field label="Spilledato">
                         <b-datepicker
@@ -227,6 +232,8 @@ export default {
             updating: false,
             gameDate: new Date(),
             version: null,
+            round: null,
+            name: '',
             oldVersion: null,
             savingIcon: 'content-save',
             showLinkSharing: false,
@@ -255,6 +262,8 @@ export default {
             result({data}) {
                 this.gameDate = new Date(data.team.gameDate);
                 this.version = data.team.version;
+                this.name = data.team.name;
+                this.round = data.team.round;
                 this.validate()
             }
         }
@@ -778,15 +787,17 @@ export default {
                             name
                             gameDate
                             version
+                            round
                           }
                         }
                     `,
                     variables: {
                         input: {
                             id: this.teamFightId,
-                            name: this.team.name,
+                            name: this.name,
                             version: this.version,
-                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate()
+                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
+                            round: this.round
                         }
                     },
                     refetchQueries: [
@@ -863,7 +874,7 @@ export default {
                         })
                     }
                 })
-        },
+        }
     }
 }
 </script>

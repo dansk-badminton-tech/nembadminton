@@ -12,11 +12,11 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 /**
- * @property int $id
+ * @property int             $id
  * @property SquadCategory[] $categories
- * @property Teams $team
- * @property int $teams_id
- * @property int $order
+ * @property Teams           $team
+ * @property int             $teams_id
+ * @property int             $order
  */
 class Squad extends Model implements Sortable
 {
@@ -25,11 +25,27 @@ class Squad extends Model implements Sortable
     use SortableTrait;
 
     public array $sortable = [
-        'order_column_name' => 'order',
-        'sort_when_creating' => true
+        'order_column_name'  => 'order',
+        'sort_when_creating' => true,
     ];
 
-    protected $fillable = ['playerLimit', 'league', 'order', 'teams_id'];
+    protected    $casts    = [
+        "playing_datetime" => 'datetime',
+    ];
+
+    protected    $fillable = [
+        'playerLimit',
+        'league',
+        'order',
+        'teams_id',
+        'name',
+        'external_team_fight_id',
+        'playing_datetime',
+        'playing_place',
+        'playing_address',
+        'playing_zip_code',
+        'playing_city',
+    ];
 
     public function buildSortQuery() : \Illuminate\Database\Eloquent\Builder
     {

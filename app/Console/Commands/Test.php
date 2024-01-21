@@ -38,6 +38,6 @@ class Test extends Command
      */
     public function handle(BadmintonPlayer $badmintonPlayer)
     {
-        $badmintonPlayer->getTeamMatch('25', '444203', '2023');
+        $badmintonPlayer->getTeamMatch( '444203', '2023');
     }
 }
