@@ -103,8 +103,8 @@ export default {
                 updateQuery: (previousResult, { subscriptionData }) => {
                     return {
                         notifications: [
-                            ...previousResult.notifications,
-                            subscriptionData.data.notifications
+                            subscriptionData.data.notifications,
+                            ...previousResult.notifications
                         ]
                     }
                 },
