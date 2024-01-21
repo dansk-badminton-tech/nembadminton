@@ -262,7 +262,7 @@ export default {
             this.errorImporting = false;
             this.$apollo.mutate(
                 {
-                    mutation: gql`mutation ($input: BadmintonPlayerTeamMatchInput!){
+                    query: gql`query ($input: BadmintonPlayerTeamMatchInput!){
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
                             leagueMatchId

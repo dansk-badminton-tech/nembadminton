@@ -6,36 +6,40 @@
                 <thead>
                 <tr>
                     <th colspan="2">
-                        <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
+                        <h2 class="is-pulled-left"><strong>Hold {{ index + 1 }}</strong> {{squad.name || 'intet navn'}}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
-                            <b-tag>{{ squad.league }}</b-tag>
                             <b-tag type="is-danger" v-if="hasEmptySpots(index)">
                                 Ugyldigt hold
                             </b-tag>
                         </b-taglist>
-                        <b-dropdown position="is-bottom-left" aria-role="list" class="is-pulled-right">
-                            <template #trigger="{ active }">
-                                <b-button
-                                    :icon-right="active ? 'arrow-up' : 'cog'"/>
-                            </template>
-                            <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
-                                             aria-role="listitem">Sæt som "andet" hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="squad.league === 'FIRSTDIVISION'"
-                                             @click="setSquadLeague(squad,'FIRSTDIVISION')" aria-role="listitem">Sæt som 1.
-                                division hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
-                                             aria-role="listitem">Sæt som LIGA hold
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === 0" @click="moveSquadOrderUp(squad)" aria-role="listitem">Flyt
-                                hold op
-                            </b-dropdown-item>
-                            <b-dropdown-item :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)"
-                                             aria-role="listitem">Flyt hold ned
-                            </b-dropdown-item>
-                            <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
-                        </b-dropdown>
+                        <div class="buttons is-pulled-right">
+                            <b-button icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
+                            <b-button :disabled="index === 0" @click="moveSquadOrderUp(squad)" title="Flyt hold op" icon-left="arrow-up"></b-button>
+                            <b-button :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)" title="Flyt hold ned" icon-left="arrow-down"></b-button>
+                            <b-dropdown position="is-bottom-left" aria-role="list">
+                                <template #trigger="{ active }">
+                                    <b-button
+                                        :icon-right="active ? 'arrow-up' : 'cog'"/>
+                                </template>
+                                <b-dropdown-item :disabled="squad.league === 'OTHER'" @click="setSquadLeague(squad,'OTHER')"
+                                                 aria-role="listitem">Sæt som "andet" hold
+                                </b-dropdown-item>
+                                <b-dropdown-item :disabled="squad.league === 'FIRSTDIVISION'"
+                                                 @click="setSquadLeague(squad,'FIRSTDIVISION')" aria-role="listitem">Sæt som 1.
+                                    division hold
+                                </b-dropdown-item>
+                                <b-dropdown-item :disabled="squad.league === 'LIGA'" @click="setSquadLeague(squad, 'LIGA')"
+                                                 aria-role="listitem">Sæt som LIGA hold
+                                </b-dropdown-item>
+                                <b-dropdown-item :disabled="index === 0" @click="moveSquadOrderUp(squad)" aria-role="listitem">Flyt
+                                    hold op
+                                </b-dropdown-item>
+                                <b-dropdown-item :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)"
+                                                 aria-role="listitem">Flyt hold ned
+                                </b-dropdown-item>
+                                <b-dropdown-item aria-role="listitem" @click="confirmDelete(squad)">Slet</b-dropdown-item>
+                            </b-dropdown>
+                        </div>
                     </th>
                 </tr>
                 </thead>
@@ -125,7 +129,7 @@ import {
 import PlayersListSearch from "./PlayersListSearch";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditPlayerModal from "./EditPlayerModal.vue";
-import gql from "graphql-tag";
+import EditSquadModal from "./EditSquadModal.vue";
 
 export default {
     name: 'TeamTable',
@@ -222,6 +226,22 @@ export default {
                 hasModalCard: true,
                 trapFocus: true
             })
+        },
+        openEditSquadModal(squad){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       props: {
+//                                           updateSquad: this.updateSquad,
+                                           squad: squad
+                                       },
+                                       events: {
+                                           close(){}
+                                       },
+                                       canCancel: ["x"],
+                                       component: EditSquadModal,
+                                       hasModalCard: true,
+                                       trapFocus: true
+                                   })
         }
     }
 }

@@ -9,7 +9,7 @@
                             <BadmintonPlayerClubs v-model="clubId" @input="clearTeams"/>
                         </b-field>
                         <b-field label="Sæson">
-                            <b-select v-model="season" expanded placeholder="Vælge sæson">
+                            <b-select v-model.number="season" expanded placeholder="Vælge sæson">
                                 <option value="2019">2019/2020</option>
                                 <option value="2020">2020/2021</option>
                                 <option value="2021">2021/2022</option>
@@ -343,9 +343,9 @@ export default {
         badmintonPlayerTeamMatchesImport() {
             this.fetchingAndValidating = true;
             this.errorImporting = false;
-            this.$apollo.mutate(
+            this.$apollo.query(
                 {
-                    mutation: gql`mutation ($input: BadmintonPlayerTeamMatchInput!){
+                    query: gql`query ($input: BadmintonPlayerTeamMatchInput!){
                         badmintonPlayerTeamMatchesImport(input: $input){
                             name
                             leagueMatchId
@@ -462,7 +462,8 @@ export default {
                 this.teams = data.badmintonPlayerTeamMatchesImport
                 this.done = true
                 this.validate()
-            }).catch(({graphQLErrors}) => {
+            }).catch((error) => {
+                console.log(error)
                 this.$buefy.toast.open({
                                            duration: 5000,
                                            message: `Et eller flere hold kunne ikke hentes`,
@@ -470,7 +471,9 @@ export default {
                                            type: 'is-danger'
                                        })
                 this.errorImporting = true;
-                this.errorImportingErrors = graphQLErrors.map((error) => {return error.message});
+                if (error.graphQLErrors){
+                    this.errorImportingErrors = graphQLErrors.map((error) => {return error.message});
+                }
                 this.fetchingAndValidating = false;
             })
         },

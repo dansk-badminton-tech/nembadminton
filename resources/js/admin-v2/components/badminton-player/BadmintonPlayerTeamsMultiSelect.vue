@@ -4,28 +4,53 @@
         :columns="columns"
         :data="badmintonPlayerTeams"
         :loading="$apollo.queries.badmintonPlayerTeams.loading"
-        checkable
+        :checkable="checkable"
         :is-row-checkable="isRowCheckable"
+        :detailed="detailed"
+        :detail-key="detailKey"
+        :show-detail-icon="showDetailIcon"
     >
         <template #empty>
             <div class="has-text-centered">Ingen hold fundet. Har du valgt den rigtige sæson og klub?</div>
+        </template>
+        <template #detail="props">
+            <slot name="detail-body" v-bind="props"></slot>
         </template>
     </b-table>
 </template>
 
 <script>
 import gql from "graphql-tag"
+import BadmintonPlayerTeamFights from "./BadmintonPlayerTeamFights.vue";
 
 export default {
     name: "BadmintonPlayerTeamsMultiSelect",
-    props: ['value', 'clubId', 'season'],
+    components: {BadmintonPlayerTeamFights},
+    props: {
+        'value': Array,
+        'clubId': Number,
+        'season': Number,
+        'checkable': {
+            type: Boolean,
+            default: true
+        },
+        'detailed': {
+            type: Boolean,
+            default: false
+        },
+        'detailKey': String,
+        showDetailIcon: {
+            type: Boolean,
+            default: false
+        }
+    },
     methods: {
         isRowCheckable(row) {
             return !((new RegExp('u[0-9]+', 'gmi')).test(row.league)
-                   || (new RegExp('sen\\+[0-9]+', 'gmi')).test(row.league)
-                    || (new RegExp('senior motion', 'gmi')).test(row.league)
-                    || (new RegExp('DMU', 'gmi')).test(row.league)
-                    || (new RegExp('4 spillere', 'gmi')).test(row.league)
+                     || (new RegExp('sen\\+[0-9]+', 'gmi')).test(row.league)
+                     || (new RegExp('senior motion', 'gmi')).test(row.league)
+                     || (new RegExp('DMU', 'gmi')).test(row.league)
+                     || (new RegExp('4 spillere', 'gmi')).test(row.league)
             )
         }
     },

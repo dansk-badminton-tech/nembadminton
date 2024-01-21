@@ -357,3 +357,25 @@ export function getCurrentSeasonInterval(){
     }
     return now.getFullYear() - 1;
 }
+
+export function formatDateTime(date) {
+    const pad = (num) => (num < 10 ? '0' + num : num);
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // getMonth() returns 0-11
+    const day = pad(date.getDate());
+
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function parseDateTime(dateTimeString) {
+    const [datePart, timePart] = dateTimeString.split(' ');
+    const [day, month, year] = datePart.split('-').map(Number);
+    const [hours, minutes] = timePart.split(':').map(Number);
+
+    return new Date(year, month - 1, day, hours, minutes); // Month is 0-based
+}

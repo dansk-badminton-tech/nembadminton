@@ -8,10 +8,13 @@
                     <thead>
                     <tr>
                         <th colspan="2">
-                            <h2 class="is-pulled-left">Hold {{ index + 1 }}</h2>
-                            <b-taglist class="ml-2 is-pulled-left">
-                                <b-tag>{{ squad.league }}</b-tag>
-                            </b-taglist>
+                            <h2 class="is-size-4">Hold {{ index + 1 }} {{squad.name || ''}}</h2>
+                            <p>{{squad.playingDatetime}}</p>
+                            <p>{{squad.playingPlace}}</p>
+                            <p>{{squad.playingAddress}} {{squad.playingZipCode}} {{squad.playingCity}}</p>
+<!--                            <b-taglist class="ml-2 is-pulled-left">-->
+<!--                                <b-tag>{{ squad.league }}</b-tag>-->
+<!--                            </b-taglist>-->
                         </th>
                     </tr>
                     </thead>
@@ -88,6 +91,12 @@ export default {
                         id
                         playerLimit
                         league
+                        name
+                        playingDatetime
+                        playingPlace
+                        playingAddress
+                        playingZipCode
+                        playingCity
                         categories{
                             id
                             category

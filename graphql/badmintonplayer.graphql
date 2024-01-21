@@ -7,21 +7,10 @@ extend type Query {
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
     "Team macth. (Requesting badmintonplayer.dk directly)"
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
-    "Team matchs (from badmintonPlayerTeamMatchsImport)"
-    badmintonPlayerTeamMatches(jobId: Int!) : [ImportTeamMatch!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatches")
-    "Ranking versions directly from badmintonplayer.dk"
-    rankingVersionsBP: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersionsBP")
-}
-
-extend type Mutation {
     "Get team matches information from badmintonplayer.dk"
     badmintonPlayerTeamMatchesImport(input: BadmintonPlayerTeamMatchInput!) : [ImportTeam!]! @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchesImport")
-    "Team Match Import"
-    badmintonPlayerTeamMatchImport(input: TeamMatchImportInput @spread) : Boolean @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Mutations\\BadmintonPlayerTeamMatchImport")
-}
-
-type BadmintonPlayerTeamMatchesImportResponse{
-    jobId: Int!
+    "Ranking versions directly from badmintonplayer.dk"
+    rankingVersionsBP: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersionsBP")
 }
 
 type BadmintonPlayerTeamFight {
