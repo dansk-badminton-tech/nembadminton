@@ -1,6 +1,6 @@
 <template>
     <section>
-        <b-loading v-model="this.fetchingAndValidating" :is-full-page="true"></b-loading>
+        <b-loading v-model="fetchingAndValidating" :is-full-page="true"></b-loading>
         <form v-if="!done">
             <b-steps v-model="activeStep">
                 <template>
@@ -345,7 +345,7 @@ export default {
             this.errorImporting = false;
             this.$apollo.query(
                 {
-                    query: gql`query ($input: BadmintonPlayerTeamMatchInput!){
+                    query: gql`query ($input: BadmintonPlayerTeamMatchesInput!){
                         badmintonPlayerTeamMatches(input: $input){
                             name
                             leagueMatchId
@@ -379,68 +379,6 @@ export default {
                     `,
                     variables: {
                         input:
-//                            {
-//                                "clubId": 1124,
-//                                "leagueMatches": [
-//                                    {
-//                                        "id": 444380,
-//                                        "teamNameHint": "SAIF Kbh.",
-//                                        "league": "3. division Pulje 3",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444607,
-//                                        "teamNameHint": "SAIF Kbh. 2",
-//                                        "league": "Danmarksserien Pulje 7",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 445936,
-//                                        "teamNameHint": "SAIF Kbh. 3",
-//                                        "league": "Serie 1 Pulje 1",
-//                                        "version": null
-//                                    }
-//                                ],
-//                                "season": 2023,
-//                                "version": "2023-11-01"
-//                            }
-//                            {
-//                                "clubId": 25,
-//                                "leagueMatches": [
-//                                    {
-//                                        "id": 444135,
-//                                        "teamNameHint": "Højbjerg 2",
-//                                        "league": "1. division Pulje 1",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444206,
-//                                        "teamNameHint": "Højbjerg 3",
-//                                        "league": "2. division Pulje 1",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444352,
-//                                        "teamNameHint": "Højbjerg 4",
-//                                        "league": "3. division Pulje 2",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 444465,
-//                                        "teamNameHint": "Højbjerg 5",
-//                                        "league": "Danmarksserien Pulje 2",
-//                                        "version": null
-//                                    },
-//                                    {
-//                                        "id": 446571,
-//                                        "teamNameHint": "Højbjerg 6",
-//                                        "league": "Kredsserien Vest Pulje 3",
-//                                        "version": null
-//                                    }
-//                                ],
-//                                "season": 2023,
-//                                "version": "2023-11-01"
-//                            }
                             {
                             clubId: parseInt(this.clubId),
                             leagueMatches: this.castToArray(this.selectedTeamMatches).map((teamMatch, index) => {
@@ -463,7 +401,7 @@ export default {
                 this.done = true
                 this.validate()
             }).catch((error) => {
-                console.log(error)
+                this.fetchingAndValidating = false;
                 this.$buefy.toast.open({
                                            duration: 5000,
                                            message: `Et eller flere hold kunne ikke hentes`,
@@ -472,9 +410,8 @@ export default {
                                        })
                 this.errorImporting = true;
                 if (error.graphQLErrors){
-                    this.errorImportingErrors = graphQLErrors.map((error) => {return error.message});
+                    this.errorImportingErrors = error.graphQLErrors.map((error) => {return error.message});
                 }
-                this.fetchingAndValidating = false;
             })
         },
         validateCrossSquads() {

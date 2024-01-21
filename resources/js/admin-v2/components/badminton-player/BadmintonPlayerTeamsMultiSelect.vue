@@ -1,5 +1,6 @@
 <template>
     <b-table
+        ref="table"
         :checked-rows.sync="teams"
         :columns="columns"
         :data="badmintonPlayerTeams"
@@ -9,6 +10,8 @@
         :detailed="detailed"
         :detail-key="detailKey"
         :show-detail-icon="showDetailIcon"
+        :hoverable="true"
+        @click="openDetail"
     >
         <template #empty>
             <div class="has-text-centered">Ingen hold fundet. Har du valgt den rigtige sæson og klub?</div>
@@ -52,6 +55,11 @@ export default {
                      || (new RegExp('DMU', 'gmi')).test(row.league)
                      || (new RegExp('4 spillere', 'gmi')).test(row.league)
             )
+        },
+        openDetail(row){
+            if(this.detailed){
+                this.$refs.table.toggleDetails(row)
+            }
         }
     },
     watch: {

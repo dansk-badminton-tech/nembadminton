@@ -8,7 +8,6 @@ export default {
     name: "EditSquadModal",
     components: {BadmintonPlayerTeamFightSelector},
     props: {
-//        updateSquad: Function,
         squad: Object
     },
     watch: {
@@ -107,43 +106,46 @@ export default {
         },
         fillInformation(teamFight, playerTeam) {
             this.externalTeamFightID = teamFight.matchId
-            this.$apollo.query({
-                                   query: gql`
-                    query TeamMatch($input: BadmintonPlayerTeamMatchInput){
-                      badmintonPlayerTeamMatch(input: $input){
-                            playingPlace
-                            playingAddress
-                            playingZipCode
-                            playingCity
+            this.$apollo.query(
+                {
+                    query: gql`
+                        query TeamMatch($input: BadmintonPlayerTeamMatchInput){
+                          badmintonPlayerTeamMatch(input: $input){
+                                playingPlace
+                                playingAddress
+                                playingZipCode
+                                playingCity
+                            }
+                        }
+                    `,
+                    variables: {
+                        input: {
+                            leagueMatchId: teamFight.matchId,
+                            season: this.getCurrentSeason
                         }
                     }
-                `,
-                                   variables: {
-                                       input: {
-                                           leagueMatchId: teamFight.matchId,
-                                           season: this.getCurrentSeason
-                                       }
-                                   }
-                               }).then(({data}) => {
-                this.playingPlace = data.badmintonPlayerTeamMatch.playingPlace
-                this.playingAddress = data.badmintonPlayerTeamMatch.playingAddress
-                this.playingCity = data.badmintonPlayerTeamMatch.playingCity
-                this.playingZipCode = data.badmintonPlayerTeamMatch.playingZipCode
-                this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Informationer udfyldt. Tjek dem igennem om de er korrekt`,
-                                           position: 'is-bottom',
-                                           type: 'is-success'
-                                       })
-                this.showTeamFightSelector = false
-            }).catch(() => {
-                this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Fejl :( Kunne ikke hente informationer automatisk fra badmintonplayer`,
-                                           position: 'is-bottom',
-                                           type: 'is-danger'
-                                       })
-            })
+                })
+                .then(({data}) => {
+                    this.playingPlace = data.badmintonPlayerTeamMatch.playingPlace
+                    this.playingAddress = data.badmintonPlayerTeamMatch.playingAddress
+                    this.playingCity = data.badmintonPlayerTeamMatch.playingCity
+                    this.playingZipCode = data.badmintonPlayerTeamMatch.playingZipCode
+                    this.$buefy.toast.open({
+                                               duration: 5000,
+                                               message: `Informationer udfyldt. Tjek dem igennem om de er korrekt`,
+                                               position: 'is-bottom',
+                                               type: 'is-success'
+                                           })
+                    this.showTeamFightSelector = false
+                })
+                .catch(() => {
+                    this.$buefy.toast.open({
+                                               duration: 5000,
+                                               message: `Fejl :( Kunne ikke hente informationer automatisk fra badmintonplayer`,
+                                               position: 'is-bottom',
+                                               type: 'is-danger'
+                                           })
+                })
 
             this.playingDatetime = parseDateTime(teamFight.gameTime)
             this.name = playerTeam.league
@@ -195,13 +197,13 @@ export default {
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <b-message type="is-info">Ved at give flere informationer kan deling via link give flere informationer til spillerne</b-message>
+                <b-message type="is-info">Alle informationerne er tilgængelig når holdrunden deles via link</b-message>
                 <b-field v-if="!showTeamFightSelector" message="Udfylder holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by">
                     <b-button type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Udfyld felter med data fra badmintonplayer.dk</b-button>
                 </b-field>
                 <b-button v-if="showTeamFightSelector" type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Luk</b-button>
                 <BadmintonPlayerTeamFightSelector :import-information="fillInformation" v-if="showTeamFightSelector"/>
-                <hr >
+                <hr>
                 <b-field label="Hold navn">
                     <b-input
                         type="text"
@@ -215,7 +217,7 @@ export default {
                     </b-select>
                 </b-field>
                 <hr/>
-                <b-field message="Giver et direkte link til holdkampen i badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">
+                <b-field message="Giver mulighed for link til badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">
                     <b-input
                         type="number"
                         v-model.number="externalTeamFightID"
