@@ -198,6 +198,39 @@ class Parser
         return $playersCollection;
     }
 
+    private function parseMatchInformation(Document $document) : array
+    {
+        $trs = $document->find('table.matchinfo tr');
+
+        $playingPlace = null;
+        $playingAddress = null;
+        $playingCity = null;
+        $playingZipCode = null;
+
+        foreach ($trs as $tr){
+            $title = $tr->find('td.lbl')[0]->text();
+            if(Str::contains($title, 'Spillested', true)){
+                $descriptionNode = $tr->find('td.val')[0] ?? null;
+                if($descriptionNode === null){
+                    continue;
+                }
+                $description = $descriptionNode->innerHtml();
+                [$playingPlace, $playingAddress, $playingCityAndZipCode] = array_pad(explode('<br>',$description, 3), 3, null);
+                $pattern = "/(\d+)\s+(.+)/";
+                preg_match($pattern, $playingCityAndZipCode, $matches);
+                $playingCity = $matches[2] ?? null;
+                $playingZipCode = $matches[1] ?? null;
+            }
+        }
+
+        return [
+            'playingPlace' => $playingPlace,
+            'playingAddress' => $playingAddress,
+            'playingCity' => $playingCity,
+            'playingZipCode' => $playingZipCode
+        ];
+    }
+
     /**
      * @param string $html
      *
@@ -207,6 +240,9 @@ class Parser
     public function teamMatch(string $html) : TeamMatch
     {
         $document = new Document($html);
+
+        $matchInformation = $this->parseMatchInformation($document);
+
         $trs = $document->find('table.matchresultschema.showmatch tr');
 
         $playersTrs = array_shift($trs);
@@ -291,7 +327,13 @@ class Parser
         $home = new Team($club1, $squad1, Side::HOME);
         $guest = new Team($club2, $squad2, Side::GUEST);
 
-        return new TeamMatch($home, $guest);
+        $teamMatch = new TeamMatch($home, $guest);
+        $teamMatch->playingPlace = $matchInformation['playingPlace'] ?? null;
+        $teamMatch->playingAddress = $matchInformation['playingAddress'] ?? null;
+        $teamMatch->playingZipCode = $matchInformation['playingZipCode'] ?? null;
+        $teamMatch->playingCity = $matchInformation['playingCity'] ?? null;
+
+        return $teamMatch;
     }
 
     /**

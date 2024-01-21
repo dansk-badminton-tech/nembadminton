@@ -12,6 +12,7 @@ query team($id: ID!){
             playingAddress
             playingPlace
             playingDatetime
+            externalTeamFightID
             categories{
                 id
                 category

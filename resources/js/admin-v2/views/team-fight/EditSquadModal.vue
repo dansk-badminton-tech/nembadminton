@@ -1,7 +1,7 @@
 <script>
 import debounce from "lodash/debounce";
 import gql from "graphql-tag";
-import {formatDateTime, parseDateTime} from "../../helpers";
+import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
 
 export default {
@@ -21,9 +21,13 @@ export default {
                 this.playingAddress = newValue.playingAddress
                 this.playingZipCode = newValue.playingZipCode
                 this.playingCity = newValue.playingCity
+                this.externalTeamFightID = newValue.externalTeamFightID
             },
             immediate: true
         }
+    },
+    computed: {
+        getCurrentSeason
     },
     data() {
         return {
@@ -48,39 +52,99 @@ export default {
     },
     methods: {
         updateSquad() {
-            this.$apollo.mutate({
-                                    mutation: gql`
-                    mutation updateSquad($input: UpdateSquadInput!){
-                        updateSquad(input: $input){
-                            id
-                            league
-                            name
-                            playingDatetime
-                            playingPlace,
+            this.loading = true
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation updateSquad($input: UpdateSquadInput!){
+                            updateSquad(input: $input){
+                                id
+                                league
+                                name
+                                playingDatetime
+                                playingPlace,
+                                playingAddress
+                                playingZipCode
+                                playingCity
+                                externalTeamFightID
+                            }
+                        }
+                    `,
+                    variables: {
+                        input: {
+                            id: this.squad.id,
+                            league: this.league,
+                            name: this.name,
+                            externalTeamFightID: this.externalTeamFightID,
+                            playingDatetime: formatDateTime(this.playingDatetime),
+                            playingPlace: this.playingPlace,
+                            playingAddress: this.playingAddress,
+                            playingZipCode: this.playingZipCode,
+                            playingCity: this.playingCity
+                        }
+                    }
+                }).then(() => {
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Hold opdateret`,
+                                           position: 'is-bottom',
+                                           type: 'is-success'
+                                       })
+
+                this.$emit('close')
+            }).catch(() => {
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Fejl :( Kunne ikke opdater holdet`,
+                                           position: 'is-bottom',
+                                           type: 'is-danger'
+                                       })
+
+            })
+                .finally(() => {
+                    this.loading = false
+                })
+        },
+        fillInformation(teamFight, playerTeam) {
+            this.externalTeamFightID = teamFight.matchId
+            this.$apollo.query({
+                                   query: gql`
+                    query TeamMatch($input: BadmintonPlayerTeamMatchInput){
+                      badmintonPlayerTeamMatch(input: $input){
+                            playingPlace
                             playingAddress
                             playingZipCode
                             playingCity
-                            externalTeamFightID
                         }
                     }
                 `,
-                                    variables: {
-                                        input: {
-                                            id: this.squad.id,
-                                            league: this.league,
-                                            name: this.name,
-                                            externalTeamFightID: this.externalTeamFightID,
-                                            playingDatetime: formatDateTime(this.playingDatetime),
-                                            playingPlace: this.playingPlace,
-                                            playingAddress: this.playingAddress,
-                                            playingZipCode: this.playingZipCode,
-                                            playingCity: this.playingCity
-                                        }
-                                    }
-                                })
-        },
-        fillInformation(teamFight, playerTeam){
-            this.externalTeamFightID = teamFight.matchId
+                                   variables: {
+                                       input: {
+                                           leagueMatchId: teamFight.matchId,
+                                           season: this.getCurrentSeason
+                                       }
+                                   }
+                               }).then(({data}) => {
+                this.playingPlace = data.badmintonPlayerTeamMatch.playingPlace
+                this.playingAddress = data.badmintonPlayerTeamMatch.playingAddress
+                this.playingCity = data.badmintonPlayerTeamMatch.playingCity
+                this.playingZipCode = data.badmintonPlayerTeamMatch.playingZipCode
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Informationer udfyldt. Tjek dem igennem om de er korrekt`,
+                                           position: 'is-bottom',
+                                           type: 'is-success'
+                                       })
+                this.showTeamFightSelector = false
+            }).catch(() => {
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Fejl :( Kunne ikke hente informationer automatisk fra badmintonplayer`,
+                                           position: 'is-bottom',
+                                           type: 'is-danger'
+                                       })
+            })
+
             this.playingDatetime = parseDateTime(teamFight.gameTime)
             this.name = playerTeam.league
         },
@@ -122,17 +186,22 @@ export default {
 
 <template>
     <form @submit.prevent="updateSquad">
-        <div class="modal-card">
+        <div class="modal-card" style="width: auto">
             <header class="modal-card-head">
-                <p class="modal-card-title">Rediger {{name}}</p>
+                <p class="modal-card-title">Rediger {{ name }}</p>
                 <button
                     type="button"
                     class="delete"
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <b-message type="is-info">Brug kun denne funktion hvis spilleren ikke findes på nembadminton.dk men på badmintonplayer.dk.</b-message>
-                                <p></p>
+                <b-message type="is-info">Ved at give flere informationer kan deling via link give flere informationer til spillerne</b-message>
+                <b-field v-if="!showTeamFightSelector" message="Udfylder holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by">
+                    <b-button type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Udfyld felter med data fra badmintonplayer.dk</b-button>
+                </b-field>
+                <b-button v-if="showTeamFightSelector" type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Luk</b-button>
+                <BadmintonPlayerTeamFightSelector :import-information="fillInformation" v-if="showTeamFightSelector"/>
+                <hr >
                 <b-field label="Hold navn">
                     <b-input
                         type="text"
@@ -146,38 +215,30 @@ export default {
                     </b-select>
                 </b-field>
                 <hr/>
-                <b-field grouped>
-<!--                    <b-field>-->
-<!--                        <b-input-->
-<!--                            type="text"-->
-<!--                            v-model="externalTeamFightID"-->
-<!--                            placeholder="446437"-->
-<!--                        />-->
-<!--                        <p class="control">-->
-<!--                            <b-button type="is-primary" label="Import" />-->
-<!--                        </p>-->
-<!--                    </b-field>-->
-<!--                    eller -->
-                    <b-button v-if="!showTeamFightSelector" @click="showTeamFightSelector = !showTeamFightSelector">Hent informationer fra badmintonplayer.dk</b-button>
-                    <BadmintonPlayerTeamFightSelector :import-information="fillInformation" v-if="showTeamFightSelector" />
+                <b-field message="Giver et direkte link til holdkampen i badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">
+                    <b-input
+                        type="number"
+                        v-model.number="externalTeamFightID"
+                        placeholder="446437"
+                    />
                 </b-field>
                 <b-field label="Spille start">
                     <b-datetimepicker
-                        placeholder="Vælge spille dato og tidspunkt"
+                        placeholder="Vælg dato og tidspunkt"
                         icon="calendar-today"
                         locale="da-DK"
                         v-model="playingDatetime"
                         editable>
                     </b-datetimepicker>
                 </b-field>
-                <b-field label="Spille sted">
+                <b-field label="Spillested">
                     <b-input
                         type="text"
                         v-model="playingPlace"
                         placeholder="Valbyhallen Hal 2"
                     />
                 </b-field>
-                <b-field label="Spille addrese">
+                <b-field label="Adresse">
                     <b-input
                         type="text"
                         v-model="playingAddress"

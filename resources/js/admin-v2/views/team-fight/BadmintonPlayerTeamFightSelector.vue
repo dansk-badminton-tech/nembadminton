@@ -51,6 +51,12 @@ export default {
                                     <p class="control">
                                         <b-button @click="importInformation(teamFight, props.playerTeam)" type="is-primary" label="Import"/>
                                     </p>
+                                    <p class="control">
+                                        <b-button icon-right="open-in-new" tag="a" target="_blank"
+                                                  :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+teamFight.matchId+',,'"
+                                                  type="is-link">Se på BP
+                                        </b-button>
+                                    </p>
                                 </b-field>
                             </template>
                         </BadmintonPlayerTeamFights>

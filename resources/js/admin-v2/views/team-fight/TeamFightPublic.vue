@@ -1,6 +1,7 @@
 <template>
     <fragment v-if="!$apollo.loading">
-        <h1 class="title">{{ team.name }} - {{ team.club.name1 }}</h1>
+        <h1 class="title">{{ team.name }} - {{ team.club.name1 }}
+        </h1>
         <h2 class="subtitle">Spille dato: {{ team.gameDate }}</h2>
         <div class="columns is-multiline">
             <div v-for="(squad, index) in team.squads" :key="squad.id" class="column is-half">
@@ -8,7 +9,12 @@
                     <thead>
                     <tr>
                         <th colspan="2">
-                            <h2 class="is-size-4">Hold {{ index + 1 }} {{squad.name || ''}}</h2>
+                            <h2 class="is-size-4">Hold {{ index + 1 }} {{squad.name || ''}}
+                                <b-button icon-right="open-in-new" v-show="squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
+                                          :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+squad.externalTeamFightID+',,'"
+                                          type="is-link">Se på BP
+                                </b-button>
+                            </h2>
                             <p>{{squad.playingDatetime}}</p>
                             <p>{{squad.playingPlace}}</p>
                             <p>{{squad.playingAddress}} {{squad.playingZipCode}} {{squad.playingCity}}</p>
@@ -53,7 +59,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import {findPositions, isYoungPlayer} from "../../helpers";
+import {findPositions, getCurrentSeason, isYoungPlayer} from "../../helpers";
 
 export default {
     name: "TeamFightPublic",
@@ -80,6 +86,9 @@ export default {
     props: {
         teamId: String,
     },
+    computed: {
+        getCurrentSeason
+    },
     apollo: {
         team: {
             query: gql` query ($id: ID!){
@@ -97,6 +106,7 @@ export default {
                         playingAddress
                         playingZipCode
                         playingCity
+                        externalTeamFightID
                         categories{
                             id
                             category

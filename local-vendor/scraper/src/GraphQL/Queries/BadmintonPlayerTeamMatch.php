@@ -7,6 +7,7 @@ use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Enricher;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class BadmintonPlayerTeamMatch
 {
@@ -39,20 +40,23 @@ class BadmintonPlayerTeamMatch
      * @throws \JsonException
      *
      * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws InvalidArgumentException
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $clubId = $args['clubId'];
         $leagueMatchId = $args['leagueMatchId'];
         $season = $args['season'];
-        $version = $args['version'];
+        $version = $args['version'] ?? null;
 
-        $teamMatch = $this->scraper->getTeamMatch($clubId, $leagueMatchId, $season);
-        foreach ($teamMatch->guest->squad->categories as $category) {
-            $this->enricher->players($category->players, $version);
-        }
-        foreach ($teamMatch->home->squad->categories as $category) {
-            $this->enricher->players($category->players, $version);
+        $teamMatch = $this->scraper->getTeamMatch($leagueMatchId, $season);
+
+        if($version !== null){
+            foreach ($teamMatch->guest->squad->categories as $category) {
+                $this->enricher->players($category->players, $version);
+            }
+            foreach ($teamMatch->home->squad->categories as $category) {
+                $this->enricher->players($category->players, $version);
+            }
         }
 
         return $teamMatch;

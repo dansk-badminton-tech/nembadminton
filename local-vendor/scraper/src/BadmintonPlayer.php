@@ -454,12 +454,12 @@ class BadmintonPlayer
      * @throws \JsonException
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function getTeamMatch(string $clubId, string $leagueMatchId, string $season) : TeamMatch
+    public function getTeamMatch(string $leagueMatchId, string $season) : TeamMatch
     {
         $params = [
             "ageGroupID"         => '',
             "callbackcontextkey" => $this->getToken(),
-            "clubID"             => $clubId,
+            "clubID"             => "",
             "leagueGroupID"      => "",
             "leagueGroupTeamID"  => "",
             "leagueMatchID"      => $leagueMatchId,
@@ -479,7 +479,12 @@ class BadmintonPlayer
         }
         $html = $data["d"]['html'];
 
-        return $this->parser->teamMatch($html);
+        $teamMatch = $this->parser->teamMatch($html);
+        $teamMatch->guest->leagueMatchId = $leagueMatchId;
+        $teamMatch->guest->squad->league = Helper::convertToLeagueType($teamMatch->guest->name);
+        $teamMatch->home->leagueMatchId = $leagueMatchId;
+        $teamMatch->home->squad->league = Helper::convertToLeagueType($teamMatch->home->name);
+        return $teamMatch;
     }
 
     /**

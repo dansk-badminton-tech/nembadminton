@@ -98,7 +98,7 @@
                                 rundt via Drag&Drop eller via knapperne)
                             </b-checkbox>
                         </b-field>
-                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatchesImport"
+                        <b-button size="is-large mt-2" @click="badmintonPlayerTeamMatches"
                                   :disabled="!sortingConfirmed">Tjek spillerunden
                         </b-button>
                         <b-message v-if="errorImporting" title="Fejl ved import" class="mt-2" type="is-danger">
@@ -113,7 +113,7 @@
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
         <b-button v-if="done" class="mb-2" @click="validate">Valider igen</b-button>
-        <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatchesImport">Hent igen</b-button>
+        <b-button v-if="done" class="mb-2" @click="badmintonPlayerTeamMatches">Hent igen</b-button>
         <b-checkbox v-if="done" v-model="markYouthAsError">Marker ungdom som fejl (kategori)</b-checkbox>
         <ValidationStatus v-if="done"
                           :hide-incomplete-team="true"
@@ -340,13 +340,13 @@ export default {
             return simpleHighlight(this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, player, category, this.markYouthAsError)
         },
         findPositions,
-        badmintonPlayerTeamMatchesImport() {
+        badmintonPlayerTeamMatches() {
             this.fetchingAndValidating = true;
             this.errorImporting = false;
             this.$apollo.query(
                 {
                     query: gql`query ($input: BadmintonPlayerTeamMatchInput!){
-                        badmintonPlayerTeamMatchesImport(input: $input){
+                        badmintonPlayerTeamMatches(input: $input){
                             name
                             leagueMatchId
                             side
@@ -459,7 +459,7 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.teams = data.badmintonPlayerTeamMatchesImport
+                this.teams = data.badmintonPlayerTeamMatches
                 this.done = true
                 this.validate()
             }).catch((error) => {
