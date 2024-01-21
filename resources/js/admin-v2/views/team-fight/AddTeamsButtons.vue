@@ -32,12 +32,12 @@
                 @click="addCustomSquad">
                 Andet
             </b-button>
-            <b-button
-                :loading="loading"
-                type="is-primary"
-                @click="importSquad">
-                Fra BadmintonPlayer
-            </b-button>
+<!--            <b-button-->
+<!--                :loading="loading"-->
+<!--                type="is-primary"-->
+<!--                @click="importSquad">-->
+<!--                Fra BadmintonPlayer-->
+<!--            </b-button>-->
         </div>
     </div>
 </template>
