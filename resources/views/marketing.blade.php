@@ -24,5 +24,6 @@
 </div>
 
 <script src="{{ mix('js/marketing/main.js') }}"></script>
+<script defer src="https://eu.umami.is/script.js" data-website-id="08e7bb76-ed23-40be-ae87-fd24446f8dc3"></script>
 </body>
 </html>

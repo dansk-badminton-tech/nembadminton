@@ -14,14 +14,14 @@
     </script>
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <noscript>
     <strong>We're sorry but admin-one-vue-bulma-dashboard doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
 </noscript>
 <div id="app"></div>
-<link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
-
 <script src="{{ mix('js/v2/main.js') }}"></script>
+<script defer src="https://eu.umami.is/script.js" data-website-id="08e7bb76-ed23-40be-ae87-fd24446f8dc3"></script>
 </body>
 </html>
