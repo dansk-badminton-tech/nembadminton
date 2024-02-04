@@ -1,5 +1,6 @@
 <template>
-    <b-select :loading="$apollo.queries.rankingVersions.loading" @focus="onFocus" v-model="version" :expanded="expanded" placeholder="Vælge rangliste">
+    <b-select :loading="$apollo.queries.rankingVersions.loading" @focus="onFocus" v-model="version" :expanded="expanded" :placeholder="placeholder">
+        <slot name="empty-option" :timeToMonth="timeToMonth"></slot>
         <option
             v-for="version in rankingVersions"
             :key="version"
@@ -18,7 +19,16 @@ import {timeToMonth} from "../team-fight/helper";
 
 export default {
     name: "RankingVersionSelect",
-    props: ['value', 'expanded', 'afterChange', 'playingDate'],
+    props: {
+        'value': String,
+        'expanded': Boolean|null,
+        'afterChange': Function|null,
+        'playingDate': Date|null,
+        'placeholder': {
+            type: String,
+            default: "Vælge rangliste"
+        }
+    },
     methods: {
         onFocus(){
             this.$emit('focus')

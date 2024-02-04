@@ -372,10 +372,28 @@ export function formatDateTime(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+export function parseDate(dateString){
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
 export function parseDateTime(dateTimeString) {
     const [datePart, timePart] = dateTimeString.split(' ');
     const [day, month, year] = datePart.split('-').map(Number);
     const [hours, minutes] = timePart.split(':').map(Number);
 
     return new Date(year, month - 1, day, hours, minutes); // Month is 0-based
+}
+
+export function compareDatesByYearMonthDay(date1, date2) {
+    const year1 = date1.getFullYear();
+    const year2 = date2.getFullYear();
+
+    const month1 = date1.getMonth();
+    const month2 = date2.getMonth();
+
+    const day1 = date1.getDate();
+    const day2 = date2.getDate();
+
+    return year1 === year2 && month1 === month2 && day1 === day2;
 }

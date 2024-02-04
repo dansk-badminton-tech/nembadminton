@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight;
 
+use App\Models\Member;
 use App\Models\Squad as SquadModel;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
@@ -16,6 +17,8 @@ use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class SquadManager
 {
@@ -137,6 +140,81 @@ class SquadManager
         }
 
         return $newSquad;
+    }
+
+    public function addPlayerToSquadByRefId(string $refId, int $categoryId, string $version)
+    {
+
+        /** @var Member $member */
+        $member = Member::query()
+                        ->where('refId', '=', $refId)
+                        ->firstOrFail();
+        $squadMember = new SquadMember([
+            'name'          => $member->name,
+            'gender'        => $member->gender,
+            'member_ref_id' => $member->refId,
+            'squad_category_id' => $categoryId
+        ]);
+        $squadMember->save();
+
+        foreach ($member->points()->where('version', '=', $version)->get() as $point){
+            $squadMember->points()->create([
+                'points' => $point->points,
+                'position' => $point->position,
+                'category' => $point->category,
+                'squad_member_id' => $squadMember->id,
+                'vintage' => $point->vintage,
+                'version' => $point->version
+            ]);
+        }
+
+        return $squadMember;
+    }
+
+    /**
+     * @param int    $userId
+     * @param string $squadId
+     *
+     * @return SquadModel
+     */
+    private function getSquadOrFail(int $userId, int $squadId): \App\Models\Squad
+    {
+        return \App\Models\Squad::query()->whereRelation('team', 'user_id', $userId)->where('id', '=', $squadId)->firstOrFail();
+    }
+
+    public function updatePoints(int $userId, int $squadId, ?string $version) : SquadModel{
+
+        return DB::transaction(function() use ($userId, $squadId, $version) {
+            $squad = $this->getSquadOrFail($userId, $squadId);
+            $squad->fill(['version' => $version]);
+            $squad->saveOrFail();
+
+            $pointVersion = $version ?? $squad->team->version;
+
+            /** @var SquadCategory $category */
+            foreach ($squad->categories()->with('players')->get() as $category){
+                foreach ($category->players as $member){
+                    $member->points()->delete();
+                    /** @var \App\Models\Point[] $points */
+                    $points = \App\Models\Point::query()
+                                   ->where('version', $pointVersion)
+                                   ->whereHas('member', function (Builder $query) use ($member) {
+                                       $query->where('refId', $member->member_ref_id);
+                                   })->get();
+                    foreach ($points as $point) {
+                        $squadPoint = new SquadPoint();
+                        $squadPoint->position = $point->position;
+                        $squadPoint->category = $point->category;
+                        $squadPoint->points = $point->points;
+                        $squadPoint->vintage = $point->vintage;
+                        $squadPoint->version = $point->version;
+                        $squadPoint->squad_member_id = $member->id;
+                        $squadPoint->saveOrFail();
+                    }
+                }
+            }
+            return $squad;
+        });
     }
 
 }

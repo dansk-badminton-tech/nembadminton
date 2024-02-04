@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,11 +14,18 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 /**
- * @property int             $id
- * @property SquadCategory[] $categories
- * @property Teams           $team
- * @property int             $teams_id
- * @property int             $order
+ * @property int                        $id
+ * @property Collection|SquadCategory[] $categories
+ * @property Teams                      $team
+ * @property int                        $teams_id
+ * @property int                        $order
+ * @property int|null                   $external_team_fight_id
+ * @property Carbon|null                $playing_datetime
+ * @property string|null                $playing_place
+ * @property string|null                $playing_address
+ * @property string|null                $playing_zip_code
+ * @property string|null                $playing_city
+ * @property Carbon|null                $version
  */
 class Squad extends Model implements Sortable
 {
@@ -45,6 +54,7 @@ class Squad extends Model implements Sortable
         'playing_address',
         'playing_zip_code',
         'playing_city',
+        'version',
     ];
 
     public function buildSortQuery() : \Illuminate\Database\Eloquent\Builder

@@ -10,25 +10,25 @@
         <div class="buttons is-centered">
             <b-button
                 :loading="loading"
-                type="is-primary"
+                type="is-link"
                 @click="addSquad6">
                 9-kamps hold
             </b-button>
             <b-button
                 :loading="loading"
-                type="is-primary"
+                type="is-link"
                 @click="addSquad8">
                 11-kamps hold
             </b-button>
             <b-button
                 :loading="loading"
-                type="is-primary"
+                type="is-link"
                 @click="addSquad10">
                 13-kamps hold
             </b-button>
             <b-button
                 :loading="loading"
-                type="is-primary"
+                type="is-link"
                 @click="addCustomSquad">
                 Andet
             </b-button>
@@ -52,7 +52,9 @@ import ImportSquadModal from "./ImportSquadModal.vue";
 
 export default {
     name: "AddTeamsButtons",
-    props: ['teamId'],
+    props: {
+        teamId: String
+    },
     data() {
         return {
             loading: false

@@ -3,6 +3,7 @@
         <div class="control" v-show="!hideIncompleteTeam">
             <div class="tags has-addons">
                 <b-tooltip
+                    type="is-info"
                     :label="incompleteTeamTip">
                     <span class="tag is-light is-medium">Fuldendt hold</span>
                     <span
@@ -13,6 +14,7 @@
         </div>
         <div class="control">
             <b-tooltip
+                type="is-info"
                 :label="invalidLevelTip">
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller på et forkert hold</span>
@@ -24,6 +26,7 @@
         </div>
         <div class="control">
             <b-tooltip
+                type="is-info"
                 :label="invalidCategoryTip">
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
