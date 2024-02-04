@@ -1,6 +1,5 @@
 <template>
     <b-select :loading="$apollo.queries.rankingVersions.loading" @focus="onFocus" v-model="version" :expanded="expanded" :placeholder="placeholder">
-        <slot name="empty-option" :timeToMonth="timeToMonth"></slot>
         <option
             v-for="version in rankingVersions"
             :key="version"
