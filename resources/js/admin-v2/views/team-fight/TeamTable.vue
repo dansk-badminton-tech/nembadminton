@@ -11,6 +11,11 @@
                             <b-tag type="is-danger" v-if="hasEmptySpots(index)">
                                 Ugyldigt hold
                             </b-tag>
+                            <b-tooltip type="is-info" label="Bruger en anden rangliste end holdrunden">
+                                <b-tag type="is-info" v-if="squad.version !== null">
+                                    {{timeToMonth(squad.version)}}
+                                </b-tag>
+                            </b-tooltip>
                         </b-taglist>
                         <div class="buttons is-pulled-right">
                             <b-button title="Udfyld holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
@@ -39,6 +44,7 @@
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id"/>
                             <b-tooltip
+                                type="is-info"
                                 class="is-pulled-left"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
@@ -61,10 +67,18 @@
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>
-                            <b-tooltip class="is-pulled-left" label="Point er redigeret manuelt">
+                            <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
                                     v-show="hasCorrectedPoints(player.points)"
                                     icon="information"
+                                    type="is-info"
+                                    size="is-small">
+                                </b-icon>
+                            </b-tooltip>
+                            <b-tooltip type="is-info" class="is-pulled-left" :label="'Point er fra '+timeToMonth(resolveVersionToUse(squad))+' ranglisten'">
+                                <b-icon
+                                    v-show="hasDifferentRankingList(player.points)"
+                                    icon="list-box-outline"
                                     type="is-info"
                                     size="is-small">
                                 </b-icon>
@@ -81,16 +95,17 @@
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
-                            :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"/>
+                            :club-id="clubId"
+                            :version="resolveVersionToUse(squad)"
+                            :category="category"/>
                         <PlayerSearch
                             class="mt-1"
                             v-if="isDouble(category) && category.players.length <= 1"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
-                            :club-id="clubId" :exclude-players="[]"
-                            :version="new Date(version)" :category="category"/>
+                            :club-id="clubId"
+                            :version="resolveVersionToUse(squad)" :category="category"/>
                     </td>
                 </tr>
                 </tbody>
@@ -101,17 +116,19 @@
 <script>
 import Draggable from "vuedraggable"
 import {
+    compareDatesByYearMonthDay,
     findPositions, getCurrentSeason,
     highlight as simpleHighlight,
     isDoubleCategory,
     isPlayingToHighByBadmintonPlayerId,
-    isYoungPlayer,
+    isYoungPlayer, parseDate,
     resolveToolTip
 } from "../../helpers";
 import PlayersListSearch from "./PlayersListSearch";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditPlayerModal from "./EditPlayerModal.vue";
 import EditSquadModal from "./EditSquadModal.vue";
+import {timeToMonth} from "./helper";
 
 export default {
     name: 'TeamTable',
@@ -148,6 +165,10 @@ export default {
         getCurrentSeason
     },
     methods: {
+        resolveVersionToUse(squad){
+            return squad.version ? new Date(squad.version) : new Date(this.version)
+        },
+        timeToMonth: timeToMonth,
         startDrag(evt, squad, category, player) {
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
@@ -193,6 +214,15 @@ export default {
         findPositions,
         hasCorrectedPoints(points) {
             return points.some((point) => point.corrected_manually)
+        },
+        hasDifferentRankingList(points){
+            console.log(points)
+            return points.every((point) => {
+                if(point.version === null){
+                    return false
+                }
+                return !compareDatesByYearMonthDay(parseDate(point.version), this.version)}
+            )
         },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);

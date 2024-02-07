@@ -13,6 +13,7 @@ query team($id: ID!){
             playingPlace
             playingDatetime
             externalTeamFightID
+            version
             categories{
                 id
                 category
@@ -29,6 +30,7 @@ query team($id: ID!){
                         position
                         vintage
                         corrected_manually
+                        version
                     }
                 }
             }

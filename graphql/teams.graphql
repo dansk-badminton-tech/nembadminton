@@ -10,6 +10,7 @@ extend type Mutation {
     updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
     deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
     createSquadMember(input: CreateSquadMemberInput! @spread) : SquadMember @create @guard
+    addSquadMemberByRefId(input: AddSquadMemberByRefIdInput! @spread) : SquadMember @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId")
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
     deleteSquad(id: ID! @eq) : Squad @guard @delete
     createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
@@ -21,10 +22,19 @@ extend type Mutation {
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
-    updatePoints(id: ID!, version: String!) : Boolean @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePoints")
+    "Changes all player points to the new version. Does not update if squad has a specific version"
+    updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
+    "Changes all player points to the new version."
+    updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+}
+
+input AddSquadMemberByRefIdInput {
+    refId: String!
+    categoryId: Int!
+    version: Date!
 }
 
 input UpdateSquadPointInput {
@@ -90,6 +100,8 @@ input UpdateSquadInput {
     playingCity: String @rename(attribute: "playing_city")
     "Name"
     name: String
+    "Ranking version"
+    version: Date
 }
 
 input CreateSquadInput {
@@ -112,6 +124,8 @@ input CreateSquadInput {
     playingCity: String @rename(attribute: "playing_city")
     "Name"
     name: String
+    "Ranking Version"
+    version: Date
 }
 
 input SquadBelongsTo {
@@ -173,6 +187,7 @@ type SquadPoint {
     position: Int
     category: String
     vintage: String
+    version: Date
     corrected_manually: Boolean
 }
 
@@ -208,6 +223,8 @@ type Squad {
     categories: [SquadCategory!]!
     "Order"
     order: Int!
+    "Ranking version"
+    version: Date
 }
 
 type Teams {

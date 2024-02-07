@@ -5,11 +5,13 @@ declare(strict_types = 1);
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use App\Models\Point;
+use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
 use App\Models\Teams;
 use App\Models\User;
 use App\Notifications\TeamUpdated;
+use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\SquadManager;
@@ -74,43 +76,60 @@ class UpdateTeams
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
      */
-    public function updatePoints($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
+    public function updatePointsOnAllSquadsInTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
     {
         $teamId = $args['id'];
         $version = $args['version'];
 
-        DB::transaction(function() use ($teamId, $version, $context) {
+        return DB::transaction(function() use ($teamId, $version, $context) {
             $team = $this->getTeamOrFail($context, $teamId);
             $team->fill(['version' => $version]);
             $team->saveOrFail();
 
-            /** @var SquadMember[] $members */
-            $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($context, $teamId) {
-                $builder->where('id', $teamId);
-                $builder->where('user_id', $context->user()->getAuthIdentifier());
-            })->get();
-
-            foreach ($members as $member) {
-                $member->points()->delete();
-                /** @var Point[] $points */
-                $points = Point::query()
-                               ->where('version', $version)
-                               ->whereHas('member', function (Builder $query) use ($member) {
-                                   $query->where('refId', $member->member_ref_id);
-                               })->get();
-                foreach ($points as $point) {
-                    $squadPoint = new SquadPoint();
-                    $squadPoint->position = $point->position;
-                    $squadPoint->category = $point->category;
-                    $squadPoint->points = $point->points;
-                    $squadPoint->vintage = $point->vintage;
-                    $squadPoint->squad_member_id = $member->id;
-                    $squadPoint->saveOrFail();
+            foreach ($team->squads as $squad){
+                /** @var SquadMember $player */
+                $versionCurrent = $squad->version ?? $version;
+                /** @var SquadCategory $category */
+                foreach ($squad->categories()->with('players')->get() as $category){
+                    foreach ($category->players as $member){
+                        $member->points()->delete();
+                        /** @var Point[] $points */
+                        $points = Point::query()
+                                       ->where('version', $versionCurrent)
+                                       ->whereHas('member', function (Builder $query) use ($member) {
+                                           $query->where('refId', $member->member_ref_id);
+                                       })->get();
+                        foreach ($points as $point) {
+                            $squadPoint = new SquadPoint();
+                            $squadPoint->position = $point->position;
+                            $squadPoint->category = $point->category;
+                            $squadPoint->points = $point->points;
+                            $squadPoint->vintage = $point->vintage;
+                            $squadPoint->version = $point->version;
+                            $squadPoint->squad_member_id = $member->id;
+                            $squadPoint->saveOrFail();
+                        }
+                    }
                 }
             }
+            return $team;
         });
+    }
 
-        return true;
+    /**
+     * @param                $rootValue
+     * @param array          $args
+     * @param GraphQLContext $context
+     * @param ResolveInfo    $resolveInfo
+     *
+     * @return \App\Models\Squad
+     */
+    public function updatePointsOnSquad($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : \App\Models\Squad
+    {
+        $squadId = (int)$args['id'];
+        $version = $args['version'];
+
+        return $this->squadManager->updatePoints($context->user()->getAuthIdentifier(), $squadId, $version);
     }
 
     /**

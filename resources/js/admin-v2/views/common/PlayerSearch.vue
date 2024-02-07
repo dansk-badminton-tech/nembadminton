@@ -81,7 +81,12 @@ export default {
     props: {
         clubId: String,
         category: Object,
-        excludePlayers: Array,
+        excludePlayers: {
+            type: Array,
+            default(){
+                return []
+            }
+        },
         version: Date,
         squad: Object,
         disabled: Boolean
@@ -149,7 +154,9 @@ export default {
                     excludeMembers: this.excludePlayers.map(member => member.id),
                     gender: resolveGenderFromCategory(this.category.category)
                 }
-                if (!!this.version) {
+                if(this?.squad?.version){
+                    params.version = this?.squad?.version
+                }else if(!!this.version){
                     params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
                 }
                 return params

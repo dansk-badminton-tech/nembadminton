@@ -6,7 +6,7 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-tooltip label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
+            <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
                        position="is-bottom">
                 <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
                           @click="saveTeams">Gem
@@ -14,7 +14,7 @@
             </b-tooltip>
             <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-primary">
+                <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Export</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
@@ -28,7 +28,7 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-primary">
+                <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Indstillinger</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
@@ -37,13 +37,13 @@
                     Validere hold
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
-                    <b-tooltip label="Kan bruges hvis du ikke kan stille et fuld hold">
+                    <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
                         <b-icon icon="cancel"></b-icon>
                         {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
                     </b-tooltip>
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                    <b-tooltip label="Opdater spillernes point med den valgte rangliste.">
+                    <b-tooltip type="is-info" label="Opdater spillernes point med den valgte rangliste.">
                         <b-icon icon="update"></b-icon>
                         Opdater spiller point
                     </b-tooltip>
@@ -332,7 +332,7 @@ export default {
         confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
-                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste.',
+                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste. Hold med en specifik rangliste vil ikke blive opdateret',
                     confirmText: 'Skift og opdater spillere',
                     onConfirm: () => {
                         this.updateToRankingList()
@@ -354,7 +354,7 @@ export default {
             this.addPlayerToCategory(squad, category, player)
                 .then(({data}) => {
                     setTimeout(() => {
-                        this.focusNext(data.createSquadMember)
+                        this.focusNext(data.addSquadMemberByRefId)
                     }, 100);
                 })
         },
@@ -363,8 +363,8 @@ export default {
             return this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation createSquadMember($input: CreateSquadMemberInput!){
-                            createSquadMember(input: $input){
+                        mutation addSquadMemberByRefId($input: AddSquadMemberByRefIdInput!){
+                            addSquadMemberByRefId(input: $input){
                                 id
                                 refId
                                 name
@@ -375,28 +375,16 @@ export default {
                                     points
                                     position
                                     vintage
+                                    version
                                 }
                             }
                         }
                     `,
                     variables: {
                         input: {
-                            category: {
-                                connect: category.id
-                            },
-                            gender: player.gender,
-                            name: player.name,
+                            categoryId: parseInt(category.id),
                             refId: player.refId,
-                            points: {
-                                create: player.points.map((point) => {
-                                    return {
-                                        category: point.category,
-                                        points: point.points,
-                                        position: point.position,
-                                        vintage: point.vintage
-                                    }
-                                })
-                            }
+                            version: squad.version ? squad.version : this.version
                         }
                     },
                     refetchQueries: [
@@ -405,7 +393,7 @@ export default {
                     awaitRefetchQueries: true
                 })
                        .then((data) => {
-                           this.$root.$emit('player-added-to-category', data.data.createSquadMember)
+                           this.$root.$emit('player-added-to-category', data.data.addSquadMemberByRefId)
                            return data
                        })
                        .catch(() => {
@@ -462,8 +450,10 @@ export default {
                        .mutate(
                            {
                                mutation: gql`
-                                    mutation ($id: ID!, $version: String!){
-                                      updatePoints(id: $id, version: $version)
+                                    mutation updatePointsTeam($id: ID!, $version: String!){
+                                      updatePointsTeam(id: $id, version: $version){
+                                        id
+                                      }
                                     }
                                 `,
                                variables: {

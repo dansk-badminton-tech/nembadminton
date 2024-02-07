@@ -3,10 +3,13 @@ import debounce from "lodash/debounce";
 import gql from "graphql-tag";
 import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
+import RankingVersionSelect from "../common/RankingVersionSelect.vue";
+import TeamQuery from "../../../queries/team.graphql";
+import {timeToMonth} from "./helper";
 
 export default {
     name: "EditSquadModal",
-    components: {BadmintonPlayerTeamFightSelector},
+    components: {RankingVersionSelect, BadmintonPlayerTeamFightSelector},
     props: {
         squad: Object
     },
@@ -15,12 +18,16 @@ export default {
             handler(newValue, oldValue) {
                 this.league = newValue.league
                 this.name = newValue.name
-                this.playingDatetime = new Date(newValue.playingDatetime)
+                this.playingDatetime = newValue.playingDatetime
+                                       ? new Date(newValue.playingDatetime)
+                                       : null
                 this.playingPlace = newValue.playingPlace
                 this.playingAddress = newValue.playingAddress
                 this.playingZipCode = newValue.playingZipCode
                 this.playingCity = newValue.playingCity
                 this.externalTeamFightID = newValue.externalTeamFightID
+                this.version = newValue.version
+                this.oldVersion = newValue.version
             },
             immediate: true
         }
@@ -39,17 +46,87 @@ export default {
             playingCity: null,
             externalTeamFightID: null,
             address: [],
+            version: null,
             league: null,
             isFetching: false,
             showTeamFightSelector: false,
+            oldVersion: null,
             leagueOptions: [
                 {label: 'Normal', value: "OTHER"},
                 {label: "1. Division", value: "FIRSTDIVISION"},
                 {label: "Liga", value: "LIGA"}
-            ]
+            ],
+            changeOfRankingWarning: false
         }
     },
     methods: {
+        updateToRankingList(newVersion) {
+            return this.$apollo
+                       .mutate(
+                           {
+                               mutation: gql`
+                                    mutation updatePointsSquad($id: ID!, $version: String){
+                                      updatePointsSquad(id: $id, version: $version){
+                                        id
+                                        playerLimit
+                                        league
+                                        order
+                                        name
+                                        playingCity
+                                        playingZipCode
+                                        playingAddress
+                                        playingPlace
+                                        playingDatetime
+                                        externalTeamFightID
+                                        version
+                                        categories{
+                                            id
+                                            category
+                                            name
+                                            players{
+                                                id
+                                                gender
+                                                name
+                                                refId
+                                                points{
+                                                    id
+                                                    category
+                                                    points
+                                                    position
+                                                    vintage
+                                                    corrected_manually
+                                                    version
+                                                }
+                                            }
+                                        }
+                                      }
+                                    }
+                                `,
+                               variables: {
+                                   id: this.squad.id,
+                                   version: newVersion
+                               }
+                           })
+                       .then(({data}) => {
+                           this.$buefy.snackbar.open(
+                               {
+                                   duration: 4000,
+                                   type: 'is-success',
+                                   queue: false,
+                                   message: `Points er nu ` + (newVersion !== null
+                                                               ? newVersion + ' ranglisten'
+                                                               : 'ændret')
+                               })
+                       })
+                       .catch((error) => {
+                           this.$buefy.snackbar.open(
+                               {
+                                   duration: 4000,
+                                   type: 'is-danger',
+                                   message: `Kunne ikke opdater points :(`
+                               })
+                       })
+        },
         updateSquad() {
             this.loading = true
             this.$apollo.mutate(
@@ -66,6 +143,7 @@ export default {
                                 playingZipCode
                                 playingCity
                                 externalTeamFightID
+                                version
                             }
                         }
                     `,
@@ -75,31 +153,40 @@ export default {
                             league: this.league,
                             name: this.name,
                             externalTeamFightID: this.externalTeamFightID,
-                            playingDatetime: formatDateTime(this.playingDatetime),
+                            playingDatetime: this.playingDatetime
+                                             ? formatDateTime(this.playingDatetime)
+                                             : null,
                             playingPlace: this.playingPlace,
                             playingAddress: this.playingAddress,
                             playingZipCode: this.playingZipCode,
-                            playingCity: this.playingCity
+                            playingCity: this.playingCity,
+                            version: this.version
                         }
                     }
-                }).then(() => {
-                this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Hold opdateret`,
-                                           position: 'is-bottom',
-                                           type: 'is-success'
-                                       })
+                })
+                .then(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 5000,
+                            type: 'is-success',
+                            queue: false,
+                            message: `Hold opdateret`,
+                        })
+                    if (this.oldVersion !== this.version) {
+                        return this.updateToRankingList(this.version)
+                    }
+                })
+                .then(() => {
+                    this.$emit('close')
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open({
+                                               duration: 5000,
+                                               message: `Fejl :( Kunne ikke opdater holdet`,
+                                               type: 'is-danger'
+                                           })
 
-                this.$emit('close')
-            }).catch(() => {
-                this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Fejl :( Kunne ikke opdater holdet`,
-                                           position: 'is-bottom',
-                                           type: 'is-danger'
-                                       })
-
-            })
+                })
                 .finally(() => {
                     this.loading = false
                 })
@@ -130,19 +217,17 @@ export default {
                     this.playingAddress = data.badmintonPlayerTeamMatch.playingAddress
                     this.playingCity = data.badmintonPlayerTeamMatch.playingCity
                     this.playingZipCode = data.badmintonPlayerTeamMatch.playingZipCode
-                    this.$buefy.toast.open({
+                    this.$buefy.snackbar.open({
                                                duration: 5000,
                                                message: `Informationer udfyldt. Tjek dem igennem om de er korrekt`,
-                                               position: 'is-bottom',
                                                type: 'is-success'
                                            })
                     this.showTeamFightSelector = false
                 })
                 .catch(() => {
-                    this.$buefy.toast.open({
+                    this.$buefy.snackbar.open({
                                                duration: 5000,
                                                message: `Fejl :( Kunne ikke hente informationer automatisk fra badmintonplayer`,
-                                               position: 'is-bottom',
                                                type: 'is-danger'
                                            })
                 })
@@ -217,6 +302,15 @@ export default {
                     </b-select>
                 </b-field>
                 <hr/>
+                <b-field label="Rangliste" message="Vælge en anden rangliste end holdrundens. Hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
+                    <RankingVersionSelect :after-change="() => {changeOfRankingWarning = true}" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
+                    <p class="control">
+                        <b-button type="is-link" @click="version = null; changeOfRankingWarning = true">Nulstill</b-button>
+                    </p>
+                </b-field>
+                <b-message v-show="changeOfRankingWarning" type="is-info">
+                    Pointene på holdet opdates til den valgte rangliste når der trykkes på gem
+                </b-message>
                 <b-field message="Giver mulighed for link til badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">
                     <b-input
                         type="number"
@@ -230,8 +324,12 @@ export default {
                         icon="calendar-today"
                         locale="da-DK"
                         v-model="playingDatetime"
+                        expanded
                         editable>
                     </b-datetimepicker>
+                    <p class="control">
+                        <b-button type="is-link" @click="playingDatetime = null">Nulstill</b-button>
+                    </p>
                 </b-field>
                 <b-field label="Spillested">
                     <b-input
@@ -264,17 +362,6 @@ export default {
                     >
                     </b-input>
                 </b-field>
-                <!--                <b-field label="Spille addrese">-->
-                <!--                    <b-autocomplete-->
-                <!--                        :data="address"-->
-                <!--                        @typing="getAsyncData"-->
-                <!--                        v-model="playingAddress"-->
-                <!--                    >-->
-                <!--                        <template v-slot:default="props">-->
-                <!--                            {{ props.option }}-->
-                <!--                        </template>-->
-                <!--                    </b-autocomplete>-->
-                <!--                </b-field>-->
             </section>
             <footer class="modal-card-foot">
                 <b-button
