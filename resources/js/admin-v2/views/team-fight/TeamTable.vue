@@ -12,7 +12,7 @@
                                 Ugyldigt hold
                             </b-tag>
                             <b-tooltip type="is-info" label="Bruger en anden rangliste end holdrunden">
-                                <b-tag type="is-info" v-if="!isSameVersions(squad.version,version)">
+                                <b-tag type="is-info" v-if="squad.version !== null">
                                     {{timeToMonth(squad.version)}}
                                 </b-tag>
                             </b-tooltip>
@@ -169,13 +169,6 @@ export default {
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },
         timeToMonth: timeToMonth,
-        isSameVersions(squadVersion, teamVersion){
-            if(squadVersion === null){
-                return true
-            }
-            let squadVersionDate = parseDate(squadVersion)
-            return squadVersionDate.getTime() === teamVersion.getTime()
-        },
         startDrag(evt, squad, category, player) {
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
@@ -223,6 +216,7 @@ export default {
             return points.some((point) => point.corrected_manually)
         },
         hasDifferentRankingList(points){
+            console.log(points)
             return points.every((point) => {
                 if(point.version === null){
                     return false

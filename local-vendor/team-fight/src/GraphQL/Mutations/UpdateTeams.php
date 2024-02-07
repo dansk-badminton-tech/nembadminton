@@ -88,14 +88,14 @@ class UpdateTeams
 
             foreach ($team->squads as $squad){
                 /** @var SquadMember $player */
-                $version = $squad->version ?? $version;
+                $versionCurrent = $squad->version ?? $version;
                 /** @var SquadCategory $category */
                 foreach ($squad->categories()->with('players')->get() as $category){
                     foreach ($category->players as $member){
                         $member->points()->delete();
                         /** @var Point[] $points */
                         $points = Point::query()
-                                       ->where('version', $version)
+                                       ->where('version', $versionCurrent)
                                        ->whereHas('member', function (Builder $query) use ($member) {
                                            $query->where('refId', $member->member_ref_id);
                                        })->get();

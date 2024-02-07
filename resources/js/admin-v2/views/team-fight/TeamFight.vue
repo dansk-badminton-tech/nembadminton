@@ -332,7 +332,7 @@ export default {
         confirmChangeOfRankingList(newVersion) {
             this.$buefy.dialog.confirm(
                 {
-                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste.',
+                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste. Hold med en specifik rangliste vil ikke blive opdateret',
                     confirmText: 'Skift og opdater spillere',
                     onConfirm: () => {
                         this.updateToRankingList()
@@ -450,7 +450,7 @@ export default {
                        .mutate(
                            {
                                mutation: gql`
-                                    mutation ($id: ID!, $version: String!){
+                                    mutation updatePointsTeam($id: ID!, $version: String!){
                                       updatePointsTeam(id: $id, version: $version){
                                         id
                                       }

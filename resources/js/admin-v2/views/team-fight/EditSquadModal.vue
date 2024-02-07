@@ -55,7 +55,8 @@ export default {
                 {label: 'Normal', value: "OTHER"},
                 {label: "1. Division", value: "FIRSTDIVISION"},
                 {label: "Liga", value: "LIGA"}
-            ]
+            ],
+            changeOfRankingWarning: false
         }
     },
     methods: {
@@ -302,11 +303,14 @@ export default {
                 </b-field>
                 <hr/>
                 <b-field label="Rangliste" message="Vælge en anden rangliste end holdrundens. Hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
-                    <RankingVersionSelect placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
+                    <RankingVersionSelect :after-change="() => {changeOfRankingWarning = true}" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
                     <p class="control">
-                        <b-button type="is-link" @click="version = null">Nulstill</b-button>
+                        <b-button type="is-link" @click="version = null; changeOfRankingWarning = true">Nulstill</b-button>
                     </p>
                 </b-field>
+                <b-message v-show="changeOfRankingWarning" type="is-info">
+                    Pointene på holdet opdates til den valgte rangliste når der trykkes på gem
+                </b-message>
                 <b-field message="Giver mulighed for link til badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">
                     <b-input
                         type="number"
