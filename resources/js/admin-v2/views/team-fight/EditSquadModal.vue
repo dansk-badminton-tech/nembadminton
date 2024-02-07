@@ -60,6 +60,9 @@ export default {
         }
     },
     methods: {
+        toggleRankingWarning(){
+            this.changeOfRankingWarning = true;
+        },
         updateToRankingList(newVersion) {
             return this.$apollo
                        .mutate(
@@ -255,7 +258,6 @@ export default {
                     return data.json();
                 })
                 .then((data) => {
-                    console.log(data)
                     this.address = []
                     data.forEach((item) => this.address.push(item))
                 })
@@ -303,12 +305,13 @@ export default {
                 </b-field>
                 <hr/>
                 <b-field label="Rangliste" message="Vælge en anden rangliste end holdrundens. Hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
-                    <RankingVersionSelect :after-change="() => {changeOfRankingWarning = true}" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
+                    <RankingVersionSelect @change="toggleRankingWarning" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
                     <p class="control">
-                        <b-button type="is-link" @click="version = null; changeOfRankingWarning = true">Nulstill</b-button>
+                        <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstill</b-button>
                     </p>
                 </b-field>
-                <b-message v-show="changeOfRankingWarning" type="is-info">
+                {{version}}
+                <b-message v-if="changeOfRankingWarning" type="is-info">
                     Pointene på holdet opdates til den valgte rangliste når der trykkes på gem
                 </b-message>
                 <b-field message="Giver mulighed for link til badmintonplayer. Kan ses hvis holdkampen deles via link" label="BadmintonPlayer kampnummer">

@@ -216,7 +216,6 @@ export default {
             return points.some((point) => point.corrected_manually)
         },
         hasDifferentRankingList(points){
-            console.log(points)
             return points.every((point) => {
                 if(point.version === null){
                     return false
