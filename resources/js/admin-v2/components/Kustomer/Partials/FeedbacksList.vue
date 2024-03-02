@@ -22,7 +22,10 @@ export default {
             this.$emit('selected', feedback)
         },
         label(type) {
-            return this.labels.feedback[type].title
+            if(this.labels?.feedbacks?.hasOwnProperty(type)){
+                return this.labels.feedbacks[type].title
+            }
+            return ''
         }
     }
 }

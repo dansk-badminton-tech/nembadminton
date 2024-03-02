@@ -49,7 +49,10 @@ export default {
 
     methods: {
         label(type) {
-            return this.labels.feedback[this.feedback.type].title
+            if(this.labels?.feedbacks?.hasOwnProperty(this.feedback.type)){
+                return this.labels.feedbacks[this.feedback.type].title
+            }
+            return ''
         },
         submit() {
             this.isLoading = true
