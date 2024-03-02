@@ -22,9 +22,9 @@
                     <b-icon icon="file-export"></b-icon>
                     CSV
                 </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="showLinkSharing = true">
+                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
                     <b-icon icon="share"></b-icon>
-                    <share-link-modal v-model="showLinkSharing" :team-id="teamFightId"></share-link-modal>
+                    Link
                 </b-dropdown-item>
             </b-dropdown>
             <b-dropdown aria-role="list" class="ml-2">
@@ -269,6 +269,22 @@ export default {
         }
     },
     methods: {
+        openLinkSharingModal(){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       component: ShareLinkModal,
+                                       props: {
+                                            teamId: this.teamFightId
+                                       },
+                                       scroll: "keep",
+                                       width: 640,
+                                       events: {
+                                           close: () => {
+                                               this.$emit('input', false)
+                                           }
+                                       }
+                                   })
+        },
         deactivateIncompleteCheck(){
             this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
             this.validate()
