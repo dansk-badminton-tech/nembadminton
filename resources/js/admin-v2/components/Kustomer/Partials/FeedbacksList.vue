@@ -22,7 +22,7 @@ export default {
             this.$emit('selected', feedback)
         },
         label(type) {
-            return eval('this.labels.feedbacks.' + type + '.title')
+            return this.labels.feedback[type].title
         }
     }
 }

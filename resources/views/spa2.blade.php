@@ -21,7 +21,7 @@
     <strong>We're sorry but admin-one-vue-bulma-dashboard doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
 </noscript>
 <div id="app"></div>
-<script src="{{ mix('js/v2/main.js') }}"></script>
+@vite(['resources/js/admin-v2/main.js'])
 <script defer src="https://eu.umami.is/script.js" data-website-id="08e7bb76-ed23-40be-ae87-fd24446f8dc3"></script>
 </body>
 </html>

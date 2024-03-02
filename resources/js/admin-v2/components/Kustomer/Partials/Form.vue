@@ -1,7 +1,7 @@
 <template>
     <section class="kustomer-form" :class="{'is-open':feedback}">
         <div class="kustomer-back" @click="back">
-            <img src="/vendor/kustomer/assets/back.svg" alt="Return" />
+            <img src="../assets/back.svg" alt="Return" />
         </div>
 
         <div v-if="feedback && !displaySuccessMessage">
@@ -33,6 +33,7 @@
 import html2canvas from 'html2canvas'
 import axios from "axios";
 import {getAuthToken, isLoggedIn} from "../../../../auth";
+import SuccessMessage from './SuccessMessage.vue'
 
 export default {
     props: ['feedback', 'params', 'labels'],
@@ -48,9 +49,7 @@ export default {
 
     methods: {
         label(type) {
-            return eval(
-                'this.labels.feedbacks.' + this.feedback.type + '.label'
-            )
+            return this.labels.feedback[this.feedback.type].title
         },
         submit() {
             this.isLoading = true
@@ -105,7 +104,7 @@ export default {
     },
 
     components: {
-        'kustomer-success': require('./SuccessMessage.vue').default
+        'kustomer-success': SuccessMessage
     }
 }
 </script>

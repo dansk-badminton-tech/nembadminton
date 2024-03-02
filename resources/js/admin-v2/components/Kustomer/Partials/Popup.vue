@@ -21,6 +21,10 @@
 </template>
 
 <script>
+import Header from './Header.vue'
+import FeedbacksList from './FeedbacksList.vue'
+import Form from './Form.vue'
+
 export default {
     props: ['params', 'labels'],
 
@@ -37,9 +41,9 @@ export default {
     },
 
     components: {
-        'kustomer-header': require('./Header.vue').default,
-        'kustomer-feedbacks-list': require('./FeedbacksList.vue').default,
-        'kustomer-feedback-form': require('./Form.vue').default
+        'kustomer-header': Header,
+        'kustomer-feedbacks-list': FeedbacksList,
+        'kustomer-feedback-form': Form
     }
 }
 </script>

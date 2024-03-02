@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
+import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 export default {
     name: "OptionalRanking",
     components: {RankingListDropdown},

@@ -158,13 +158,13 @@
 </template>
 
 <script>
-import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs";
-import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights";
+import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs.vue";
+import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights.vue";
 import gql from "graphql-tag";
 import {findPositions, highlight as simpleHighlight, isPlayingToHighByBadmintonPlayerId, isYoungPlayer, resolveToolTip, swapObject} from "../../helpers";
-import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect";
-import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown";
-import OptionalRanking from "./OptionalRanking";
+import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect.vue";
+import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
+import OptionalRanking from "./OptionalRanking.vue";
 import ValidationStatus from "../../../views/ValidationStatus.vue";
 import {filterYouthFromCategory, filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 

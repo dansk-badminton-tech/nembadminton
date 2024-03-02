@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import Popup from './Partials/Popup.vue'
+
 export default {
     props: ['params', 'labels'],
 
@@ -45,7 +47,7 @@ export default {
     },
 
     components: {
-        'kustomer-popup': require('./Partials/Popup.vue').default
+        'kustomer-popup': Popup
     }
 }
 </script>

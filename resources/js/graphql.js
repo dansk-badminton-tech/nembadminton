@@ -29,11 +29,11 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const httpLinkWithAuth = authMiddleware.concat(httpLink);
 const pusherLink = new PusherLink({
-                                      pusher: new Pusher(process.env.MIX_PUSHER_APP_KEY, {
+                                      pusher: new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
                                           cluster: '',
-                                          wsHost: process.env.MIX_PUSHER_HOST,
-                                          wsPort: process.env.MIX_PUSHER_PORT,
-                                          forceTLS: process.env.MIX_PUSHER_SCHEME === 'https',
+                                          wsHost: import.meta.env.VITE_PUSHER_HOST,
+                                          wsPort: import.meta.env.VITE_PUSHER_PORT,
+                                          forceTLS: import.meta.env.VITE_PUSHER_SCHEME === 'https',
                                           disableStats: true,
                                           enabledTransports: ['ws', 'wss'],
                                           channelAuthorization: {

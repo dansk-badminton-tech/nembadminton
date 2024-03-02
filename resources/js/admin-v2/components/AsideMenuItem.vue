@@ -41,11 +41,12 @@
 
 <script>
 import { defineComponent } from 'vue'
+import AsideMenuList from '@/components/AsideMenuList.vue'
 
 export default defineComponent({
   name: 'AsideMenuItem',
   components: {
-    AsideMenuList: () => import('@/components/AsideMenuList.vue')
+    AsideMenuList
   },
   props: {
     item: {

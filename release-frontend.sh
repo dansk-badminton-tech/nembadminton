@@ -3,10 +3,10 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-export MIX_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
-export MIX_PUSHER_HOST="ws.platform.nembadminton.dk"
-export MIX_PUSHER_PORT="443"
-export MIX_PUSHER_SCHEME="https"
+export VITE_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
+export VITE_PUSHER_HOST="ws.platform.nembadminton.dk"
+export VITE_PUSHER_PORT="443"
+export VITE_PUSHER_SCHEME="https"
 
 echo "Building frontend"
 yarn install --frozen-lockfile --no-progress

@@ -124,7 +124,7 @@ const routes = [
             {
                 path: '/team-fight/:teamUUID/public-view',
                 name: 'team-fight-public-view',
-                component: () => import("../views/team-fight/TeamFightPublic"),
+                component: () => import("../views/team-fight/TeamFightPublic.vue"),
                 props: route => ({teamId: route.params.teamUUID}),
                 meta: {
                     title: 'Holdkamp'
@@ -168,7 +168,7 @@ const routes = [
     {
         path: '/onboarding',
         name: 'onboarding',
-        component: () => import('../views/onboarding/Onboarding'),
+        component: () => import('../views/onboarding/Onboarding.vue'),
         meta: {
             requiresAuth: true,
             title: 'Klargør din klub'
