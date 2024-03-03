@@ -310,7 +310,6 @@ export default {
                         <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstill</b-button>
                     </p>
                 </b-field>
-                {{version}}
                 <b-message v-if="changeOfRankingWarning" type="is-info">
                     Pointene på holdet opdates til den valgte rangliste når der trykkes på gem
                 </b-message>
