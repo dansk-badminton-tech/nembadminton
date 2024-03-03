@@ -6,7 +6,7 @@
         </hero-bar>
         <section class="section is-main-section">
             <h2 class="subtitle">Tilknyt flere klubber til din profil og sammensæt holdkampe på tværs af klubber</h2>
-            <b-button type="is-success" @click="showModal = true">Tilføj klub</b-button>
+            <b-button type="is-success" @click="openModal">Tilføj klub</b-button>
             <b-table :data="me?.clubs">
                 <b-table-column field="id" label="ID" width="40" numeric v-slot="props">
                     {{ props.row.id }}
@@ -29,11 +29,6 @@
                     <b-button :disabled="me?.club?.id === props.row.id" @click="deleteClubConnection(props.row)" type="is-danger">Fjern tilknytning</b-button>
                 </b-table-column>
             </b-table>
-            <b-modal v-model="showModal" has-modal-card close-button-aria-label="Close">
-                <template #default="props">
-                    <modal-form @close="props.close"></modal-form>
-                </template>
-            </b-modal>
         </section>
     </div>
 </template>
@@ -41,96 +36,13 @@
 <script>
 import ME from "../../../queries/me.gql";
 import gql from "graphql-tag";
-import BadmintonPlayerClubs from "../../../components/badminton-player/BadmintonPlayerClubs.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import TitleBar from "../../components/TitleBar.vue";
-
-const ModalForm = {
-    components: {BadmintonPlayerClubs},
-    template: `
-        <form action="">
-        <div class="modal-card" style="width: auto">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Tilføj klub</p>
-                <button
-                    type="button"
-                    class="delete"
-                    @click="$emit('close')"/>
-            </header>
-            <section class="modal-card-body">
-                <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
-            </section>
-            <footer class="modal-card-foot">
-                <b-button
-                    label="Close"
-                    @click="$emit('close')"/>
-                <b-button
-                    :loading="loading"
-                    label="Tilknyt"
-                    :disabled="clubId === null"
-                    @click="updateClubs"
-                    type="is-primary"/>
-            </footer>
-        </div>
-        </form>
-    `,
-    data() {
-        return {
-            loading: false,
-            clubId: null
-        }
-    },
-    methods: {
-        updateClubs() {
-            this.loading = true;
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation updateMe($input: UpdateMe!){
-                            updateMe(input: $input){
-                                id
-                                clubs {
-                                    id
-                                    name1
-                                    initialized
-                                }
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: {
-                            clubs: {
-                                connect: [this.clubId]
-                            }
-                        }
-                    }
-                }
-            ).then(() => {
-                this.$emit('close')
-                this.$buefy.snackbar.open(
-                    {
-                        duration: 6000,
-                        type: 'is-success',
-                        message: 'Klubben er tilknyttet'
-                    })
-            }).catch(() => {
-                this.$buefy.snackbar.open(
-                    {
-                        duration: 6000,
-                        type: 'is-danger',
-                        message: 'Kunne ikke tilknytte klub'
-                    })
-
-            }).finally(() => {
-                this.loading = false
-            })
-        }
-    }
-}
+import AddClubModel from "@/views/my-club/AddClubModel.vue";
 
 export default {
     name: "MyClubs",
-    components: {TitleBar, HeroBar, ModalForm},
+    components: {TitleBar, HeroBar},
     apollo: {
         me: {
             query: ME,
@@ -138,6 +50,19 @@ export default {
         }
     },
     methods: {
+        openModal(){
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       component: AddClubModel,
+                                       scroll: "keep",
+                                       width: 640,
+                                       events: {
+                                           close: () => {
+                                               this.$emit('input', false)
+                                           }
+                                       }
+                                   })
+        },
         deleteClubConnection(club) {
             this.$buefy.dialog.confirm(
                 {
