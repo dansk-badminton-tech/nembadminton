@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           script: |
-            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }} /var/www/badminton.social/projects/holdkamp/public/build
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/build /var/www/badminton.social/projects/holdkamp/public/build
 
       - name: Deploying newest backend of master
         uses: appleboy/ssh-action@v1.0.0
