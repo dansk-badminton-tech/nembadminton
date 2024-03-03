@@ -37,13 +37,13 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '20.x'
           cache: 'yarn'
 
       - name: Frontend build
         run: |
           yarn install --frozen-lockfile
-          yarn run production
+          yarn run build
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

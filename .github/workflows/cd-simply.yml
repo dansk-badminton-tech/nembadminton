@@ -19,7 +19,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '20.x'
           cache: 'yarn'
 
       - name: Frontend build
@@ -29,7 +29,7 @@ jobs:
           export VITE_PUSHER_PORT="443"
           export VITE_PUSHER_SCHEME="https"
           yarn install --frozen-lockfile
-          yarn run production
+          yarn run build
 
       - name: Upload new frontend
         uses: appleboy/scp-action@v0.1.4
@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.SIMPLY_SSH_USERNAME }}
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
-          source: "public/css,public/js,public/images,public/mix-manifest.json"
+          source: "public/build"
           target: /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}
           strip_components: 1
 
@@ -50,10 +50,7 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           script: |
-            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/images /var/www/badminton.social/projects/holdkamp/public/images
-            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/css /var/www/badminton.social/projects/holdkamp/public/css
-            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/js /var/www/badminton.social/projects/holdkamp/public/js
-            ln -sf /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/mix-manifest.json /var/www/badminton.social/projects/holdkamp/public/mix-manifest.json
+            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }} /var/www/badminton.social/projects/holdkamp/public/build
 
       - name: Deploying newest backend of master
         uses: appleboy/ssh-action@v1.0.0
@@ -65,8 +62,8 @@ jobs:
           script: |
             cd /var/www/badminton.social/projects/holdkamp
             git pull
-            php81 /usr/local/bin/composer install --ignore-platform-reqs
-            php81 artisan migrate --force
-            php81 artisan lighthouse:clear-cache
-            php81 artisan lighthouse:cache
+            php82 /usr/local/bin/composer install --ignore-platform-reqs
+            php82 artisan migrate --force
+            php82 artisan lighthouse:clear-cache
+            php82 artisan lighthouse:cache
 
