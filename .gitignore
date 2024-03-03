@@ -8,6 +8,7 @@
 /public/mix-manifest.json
 /public/*.js
 /public/*.map
+/public/build
 /storage/*.key
 /vendor
 .env

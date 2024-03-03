@@ -20,7 +20,6 @@
     background: linear-gradient(rgba(31, 44, 108, 0.65), rgba(31, 44, 108, 0.65)), rgba(0, 0, 0, 0.55) url("../../../assets/badminton-concept-with-shuttlecock-racket-1080.jpg") no-repeat;
     background-size: cover;
     background-position: center;
-    //box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 </style>
 

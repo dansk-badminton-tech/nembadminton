@@ -15,11 +15,9 @@ services:
       - 80:80
     depends_on:
       - database
-      - phpmyadmin
       - smtp
       - redis
-      - worker
-      - db-worker
+      - phpmyadmin
 
   db-worker:
     image: flycompany/holdkamp

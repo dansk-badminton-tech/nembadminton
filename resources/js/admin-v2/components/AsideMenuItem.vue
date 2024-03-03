@@ -45,7 +45,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'AsideMenuItem',
   components: {
-    AsideMenuList: () => import('@/components/AsideMenuList.vue')
+      AsideMenuList: () => import('@/components/AsideMenuList.vue')
   },
   props: {
     item: {

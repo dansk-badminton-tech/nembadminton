@@ -124,7 +124,7 @@ import {
     isYoungPlayer, parseDate,
     resolveToolTip
 } from "../../helpers";
-import PlayersListSearch from "./PlayersListSearch";
+import PlayersListSearch from "./PlayersListSearch.vue";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditPlayerModal from "./EditPlayerModal.vue";
 import EditSquadModal from "./EditSquadModal.vue";
