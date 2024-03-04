@@ -16,12 +16,12 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - uses: php-actions/composer@v6
         with:
-          php_version: 8.2
+          php_version: 8.3
           version: 2
           args: --ignore-platform-reqs
       - name: Generate key
