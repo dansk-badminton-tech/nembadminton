@@ -50,7 +50,7 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           script: |
-            ln -sfn /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}/build /var/www/badminton.social/projects/holdkamp/public/build
+            ln -sfn /var/www/nembadminton.dk/projects/frontend-deploy/${{ github.sha }}/build /var/www/nembadminton.dk/projects/holdkamp/public/build
 
       - name: Deploying newest backend of master
         uses: appleboy/ssh-action@v1.0.0
@@ -60,7 +60,7 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           script: |
-            cd /var/www/badminton.social/projects/holdkamp
+            cd /var/www/nembadminton.dk/projects/holdkamp
             git pull
             php83 /usr/local/bin/composer install --ignore-platform-reqs
             php83 artisan migrate --force
