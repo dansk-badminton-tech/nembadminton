@@ -39,7 +39,7 @@ jobs:
           key: ${{ secrets.SIMPLY_SSH_KEY }}
           port: 22
           source: "public/build"
-          target: /var/www/badminton.social/projects/frontend-deploy/${{ github.sha }}
+          target: /var/www/nembadminton.dk/projects/frontend-deploy/${{ github.sha }}
           strip_components: 1
 
       - name: Switch to new version of frontend
