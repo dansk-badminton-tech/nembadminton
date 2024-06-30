@@ -50,9 +50,9 @@
 <script>
 import gql from "graphql-tag"
 import CardComponent from "../../components/CardComponent.vue";
-import BadmintonPlayerClubs from "../../../components/badminton-player/BadmintonPlayerClubs.vue";
+import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerClubs.vue";
 import {setAuthToken} from "../../../auth";
-import {extractErrors} from "../../../helpers";
+import {extractErrors} from "@/helpers";
 
 export default {
     name: "CreateUser",

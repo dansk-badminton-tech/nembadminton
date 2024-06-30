@@ -62,7 +62,7 @@
 
 import gql from 'graphql-tag';
 import ActivityLog from "../common/ActivityLog.vue";
-import {debounce} from "../../../helpers";
+import {debounce} from "@/helpers";
 import MeQuery from '../../../queries/me.gql'
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";

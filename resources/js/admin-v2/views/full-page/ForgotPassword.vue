@@ -32,7 +32,7 @@
 
 <script>
 import gql from "graphql-tag";
-import {extractErrors} from "../../../helpers";
+import {extractErrors} from "@/helpers";
 import CardComponent from "../../components/CardComponent.vue";
 
 export default {

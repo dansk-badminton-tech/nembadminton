@@ -1,6 +1,6 @@
 <script>
 import gql from "graphql-tag";
-import BadmintonPlayerClubs from "../../../components/badminton-player/BadmintonPlayerClubs.vue";
+import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerClubs.vue";
 
 export default {
     name: "AddClubModel",
