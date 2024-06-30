@@ -18,7 +18,7 @@ class BadmintonPlayerClubsImporter extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-import:clubs';
+    protected $signature = 'badmintonplayer-scrape-import:clubs';
 
     /**
      * The console command description.

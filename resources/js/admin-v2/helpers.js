@@ -163,7 +163,7 @@ export function findPositions(member, show = 'all') {
 export function extractErrors(graphqlErrors) {
     let errors = [];
     for (let graphqlError of graphqlErrors) {
-        if (graphqlError.extensions.category === 'validation') {
+        if (graphqlError.extensions.hasOwnProperty('validation')) {
             for (let validationKey in graphqlError.extensions.validation) {
                 for (let error of graphqlError.extensions.validation[validationKey]) {
                     errors.push(error)
@@ -176,7 +176,6 @@ export function extractErrors(graphqlErrors) {
     }
     return errors;
 }
-
 export function isPlayingToHigh(playingToHighPlayers, player, category) {
     return getPlayingToHigh(playingToHighPlayers, player, category) !== undefined;
 }

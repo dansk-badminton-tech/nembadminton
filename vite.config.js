@@ -9,8 +9,7 @@ export default defineConfig(
     {
         plugins: [
             laravel([
-                        'resources/js/admin-v2/main.js',
-                        'resources/js/marketing/main.js',
+                        'resources/js/admin-v2/main.js'
                     ]),
             vue({
                     template: {

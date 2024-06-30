@@ -64,7 +64,7 @@
 import { defineComponent } from 'vue'
 import CardComponent from '@/components/CardComponent.vue'
 import gql from "graphql-tag";
-import {extractErrors} from "../../helpers";
+import {extractErrors} from "@/helpers.js";
 
 export default defineComponent({
   name: 'PasswordUpdateForm',

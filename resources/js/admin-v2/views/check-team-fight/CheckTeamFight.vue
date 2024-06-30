@@ -165,7 +165,7 @@ import {findPositions, highlight as simpleHighlight, isPlayingToHighByBadmintonP
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect.vue";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 import OptionalRanking from "./OptionalRanking.vue";
-import ValidationStatus from "../../../views/ValidationStatus.vue";
+import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
 import {filterYouthFromCategory, filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {

@@ -19,7 +19,7 @@ class BadmintonPlayerPointsImporter extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-import:points {club-id : BadmintonPlayer club id} {--rankingList= : Limit import to one RankingList}';
+    protected $signature = 'badmintonplayer-scrape-import:points {club-id : BadmintonPlayer club id} {--rankingList= : Limit import to one RankingList}';
 
     /**
      * The console command description.
