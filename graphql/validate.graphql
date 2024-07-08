@@ -1,5 +1,5 @@
 extend type Mutation {
-    "Validates players is playing on the right squad (level-ranking)"
+    "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates categories for right streng order (category-ranking)"
     validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
@@ -53,6 +53,8 @@ type BelowPlayer {
     id: ID!
     refId: String
     isYouthPlayer: Boolean!
+    category: String!
+    balance: Int!
 }
 
 type PlayingToHigh{

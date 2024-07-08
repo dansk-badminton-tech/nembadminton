@@ -46,6 +46,7 @@
                             <b-tooltip
                                 type="is-info"
                                 class="is-pulled-left"
+                                size="is-large"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
