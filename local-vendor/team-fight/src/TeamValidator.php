@@ -116,6 +116,7 @@ class TeamValidator
 
         $limit = 50;
         $summeryInvalid = [];
+        /** @var Player $player */
         foreach ($players as $player) {
             foreach ($playersFromHighSquads as $playerHigh) {
                 $invalid = [];
@@ -155,11 +156,17 @@ class TeamValidator
                 }
                 // Only include if conflicting in all categories
                 if (count($invalid) === count($categories)) {
-                    $summeryInvalid[] = [
-                        'player'   => $player,
-                        'conflict' => $playerHigh,
-                        'invalid'  => $invalid,
-                    ];
+                    $summeryCurrent = $summeryInvalid[$player->refId] ?? null;
+                    if($summeryCurrent === null){
+                        $summeryInvalid[$player->refId] = [
+                            'player'   => $player,
+                            'conflict' => $playerHigh,
+                            'invalid'  => $invalid,
+                        ];
+                    }else{
+                        $summeryCurrent['invalid'] = array_merge($invalid, $summeryCurrent['invalid']);
+                        $summeryInvalid[$player->refId] = $summeryCurrent;
+                    }
                 }
             }
         }

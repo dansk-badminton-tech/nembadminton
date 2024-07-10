@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Tests\GraphQL;
 
 use Carbon\Carbon;
@@ -26,11 +27,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase5(): void
+    public function useCase5() : void
     {
-        $this->fixedInTime(function(){
+        $this->fixedInTime(function () {
             // https://github.com/flycompanytech/holdkamp-project/issues/31
-            $data = require __DIR__.'/CrossSquadsUseCases/usecase5.php';
+            $data = require __DIR__ . '/CrossSquadsUseCases/usecase5.php';
 
             $this->graphQL(
             /** @lang GraphQL */ '
@@ -44,14 +45,14 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
             ',
                 $data
             )->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => []
+                'data'       => [
+                    'validateCrossSquads' => [],
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
+                        'channel' => null,
+                    ],
+                ],
             ]);
         });
     }
@@ -59,11 +60,11 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase4(): void
+    public function useCase4() : void
     {
-        $this->fixedInTime(function(){
+        $this->fixedInTime(function () {
             // https://github.com/flycompanytech/holdkamp-project/issues/30
-            $data = require __DIR__.'/CrossSquadsUseCases/usecase4.php';
+            $data = require __DIR__ . '/CrossSquadsUseCases/usecase4.php';
             $this->graphQL(
             /** @lang GraphQL */ '
                 mutation ($input: [ValidateTeam!]!) {
@@ -79,9 +80,9 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 [
                     [
                         'category' => 'DD',
-                        'name' => 'Signe Schulz Terp-Nielsen',
-                        'refId' => '010626-02'
-                    ]
+                        'name'     => 'Signe Schulz Terp-Nielsen',
+                        'refId'    => '010626-02',
+                    ],
                 ]
             );
         });
@@ -90,9 +91,9 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase3(): void
+    public function useCase3() : void
     {
-        $this->fixedInTime(function() {
+        $this->fixedInTime(function () {
             // abc Aalborg - 2021-10-30
             $data = require __DIR__ . '/CrossSquadsUseCases/usecase3.php';
 
@@ -116,13 +117,13 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 $data
             )->assertExactJson([
                 'data'       => [
-                    'validateCrossSquads' => []
+                    'validateCrossSquads' => [],
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
+                        'channel' => null,
+                    ],
+                ],
             ]);
         });
     }
@@ -130,9 +131,9 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
     /**
      * @test
      */
-    public function useCase2(): void
+    public function useCase2() : void
     {
-        $this->fixedInTime(function() {
+        $this->fixedInTime(function () {
             // abc Aalborg - 2021-10-30
             $data = require __DIR__ . '/CrossSquadsUseCases/usecase2.php';
 
@@ -153,13 +154,13 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 $data
             )->assertExactJson([
                 'data'       => [
-                    'validateCrossSquads' => []
+                    'validateCrossSquads' => [],
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
+                        'channel' => null,
+                    ],
+                ],
             ]);
         });
     }
@@ -169,18 +170,16 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
      */
     public function useCase1()
     {
-        $this->fixedInTime(function() {
+        $this->fixedInTime(function () {
             $data = require __DIR__ . '/CrossSquadsUseCases/usecase1.php';
 
             $this->graphQL(
             /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateCrossSquads(input: $input) {
+                name
                 refId
-                category
-                gender
                 belowPlayer{
-                    name
                     refId
                 }
               }
@@ -191,197 +190,50 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 'data'       => [
                     'validateCrossSquads' => [
                         [
-                            'refId'       => '951108-04',
-                            'category'    => 'MD',
-                            'gender'      => 'K',
+                            "name"        => "Maibritt Meldgaard",
+                            "refId"       => "981105-05",
                             'belowPlayer' => [
                                 [
-                                    "name"  => "Maibritt Meldgaard",
-                                    "refId" => "981105-05"
+                                    'refId' => '951108-04',
                                 ],
+                            ],
+                        ],
+                        [
+                            "name"        => "Caroline Bohm Veng",
+                            "refId"       => "000128-10",
+                            'belowPlayer' => [
                                 [
-                                    "name"  => "Caroline Bohm Veng",
-                                    "refId" => "000128-10"
+                                    'refId' => '951108-04',
                                 ],
+                            ],
+                        ],
+                        [
+                            "name"        => "Louise Bolding Lund",
+                            "refId"       => "990618-10",
+                            'belowPlayer' => [
                                 [
-                                    "name"  => "Louise Bolding Lund",
-                                    "refId" => "990618-10"
+                                    'refId' => '951108-04',
                                 ],
+                            ],
+                        ],
+                        [
+                            "name"        => "Anna Schøn",
+                            "refId"       => "900216-01",
+                            'belowPlayer' => [
                                 [
-                                    "name"  => "Anna Schøn",
-                                    "refId" => "900216-01"
-                                ]
-                            ]
+                                    'refId' => '951108-04',
+                                ],
+                            ],
                         ]
-                    ]
+                    ],
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
+                        'channel' => null,
+                    ],
+                ],
             ]);
         });
-    }
-
-    /**
-     * @test
-     * @throws \JsonException
-     */
-    public function shouldOnlyCompareLeagueWithFirstDivisionAndFirstDivisionWithDenmarkSeries()
-    {
-        $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
-        $womenSpecial2 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-2');
-        $women3 = CategoryFactory::makeWomen('DS', 50, 'DD', 100, 0, '101010-3');
-
-        $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-5');
-        $men2 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-6');
-        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-7');
-        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-8');
-
-        $squad = new Squad();
-        $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSpecial1, $men1);
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $womenSpecial2, $men2);
-        $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 1', 'HS', $men3);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 2', 'HS', $men4);
-        $squad->categories[] = CategoryFactory::makeCategory('DD. 1', 'DD', $womenSpecial1, $womenSpecial2);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 1', 'HD', $men1, $men2);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
-
-        $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
-        ];
-
-        $womenSquad2Special1 = CategoryFactory::makeWomen('MxD', 101, 'DD', 101, 0, '101010-11');
-        $womenSquad2Special2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-12');
-        $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-13');
-
-        $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-15');
-        $men2 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-16');
-        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-17');
-        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-18');
-
-        $squad = new Squad();
-        $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSquad2Special1, $men1);
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $womenSquad2Special2, $men2);
-        $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 1', 'HS', $men3);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 2', 'HS', $men4);
-        $squad->categories[] = CategoryFactory::makeCategory('DD. 1', 'DD', $womenSquad2Special1, $womenSquad2Special2);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 1', 'HD', $men1, $men2);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
-
-        $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
-        ];
-
-        $women1 = CategoryFactory::makeWomen('MxD', 152, 'DD', 152, 0, '101010-19');
-        $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-20');
-        $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-21');
-        $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-22');
-
-        $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-23');
-        $men2 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-24');
-        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-25');
-        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-26');
-        $men5 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-27');
-        $men6 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-28');
-
-        $squad = new Squad();
-        $squad->playerLimit = 10;
-        $squad->league = 'OTHER';
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
-        $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
-        $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
-        $squad->categories[] = CategoryFactory::makeCategory('DS. 2', 'DS', $women4);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 1', 'HS', $men3);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 2', 'HS', $men4);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 3', 'HS', $men5);
-        $squad->categories[] = CategoryFactory::makeCategory('HS. 4', 'HS', $men6);
-        $squad->categories[] = CategoryFactory::makeCategory('DD. 1', 'DD', $women1, $women2);
-        $squad->categories[] = CategoryFactory::makeCategory('DD. 2', 'DD', $women3, $women4);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 1', 'HD', $men1, $men6);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
-        $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men2);
-
-        $denmarkSerieTeam = [
-            'name' => 'Team 1',
-            'squad' => $squad
-        ];
-
-        $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam, $denmarkSerieTeam], 'json');
-
-        $variables = ['input' => json_decode($teams, true, 512, JSON_THROW_ON_ERROR), 'rules' => 'LEAGUE1DIV'];
-        $this->graphQL(
-        /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
-              validateCrossSquads(input: $input) {
-                refId
-                category
-                gender
-              }
-            }
-        ',
-            $variables
-        )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial2->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSquad2Special1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSquad2Special1->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSquad2Special2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSquad2Special2->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ]
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
     }
 
     /**
@@ -412,8 +264,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
+            'name'  => 'Liga',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 101, 'DD', 101, 0, '101010-11');
@@ -438,8 +290,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
+            'name'  => '1. Div',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam], 'json');
@@ -452,42 +304,49 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 refId
                 category
                 gender
+                belowPlayer {
+                    refId
+                    category
+                }
               }
             }
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial2->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial2->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ]
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [
+                         [
+                             'refId'    => $women1->refId,
+                             'category' => 'Dummy-stuff',
+                             'gender'   => 'K',
+                             'belowPlayer' => [
+                                 [
+                                     'refId'    => $womenSpecial2->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $womenSpecial2->refId,
+                                     'category' => 'DD'
+                                 ],
+                                 [
+                                     'category' => 'MxD',
+                                     'refId'    => $womenSpecial1->refId,
+                                 ],
+                                 [
+                                     'category' => 'DD',
+                                     'refId'    => $womenSpecial1->refId,
+                                 ]
+                             ]
+                         ]
+                     ],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -518,8 +377,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
+            'name'  => 'Liga',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 75, 'DD', 101, 0, '101010-11');
@@ -544,8 +403,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
+            'name'  => '1. Div',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam], 'json');
@@ -563,16 +422,16 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => []
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -603,8 +462,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
+            'name'  => 'Liga',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 101, 'DD', 101, 0, '101010-11');
@@ -629,8 +488,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
+            'name'  => '1. Div',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam], 'json');
@@ -643,39 +502,48 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                 refId
                 category
                 gender
+                belowPlayer {
+                    refId
+                    category
+                }
               }
             }
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'MD',
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $womenSpecial1->refId,
-                            'category' => 'DD',
-                            'gender' => 'K'
-                        ]
-                    ],
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [
+                         [
+                             'refId' => $women1->refId,
+                             'category' => 'Dummy-stuff',
+                             'gender'  => 'K',
+                             'belowPlayer' => [
+                                 [
+                                     'refId'    => $womenSpecial1->refId,
+                                     'category' => 'MxD'
+                                 ],
+                                 [
+                                     'refId'    => $womenSpecial1->refId,
+                                     'category' => 'DD'
+                                 ]
+                             ]
+                         ]
+                     ],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
      * @test
      * @throws \JsonException
      */
-    public function womenWithin50PointsInMDShouldNotShow(): void
+    public function womenWithin50PointsInMDShouldNotShow() : void
     {
         $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
         $women2 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-2');
@@ -699,8 +567,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
+            'name'  => 'Liga',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 75, 'DD', 0, 0, '101010-11');
@@ -725,8 +593,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
+            'name'  => '1. Div',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam], 'json');
@@ -744,16 +612,16 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => []
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -784,8 +652,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $leagueTeam = [
-            'name' => 'Liga',
-            'squad' => $squad
+            'name'  => 'Liga',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-11');
@@ -810,8 +678,8 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4);
 
         $firstDivTeam = [
-            'name' => '1. Div',
-            'squad' => $squad
+            'name'  => '1. Div',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$leagueTeam, $firstDivTeam], 'json');
@@ -829,15 +697,15 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => []
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 }
