@@ -5,6 +5,21 @@
             {{ me?.club?.name1 }}
         </hero-bar>
         <section class="section is-main-section">
+            <notification-bar class="is-info">
+                Nembadminton er ændret til at understøtte reglementsændringerne for 2024/2025-sæsonen, så du forsat kan sætte hold nemt og bekymringsfrit.
+                <a
+                    slot="right"
+                    href="https://badminton.dk/2024/07/01/reglementsaendringer-til-2024-2025-saesonen/"
+                    target="_blank"
+                    class="button is-white is-small"
+                >
+                    <b-icon
+                        icon="open-in-new"
+                        custom-size="default"
+                    />
+                    <span>Læs nyheden her</span>
+                </a>
+            </notification-bar>
             <tiles-block>
                 <card-widget
                     class="tile is-child"
@@ -68,10 +83,11 @@ import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import TilesBlock from "../../components/TilesBlock.vue";
 import CardWidget from "../../components/CardWidget.vue";
+import NotificationBar from "@/components/NotificationBar.vue";
 
 export default {
     name: "ClubDashboard",
-    components: {CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
+    components: {NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
     apollo: {
         clubStats: {
             query: gql`
