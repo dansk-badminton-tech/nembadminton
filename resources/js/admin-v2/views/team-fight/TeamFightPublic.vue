@@ -43,7 +43,7 @@
                                     </b-icon>
                                     {{ player.name }}
                                     ({{
-                                        findPositions(player, 'N') + ' ' + findPositions(player, category.category)
+                                        findPositions(player, category.category)
                                     }})
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
