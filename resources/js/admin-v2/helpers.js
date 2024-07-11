@@ -236,7 +236,7 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
 export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
     let msg = []
     let resolveNames = (playerWithBelowPlayers) => {
-        let names = playerWithBelowPlayers.belowPlayer.map(x => (x.category ?? '')+': ' + x.name ) // + ' (Forskel:'+x.balance+')'
+        let names = playerWithBelowPlayers.belowPlayer.map(x => (x.category ? x.category+': ' : '')+'' + x.name + (x.balance ? ' (Forskel: '+x.balance+')' : '' ))
         return names.join('<br />')
     }
     let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player)
@@ -247,13 +247,13 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
         }
     }
     if (playerWithBelowPlayersCrossSquads !== undefined) {
-        msg.push("<b>Denne spiller er på forkert hold:</b> <br/>" + resolveNames(playerWithBelowPlayersCrossSquads));
+        msg.push("<b>Spiller på for lavt hold:</b> <br/>" + resolveNames(playerWithBelowPlayersCrossSquads));
     }
     if (playerWithBelowPlayersSquad !== undefined) {
         if(!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner){
             msg.push("OBS: Har U17/U19 makker")
         }
-        msg.push("Bedre spiller i kategorien: " + resolveNames(playerWithBelowPlayersSquad))
+        msg.push("<b>Spiller for højt på holdet i kategorien:</b> <br />" + resolveNames(playerWithBelowPlayersSquad))
     }
     return msg.join("<br />--------<br />");
 }
