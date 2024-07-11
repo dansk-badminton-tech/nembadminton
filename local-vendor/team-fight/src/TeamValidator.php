@@ -148,7 +148,7 @@ class TeamValidator
 
                     if ($balance < 0) {
                         $invalid[] = [
-                            'balance'  => $abovePlayerCategoryPoint - $belowPlayerCategoryPoint,
+                            'balance'  => $belowPlayerCategoryPoint - $abovePlayerCategoryPoint,
                             'category' => $category,
                             'player'   => $playerHigh,
                         ];
