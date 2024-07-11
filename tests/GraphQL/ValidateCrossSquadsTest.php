@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Tests\GraphQL;
 
 use Carbon\Carbon;
@@ -64,8 +65,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -96,8 +97,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -130,8 +131,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -150,14 +151,14 @@ class ValidateCrossSquadsTest extends BaseTestCase
             $variables
         )
              ->assertExactJson([
-                 'data' => [
-                     'validateCrossSquads' => []
+                 'data'       => [
+                     'validateCrossSquads' => [],
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
-                         'channel' => null
-                     ]
-                 ]
+                         'channel' => null,
+                     ],
+                 ],
              ]);
 
     }
@@ -199,8 +200,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -230,8 +231,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('DD. 2', 'DD', $women3, $women4);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -264,8 +265,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -284,14 +285,14 @@ class ValidateCrossSquadsTest extends BaseTestCase
             $variables
         )
              ->assertExactJson([
-                 'data' => [
-                     'validateCrossSquads' => []
+                 'data'       => [
+                     'validateCrossSquads' => [],
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
-                         'channel' => null
-                     ]
-                 ]
+                         'channel' => null,
+                     ],
+                 ],
              ]);
 
     }
@@ -333,8 +334,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -365,8 +366,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -399,8 +400,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -419,14 +420,14 @@ class ValidateCrossSquadsTest extends BaseTestCase
             $variables
         )
              ->assertExactJson([
-                 'data' => [
-                     'validateCrossSquads' => []
+                 'data'       => [
+                     'validateCrossSquads' => [],
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
-                         'channel' => null
-                     ]
-                 ]
+                         'channel' => null,
+                     ],
+                 ],
              ]);
 
     }
@@ -468,8 +469,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -498,8 +499,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -532,8 +533,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -552,14 +553,14 @@ class ValidateCrossSquadsTest extends BaseTestCase
             $variables
         )
              ->assertExactJson([
-                 'data' => [
-                     'validateCrossSquads' => []
+                 'data'       => [
+                     'validateCrossSquads' => [],
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
-                         'channel' => null
-                     ]
-                 ]
+                         'channel' => null,
+                     ],
+                 ],
              ]);
 
     }
@@ -601,8 +602,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -633,8 +634,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -667,8 +668,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -687,14 +688,14 @@ class ValidateCrossSquadsTest extends BaseTestCase
             $variables
         )
              ->assertExactJson([
-                 'data' => [
-                     'validateCrossSquads' => []
+                 'data'       => [
+                     'validateCrossSquads' => [],
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
-                         'channel' => null
-                     ]
-                 ]
+                         'channel' => null,
+                     ],
+                 ],
              ]);
 
     }
@@ -735,8 +736,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 600, '101010-11');
@@ -769,8 +770,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 400, '101010-21');
@@ -803,8 +804,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -822,16 +823,16 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => []
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -870,11 +871,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
-        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 51, '101010-11');
+        $women1 = CategoryFactory::makeWomen('MxD', 51, 'DD', 51, 0, '101010-11');
         $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-12');
         $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-13');
         $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-14');
@@ -904,8 +905,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2], 'json');
@@ -917,30 +918,48 @@ class ValidateCrossSquadsTest extends BaseTestCase
               validateCrossSquads(input: $input) {
                 refId
                 gender
+                belowPlayer {
+                    refId
+                    category
+                }
               }
             }
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'gender' => 'K'
-                        ],
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [
+                         [
+                             'refId'       => $women1->refId,
+                             'gender'      => 'K',
+                             'belowPlayer' => [
+                                 [
+                                     'refId'    => $squad1Women2->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women2->refId,
+                                     'category' => 'DD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women1->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women1->refId,
+                                     'category' => 'DD',
+                                 ],
+                             ],
+                         ],
+                     ],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -979,8 +998,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-11');
@@ -1013,11 +1032,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
-        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 51, '101010-21');
+        $women1 = CategoryFactory::makeWomen('MxD', 51, 'DD', 51, 0, '101010-21');
         $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-22');
         $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-23');
         $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-24');
@@ -1047,8 +1066,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -1060,45 +1079,71 @@ class ValidateCrossSquadsTest extends BaseTestCase
               validateCrossSquads(input: $input) {
                 refId
                 gender
+                belowPlayer {
+                    category
+                    refId
+                }
               }
             }
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad2Women1->refId,
-                            'gender' => 'K'
-                        ],
-                        [
-                            'refId' => $squad2Women2->refId,
-                            'gender' => 'K'
-                        ]
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [
+                         [
+                             'belowPlayer' => [
+                                 [
+                                     'refId'    => $squad2Women2->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad2Women2->refId,
+                                     'category' => 'DD',
+                                 ],
+                                 [
+                                     'refId'    => $squad2Women1->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad2Women1->refId,
+                                     'category' => 'DD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women2->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women2->refId,
+                                     'category' => 'DD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women1->refId,
+                                     'category' => 'MxD',
+                                 ],
+                                 [
+                                     'refId'    => $squad1Women1->refId,
+                                     'category' => 'DD',
+                                 ],
+                             ],
+                             'refId'       => $women1->refId,
+                             'gender'      => 'K',
+                         ],
+                     ],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
      * @test
      * @throws \JsonException
      */
-    public function playingToHighInMixDoubleCross3SquadsCheckBelowPlayers()
+    public function playingToHighInMixDoubleCross3SquadsButStillValidBecauseItOnlyVialatesInOneCategory()
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
         $squad1Women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-2');
@@ -1130,8 +1175,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
         $squad2Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-11');
@@ -1164,11 +1209,11 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
-        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 51, '101010-21');
+        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 51, 0, '101010-21');
         $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-22');
         $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-23');
         $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-24');
@@ -1198,8 +1243,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap3 = [
-            'name' => 'Team 3',
-            'squad' => $squad
+            'name'  => 'Team 3',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2, $teamWrap3], 'json');
@@ -1220,57 +1265,16 @@ class ValidateCrossSquadsTest extends BaseTestCase
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $squad1Women1->refId,
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad1Women2->refId,
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad2Women1->refId,
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ],
-                        [
-                            'refId' => $squad2Women2->refId,
-                            'gender' => 'K',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $women1->name,
-                                    'refId' => $women1->refId
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
 
     /**
@@ -1279,17 +1283,17 @@ class ValidateCrossSquadsTest extends BaseTestCase
      */
     public function SpecialCase()
     {
-        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 1000, '101010-1');
-        $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 1000, '101010-2');
-        $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 1000, '101010-3');
-        $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 1000, '101010-4');
+        $women1 = CategoryFactory::makeWomen('MxD', 1000, 'DD', 1000, 1000, '101010-1');
+        $women2 = CategoryFactory::makeWomen('MxD', 1000, 'DD', 1000, 1000, '101010-2');
+        $women3 = CategoryFactory::makeWomen('DS', 1000, 'DD', 1000, 1000, '101010-3');
+        $women4 = CategoryFactory::makeWomen('DS', 1000, 'DD', 1000, 1000, '101010-4');
 
-        $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 1000, '101010-5');
-        $specialMen2 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 500, '101010-6');
-        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-7');
-        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-8');
-        $men5 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-9');
-        $men6 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-10');
+        $men1 = CategoryFactory::makeMen('MxH', 1000, 'HD', 1000, 1000, '101010-5');
+        $specialMen2 = CategoryFactory::makeMen('MxH', 500, 'HD', 500, 0, '101010-6');
+        $men3 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-7');
+        $men4 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-8');
+        $men5 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-9');
+        $men6 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-10');
 
         $squad = new Squad();
         $squad->playerLimit = 10;
@@ -1309,21 +1313,21 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $specialMen2);
 
         $teamWrap1 = [
-            'name' => 'Team 1',
-            'squad' => $squad
+            'name'  => 'Team 1',
+            'squad' => $squad,
         ];
 
-        $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 1000, '101010-11');
-        $women2 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 1000, '101010-12');
-        $women3 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 1000, '101010-13');
-        $women4 = CategoryFactory::makeWomen('DS', 0, 'DD', 0, 1000, '101010-14');
+        $women1 = CategoryFactory::makeWomen('MxD', 1000, 'DD', 1000, 1000, '101010-11');
+        $women2 = CategoryFactory::makeWomen('MxD', 1000, 'DD', 1000, 1000, '101010-12');
+        $women3 = CategoryFactory::makeWomen('DS', 1000, 'DD', 1000, 1000, '101010-13');
+        $women4 = CategoryFactory::makeWomen('DS', 1000, 'DD', 1000, 1000, '101010-14');
 
-        $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 1000, '101010-15');
-        $men2 = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 1000, '101010-16');
-        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-17');
-        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-18');
-        $men5 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-19');
-        $men6 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 1000, '101010-20');
+        $men1 = CategoryFactory::makeMen('MxH', 1000, 'HD', 1000, 1000, '101010-15');
+        $men2 = CategoryFactory::makeMen('MxH', 1000, 'HD', 1000, 1000, '101010-16');
+        $men3 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-17');
+        $men4 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-18');
+        $men5 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-19');
+        $men6 = CategoryFactory::makeMen('HS', 1000, 'HD', 1000, 1000, '101010-20');
 
         $squad = new Squad();
         $squad->playerLimit = 10;
@@ -1343,8 +1347,8 @@ class ValidateCrossSquadsTest extends BaseTestCase
         $squad->categories[] = CategoryFactory::makeCategory('HD. 3', 'HD', $men5, $men6);
 
         $teamWrap2 = [
-            'name' => 'Team 2',
-            'squad' => $squad
+            'name'  => 'Team 2',
+            'squad' => $squad,
         ];
 
         $teams = SerializerHelper::getSerializer()->encode([$teamWrap1, $teamWrap2], 'json');
@@ -1357,168 +1361,52 @@ class ValidateCrossSquadsTest extends BaseTestCase
                 refId
                 gender
                 belowPlayer{
-                    name
                     refId
+                    category
                 }
               }
             }
         ',
             $variables
         )
-            ->assertExactJson([
-                'data' => [
-                    'validateCrossSquads' => [
-                        [
-                            'refId' => $specialMen2->refId,
-                            'gender' => 'M',
-                            'belowPlayer' => [
-                                [
-                                    'name' => $men1->name,
-                                    'refId' => $men1->refId,
-                                ],
-                                [
-                                    'name' => $men2->name,
-                                    'refId' => $men2->refId,
-                                ],
-                            ]
-                        ]
-                    ]
-                ],
-                'extensions' => [
-                    'lighthouse_subscriptions' => [
-                        'channel' => null
-                    ]
-                ]
-            ]);
+             ->assertExactJson([
+                 'data'       => [
+                     'validateCrossSquads' => [
+                         [
+                             'refId'       => $men1->refId,
+                             'gender'      => 'M',
+                             'belowPlayer' => [
+                                 [
+                                     'category' => 'MxH',
+                                     'refId'    => $specialMen2->refId,
+                                 ],
+                                 [
+                                     'category' => 'HD',
+                                     'refId'    => $specialMen2->refId,
+                                 ],
+                             ],
+                         ],
+                         [
+                             'refId'       => $men2->refId,
+                             'gender'      => 'M',
+                             'belowPlayer' => [
+                                 [
+                                     'category' => 'MxH',
+                                     'refId'    => $specialMen2->refId,
+                                 ],
+                                 [
+                                     'category' => 'HD',
+                                     'refId'    => $specialMen2->refId,
+                                 ],
+                             ],
+                         ],
+                     ],
+                 ],
+                 'extensions' => [
+                     'lighthouse_subscriptions' => [
+                         'channel' => null,
+                     ],
+                 ],
+             ]);
     }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function useCase6()
-    {
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase6.php';
-
-        $this->graphQL(
-        /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
-              validateCrossSquads(input: $input) {
-                refId
-                gender
-                belowPlayer{
-                    name
-                    refId
-                }
-              }
-            }
-        ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => [
-                    [
-                        'refId' => '000511-04',
-                        'gender' => 'M',
-                        'belowPlayer' => [
-                            [
-                                "name" => "Peter Philipsen",
-                                "refId" => "960606-06"
-                            ],
-                            [
-                                "name" => "Stephan Hjelmdal Nielsen",
-                                "refId" => "830421-01"
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
-                ]
-            ]
-        ]);
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function useCase7()
-    {
-        $data = require __DIR__.'/CrossSquadsUseCases/usecase7.php';
-
-        $this->graphQL(
-        /** @lang GraphQL */ '
-            mutation ($input: [ValidateTeam!]!) {
-              validateCrossSquads(input: $input) {
-                refId
-                gender
-                belowPlayer{
-                    name
-                    refId
-                }
-              }
-            }
-        ',
-            $data
-        )->assertExactJson([
-            'data' => [
-                'validateCrossSquads' => [
-                    [
-                        'refId' => '000511-04',
-                        'gender' => 'M',
-                        'belowPlayer' => [
-                            [
-                                "name" => "Peter Philipsen",
-                                "refId" => "960606-06"
-                            ],
-                            [
-                                "name" => "Stephan Hjelmdal Nielsen",
-                                "refId" => "830421-01"
-                            ]
-                        ]
-                    ],
-                    [
-                        'refId' => '930120-04',
-                        'gender' => 'M',
-                        'belowPlayer' => [
-                            [
-                                "name" => "Andreas Berthelsen",
-                                "refId" => "931114-01"
-                            ],
-                            [
-                                "name" => "Kasper B. Hansen",
-                                "refId" => "920213-11"
-                            ],
-                            [
-                                "name" => "Rasmus Jakobsen",
-                                "refId" => "970610-05"
-                            ],
-                            [
-                                "name" => "Lasse Qvistgaard Andersen",
-                                "refId" => "961002-10"
-                            ],
-                            [
-                                "name" => "Peter Philipsen",
-                                "refId" => "960606-06"
-                            ],
-                            [
-                                "name" => "Stephan Hjelmdal Nielsen",
-                                "refId" => "830421-01"
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'extensions' => [
-                'lighthouse_subscriptions' => [
-                    'channel' => null
-                ]
-            ]
-        ]);
-    }
-
-
 }

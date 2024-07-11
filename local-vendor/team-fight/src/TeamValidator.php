@@ -8,8 +8,8 @@ namespace FlyCompany\TeamFight;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class TeamValidator
 {
@@ -22,239 +22,43 @@ class TeamValidator
         'HD',
     ];
 
-    /**
-     * @param array|Squad[] $squads
-     */
-    public function validateCrossSquadsLeague(array $squads) : Collection
+    public function validateCrossSquadsLeagueV3(array $squads) : Collection
     {
         $count = count($squads);
         if (empty($squads) || $count === 1) {
             return new Collection();
         }
-        if ($count !== 2) {
-            throw new \RuntimeException('There must be two teams for league + 1 div validation');
-        }
-        [$upperTeam, $lowerTeam] = $squads;
-        $lowerTeam = new Collection($lowerTeam);
-        $lowerTeamPlayers = (new Collection($lowerTeam->get('categories')))->pluck('players')->flatten(1)->unique(
-            'refId'
-        );
 
-        $totalHits = new Collection();
-        /** @var Player[] $lowerTeamPlayers */
-        foreach ($lowerTeamPlayers as $lowerPlayer) {
-            if (!$this->isYoungPlayer($lowerPlayer)) {
-                $hits = $this->compareEveryPlayerInEveryCategory($upperTeam, $lowerPlayer);
-                $totalHits->put($lowerPlayer->refId, $hits);
-            }
+        $listOfInvalidPlayers = [];
+
+        while ($lastTeam = array_pop($squads)) {
+            $listOfInvalidPlayers[] = $this->compare($lastTeam, $squads);
         }
 
-        $conflicts = new Collection();
-
-        /** @var Collection[] $totalHits */
-        foreach ($totalHits as $hits) {
-            foreach ($hits as $hit) {
-                $yes = $hit->filter(function ($balance) {
-                    return $balance['balance'] < 0;
-                });
-                if ($yes->count() === $hit->count()) {
-                    foreach ($hit as $stuff) {
-                        $currentAbovePlayer = $stuff['target'];
-                        $currentBelowPlayer = $stuff['source'];
-                        $currentCategory = $stuff['category'];
-                        $this->addOrUpdateBelowPlayers(
-                            $conflicts,
-                            $currentAbovePlayer,
-                            $currentCategory,
-                            $currentBelowPlayer
-                        );
-                    }
-                }
-            }
-        }
-
-        return $conflicts;
-    }
-
-    private function compareEveryPlayerInEveryCategory(Squad $leagueSquad, Player $belowPlayer) : Collection
-    {
-        $limit = 50;
-        $hit = new Collection();
-        foreach ($leagueSquad->categories as $leagueCategory) {
-            foreach ($leagueCategory->players as $abovePlayer) {
-                if ($abovePlayer->gender !== $belowPlayer->gender || $this->isYoungPlayer($abovePlayer)) {
-                    continue;
-                }
-
-                try {
-                    $belowPlayerCategoryPoint = $this->getPlayerCategoryPoint($belowPlayer, $leagueCategory->category);
-                } catch (PointNotFoundInCategoryException $categoryException) {
-                    $belowPlayerCategoryPoint = null;
-                }
-                $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($abovePlayer, $leagueCategory->category);
-
-                // If below player is not placed in the category ranking it is marked as valid
-                if ($belowPlayerCategoryPoint === null) {
-                    $balance = 0;
-                } else {
-                    $balance = $abovePlayerCategoryPoint - $belowPlayerCategoryPoint + $limit;
-                }
-                if ($hit->has($abovePlayer->refId)) {
-                    $hit->get($abovePlayer->refId)->push([
-                        'balance'  => $balance,
-                        'category' => $leagueCategory->category,
-                        'source'   => $belowPlayer,
-                        'target'   => $abovePlayer,
-                    ]);
-                } else {
-                    $hit->put(
-                        $abovePlayer->refId,
-                        new Collection([
-                            [
-                                'balance'  => $balance,
-                                'category' => $leagueCategory->category,
-                                'source'   => $belowPlayer,
-                                'target'   => $abovePlayer,
-                            ],
-                        ])
-                    );
-                }
-            }
-        }
-
-        return $hit;
-    }
-
-    private function validateSquadV2(Squad $currentSquad, Collection $restSquads) : Collection
-    {
-        // Making a list of players grouped by squad and category
-        $groupByCategory = static function (Collection $squads) {
-            $teamCategories = $squads->pluck('categories');
-            $categories = new Collection();
-            foreach ($teamCategories as $teamCategory) {
-                $teamCategory = new Collection($teamCategory);
-                $groupedByCategory = $teamCategory->groupBy('category');
-                foreach ($groupedByCategory as $category => $players) {
-                    if (!$categories->has($category)) {
-                        $categories->put($category, new Collection());
-                    }
-                    $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
-                }
-            }
-
-            return $categories;
-        };
-
-        $categoriesIAmPlayer = static function (Player $player, Collection $categories) {
-            return $categories->map(static function (Collection $collection, $category) use ($player) {
-                $found = $collection->flatten()->first(static function (Player $loopPlayer) use ($player) {
-                    return $loopPlayer->refId === $player->refId;
-                });
-
-                return $found !== null;
-            })->filter(fn($value) => $value)->keys();
-        };
-        $findPlayersPlayingInSameCategory = static function (Collection $categories, Collection $players) {
-            return $players->filter(fn(Player $player) => $categories->intersect($player->getPlayingIn())->count() === $categories->count());
-        };
-        $compare = function (Player $player, Collection $players) {
-            $playerPoints = $this->getPlayerLevel($player);
-
-            return $players->filter(function (Player $currentPlayer) use ($playerPoints, $player) {
-                $limit = 50;
-                $currentPlayerPoints = $this->getPlayerLevel($currentPlayer);
-
-                return ($playerPoints + $limit) < $currentPlayerPoints && $currentPlayer->gender === $player->gender && !$this->isYoungPlayer($currentPlayer);
-            });
-        };
-
-        $appendCategoriesToPlayers = static function (Collection $categories) : Collection {
-            $enrichPlayers = new Collection();
-            //Enrich player with categories
-            foreach ($categories as $category => $players) {
-                /** @var Player $player */
-                foreach ($players->flatten() as $player) {
-                    // Cloning is needed because we are altering objects and doing it multiple times.
-                    // This is messy
-                    $clonedPlayer = clone $player;
-                    $array = $clonedPlayer->getPlayingIn();
-                    $array[] = $category;
-                    $clonedPlayer->setPlayingIn($array);
-                    $enrichPlayers->add($clonedPlayer);
-                }
-            }
-
-            // Merge players and append categories and remove duplicates
-            $cleanedPlayers = new Collection();
-            foreach ($enrichPlayers as $player) {
-                /** @var Player $playerExisting */
-                $playerExisting = $cleanedPlayers->firstWhere(function ($value) use ($player) {
-                    return $value->refId === $player->refId;
-                });
-                if ($playerExisting === null) {
-                    $cleanedPlayers->add($player);
-                } else {
-                    $playerExisting->setPlayingIn(array_merge($player->getPlayingIn(), $playerExisting->getPlayingIn()));
-                }
-            }
-
-            return $cleanedPlayers;
-        };
-
-        $playerAndConflict = new Collection();
-        $restPlayersWithCategories = $appendCategoriesToPlayers($groupByCategory($restSquads));
-        $currentSquadCategories = $groupByCategory((new Collection())->push($currentSquad));
-        $players = $currentSquadCategories->flatten()->unique('refId');
-        /** @var Player $player */
-        foreach ($players as $player) {
-            $categoriesIPlayIn = $categoriesIAmPlayer($player, $currentSquadCategories);
-            $playersToCompareWith = $findPlayersPlayingInSameCategory($categoriesIPlayIn, $restPlayersWithCategories);
-            $conflict = $compare($player, $playersToCompareWith);
-            if ($conflict->isNotEmpty()) {
-                $playerAndConflict->push([
-                    $player,
-                    $conflict,
-                ]);
-            }
-        }
-
-        return $playerAndConflict;
-    }
-
-    /**
-     * @param array|Squad[] $squads
-     *
-     * @return Collection
-     */
-    public function validateCrossSquadsV2(array $squads) : Collection
-    {
-        $squads = new Collection($squads);
-
-        $conflicts = new Collection();
-        while ($currentSquad = $squads->shift()) {
-            if (!$squads->isEmpty()) {
-                $conflicts = $conflicts->merge($this->validateSquadV2($currentSquad, $squads));
-            }
-        }
-
-        return $conflicts->map(function (array $playerAndConflict) {
-            /** @var Collection $conflicts */
+        return collect($listOfInvalidPlayers)->flatten(1)->map(function ($data) {
             /** @var Player $player */
-            [$player, $conflicts] = $playerAndConflict;
+            $player = $data['player'];
+
+            $invalids = collect($data['invalid']);
 
             return new Collection([
-                'id'                  => $player->id ?? 0,
-                'refId'               => $player->refId,
-                'name'                => $player->name,
-                'category'            => "Dummy-stuff",
-                'gender'              => $player->gender,
-                'isYouthPlayer'       => $this->hasYoungPlayer([$player]),
-                'belowPlayer'         => $conflicts->map(function (Player $player) {
+                'id'            => $player->id ?? 0,
+                'refId'         => $player->refId,
+                'name'          => $player->name,
+                'category'      => "Dummy-stuff",
+                'gender'        => $player->gender,
+                'isYouthPlayer' => $this->hasYoungPlayer([$player]),
+                'belowPlayer'   => $invalids->map(function (array $invalidData) {
+                    /** @var Player $player */
+                    $player = $invalidData['player'];
+
                     return [
                         'id'            => $player->id ?? 0,
                         'refId'         => $player->refId,
                         'name'          => $player->name,
                         'gender'        => $player->gender,
+                        'category'      => $invalidData['category'],
+                        'balance'       => $invalidData['balance'],
                         'isYouthPlayer' => $this->hasYoungPlayer([$player]),
                     ];
                 }),
@@ -265,68 +69,130 @@ class TeamValidator
     /**
      * @param array|Squad[] $squads
      *
-     * @return Collection
+     * @return array
      */
-    public function validateCrossSquads(array $squads) : Collection
+    private function playerToCategoriesLookupMap(array $squads) : array
     {
-        $limit = 50;
-
-        // Making a list of players grouped by squad and category
-        $squadsC = new Collection($squads);
-        $teamCategories = $squadsC->pluck('categories');
-        $categories = new Collection();
-        foreach ($teamCategories as $teamCategory) {
-            $teamCategory = new Collection($teamCategory);
-            $groupedByCategory = $teamCategory->groupBy('category');
-            foreach ($groupedByCategory as $category => $players) {
-                if (!$categories->has($category)) {
-                    $categories->put($category, new Collection());
-                }
-                $categories->get($category)->push(new Collection(collect($players)->pluck('players')->collapse()));
+        $lookupMap = [];
+        $categories = collect($squads)->pluck('categories')->flatten();
+        foreach ($categories as $category) {
+            foreach ($category->players as $player) {
+                $lookupMap[$player->refId][] = $category->category;
             }
         }
 
-        // Finding conflicts only scoped to categorize
-        $hits = new Collection();
-        /** @var Collection[] $categories */
-        foreach ($categories as $categoryName => $category) {
-            while ($category->isNotEmpty()) {
-                /** @var Collection $currentAbovePlayers */
-                $currentAbovePlayers = $category->shift();
-                foreach ($currentAbovePlayers as $currentAbovePlayer) {
-                    $allBelowPlayers = $category->collapse();
-                    foreach ($allBelowPlayers as $belowPlayer) {
-                        $belowPlayerPoints = $this->getPlayerLevel($belowPlayer);
-                        $abovePlayerPoints = $this->getPlayerLevel($currentAbovePlayer);
-                        if ($belowPlayerPoints > ($abovePlayerPoints + $limit) && $currentAbovePlayer->gender === $belowPlayer->gender && !$this->isYoungPlayer($belowPlayer)) {
-                            $hits->push([$categoryName, $currentAbovePlayer, $belowPlayer]);
-                        }
+        return $lookupMap;
+    }
+
+    private function translateCategory($shortCategory, $gender)
+    {
+        if ($shortCategory === "MD") {
+            if (strtoupper($gender) === "M") {
+                return "MxH";
+            }
+
+            return "MxD";
+        }
+
+        return $shortCategory;
+    }
+
+    /**
+     * @param Squad         $squad
+     * @param array|Squad[] $squads
+     *
+     * @return array
+     */
+    private function compare(Squad $squad, array $squads) : array
+    {
+
+        /** @var Player[] $playersFromSquad */
+        $players = collect($squad->categories)->flatten(1)->pluck('players')->flatten()->unique('refId');
+
+        /** @var Player[] $playersFromHighSquads */
+        $playersFromHighSquads = collect($squads)->pluck('categories')->flatten()->pluck('players')->flatten()->unique('refId');
+
+        $playerToCategoriesLookupMap = $this->playerToCategoriesLookupMap($squads);
+
+        $limit = 50;
+        $summeryInvalid = [];
+        /** @var Player $player */
+        foreach ($players as $player) {
+            foreach ($playersFromHighSquads as $playerHigh) {
+                $invalid = [];
+                // A comparison should only be made in the category or categories in which the players on the higher-ranked team participate.
+                $categories = $playerToCategoriesLookupMap[$playerHigh->refId] ?? [];
+                foreach ($categories as $category) {
+                    $category = $this->translateCategory($category, $playerHigh->gender);
+                    if ($player->gender !== $playerHigh->gender || $this->isYoungPlayer($playerHigh) || $this->isYoungPlayer($player)) {
+                        continue;
+                    }
+
+                    try {
+                        $belowPlayerCategoryPoint = $this->getPlayerCategoryPoint($player, $category);
+                    } catch (PointNotFoundInCategoryException $categoryException) {
+                        $belowPlayerCategoryPoint = null;
+                    }
+                    try {
+                        $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($playerHigh, $category);
+                    } catch (PointNotFoundInCategoryException $categoryException) {
+                        $abovePlayerCategoryPoint = null;
+                    }
+
+                    // If below player is not placed in the category ranking it is marked as valid
+                    if ($belowPlayerCategoryPoint === null || $abovePlayerCategoryPoint === null) {
+                        $balance = 0;
+                    } else {
+                        $balance = ($abovePlayerCategoryPoint + $limit) - $belowPlayerCategoryPoint;
+                    }
+
+                    if ($balance < 0) {
+                        $invalid[] = [
+                            'balance'  => $belowPlayerCategoryPoint - $abovePlayerCategoryPoint,
+                            'category' => $category,
+                            'player'   => $playerHigh,
+                        ];
+                    }
+                }
+                // Only include if conflicting in all categories
+                if (count($invalid) === count($categories)) {
+                    $summeryCurrent = $summeryInvalid[$player->refId] ?? null;
+                    if($summeryCurrent === null){
+                        $summeryInvalid[$player->refId] = [
+                            'player'   => $player,
+                            'conflict' => $playerHigh,
+                            'invalid'  => $invalid,
+                        ];
+                    }else{
+                        $summeryCurrent['invalid'] = array_merge($invalid, $summeryCurrent['invalid']);
+                        $summeryInvalid[$player->refId] = $summeryCurrent;
                     }
                 }
             }
         }
 
-        // Finding valid conflicts. A conflict is only valid if the same players are in conflict in the same categories
-        $conflict = new Collection();
-        while ($hits->isNotEmpty()) {
-            [$currentCategory, $currentAbovePlayer, $currentBelowPlayer] = $hits->shift();
-            $playerInOtherCategory = $hits->first(
-                static function (array $players) use ($currentAbovePlayer, $currentBelowPlayer) {
-                    [, $abovePlayer, $belowPlayer] = $players;
-
-                    return $abovePlayer->refId === $currentAbovePlayer->refId && $belowPlayer->refId === $currentBelowPlayer->refId;
-                }
-            );
-            if ($playerInOtherCategory !== null) {
-                $this->addOrUpdateBelowPlayers($conflict, $currentAbovePlayer, $currentCategory, $currentBelowPlayer);
-                [$category, $abovePlayer, $belowPlayer] = $playerInOtherCategory;
-                $this->addOrUpdateBelowPlayers($conflict, $abovePlayer, $category, $belowPlayer);
-            }
-        }
-
-        return $conflict->values();
+        return $summeryInvalid;
     }
 
+    public function validateSquads(array $squads) : array{
+        collect($squads);
+        foreach ($squads as $squad){
+            $categoriesGroups = collect(collect($squad)->get('categories'))->groupBy('category');
+            foreach ($categoriesGroups as $categoryName => $categoryGroup){
+                foreach ($categoryGroup as $category){
+
+                }
+                $categoryGroup->map(function(Category $category) use ($categoryName) {
+                    if($this->isDoubles($categoryName)){
+                        return $this->getPairPoints($category->players, $categoryName);
+                    }else{
+                        $player = collect($category->players)->first();
+                        return $this->getPlayerCategoryPoint($player, $categoryName);
+                    }
+                });
+            }
+        }
+    }
     /**
      * @param Squad $squad
      *
@@ -424,23 +290,6 @@ class TeamValidator
         return new Collection($pairs);
     }
 
-    /**
-     * @param Player $player
-     *
-     * @return int
-     */
-    private function getPlayerLevel(Player $player) : int
-    {
-        $points = $player->points;
-        foreach ($points as $point) {
-            if ($point->category === null) {
-                return (int)$point->points;
-            }
-        }
-
-        throw new \RuntimeException('Bad lucky on '.$player->name);
-    }
-
     private function getPlayerCategoryPoint(Player $player, string $category)
     {
         $points = $player->points;
@@ -465,64 +314,6 @@ class TeamValidator
         }
 
         return $category;
-    }
-
-    /**
-     * @param Collection $conflict
-     * @param            $currentAbovePlayer
-     * @param            $currentCategory
-     * @param            $currentBelowPlayer
-     */
-    private function addOrUpdateBelowPlayers(
-        Collection $conflict,
-        $currentAbovePlayer,
-        $currentCategory,
-        $currentBelowPlayer
-    ) : void {
-        /** @var Collection $currentConflictPlayer */
-        $currentConflictPlayer = $conflict->first(function (Collection $player) use (
-            $currentAbovePlayer,
-            $currentCategory
-        ) {
-            return $player->get('category') === $currentCategory
-                   && $player->get(
-                    'refId'
-                ) === $currentAbovePlayer->refId;
-        });
-        if ($currentConflictPlayer !== null) {
-            $currentConflictBelowPlayers = $currentConflictPlayer->get('belowPlayer');
-            $array = [
-                'id'            => $currentBelowPlayer->id ?? 0,
-                'refId'         => $currentBelowPlayer->refId,
-                'name'          => $currentBelowPlayer->name,
-                'gender'        => $currentBelowPlayer->gender,
-                'category'      => $currentCategory,
-                'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer]),
-            ];
-            $currentConflictBelowPlayers[] = $array;
-            $currentConflictPlayer->put('belowPlayer', $currentConflictBelowPlayers);
-        } else {
-            $conflict->push(
-                new Collection([
-                    'id'            => $currentAbovePlayer->id ?? 0,
-                    'refId'         => $currentAbovePlayer->refId,
-                    'name'          => $currentAbovePlayer->name,
-                    'category'      => $currentCategory,
-                    'gender'        => $currentAbovePlayer->gender,
-                    'isYouthPlayer' => $this->hasYoungPlayer([$currentAbovePlayer]),
-                    'belowPlayer'   => [
-                        [
-                            'id'            => $currentBelowPlayer->id ?? 0,
-                            'refId'         => $currentBelowPlayer->refId,
-                            'name'          => $currentBelowPlayer->name,
-                            'gender'        => $currentBelowPlayer->gender,
-                            'category'      => $currentCategory,
-                            'isYouthPlayer' => $this->hasYoungPlayer([$currentBelowPlayer]),
-                        ],
-                    ],
-                ])
-            );
-        }
     }
 
     /**
@@ -555,7 +346,7 @@ class TeamValidator
                         $validt = false;
                     }
                 } else {
-                    throw new \RuntimeException('Unknown category');
+                    throw new RuntimeException('Unknown category');
                 }
             }
 
@@ -610,7 +401,7 @@ class TeamValidator
         $pairsInCategory = $this->getPairByCategory($squad->categories, $category);
         while ($pairsInCategory->count() > 1) {
             $belowPair = $pairsInCategory->pop();
-            if(count($belowPair) !== 2){
+            if (count($belowPair) !== 2) {
                 continue;
             }
             $belowPairsPoints = $this->getPairPoints($belowPair, $category);

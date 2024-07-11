@@ -95,7 +95,7 @@ class BadmintonPlayerHelper
     public static function getCurrentSeasonStart() : Carbon
     {
         $now = Carbon::now();
-        if ($now->month < 8){
+        if ($now->month < 7){
             $now->subYear();
         }
         return self::makeSeasonStart($now->year);

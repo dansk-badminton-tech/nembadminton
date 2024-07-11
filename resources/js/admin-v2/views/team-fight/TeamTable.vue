@@ -46,6 +46,7 @@
                             <b-tooltip
                                 type="is-info"
                                 class="is-pulled-left"
+                                size="is-large"
                                 :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
@@ -63,7 +64,7 @@
                                         size="is-small">
                                     </b-icon>
                                     {{ player.name }}
-                                    ({{ findPositions(player, 'N') + ' ' + findPositions(player, category.category) }})
+                                    ({{findPositions(player, category.category) }})
                                 </p>
                                 <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
                             </b-tooltip>

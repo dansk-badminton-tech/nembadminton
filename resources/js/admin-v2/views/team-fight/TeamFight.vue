@@ -555,6 +555,8 @@ export default {
                                 name
                                 id
                                 refId
+                                category
+                                balance
                             }
                           }
                         }

@@ -3,11 +3,9 @@
     <b-field grouped group-multiline>
       <b-input @input="search" placeholder="Søg på navn"></b-input>
       <b-select v-model="rankingList">
-        <option value="WOMEN_LEVEL">Dame Niveau</option>
         <option value="WOMEN_SINGLE">Dame Single</option>
         <option value="WOMENS_DOUBLE">Dame Double</option>
         <option value="WOMEN_MIX">Dame Mix</option>
-        <option value="MEN_LEVEL">Herre Niveau</option>
         <option value="MEN_SINGLE">Herre Single</option>
         <option value="MENS_DOUBLE">Herre Double</option>
         <option value="MEN_MIX">Herre Mix</option>
@@ -116,7 +114,7 @@ export default {
         }
       },
       hideCancellation: true,
-      rankingList: 'WOMEN_LEVEL',
+      rankingList: 'WOMEN_SINGLE',
       perPage: 15,
       currentPage: 1,
       total: 0,
