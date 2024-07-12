@@ -132,13 +132,22 @@ class Parser
     private function findTime(string $text) : string
     {
         $normalizedStr = \str_replace('‑', '-', $text);
-        preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches);
-        $date = $dateMatches[0];
-        preg_match('/(\d\d:\d\d)/', $normalizedStr, $timeMatches);
 
+        $datePattern = '/\((\d{2}-\d{2}-\d{4})\)/';
+        if (preg_match($datePattern, $normalizedStr, $dateMatches)) {
+            $date = $dateMatches[1];
+        }elseif(preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches)){
+            $date = $dateMatches[0];
+        }else{
+            $date = '';
+        }
+
+        preg_match('/(\d\d:\d\d)/', $normalizedStr, $timeMatches);
         if (!empty($timeMatches)) {
             $date .= ' ' . $timeMatches[0];
         }
+
+        //dump($text, $date);
 
         return $date;
     }

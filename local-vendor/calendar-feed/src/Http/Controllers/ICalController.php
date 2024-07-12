@@ -55,7 +55,8 @@ class ICalController extends Controller
                                   ->description('Link til badmintonplayer (igennem nembadminton): ' . $url);
                     $playingTime = Carbon::parse($teamFight["gameTime"]);
                     if($playingTime->isMidnight()){
-                        $event->fullDay();
+                        $event->startsAt($playingTime, false)
+                              ->fullDay();
                     }else{
                         $event->startsAt($playingTime);
                     }
@@ -64,8 +65,7 @@ class ICalController extends Controller
             }
         }
 
-        return response($calendar->get())
-            ->header('Content-Type', 'text/calendar; charset=utf-8');
+        return response($calendar->get())->header('Content-Type', 'text/calendar; charset=utf-8');
 
     }
 
