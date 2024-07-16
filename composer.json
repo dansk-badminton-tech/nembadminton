@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-simplexml": "*",
@@ -49,6 +49,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.9",
         "haydenpierce/class-finder": "^0.4.2",
+        "ion-bazan/composer-diff": "^1.9",
         "laravel/telescope": "^4.0",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^7.0",
@@ -61,10 +62,11 @@
         "sort-packages": true,
         "platform": {
             "ext-pcntl": "1.0",
-            "php": "8.2"
+            "php": "8.3"
         },
         "allow-plugins": {
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "ion-bazan/composer-diff": true
         }
     },
     "extra": {
