@@ -135,9 +135,6 @@ export function findPositions(member, show = 'all') {
     }
     let summary = []
     for (let point of member.points) {
-        if (point.category === null && point.points !== null && (show === 'all' || show === 'N')) {
-            summary.push('N:' + point.points)
-        }
         if (point.category === 'HS' && (show === 'all' || show === 'HS')) {
             summary.push('HS:' + point.points)
         }
