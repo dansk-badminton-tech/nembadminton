@@ -11,6 +11,11 @@ export default [
             icon: 'account-group',
             label: 'Holdrunder'
         },
+        {
+            to: '/cancellations/dashboard',
+            icon: 'cancel',
+            label: 'Afbud'
+        },
 //        {
 //            to: '/calendar',
 //            icon: 'calendar',

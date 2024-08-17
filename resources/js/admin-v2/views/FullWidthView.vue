@@ -1,14 +1,8 @@
 <template>
-  <section class="section hero is-fullheight is-error-section">
-    <div class="hero-body">
+  <section class="section is-fullheight is-error-section">
       <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-full">
             <router-view />
-          </div>
-        </div>
       </div>
-    </div>
     <div class="hero-foot has-text-centered">
       <div class="logo" />
     </div>

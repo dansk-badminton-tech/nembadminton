@@ -5,6 +5,8 @@ extend type Query {
     badmintonPlayerTeams(input: BadmintonPlayerTeamsInput @spread): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams")
     "Team fights for a team (scraping badmintonplayer.dk)"
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
+    "Team fights for teams (scraping badmintonplayer.dk)"
+    badmintonPlayerTeamFightsBulk(input: [BadmintonPlayerTeamFightsInput]): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFightsBulk")
     "Team match information (scraping badmintonplayer.dk)"
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
     "Team matches information (scraping badmintonplayer.dk)"

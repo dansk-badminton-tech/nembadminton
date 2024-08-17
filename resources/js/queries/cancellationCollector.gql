@@ -1,0 +1,9 @@
+query cancellationCollector{
+    cancellationCollector{
+        id
+        email
+        createdAt
+        updatedAt
+        sharingId
+    }
+}

@@ -5,69 +5,80 @@
             Dashboard
         </hero-bar>
         <section class="section is-main-section">
-            <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
-                       position="is-bottom">
-                <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
-                          @click="saveTeams">Gem
-                </b-button>
-            </b-tooltip>
-            <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
-            <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Export</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
-                <b-dropdown-item aria-role="listitem" @click="exportToCSV">
-                    <b-icon icon="file-export"></b-icon>
-                    CSV
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
-                    <b-icon icon="share"></b-icon>
-                    Link
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Indstillinger</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
-                <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
-                    <b-icon icon="brain"></b-icon>
-                    Validere hold
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
-                    <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
-                        <b-icon icon="cancel"></b-icon>
-                        {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
-                    </b-tooltip>
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                    <b-tooltip type="is-info" label="Opdater spillernes point med den valgte rangliste.">
-                        <b-icon icon="update"></b-icon>
-                        Opdater spiller point
-                    </b-tooltip>
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
-                    <b-icon icon="content-copy"></b-icon>
-                    Kopier hele holdet
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
-                    <b-icon icon="trash-can"></b-icon>
-                    Slet holdet
-                </b-dropdown-item>
-            </b-dropdown>
+            <p class="buttons">
+                <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
+                <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
+                           position="is-bottom">
+                    <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
+                              @click="saveTeams">Gem
+                    </b-button>
+                </b-tooltip>
+                <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
+                <b-dropdown aria-role="list" class="ml-2">
+                    <template v-slot:trigger="{ active }">
+                        <button class="button is-link">
+                            <span>Export</span>
+                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                        </button>
+                    </template>
+                    <b-dropdown-item aria-role="listitem" @click="exportToCSV">
+                        <b-icon icon="file-export"></b-icon>
+                        CSV
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                        <b-icon icon="share"></b-icon>
+                        Link
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-dropdown aria-role="list" class="ml-2">
+                    <template v-slot:trigger="{ active }">
+                        <button class="button is-link">
+                            <span>Indstillinger</span>
+                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                        </button>
+                    </template>
+                    <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
+                        <b-icon icon="brain"></b-icon>
+                        Validere hold
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
+                        <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
+                            <b-icon icon="cancel"></b-icon>
+                            {{
+                                ignoreIncompleteTeam
+                                ? 'Aktiver'
+                                : 'Deaktiver'
+                            }} "Fuldendt hold" check
+                        </b-tooltip>
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
+                        <b-tooltip type="is-info" label="Opdater spillernes point med den valgte rangliste.">
+                            <b-icon icon="update"></b-icon>
+                            Opdater spiller point
+                        </b-tooltip>
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
+                        <b-icon icon="content-copy"></b-icon>
+                        Kopier hele holdet
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
+                        <b-icon icon="trash-can"></b-icon>
+                        Slet holdet
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-button type="is-link" class="ml-2" icon-left="account-off" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
+            </p>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
                         <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                     </b-field>
                 </div>
-<!--                <div class="column">-->
-<!--                    <b-field label="Runde">-->
-<!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
-<!--                    </b-field>-->
-<!--                </div>-->
+                <!--                <div class="column">-->
+                <!--                    <b-field label="Runde">-->
+                <!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
+                <!--                    </b-field>-->
+                <!--                </div>-->
                 <div class="column">
                     <b-field label="Spilledato">
                         <b-datepicker
@@ -163,6 +174,7 @@ import PlayerList from "./PlayerList.vue";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
+import ShareLinkCancellationModal from "@/views/team-fight/ShareLinkCancellationModal.vue";
 
 export default {
     name: "TeamFight",
@@ -193,7 +205,7 @@ export default {
             }).join(', ')
         },
         resolveIncompleteTeam() {
-            if(this.ignoreIncompleteTeam){
+            if (this.ignoreIncompleteTeam) {
                 return null
             }
             if (this.validateBasicSquads.length === 0) {
@@ -202,7 +214,7 @@ export default {
             return this.validateBasicSquads.find(data => data.missingPlayerInCategory === true || data.spotsFulfilled === false) !== undefined
         },
         resolveInvalidCategory() {
-            if(this.errorValidatingCategory){
+            if (this.errorValidatingCategory) {
                 return null
             }
             if (!this.canValidateSquads) {
@@ -211,7 +223,7 @@ export default {
             return hasInvalidCategory(this.playingToHighSquadList)
         },
         resolveInvalidLevel() {
-            if(this.errorValidatingLevel){
+            if (this.errorValidatingLevel) {
                 return null
             }
             if (!this.canValidateCrossSquads) {
@@ -269,12 +281,12 @@ export default {
         }
     },
     methods: {
-        openLinkSharingModal(){
+        openLinkSharingModal() {
             this.$buefy.modal.open({
                                        parent: this,
                                        component: ShareLinkModal,
                                        props: {
-                                            teamId: this.teamFightId
+                                           teamId: this.teamFightId
                                        },
                                        scroll: "keep",
                                        width: 640,
@@ -285,7 +297,23 @@ export default {
                                        }
                                    })
         },
-        deactivateIncompleteCheck(){
+        openLinkSharingCancellationModel() {
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       component: ShareLinkCancellationModal,
+                                       props: {
+                                           teamId: this.teamFightId
+                                       },
+                                       scroll: "keep",
+                                       width: 640,
+                                       events: {
+                                           close: () => {
+                                               this.$emit('input', false)
+                                           }
+                                       }
+                                   })
+        },
+        deactivateIncompleteCheck() {
             this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
             this.validate()
         },
@@ -400,7 +428,9 @@ export default {
                         input: {
                             categoryId: parseInt(category.id),
                             refId: player.refId,
-                            version: squad.version ? squad.version : this.version
+                            version: squad.version
+                                     ? squad.version
+                                     : this.version
                         }
                     },
                     refetchQueries: [

@@ -1,0 +1,39 @@
+extend type Query{
+    membersCancellationSearch(
+        clubId: Int! @scope(name: "club")
+        name: String @where(operator: "like"),
+        orderBy: _ @orderBy(columns: ["name"])
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
+    confirmCancellation(refId: String!) : ConfirmCancellation  @field(resolver: "FlyCompany\\Members\\GraphQL\\Mutation\\CancellationConfirm")
+    updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
+    createCancellation(refId: String!, teamId: ID) : Cancellation @create
+    deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+    cancellationCollector : CancellationCollector @find(scopes: ["currentUser"]) @guard
+}
+
+extend type Mutation {
+    createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id")
+    updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard
+    deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @guard
+}
+
+input CancellationCollectionInput {
+    email: String! @rules(apply: ["required", "email"])
+}
+
+type ConfirmCancellation {
+    email_attached: Boolean
+    email_pattern: String
+}
+
+type CancellationCollector {
+    id: ID!
+    "Email for notifying"
+    email: String!
+    "Sharing ID"
+    sharingId: String! @rename(attribute: "sharing_id")
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}

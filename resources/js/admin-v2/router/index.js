@@ -70,6 +70,33 @@ const routes = [
         component: () => import(/* webpackChunkName: "profile" */ '@/views/my-club/MyClubs.vue')
     },
     {
+        meta: {
+            title: 'Afbud',
+            requiresAuth: true
+        },
+        path: '/cancellations/dashboard',
+        name: 'cancellation-dashboard',
+        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/CancellationDashboard.vue')
+    },
+    {
+        meta: {
+            title: 'Opret afbudslink',
+            requiresAuth: true
+        },
+        path: '/cancellations/create',
+        name: 'cancellation-create',
+        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/CreateCancellationCollector.vue')
+    },
+    {
+        meta: {
+            title: 'Rediger afbudslink',
+            requiresAuth: true
+        },
+        path: '/cancellations/edit',
+        name: 'cancellation-update',
+        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/UpdateCancellationCollector.vue')
+    },
+    {
         path: '/superadmin/notification',
         name: 'superadmin-notification',
         component: () => import('../views/superadmin/Notification.vue'),
@@ -131,12 +158,21 @@ const routes = [
                 }
             },
             {
+                path: '/cancellation/:sharingId/public-cancellation',
+                name: 'cancellation-public-view',
+                component: () => import("../views/cancellation/CancellationPublic.vue"),
+                props: route => ({sharingId: route.params.sharingId}),
+                meta: {
+                    title: 'Afbuds indsamler'
+                }
+            },
+            {
                 path: '/calendar-generator/:teamUUID',
                 name: 'calendar-generator-public-view',
                 component: () => import("../views/calendar/CalendarGenerator.vue"),
                 props: route => ({teamId: route.params.teamUUID}),
                 meta: {
-                    title: 'Holdkamp'
+                    title: 'Kalendar generator'
                 }
             },
             {
