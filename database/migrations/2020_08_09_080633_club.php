@@ -37,7 +37,7 @@ class Club extends Migration
         });
         Schema::create('club_member', static function (Blueprint $table) {
             $table->foreignId('club_id')->constrained();
-            $table->foreignId('member_id')->constrained();
+            $table->foreignId('member_id')->constrained()->cascadeOnDelete();
         });
     }
 
