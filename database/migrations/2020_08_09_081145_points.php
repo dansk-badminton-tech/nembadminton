@@ -21,7 +21,7 @@ class Points extends Migration
             $table->string('clh')->nullable();
             $table->string('category', 10)->nullable();
             $table->string('vintage', 10)->nullable();
-            $table->foreignId('member_id')->constrained();
+            $table->foreignId('member_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
