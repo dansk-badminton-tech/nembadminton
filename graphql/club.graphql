@@ -1,16 +1,18 @@
 extend type Query{
     membersSearch(
         name: String @where(operator: "like"),
+        refId: String @where
         excludeMembers: [Int!] @notIn(key: "id"),
         gender: [Gender!] @in,
-        orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints", "myClubs"]) @guard
+        orderBy: _ @orderBy(columns: ["name"]),
+        hasPoints: Boolean
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPointsToggle","myClubs"]) @guard
     memberSearchCancellation(
         teamId: String!
     ): [Member!]! @paginate(defaultCount: 20, scopes: ["myClubs", "hasCancellations"]) @guard
     memberSearchPoints(
         teamId: String!
-        version: String!
+        version: Date!
         name: String @where(operator: "like")
         rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
@@ -33,27 +35,33 @@ extend type Query{
 }
 
 extend type Mutation {
-    createMember(input: CreateMemberInput! @spread): Member @create @guard @inject(context: "user.id", name: "owner_id")
+    createMember(input: CreateMemberInput! @spread): Member @upsert @guard @inject(context: "user.id", name: "owner_id")
     deleteMember(id: ID! @whereKey) : Member @delete @guard @can(ability: "delete", find: "id")
 }
 
 input CreateMemberInput {
+    id: ID
     gender: Gender!
     name: String!
     refId: String!
-    points: CreatePointMemberHasManyInput!
-    clubs: CreateMemberHasManyInput!
+    points: UpsertPointMemberInput!
+    clubs: UpsertClubsInput!
 }
 
-input CreateMemberHasManyInput {
-    connect: [ID!]
+input UpsertClubsInput {
+    upsert: [UpsertClub!]
 }
 
-input CreatePointMemberHasManyInput {
-    create: [CreatePointMemberInput!]!
+input UpsertClub {
+    id: ID
+}
+
+input UpsertPointMemberInput {
+    upsert: [CreatePointMemberInput!]!
 }
 
 input CreatePointMemberInput {
+    id: ID
     category: Category
     points: Int!
     vintage: Vintage!
@@ -101,7 +109,7 @@ type MemberWithLatestPoints {
     id: ID!
     refId: String!
     name: String!
-    gender: String!
+    gender: Gender!
     vintage: Vintage! @method(name: "getVintage")
     birthday: Date! @method(name: "getBirthday")
     latestLevelPoints: Int @rename(attribute: "latest_level_points")
@@ -123,11 +131,11 @@ type Member {
     id: ID!
     refId: String!
     name: String!
-    gender: String!
+    gender: Gender!
     ownerId: Int @rename(attribute: "owner_id")
     vintage: Vintage! @method(name: "getVintage")
     birthday: Date! @method(name: "getBirthday")
-    points(version: String @eq): [Point!] @hasMany
+    points(version: Date @eq): [Point!]! @hasMany
     clubs: [Club!]! @belongsToMany
     cancellations(teamId: String): [Cancellation!]! @hasMany(scopes: ["cancellationsByTeamId"])
 }
@@ -136,7 +144,7 @@ type Point {
     id: ID!
     points: Int
     position: Int
-    category: String
+    category: Category
     vintage: String
     version: Date
 }

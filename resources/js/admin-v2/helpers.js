@@ -53,10 +53,10 @@ export function isYoungPlayer(player, category) {
             return false;
         } else {
             if (category === 'MD') {
-                if (player.gender === 'M' && point.category === 'MxH') {
+                if (player.gender === 'MEN' && point.category === 'MxH') {
                     return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
                 }
-                if (player.gender === 'K' && point.category === 'MxD') {
+                if (player.gender === 'WOMEN' && point.category === 'MxD') {
                     return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
                 }
             }
@@ -115,10 +115,10 @@ export function findLevel(member, category) {
     }
     for (let point of member.points) {
         if (category === 'MD') {
-            if (member.gender === 'M' && point.category === 'MxH') {
+            if (member.gender === 'MEN' && point.category === 'MxH') {
                 return point.points
             }
-            if (member.gender === 'K' && point.category === 'MxD') {
+            if (member.gender === 'WOMEN' && point.category === 'MxD') {
                 return point.points
             }
         }
@@ -147,10 +147,10 @@ export function findPositions(member, show = 'all') {
         if (point.category === 'DD' && (show === 'all' || show === 'DD')) {
             summary.push('DD:' + point.points)
         }
-        if (point.category === 'MxH' && member.gender === 'M' && (show === 'all' || show === 'MD')) {
+        if (point.category === 'MxH' && member.gender === 'MEN' && (show === 'all' || show === 'MD')) {
             summary.push('MxH:' + point.points)
         }
-        if (point.category === 'MxD' && member.gender === 'K' && (show === 'all' || show === 'MD')) {
+        if (point.category === 'MxD' && member.gender === 'WOMEN' && (show === 'all' || show === 'MD')) {
             summary.push('MxD:' + point.points)
         }
     }
@@ -281,13 +281,13 @@ export function isWomensSingle(category) {
 
 export function containsWomen(category) {
     return category.players.some((player) => {
-        return player.gender === 'K';
+        return player.gender === 'WOMEN';
     });
 }
 
 export function containsMen(category) {
     return category.players.some((player) => {
-        return player.gender === 'M';
+        return player.gender === 'MEN';
     });
 }
 

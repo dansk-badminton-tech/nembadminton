@@ -667,12 +667,12 @@ export default {
             outside:
                 for (const [index, squad] of this.team.squads.entries()) {
                     for (const category of squad.categories) {
-                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'K') {
+                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'WOMEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
                             break outside;
-                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'M') {
+                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'MEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
@@ -683,23 +683,23 @@ export default {
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
-                            } else if (containsWomen(category) && player.gender === 'M') {
+                            } else if (containsWomen(category) && player.gender === 'MEN') {
                                 this.addedPlayerNotification(index, category.name)
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
-                            } else if (containsMen(category) && player.gender === 'K') {
+                            } else if (containsMen(category) && player.gender === 'WOMEN') {
                                 this.addedPlayerNotification(index, category.name)
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
                             }
-                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'M') {
+                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'MEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
                             break outside;
-                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'K') {
+                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'WOMEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
@@ -707,6 +707,7 @@ export default {
                         }
                     }
                 }
+                console.log(player)
             if (foundPlace === false) {
                 this.$buefy.snackbar.open(
                     {

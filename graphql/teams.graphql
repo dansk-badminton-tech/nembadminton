@@ -59,7 +59,7 @@ input UpdateCategoryInputNew {
 
 input CreateSquadMemberInput {
     category: CreateCategoryBelongsTo!
-    gender: String!
+    gender: Gender!
     name: String!
     refId: String! @rename(attribute: "member_ref_id")
     points: CreatePointHasManyInput!
@@ -176,7 +176,7 @@ type SquadMember {
     id: ID!
     refId: String! @rename(attribute: "member_ref_id")
     name: String!
-    gender: String!
+    gender: Gender!
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
 }
