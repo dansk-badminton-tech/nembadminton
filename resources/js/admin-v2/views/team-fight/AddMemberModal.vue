@@ -173,7 +173,6 @@ export default {
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                {{this.points}}
                 <p>Spilleren bliver oprettet på ranglisten <strong>{{ versionMonth }}</strong>, spilleren kan ses af <strong>alle</strong> som har klubben tilknyttet.</p>
                 <hr/>
                 <b-field grouped label="Badmintonplayer ID">
