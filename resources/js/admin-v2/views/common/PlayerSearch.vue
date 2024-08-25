@@ -126,7 +126,7 @@ export default {
             }
         },
         membersSearch: {
-            query: gql`query membersSearch($name: String, $excludeMembers: [Int!], $version: String, $gender: [Gender!]){
+            query: gql`query membersSearch($name: String, $excludeMembers: [Int!], $version: Date, $gender: [Gender!]){
                       membersSearch(name: $name, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }, gender: $gender) {
                         data {
                           id
@@ -157,7 +157,7 @@ export default {
                 if(this?.squad?.version){
                     params.version = this?.squad?.version
                 }else if(!!this.version){
-                    params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
+                    params.version = this.version.toISOString().slice(0, 10)
                 }
                 return params
             },

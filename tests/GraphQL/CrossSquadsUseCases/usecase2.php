@@ -24,7 +24,7 @@ return [
                                                         [
                                                             'refId' => '010519-03',
                                                             'name' => 'Anna Do',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -65,7 +65,7 @@ return [
                                                         [
                                                             'refId' => '010613-02',
                                                             'name' => 'Magnus Gregersen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -114,7 +114,7 @@ return [
                                                         [
                                                             'refId' => '050128-01',
                                                             'name' => 'Sarah Skriver',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -155,7 +155,7 @@ return [
                                                         [
                                                             'refId' => '920421-01',
                                                             'name' => 'Frederik Houlberg',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -204,7 +204,7 @@ return [
                                                         [
                                                             'refId' => '020424-06',
                                                             'name' => 'Sofie Løth Topp',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -253,7 +253,7 @@ return [
                                                         [
                                                             'refId' => '050128-01',
                                                             'name' => 'Sarah Skriver',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -302,7 +302,7 @@ return [
                                                         [
                                                             'refId' => '001018-03',
                                                             'name' => 'Mads Sørensen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -351,7 +351,7 @@ return [
                                                         [
                                                             'refId' => '990714-01',
                                                             'name' => 'Kasper Rossen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -400,7 +400,7 @@ return [
                                                         [
                                                             'refId' => '010519-03',
                                                             'name' => 'Anna Do',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -441,7 +441,7 @@ return [
                                                         [
                                                             'refId' => '020424-06',
                                                             'name' => 'Sofie Løth Topp',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -490,7 +490,7 @@ return [
                                                         [
                                                             'refId' => '010613-02',
                                                             'name' => 'Magnus Gregersen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -531,7 +531,7 @@ return [
                                                         [
                                                             'refId' => '920421-01',
                                                             'name' => 'Frederik Houlberg',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -580,7 +580,7 @@ return [
                                                         [
                                                             'refId' => '001018-03',
                                                             'name' => 'Mads Sørensen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -621,7 +621,7 @@ return [
                                                         [
                                                             'refId' => '990714-01',
                                                             'name' => 'Kasper Rossen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -682,7 +682,7 @@ return [
                                                         [
                                                             'refId' => '930119-01',
                                                             'name' => 'Pernille Bundgaard',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -723,7 +723,7 @@ return [
                                                         [
                                                             'refId' => '840719-01',
                                                             'name' => 'Jacob Tovgaard',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -772,7 +772,7 @@ return [
                                                         [
                                                             'refId' => '931214-07',
                                                             'name' => 'Amalie Vestmar',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -813,7 +813,7 @@ return [
                                                         [
                                                             'refId' => '000317-02',
                                                             'name' => 'Victor Bendsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -862,7 +862,7 @@ return [
                                                         [
                                                             'refId' => '970602-05',
                                                             'name' => 'Sofie Zacho Vestergård',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -911,7 +911,7 @@ return [
                                                         [
                                                             'refId' => '940501-03',
                                                             'name' => 'Astrid Gjettermann',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -960,7 +960,7 @@ return [
                                                         [
                                                             'refId' => '990328-04',
                                                             'name' => 'Johan Simoni Haunsø',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1009,7 +1009,7 @@ return [
                                                         [
                                                             'refId' => '030611-01',
                                                             'name' => 'Malte Friis',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1058,7 +1058,7 @@ return [
                                                         [
                                                             'refId' => '910803-06',
                                                             'name' => 'Martin Thy Bjerre',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1107,7 +1107,7 @@ return [
                                                         [
                                                             'refId' => '921118-05',
                                                             'name' => 'Rasmus Skjølstrup',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1156,7 +1156,7 @@ return [
                                                         [
                                                             'refId' => '931214-07',
                                                             'name' => 'Amalie Vestmar',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1197,7 +1197,7 @@ return [
                                                         [
                                                             'refId' => '970602-05',
                                                             'name' => 'Sofie Zacho Vestergård',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1246,7 +1246,7 @@ return [
                                                         [
                                                             'refId' => '940501-03',
                                                             'name' => 'Astrid Gjettermann',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1287,7 +1287,7 @@ return [
                                                         [
                                                             'refId' => '930119-01',
                                                             'name' => 'Pernille Bundgaard',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1336,7 +1336,7 @@ return [
                                                         [
                                                             'refId' => '910803-06',
                                                             'name' => 'Martin Thy Bjerre',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1377,7 +1377,7 @@ return [
                                                         [
                                                             'refId' => '921118-05',
                                                             'name' => 'Rasmus Skjølstrup',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1426,7 +1426,7 @@ return [
                                                         [
                                                             'refId' => '000317-02',
                                                             'name' => 'Victor Bendsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1467,7 +1467,7 @@ return [
                                                         [
                                                             'refId' => '840719-01',
                                                             'name' => 'Jacob Tovgaard',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1516,7 +1516,7 @@ return [
                                                         [
                                                             'refId' => '030611-01',
                                                             'name' => 'Malte Friis',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1557,7 +1557,7 @@ return [
                                                         [
                                                             'refId' => '990328-04',
                                                             'name' => 'Johan Simoni Haunsø',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1618,7 +1618,7 @@ return [
                                                         [
                                                             'refId' => '000727-03',
                                                             'name' => 'Christinna Andersen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1659,7 +1659,7 @@ return [
                                                         [
                                                             'refId' => '720113-01',
                                                             'name' => 'Lars Zilmer Jakobsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1708,7 +1708,7 @@ return [
                                                         [
                                                             'refId' => '000706-07',
                                                             'name' => 'Rikke Andersen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1749,7 +1749,7 @@ return [
                                                         [
                                                             'refId' => '050122-01',
                                                             'name' => 'Thais Uggerly',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1798,7 +1798,7 @@ return [
                                                         [
                                                             'refId' => '001223-01',
                                                             'name' => 'Elisabeth Tran',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1847,7 +1847,7 @@ return [
                                                         [
                                                             'refId' => '990519-21',
                                                             'name' => 'Frederikke Enevoldsen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1896,7 +1896,7 @@ return [
                                                         [
                                                             'refId' => '020326-06',
                                                             'name' => 'Andreas Lund',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1945,7 +1945,7 @@ return [
                                                         [
                                                             'refId' => '940902-04',
                                                             'name' => 'Thorkild Bendsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -1994,7 +1994,7 @@ return [
                                                         [
                                                             'refId' => '941218-02',
                                                             'name' => 'Mads Møller Christensen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2043,7 +2043,7 @@ return [
                                                         [
                                                             'refId' => '970919-04',
                                                             'name' => 'Kristian Eskildsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2092,7 +2092,7 @@ return [
                                                         [
                                                             'refId' => '000727-03',
                                                             'name' => 'Christinna Andersen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2133,7 +2133,7 @@ return [
                                                         [
                                                             'refId' => '001223-01',
                                                             'name' => 'Elisabeth Tran',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2182,7 +2182,7 @@ return [
                                                         [
                                                             'refId' => '000706-07',
                                                             'name' => 'Rikke Andersen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2223,7 +2223,7 @@ return [
                                                         [
                                                             'refId' => '990519-21',
                                                             'name' => 'Frederikke Enevoldsen',
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2272,7 +2272,7 @@ return [
                                                         [
                                                             'refId' => '941218-02',
                                                             'name' => 'Mads Møller Christensen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2313,7 +2313,7 @@ return [
                                                         [
                                                             'refId' => '940902-04',
                                                             'name' => 'Thorkild Bendsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2362,7 +2362,7 @@ return [
                                                         [
                                                             'refId' => '020326-06',
                                                             'name' => 'Andreas Lund',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2403,7 +2403,7 @@ return [
                                                         [
                                                             'refId' => '720113-01',
                                                             'name' => 'Lars Zilmer Jakobsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2452,7 +2452,7 @@ return [
                                                         [
                                                             'refId' => '970919-04',
                                                             'name' => 'Kristian Eskildsen',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>
@@ -2493,7 +2493,7 @@ return [
                                                         [
                                                             'refId' => '050122-01',
                                                             'name' => 'Thais Uggerly',
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'points' =>
                                                                 [
                                                                     0 =>

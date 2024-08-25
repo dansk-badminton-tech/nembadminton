@@ -78,6 +78,15 @@ class Member extends Model
         });
     }
 
+    public function scopeHasPointsToggle($query, $args)
+    {
+        if ($args['hasPoints'] ?? true) {
+            return $query->hasPoints();
+        }
+
+        return $query;
+    }
+
     public function scopeHasPoints(Builder $builder) : Builder
     {
         return $builder->has('points');

@@ -48,21 +48,19 @@ class ImportMembers implements ShouldQueue
             \FlyCompany\Club\Log::createLog($clubId, "Importerer medlemmer fra niveau ranglisten {$rankingList->getVersionDateCarbon()->format('Y-m-d')}", 'member-importer');
             /** @var Club $clubModel */
             $clubModel = Club::query()->where(['id' => $clubId])->firstOrFail();
+            Log::debug("Importing club-id: $clubId ($clubModel->name1)");
 
             $membersIds = [];
             /** @var PlayerRanking[] $players */
             $players = $rankingList->getPlayerRankingCollection()->getByClubId($clubId);
             foreach ($players as $player){
-                if($player->niveauPoints !== 0 && $player->niveauPoints !== null){
-                    Log::info("Upsert $player->name($player->playerNumber) with level points $player->niveauPoints ranking {$rankingList->getVersionDateCarbon()}");
-                    $member = $memberManager->addOrUpdateMember($player->playerNumber, $player->name, $player->gender);
-                    $pointsManager->addPointsByMember($member, $player->niveauPoints, 0, $rankingList->getVersionDateCarbon(), null, $player->getVintage()->value);
-                    $membersIds[] = $member->id;
-                }
+                Log::info("Upsert $player->name($player->playerNumber) from ranking {$rankingList->getVersionDateCarbon()}");
+                $member = $memberManager->addOrUpdateMember($player->playerNumber, $player->name, $player->gender);
+                $membersIds[] = $member->id;
             }
             $membersIds = array_unique($membersIds);
             $clubModel->members()->sync($membersIds);
-            \FlyCompany\Club\Log::createLog($clubId, "Medlemsimport færdig", 'member-importer');
+            \FlyCompany\Club\Log::createLog($clubId, "Medlems import færdig", 'member-importer');
             Log::info("Added ".count($membersIds)." to $clubModel->name1");
         }
         return 0;

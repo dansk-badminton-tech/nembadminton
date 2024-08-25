@@ -35,7 +35,7 @@ input ValidateMember {
     id: ID
     refId: String!
     name: String!
-    gender: String!
+    gender: Gender!
     points: [ValidatePoint!]!
 }
 
@@ -62,7 +62,7 @@ type PlayingToHigh{
     id: ID!
     refId: String!
     category: String
-    gender: String!
+    gender: Gender!
     isYouthPlayer: Boolean!
     hasYouthPlayerPartner: Boolean!
     belowPlayer: [BelowPlayer!]

@@ -24,7 +24,7 @@ return array (
               array (
                 'refId' => '970310-06',
                 'name' => 'Claudia Paredes',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -65,7 +65,7 @@ return array (
               array (
                 'refId' => '971022-01',
                 'name' => 'Tobias Holst-Christensen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -114,7 +114,7 @@ return array (
               array (
                 'refId' => '950821-02',
                 'name' => 'Isabella Nielsen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -155,7 +155,7 @@ return array (
               array (
                 'refId' => '981004-15',
                 'name' => 'Rasmus Kjær Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -204,7 +204,7 @@ return array (
               array (
                 'refId' => '040911-06',
                 'name' => 'Benedicte Sillassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -253,7 +253,7 @@ return array (
               array (
                 'refId' => '970310-06',
                 'name' => 'Claudia Paredes',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -302,7 +302,7 @@ return array (
               array (
                 'refId' => '020205-02',
                 'name' => 'Axel Henrik Parkhøi',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -351,7 +351,7 @@ return array (
               array (
                 'refId' => '020618-01',
                 'name' => 'Marcus Viscovich',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -400,7 +400,7 @@ return array (
               array (
                 'refId' => '040911-06',
                 'name' => 'Benedicte Sillassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -441,7 +441,7 @@ return array (
               array (
                 'refId' => '950821-02',
                 'name' => 'Isabella Nielsen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -490,7 +490,7 @@ return array (
               array (
                 'refId' => '981004-15',
                 'name' => 'Rasmus Kjær Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -531,7 +531,7 @@ return array (
               array (
                 'refId' => '971022-01',
                 'name' => 'Tobias Holst-Christensen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -580,7 +580,7 @@ return array (
               array (
                 'refId' => '020205-02',
                 'name' => 'Axel Henrik Parkhøi',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -621,7 +621,7 @@ return array (
               array (
                 'refId' => '020618-01',
                 'name' => 'Marcus Viscovich',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -682,7 +682,7 @@ return array (
               array (
                 'refId' => '870619-02',
                 'name' => 'Marie Røpke',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -723,7 +723,7 @@ return array (
               array (
                 'refId' => '970813-02',
                 'name' => 'Christoffer Voldsgaard Holm',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -772,7 +772,7 @@ return array (
               array (
                 'refId' => '990909-01',
                 'name' => 'Filippa Koch Rohde',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -813,7 +813,7 @@ return array (
               array (
                 'refId' => '990202-01',
                 'name' => 'Tobias Middelbo Eigtved',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -862,7 +862,7 @@ return array (
               array (
                 'refId' => '970630-04',
                 'name' => 'Amalie Hertz',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -903,7 +903,7 @@ return array (
               array (
                 'refId' => '041112-01',
                 'name' => 'Mie Andersson',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -952,7 +952,7 @@ return array (
               array (
                 'refId' => '950323-04',
                 'name' => 'Rasmus Middelbo Eigtved',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1001,7 +1001,7 @@ return array (
               array (
                 'refId' => '060624-01',
                 'name' => 'Mads Andersson',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1050,7 +1050,7 @@ return array (
               array (
                 'refId' => '040526-04',
                 'name' => 'Deepak Pillai',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1099,7 +1099,7 @@ return array (
               array (
                 'refId' => '721015-02',
                 'name' => 'Johnny Hast Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1148,7 +1148,7 @@ return array (
               array (
                 'refId' => '870619-02',
                 'name' => 'Marie Røpke',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1189,7 +1189,7 @@ return array (
               array (
                 'refId' => '990909-01',
                 'name' => 'Filippa Koch Rohde',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1238,7 +1238,7 @@ return array (
               array (
                 'refId' => '970630-04',
                 'name' => 'Amalie Hertz',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1271,7 +1271,7 @@ return array (
               array (
                 'refId' => '041112-01',
                 'name' => 'Mie Andersson',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1320,7 +1320,7 @@ return array (
               array (
                 'refId' => '970813-02',
                 'name' => 'Christoffer Voldsgaard Holm',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1361,7 +1361,7 @@ return array (
               array (
                 'refId' => '950323-04',
                 'name' => 'Rasmus Middelbo Eigtved',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1410,7 +1410,7 @@ return array (
               array (
                 'refId' => '990202-01',
                 'name' => 'Tobias Middelbo Eigtved',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1451,7 +1451,7 @@ return array (
               array (
                 'refId' => '721015-02',
                 'name' => 'Johnny Hast Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1500,7 +1500,7 @@ return array (
               array (
                 'refId' => '040526-04',
                 'name' => 'Deepak Pillai',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1541,7 +1541,7 @@ return array (
               array (
                 'refId' => '060624-01',
                 'name' => 'Mads Andersson',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1602,7 +1602,7 @@ return array (
               array (
                 'refId' => '910425-06',
                 'name' => 'Sophie Kampmann',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1643,7 +1643,7 @@ return array (
               array (
                 'refId' => '801106-01',
                 'name' => 'Henrik Koblauch',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1692,7 +1692,7 @@ return array (
               array (
                 'refId' => '960311-01',
                 'name' => 'Sine Skov Jonassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1733,7 +1733,7 @@ return array (
               array (
                 'refId' => '900818-23',
                 'name' => 'Rasmus Quist Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1782,7 +1782,7 @@ return array (
               array (
                 'refId' => '940428-09',
                 'name' => 'Julie Rechnagel',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1831,7 +1831,7 @@ return array (
               array (
                 'refId' => '030107-01',
                 'name' => 'Naja Maj Jonassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -1880,7 +1880,7 @@ return array (
               array (
                 'refId' => '060326-03',
                 'name' => 'William Linnemann Sax',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1929,7 +1929,7 @@ return array (
               array (
                 'refId' => '040824-06',
                 'name' => 'Leander Rostgaard Stender',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -1994,7 +1994,7 @@ return array (
               array (
                 'refId' => '940428-09',
                 'name' => 'Julie Rechnagel',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -2035,7 +2035,7 @@ return array (
               array (
                 'refId' => '910425-06',
                 'name' => 'Sophie Kampmann',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -2084,7 +2084,7 @@ return array (
               array (
                 'refId' => '960311-01',
                 'name' => 'Sine Skov Jonassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -2125,7 +2125,7 @@ return array (
               array (
                 'refId' => '030107-01',
                 'name' => 'Naja Maj Jonassen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 array (
                   0 =>
@@ -2174,7 +2174,7 @@ return array (
               array (
                 'refId' => '900818-23',
                 'name' => 'Rasmus Quist Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -2215,7 +2215,7 @@ return array (
               array (
                 'refId' => '801106-01',
                 'name' => 'Henrik Koblauch',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -2264,7 +2264,7 @@ return array (
               array (
                 'refId' => '060326-03',
                 'name' => 'William Linnemann Sax',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
@@ -2305,7 +2305,7 @@ return array (
               array (
                 'refId' => '040824-06',
                 'name' => 'Leander Rostgaard Stender',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 array (
                   0 =>
