@@ -24,7 +24,7 @@ return [
               [
                 'refId' => '000116-01',
                 'name' => 'Malene Kæseler',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -65,7 +65,7 @@ return [
               [
                 'refId' => '990608-01',
                 'name' => 'Emil Lauritzen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -114,7 +114,7 @@ return [
               [
                 'refId' => '960905-01',
                 'name' => 'Marie Louise Steffensen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -155,7 +155,7 @@ return [
               [
                 'refId' => '940127-05',
                 'name' => 'Frederik Aalestrup',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -204,7 +204,7 @@ return [
               [
                 'refId' => '911123-08',
                 'name' => 'Kathrine Kaack',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -245,7 +245,7 @@ return [
               [
                 'refId' => '000116-01',
                 'name' => 'Malene Kæseler',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -294,7 +294,7 @@ return [
               [
                 'refId' => '961124-13',
                 'name' => 'Ygor Coelho (udl.)',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -343,7 +343,7 @@ return [
               [
                 'refId' => '030116-01',
                 'name' => 'Mads Juel Møller',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -384,7 +384,7 @@ return [
               [
                 'refId' => '960905-01',
                 'name' => 'Marie Louise Steffensen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -425,7 +425,7 @@ return [
               [
                 'refId' => '010626-02',
                 'name' => 'Signe Schulz Terp-Nielsen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -474,7 +474,7 @@ return [
               [
                 'refId' => '940127-05',
                 'name' => 'Frederik Aalestrup',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -515,7 +515,7 @@ return [
               [
                 'refId' => '990608-01',
                 'name' => 'Emil Lauritzen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -564,7 +564,7 @@ return [
               [
                 'refId' => '961124-13',
                 'name' => 'Ygor Coelho (udl.)',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -605,7 +605,7 @@ return [
               [
                 'refId' => '030116-01',
                 'name' => 'Mads Juel Møller',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -658,7 +658,7 @@ return [
               [
                 'refId' => '031125-01',
                 'name' => 'Clara Løber',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -699,7 +699,7 @@ return [
               [
                 'refId' => '050126-01',
                 'name' => 'Mike Vestergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -748,7 +748,7 @@ return [
               [
                 'refId' => '040821-01',
                 'name' => 'Emma Irring Braüner',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -789,7 +789,7 @@ return [
               [
                 'refId' => '050730-01',
                 'name' => 'Calvin Lundsgaard Kvolbæk',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -838,7 +838,7 @@ return [
               [
                 'refId' => '010915-03',
                 'name' => 'Filippa Thyberg',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -887,7 +887,7 @@ return [
               [
                 'refId' => '940119-05',
                 'name' => 'Nanna Vestergaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -936,7 +936,7 @@ return [
               [
                 'refId' => '040214-01',
                 'name' => 'Jakob Houe Andersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -985,7 +985,7 @@ return [
               [
                 'refId' => '030530-01',
                 'name' => 'Nikolaj Lassen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1034,7 +1034,7 @@ return [
               [
                 'refId' => '980725-01',
                 'name' => 'Mickey Lykkegren',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1083,7 +1083,7 @@ return [
               [
                 'refId' => '971027-04',
                 'name' => 'Lasse Brund',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1124,7 +1124,7 @@ return [
               [
                 'refId' => '040821-01',
                 'name' => 'Emma Irring Braüner',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1165,7 +1165,7 @@ return [
               [
                 'refId' => '031125-01',
                 'name' => 'Clara Løber',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1214,7 +1214,7 @@ return [
               [
                 'refId' => '940119-05',
                 'name' => 'Nanna Vestergaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1255,7 +1255,7 @@ return [
               [
                 'refId' => '010915-03',
                 'name' => 'Filippa Thyberg',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1304,7 +1304,7 @@ return [
               [
                 'refId' => '050730-01',
                 'name' => 'Calvin Lundsgaard Kvolbæk',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1345,7 +1345,7 @@ return [
               [
                 'refId' => '040214-01',
                 'name' => 'Jakob Houe Andersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1394,7 +1394,7 @@ return [
               [
                 'refId' => '050126-01',
                 'name' => 'Mike Vestergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1435,7 +1435,7 @@ return [
               [
                 'refId' => '030530-01',
                 'name' => 'Nikolaj Lassen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1484,7 +1484,7 @@ return [
               [
                 'refId' => '971027-04',
                 'name' => 'Lasse Brund',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1517,7 +1517,7 @@ return [
               [
                 'refId' => '980725-01',
                 'name' => 'Mickey Lykkegren',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1578,7 +1578,7 @@ return [
               [
                 'refId' => '060503-01',
                 'name' => 'Sophia Lemming',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1619,7 +1619,7 @@ return [
               [
                 'refId' => '910611-01',
                 'name' => 'Morten Skrøder Bødskov',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1660,7 +1660,7 @@ return [
               [
                 'refId' => '011206-03',
                 'name' => 'Karoline Asp',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1701,7 +1701,7 @@ return [
               [
                 'refId' => '050312-01',
                 'name' => 'Jacob Bay',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1750,7 +1750,7 @@ return [
               [
                 'refId' => '020722-02',
                 'name' => 'Sophia Bach Graversen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1799,7 +1799,7 @@ return [
               [
                 'refId' => '880721-07',
                 'name' => 'Rikke Nørgaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -1848,7 +1848,7 @@ return [
               [
                 'refId' => '060318-01',
                 'name' => 'Lasse Linderoth Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1897,7 +1897,7 @@ return [
               [
                 'refId' => '050521-11',
                 'name' => 'Magnus Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1946,7 +1946,7 @@ return [
               [
                 'refId' => '060203-02',
                 'name' => 'Jakob Clausen Jessen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -1995,7 +1995,7 @@ return [
               [
                 'refId' => '060130-06',
                 'name' => 'Simon Bloch Østergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2044,7 +2044,7 @@ return [
               [
                 'refId' => '020722-02',
                 'name' => 'Sophia Bach Graversen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2085,7 +2085,7 @@ return [
               [
                 'refId' => '060503-01',
                 'name' => 'Sophia Lemming',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2134,7 +2134,7 @@ return [
               [
                 'refId' => '011206-03',
                 'name' => 'Karoline Asp',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2175,7 +2175,7 @@ return [
               [
                 'refId' => '880721-07',
                 'name' => 'Rikke Nørgaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2224,7 +2224,7 @@ return [
               [
                 'refId' => '050312-01',
                 'name' => 'Jacob Bay',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2265,7 +2265,7 @@ return [
               [
                 'refId' => '910611-01',
                 'name' => 'Morten Skrøder Bødskov',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2306,7 +2306,7 @@ return [
               [
                 'refId' => '060130-06',
                 'name' => 'Simon Bloch Østergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2347,7 +2347,7 @@ return [
               [
                 'refId' => '060318-01',
                 'name' => 'Lasse Linderoth Pedersen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2396,7 +2396,7 @@ return [
               [
                 'refId' => '060203-02',
                 'name' => 'Jakob Clausen Jessen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2437,7 +2437,7 @@ return [
               [
                 'refId' => '050521-11',
                 'name' => 'Magnus Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2498,7 +2498,7 @@ return [
               [
                 'refId' => '880721-07',
                 'name' => 'Rikke Nørgaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2539,7 +2539,7 @@ return [
               [
                 'refId' => '831122-01',
                 'name' => 'Morten Møller',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2588,7 +2588,7 @@ return [
               [
                 'refId' => '011206-03',
                 'name' => 'Karoline Asp',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2629,7 +2629,7 @@ return [
               [
                 'refId' => '000601-03',
                 'name' => 'Sebastian Suder',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2678,7 +2678,7 @@ return [
               [
                 'refId' => '040225-08',
                 'name' => 'Sofie Solveig Hansen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2727,7 +2727,7 @@ return [
               [
                 'refId' => '800213-01',
                 'name' => 'Heidi Toft',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -2776,7 +2776,7 @@ return [
               [
                 'refId' => '961004-15',
                 'name' => 'Peter Lauritzen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2825,7 +2825,7 @@ return [
               [
                 'refId' => '900726-22',
                 'name' => 'Thomas Søe Jepsen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2874,7 +2874,7 @@ return [
               [
                 'refId' => '881122-01',
                 'name' => 'Christoffer Vestergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2923,7 +2923,7 @@ return [
               [
                 'refId' => '850115-01',
                 'name' => 'Jens Jørgen Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -2972,7 +2972,7 @@ return [
               [
                 'refId' => '800213-01',
                 'name' => 'Heidi Toft',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -3013,7 +3013,7 @@ return [
               [
                 'refId' => '880721-07',
                 'name' => 'Rikke Nørgaard',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -3062,7 +3062,7 @@ return [
               [
                 'refId' => '040225-08',
                 'name' => 'Sofie Solveig Hansen',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -3103,7 +3103,7 @@ return [
               [
                 'refId' => '011206-03',
                 'name' => 'Karoline Asp',
-                'gender' => 'K',
+                'gender' => 'WOMEN',
                 'points' =>
                 [
                   0 =>
@@ -3152,7 +3152,7 @@ return [
               [
                 'refId' => '881122-01',
                 'name' => 'Christoffer Vestergaard',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -3193,7 +3193,7 @@ return [
               [
                 'refId' => '900726-22',
                 'name' => 'Thomas Søe Jepsen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -3242,7 +3242,7 @@ return [
               [
                 'refId' => '850115-01',
                 'name' => 'Jens Jørgen Hansen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -3283,7 +3283,7 @@ return [
               [
                 'refId' => '831122-01',
                 'name' => 'Morten Møller',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -3332,7 +3332,7 @@ return [
               [
                 'refId' => '000601-03',
                 'name' => 'Sebastian Suder',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>
@@ -3373,7 +3373,7 @@ return [
               [
                 'refId' => '961004-15',
                 'name' => 'Peter Lauritzen',
-                'gender' => 'M',
+                'gender' => 'MEN',
                 'points' =>
                 [
                   0 =>

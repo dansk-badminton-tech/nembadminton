@@ -12,12 +12,12 @@ class CategoryFactory
 
     public static function makeWomen(string $category1PointName, int $category1Points, string $category2PointName, int $category2Points, int $levelPoints, string $refId): Player
     {
-        return static::makePlayerWithPoint($category1PointName, $category2PointName, 'K', $refId, $category1Points, $category2Points, $levelPoints);
+        return static::makePlayerWithPoint($category1PointName, $category2PointName, 'WOMEN', $refId, $category1Points, $category2Points, $levelPoints);
     }
 
     public static function makeMen(string $category1PointName, int $category1Points, string $category2PointName, int $category2Points, int $levelPoints, string $refId): Player
     {
-        return static::makePlayerWithPoint($category1PointName, $category2PointName, 'M', $refId, $category1Points, $category2Points, $levelPoints);
+        return static::makePlayerWithPoint($category1PointName, $category2PointName, 'MEN', $refId, $category1Points, $category2Points, $levelPoints);
     }
 
     public static function makePlayerWithPoint(string $category1PointName, string $category2PointName, string $gender, string $refId, int $category1Points = 0, int $category2Points = 0, int $levelPoints = 0): Player

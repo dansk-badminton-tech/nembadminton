@@ -319,7 +319,7 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                          [
                              'refId'    => $women1->refId,
                              'category' => 'Dummy-stuff',
-                             'gender'   => 'K',
+                             'gender'   => 'WOMEN',
                              'belowPlayer' => [
                                  [
                                      'refId'    => $womenSpecial2->refId,
@@ -517,7 +517,7 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
                          [
                              'refId' => $women1->refId,
                              'category' => 'Dummy-stuff',
-                             'gender'  => 'K',
+                             'gender'  => 'WOMEN',
                              'belowPlayer' => [
                                  [
                                      'refId'    => $womenSpecial1->refId,
