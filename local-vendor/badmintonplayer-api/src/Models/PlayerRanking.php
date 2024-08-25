@@ -49,7 +49,7 @@ class PlayerRanking
      * Level points
      * @var int|null
      */
-    public ?int $niveauPoints;
+    public ?int $niveauPoints = 0;
 
     /**
      * Club Identifier

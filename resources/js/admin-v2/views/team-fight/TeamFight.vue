@@ -42,12 +42,6 @@
                         {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
                     </b-tooltip>
                 </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                    <b-tooltip type="is-info" label="Opdater spillernes point med den valgte rangliste.">
-                        <b-icon icon="update"></b-icon>
-                        Opdater spiller point
-                    </b-tooltip>
-                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
                     <b-icon icon="content-copy"></b-icon>
                     Kopier hele holdet
@@ -667,12 +661,12 @@ export default {
             outside:
                 for (const [index, squad] of this.team.squads.entries()) {
                     for (const category of squad.categories) {
-                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'K') {
+                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'WOMEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
                             break outside;
-                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'M') {
+                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'MEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
@@ -683,23 +677,23 @@ export default {
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
-                            } else if (containsWomen(category) && player.gender === 'M') {
+                            } else if (containsWomen(category) && player.gender === 'MEN') {
                                 this.addedPlayerNotification(index, category.name)
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
-                            } else if (containsMen(category) && player.gender === 'K') {
+                            } else if (containsMen(category) && player.gender === 'WOMEN') {
                                 this.addedPlayerNotification(index, category.name)
                                 addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                                 foundPlace = true;
                                 break outside;
                             }
-                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'M') {
+                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'MEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
                             break outside;
-                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'K') {
+                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'WOMEN') {
                             this.addedPlayerNotification(index, category.name)
                             addPlayerPromise = this.addPlayerToCategory(squad, category, player)
                             foundPlace = true;
@@ -707,6 +701,7 @@ export default {
                         }
                     }
                 }
+                console.log(player)
             if (foundPlace === false) {
                 this.$buefy.snackbar.open(
                     {

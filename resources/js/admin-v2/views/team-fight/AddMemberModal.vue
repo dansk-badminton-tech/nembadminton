@@ -17,43 +17,116 @@ export default {
             vintage: 'SEN',
             club: null,
             points: [
-                {category: "LEVEL", label: "Niveau", points: 1000},
-                {category: "SINGLE", label: "Single", points: 1000},
-                {category: "DOUBLE", label: "Double", points: 1000},
-                {category: "MIXDOUBLE", label: "Mix double", points: 1000}
+                {id: null, category: "SINGLE", label: "Single", points: 1000},
+                {id: null, category: "DOUBLE", label: "Double", points: 1000},
+                {id: null, category: "MIXDOUBLE", label: "Mix double", points: 1000}
             ],
             loading: false
         }
     },
     computed: {
         vintageOptions: vintageOptions,
+        memberExists(){
+            return this.membersSearch?.data?.length > 0;
+        },
+        refId(){
+            return this.refBirthday + '-' + this.refEndId
+        },
+        versionMonth(){
+            return timeToMonth(this.version.toISOString().substring(0, 10))
+        }
     },
     apollo: {
         me: {
             query: ME
+        },
+        membersSearch: {
+            query: gql`query membersSearch($refId: String, $version: Date){
+                      membersSearch(refId: $refId) {
+                        data {
+                          id
+                          gender
+                          name
+                          refId
+                          points(version: $version){
+                            id
+                            points
+                            position
+                            category
+                            version
+                            vintage
+                          }
+                          clubs{
+                            id
+                            name1
+                            initialized
+                          }
+                        }
+                      }
+                    }
+                `,
+            variables() {
+                return {
+                    refId: this.refId,
+                    version: this.version.toISOString().slice(0, 10)
+                }
+            },
+            result({data}){
+                if(data.membersSearch.data.length > 0){
+                    let member = data.membersSearch.data[0]
+                    this.gender = member.gender
+                    this.name = member.name
+                    this.club = member.clubs[0].id
+                    this.points.forEach(point => {
+                        let remotePoints = data.membersSearch.data[0].points.find(pointItem => pointItem.category === convertCategoryAndGenderToFinalCategory(point.category, this.gender));
+                        if(remotePoints !== undefined){
+                            point.id = remotePoints.id
+                            point.points = remotePoints.points;
+                        }
+                    });
+                }
+                console.log(data)
+            },
+            fetchPolicy: "network-only"
         }
     },
     methods: {
-        timeToMonth,
         createMember(e) {
             this.loading = true
+            let memberId = null
+            if(this.membersSearch?.data?.length > 0){
+                memberId = this.membersSearch.data[0].id
+            }
             this.$apollo
                 .mutate({
                             mutation: gql`
-                                mutation createMember($input: CreateMemberInput!){
+                                mutation createMember($input: CreateMemberInput!, $version: Date){
                                     createMember(input: $input){
                                         id
                                         gender
+                                        name
+                                          refId
+                                          points(version: $version){
+                                            id
+                                            points
+                                            position
+                                            category
+                                            version
+                                            vintage
+                                          }
                                     }
                                 }
                             `,
                             variables: {
+                                version: this.version.toISOString().substring(0,10),
                                 input: {
+                                    id: memberId,
                                     gender: this.gender,
                                     name: this.name,
-                                    refId: this.refBirthday + '-' + this.refEndId,
+                                    refId: this.refId,
                                     points: {
-                                        create: this.points.map((point) => ({
+                                        upsert: this.points.map((point) => ({
+                                            id: point.id,
                                             category: convertCategoryAndGenderToFinalCategory(point.category, this.gender),
                                             points: point.points,
                                             vintage: this.vintage,
@@ -61,7 +134,7 @@ export default {
                                         }))
                                     },
                                     clubs: {
-                                        connect: [this.club]
+                                        upsert: [{id: this.club}]
                                     }
                                 }
                             }
@@ -100,17 +173,8 @@ export default {
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <b-message type="is-info">Brug kun denne funktion hvis spilleren ikke findes på nembadminton.dk men på badmintonplayer.dk.</b-message>
-                <p>Spilleren bliver oprettet på ranglisten <strong>{{ timeToMonth(this.version.toISOString().substring(0, 10)) }}</strong>, spilleren kan ses af <strong>alle</strong> som har klubben tilknyttet.</p>
+                <p>Spilleren bliver oprettet på ranglisten <strong>{{ versionMonth }}</strong>, spilleren kan ses af <strong>alle</strong> som har klubben tilknyttet.</p>
                 <hr/>
-                <b-field label="Navn">
-                    <b-input
-                        type="text"
-                        v-model="name"
-                        placeholder="Name"
-                        required>
-                    </b-input>
-                </b-field>
                 <b-field grouped label="Badmintonplayer ID">
                     <b-field expanded>
                         <b-field>
@@ -118,6 +182,15 @@ export default {
                             <b-input v-model="refEndId" type="text" minlength="2" maxlength="2" placeholder="XX" required></b-input>
                         </b-field>
                     </b-field>
+                </b-field>
+                <b-message v-if="memberExists" type="is-info">Brugeren med {{this.refId}} findes allerede i systemet. Der vil ikke blive oprettet en ny bruger, men i stedet vil brugerens point blive opdateret på {{versionMonth}} til de nye data.</b-message>
+                <b-field label="Navn">
+                    <b-input
+                        type="text"
+                        v-model="name"
+                        placeholder="Name"
+                        required>
+                    </b-input>
                 </b-field>
                 <b-field label="Køn">
                     <b-select v-model="gender" required expanded>
@@ -132,13 +205,13 @@ export default {
                 </b-field>
                 <b-field label="Klub">
                     <b-select v-model="club" expanded required>
-                        <option v-for="club in this.me?.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
+                        <option v-for="club in me?.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
                     </b-select>
                 </b-field>
                 <hr/>
                 <label class="label">Points</label>
                 <b-field horizontal :label="point.label" v-for="point in this.points" :key="point.category">
-                    <b-input type="number" v-model="point.points" required></b-input>
+                    <b-input type="number" v-model.number="point.points" required></b-input>
                 </b-field>
             </section>
             <footer class="modal-card-foot">

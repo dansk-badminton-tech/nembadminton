@@ -23,7 +23,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '821',
                                                             'name' => 'Mathilde Lund',
                                                             'refId' => '970325-01',
@@ -61,7 +61,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '822',
                                                             'name' => 'Søren Frandsen',
                                                             'refId' => '840901-01',
@@ -107,7 +107,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '840',
                                                             'name' => 'Astrid Krog Sørensen',
                                                             'refId' => '951108-04',
@@ -145,7 +145,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '824',
                                                             'name' => 'Philip Madsen',
                                                             'refId' => '980315-01',
@@ -191,7 +191,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '825',
                                                             'name' => 'Louise Holst',
                                                             'refId' => '930824-05',
@@ -237,7 +237,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '826',
                                                             'name' => 'Stinne B. Enevoldsen',
                                                             'refId' => '941101-03',
@@ -283,7 +283,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '827',
                                                             'name' => 'Martin Lindved',
                                                             'refId' => '911006-03',
@@ -329,7 +329,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '828',
                                                             'name' => 'Alexander Illum',
                                                             'refId' => '920326-18',
@@ -375,7 +375,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '829',
                                                             'name' => 'Stinne B. Enevoldsen',
                                                             'refId' => '941101-03',
@@ -413,7 +413,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '830',
                                                             'name' => 'Louise Holst',
                                                             'refId' => '930824-05',
@@ -459,7 +459,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '831',
                                                             'name' => 'Philip Madsen',
                                                             'refId' => '980315-01',
@@ -497,7 +497,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '832',
                                                             'name' => 'Søren Frandsen',
                                                             'refId' => '840901-01',
@@ -543,7 +543,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '833',
                                                             'name' => 'Alexander Illum',
                                                             'refId' => '920326-18',
@@ -581,7 +581,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '834',
                                                             'name' => 'Martin Lindved',
                                                             'refId' => '911006-03',
@@ -640,7 +640,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '835',
                                                             'name' => 'Maibritt Meldgaard',
                                                             'refId' => '981105-05',
@@ -678,7 +678,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '836',
                                                             'name' => 'Bastian Brænder',
                                                             'refId' => '921110-16',
@@ -724,7 +724,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '837',
                                                             'name' => 'Caroline Bohm Veng',
                                                             'refId' => '000128-10',
@@ -762,7 +762,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '838',
                                                             'name' => 'Stephan Hjelmdal Nielsen',
                                                             'refId' => '830421-01',
@@ -808,7 +808,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '839',
                                                             'name' => 'Louise Bolding Lund',
                                                             'refId' => '990618-10',
@@ -854,7 +854,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '823',
                                                             'name' => 'Anna Schøn',
                                                             'refId' => '900216-01',
@@ -900,7 +900,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '841',
                                                             'name' => 'Victor Tang Merit',
                                                             'refId' => '950326-02',
@@ -946,7 +946,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '842',
                                                             'name' => 'Casper Brix Bruun',
                                                             'refId' => '900704-11',
@@ -992,7 +992,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '843',
                                                             'name' => 'Anders Vestergaard',
                                                             'refId' => '900427-08',
@@ -1038,7 +1038,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '844',
                                                             'name' => 'Peter Philipsen',
                                                             'refId' => '960606-06',
@@ -1077,7 +1077,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '845',
                                                             'name' => 'Maibritt Meldgaard',
                                                             'refId' => '981105-05',
@@ -1115,7 +1115,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '823',
                                                             'name' => 'Anna Schøn',
                                                             'refId' => '900216-01',
@@ -1161,7 +1161,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '846',
                                                             'name' => 'Caroline Bohm Veng',
                                                             'refId' => '000128-10',
@@ -1199,7 +1199,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'K',
+                                                            'gender' => 'WOMEN',
                                                             'id' => '847',
                                                             'name' => 'Louise Bolding Lund',
                                                             'refId' => '990618-10',
@@ -1245,7 +1245,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '849',
                                                             'name' => 'Bastian Brænder',
                                                             'refId' => '921110-16',
@@ -1283,7 +1283,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '850',
                                                             'name' => 'Stephan Hjelmdal Nielsen',
                                                             'refId' => '830421-01',
@@ -1329,7 +1329,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '851',
                                                             'name' => 'Casper Brix Bruun',
                                                             'refId' => '900704-11',
@@ -1367,7 +1367,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '852',
                                                             'name' => 'Victor Tang Merit',
                                                             'refId' => '950326-02',
@@ -1413,7 +1413,7 @@ return [
                                                 [
                                                     0 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '853',
                                                             'name' => 'Anders Vestergaard',
                                                             'refId' => '900427-08',
@@ -1451,7 +1451,7 @@ return [
                                                         ],
                                                     1 =>
                                                         [
-                                                            'gender' => 'M',
+                                                            'gender' => 'MEN',
                                                             'id' => '854',
                                                             'name' => 'Peter Philipsen',
                                                             'refId' => '960606-06',

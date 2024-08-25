@@ -32,12 +32,12 @@
 
                                 <p class="fa-pull-left">
                                     <b-icon
-                                        v-show="player.gender === 'M'"
+                                        v-show="player.gender === 'MEN'"
                                         icon="mars"
                                         size="is-small">
                                     </b-icon>
                                     <b-icon
-                                        v-show="player.gender === 'K'"
+                                        v-show="player.gender === 'WOMEN'"
                                         icon="venus"
                                         size="is-small">
                                     </b-icon>

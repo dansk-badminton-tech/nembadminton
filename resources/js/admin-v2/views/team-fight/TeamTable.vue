@@ -54,12 +54,12 @@
                                 </template>
                                 <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
                                     <b-icon
-                                        v-show="player.gender === 'M'"
+                                        v-show="player.gender === 'MEN'"
                                         icon="gender-male"
                                         size="is-small">
                                     </b-icon>
                                     <b-icon
-                                        v-show="player.gender === 'K'"
+                                        v-show="player.gender === 'WOMEN'"
                                         icon="gender-female"
                                         size="is-small">
                                     </b-icon>
@@ -125,7 +125,6 @@ import {
     isYoungPlayer, parseDate,
     resolveToolTip
 } from "../../helpers";
-import PlayersListSearch from "./PlayersListSearch.vue";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditPlayerModal from "./EditPlayerModal.vue";
 import EditSquadModal from "./EditSquadModal.vue";
@@ -133,7 +132,7 @@ import {timeToMonth} from "./helper";
 
 export default {
     name: 'TeamTable',
-    components: {PlayerSearch, PlayersListSearch, Draggable},
+    components: {PlayerSearch, Draggable},
     props: {
         version: Date,
         clubId: String,
@@ -232,7 +231,7 @@ export default {
                 {
                     parent: this,
                     props: {
-                        value: player
+                        player: player
                     },
                     events: {
                         close() {

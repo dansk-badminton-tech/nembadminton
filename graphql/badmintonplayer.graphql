@@ -96,7 +96,7 @@ type ImportSquad{
 type ImportMember{
     refId: String!
     name: String!
-    gender: String!
+    gender: Gender!
     points: [ImportPoint!]
 }
 

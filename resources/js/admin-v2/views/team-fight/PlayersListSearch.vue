@@ -327,7 +327,7 @@ export default {
         if (this.hideCancellation) {
           return gql`
                         query memberSearchPoints(
-                            $version: String!,
+                            $version: Date!,
                             $page: Int,
                             $first: Int,
                             $name: String,
@@ -363,7 +363,7 @@ export default {
                     `
         } else {
           return gql`
-                        query memberSearchCancellation($teamId: String!, $version: String){
+                        query memberSearchCancellation($teamId: String!, $version: Date){
                             memberSearchCancellation(teamId: $teamId){
                                 data {
                                   id
@@ -407,7 +407,7 @@ export default {
           params.rankingList = this.rankingList
         }
         if (!!this.version) {
-          params.version = this.version.getFullYear() + "-" + (this.version.getMonth() + 1) + "-" + this.version.getDate()
+          params.version = this.version.toISOString().slice(0, 10)
         }
         if (!this.hideCancellation) {
           params.rankingList = 'ALL_LEVEL';

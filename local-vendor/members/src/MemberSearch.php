@@ -8,6 +8,7 @@ use App\Models\Member;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MemberSearch
@@ -39,7 +40,7 @@ class MemberSearch
         return $builder;
     }
 
-    private function applyRankingList(Builder $builder, string $rankingList, string $version)
+    private function applyRankingList(Builder $builder, string $rankingList, Carbon $version)
     {
         if ($rankingList === 'ALL_LEVEL') {
             $builder->whereNull('points.category')

@@ -5,7 +5,7 @@ import {debounce} from "../../helpers";
 
 export default {
     name: "EditPlayerModal",
-    props: ['value'],
+    props: ['player'],
     data() {
         return {
             loading: false
@@ -54,20 +54,20 @@ export default {
     <form action="">
         <div class="modal-card" style="width: auto">
             <header class="modal-card-head">
-                <p class="modal-card-title">Rediger <strong>{{ value.name }}</strong> points</p>
+                <p class="modal-card-title">Rediger <strong>{{ player.name }}</strong> points</p>
                 <button
                     type="button"
                     class="delete"
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <p>Ændringerne er kun lokale, så pointene ændres kun for denne spiller i denne kategori. Husk at opdatere pointene for samme spiller i anden kategori. En manuelt redigeret spiller er markeret med <b-icon type="is-info" icon="information" /></p>
+                <b-message type="is-warning">Ændringerne er kun lokale, så pointene ændres kun for denne spiller i denne kategori. Husk at opdatere pointene for samme spiller i anden kategori. En manuelt redigeret spiller er markeret med <b-icon type="is-info" icon="information" /></b-message>
                 <hr/>
-                <b-field v-for="points in value.points" :key="points.id" :label="resolveCategoryName(points.category)">
+                <b-field v-for="innerPoints in player.points" :key="innerPoints.id" :label="resolveCategoryName(innerPoints.category)">
                     <b-input
                         type="number"
-                        @input="updatePoint(points, $event)"
-                        v-model="points.points"
+                        @input="updatePoint(innerPoints, $event)"
+                        :value="innerPoints.points"
                         required>
                     </b-input>
                 </b-field>

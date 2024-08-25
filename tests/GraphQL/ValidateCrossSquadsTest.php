@@ -932,7 +932,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
                      'validateCrossSquads' => [
                          [
                              'refId'       => $women1->refId,
-                             'gender'      => 'K',
+                             'gender'      => 'WOMEN',
                              'belowPlayer' => [
                                  [
                                      'refId'    => $squad1Women2->refId,
@@ -1127,7 +1127,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
                                  ],
                              ],
                              'refId'       => $women1->refId,
-                             'gender'      => 'K',
+                             'gender'      => 'WOMEN',
                          ],
                      ],
                  ],
@@ -1374,7 +1374,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
                      'validateCrossSquads' => [
                          [
                              'refId'       => $men1->refId,
-                             'gender'      => 'M',
+                             'gender'      => 'MEN',
                              'belowPlayer' => [
                                  [
                                      'category' => 'MxH',
@@ -1388,7 +1388,7 @@ class ValidateCrossSquadsTest extends BaseTestCase
                          ],
                          [
                              'refId'       => $men2->refId,
-                             'gender'      => 'M',
+                             'gender'      => 'MEN',
                              'belowPlayer' => [
                                  [
                                      'category' => 'MxH',

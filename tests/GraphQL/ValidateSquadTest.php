@@ -49,10 +49,10 @@ class ValidateSquadTest extends BaseTestCase
         )->assertExactJson([
             'data' => [
                 'validateSquads' => [
-                    ["category"=>"HD","gender"=>"M","refId"=>"020202-1011"],
-                    ["category"=>"HD","gender"=>"M","refId"=>"030610-05"],
-                    ["category"=>"DD","gender"=>"K","refId"=>"040201-01"],
-                    ["category"=>"DD","gender"=>"K","refId"=>"970512-21"]
+                    ["category"=>"HD","gender"=>"MEN","refId"=>"020202-1011"],
+                    ["category"=>"HD","gender"=>"MEN","refId"=>"030610-05"],
+                    ["category"=>"DD","gender"=>"WOMEN","refId"=>"040201-01"],
+                    ["category"=>"DD","gender"=>"WOMEN","refId"=>"970512-21"]
                 ]
             ],
             'extensions' => [
@@ -123,12 +123,12 @@ class ValidateSquadTest extends BaseTestCase
                         [
                             'refId' => $women1->refId,
                             'category' => 'MD',
-                            'gender' => 'K'
+                            'gender' => 'WOMEN'
                         ],
                         [
                             'refId' => $men1->refId,
                             'category' => 'MD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ]
                     ]
                 ],
@@ -200,17 +200,17 @@ class ValidateSquadTest extends BaseTestCase
                         [
                             'refId' => $men3->refId,
                             'category' => 'HS',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men4->refId,
                             'category' => 'HS',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men5->refId,
                             'category' => 'HS',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                     ]
                 ],
@@ -282,22 +282,22 @@ class ValidateSquadTest extends BaseTestCase
                         [
                             'refId' => $men1->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men2->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men3->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men4->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                     ]
                 ],
@@ -369,32 +369,32 @@ class ValidateSquadTest extends BaseTestCase
                         [
                             'refId' => $women1->refId,
                             'category' => 'MD',
-                            'gender' => 'K'
+                            'gender' => 'WOMEN'
                         ],
                         [
                             'refId' => $men1->refId,
                             'category' => 'MD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men1->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men2->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men3->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                         [
                             'refId' => $men4->refId,
                             'category' => 'HD',
-                            'gender' => 'M'
+                            'gender' => 'MEN'
                         ],
                     ]
                 ],
@@ -510,7 +510,7 @@ class ValidateSquadTest extends BaseTestCase
                          [
                              'refId' => $men3->refId,
                              'category' => 'HS',
-                             'gender' => 'M'
+                             'gender' => 'MEN'
                          ]
                      ]
                  ],

@@ -87,11 +87,6 @@ class ImportPoints implements ShouldQueue
                         Log::info("Updating $player->name($player->gender) mix points to {$player->mixPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
                         $pointsManager->addPointsByMember($member, $player->mixPoints, 0, $rankingList->getVersionDateCarbon(), $player->getMixCategory()->value, $player->getVintage()->value);
                     }
-
-                    if($player->niveauPoints !== 0 && $player->niveauPoints !== null) {
-                        Log::info("Updating $player->name($player->gender) level points to {$player->niveauPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
-                        $pointsManager->addPointsByMember($member, $player->niveauPoints, 0, $rankingList->getVersionDateCarbon(), null, $player->getVintage()->value);
-                    }
                 }
             }
         });
