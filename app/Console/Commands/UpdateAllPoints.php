@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\BadmintonPlayerImportMembers;
 use App\Jobs\BadmintonPlayerImportPoints;
+use App\Models\Club;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -32,9 +33,10 @@ class UpdateAllPoints extends Command
      */
     public function handle()
     {
-        $usersWithClubId = User::query()->groupBy('organization_id')->get(['organization_id']);
-        foreach ($usersWithClubId as $item){
-            BadmintonPlayerImportPoints::dispatch($item->organization_id);
+        /** @var Club[] $clubs */
+        $clubs = Club::query()->where('initialized', '=', 1)->get();
+        foreach ($clubs as $club){
+            BadmintonPlayerImportPoints::dispatch($club->badmintonPlayerId);
         }
         return 0;
     }

@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use App\Notifications\Release;
 use FlyCompany\Scraper\BadmintonPlayer;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\TeamManager;
@@ -37,8 +38,11 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamManager $teamManager)
+    public function handle(TeamManager $teamManager ,BadmintonPlayer $scraper)
     {
-        $teamManager->addPlayerToSquadByRefId('900910-17', 12666, '2023-09-01');
+        $versions = $scraper->getVersions(BadmintonPlayerHelper::getCurrentSeason());
+        $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($versions);
+
+        dd($rankingMonths);
     }
 }

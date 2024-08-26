@@ -643,8 +643,6 @@ class BadmintonPlayer
     {
         if ($gender === null) {
             return [
-                'DL',
-                'HL',
                 'HS',
                 'DS',
                 'HD',
@@ -656,7 +654,6 @@ class BadmintonPlayer
 
         if ($gender === 'K') {
             return [
-                'DL',
                 'DS',
                 'DD',
                 'MxD',
@@ -665,7 +662,6 @@ class BadmintonPlayer
 
         if ($gender === 'M') {
             return [
-                'HL',
                 'HS',
                 'HD',
                 'MxH',

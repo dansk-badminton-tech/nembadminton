@@ -55,7 +55,7 @@ class BadmintonPlayerImportPoints implements ShouldQueue
         if($this->rankingList !== null){
             $rankingLists = [$this->rankingList->value];
         }else{
-            $rankingLists = BadmintonPlayer::rankingLevelLists();
+            $rankingLists = BadmintonPlayer::rankingLists();
         }
 
         $seasons = [BadmintonPlayerHelper::getCurrentSeason()];
@@ -64,7 +64,8 @@ class BadmintonPlayerImportPoints implements ShouldQueue
             foreach ($seasons as $season){
                 \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season", 'points-importer');
                 /** @var Collection|Carbon[] $rankingMonths */
-                $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($scraper->getVersions($season));
+                $versions = $scraper->getVersions($season);
+                $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($versions);
                 $rankingMonths = $rankingMonths->pop(2);
                 foreach ($rankingMonths as $starting){
                     $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
@@ -72,7 +73,7 @@ class BadmintonPlayerImportPoints implements ShouldQueue
                         $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
                         foreach ($player->points as $point) {
                             try {
-                                Log::info("Updating $player->name $player->refId {$point->getVintage()} {$point->getPoints()} $starting $rankingListNormalized");
+                                Log::info("Updating $player->name $player->refId {$point->getVintage()} {$point->getPoints()} $starting $rankingListNormalized $rankingList");
                                 $pointsManager->addPointsByRefId($player->refId, $point->getPoints(), $point->getPosition(), $starting, $rankingListNormalized, $point->getVintage());
                             } catch (ModelNotFoundException) {
                                 Log::info("Skipping: $player->name could not find player");
