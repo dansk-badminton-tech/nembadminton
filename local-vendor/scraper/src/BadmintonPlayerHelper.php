@@ -41,7 +41,7 @@ class BadmintonPlayerHelper
             return $carbon;
         }, $versions), 'is_object'));
         sort($carbons);
-        return array_filter($carbons, static function(Carbon $carbon){return $carbon > BadmintonPlayerHelper::getCurrentSeasonStart(); });
+        return array_filter($carbons, static function(Carbon $carbon){return $carbon >= BadmintonPlayerHelper::getCurrentSeasonStart(); });
     }
 
     /**
@@ -102,7 +102,7 @@ class BadmintonPlayerHelper
     }
 
     public static function makeSeasonStart(int $seasonStartYear) : Carbon {
-        return Carbon::createFromDate($seasonStartYear, 8,1);
+        return Carbon::createFromDate($seasonStartYear, 8,1)->setTime(0, 0, 0);
     }
 
 }
