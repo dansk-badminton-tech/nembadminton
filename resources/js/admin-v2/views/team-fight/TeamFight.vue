@@ -42,6 +42,12 @@
                         {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
                     </b-tooltip>
                 </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
+                    <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
+                        <b-icon icon="update"></b-icon>
+                        Opdater spiller point
+                    </b-tooltip>
+                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
                     <b-icon icon="content-copy"></b-icon>
                     Kopier hele holdet
