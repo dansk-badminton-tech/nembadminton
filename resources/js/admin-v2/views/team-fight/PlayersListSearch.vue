@@ -363,8 +363,12 @@ export default {
                     `
         } else {
           return gql`
-                        query memberSearchCancellation($teamId: String!, $version: Date){
-                            memberSearchCancellation(teamId: $teamId){
+                        query memberSearchCancellation(
+                        $teamId: String!,
+                        $version: Date,
+                        $page: Int,
+                        $first: Int){
+                            memberSearchCancellation(teamId: $teamId, page: $page, first: $first){
                                 data {
                                   id
                                   name
