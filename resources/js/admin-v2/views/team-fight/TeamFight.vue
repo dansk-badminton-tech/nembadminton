@@ -142,7 +142,7 @@ import Draggable from "vuedraggable"
 import gql from "graphql-tag"
 import {
     containsMen,
-    containsWomen,
+    containsWomen, extractErrorMessages,
     isMensDouble,
     isMensSingle,
     isMixDouble,
@@ -529,14 +529,15 @@ export default {
                 .then(({data}) => {
                     this.playingToHighSquadList = data.validateSquads;
                 })
-                .catch((error) => {
+                .catch(({graphQLErrors}) => {
                     this.errorValidatingCategory = true;
+                    const errorMessages = extractErrorMessages(graphQLErrors);
                     this.$buefy.snackbar.open(
                         {
-                            duration: 4000,
+                            duration: 5000,
                             type: 'is-danger',
                             queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validateSquad)`
+                            message: 'Noget gik galt under intern valideringen af holdet. <br/><br /> '+errorMessages.join(', ')
                         })
                 })
         },
@@ -575,7 +576,7 @@ export default {
                             duration: 4000,
                             type: 'is-danger',
                             queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validate)`
+                            message: `Noget gik galt under valideringen af holdet (crossSquadsValidate)`
                         })
                 })
         },

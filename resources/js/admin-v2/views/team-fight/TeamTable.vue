@@ -37,7 +37,7 @@
                         @dragover.prevent
                         @dragenter.prevent>
                         <div draggable="true"
-                             v-for="player in category.players"
+                             v-for="(player, index) in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
                              :key="player.id"
                              :data-player-id="player.id"
@@ -86,7 +86,7 @@
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
-                                          @click="openEditPlayerModal(squad, category, player)"></b-button>
+                                          @click="openEditPlayerModal(category, index)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
@@ -112,13 +112,25 @@
                 </tbody>
             </table>
         </div>
+        <b-modal
+            v-model="showPlayerModal"
+            :can-cancel="['x']"
+            has-modal-card
+            trap-focus
+            @close="closeEditPlayerModal"
+        >
+            <template #default="props">
+                <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
+            </template>
+        </b-modal>
     </div>
 </template>
 <script>
 import Draggable from "vuedraggable"
 import {
     compareDatesByYearMonthDay,
-    findPositions, getCurrentSeason,
+    findPositions as findPositionHelper,
+    getCurrentSeason,
     highlight as simpleHighlight,
     isDoubleCategory,
     isPlayingToHighByBadmintonPlayerId,
@@ -126,13 +138,13 @@ import {
     resolveToolTip
 } from "../../helpers";
 import PlayerSearch from "../common/PlayerSearch.vue";
-import EditPlayerModal from "./EditPlayerModal.vue";
 import EditSquadModal from "./EditSquadModal.vue";
 import {timeToMonth} from "./helper";
+import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 
 export default {
     name: 'TeamTable',
-    components: {PlayerSearch, Draggable},
+    components: {EditPlayerModal, PlayerSearch, Draggable},
     props: {
         version: Date,
         clubId: String,
@@ -164,6 +176,12 @@ export default {
     computed: {
         getCurrentSeason
     },
+    data(){
+        return {
+            modalPlayer: {},
+            showPlayerModal: false
+        }
+    },
     methods: {
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
@@ -183,10 +201,6 @@ export default {
             if (sourceSquad.id !== targetSquad.id || targetCategory.id !== sourceCategory.id) {
                 this.playerMove(evt, player, sourceSquad, sourceCategory, targetSquad, targetCategory)
             }
-        },
-        setSquadLeague(squad, league) {
-            squad.league = league
-            this.updateSquad(squad)
         },
         isYoungPlayer,
         isDouble(category) {
@@ -211,7 +225,13 @@ export default {
         isPlayingToHighInSquad(player, category) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHighInSquad, player, category);
         },
-        findPositions,
+        findPositions(player, category){
+            let result = findPositionHelper(player, category)
+            if(result === null){
+                return category+': Ingen point'
+            }
+            return result
+        },
         hasCorrectedPoints(points) {
             return points.some((point) => point.corrected_manually)
         },
@@ -226,22 +246,12 @@ export default {
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
         },
-        openEditPlayerModal(squad, category, player) {
-            this.$buefy.modal.open(
-                {
-                    parent: this,
-                    props: {
-                        player: player
-                    },
-                    events: {
-                        close() {
-                        }
-                    },
-                    canCancel: ["x"],
-                    component: EditPlayerModal,
-                    hasModalCard: true,
-                    trapFocus: true
-                })
+        closeEditPlayerModal(){
+            this.modalPlayer = {}
+        },
+        openEditPlayerModal(category, index) {
+            this.modalPlayer = category.players[index]
+            this.showPlayerModal = true
         },
         openEditSquadModal(squad) {
             this.$buefy.modal.open(

@@ -1,14 +1,58 @@
 <script>
 
 import gql from "graphql-tag";
-import {debounce} from "../../helpers";
+import {categories, debounce} from "../../helpers";
+import EditPlayerAddPoint from "@/views/team-fight/EditPlayerAddPoint.vue";
+import {difference, uniq} from "lodash/array.js";
+import {isEmpty} from "lodash/lang.js";
 
 export default {
     name: "EditPlayerModal",
-    props: ['player'],
+    components: {EditPlayerAddPoint},
+    props: ['player', 'version'],
     data() {
         return {
-            loading: false
+            loading: false,
+            squadMember: {}
+        }
+    },
+    computed:{
+        hasMissingCategories(){
+            const missingCategories1 = this.missingCategories || [];
+            return missingCategories1.length > 0
+        },
+        missingCategories() {
+            if (!isEmpty(this.squadMember)) {
+                const uniqueExistingCategories = uniq(this.squadMember.points.map(item => item.category));
+                return difference(categories(this.squadMember.gender), uniqueExistingCategories)
+            }
+        }
+    },
+
+    apollo: {
+        squadMember: {
+            query: gql`
+                query getSquadMember($id: ID!) {
+                    squadMember(id: $id) {
+                        id
+                        name
+                        gender
+                        vintage
+                        points {
+                            id
+                            points
+                            category
+                            position
+                            vintage
+                        }
+                    }
+                }
+            `,
+            variables() {
+                return {
+                    id: this.player.id
+                }
+            }
         }
     },
     methods: {
@@ -54,7 +98,7 @@ export default {
     <form action="">
         <div class="modal-card" style="width: auto">
             <header class="modal-card-head">
-                <p class="modal-card-title">Rediger <strong>{{ player.name }}</strong> points</p>
+                <p class="modal-card-title">Rediger <strong>{{ squadMember.name }}</strong> points</p>
                 <button
                     type="button"
                     class="delete"
@@ -63,7 +107,7 @@ export default {
             <section class="modal-card-body">
                 <b-message type="is-warning">Ændringerne er kun lokale, så pointene ændres kun for denne spiller i denne kategori. Husk at opdatere pointene for samme spiller i anden kategori. En manuelt redigeret spiller er markeret med <b-icon type="is-info" icon="information" /></b-message>
                 <hr/>
-                <b-field v-for="innerPoints in player.points" :key="innerPoints.id" :label="resolveCategoryName(innerPoints.category)">
+                <b-field v-for="innerPoints in squadMember.points" :key="innerPoints.id" :label="resolveCategoryName(innerPoints.category)">
                     <b-input
                         type="number"
                         @input="updatePoint(innerPoints, $event)"
@@ -71,6 +115,7 @@ export default {
                         required>
                     </b-input>
                 </b-field>
+                <EditPlayerAddPoint v-if="hasMissingCategories" :version="this.version" :missing-categories="missingCategories" :player="squadMember"/>
             </section>
             <footer class="modal-card-foot">
                 <b-button
@@ -83,6 +128,3 @@ export default {
     </form>
 </template>
 
-<style scoped>
-
-</style>
