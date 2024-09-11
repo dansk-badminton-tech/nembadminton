@@ -80,7 +80,6 @@
 
 import gql from 'graphql-tag'
 import {convertRankingToCategory, debounce, findLevel} from "../../helpers";
-import EditPlayerModal from "./EditPlayerModal.vue";
 import AddMemberModal from "./AddMemberModal.vue";
 
 export default {
