@@ -37,7 +37,7 @@
                         @dragover.prevent
                         @dragenter.prevent>
                         <div draggable="true"
-                             v-for="(player, index) in category.players"
+                             v-for="player in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
                              :key="player.id"
                              :data-player-id="player.id"
@@ -86,7 +86,7 @@
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
-                                          @click="openEditPlayerModal(category, index)"></b-button>
+                                          @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
@@ -249,8 +249,8 @@ export default {
         closeEditPlayerModal(){
             this.modalPlayer = {}
         },
-        openEditPlayerModal(category, index) {
-            this.modalPlayer = category.players[index]
+        openEditPlayerModal(player) {
+            this.modalPlayer = player
             this.showPlayerModal = true
         },
         openEditSquadModal(squad) {
