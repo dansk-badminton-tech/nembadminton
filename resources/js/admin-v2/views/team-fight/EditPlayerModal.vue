@@ -89,6 +89,14 @@ export default {
                 .finally(() => {
                     this.loading = false
                 })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            message: `Kunne ikke opdater point :(`
+                        })
+                })
         }, 500)
     }
 }

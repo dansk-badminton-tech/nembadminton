@@ -66,8 +66,12 @@ export default {
                     console.log(response.data);
                 })
                 .catch(error => {
-                    // Handle the error if needed
-                    console.error(error);
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            message: `Kunne ikke tilføje point :(`
+                        })
                 })
                 .finally(() => {
                     this.loading = false
