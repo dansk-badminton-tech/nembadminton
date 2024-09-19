@@ -145,7 +145,7 @@
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
                                 ({{ findPositions(player, 'N') + ' ' + findPositions(player, props.row.category) }})
                             </p>
-                            <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
+                            <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                         </b-tooltip>
                     </b-table-column>
                     <b-table-column width="30%" :td-attrs="(row, column) => resolveAttrs(row, column, team)" v-slot="props" field="results" label="Result">

@@ -46,28 +46,8 @@ export function findPlayersInCategory(categories, searchCategory, gender) {
     return players;
 }
 
-export function isYoungPlayer(player, category) {
-    if (!player.points) {
-        return false
-    }
-    for (let point of player.points) {
-        if (point.vintage === '' || point.vintage === null) {
-            return false;
-        } else {
-            if (category === 'MD') {
-                if (player.gender === 'MEN' && point.category === 'MxH') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-                if (player.gender === 'WOMEN' && point.category === 'MxD') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-            }
-            if (point.category === category) {
-                return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-            }
-        }
-    }
-    return false;
+export function isYoungPlayer(player) {
+    return player.vintage.toUpperCase() === 'U17' || player.vintage.toUpperCase() === 'U19'
 }
 
 export function resolveGenderFromCategoryShort(category){

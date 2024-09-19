@@ -46,7 +46,7 @@
                                         findPositions(player, category.category)
                                     }})
                                 </p>
-                                <b-tag v-if="isYoungPlayer(player, null)">U17/U19</b-tag>
+                                <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                             </div>
                         </td>
                     </tr>
@@ -116,6 +116,7 @@ export default {
                                 gender
                                 name
                                 refId
+                                vintage
                                 points{
                                     category
                                     points
