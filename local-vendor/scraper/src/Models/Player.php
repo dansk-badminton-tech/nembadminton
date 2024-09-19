@@ -26,6 +26,8 @@ class Player
 
     public string $rankingList;
 
+    public string $vintage;
+
     /**
      * This can happen is a player is not plotted in on badmintonplayer.dk
      * @return bool

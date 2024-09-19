@@ -198,6 +198,7 @@ class Parser
             $player->name = $name;
             $player->refId = $refId;
             $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
+            $player->vintage = $player->calculateVintage()->value;
             $point = new Point((int)$points, (int)$position, $vintage);
             $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
             $player->points = [$point];
