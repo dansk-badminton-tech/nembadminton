@@ -161,7 +161,7 @@ class BadmintonPlayer
 
         //Log::debug("HTML: $html");
 
-        return $this->parser->clubTeams($html);
+        return $this->parser->clubTeams($html, $clubId);
     }
 
     /**

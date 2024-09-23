@@ -61,7 +61,7 @@ class Parser
         return $teams;
     }
 
-    public function clubTeams(string $html) : array
+    public function clubTeams(string $html, int $clubId) : array
     {
         $document = new Document($html);
         $trs = $document->find('table.clubgrouplist tr.grouprow');
@@ -77,6 +77,7 @@ class Parser
             $team->leagueGroupId = $leagueGroupId;
             $team->ageGroupId = $ageGroupId;
             $team->league = $teamTr->find('td')[1]->text();
+            $team->clubId = $clubId;
 
             $teams[] = $team;
         }

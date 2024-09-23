@@ -1,4 +1,9 @@
 extend type Query{
+    membersSearchPublic(
+        name: String @where(operator: "like"),
+        gender: [Gender!] @in,
+        orderBy: _ @orderBy(columns: ["name"])
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
     membersSearch(
         name: String @where(operator: "like"),
         refId: String @where

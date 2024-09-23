@@ -2,44 +2,48 @@
 import gql from "graphql-tag";
 import _ from "lodash/fp.js";
 import TeamFights from "@/views/cancellation/TeamFights.vue";
+import {getCurrentSeason} from "@/helpers.js";
+import Form from "@/components/Kustomer/Partials/Form.vue";
+import Teams from "@/views/cancellation/Teams.vue";
+import MemberSearchCancellation from "./MemberSearchCancellation.vue";
 
 export default {
     name: "CancellationPublic",
     props: {"sharingId": String},
-    components: {TeamFights},
-    computed: {
-        collapsedTeams() {
-            return _.uniqBy('name', this.badmintonPlayerTeams)
-        },
-    },
-    data(){
+    components: {Teams, Form, TeamFights, MemberSearchCancellation},
+    data() {
         return {
+            form: {
+                selectedTeamFights: [],
+                selectedPlayer: {},
+                email: ''
+            },
             selectedTeams: [],
             badmintonPlayerTeamFightsBulk: [],
-            selectedTeamFights: []
+            cancellationCollectorPublic: {
+                clubs: []
+            }
         }
     },
     apollo: {
-        badmintonPlayerTeams: {
+        cancellationCollectorPublic: {
             query: gql`
-                query badmintonPlayerTeams($input: BadmintonPlayerTeamsInput){
-                                badmintonPlayerTeams(input: $input){
-                                    name
-                                    ageGroupId
-                                    league
-                                    leagueGroupId
-                                }
-            }`,
-            variables(){
-                return {
-                    input: {
-                        season: 2024,
-                        clubId: 1124
+                query cancellationCollectorPublic($sharingId: String!){
+                    cancellationCollectorPublic(sharingId: $sharingId){
+                        id
+                        clubs {
+                            id
+                        }
                     }
                 }
+                `,
+            variables() {
+                return {
+                    sharingId: this.sharingId
+                }
             },
-            error(err){
-                this.$buefy.toast.open({message: `Error fetching teams`, type: "is-danger", duration: 5000});
+            error(err) {
+                this.$buefy.toast.open({message: `Error fetching cancellation collector`, type: "is-danger", duration: 5000});
             }
         },
         badmintonPlayerTeamFightsBulk: {
@@ -53,20 +57,50 @@ export default {
                                     teams
                                 }
             }`,
-            variables(){
+            variables() {
                 return {
                     input: this.selectedTeams.map(t => ({
-                        season: 2024,
-                        clubId: 1124,
+                        season: getCurrentSeason(),
+                        clubId: t.clubId,
                         ageGroupId: Number(t.ageGroupId),
                         leagueGroupId: Number(t.leagueGroupId),
                         clubName: t.name
                     }))
                 }
             },
-            error(err){
-                this.$buefy.toast.open({message:`Error fetching teams rounds`, type: "is-danger", duration: 5000});
+            error(err) {
+                this.$buefy.toast.open({message: `Error fetching teams rounds`, type: "is-danger", duration: 5000});
             }
+        }
+    },
+    methods: {
+        createCancellation(){
+            this.$apollo.mutate({
+                mutation: gql`
+                    mutation createCancellationViaCollector($sharingId: String!, $input: CancellationViaCollectorInput!){
+                        createCancellationViaCollector(sharingId: $sharingId, input: $input){
+                            success
+                        }
+                    }
+                `,
+                variables: {
+                    sharingId: this.sharingId,
+                    input: {
+                        name: this.form.name,
+                        email: this.form.email,
+                        teamFights: this.form.selectedTeamFights.map(tf => ({
+                            gameTime: tf.gameTime,
+                            matchId: tf.matchId,
+                            round: tf.round,
+                            roundDate: tf.roundDate,
+                            teams: tf.teams
+                        }))
+                    }
+                }
+                                })
+                .then((data) => {
+                    console.log(data)
+            })
         }
     }
 }
@@ -75,20 +109,24 @@ export default {
 
 <template>
     <section>
+        <form @submit.prevent="createCancellation">
             <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
-            <b-field label="Holdene" message="Vælg de hold som du vil melde afbud til">
-                <b-checkbox size="is-medium" v-for="team in collapsedTeams" :key="team.name" v-model="selectedTeams"
-                            :native-value="team">
-                    {{team.name}} - {{team.league}}
-                </b-checkbox>
+            <b-field label="Dit navn">
+                <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
-        <hr>
+            <b-field label="Dit email" message="Bruges til at sende en kvittering">
+                <b-input type="email" v-model="form.email" required/>
+            </b-field>
+            <teams :clubs="cancellationCollectorPublic.clubs" v-model="selectedTeams"/>
+            <hr>
+            {{selectedTeams}}
             <strong>Vælg hvilke(n) holdkamp(e) du vil melde afbud til</strong>
+            <p v-if="selectedTeams.length === 0">Ingen hold valgt</p>
             <div class="columns is-multiline mt-2">
-                <TeamFights v-model="selectedTeamFights" :data="badmintonPlayerTeamFightsBulk"/>
+                <TeamFights v-model="form.selectedTeamFights" :data="badmintonPlayerTeamFightsBulk"/>
             </div>
-            {{selectedTeamFights}}
-            <b-button type="is-info" expanded size="is-medium" class="is-pulled-right">Meld afbud</b-button>
+            <b-button native-type="submit" expanded size="is-medium">Meld afbud</b-button>
+            {{ form }}
+        </form>
     </section>
 </template>
-

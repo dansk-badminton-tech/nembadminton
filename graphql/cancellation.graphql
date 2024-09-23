@@ -1,39 +1,67 @@
 extend type Query{
     membersCancellationSearch(
-        clubId: Int! @scope(name: "club")
+        clubIds: [Int!]! @scope(name: "clubs")
         name: String @where(operator: "like"),
         orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
-    confirmCancellation(refId: String!) : ConfirmCancellation  @field(resolver: "FlyCompany\\Members\\GraphQL\\Mutation\\CancellationConfirm")
-    updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
-    createCancellation(refId: String!, teamId: ID) : Cancellation @create
-    deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+    ): [Member!]! @paginate
     cancellationCollector : CancellationCollector @find(scopes: ["currentUser"]) @guard
+    cancellationCollectorPublic(sharingId: String! @eq(key: "sharing_id")) : CancellationCollector @find
 }
 
 extend type Mutation {
+    createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
+    deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
+    updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
+    createCancellationViaCollector(sharingId: String!, input: CancellationViaCollectorInput!) : CancellationViaCollector @field(resolver: "\\FlyCompany\\Members\\GraphQL\\Mutation\\CreateCancellationViaCollector")
     createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id")
     updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard
     deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @guard
 }
 
-input CancellationCollectionInput {
-    email: String! @rules(apply: ["required", "email"])
+
+type CancellationViaCollector {
+    success: Boolean
 }
 
-type ConfirmCancellation {
-    email_attached: Boolean
-    email_pattern: String
+input CancellationViaCollectorInput {
+    email: String!
+    member: Int!
+    teamFights: [TeamFightInput!]!
+}
+
+input TeamFightInput {
+    gameTime: DateTime!
+    matchId: Int!
+    round: Int!
+    roundDate: Date!
+    teams: [String!]!
+}
+
+input CancellationCollectionInput {
+    email: String! @rules(apply: ["required", "email"])
+    clubs: ClubBelongsToMany
+}
+
+input ClubBelongsToMany {
+    connect: [ID!]!
 }
 
 type CancellationCollector {
     id: ID!
     "Email for notifying"
-    email: String!
+    email: String! @guard
+    "Clubs"
+    clubs: [Club!]!
     "Sharing ID"
     sharingId: String! @rename(attribute: "sharing_id")
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
     createdAt: DateTime @rename(attribute: "created_at")
+}
+
+type Cancellation {
+    id: ID
+    refId: String!
+    teamId: String
 }

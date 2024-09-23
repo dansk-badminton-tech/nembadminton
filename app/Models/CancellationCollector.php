@@ -6,13 +6,15 @@ use App\Util\Util;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 
 class CancellationCollector extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email', 'user_id'];
+    protected $fillable = ['email', 'user_id', 'club_id'];
 
     protected static function booted()
     {
@@ -21,9 +23,13 @@ class CancellationCollector extends Model
         });
     }
 
-
     public function scopeCurrentUser(Builder $query) : Builder
     {
         return $query->where('user_id', Auth::user()->id);
+    }
+
+    public function clubs() : BelongsToMany
+    {
+        return $this->belongsToMany(Club::class, 'cancellation_collector_clubs', 'cancellation_collector_id', 'club_id');
     }
 }

@@ -92,10 +92,10 @@ class Member extends Model
         return $builder->has('points');
     }
 
-    public function scopeClub(Builder $builder, int $clubId) : Builder
+    public function scopeClubs(Builder $builder, array $clubIds) : Builder
     {
-        return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
-            $builder->where('id', $clubId);
+        return $builder->whereHas('clubs', function (Builder $builder) use ($clubIds) {
+            $builder->whereIn('id', $clubIds);
         });
     }
 

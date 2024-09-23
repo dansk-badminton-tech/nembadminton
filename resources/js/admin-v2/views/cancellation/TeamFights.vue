@@ -4,8 +4,8 @@
             <div class="box">
                 Runde {{key}}
                 <hr class="pt-0">
-                <b-field :key="fight" v-for="fight in fights">
-                    <b-checkbox v-model="value" :native-value="fight">
+                <b-field :key="fight.matchId" v-for="fight in fights">
+                    <b-checkbox v-model="selectedTeamMatch" :native-value="fight">
                         {{fight.gameTime}}:
                         {{fight.teams.slice(0,2).join(' VS ')}}
                     </b-checkbox>

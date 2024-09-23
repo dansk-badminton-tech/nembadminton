@@ -1,28 +1,13 @@
 <?php
 
 
-namespace FlyCompany\Scraper\GraphQL\Queries;
+namespace FlyCompany\Members\GraphQL\Mutation;
 
-use App\Models\Teams;
-use FlyCompany\Scraper\BadmintonPlayer;
-use FlyCompany\TeamFight\Enricher;
-use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class BadmintonPlayerTeams
+class CreateCancellationViaCollector
 {
-
-    /**
-     * @var BadmintonPlayer
-     */
-    private BadmintonPlayer $scraper;
-
-
-    public function __construct(BadmintonPlayer $scraper)
-    {
-        $this->scraper = $scraper;
-    }
 
     /**
      * Return a value for the field.
@@ -40,9 +25,9 @@ class BadmintonPlayerTeams
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $clubId = $args['clubId'];
-        $season = $args['season'];
 
-        return $this->scraper->getClubTeams($season, $clubId);
+        dd($args);
+
     }
+
 }

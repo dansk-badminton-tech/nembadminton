@@ -10,7 +10,7 @@ use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class BadmintonPlayerTeams
+class BadmintonPlayerTeamsBulk
 {
 
     /**
@@ -18,6 +18,15 @@ class BadmintonPlayerTeams
      */
     private BadmintonPlayer $scraper;
 
+    /**
+     * @var Enricher
+     */
+    private Enricher $enricher;
+
+    /**
+     * @var SquadManager
+     */
+    private SquadManager $squadManager;
 
     public function __construct(BadmintonPlayer $scraper)
     {
@@ -40,9 +49,13 @@ class BadmintonPlayerTeams
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $clubId = $args['clubId'];
-        $season = $args['season'];
 
-        return $this->scraper->getClubTeams($season, $clubId);
+        $results = [];
+        foreach ($args['input'] as $arg){
+            $clubId = $arg['clubId'];
+            $season = $arg['season'];
+            $results = array_merge($this->scraper->getClubTeams($season, $clubId), $results);
+        }
+        return $results;
     }
 }

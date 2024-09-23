@@ -3,6 +3,8 @@ extend type Query {
     badmintonPlayerClubs: [OptionClub] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions")
     "Teams from a club (scraping badmintonplayer.dk)"
     badmintonPlayerTeams(input: BadmintonPlayerTeamsInput @spread): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams")
+    "Teams from a clubs (scraping badmintonplayer.dk)"
+    badmintonPlayerTeamsBulk(input: [BadmintonPlayerTeamsInput!]!): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamsBulk")
     "Team fights for a team (scraping badmintonplayer.dk)"
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
     "Team fights for teams (scraping badmintonplayer.dk)"
@@ -41,6 +43,7 @@ type BadmintonPlayerTeam {
     ageGroupId: String!
     name: String!
     league: String!
+    clubId: Int!
 }
 
 input BadmintonPlayerTeamMatchesInput {
