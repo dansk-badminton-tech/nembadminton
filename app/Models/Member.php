@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string  refId
  * @property string  name
  * @property string  gender
+ * @property string  email
  * @property Point[] points
  * @property User    owner
  * @package App\Models

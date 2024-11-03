@@ -6,23 +6,42 @@ import {getCurrentSeason} from "@/helpers.js";
 import Form from "@/components/Kustomer/Partials/Form.vue";
 import Teams from "@/views/cancellation/Teams.vue";
 import MemberSearchCancellation from "./MemberSearchCancellation.vue";
+import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";
 
 export default {
     name: "CancellationPublic",
     props: {"sharingId": String},
-    components: {Teams, Form, TeamFights, MemberSearchCancellation},
+    components: {TeamMatchCalendar, Teams, Form, TeamFights, MemberSearchCancellation},
     data() {
         return {
             form: {
-                selectedTeamFights: [],
                 selectedPlayer: {},
-                email: ''
+                additionalInfo: "",
+                email: '',
+                selectedDates: []
             },
             selectedTeams: [],
             badmintonPlayerTeamFightsBulk: [],
             cancellationCollectorPublic: {
                 clubs: []
             }
+        }
+    },
+    computed: {
+        hasSelectedPlayer(){
+            return Object.keys(this.form.selectedPlayer).length > 0
+        },
+        showClubNames() {
+            if (this.cancellationCollectorPublic.clubs.length === 0) {
+                return "Ingen klubber"
+            }
+            return this.cancellationCollectorPublic.clubs.map(club => club.name1).join(", ")
+        },
+        isAtleastOneDateSelected() {
+            return this.form.selectedDates.length > 0
+        },
+        resolveSelectedDatesIntoHtml() {
+            return this.form.selectedDates.map(d => '<li>'+d.toISOString().substring(0, 10)+'</li>').join("")
         }
     },
     apollo: {
@@ -33,6 +52,7 @@ export default {
                         id
                         clubs {
                             id
+                            name1
                         }
                     }
                 }
@@ -74,7 +94,16 @@ export default {
         }
     },
     methods: {
+        resetForm(){
+            this.form = {
+                selectedPlayer: {},
+                additionalInfo: "",
+                email: '',
+                selectedDates: []
+            }
+        },
         createCancellation(){
+            this.sendingCancellation = true;
             this.$apollo.mutate({
                 mutation: gql`
                     mutation createCancellationViaCollector($sharingId: String!, $input: CancellationViaCollectorInput!){
@@ -86,47 +115,77 @@ export default {
                 variables: {
                     sharingId: this.sharingId,
                     input: {
-                        name: this.form.name,
+                        name: this.form.selectedPlayer.name,
+                        refId: this.form.selectedPlayer.refId,
                         email: this.form.email,
-                        teamFights: this.form.selectedTeamFights.map(tf => ({
-                            gameTime: tf.gameTime,
-                            matchId: tf.matchId,
-                            round: tf.round,
-                            roundDate: tf.roundDate,
-                            teams: tf.teams
-                        }))
+                        message: this.form.additionalInfo,
+                        dates: this.form.selectedDates.map(d => d.toISOString().substring(0,10))
                     }
                 }
                                 })
                 .then((data) => {
-                    console.log(data)
+                    this.$buefy.toast.open({message: 'Afbud sendt!', type: "is-success", duration: 5000})
+            }).catch((err) => {
+                this.$buefy.toast.open({message: `Fejl kunne ikke sende afbud`, type: "is-danger", duration: 5000});
+            }).finally(() => {
+                this.sendingCancellation = false;
             })
+        },
+        confirmCancellation() {
+            if(this.isAtleastOneDateSelected){
+                const resolveSelectedDatesIntoHtml = this.resolveSelectedDatesIntoHtml;
+                this.$buefy.dialog.confirm({
+                                               title: 'Afbud for '+this.form.selectedPlayer.name,
+                                               message: `<div class="content">Du har meldt afbud på følgende datoer:
+                                               <ul>
+                                                ${resolveSelectedDatesIntoHtml}
+                                               </ul>
+                                               <hr>
+                                               Besked: ${this.form.additionalInfo || 'Ingen besked'}
+                                               </div>`,
+                                               cancelText: 'Tilbage',
+                                               confirmText: 'Send afbud',
+                                               type: 'is-success',
+                                               onConfirm: () => {
+                                                   this.createCancellation()
+                                               }
+                                           })
+            }else{
+                this.$buefy.toast.open({message: `Du skal vælge mindst 1 dato`, type: "is-danger", duration: 5000});
+            }
         }
-    }
+    },
 }
 
 </script>
 
 <template>
     <section>
-        <form @submit.prevent="createCancellation">
-            <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
-            <b-field label="Dit navn">
+        <h2 class="title is-4">Afbud for {{showClubNames}}</h2>
+        <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
+        <form @submit.prevent="confirmCancellation">
+            <b-field label="Vælge dit navn" message="Søg efter dit navn fra badmintonplayer">
                 <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
             <b-field label="Dit email" message="Bruges til at sende en kvittering">
-                <b-input type="email" v-model="form.email" required/>
+                <b-input placeholder="badminton@badminton.dk" type="email" v-model="form.email" required/>
             </b-field>
-            <teams :clubs="cancellationCollectorPublic.clubs" v-model="selectedTeams"/>
-            <hr>
-            {{selectedTeams}}
-            <strong>Vælg hvilke(n) holdkamp(e) du vil melde afbud til</strong>
-            <p v-if="selectedTeams.length === 0">Ingen hold valgt</p>
-            <div class="columns is-multiline mt-2">
-                <TeamFights v-model="form.selectedTeamFights" :data="badmintonPlayerTeamFightsBulk"/>
-            </div>
-            <b-button native-type="submit" expanded size="is-medium">Meld afbud</b-button>
-            {{ form }}
+            <b-field label="Vælge afbuds datoer" message="Vælge mindst 1 dato. Er kan vælge mere end 1 dato">
+                <b-datepicker
+                    placeholder="Vælge datoer du ikke kan spille..."
+                    v-model="form.selectedDates"
+                    :first-day-of-week="1"
+                    multiple
+                    required>
+                </b-datepicker>
+            </b-field>
+            <b-field label="Besked med afbudet. Valgfrit">
+                <b-input type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder="Besked sammen med afbud"/>
+            </b-field>
+            <h2 class="title is-4">Holdkamp kalender (Beta)</h2>
+            <h2 class="subtitle">Viser alle holdkampe for senior. Dage som du har meldt afbud på markeres med rød</h2>
+            <TeamMatchCalendar :selected-dates="form.selectedDates" :clubs="cancellationCollectorPublic.clubs" />
+            <b-button native-type="submit" class="mt-4" expanded size="is-medium">Meld afbud</b-button>
         </form>
     </section>
 </template>

@@ -18,6 +18,7 @@ use FlyCompany\Scraper\Models\Result;
 use FlyCompany\Scraper\Models\Squad;
 use FlyCompany\Scraper\Models\Team;
 use FlyCompany\Scraper\Models\TeamMatch;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Psr\Log\LoggerInterface;
 
@@ -42,6 +43,9 @@ class Parser
                     $currentRound = $output_array[1] ?? null;
                     $currentRound = is_int($currentRound) ?: (int)$currentRound;
                     $currentRoundDate = $output_array[2] ?? null;
+                    if($currentRoundDate !== null){
+                        $currentRoundDate = Carbon::parse($currentRoundDate);
+                    }
                 }
             } else {
                 $data = [];
@@ -51,7 +55,9 @@ class Parser
                 foreach ($tr->find('td.matchno') as $td) {
                     $data['matchId'] = $td->text();
                 }
-                $data['gameTime'] = $this->findTime((string)$tr->find('td.time')[0]);
+                $gameTime = $this->findTime((string)$tr->find('td.time')[0]);
+                $gameTime = Carbon::parse($gameTime);
+                $data['gameTime'] = $gameTime;
                 $data['round'] = $currentRound;
                 $data['roundDate'] = $currentRoundDate;
                 $teams[] = $data;

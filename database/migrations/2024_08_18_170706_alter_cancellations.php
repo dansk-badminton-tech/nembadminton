@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::table('cancellations', static function (Blueprint $table) {
             $table->boolean('permanent')->default(false);
-            $table->integer('round')->nullable();
             $table->integer('season')->nullable();
         });
     }
@@ -29,7 +28,6 @@ return new class extends Migration
     {
         Schema::table('cancellations', static function (Blueprint $table) {
             $table->dropColumn('permanent');
-            $table->dropColumn('round');
             $table->dropColumn('season');
         });
     }

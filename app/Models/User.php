@@ -79,4 +79,9 @@ class User extends Authenticatable
         return $this->hasMany(Teams::class);
     }
 
+    public function cancellationCollector() : HasOne
+    {
+        return $this->hasOne(CancellationCollector::class);
+    }
+
 }

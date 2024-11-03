@@ -42,7 +42,11 @@ import {
     faFistRaised,
     faUserMinus,
     faUserClock,
-    faExternalLinkSquareAlt, faCircleInfo, faRotate, faSpinner, faCircleQuestion
+    faExternalLinkSquareAlt,
+    faCircleInfo,
+    faRotate,
+    faSpinner,
+    faCircleQuestion
 } from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 

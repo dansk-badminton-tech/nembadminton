@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property string $sharing_id
+ */
 class CancellationCollector extends Model
 {
     use HasFactory;
@@ -31,5 +35,10 @@ class CancellationCollector extends Model
     public function clubs() : BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'cancellation_collector_clubs', 'cancellation_collector_id', 'club_id');
+    }
+
+    public function cancellationPublic() : HasMany
+    {
+        return $this->hasMany(CancellationPublic::class);
     }
 }

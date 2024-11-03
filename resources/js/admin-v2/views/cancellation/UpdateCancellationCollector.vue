@@ -8,17 +8,32 @@ export default {
     name: "UpdateCancellationCollector",
     components: {HeroBar, TitleBar},
     props: {
-        id: Number
+        collectorId: String
     },
     data() {
         return {
+            titleStack: ['Afbuds indsamling', 'Opdater'],
             submitting: false,
             email: ''
         }
     },
     apollo: {
         cancellationCollector: {
-            query: cancellationCollectorQuery,
+            query: gql`
+                query cancellationCollector($id: ID!){
+                    cancellationCollector(id: $id){
+                        id
+                        email
+                        createdAt
+                        updatedAt
+                    }
+                }
+            `,
+            variables() {
+                return {
+                    id: this.collectorId
+                }
+            },
             result({data}) {
                 // Set the email from the fetched data
                 this.email = data.cancellationCollector.email;
@@ -51,7 +66,7 @@ export default {
                                     ]
                                 }
             ).then(() => {
-                this.$router.push({name: 'cancellation-dashboard'})
+                this.$router.push({name: 'cancellation-view', params: {collectorId: this.cancellationCollector.id}})
             }).catch(() => {
                 this.$buefy.toast.open({message: `Fejl: Kunne ikke lave afbudslink`, type: "is-danger", duration: 5000})
             }).finally(() => {

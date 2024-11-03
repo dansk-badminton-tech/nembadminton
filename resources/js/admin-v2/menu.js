@@ -12,7 +12,7 @@ export default [
             label: 'Holdrunder'
         },
         {
-            to: '/cancellations/dashboard',
+            to: '/cancellations/redirect',
             icon: 'cancel',
             label: 'Afbud'
         },

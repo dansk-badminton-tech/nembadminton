@@ -3,6 +3,11 @@
 
 namespace FlyCompany\Members\GraphQL\Mutation;
 
+use App\Models\CancellationCollector;
+use App\Models\CancellationPublic;
+use App\Models\Member;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
+use FlyCompany\Scraper\Helper;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -25,8 +30,27 @@ class CreateCancellationViaCollector
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
+        //dump($args);
+        /** @var CancellationCollector $collector */
+        $collector = CancellationCollector::query()->where('sharing_id', $args['sharingId'])->firstOrFail();
 
-        dd($args);
+        /** @var Member $member */
+        $member = Member::query()->where('refId', $args['input']['refId'])->firstOrFail();
+        $member->email = $args['input']['email'];
+        $member->save();
+
+        /** @var CancellationPublic $cancellation */
+        $cancellation = CancellationPublic::forceCreate([
+            'member_id' => $member->id,
+            'cancellation_collector_id' => $collector->id,
+            'message' => $args['input']['message'],
+        ]);
+
+        $cancellation->dates()->createMany(array_map(function ($date){
+            return ['date' => $date];
+        }, $args['input']['dates']));
+
+        //dd($args);
 
     }
 

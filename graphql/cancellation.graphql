@@ -4,7 +4,7 @@ extend type Query{
         name: String @where(operator: "like"),
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate
-    cancellationCollector : CancellationCollector @find(scopes: ["currentUser"]) @guard
+    cancellationCollector(id: ID! @eq) : CancellationCollector @find @guard
     cancellationCollectorPublic(sharingId: String! @eq(key: "sharing_id")) : CancellationCollector @find
 }
 
@@ -24,17 +24,11 @@ type CancellationViaCollector {
 }
 
 input CancellationViaCollectorInput {
+    name: String!
+    refId: String!
     email: String!
-    member: Int!
-    teamFights: [TeamFightInput!]!
-}
-
-input TeamFightInput {
-    gameTime: DateTime!
-    matchId: Int!
-    round: Int!
-    roundDate: Date!
-    teams: [String!]!
+    message: String
+    dates: [Date!]!
 }
 
 input CancellationCollectionInput {
@@ -46,6 +40,24 @@ input ClubBelongsToMany {
     connect: [ID!]!
 }
 
+type CancellationDate {
+    date: Date
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}
+
+type CancellationPublic {
+    member: Member
+    message: String
+    dates: [CancellationDate]
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}
+
 type CancellationCollector {
     id: ID!
     "Email for notifying"
@@ -54,10 +66,17 @@ type CancellationCollector {
     clubs: [Club!]!
     "Sharing ID"
     sharingId: String! @rename(attribute: "sharing_id")
+    "Cancellations"
+    cancellationPublic(hasDates: _ @whereHasConditions(columns: ["date"])): [CancellationPublic!]! @hasMany(type: PAGINATOR)
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
     createdAt: DateTime @rename(attribute: "created_at")
+}
+
+input DateRange {
+    from: Date!
+    to: Date!
 }
 
 type Cancellation {

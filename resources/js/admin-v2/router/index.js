@@ -74,9 +74,19 @@ const routes = [
             title: 'Afbud',
             requiresAuth: true
         },
-        path: '/cancellations/dashboard',
-        name: 'cancellation-dashboard',
-        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/CancellationDashboard.vue')
+        path: '/cancellations/redirect',
+        name: 'cancellation-redirect',
+        component: () => import('@/views/cancellation/CancellationRedirect.vue')
+    },
+    {
+        meta: {
+            title: 'Afbud',
+            requiresAuth: true
+        },
+        path: '/cancellations/view/:collectorId',
+        name: 'cancellation-view',
+        component: () => import('@/views/cancellation/CancellationDashboard.vue'),
+        props: route => ({collectorId: route.params.collectorId})
     },
     {
         meta: {
@@ -85,16 +95,17 @@ const routes = [
         },
         path: '/cancellations/create',
         name: 'cancellation-create',
-        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/CreateCancellationCollector.vue')
+        component: () => import('@/views/cancellation/CreateCancellationCollector.vue')
     },
     {
         meta: {
             title: 'Rediger afbudslink',
             requiresAuth: true
         },
-        path: '/cancellations/edit',
+        path: '/cancellations/edit/:collectorId',
         name: 'cancellation-update',
-        component: () => import(/* webpackChunkName: "cancellation" */ '@/views/cancellation/UpdateCancellationCollector.vue')
+        component: () => import('@/views/cancellation/UpdateCancellationCollector.vue'),
+        props: route => ({collectorId: route.params.collectorId})
     },
     {
         path: '/superadmin/notification',
@@ -163,7 +174,7 @@ const routes = [
                 component: () => import("../views/cancellation/CancellationPublic.vue"),
                 props: route => ({sharingId: route.params.sharingId}),
                 meta: {
-                    title: 'Afbuds indsamler'
+                    title: 'Afbud'
                 }
             },
             {

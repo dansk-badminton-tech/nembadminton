@@ -20,9 +20,9 @@ extend type Query {
 type BadmintonPlayerTeamFight {
     teams: [String!]!
     matchId: Int!
-    gameTime: String!
+    gameTime: DateTime!
     round: Int
-    roundDate: String
+    roundDate: Date
 }
 
 input BadmintonPlayerTeamFightsInput {

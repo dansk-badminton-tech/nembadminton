@@ -21,10 +21,10 @@ export default {
             }
         }
     },
-    apollo:{
+    apollo: {
         me: {
             query: ME,
-            result({data}){
+            result({data}) {
                 this.clubs = data.me.clubs
                 this.filteredClubs = data.me.clubs
             }
@@ -62,10 +62,11 @@ export default {
                                         }
                                     },
                                     refetchQueries: [
-                                        {query: cancellationCollectorQuery}
+                                        {query: ME}
                                     ]
-                                }).then(() => {
-                this.$router.push({name: 'cancellation-dashboard'})
+                                })
+                .then(({data}) => {
+                this.$router.push({name: 'cancellation-view', params: {collectorId: data.createCancellationCollector.id}})
             }).catch(() => {
                 this.$buefy.toast.open({message: `Fejl: Kunne ikke lave afbudslink`, type: "is-danger", duration: 5000})
             }).finally(() => {

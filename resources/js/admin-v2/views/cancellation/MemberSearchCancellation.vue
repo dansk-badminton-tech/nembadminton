@@ -5,6 +5,11 @@
         @typing="searchMembers"
         @select="option => selected = option"
         field="name"
+        :clearable="true"
+        :open-on-focus="true"
+        required
+        :readonly="selected !== null"
+        placeholder="Søg efter medlem"
     >
         <template v-slot:default="{ option }">
             <div class="media">

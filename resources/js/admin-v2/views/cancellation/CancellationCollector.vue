@@ -1,14 +1,17 @@
 <template>
     <div>
-        <b-field expanded label="Link til deling" message="Dette link kan du give til alle i din klub">
-            <b-input expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
-            <p class="control">
-                <b-button @click="copyToClipboard(shareUrl)">Copy Link</b-button>
-                <b-button @click="openLink(shareUrl)">Open Link</b-button>
-            </p>
-        </b-field>
-        <b-field label="Email" message="Når der meldes afbud sendes der en email til denne email samt en kvitering til den som melder afbud">
-            <b-input type="text" readonly v-model="cancellationCollector.email"></b-input>
+        <b-field grouped>
+            <b-field expanded class="" label="Link til deling" message="Dette link kan du give til alle i din klub">
+                <b-input expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
+                <p class="control">
+                    <b-button @click="copyToClipboard(shareUrl)">Kopir Link</b-button>
+                    <b-button @click="openLink(shareUrl)">Åben Link</b-button>
+                </p>
+            </b-field>
+            <b-field expanded label="Email" message="Når der meldes afbud sendes der en email til denne email samt en kvitering til den som melder afbud">
+                <b-input type="text" readonly v-model="cancellationCollector.email"></b-input>
+            </b-field>
+
         </b-field>
     </div>
 </template>

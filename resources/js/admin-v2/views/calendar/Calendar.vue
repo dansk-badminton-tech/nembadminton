@@ -5,30 +5,21 @@
             Kalender
         </hero-bar>
         <section class="section is-main-section">
-            <div class="buttons">
-                <b-button>2022/2023</b-button>
-                <b-button>2023/2024</b-button>
+            <b-loading v-model="$apollo.queries.calendarEvents.loading" :is-full-page="false" :can-cancel="true"></b-loading>
+            <div class="calendar-parent">
+                <calendar-view
+                    :items="eventItems"
+                    :show-date="showDate"
+                    :startingDayOfWeek="1"
+                    @click-item="onEventClick"
+                    class="theme-default">
+                    <calendar-view-header
+                        slot="header"
+                        slot-scope="t"
+                        :header-props="t.headerProps"
+                        @input="setShowDate" />
+                </calendar-view>
             </div>
-            <div class="columns is-multiline" v-for="event in calendarEvents">
-                <div class="column is-full">
-                    <div class="columns">
-                        <div class="column is-one-fifth is-flex is-justify-content-center is-align-items-center is-flex-direction-column is-gapless">
-                            <span class="is-size-5">{{toDateObject(event.start).toLocaleString('da-dk', {  weekday: 'short' })}}</span>
-                            <span class="is-size-2">{{toDateObject(event.start).toLocaleString('da-dk', {  day: '2-digit' })}}</span>
-                        </div>
-                        <div class="column is-one-quarter is-flex is-justify-content-space-evenly is-flex-direction-column">
-                            <div><p><b-icon icon="clock-time-four" size="is-small"></b-icon>{{toTimeStr(event.start)}} - {{toTimeStr(event.end)}}</p></div>
-                            <div><p><b-icon icon="map-marker" size="is-small"></b-icon> At valby hallen</p></div>
-                        </div>
-                        <div class="column is-flex is-justify-content-space-evenly is-flex-direction-column">
-                            <p>{{event.title}}</p>
-                            <p v-html="event.contentFull"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <b-loading v-model="$apollo.queries.calendarEvents.loading" :can-cancel="true"></b-loading>
-            <vue-cal style="min-height: 500px" :events="calendarEvents" :on-event-click="onEventClick"/>
             <b-modal v-model="showModal">
                 <div class="card">
                     <div class="card-header">
@@ -38,11 +29,11 @@
                     </div>
                     <div class="card-content">
                         <div class="content">
-                            <div v-html="selectedEvent.contentFull"></div>
+                            <div v-html="selectedEvent?.originalItem?.url"></div>
                             <br>
                             <strong>Event details:</strong>
                             <ul>
-                                <li>Start: {{ selectedEvent.start && selectedEvent.start.formatTime() }}</li>
+                                <li>Start: {{ selectedEvent.startDate && selectedEvent.startDate.formatTime() }}</li>
                             </ul>
                         </div>
                     </div>
@@ -54,21 +45,24 @@
 
 <script>
 
-import VueCal from 'vue-cal'
-import 'vue-cal/dist/vuecal.css'
+import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
+import "vue-simple-calendar/static/css/default.css"
+
 import gql from "graphql-tag";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 
 export default {
     name: "Calendar",
-    components: {HeroBar, TitleBar, VueCal},
+    components: {HeroBar, TitleBar, CalendarView, CalendarViewHeader},
     data: () => ({
         titleStack: ['Admin', 'Kalender'],
         events: [],
         calendarEvents: [],
         showModal: false,
-        selectedEvent: {}
+        selectedEvent: {},
+        showDate: new Date(),
+        eventItems: []
     }),
     apollo: {
         calendarEvents: {
@@ -83,10 +77,22 @@ export default {
                     matchId
                   }
                 }
-            `
+            `,
+            result({data}, key){
+                this.eventItems = data[key].map(e => ({
+                    id: e.matchId,
+                    startDate: e.start,
+                    endDate: e.end,
+                    title: e.title,
+                    url: e.contentFull
+                }))
+            }
         }
     },
     methods: {
+        setShowDate(d) {
+            this.showDate = d;
+        },
         toTimeStr(str){
             return str.substring(10, 16);
         },
@@ -96,6 +102,7 @@ export default {
         onEventClick(event, e) {
             this.selectedEvent = event
             this.showModal = true
+            console.log(event, e)
 //            this.$buefy.dialog.alert({
 //                                         title: event.title,
 //                                         message: event.contentFull,
@@ -109,5 +116,14 @@ export default {
 </script>
 
 <style scoped>
-
+    .calendar-parent {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        max-height: 80vh;
+        min-height: 800px;
+        background-color: white;
+    }
 </style>
