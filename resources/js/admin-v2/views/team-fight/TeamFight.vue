@@ -57,6 +57,7 @@
                     Slet holdet
                 </b-dropdown-item>
             </b-dropdown>
+Mor            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
@@ -163,7 +164,6 @@ import PlayerList from "./PlayerList.vue";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
-import ShareLinkCancellationModal from "@/views/team-fight/ShareLinkCancellationModal.vue";
 
 export default {
     name: "TeamFight",
@@ -287,20 +287,7 @@ export default {
                                    })
         },
         openLinkSharingCancellationModel() {
-            this.$buefy.modal.open({
-                                       parent: this,
-                                       component: ShareLinkCancellationModal,
-                                       props: {
-                                           teamId: this.teamFightId
-                                       },
-                                       scroll: "keep",
-                                       width: 640,
-                                       events: {
-                                           close: () => {
-                                               this.$emit('input', false)
-                                           }
-                                       }
-                                   })
+            this.$router.push({name: 'cancellation-redirect'})
         },
         deactivateIncompleteCheck() {
             this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
