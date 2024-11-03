@@ -57,7 +57,7 @@
                     Slet holdet
                 </b-dropdown-item>
             </b-dropdown>
-Mor            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
+            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
