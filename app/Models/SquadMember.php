@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\Util;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +47,16 @@ class SquadMember extends Model
     public function getIsInSquad() : bool
     {
         return true;
+    }
+
+    public function getVintage() : string
+    {
+        return Util::calculateVintage($this->getBirthday())->value;
+    }
+
+    public function getBirthday() : Carbon
+    {
+        return Carbon::createFromFormat('ymd', substr($this->member_ref_id, 0, 6));
     }
 
 }

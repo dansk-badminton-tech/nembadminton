@@ -17,6 +17,12 @@
             <b-button
                 :loading="loading"
                 type="is-link"
+                @click="addSquadSeries1">
+                10-kamps hold
+            </b-button>
+            <b-button
+                :loading="loading"
+                type="is-link"
                 @click="addSquad8">
                 11-kamps hold
             </b-button>
@@ -111,6 +117,9 @@ export default {
         },
         addSquad8() {
             this.addSquad(TeamFightHelper.generateSquadWith8Players())
+        },
+        addSquadSeries1() {
+            this.addSquad(TeamFightHelper.generateSquadSeries1())
         },
         addSquad6() {
             this.addSquad(TeamFightHelper.generateSquadWith6Players())

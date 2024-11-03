@@ -23,6 +23,7 @@ query team($id: ID!){
                     gender
                     name
                     refId
+                    vintage
                     points{
                         id
                         category

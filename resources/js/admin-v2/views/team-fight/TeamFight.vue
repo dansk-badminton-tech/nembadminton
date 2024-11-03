@@ -5,63 +5,58 @@
             Dashboard
         </hero-bar>
         <section class="section is-main-section">
-            <p class="buttons">
-                <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-                <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
-                           position="is-bottom">
-                    <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
-                              @click="saveTeams">Gem
-                    </b-button>
-                </b-tooltip>
-                <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
-                <b-dropdown aria-role="list" class="ml-2">
-                    <template v-slot:trigger="{ active }">
-                        <button class="button is-link">
-                            <span>Export</span>
-                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                        </button>
-                    </template>
-                    <b-dropdown-item aria-role="listitem" @click="exportToCSV">
-                        <b-icon icon="file-export"></b-icon>
-                        CSV
-                    </b-dropdown-item>
-                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
-                        <b-icon icon="share"></b-icon>
-                        Link
-                    </b-dropdown-item>
-                </b-dropdown>
-                <b-dropdown aria-role="list" class="ml-2">
-                    <template v-slot:trigger="{ active }">
-                        <button class="button is-link">
-                            <span>Indstillinger</span>
-                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                        </button>
-                    </template>
-                    <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
-                        <b-icon icon="brain"></b-icon>
-                        Validere hold
-                    </b-dropdown-item>
-                    <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
-                        <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
-                            <b-icon icon="cancel"></b-icon>
-                            {{
-                                ignoreIncompleteTeam
-                                ? 'Aktiver'
-                                : 'Deaktiver'
-                            }} "Fuldendt hold" check
-                        </b-tooltip>
-                    </b-dropdown-item>
-                    <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
-                        <b-icon icon="content-copy"></b-icon>
-                        Kopier hele holdet
-                    </b-dropdown-item>
-                    <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
-                        <b-icon icon="trash-can"></b-icon>
-                        Slet holdet
-                    </b-dropdown-item>
-                </b-dropdown>
-                <b-button type="is-link" class="ml-2" icon-left="account-off" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
-            </p>
+            <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
+            <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
+                       position="is-bottom">
+                <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
+                          @click="saveTeams">Gem
+                </b-button>
+            </b-tooltip>
+            <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
+            <b-dropdown aria-role="list" class="ml-2">
+                <button slot="trigger" slot-scope="{ active }" class="button is-link">
+                    <span>Export</span>
+                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                </button>
+                <b-dropdown-item aria-role="listitem" @click="exportToCSV">
+                    <b-icon icon="file-export"></b-icon>
+                    CSV
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                    <b-icon icon="share"></b-icon>
+                    Link
+                </b-dropdown-item>
+            </b-dropdown>
+            <b-dropdown aria-role="list" class="ml-2">
+                <button slot="trigger" slot-scope="{ active }" class="button is-link">
+                    <span>Indstillinger</span>
+                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                </button>
+                <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
+                    <b-icon icon="brain"></b-icon>
+                    Validere hold
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
+                    <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
+                        <b-icon icon="cancel"></b-icon>
+                        {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
+                    </b-tooltip>
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
+                    <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
+                        <b-icon icon="update"></b-icon>
+                        Opdater spiller point
+                    </b-tooltip>
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
+                    <b-icon icon="content-copy"></b-icon>
+                    Kopier hele holdet
+                </b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
+                    <b-icon icon="trash-can"></b-icon>
+                    Slet holdet
+                </b-dropdown-item>
+            </b-dropdown>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
@@ -147,7 +142,7 @@ import Draggable from "vuedraggable"
 import gql from "graphql-tag"
 import {
     containsMen,
-    containsWomen,
+    containsWomen, extractErrorMessages,
     isMensDouble,
     isMensSingle,
     isMixDouble,
@@ -553,14 +548,15 @@ export default {
                 .then(({data}) => {
                     this.playingToHighSquadList = data.validateSquads;
                 })
-                .catch((error) => {
+                .catch(({graphQLErrors}) => {
                     this.errorValidatingCategory = true;
+                    const errorMessages = extractErrorMessages(graphQLErrors);
                     this.$buefy.snackbar.open(
                         {
-                            duration: 4000,
+                            duration: 5000,
                             type: 'is-danger',
                             queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validateSquad)`
+                            message: 'Noget gik galt under intern valideringen af holdet. <br/><br /> '+errorMessages.join(', ')
                         })
                 })
         },
@@ -599,7 +595,7 @@ export default {
                             duration: 4000,
                             type: 'is-danger',
                             queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validate)`
+                            message: `Noget gik galt under valideringen af holdet (crossSquadsValidate)`
                         })
                 })
         },

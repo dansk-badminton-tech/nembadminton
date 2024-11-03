@@ -102,6 +102,7 @@ type ImportMember{
     refId: String!
     name: String!
     gender: Gender!
+    vintage: Vintage!
     points: [ImportPoint!]
 }
 

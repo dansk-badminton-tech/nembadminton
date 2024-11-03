@@ -4,11 +4,13 @@ extend type Query {
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     cancellations(teamId: String! @eq) : [Cancellation] @guard @all
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
+    squadMember(id: ID! @eq) : SquadMember @find @guard
 }
 
 extend type Mutation {
     updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
     deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
+    updateSquadMember(input: UpdateSquadMemberInput! @spread) : SquadMember @update @guard
     createSquadMember(input: CreateSquadMemberInput! @spread) : SquadMember @create @guard
     addSquadMemberByRefId(input: AddSquadMemberByRefIdInput! @spread) : SquadMember @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId")
     updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
@@ -28,6 +30,11 @@ extend type Mutation {
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
 }
 
+input UpdateSquadMemberInput {
+    id: ID!
+    points: CreatePointHasManyInput!
+}
+
 input AddSquadMemberByRefIdInput {
     refId: String!
     categoryId: Int!
@@ -36,7 +43,7 @@ input AddSquadMemberByRefIdInput {
 
 input UpdateSquadPointInput {
     id: ID!
-    category: String
+    category: Category
     points: Int
     position: Int
     vintage: Vintage
@@ -71,11 +78,12 @@ input CreatePointHasManyInput {
 }
 
 input CreatePointInput {
-    category: String
-    points: Int
+    category: Category!
+    points: Int!
     position: Int
-    vintage: Vintage
-    corrected_manually: Boolean
+    vintage: Vintage!
+    corrected_manually: Boolean!
+    version: Date!
 }
 
 input UpdateSquadInput {
@@ -168,6 +176,7 @@ type SquadMember {
     refId: String! @rename(attribute: "member_ref_id")
     name: String!
     gender: Gender!
+    vintage: Vintage! @method(name: "getVintage")
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
 }

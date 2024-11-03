@@ -1,3 +1,5 @@
+import {difference, uniq} from "lodash/array.js";
+
 export function chunk(array, size) {
     const chunked_arr = [];
     for (let i = 0; i < array.length; i++) {
@@ -44,28 +46,8 @@ export function findPlayersInCategory(categories, searchCategory, gender) {
     return players;
 }
 
-export function isYoungPlayer(player, category) {
-    if (!player.points) {
-        return false
-    }
-    for (let point of player.points) {
-        if (point.vintage === '' || point.vintage === null) {
-            return false;
-        } else {
-            if (category === 'MD') {
-                if (player.gender === 'MEN' && point.category === 'MxH') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-                if (player.gender === 'WOMEN' && point.category === 'MxD') {
-                    return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-                }
-            }
-            if (point.category === category) {
-                return point.vintage.toUpperCase() === 'U17' || point.vintage.toUpperCase() === 'U19'
-            }
-        }
-    }
-    return false;
+export function isYoungPlayer(player) {
+    return player.vintage.toUpperCase() === 'U17' || player.vintage.toUpperCase() === 'U19'
 }
 
 export function resolveGenderFromCategoryShort(category){
@@ -131,7 +113,7 @@ export function findLevel(member, category) {
 
 export function findPositions(member, show = 'all') {
     if (!member.points) {
-        return ''
+        return 'Ingen point i alle kategorier'
     }
     let summary = []
     for (let point of member.points) {
@@ -154,6 +136,11 @@ export function findPositions(member, show = 'all') {
             summary.push('MxD:' + point.points)
         }
     }
+
+    if(summary.length === 0){
+        return null
+    }
+
     return summary.join(', ')
 }
 
@@ -173,6 +160,22 @@ export function extractErrors(graphqlErrors) {
     }
     return errors;
 }
+
+export function extractErrorMessages(data) {
+    const errorMessages = [];
+
+    // Check if the errors key exists and is an array
+    if (Array.isArray(data)) {
+        data.forEach(error => {
+            if (error.message) {
+                errorMessages.push(error.message);
+            }
+        });
+    }
+
+    return errorMessages;
+}
+
 export function isPlayingToHigh(playingToHighPlayers, player, category) {
     return getPlayingToHigh(playingToHighPlayers, player, category) !== undefined;
 }
@@ -388,4 +391,32 @@ export function compareDatesByYearMonthDay(date1, date2) {
     const day2 = date2.getDate();
 
     return year1 === year2 && month1 === month2 && day1 === day2;
+}
+
+export function categories(gender){
+    if (gender){
+        if(gender === 'WOMEN'){
+            return [
+                'MxD',
+                'DD',
+                'DS'
+            ]
+        }
+        if(gender === 'MEN'){
+            return [
+                'MxH',
+                'HD',
+                'HS'
+            ]
+        }
+    }
+
+    return [
+        'MxD',
+        'MxH',
+        'DD',
+        'DS',
+        'HD',
+        'HS'
+    ]
 }
