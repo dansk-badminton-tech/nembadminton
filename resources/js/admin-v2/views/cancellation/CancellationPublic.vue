@@ -41,8 +41,21 @@ export default {
             return this.form.selectedDates.length > 0
         },
         resolveSelectedDatesIntoHtml() {
-            return this.form.selectedDates.map(d => '<li>'+d.toISOString().substring(0, 10)+'</li>').join("")
+            return this.form.selectedDates.map(d => '<li>' + d.toISOString().substring(0, 10) + '</li>').join("")
+        },
+        convertToEvents(){
+            const dateObjects = []
+            for (let date of this.form.selectedDates){
+                dateObjects.push({
+                                     startDate: date,
+                                     endDate: date,
+                                     title: 'Dit afbud',
+                                     classes: 'has-background-danger'
+                                 })
+            }
+            return dateObjects;
         }
+
     },
     apollo: {
         cancellationCollectorPublic: {
@@ -125,6 +138,7 @@ export default {
                                 })
                 .then((data) => {
                     this.$buefy.toast.open({message: 'Afbud sendt!', type: "is-success", duration: 5000})
+                    this.resetForm();
             }).catch((err) => {
                 this.$buefy.toast.open({message: `Fejl kunne ikke sende afbud`, type: "is-danger", duration: 5000});
             }).finally(() => {
@@ -184,7 +198,7 @@ export default {
             </b-field>
             <h2 class="title is-4">Holdkamp kalender (Beta)</h2>
             <h2 class="subtitle">Viser alle holdkampe for senior. Dage som du har meldt afbud på markeres med rød</h2>
-            <TeamMatchCalendar :selected-dates="form.selectedDates" :clubs="cancellationCollectorPublic.clubs" />
+            <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs" />
             <b-button native-type="submit" class="mt-4" expanded size="is-medium">Meld afbud</b-button>
         </form>
     </section>

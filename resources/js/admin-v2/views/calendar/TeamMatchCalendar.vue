@@ -37,10 +37,10 @@ export default {
             }))
             const selectedDates = this.selectedDates.map(e => ({
                 id: Math.random(),
-                startDate: e,
-                endDate: e,
-                title: "Dit afbud",
-                classes: "has-background-danger"
+                startDate: e.startDate,
+                endDate: e.endDate,
+                title: e.title,
+                classes: e.classes || ''
             }))
             events.push(...selectedDates)
             return events

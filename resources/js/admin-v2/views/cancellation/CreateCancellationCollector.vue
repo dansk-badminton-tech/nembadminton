@@ -81,7 +81,7 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Afbuds indsamling
+            Opret afbuds link
         </hero-bar>
         <section class="section is-main-section">
             <form @submit.prevent="submitCancellation">
@@ -99,7 +99,7 @@ export default {
                         aria-close-label="Delete this tag">
                     </b-taginput>
                 </b-field>
-                <b-button :loading="submitting" native-type="submit">Opret afbuds link</b-button>
+                <b-button :loading="submitting" native-type="submit">Opret</b-button>
             </form>
         </section>
     </div>

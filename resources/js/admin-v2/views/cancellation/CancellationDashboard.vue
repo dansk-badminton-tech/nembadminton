@@ -86,6 +86,23 @@ export default {
                 return "Ingen klubber"
             }
             return this.me.clubs.map(club => club.name1).join(", ")
+        },
+        showSelectedDateRange() {
+            return this.selectedDateRange.map(d => d.toLocaleDateString()).join(" - ")
+        },
+        generateEventThatShowAmountOfCancellations() {
+            Object.groupBy(this.cancellationCollector.cancellationPublic.data, ({dates}) => {
+
+            })
+            this.cancellationCollector.cancellationPublic.data.groupBy(cancellation => cancellation.member.id);
+            return this.cancellationCollector.cancellationPublic.data.map(cancellation => {
+                return {
+                    title: 'Antal afbud: ',
+                    startDate: cancellation.dates[0].date,
+                    endDate: cancellation.dates[cancellation.dates.length - 1].date,
+                    classes: ''
+                }
+            })
         }
     }
 }
@@ -94,33 +111,36 @@ export default {
 <template>
     <div>
         <title-bar :title-stack="titleStack"/>
-        <hero-bar :has-right-visible="false">
-            Afbuds indsamling
-        </hero-bar>
         <section class="section is-main-section">
             <b-button
                 v-if="hasCancellationLink"
                 tag="router-link"
                 :to="'/cancellations/edit/'+collectorId">Rediger
             </b-button>
-            <div v-else class="box has-text-centered">
-                <h2 class="title is-4">Kom igang</h2>
-                <p>Indsammel afbud for holdturneringen</p>
-                <div class="buttons is-centered">
-                    <b-button tag="router-link" to="/cancellations/create" class="button is-link">Opret nu</b-button>
-                </div>
-            </div>
             <b-button
                 v-if="hasCancellationLink"
                 :loading="isDeleting"
-                @click="confirmDeleteCancellationCollector">
+                @click="confirmDeleteCancellationCollector"
+                class="ml-2"
+            >
                 Slet
             </b-button>
+            <div v-else class="box has-text-centered">
+                <h2 class="title is-4">Hvordan virker det?</h2>
+                <ul>
+                    <li>1. Du sætter din afbuds indsamler op</li>
+                    <li>2. Deler linket med alle spiller i klubben</li>
+                </ul>
+                <hr>
+                <div class="buttons is-centered">
+                    <b-button tag="router-link" to="/cancellations/create" class="button is-link">Indstil nu</b-button>
+                </div>
+            </div>
             <hr>
             <CancellationCollector v-if="!!cancellationCollector" :cancellationCollector="cancellationCollector"/>
             <hr>
             <div v-if="!!cancellationCollector">
-                <h1 class="title is-3">Afbud</h1>
+                <h1 class="title is-3">Oversigt over afbud</h1>
                 <b-field label="Søg på afbuds datoer">
                     <b-datepicker
                         placeholder="Søg på afbuds datoer"
@@ -147,13 +167,13 @@ export default {
                         {{ props.row.message }}
                     </b-table-column>
                     <template #empty>
-                        <p>Ingen afbud fundet</p>
+                        <p>Ingen afbud fundet mellem {{showSelectedDateRange}}</p>
                     </template>
                 </b-table>
                 <hr>
                 <h1 class="title is-3">Holdkamp kalender (Beta)</h1>
                 <h2 class="subtitle">Viser alle holdkampe for {{showClubNames}} senior for mine klubber. Data'en er hentet direkte fra badmintonplayer.dk</h2>
-                <TeamMatchCalendar :clubs="me.clubs"  />
+                <TeamMatchCalendar :clubs="me.clubs" />
             </div>
         </section>
     </div>

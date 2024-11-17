@@ -18,6 +18,11 @@ extend type Mutation {
     deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @guard
 }
 
+input CancellationInput {
+    refId: String!
+    permanent: Boolean!
+    dates: [Date!]!
+}
 
 type CancellationViaCollector {
     success: Boolean

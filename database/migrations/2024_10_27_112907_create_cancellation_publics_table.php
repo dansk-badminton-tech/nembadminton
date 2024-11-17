@@ -21,7 +21,8 @@ return new class extends Migration
 
         Schema::create('cancellation_dates', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->foreignId('cancellation_public_id')->constrained()->cascadeOnDelete(); // Foreign key
+            $table->foreignId('cancellation_public_id')->nullable()->constrained()->cascadeOnDelete(); // Foreign key
+            $table->foreignId('cancellation_id')->nullable()->constrained()->cascadeOnDelete(); // Foreign key
             $table->date('date'); // Date field
             $table->timestamps(); // created_at and updated_at columns
         });
