@@ -110,7 +110,7 @@
                         <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj extra klub)</router-link>
                     </h1>
                     <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
-                                       :version="new Date(version)"/>
+                                       :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
                     <h1 class="title">Holdene i holdrunden</h1>
@@ -160,8 +160,6 @@ import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
 import ValidateTeams from "./ValidateTeams.vue";
-import PlayerList from "./PlayerList.vue";
-import PlayerSearch from "../common/PlayerSearch.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 
@@ -177,8 +175,6 @@ export default {
         RankingVersionSelect,
         TeamTable,
         ValidateTeams,
-        PlayerList,
-        PlayerSearch,
         Draggable
     },
     props: {
