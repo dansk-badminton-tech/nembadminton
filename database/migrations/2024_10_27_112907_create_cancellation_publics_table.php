@@ -11,17 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cancellation_publics', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('member_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('cancellation_collector_id')->constrained()->cascadeOnDelete();
-            $table->text('message')->nullable(); // Corresponding to String, nullable because it's not required
-            $table->timestamps();
-        });
-
         Schema::create('cancellation_dates', function (Blueprint $table) {
             $table->id(); // Primary key
-            $table->foreignId('cancellation_public_id')->nullable()->constrained()->cascadeOnDelete(); // Foreign key
             $table->foreignId('cancellation_id')->nullable()->constrained()->cascadeOnDelete(); // Foreign key
             $table->date('date'); // Date field
             $table->timestamps(); // created_at and updated_at columns
@@ -34,6 +25,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('cancellation_dates');
-        Schema::dropIfExists('cancellation_publics');
     }
 };

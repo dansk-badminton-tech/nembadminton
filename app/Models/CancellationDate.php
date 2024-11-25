@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CancellationDate extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'cancellation_publics_id',
+        'cancellation_id',
         'date',
     ];
 
-    public function cancellationPublic()
+    public function cancellation() : BelongsTo
     {
-        return $this->belongsTo(CancellationPublic::class);
+        return $this->belongsTo(Cancellation::class);
     }
 }

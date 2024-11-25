@@ -28,7 +28,7 @@ export default {
         }
     },
     computed: {
-        hasSelectedPlayer(){
+        hasSelectedPlayer() {
             return Object.keys(this.form.selectedPlayer).length > 0
         },
         showClubNames() {
@@ -43,9 +43,9 @@ export default {
         resolveSelectedDatesIntoHtml() {
             return this.form.selectedDates.map(d => '<li>' + d.toISOString().substring(0, 10) + '</li>').join("")
         },
-        convertToEvents(){
+        convertToEvents() {
             const dateObjects = []
-            for (let date of this.form.selectedDates){
+            for (let date of this.form.selectedDates) {
                 dateObjects.push({
                                      startDate: date,
                                      endDate: date,
@@ -107,7 +107,7 @@ export default {
         }
     },
     methods: {
-        resetForm(){
+        resetForm() {
             this.form = {
                 selectedPlayer: {},
                 additionalInfo: "",
@@ -115,41 +115,47 @@ export default {
                 selectedDates: []
             }
         },
-        createCancellation(){
+        createCancellation() {
             this.sendingCancellation = true;
-            this.$apollo.mutate({
-                mutation: gql`
-                    mutation createCancellationViaCollector($sharingId: String!, $input: CancellationViaCollectorInput!){
-                        createCancellationViaCollector(sharingId: $sharingId, input: $input){
-                            success
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                                        mutation createCancellation($input: CancellationInput!){
+                                            createCancellation(input: $input){
+                                                id
+                                                refId
+                                            }
+                                        }
+                                    `,
+                    variables: {
+                        input: {
+                            refId: this.form.selectedPlayer.refId,
+                            message: this.form.additionalInfo,
+                            cancellationCollector: {
+                                connect: this.cancellationCollectorPublic.id
+                            },
+                            dates: {
+                                create: this.form.selectedDates.map(d => ({date: d.toISOString().substring(0, 10)}))
+                            }
                         }
                     }
-                `,
-                variables: {
-                    sharingId: this.sharingId,
-                    input: {
-                        name: this.form.selectedPlayer.name,
-                        refId: this.form.selectedPlayer.refId,
-                        email: this.form.email,
-                        message: this.form.additionalInfo,
-                        dates: this.form.selectedDates.map(d => d.toISOString().substring(0,10))
-                    }
-                }
-                                })
+                })
                 .then((data) => {
                     this.$buefy.toast.open({message: 'Afbud sendt!', type: "is-success", duration: 5000})
                     this.resetForm();
-            }).catch((err) => {
-                this.$buefy.toast.open({message: `Fejl kunne ikke sende afbud`, type: "is-danger", duration: 5000});
-            }).finally(() => {
-                this.sendingCancellation = false;
-            })
+                })
+                .catch((err) => {
+                    this.$buefy.toast.open({message: `Fejl kunne ikke sende afbud`, type: "is-danger", duration: 5000});
+                })
+                .finally(() => {
+                    this.sendingCancellation = false;
+                })
         },
         confirmCancellation() {
-            if(this.isAtleastOneDateSelected){
+            if (this.isAtleastOneDateSelected) {
                 const resolveSelectedDatesIntoHtml = this.resolveSelectedDatesIntoHtml;
                 this.$buefy.dialog.confirm({
-                                               title: 'Afbud for '+this.form.selectedPlayer.name,
+                                               title: 'Afbud for ' + this.form.selectedPlayer.name,
                                                message: `<div class="content">Du har meldt afbud på følgende datoer:
                                                <ul>
                                                 ${resolveSelectedDatesIntoHtml}
@@ -164,7 +170,7 @@ export default {
                                                    this.createCancellation()
                                                }
                                            })
-            }else{
+            } else {
                 this.$buefy.toast.open({message: `Du skal vælge mindst 1 dato`, type: "is-danger", duration: 5000});
             }
         }
@@ -175,7 +181,7 @@ export default {
 
 <template>
     <section>
-        <h2 class="title is-4">Afbud for {{showClubNames}}</h2>
+        <h2 class="title is-4">Afbud for {{ showClubNames }}</h2>
         <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
         <form @submit.prevent="confirmCancellation">
             <b-field label="Vælge dit navn" message="Søg efter dit navn fra badmintonplayer">
@@ -198,7 +204,7 @@ export default {
             </b-field>
             <h2 class="title is-4">Holdkamp kalender (Beta)</h2>
             <h2 class="subtitle">Viser alle holdkampe for senior. Dage som du har meldt afbud på markeres med rød</h2>
-            <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs" />
+            <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs"/>
             <b-button native-type="submit" class="mt-4" expanded size="is-medium">Meld afbud</b-button>
         </form>
     </section>

@@ -1,7 +1,6 @@
 <script>
 import gql from "graphql-tag";
 
-import cancellationCollectorQuery from '@/../queries/cancellationCollector.gql';
 import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
 import ME from "../../../queries/me.gql";

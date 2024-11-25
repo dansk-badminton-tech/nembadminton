@@ -9,10 +9,9 @@ extend type Query{
 }
 
 extend type Mutation {
-    createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
+    createCancellation(input: CancellationInput! @spread) : Cancellation @create
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
-    createCancellationViaCollector(sharingId: String!, input: CancellationViaCollectorInput!) : CancellationViaCollector @field(resolver: "\\FlyCompany\\Members\\GraphQL\\Mutation\\CreateCancellationViaCollector")
     createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id")
     updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard
     deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @guard
@@ -20,20 +19,22 @@ extend type Mutation {
 
 input CancellationInput {
     refId: String!
-    permanent: Boolean!
-    dates: [Date!]!
-}
-
-type CancellationViaCollector {
-    success: Boolean
-}
-
-input CancellationViaCollectorInput {
-    name: String!
-    refId: String!
-    email: String!
+    teamId: String
     message: String
-    dates: [Date!]!
+    cancellationCollector: ConnectCancellationCollectorBelongsTo
+    dates: CreateCancellationDateHasMany!
+}
+
+input ConnectCancellationCollectorBelongsTo {
+    connect: ID
+}
+
+input CreateCancellationDateHasMany {
+    create: [CreateCancellationDate!]!
+}
+
+input CreateCancellationDate {
+    date: Date!
 }
 
 input CancellationCollectionInput {
@@ -53,16 +54,6 @@ type CancellationDate {
     createdAt: DateTime @rename(attribute: "created_at")
 }
 
-type CancellationPublic {
-    member: Member
-    message: String
-    dates: [CancellationDate]
-    "Updated at"
-    updatedAt: DateTime @rename(attribute: "updated_at")
-    "Created at"
-    createdAt: DateTime @rename(attribute: "created_at")
-}
-
 type CancellationCollector {
     id: ID!
     "Email for notifying"
@@ -72,20 +63,23 @@ type CancellationCollector {
     "Sharing ID"
     sharingId: String! @rename(attribute: "sharing_id")
     "Cancellations"
-    cancellationPublic(hasDates: _ @whereHasConditions(columns: ["date"])): [CancellationPublic!]! @hasMany(type: PAGINATOR)
+    cancellations(hasDates: _ @whereHasConditions(columns: ["date"])): [Cancellation!]! @hasMany(type: PAGINATOR)
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
     createdAt: DateTime @rename(attribute: "created_at")
 }
 
-input DateRange {
-    from: Date!
-    to: Date!
-}
-
 type Cancellation {
     id: ID
     refId: String!
     teamId: String
+    message: String
+    member: Member!
+    canellationCollector: CancellationCollector @belongsTo
+    dates: [CancellationDate!]! @hasMany
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
 }

@@ -8,7 +8,11 @@ import gql from "graphql-tag";
 import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";
 import ME from "../../../queries/me.gql";
 
+const now = new Date()
+now.setHours(0, 0, 0, 0)
 const nowPlus14Days = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+nowPlus14Days.setHours(0, 0, 0, 0)
+
 export default {
     name: "CancellationDashboard",
     props: {
@@ -21,7 +25,7 @@ export default {
             me: {
                 clubs: []
             },
-            selectedDateRange: [new Date(), nowPlus14Days]
+            selectedDateRange: [now, nowPlus14Days]
         }
     },
     components: {TeamMatchCalendar, CancellationCollector, TitleBar, HeroBar},
@@ -89,20 +93,6 @@ export default {
         },
         showSelectedDateRange() {
             return this.selectedDateRange.map(d => d.toLocaleDateString()).join(" - ")
-        },
-        generateEventThatShowAmountOfCancellations() {
-            Object.groupBy(this.cancellationCollector.cancellationPublic.data, ({dates}) => {
-
-            })
-            this.cancellationCollector.cancellationPublic.data.groupBy(cancellation => cancellation.member.id);
-            return this.cancellationCollector.cancellationPublic.data.map(cancellation => {
-                return {
-                    title: 'Antal afbud: ',
-                    startDate: cancellation.dates[0].date,
-                    endDate: cancellation.dates[cancellation.dates.length - 1].date,
-                    classes: ''
-                }
-            })
         }
     }
 }
@@ -149,7 +139,7 @@ export default {
                     </b-datepicker>
                 </b-field>
                 <b-table
-                    :data="cancellationCollector?.cancellationPublic.data || []"
+                    :data="cancellationCollector?.cancellations.data || []"
                     :narrowed="true"
                     :per-page="10">
                     <b-table-column field="createdAt" label="Oprettet" sortable v-slot="props">

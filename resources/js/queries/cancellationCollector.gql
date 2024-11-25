@@ -2,7 +2,7 @@ query cancellationCollector($id: ID!, $dateRange: Mixed){
     cancellationCollector(id: $id){
         id
         email
-        cancellationPublic(first: 20, page: 0, hasDates: {column: DATE, operator: BETWEEN, value: $dateRange}){
+        cancellations(first: 20, page: 0, hasDates: {column: DATE, operator: BETWEEN, value: $dateRange}){
             data{
                 member {
                     id

@@ -37,8 +37,8 @@ class CancellationCollector extends Model
         return $this->belongsToMany(Club::class, 'cancellation_collector_clubs', 'cancellation_collector_id', 'club_id');
     }
 
-    public function cancellationPublic() : HasMany
+    public function cancellations() : HasMany
     {
-        return $this->hasMany(CancellationPublic::class);
+        return $this->hasMany(Cancellation::class);
     }
 }

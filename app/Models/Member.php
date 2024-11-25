@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string  name
  * @property string  gender
  * @property string  email
+ * @property boolean playable
  * @property Point[] points
  * @property User    owner
  * @package App\Models
@@ -30,7 +31,7 @@ use Illuminate\Support\Facades\Auth;
 class Member extends Model
 {
 
-    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id'];
+    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable'];
 
     public function clubs() : BelongsToMany
     {
@@ -54,15 +55,6 @@ class Member extends Model
     public function squadMember() : HasMany
     {
         return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
-    }
-
-    public function scopeHasCancellations(Builder $builder, array $args)
-    {
-        $teamId = $args['teamId'];
-
-        return $builder->whereHas('cancellations', static function (Builder $builder) use ($teamId) {
-            $builder->where('teamId', '=', $teamId)->orWhereNull('teamId');
-        });
     }
 
     public function scopeNotCancelled(Builder $builder, string $teamId) : Builder
