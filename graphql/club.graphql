@@ -7,19 +7,17 @@ extend type Query{
     membersSearch(
         name: String @where(operator: "like"),
         refId: String @where
-        excludeMembers: [Int!] @notIn(key: "id"),
         gender: [Gender!] @in,
         orderBy: _ @orderBy(columns: ["name"]),
         hasPoints: Boolean
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPointsToggle","myClubs"]) @guard
-    memberSearchCancellation(
-        teamId: String!
-    ): [Member!]! @paginate(defaultCount: 20, scopes: ["myClubs", "hasCancellations"]) @guard
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs", "hasPointsToggle"]) @guard
     memberSearchPoints(
         teamId: String!
         version: Date!
         name: String @where(operator: "like")
         rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId"])
+        hasCancellations: _ @whereHasConditions(columns: ["date", "teamId", "id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
     memberSearchTeamFight(
         name: String!
@@ -40,17 +38,19 @@ extend type Query{
 }
 
 extend type Mutation {
+    updateMember(input: CreateMemberInput! @spread): Member @update @guard
     createMember(input: CreateMemberInput! @spread): Member @upsert @guard @inject(context: "user.id", name: "owner_id")
     deleteMember(id: ID! @whereKey) : Member @delete @guard @can(ability: "delete", find: "id")
 }
 
 input CreateMemberInput {
     id: ID
-    gender: Gender!
-    name: String!
-    refId: String!
-    points: UpsertPointMemberInput!
-    clubs: UpsertClubsInput!
+    gender: Gender
+    name: String
+    refId: String
+    points: UpsertPointMemberInput
+    clubs: UpsertClubsInput
+    playable: Boolean
 }
 
 input UpsertClubsInput {
@@ -140,9 +140,10 @@ type Member {
     ownerId: Int @rename(attribute: "owner_id")
     vintage: Vintage! @method(name: "getVintage")
     birthday: Date! @method(name: "getBirthday")
-    points(version: Date @eq): [Point!]! @hasMany
+    points(version: Date @eq, where: _ @whereConditions(columns: ["points", "category"]) ): [Point!]! @hasMany
     clubs: [Club!]! @belongsToMany
-    cancellations(teamId: String): [Cancellation!]! @hasMany(scopes: ["cancellationsByTeamId"])
+    cancellations(where: _ @whereConditions(columns: ["teamId", "date", "id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
+    playable: Boolean!
 }
 
 type Point {

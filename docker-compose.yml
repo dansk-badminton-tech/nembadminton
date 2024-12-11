@@ -58,7 +58,7 @@ services:
 
   artisan:
     image: flycompany/holdkamp
-    user: "33:33"
+    user: "1000:33"
     entrypoint: "php artisan"
     environment:
       TELESCOPE_ENABLED: "false"

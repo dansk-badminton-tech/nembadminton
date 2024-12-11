@@ -76,7 +76,7 @@ type Cancellation {
     teamId: String
     message: String
     member: Member!
-    canellationCollector: CancellationCollector @belongsTo
+    cancellationCollector: CancellationCollector @belongsTo @canQuery(ability: "view", scopes: ["currentUser"])
     dates: [CancellationDate!]! @hasMany
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")

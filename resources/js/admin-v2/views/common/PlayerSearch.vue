@@ -145,7 +145,6 @@ export default {
             variables() {
                 let params = {
                     name: '%' + this.querySearchName + '%',
-                    excludeMembers: this.excludePlayers.map(member => member.id),
                     gender: resolveGenderFromCategory(this.category.category)
                 }
                 if(this?.squad?.version){

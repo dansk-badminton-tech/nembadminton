@@ -6,10 +6,13 @@ namespace FlyCompany\Members;
 
 use App\Models\Member;
 use GraphQL\Type\Definition\ResolveInfo;
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Nuwave\Lighthouse\WhereConditions\WhereConditionsHandler;
+use Nuwave\Lighthouse\WhereConditions\WhereConditionsServiceProvider;
 
 class MemberSearch
 {
@@ -31,12 +34,12 @@ class MemberSearch
                 ->join('points', 'members.id', '=', 'points.member_id')
                 ->where('points.points', '!=', 0)
                 ->orderBy('points.points', 'desc');
-            $builder->notCancelled($teamId);
             $builder->notOnSquad($teamId);
             if (Arr::has($args, 'rankingList')) {
                 $this->applyRankingList($builder, $args['rankingList'], $version);
             }
         }
+
         return $builder;
     }
 

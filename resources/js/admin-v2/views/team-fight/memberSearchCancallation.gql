@@ -1,0 +1,41 @@
+query memberSearchCancellation(
+    $hasCancellations: QueryMemberSearchCancellationHasCancellationsWhereHasConditions
+    $version: Date
+    $page: Int
+    $first: Int
+){
+    memberSearchCancellation(
+        hasCancellations: $hasCancellations
+        page: $page
+        first: $first
+    ){
+        data {
+            id
+            name
+            gender
+            refId
+            ownerId
+            points(version: $version){
+                points
+                position
+                category
+                vintage
+            }
+            cancellations{
+                id
+                refId
+                teamId
+                message
+                dates {
+                    date
+                    createdAt
+                }
+            }
+            playable
+        }
+        paginatorInfo {
+            count
+            total
+        }
+    }
+}
