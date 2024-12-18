@@ -1,11 +1,13 @@
-query memberSearchCancellation(
-    $hasCancellations: QueryMemberSearchCancellationHasCancellationsWhereHasConditions
-    $version: Date
+query membersSearch(
     $page: Int
     $first: Int
+    $notOnSquad: String
+    $whereCancellations: QueryMembersSearchWhereCancellationsWhereConditions
+    $cancellationWhere: MemberCancellationsWhereWhereConditions
 ){
-    memberSearchCancellation(
-        hasCancellations: $hasCancellations
+    membersSearch(
+        whereCancellations: $whereCancellations
+        notOnSquad: $notOnSquad
         page: $page
         first: $first
     ){
@@ -15,17 +17,15 @@ query memberSearchCancellation(
             gender
             refId
             ownerId
-            points(version: $version){
-                points
-                position
-                category
-                vintage
-            }
-            cancellations{
+            cancellations(where: $cancellationWhere){
                 id
                 refId
                 teamId
                 message
+                createdAt
+                cancellationCollector{
+                    id
+                }
                 dates {
                     date
                     createdAt

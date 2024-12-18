@@ -6,7 +6,6 @@ query memberSearchPoints(
     $teamId: String!,
     $rankingList: MemberSearchOrderBy!
     $whereCancellations: QueryMemberSearchPointsWhereCancellationsWhereConditions
-    $hasCancellations: QueryMemberSearchPointsHasCancellationsWhereHasConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions
 ){
     memberSearchPoints(
@@ -16,7 +15,6 @@ query memberSearchPoints(
         first: $first,
         teamId: $teamId,
         whereCancellations: $whereCancellations,
-        hasCancellations: $hasCancellations,
         rankingList: $rankingList
     ) {
         data {

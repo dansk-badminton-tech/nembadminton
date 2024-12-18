@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-field grouped>
-            <b-field expanded class="" label="Link til deling" message="Dette link kan du give til alle i din klub">
+            <b-field expanded class="" label="Indsamling link" message="Dette link kan du give til alle i din klub">
                 <b-input expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
                 <p class="control">
                     <b-button @click="copyToClipboard(shareUrl)">Kopir Link</b-button>

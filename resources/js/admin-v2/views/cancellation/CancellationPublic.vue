@@ -116,7 +116,6 @@ export default {
             }
         },
         createCancellation() {
-            this.sendingCancellation = true;
             this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -131,6 +130,7 @@ export default {
                         input: {
                             refId: this.form.selectedPlayer.refId,
                             message: this.form.additionalInfo,
+                            email: this.form.email,
                             cancellationCollector: {
                                 connect: this.cancellationCollectorPublic.id
                             },
@@ -148,7 +148,6 @@ export default {
                     this.$buefy.toast.open({message: `Fejl kunne ikke sende afbud`, type: "is-danger", duration: 5000});
                 })
                 .finally(() => {
-                    this.sendingCancellation = false;
                 })
         },
         confirmCancellation() {
@@ -184,10 +183,10 @@ export default {
         <h2 class="title is-4">Afbud for {{ showClubNames }}</h2>
         <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
         <form @submit.prevent="confirmCancellation">
-            <b-field label="Vælge dit navn" message="Søg efter dit navn fra badmintonplayer">
+            <b-field label="Navn" message="Søg efter dit navn fra badmintonplayer.">
                 <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
-            <b-field label="Dit email" message="Bruges til at sende en kvittering">
+            <b-field label="Email" message="Bruges til at sende en kvittering">
                 <b-input placeholder="badminton@badminton.dk" type="email" v-model="form.email" required/>
             </b-field>
             <b-field label="Vælge afbuds datoer" message="Vælge mindst 1 dato. Er kan vælge mere end 1 dato">
@@ -196,7 +195,23 @@ export default {
                     v-model="form.selectedDates"
                     :first-day-of-week="1"
                     multiple
-                    required>
+                    required
+                    :mobile-native="false"
+                    ref="datepicker"
+                >
+                    <b-button
+                        label="Ryd"
+                        type="is-danger"
+                        icon-left="close"
+                        outlined
+                        @click="form.selectedDates = []" />
+                    <b-button
+                        class="is-pulled-right"
+                        label="Gem"
+                        type="is-info"
+                        icon-left="content-save"
+                        @click="$refs.datepicker.toggle()" />
+
                 </b-datepicker>
             </b-field>
             <b-field label="Besked med afbudet. Valgfrit">

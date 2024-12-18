@@ -21,10 +21,15 @@ class CancellationPolicy
      */
     public function view(User $user, Cancellation $cancellation): bool
     {
-        if($cancellation->team !== null){
+        if ($cancellation->team !== null) {
             return $cancellation->team->user_id === $user->getAuthIdentifier();
         }
-        return true;
+
+        if($cancellation->cancellationCollector !== null) {
+            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+        }
+
+        return false;
     }
 
     /**

@@ -2,23 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property Teams|null $team
  * @property CancellationCollector|null $cancellationCollector
  * @property Member $member
- * @property CancellationDate[] $dates
+ * @property CancellationDate[]|Collection $dates
+ * @property string $message
+ * @property string $email
  */
 class Cancellation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['refId', 'teamId', 'message'];
+    protected $dispatchesEvents = [
+        //'created' => \App\Events\CancellationCreated::class,
+    ];
 
+    protected $fillable = ['refId', 'teamId', 'message', 'email'];
 
     public function dates() : HasMany
     {
@@ -36,4 +44,5 @@ class Cancellation extends Model
     public function cancellationCollector() : BelongsTo{
         return $this->belongsTo(CancellationCollector::class);
     }
+
 }

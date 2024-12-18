@@ -37,7 +37,7 @@ class CancellationCollectorPolicy
      */
     public function update(User $user, CancellationCollector $cancellationCollector): bool
     {
-        //
+        return $cancellationCollector->user_id === $user->getAuthIdentifier();
     }
 
     /**
@@ -45,7 +45,7 @@ class CancellationCollectorPolicy
      */
     public function delete(User $user, CancellationCollector $cancellationCollector): bool
     {
-        //
+        return $cancellationCollector->user_id === $user->getAuthIdentifier();
     }
 
     /**

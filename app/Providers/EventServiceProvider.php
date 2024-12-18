@@ -3,8 +3,10 @@ declare(strict_types = 1);
 
 namespace App\Providers;
 
+use App\Events\CancellationCreated;
 use App\Events\UserUpdate;
 use App\Listeners\AddedClubConnection;
+use App\Listeners\ConfirmationEmail;
 use App\Listeners\EnsureClubConnection;
 use App\Listeners\InitializeClub;
 use Illuminate\Auth\Events\Registered;
@@ -25,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserUpdate::class => [
             AddedClubConnection::class
+        ],
+        CancellationCreated::class => [
+            ConfirmationEmail::class
         ]
     ];
 

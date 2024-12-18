@@ -9,18 +9,19 @@ extend type Query{
 }
 
 extend type Mutation {
-    createCancellation(input: CancellationInput! @spread) : Cancellation @create
+    createCancellation(input: CancellationInput! @spread) : Cancellation @create @event(dispatch: "App\\Events\\CancellationCreated")
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
     updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
     createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id")
-    updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard
-    deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @guard
+    updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard @canFind(ability: "update", find: "id")
+    deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @canFind(ability: "delete", find: "id") @guard
 }
 
 input CancellationInput {
     refId: String!
     teamId: String
     message: String
+    email: String @rules(apply: ["email"])
     cancellationCollector: ConnectCancellationCollectorBelongsTo
     dates: CreateCancellationDateHasMany!
 }

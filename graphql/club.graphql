@@ -5,19 +5,21 @@ extend type Query{
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
     membersSearch(
-        name: String @where(operator: "like"),
+        name: String @where(operator: "like")
         refId: String @where
-        gender: [Gender!] @in,
-        orderBy: _ @orderBy(columns: ["name"]),
-        hasPoints: Boolean
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs", "hasPointsToggle"]) @guard
+        gender: [Gender!] @in
+        orderBy: _ @orderBy(columns: ["name"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
+        hasPoints: Boolean @scope
+        "Team ID"
+        notOnSquad: String @scope
+    ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs"]) @guard
     memberSearchPoints(
         teamId: String!
         version: Date!
         name: String @where(operator: "like")
         rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
-        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId"])
-        hasCancellations: _ @whereHasConditions(columns: ["date", "teamId", "id"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
     memberSearchTeamFight(
         name: String!
@@ -89,15 +91,13 @@ enum Gender {
 }
 
 enum MemberSearchOrderBy {
-    ALL_LEVEL @enum(value: "ALL_LEVEL")
-    WOMEN_LEVEL @enum(value: "WOMEN_LEVEL")
-    WOMEN_SINGLE @enum(value: "WOMEN_SINGLE")
-    WOMENS_DOUBLE @enum(value: "WOMENS_DOUBLE")
-    WOMEN_MIX @enum(value: "WOMEN_MIX")
-    MEN_LEVEL @enum(value: "MEN_LEVEL")
-    MEN_SINGLE @enum(value: "MEN_SINGLE")
-    MENS_DOUBLE @enum(value: "MENS_DOUBLE")
-    MEN_MIX @enum(value: "MEN_MIX")
+    ALL_LEVEL @enum(value: "ALL")
+    WOMEN_SINGLE @enum(value: "DS")
+    WOMENS_DOUBLE @enum(value: "DD")
+    WOMEN_MIX @enum(value: "MxD")
+    MEN_SINGLE @enum(value: "HS")
+    MENS_DOUBLE @enum(value: "HD")
+    MEN_MIX @enum(value: "MxH")
 }
 
 type Log {
@@ -142,7 +142,7 @@ type Member {
     birthday: Date! @method(name: "getBirthday")
     points(version: Date @eq, where: _ @whereConditions(columns: ["points", "category"]) ): [Point!]! @hasMany
     clubs: [Club!]! @belongsToMany
-    cancellations(where: _ @whereConditions(columns: ["teamId", "date", "id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
+    cancellations(where: _ @whereConditions(columns: ["teamId", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
     playable: Boolean!
 }
 

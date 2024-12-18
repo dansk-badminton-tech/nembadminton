@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 /**
  * @property string $sharing_id
  * @property int $user_id
+ * @property string $email
  */
 class CancellationCollector extends Model
 {

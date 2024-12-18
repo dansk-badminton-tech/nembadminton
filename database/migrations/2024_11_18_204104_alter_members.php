@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::table('cancellations', function (Blueprint $table) {
             $table->foreignId('cancellation_collector_id')->nullable()->constrained()->cascadeOnDelete();
             $table->text('message')->nullable(); // Corresponding to String, nullable because it's not required
-            $table->text('created_by')->nullable();
+            $table->text('email')->nullable();
         });
     }
 
@@ -33,7 +33,7 @@ return new class extends Migration
         Schema::table('cancellations', function (Blueprint $table) {
             $table->dropConstrainedForeignId('cancellation_collector_id');
             $table->dropColumn('message');
-            $table->dropColumn('created_by');
+            $table->dropColumn('email');
         });
     }
 };

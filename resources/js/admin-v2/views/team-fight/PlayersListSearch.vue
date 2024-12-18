@@ -15,24 +15,27 @@
                 Tilføj spiller
             </b-button>
         </b-field>
+        {{resolveHelperText}}
         <b-table
             class="mt-5"
-            :data="memberSearchPointsFiltered"
+            :data="membersList"
             :paginated="true"
             :backend-pagination="true"
-            :loading="$apollo.queries.memberSearch.loading || loading"
-            :total="memberSearch.paginatorInfo.total"
+            :loading="apolloLoading || loading"
+            :total="memberPageInfo.paginatorInfo.total"
             :per-page="perPage"
             @page-change="onPageChange"
             :pagination-rounded="true"
-            :row-class="rowColoring"
             :detailed="showCancellation"
             detail-key="id"
+            @click="openDetailedRow"
+            :opened-detailed="openedDetailed"
+            :hoverable="true"
         >
             <b-table-column field="points" label="#" v-slot="props">
                 {{ (props.index + 1) + perPage * (currentPage - 1) }}
             </b-table-column>
-            <b-table-column field="points" label="Points" v-slot="props">
+            <b-table-column :visible="!showCancellation" field="points" label="Points" v-slot="props">
                 {{ findLevel(props.row, convertRankingToCategory(rankingList)) }}
             </b-table-column>
             <b-table-column field="vintage" label="" v-slot="props">
@@ -56,28 +59,30 @@
                               @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>
-            <template #empty>
+            <template v-slot:empty="props">
                 <div class="has-text-centered" v-if="showCancellation">Søgte på afbud for {{ rankingListTranslate }} og {{ formatGameDate }} - fandt 0.</div>
             </template>
             <template v-slot:detail="props">
                 <tr>
-                   <td>Oprettet</td>
-                   <td></td>
-                   <td></td>
-                   <td>Afbuds datoer</td>
-                   <td>Oprettet af</td>
-                   <td>Funktioner</td>
+                    <td>Oprettet</td>
+                    <td></td>
+                    <td></td>
+                    <td>Afbuds datoer</td>
+                    <td>Oprettet af</td>
+                    <td>Funktioner</td>
                 </tr>
                 <tr v-for="cancellation in props.row.cancellations" :key="cancellation.id">
-                    <td colspan="3">{{cancellation.createdAt}}</td>
-                    <td>{{cancellation.dates.map(d => d.date).join(", ")}}</td>
-                    <td>{{resolveCancellationCreatedBy(cancellation)}}</td>
+                    <td colspan="3">{{ cancellation.createdAt }}</td>
+                    <td>{{ cancellation.dates.map(d => d.date).join(", ") }}</td>
+                    <td>{{ resolveCancellationCreatedBy(cancellation) }}</td>
                     <td>
-                        <b-button
-                            :disabled="cancellation?.cancellationCollector?.id"
-                            size="is-small" type="is-danger"
-                            title="Annuller afbud (Denne holdrunde)" icon-right="delete"
-                            @click="deleteCancellation(cancellation)"></b-button>
+                        <b-tooltip type="is-info" position="is-top" :active="!!cancellation?.cancellationCollector?.id" label="Du kan ikke slette afbud fra spiller. Du kan stadig søge spilleren frem via 'Søg på spiller'">
+                            <b-button
+                                :disabled="cancellation?.cancellationCollector?.id"
+                                size="is-small" type="is-danger"
+                                title="Annuller afbud (Denne holdrunde)" icon-right="delete"
+                                @click="deleteCancellation(cancellation)"></b-button>
+                        </b-tooltip>
                     </td>
                 </tr>
             </template>
@@ -102,6 +107,8 @@ import gql from 'graphql-tag'
 import {convertRankingToCategory, debounce, findLevel} from "../../helpers";
 import AddMemberModal from "./AddMemberModal.vue";
 import MemberSearchPoints from "./memberSearchPoints.gql"
+import MemberSearchCancellation from "./memberSearchCancellation.gql"
+import ME from "../../../queries/me.gql";
 
 export default {
     name: 'PlayersListSearch',
@@ -114,8 +121,28 @@ export default {
         gameDate: Date
     },
     computed: {
-        memberSearchPointsFiltered() {
-            return this.memberSearch.data
+        resolveHelperText(){
+            if(this.showCancellation){
+                return 'Viser afbud som overlapper med '+this.gameDate.toISOString().slice(0, 10)+' og dine afbud'
+            }
+        },
+        membersList() {
+            if (this.showCancellation) {
+                return this.memberSearchCancellation?.data
+            }
+            return this.memberSearch?.data
+        },
+        memberPageInfo() {
+            if (this.showCancellation) {
+                return this.memberSearchCancellation
+            }
+            return this.memberSearch
+        },
+        apolloLoading() {
+            if (this.showCancellation) {
+                return this.$apollo.queries.memberSearchCancellation.loading
+            }
+            return this.$apollo.queries.memberSearch.loading
         },
         rankingListTranslate() {
             return this.rankings[this.rankingList] || this.rankingList
@@ -127,9 +154,11 @@ export default {
     mounted() {
         this.$root.$on('player-added-to-category', (player) => {
             this.$apollo.queries.memberSearch.refresh()
+            this.$apollo.queries.memberSearchCancellation.refresh()
         })
         this.$root.$on('player-deleted-from-category', (player) => {
             this.$apollo.queries.memberSearch.refresh()
+            this.$apollo.queries.memberSearchCancellation.refresh()
         })
     },
     data() {
@@ -140,6 +169,10 @@ export default {
                     total: 0
                 }
             },
+            me: {
+                id: 0
+            },
+            openedDetailed: [],
             showCancellation: false,
             rankingList: 'WOMEN_SINGLE',
             perPage: 15,
@@ -157,9 +190,20 @@ export default {
         }
     },
     methods: {
-        rowColoring(row, index) {
-            if (row.cancellations.length > 0) {
-                return 'has-background-danger-light'
+        refreshMembers(){
+            this.$apollo.queries.memberSearch.refresh()
+            this.$apollo.queries.memberSearchCancellation.refresh()
+        },
+        openDetailedRow(obj) {
+            if(this.showCancellation){
+                const index = this.openedDetailed.indexOf(obj.id);
+                if (index !== -1) {
+                    // If obj.id exists in the array, remove it
+                    this.openedDetailed.splice(index, 1);
+                } else {
+                    // If obj.id does not exist in the array, add it
+                    this.openedDetailed.push(obj.id);
+                }
             }
         },
         deleteMember(player) {
@@ -177,7 +221,7 @@ export default {
                             },
                         })
                 .then(() => {
-                    this.$apollo.queries.memberSearch.refresh()
+                    this.refreshMembers()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -217,7 +261,7 @@ export default {
                             }
                         })
                 .then(() => {
-                    this.$apollo.queries.memberSearch.refresh()
+                    this.refreshMembers()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -251,7 +295,7 @@ export default {
                             }
                         })
                 .then(() => {
-                    this.$apollo.queries.memberSearch.refresh()
+                    this.refreshMembers()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -268,33 +312,35 @@ export default {
         },
         makeCancellation(player) {
             this.$apollo
-                .mutate({
-                            mutation: gql`
-                        mutation createCancellation($input: CancellationInput!){
-                                createCancellation(input: $input){
-                                    id
-                                    refId
-                                    teamId
-                                    dates{
-                                     date
-                                     updatedAt
-                                     createdAt
+                .mutate(
+                    {
+                        mutation: gql`
+                                mutation createCancellation($input: CancellationInput!){
+                                        createCancellation(input: $input){
+                                            id
+                                            refId
+                                            teamId
+                                            dates{
+                                             date
+                                             updatedAt
+                                             createdAt
+                                            }
+                                        }
                                     }
+                                `,
+                        variables: {
+                            input: {
+                                refId: player.refId,
+                                teamId: this.teamId,
+                                dates: {
+                                    create: [{date: this.gameDate.toISOString().substring(0, 10)}]
                                 }
                             }
-                        `,
-                            variables: {
-                                input: {
-                                    refId: player.refId,
-                                    teamId: this.teamId,
-                                    dates: {
-                                        create: [{date: this.gameDate.toISOString().substring(0, 10)}]
-                                    }
-                                }
-                            }
-                        })
+                        }
+                    }
+                )
                 .then(() => {
-                    this.$apollo.queries.memberSearch.refresh()
+                    this.refreshMembers()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -313,18 +359,18 @@ export default {
             this.$apollo
                 .mutate({
                             mutation: gql`
-                        mutation deleteCancellation($id : ID!){
-                            deleteCancellation(id: $id){
-                                id
-                            }
-                        }
-                    `,
+                                mutation deleteCancellation($id : ID!){
+                                    deleteCancellation(id: $id){
+                                        id
+                                    }
+                                }
+                            `,
                             variables: {
                                 id: cancellation.id
                             }
                         })
                 .then(() => {
-                    this.$apollo.queries.memberSearch.refresh()
+                    this.refreshMembers()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -339,11 +385,11 @@ export default {
                                               })
                 })
         },
-        resolveCancellationCreatedBy(cancellation){
-            if(cancellation.teamId){
+        resolveCancellationCreatedBy(cancellation) {
+            if (cancellation.teamId) {
                 return "Dig"
             }
-            if(cancellation.cancellationCollector){
+            if (cancellation.cancellationCollector) {
                 return "Afbuds indsamler"
             }
         },
@@ -373,13 +419,90 @@ export default {
                                        trapFocus: true
                                    })
         }
-
     },
     apollo: {
-        memberSearch: {
-            query() {
-                return MemberSearchPoints
+        me: ME,
+        memberSearchCancellation: {
+            query: MemberSearchCancellation,
+            update: data => data.membersSearch,
+            fetchPolicy: "network-only",
+            variables() {
+                return {
+                    page: this.currentPage,
+                    first: this.perPage,
+                    notOnSquad: this.teamId,
+                    cancellationWhere: {
+                        OR: [{
+                            column: 'TEAM_ID',
+                            value: this.teamId
+                        }, {
+                            AND: [
+                                {
+                                    HAS: {
+                                        relation: 'cancellationCollector',
+                                        condition: {
+                                            column: 'USER_ID',
+                                            value: this.me.id
+                                        }
+                                    }
+                                },
+                                {
+                                    HAS: {
+                                        relation: 'dates',
+                                        condition: {
+                                            column: 'DATE',
+                                            operator: 'BETWEEN',
+                                            value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
+                                        }
+                                    }
+                                }
+                            ],
+                        }]
+                    },
+                    whereCancellations: {
+                        HAS: {
+                            relation: 'cancellations',
+                            condition: {
+                                OR: [
+                                    {
+                                        column: 'TEAM_ID',
+                                        value: this.teamId
+                                    },
+                                    {
+                                        AND: [
+                                            {
+                                                HAS: {
+                                                    relation: 'cancellationCollector',
+                                                    condition: {
+                                                        column: 'USER_ID',
+                                                        value: this.me?.id
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                HAS: {
+                                                    relation: 'dates',
+                                                    condition: {
+                                                        column: 'DATE',
+                                                        operator: 'BETWEEN',
+                                                        value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
             },
+            skip() {
+                return false
+            }
+        },
+        memberSearch: {
+            query: MemberSearchPoints,
             update: data => data.memberSearchPoints,
             fetchPolicy: "network-only",
             variables() {
@@ -407,8 +530,8 @@ export default {
                                 HAS: {
                                     relation: 'cancellationCollector',
                                     condition: {
-                                        column: 'ID',
-                                        value: 2
+                                        column: 'USER_ID',
+                                        value: this.me.id
                                     }
                                 }
                             },
@@ -425,15 +548,16 @@ export default {
                         ],
                     }]
                 }
-
-                if (this.showCancellation) {
-                    params.hasCancellations = {
-                        OR: [
-                            {
+                params.whereCancellations = {
+                    HAS: {
+                        relation: 'cancellations',
+                        operator: 'LT',
+                        amount: 1,
+                        condition: {
+                            OR: [{
                                 column: 'TEAM_ID',
                                 value: this.teamId
-                            },
-                            {
+                            }, {
                                 AND: [
                                     {
                                         HAS: {
@@ -444,33 +568,19 @@ export default {
                                                 value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
                                             }
                                         }
+                                    },
+                                    {
+                                        HAS: {
+                                            relation: 'cancellationCollector',
+                                            condition: {
+                                                column: 'USER_ID',
+                                                value: this.me.id
+                                            }
+                                        }
                                     }
                                 ],
                             }
-                        ]
-                    }
-                } else {
-                    params.whereCancellations = {
-                        HAS: {
-                            relation: 'cancellations',
-                            operator: 'LT',
-                            amount: 1,
-                            condition: {
-                                OR: [{
-                                    column: 'TEAM_ID',
-                                    value: this.teamId
-                                }, {
-                                    HAS: {
-                                        relation: 'dates',
-                                        condition: {
-                                            column: 'DATE',
-                                            operator: 'BETWEEN',
-                                            value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
-                                        }
-                                    }
-                                }
-                                ]
-                            }
+                            ]
                         }
                     }
                 }

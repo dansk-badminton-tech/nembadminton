@@ -71,18 +71,13 @@ class Member extends Model
         });
     }
 
-    public function scopeHasPointsToggle($query, $args)
+    public function scopeHasPoints(Builder $query, ?bool $hasPoints)
     {
-        if ($args['hasPoints'] ?? true) {
-            return $query->hasPoints();
+        if ($hasPoints ?? false) {
+            return $query->has('points');
         }
 
         return $query;
-    }
-
-    public function scopeHasPoints(Builder $builder) : Builder
-    {
-        return $builder->has('points');
     }
 
     public function scopeClubs(Builder $builder, array $clubIds) : Builder

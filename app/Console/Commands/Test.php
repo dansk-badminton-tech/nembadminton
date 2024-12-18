@@ -3,6 +3,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Cancellation;
 use App\Models\User;
 use App\Notifications\Release;
 use FlyCompany\Scraper\BadmintonPlayer;
@@ -13,6 +14,7 @@ use FlyCompany\TeamFight\TeamManager;
 use FlyCompany\TeamFight\TeamValidator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class Test extends Command
 {
@@ -40,9 +42,6 @@ class Test extends Command
      */
     public function handle(TeamManager $teamManager ,BadmintonPlayer $scraper)
     {
-        $versions = $scraper->getVersions(BadmintonPlayerHelper::getCurrentSeason());
-        $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($versions);
-
-        dd($rankingMonths);
+        Mail::to('danielflynygaard@gmail.com')->send(new \App\Mail\ConfirmationParticipantEmail(Cancellation::query()->find(127)));
     }
 }

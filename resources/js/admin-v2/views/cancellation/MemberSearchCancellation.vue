@@ -1,6 +1,7 @@
 <template>
     <b-autocomplete
         :data="data"
+        v-model="player"
         @input="searchMembers"
         @typing="searchMembers"
         @select="option => selected = option"
@@ -10,6 +11,7 @@
         required
         :readonly="selected !== null"
         placeholder="Søg efter medlem"
+        keep-first
     >
         <template v-slot:default="{ option }">
             <div class="media">
@@ -31,15 +33,20 @@ import {debounce} from "@/helpers.js";
 
 export default {
     name: "MemberSearchCancellation",
-    props: {clubs: Array},
+    props: {value: Object, clubs: Array},
     data(){
         return {
             data: [],
             querySearchName: '',
+            player: null,
             selected: null
         }
     },
     watch: {
+        value(val){
+            this.player = null
+            this.selected = val
+        },
         selected(val){
             this.$emit('input', val)
         }
