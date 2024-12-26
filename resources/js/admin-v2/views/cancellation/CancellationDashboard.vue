@@ -7,12 +7,12 @@ import CancellationCollector from "@/views/cancellation/CancellationCollector.vu
 import gql from "graphql-tag";
 import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";
 import ME from "../../../queries/me.gql";
+import moment from "moment";
 
 const now = new Date()
 now.setHours(0, 0, 0, 0)
 const nowPlus14Days = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 nowPlus14Days.setHours(0, 0, 0, 0)
-
 export default {
     name: "CancellationDashboard",
     props: {
@@ -25,7 +25,13 @@ export default {
             me: {
                 clubs: []
             },
-            selectedDateRange: [now, nowPlus14Days]
+            selectedDateRange: null,
+            perPage: 10,
+            currentPage: 1,
+            orderBy: [{
+                column: 'CREATED_AT',
+                order: 'DESC'
+            }]
         }
     },
     components: {TeamMatchCalendar, CancellationCollector, TitleBar, HeroBar},
@@ -33,20 +39,86 @@ export default {
         cancellationCollector: {
             query: cancellationCollectorQuery,
             variables() {
-                return {
-                    dateRange: this.selectedDateRange,
-                    id: this.collectorId
-                }
-            }
+                return this.resolveVariables()
+            },
+            fetchPolicy: 'network-only',
         },
         me: {
             query: ME
         }
     },
     methods: {
+        onSort(field, order) {
+            this.orderBy = [
+                {
+                    column: 'CREATED_AT',
+                    order: order.toUpperCase()
+                }
+            ]
+        },
+        resolveVariables() {
+            const vars = {
+                id: this.collectorId,
+                hasDates: null,
+                orderBy: this.orderBy,
+                page: this.currentPage,
+                first: this.perPage,
+            };
+
+            if (this.selectedDateRange !== null) {
+                vars.hasDates = {
+                    column: 'DATE',
+                    operator: 'BETWEEN',
+                    value: [
+                        moment(this.selectedDateRange[0]).format('YYYY-MM-DDTHH:mm:ss'),
+                        moment(this.selectedDateRange[1]).format('YYYY-MM-DDTHH:mm:ss')
+                    ]
+                };
+            }
+            return vars;
+        },
+        confirmDeleteCancellation(cancellation) {
+            const variables = this.resolveVariables()
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Er du sikker på, at du vil slette dette afbud?',
+                    onConfirm: () => {
+                        this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                                  mutation DeleteCancellation($id: ID!) {
+                                                    deleteCancellation(id: $id) {
+                                                        id
+                                                    }
+                                                  }
+                                                `,
+                                variables: {
+                                    id: cancellation.id
+                                },
+                                refetchQueries: [{query: cancellationCollectorQuery, variables: variables}]
+                            })
+                            .then(() => {
+                                this.$buefy.toast.open({
+                                                           message: 'Afbud slettet',
+                                                           type: 'is-success'
+                                                       });
+                            })
+                            .catch(error => {
+                                console.error('Error deleting cancellation:', error);
+                                this.$buefy.toast.open({
+                                                           message: 'Der opstod en fejl under sletningen af afbuddet.',
+                                                           type: 'is-danger'
+                                                       });
+                            });
+                    }
+                });
+        },
+        resetSelectedDateRange() {
+            this.selectedDateRange = null
+        },
         confirmDeleteCancellationCollector() {
             this.$buefy.dialog.confirm({
-                                           message: 'Sikker på du vil slette? Alle afbud bliver slettet.',
+                                           message: 'Sikker på du vil slette? Alle eksiterende afbud fra spiller bliver slettet.',
                                            onConfirm: () => this.deleteCancellationCollector()
                                        })
         },
@@ -69,7 +141,7 @@ export default {
                                            message: 'Cancellation collector deleted successfully',
                                            type: 'is-success'
                                        });
-                this.$router.push({name: "cancellation-redirect"})
+                this.$router.push({name: "cancellation-landing"})
             }).catch(error => {
                 console.error('Error deleting cancellation collector:', error);
                 this.$buefy.toast.open({
@@ -79,6 +151,27 @@ export default {
             }).finally(() => {
                 this.isDeleting = false;
             });
+        },
+        showMessage(row) {
+            this.$buefy.dialog.alert({
+                                         title: 'Besked',
+                                         message: row.message || 'Ingen besked tilgængelig.',
+                                         confirmText: 'OK',
+                                         type: 'is-info'
+                                     });
+        },
+        showEmail(row) {
+            this.$buefy.dialog.alert({
+                                         title: 'Email som har meldt afbud',
+                                         message: row.email || 'Ingen email tilgængelig.',
+                                         confirmText: 'OK',
+                                         type: 'is-info'
+                                     });
+        },
+        selectedDateRangeInput(input){
+            const final = [input[0]]
+            final[1] = new Date(input[1].getTime() + 24 * 60 * 60 * 1000 - 1);
+            this.selectedDateRange = final
         }
     },
     computed: {
@@ -86,13 +179,16 @@ export default {
             return this.cancellationCollector !== null
         },
         showClubNames() {
-            if (this.me.clubs.length === 0) {
+            if (this.cancellationCollector?.clubs.length === 0) {
                 return "Ingen klubber"
             }
-            return this.me.clubs.map(club => club.name1).join(", ")
+            return this.cancellationCollector?.clubs.map(club => club.name1).join(", ")
         },
         showSelectedDateRange() {
-            return this.selectedDateRange.map(d => d.toLocaleDateString()).join(" - ")
+            if (this.selectedDateRange === null) {
+                return ''
+            }
+            return 'Søgte mellem ' + this.selectedDateRange?.map(d => d.toLocaleDateString()).join(" - ")
         }
     }
 }
@@ -115,55 +211,93 @@ export default {
             >
                 Slet
             </b-button>
-            <div v-else class="box has-text-centered">
-                <h2 class="title is-4">Hvordan virker det?</h2>
-                <ul>
-                    <li>1. Du sætter din afbuds indsamler op</li>
-                    <li>2. Deler linket med alle spiller i klubben</li>
-                </ul>
-                <hr>
-                <div class="buttons is-centered">
-                    <b-button tag="router-link" to="/cancellations/create" class="button is-link">Indstil nu</b-button>
-                </div>
-            </div>
             <hr>
             <CancellationCollector v-if="!!cancellationCollector" :cancellationCollector="cancellationCollector"/>
             <hr>
             <div v-if="!!cancellationCollector">
                 <h1 class="title is-3">Oversigt over afbud</h1>
-                <b-field label="Søg på afbuds datoer">
-                    <b-datepicker
-                        placeholder="Søg på afbuds datoer"
-                        v-model="selectedDateRange"
-                        range>
-                    </b-datepicker>
-                </b-field>
                 <b-table
                     :data="cancellationCollector?.cancellations.data || []"
                     :narrowed="true"
-                    :per-page="10">
+                    :loading="$apollo.queries.cancellationCollector.loading"
+                    :paginated="true"
+                    :backend-pagination="true"
+                    :total="cancellationCollector?.cancellations.paginatorInfo.total"
+                    :per-page="perPage"
+                    @page-change="page => this.currentPage = page"
+                    backend-sorting
+                    :default-sort="['createdAt', 'desc']"
+                    @sort="onSort"
+                >
                     <b-table-column field="createdAt" label="Oprettet" sortable v-slot="props">
                         {{ props.row.createdAt }}
                     </b-table-column>
 
-                    <b-table-column field="member.name" label="Navn" sortable v-slot="props">
+                    <b-table-column field="member.name" label="Navn" v-slot="props">
                         {{ props.row.member.name }}
                     </b-table-column>
 
-                    <b-table-column field="dates" label="Afbuds datoer" sortable v-slot="props">
-                        {{props.row.dates.map(d => d.date).join(", ")}}
+                    <b-table-column field="member.clubs" label="Klub" v-slot="props">
+                        {{ props.row.member.clubs.map(c => c.name1).join(", ") }}
                     </b-table-column>
-                    <b-table-column field="message" label="Besked" sortable v-slot="props">
-                        {{ props.row.message }}
+
+                    <b-table-column searchable field="dates" label="Afbuds datoer">
+                        <template
+                            v-slot:searchable="props">
+                            <b-field grouped>
+                                <b-datepicker
+                                    placeholder="Søg på afbuds datoer"
+                                    :value="selectedDateRange"
+                                    @input="selectedDateRangeInput"
+                                    size="is-small"
+                                    :first-day-of-week="1"
+                                    locale="da-DK"
+                                    range>
+                                </b-datepicker>
+                                <p class="control">
+                                    <b-button size="is-small" @click="resetSelectedDateRange">Reset</b-button>
+                                </p>
+                            </b-field>
+                        </template>
+                        <template v-slot="props">
+                            {{ props.row.dates.map(d => d.date).join(", ") }}
+                        </template>
                     </b-table-column>
-                    <template #empty>
-                        <p>Ingen afbud fundet mellem {{showSelectedDateRange}}</p>
+                    <b-table-column v-slot="props">
+                        <div class="buttons">
+                            <b-button
+                                icon-left="message"
+                                size="is-small"
+                                @click="showMessage(props.row)"
+                                aria-label="Vis besked"
+                                title="Vis besked"
+                                v-if="props.row.message"
+                            />
+                            <b-button
+                                icon-left="email"
+                                size="is-small"
+                                @click="showEmail(props.row)"
+                                aria-label="Vis email"
+                                title="Vis email"
+                            />
+                            <b-button
+                                icon-left="delete"
+                                type="is-danger"
+                                size="is-small"
+                                @click="confirmDeleteCancellation(props.row)"
+                                aria-label="Slet afbud"
+                                title="Slet afbud"
+                            />
+                        </div>
+                    </b-table-column>
+                    <template v-slot:empty="props">
+                        <p>Ingen afbud fundet. {{ showSelectedDateRange }}</p>
                     </template>
                 </b-table>
                 <hr>
                 <h1 class="title is-3">Holdkamp kalender (Beta)</h1>
-                <h2 class="subtitle">Viser alle holdkampe for {{showClubNames}} senior for mine klubber. Data'en er hentet direkte fra badmintonplayer.dk</h2>
-                <TeamMatchCalendar :clubs="me.clubs" />
+                <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }} senior for mine klubber. Data'en er hentet direkte fra badmintonplayer.dk</h2>
+                <TeamMatchCalendar :clubs="cancellationCollector?.clubs"/>
             </div>
         </section>
     </div>

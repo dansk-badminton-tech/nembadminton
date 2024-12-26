@@ -22,10 +22,6 @@ class Cancellation extends Model
 {
     use HasFactory;
 
-    protected $dispatchesEvents = [
-        //'created' => \App\Events\CancellationCreated::class,
-    ];
-
     protected $fillable = ['refId', 'teamId', 'message', 'email'];
 
     public function dates() : HasMany

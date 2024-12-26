@@ -10,6 +10,7 @@
         :open-on-focus="true"
         required
         :readonly="selected !== null"
+        @keyup.native="clearOnBackspace"
         placeholder="Søg efter medlem"
         keep-first
     >
@@ -52,6 +53,12 @@ export default {
         }
     },
     methods: {
+        clearOnBackspace(nativeEvent) {
+            if (nativeEvent.key === 'Backspace' && this.selected !== null) {
+                this.selected = null;
+                this.player = null;
+            }
+        },
         searchMembers: debounce(function (name) {
             this.querySearchName = name
         }, 300),

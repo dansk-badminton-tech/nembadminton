@@ -15,7 +15,6 @@
                 Tilføj spiller
             </b-button>
         </b-field>
-        {{resolveHelperText}}
         <b-table
             class="mt-5"
             :data="membersList"
@@ -460,40 +459,49 @@ export default {
                         }]
                     },
                     whereCancellations: {
-                        HAS: {
-                            relation: 'cancellations',
-                            condition: {
-                                OR: [
-                                    {
-                                        column: 'TEAM_ID',
-                                        value: this.teamId
-                                    },
-                                    {
-                                        AND: [
+                        OR: [
+                            {
+                                column: 'PLAYABLE',
+                                value: false
+                            },
+                            {
+                                HAS: {
+                                    relation: 'cancellations',
+                                    condition: {
+                                        OR: [
                                             {
-                                                HAS: {
-                                                    relation: 'cancellationCollector',
-                                                    condition: {
-                                                        column: 'USER_ID',
-                                                        value: this.me?.id
-                                                    }
-                                                }
+                                                column: 'TEAM_ID',
+                                                value: this.teamId
                                             },
                                             {
-                                                HAS: {
-                                                    relation: 'dates',
-                                                    condition: {
-                                                        column: 'DATE',
-                                                        operator: 'BETWEEN',
-                                                        value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
+                                                AND: [
+                                                    {
+                                                        HAS: {
+                                                            relation: 'cancellationCollector',
+                                                            condition: {
+                                                                column: 'USER_ID',
+                                                                value: this.me?.id
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        HAS: {
+                                                            relation: 'dates',
+                                                            condition: {
+                                                                column: 'DATE',
+                                                                operator: 'BETWEEN',
+                                                                value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
+                                                            }
+                                                        }
                                                     }
-                                                }
+                                                ],
                                             }
-                                        ],
+                                        ]
                                     }
-                                ]
+                                }
+
                             }
-                        }
+                        ],
                     }
                 }
             },
@@ -509,6 +517,7 @@ export default {
                 let params = {
                     page: this.currentPage,
                     first: this.perPage,
+                    playable: true
                 }
                 if (this.searchName.trim() !== '') {
                     params.name = '%' + this.searchName + '%'

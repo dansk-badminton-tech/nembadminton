@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmationParticipantEmail extends Mailable implements ShouldQueue
+class CancellationConfirmationParticipantEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +28,7 @@ class ConfirmationParticipantEmail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: 'afbud@nembadminton.dk',
             subject: 'Vi har modtaget dit afbud',
         );
     }

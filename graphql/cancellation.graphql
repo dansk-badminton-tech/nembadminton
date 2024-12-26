@@ -44,7 +44,8 @@ input CancellationCollectionInput {
 }
 
 input ClubBelongsToMany {
-    connect: [ID!]!
+    connect: [ID!]
+    sync: [ID!]
 }
 
 type CancellationDate {
@@ -64,7 +65,10 @@ type CancellationCollector {
     "Sharing ID"
     sharingId: String! @rename(attribute: "sharing_id")
     "Cancellations"
-    cancellations(hasDates: _ @whereHasConditions(columns: ["date"])): [Cancellation!]! @hasMany(type: PAGINATOR)
+    cancellations(
+        hasDates: _ @whereHasConditions(columns: ["date"]),
+        orderBy: _ @orderBy(columns: ["created_at"])
+    ): [Cancellation!]! @hasMany(type: PAGINATOR)
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
@@ -77,6 +81,7 @@ type Cancellation {
     teamId: String
     message: String
     member: Member!
+    email: String!
     cancellationCollector: CancellationCollector @belongsTo @canQuery(ability: "view", scopes: ["currentUser"])
     dates: [CancellationDate!]! @hasMany
     "Updated at"

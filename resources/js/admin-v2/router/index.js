@@ -71,6 +71,15 @@ const routes = [
     },
     {
         meta: {
+            title: 'Afbud - landing',
+            requiresAuth: true
+        },
+        path: '/cancellations/landing',
+        name: 'cancellation-landing',
+        component: () => import('@/views/cancellation/CancellationLanding.vue')
+    },
+    {
+        meta: {
             title: 'Afbud',
             requiresAuth: true
         },
@@ -172,6 +181,15 @@ const routes = [
                 path: '/cancellation/:sharingId/public-cancellation',
                 name: 'cancellation-public-view',
                 component: () => import("../views/cancellation/CancellationPublic.vue"),
+                props: route => ({sharingId: route.params.sharingId}),
+                meta: {
+                    title: 'Afbud'
+                }
+            },
+            {
+                path: '/cancellation/:sharingId/public-cancellation/finish',
+                name: 'cancellation-public-finish',
+                component: () => import("../views/cancellation/CancellationPublicFinish.vue"),
                 props: route => ({sharingId: route.params.sharingId}),
                 meta: {
                     title: 'Afbud'

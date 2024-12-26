@@ -80,11 +80,11 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Opret afbuds link
+            Opret afbuds indsamling
         </hero-bar>
         <section class="section is-main-section">
             <form @submit.prevent="submitCancellation">
-                <b-field label="Email" message="Når der meldes afbud sendes der en email til denne email samt en kvitering til den som melder afbud">
+                <b-field label="Email" message="Email til notifikationer når et afbud modtages">
                     <b-input v-model="email" type="email" required></b-input>
                 </b-field>
                 <b-field label="Clubs">

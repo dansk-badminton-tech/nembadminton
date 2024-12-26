@@ -42,6 +42,6 @@ class Test extends Command
      */
     public function handle(TeamManager $teamManager ,BadmintonPlayer $scraper)
     {
-        Mail::to('danielflynygaard@gmail.com')->send(new \App\Mail\ConfirmationParticipantEmail(Cancellation::query()->find(127)));
+        Mail::to('danielflynygaard@gmail.com')->send(new \App\Mail\CancellationConfirmationParticipantEmail(Cancellation::query()->find(127)));
     }
 }

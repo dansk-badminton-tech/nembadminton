@@ -9,9 +9,10 @@ extend type Query{
         refId: String @where
         gender: [Gender!] @in
         orderBy: _ @orderBy(columns: ["name"])
-        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id", "playable"])
+        "Need to have at least one point"
         hasPoints: Boolean @scope
-        "Team ID"
+        "If specified will not show members that is part of Team ID"
         notOnSquad: String @scope
     ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs"]) @guard
     memberSearchPoints(
@@ -19,6 +20,7 @@ extend type Query{
         version: Date!
         name: String @where(operator: "like")
         rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
+        playable: Boolean @where
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
     memberSearchTeamFight(
