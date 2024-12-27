@@ -17,7 +17,8 @@ export default {
             titleStack: ['Afbuds indsamling'],
             me: {
                 clubs: []
-            }
+            },
+            noNotification: false
         }
     },
     apollo: {
@@ -54,7 +55,7 @@ export default {
                                     `,
                                     variables: {
                                         input: {
-                                            email: this.email,
+                                            email: this.noNotification ? null : this.email,
                                             clubs: {
                                                 connect: this.clubs.map(c => c.id)
                                             }
@@ -84,8 +85,13 @@ export default {
         </hero-bar>
         <section class="section is-main-section">
             <form @submit.prevent="submitCancellation">
-                <b-field label="Email" message="Email til notifikationer når et afbud modtages">
-                    <b-input v-model="email" type="email" required></b-input>
+                <b-field addons label="Email" message="Email til notifikationer når et afbud modtages">
+                    <div class="control">
+                        <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
+                    </div>
+                    <div class="control is-expanded">
+                        <b-input :disabled="noNotification" v-model="email"></b-input>
+                    </div>
                 </b-field>
                 <b-field label="Clubs">
                     <b-taginput

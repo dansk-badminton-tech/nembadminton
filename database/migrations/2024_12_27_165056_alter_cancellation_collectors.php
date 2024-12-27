@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cancellation_collectors', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->string('email');
-            $table->string('sharing_id', 24);
-            $table->timestamps();
+        Schema::table('cancellation_collectors', function (Blueprint $table) {
+            $table->string('email')->nullable()->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::drop('cancellation_collectors');
+        Schema::table('cancellation_collectors', function (Blueprint $table) {
+            $table->string('email')->change();
+        });
     }
 };

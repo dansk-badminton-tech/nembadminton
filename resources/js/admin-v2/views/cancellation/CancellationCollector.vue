@@ -10,7 +10,7 @@
             </b-field>
         </b-field>
         <b-field expanded label="Email" message="Email til notifikationer når et afbud modtages">
-            <p>{{cancellationCollector.email}}</p>
+            <p>{{resolveEmail}}</p>
         </b-field>
         <b-field expanded label="Klubber" message="Bestemmer hvilke spiller som der kan søges i på afbuds siden">
             <p>{{resolvedClubs}}</p>
@@ -33,6 +33,12 @@ export default {
         },
         resolvedClubs(){
             return this.cancellationCollector?.clubs?.map(club => club.name1).join(',') || []
+        },
+        resolveEmail(){
+            if(this.cancellationCollector.email === null){
+                return 'Ingen email angivet, notifikationer vil ikke sendes'
+            }
+            return cancellationCollector.email
         }
     },
     methods: {

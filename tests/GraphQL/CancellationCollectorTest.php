@@ -6,7 +6,6 @@ namespace GraphQL;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
-use Nuwave\Lighthouse\Testing\RefreshesSchemaCache;
 use Tests\CreatesApplication;
 
 class CancellationCollectorTest extends TestCase
@@ -14,7 +13,6 @@ class CancellationCollectorTest extends TestCase
 
     use CreatesApplication;
     use MakesGraphQLRequests;
-    use RefreshesSchemaCache;
 
     /**
      * @test

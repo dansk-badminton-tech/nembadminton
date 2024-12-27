@@ -39,7 +39,7 @@ input CreateCancellationDate {
 }
 
 input CancellationCollectionInput {
-    email: String! @rules(apply: ["required", "email"])
+    email: String @rules(apply: ["email", "nullable"])
     clubs: ClubBelongsToMany
 }
 
@@ -59,7 +59,7 @@ type CancellationDate {
 type CancellationCollector {
     id: ID!
     "Email for notifying"
-    email: String! @guard
+    email: String @guard
     "Clubs"
     clubs: [Club!]!
     "Sharing ID"

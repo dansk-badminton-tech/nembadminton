@@ -13,11 +13,12 @@ export default {
     },
     data() {
         return {
-            titleStack: ['Afbuds indsamling', 'Opdater'],
+            titleStack: ['Admin', 'Rediger'],
             submitting: false,
             email: '',
             clubs: [],
             filteredClubs: [],
+            noNotification: false
         }
     },
     apollo: {
@@ -51,6 +52,7 @@ export default {
                 // Set the email from the fetched data
                 this.clubs = data.cancellationCollector.clubs;
                 this.email = data.cancellationCollector.email;
+                this.noNotification = this.email === null;
             },
             fetchPolicy: "network-only"
         }
@@ -81,7 +83,7 @@ export default {
                                     variables: {
                                         id: this.cancellationCollector.id,
                                         input: {
-                                            email: this.email,
+                                            email: this.noNotification ? null : this.email,
                                             clubs: {
                                                 sync: this.clubs.map(c => c.id)
                                             }
@@ -95,12 +97,12 @@ export default {
             ).then(() => {
                 this.$router.push({name: 'cancellation-view', params: {collectorId: this.cancellationCollector.id}})
             }).catch(() => {
-                this.$buefy.toast.open({message: `Fejl: Kunne ikke lave afbudslink`, type: "is-danger", duration: 5000})
+                this.$buefy.toast.open({message: `Fejl: Kunne ikke opdater afbudslink`, type: "is-danger", duration: 5000})
             }).finally(() => {
                 this.submitting = false
             })
         }
-    }
+    },
 }
 </script>
 
@@ -111,9 +113,15 @@ export default {
             Afbuds indsamling
         </hero-bar>
         <section class="section is-main-section">
+            <b-loading v-model="$apollo.loading" :is-full-page="false"></b-loading>
             <form @submit.prevent="updateCancellation">
-                <b-field label="Email" message="Email til notifikationer når et afbud modtages">
-                    <b-input v-model="email"></b-input>
+                <b-field addons label="Email" message="Email til notifikationer når et afbud modtages">
+                    <div class="control">
+                      <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
+                    </div>
+                    <div class="control is-expanded">
+                      <b-input :disabled="noNotification" v-model="email"></b-input>
+                    </div>
                 </b-field>
                 <b-field label="Clubs">
                     <b-taginput
