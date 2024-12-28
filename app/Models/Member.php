@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Auth;
  * @property string  refId
  * @property string  name
  * @property string  gender
+ * @property string  email
+ * @property boolean playable
  * @property Point[] points
  * @property User    owner
  * @package App\Models
@@ -29,7 +31,7 @@ use Illuminate\Support\Facades\Auth;
 class Member extends Model
 {
 
-    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id'];
+    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable'];
 
     public function clubs() : BelongsToMany
     {
@@ -55,15 +57,6 @@ class Member extends Model
         return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
     }
 
-    public function scopeHasCancellations(Builder $builder, array $args)
-    {
-        $teamId = $args['teamId'];
-
-        return $builder->whereHas('cancellations', static function (Builder $builder) use ($teamId) {
-            $builder->where('teamId', '=', $teamId)->orWhereNull('teamId');
-        });
-    }
-
     public function scopeNotCancelled(Builder $builder, string $teamId) : Builder
     {
         return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamId) {
@@ -78,24 +71,19 @@ class Member extends Model
         });
     }
 
-    public function scopeHasPointsToggle($query, $args)
+    public function scopeHasPoints(Builder $query, ?bool $hasPoints)
     {
-        if ($args['hasPoints'] ?? true) {
-            return $query->hasPoints();
+        if ($hasPoints ?? false) {
+            return $query->has('points');
         }
 
         return $query;
     }
 
-    public function scopeHasPoints(Builder $builder) : Builder
+    public function scopeClubs(Builder $builder, array $clubIds) : Builder
     {
-        return $builder->has('points');
-    }
-
-    public function scopeClub(Builder $builder, int $clubId) : Builder
-    {
-        return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
-            $builder->where('id', $clubId);
+        return $builder->whereHas('clubs', function (Builder $builder) use ($clubIds) {
+            $builder->whereIn('id', $clubIds);
         });
     }
 

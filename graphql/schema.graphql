@@ -17,3 +17,4 @@ type Subscription
 #import badmintonplayer-api.graphql
 #import validate.graphql
 #import calendar.graphql
+#import cancellation.graphql

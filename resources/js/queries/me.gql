@@ -13,6 +13,9 @@ query me{
             name1
             initialized
         }
+        cancellationCollector {
+            id
+        }
         organization_id
     }
 }

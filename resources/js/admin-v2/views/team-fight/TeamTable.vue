@@ -18,10 +18,10 @@
                             </b-tooltip>
                         </b-taglist>
                         <div class="buttons is-pulled-right">
-                            <b-button title="Udfyld holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
+                            <b-button title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
                             <b-button :disabled="index === 0" @click="moveSquadOrderUp(squad)" title="Flyt hold op" icon-left="arrow-up"></b-button>
                             <b-button :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)" title="Flyt hold ned" icon-left="arrow-down"></b-button>
-                            <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kraver kamp nummer" :disabled="!!!squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
+                            <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kræver kampnummer" :disabled="!!!squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
                                       :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+squad.externalTeamFightID+',,'"
                                       type="is-link">
                             </b-button>

@@ -11,6 +11,11 @@ export default [
             icon: 'account-group',
             label: 'Holdrunder'
         },
+        {
+            to: '/cancellations/redirect',
+            icon: 'cancel',
+            label: 'Afbud (NYT 🤩)'
+        },
 //        {
 //            to: '/calendar',
 //            icon: 'calendar',

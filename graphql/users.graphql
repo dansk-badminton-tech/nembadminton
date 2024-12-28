@@ -37,6 +37,7 @@ type User {
     clubs: [Club!]! @hasMany
     organization_id: Int!
     subscriptionSettings: SubscriptionSetting
+    cancellationCollector: CancellationCollector
     created_at: DateTime!
     updated_at: DateTime!
 }

@@ -15,7 +15,7 @@
             <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Export</span>
+                    <span>Eksporter</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
@@ -34,7 +34,7 @@
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
                     <b-icon icon="brain"></b-icon>
-                    Validere hold
+                    Valider holdrunden
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
                     <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
@@ -45,29 +45,30 @@
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
                     <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
                         <b-icon icon="update"></b-icon>
-                        Opdater spiller point
+                        Opdater spillerpoint
                     </b-tooltip>
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
                     <b-icon icon="content-copy"></b-icon>
-                    Kopier hele holdet
+                    Kopier hele holdrunden
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                     <b-icon icon="trash-can"></b-icon>
-                    Slet holdet
+                    Slet holdrunden
                 </b-dropdown-item>
             </b-dropdown>
+            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Opret afbudslink</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
                         <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                     </b-field>
                 </div>
-<!--                <div class="column">-->
-<!--                    <b-field label="Runde">-->
-<!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
-<!--                    </b-field>-->
-<!--                </div>-->
+                <!--                <div class="column">-->
+                <!--                    <b-field label="Runde">-->
+                <!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
+                <!--                    </b-field>-->
+                <!--                </div>-->
                 <div class="column">
                     <b-field label="Spilledato">
                         <b-datepicker
@@ -106,10 +107,10 @@
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj extra klub)</router-link>
+                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ekstra klub)</router-link>
                     </h1>
                     <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
-                                       :version="new Date(version)"/>
+                                       :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
                     <h1 class="title">Holdene i holdrunden</h1>
@@ -159,8 +160,6 @@ import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
 import ValidateTeams from "./ValidateTeams.vue";
-import PlayerList from "./PlayerList.vue";
-import PlayerSearch from "../common/PlayerSearch.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 
@@ -176,8 +175,6 @@ export default {
         RankingVersionSelect,
         TeamTable,
         ValidateTeams,
-        PlayerList,
-        PlayerSearch,
         Draggable
     },
     props: {
@@ -193,7 +190,7 @@ export default {
             }).join(', ')
         },
         resolveIncompleteTeam() {
-            if(this.ignoreIncompleteTeam){
+            if (this.ignoreIncompleteTeam) {
                 return null
             }
             if (this.validateBasicSquads.length === 0) {
@@ -202,7 +199,7 @@ export default {
             return this.validateBasicSquads.find(data => data.missingPlayerInCategory === true || data.spotsFulfilled === false) !== undefined
         },
         resolveInvalidCategory() {
-            if(this.errorValidatingCategory){
+            if (this.errorValidatingCategory) {
                 return null
             }
             if (!this.canValidateSquads) {
@@ -211,7 +208,7 @@ export default {
             return hasInvalidCategory(this.playingToHighSquadList)
         },
         resolveInvalidLevel() {
-            if(this.errorValidatingLevel){
+            if (this.errorValidatingLevel) {
                 return null
             }
             if (!this.canValidateCrossSquads) {
@@ -269,12 +266,12 @@ export default {
         }
     },
     methods: {
-        openLinkSharingModal(){
+        openLinkSharingModal() {
             this.$buefy.modal.open({
                                        parent: this,
                                        component: ShareLinkModal,
                                        props: {
-                                            teamId: this.teamFightId
+                                           teamId: this.teamFightId
                                        },
                                        scroll: "keep",
                                        width: 640,
@@ -285,7 +282,10 @@ export default {
                                        }
                                    })
         },
-        deactivateIncompleteCheck(){
+        openLinkSharingCancellationModel() {
+            this.$router.push({name: 'cancellation-redirect'})
+        },
+        deactivateIncompleteCheck() {
             this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
             this.validate()
         },
@@ -400,7 +400,9 @@ export default {
                         input: {
                             categoryId: parseInt(category.id),
                             refId: player.refId,
-                            version: squad.version ? squad.version : this.version
+                            version: squad.version
+                                     ? squad.version
+                                     : this.version
                         }
                     },
                     refetchQueries: [
@@ -649,9 +651,6 @@ export default {
                             })
                     }
                 })
-        },
-        selectClub(id) {
-            this.clubId = id
         },
         addedPlayerNotification(squadIndex, category) {
             this.$buefy.snackbar.open(

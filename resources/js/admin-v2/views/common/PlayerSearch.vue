@@ -81,12 +81,6 @@ export default {
     props: {
         clubId: String,
         category: Object,
-        excludePlayers: {
-            type: Array,
-            default(){
-                return []
-            }
-        },
         version: Date,
         squad: Object,
         disabled: Boolean
@@ -126,8 +120,8 @@ export default {
             }
         },
         membersSearch: {
-            query: gql`query membersSearch($name: String, $excludeMembers: [Int!], $version: Date, $gender: [Gender!]){
-                      membersSearch(name: $name, excludeMembers: $excludeMembers, orderBy: { column: NAME, order: ASC }, gender: $gender) {
+            query: gql`query membersSearch($name: String, $version: Date, $gender: [Gender!]){
+                      membersSearch(name: $name, orderBy: { column: NAME, order: ASC }, gender: $gender) {
                         data {
                           id
                           name
@@ -151,7 +145,6 @@ export default {
             variables() {
                 let params = {
                     name: '%' + this.querySearchName + '%',
-                    excludeMembers: this.excludePlayers.map(member => member.id),
                     gender: resolveGenderFromCategory(this.category.category)
                 }
                 if(this?.squad?.version){

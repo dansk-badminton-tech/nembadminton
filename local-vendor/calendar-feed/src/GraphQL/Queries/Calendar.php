@@ -9,6 +9,7 @@ use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use GraphQL\Type\Definition\ResolveInfo;
+use Illuminate\Support\Arr;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Calendar
@@ -23,33 +24,31 @@ class Calendar
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-
-        /** @var User $user */
-        $user = $context->user();
-        $clubId = $user->club->badmintonPlayerId;
-        $season = BadmintonPlayerHelper::getCurrentSeason();
-        $teams = $this->badmintonPlayer->getClubTeams($season, $clubId);
         $events = [];
-        foreach ($teams as $team){
-            if(in_array((int)$team->ageGroupId, [1, 6, 7])){
-                $teamFights = $this->badmintonPlayer->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
-                foreach ($teamFights as $teamFight){
-                    $start = Carbon::parse($teamFight["gameTime"]);
-                    $format = "Y-m-d H:i:s";
-                    $startFormat = $start->format($format);
-                    $endFormat = $start->addHours(3)->format($format);
-                    $events[] = [
-                        'title' => $this->generateTitle($teamFight["teams"]),
-                        'start' => $startFormat,
-                        'end' => $endFormat,
-                        'content' => 'Klik for info',
-                        'matchId' => $teamFight['matchId'],
-                        'contentFull' => '<a target="_blank" href="https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight["matchId"].',,">Link til kampen på badmintonplayer.dk</a>'
-                    ];
+        foreach ($args['clubIds'] as $clubId){
+            $season = BadmintonPlayerHelper::getCurrentSeason();
+            $teams = $this->badmintonPlayer->getClubTeams($season, $clubId);
+            foreach ($teams as $team){
+                if(in_array((int)$team->ageGroupId, [1, 6, 7])){
+                    $teamFights = $this->badmintonPlayer->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
+                    foreach ($teamFights as $teamFight){
+                        $start = Carbon::parse($teamFight["gameTime"]);
+                        $format = "Y-m-d H:i:s";
+                        $startFormat = $start->format($format);
+                        $endFormat = $start->addHours(3)->format($format);
+                        $events[] = [
+                            'title' => $this->generateTitle($teamFight["teams"]),
+                            'start' => $startFormat,
+                            'end' => $endFormat,
+                            'content' => 'Klik for info',
+                            'matchId' => $teamFight['matchId'],
+                            'contentFull' => '<a target="_blank" href="https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight["matchId"].',,">Link til kampen på badmintonplayer.dk</a>'
+                        ];
+                    }
                 }
             }
         }
-        return $events;
+        return collect($events)->unique('matchId');
     }
 
     /**

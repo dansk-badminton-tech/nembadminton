@@ -3,8 +3,12 @@ extend type Query {
     badmintonPlayerClubs: [OptionClub] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions")
     "Teams from a club (scraping badmintonplayer.dk)"
     badmintonPlayerTeams(input: BadmintonPlayerTeamsInput @spread): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams")
+    "Teams from a clubs (scraping badmintonplayer.dk)"
+    badmintonPlayerTeamsBulk(input: [BadmintonPlayerTeamsInput!]!): [BadmintonPlayerTeam] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamsBulk")
     "Team fights for a team (scraping badmintonplayer.dk)"
     badmintonPlayerTeamFights(input: BadmintonPlayerTeamFightsInput @spread): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights")
+    "Team fights for teams (scraping badmintonplayer.dk)"
+    badmintonPlayerTeamFightsBulk(input: [BadmintonPlayerTeamFightsInput]): [BadmintonPlayerTeamFight] @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFightsBulk")
     "Team match information (scraping badmintonplayer.dk)"
     badmintonPlayerTeamMatch(input: BadmintonPlayerTeamMatchInput @spread) : ImportTeamMatch @field(resolver: "FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatch")
     "Team matches information (scraping badmintonplayer.dk)"
@@ -16,9 +20,9 @@ extend type Query {
 type BadmintonPlayerTeamFight {
     teams: [String!]!
     matchId: Int!
-    gameTime: String!
+    gameTime: DateTime!
     round: Int
-    roundDate: String
+    roundDate: Date
 }
 
 input BadmintonPlayerTeamFightsInput {
@@ -39,6 +43,7 @@ type BadmintonPlayerTeam {
     ageGroupId: String!
     name: String!
     league: String!
+    clubId: Int!
 }
 
 input BadmintonPlayerTeamMatchesInput {

@@ -5,7 +5,7 @@
                 <b-button @click="setGameDate(currentSeason)">{{currentSeasonButtonName}}</b-button>
                 <b-button @click="setGameDate(previousSeason)">{{previousSeasonButtonName}}</b-button>
                 <b-button @click="setGameDateToRest">Tidligere sæsoner</b-button>
-                <p class="ml-4">Viser holdrunder med spille datoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b></p>
+                <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b></p>
             </div>
         </div>
         <b-table

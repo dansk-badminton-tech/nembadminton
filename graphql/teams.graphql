@@ -28,9 +28,6 @@ extend type Mutation {
     updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
-    updateCancellation(id: ID!, teamId: ID) : Cancellation @update @guard
-    createCancellation(refId: String!, teamId: ID) : Cancellation @create @guard
-    deleteCancellation(id: ID! @eq) : Cancellation @delete @guard
 }
 
 input UpdateSquadMemberInput {
@@ -147,12 +144,6 @@ input CreateCategoryHasManyInput {
 input CreateCategoryInput {
     category: String!
     name: String!
-}
-
-type Cancellation {
-    id: ID
-    refId: String!
-    teamId: String
 }
 
 input CreateTeamInput {

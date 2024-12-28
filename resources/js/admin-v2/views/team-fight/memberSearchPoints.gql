@@ -1,0 +1,56 @@
+query memberSearchPoints(
+    $version: Date!,
+    $page: Int,
+    $first: Int,
+    $name: String,
+    $teamId: String!,
+    $rankingList: MemberSearchOrderBy!
+    $playable: Boolean
+    $whereCancellations: QueryMemberSearchPointsWhereCancellationsWhereConditions
+    $cancellationWhere: MemberCancellationsWhereWhereConditions
+){
+    memberSearchPoints(
+        version: $version,
+        name: $name,
+        page: $page,
+        first: $first,
+        teamId: $teamId,
+        playable: $playable,
+        whereCancellations: $whereCancellations,
+        rankingList: $rankingList
+    ) {
+        data {
+            id
+            name
+            gender
+            refId
+            vintage
+            ownerId
+            points(version: $version){
+                points
+                position
+                category
+                vintage
+            }
+            cancellations(where: $cancellationWhere){
+                id
+                refId
+                teamId
+                message
+                createdAt
+                cancellationCollector{
+                    id
+                }
+                dates {
+                    date
+                    createdAt
+                }
+            }
+            playable
+        }
+        paginatorInfo {
+            count
+            total
+        }
+    }
+}

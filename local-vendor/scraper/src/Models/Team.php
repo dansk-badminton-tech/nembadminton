@@ -21,6 +21,8 @@ class Team
 
     public ?Squad  $squad;
 
+    public ?int $clubId;
+
     public function __construct(string $name, ?Squad $squad = null, ?Side $side = null)
     {
         $this->name = $name;

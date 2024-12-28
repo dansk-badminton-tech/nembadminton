@@ -70,6 +70,53 @@ const routes = [
         component: () => import(/* webpackChunkName: "profile" */ '@/views/my-club/MyClubs.vue')
     },
     {
+        meta: {
+            title: 'Afbud - landing',
+            requiresAuth: true
+        },
+        path: '/cancellations/landing',
+        name: 'cancellation-landing',
+        component: () => import('@/views/cancellation/CancellationLanding.vue')
+    },
+    {
+        meta: {
+            title: 'Afbud',
+            requiresAuth: true
+        },
+        path: '/cancellations/redirect',
+        name: 'cancellation-redirect',
+        component: () => import('@/views/cancellation/CancellationRedirect.vue')
+    },
+    {
+        meta: {
+            title: 'Afbud',
+            requiresAuth: true
+        },
+        path: '/cancellations/view/:collectorId',
+        name: 'cancellation-view',
+        component: () => import('@/views/cancellation/CancellationDashboard.vue'),
+        props: route => ({collectorId: route.params.collectorId})
+    },
+    {
+        meta: {
+            title: 'Opret afbudslink',
+            requiresAuth: true
+        },
+        path: '/cancellations/create',
+        name: 'cancellation-create',
+        component: () => import('@/views/cancellation/CreateCancellationCollector.vue')
+    },
+    {
+        meta: {
+            title: 'Rediger afbudslink',
+            requiresAuth: true
+        },
+        path: '/cancellations/edit/:collectorId',
+        name: 'cancellation-update',
+        component: () => import('@/views/cancellation/UpdateCancellationCollector.vue'),
+        props: route => ({collectorId: route.params.collectorId})
+    },
+    {
         path: '/superadmin/notification',
         name: 'superadmin-notification',
         component: () => import('../views/superadmin/Notification.vue'),
@@ -131,12 +178,30 @@ const routes = [
                 }
             },
             {
+                path: '/cancellation/:sharingId/public-cancellation',
+                name: 'cancellation-public-view',
+                component: () => import("../views/cancellation/CancellationPublic.vue"),
+                props: route => ({sharingId: route.params.sharingId}),
+                meta: {
+                    title: 'Afbud'
+                }
+            },
+            {
+                path: '/cancellation/:sharingId/public-cancellation/finish',
+                name: 'cancellation-public-finish',
+                component: () => import("../views/cancellation/CancellationPublicFinish.vue"),
+                props: route => ({sharingId: route.params.sharingId}),
+                meta: {
+                    title: 'Afbud'
+                }
+            },
+            {
                 path: '/calendar-generator/:teamUUID',
                 name: 'calendar-generator-public-view',
                 component: () => import("../views/calendar/CalendarGenerator.vue"),
                 props: route => ({teamId: route.params.teamUUID}),
                 meta: {
-                    title: 'Holdkamp'
+                    title: 'Kalendar generator'
                 }
             },
             {

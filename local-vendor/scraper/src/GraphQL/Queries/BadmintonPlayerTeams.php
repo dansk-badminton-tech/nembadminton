@@ -18,21 +18,10 @@ class BadmintonPlayerTeams
      */
     private BadmintonPlayer $scraper;
 
-    /**
-     * @var Enricher
-     */
-    private Enricher $enricher;
 
-    /**
-     * @var SquadManager
-     */
-    private SquadManager $squadManager;
-
-    public function __construct(BadmintonPlayer $scraper, Enricher $enricher, SquadManager $squadManager)
+    public function __construct(BadmintonPlayer $scraper)
     {
         $this->scraper = $scraper;
-        $this->enricher = $enricher;
-        $this->squadManager = $squadManager;
     }
 
     /**

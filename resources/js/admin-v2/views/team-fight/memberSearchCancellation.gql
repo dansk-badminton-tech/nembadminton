@@ -1,0 +1,41 @@
+query membersSearch(
+    $page: Int
+    $first: Int
+    $notOnSquad: String
+    $whereCancellations: QueryMembersSearchWhereCancellationsWhereConditions
+    $cancellationWhere: MemberCancellationsWhereWhereConditions
+){
+    membersSearch(
+        whereCancellations: $whereCancellations
+        notOnSquad: $notOnSquad
+        page: $page
+        first: $first
+    ){
+        data {
+            id
+            name
+            gender
+            refId
+            ownerId
+            cancellations(where: $cancellationWhere){
+                id
+                refId
+                teamId
+                message
+                createdAt
+                cancellationCollector{
+                    id
+                }
+                dates {
+                    date
+                    createdAt
+                }
+            }
+            playable
+        }
+        paginatorInfo {
+            count
+            total
+        }
+    }
+}

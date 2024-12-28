@@ -285,29 +285,29 @@ export default {
             </header>
             <section class="modal-card-body">
                 <b-message type="is-info">Alle informationerne er tilgængelig når holdrunden deles via link</b-message>
-                <b-field v-if="!showTeamFightSelector" message="Udfylder holdnavn, kampnummer, spille start, spillested, adresse, postnummer og by">
+                <b-field v-if="!showTeamFightSelector" message="Udfylder holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by">
                     <b-button type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Udfyld felter med data fra badmintonplayer.dk</b-button>
                 </b-field>
                 <b-button v-if="showTeamFightSelector" type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Luk</b-button>
                 <BadmintonPlayerTeamFightSelector :import-information="fillInformation" v-if="showTeamFightSelector"/>
                 <hr>
-                <b-field label="Hold navn">
+                <b-field label="Holdnavn">
                     <b-input
                         type="text"
                         v-model="name"
                         placeholder="Danmarksserien Pulje 1">
                     </b-input>
                 </b-field>
-                <b-field label="Hold type">
+                <b-field label="Holdtype">
                     <b-select expanded v-model="league" required>
                         <option v-for="leagueOption in leagueOptions" :value="leagueOption.value" :key="leagueOption.value">{{ leagueOption.label }}</option>
                     </b-select>
                 </b-field>
                 <hr/>
-                <b-field label="Rangliste" message="Vælge en anden rangliste end holdrundens. Hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
+                <b-field label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
                     <RankingVersionSelect @change="toggleRankingWarning" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
                     <p class="control">
-                        <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstill</b-button>
+                        <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstil</b-button>
                     </p>
                 </b-field>
                 <b-message v-if="changeOfRankingWarning" type="is-info">
@@ -320,7 +320,7 @@ export default {
                         placeholder="446437"
                     />
                 </b-field>
-                <b-field label="Spille start">
+                <b-field label="Spillestart">
                     <b-datetimepicker
                         placeholder="Vælg dato og tidspunkt"
                         icon="calendar-today"
@@ -330,7 +330,7 @@ export default {
                         editable>
                     </b-datetimepicker>
                     <p class="control">
-                        <b-button type="is-link" @click="playingDatetime = null">Nulstill</b-button>
+                        <b-button type="is-link" @click="playingDatetime = null">Nulstil</b-button>
                     </p>
                 </b-field>
                 <b-field label="Spillested">

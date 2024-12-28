@@ -97,6 +97,10 @@ export default {
             if(this.membersSearch?.data?.length > 0){
                 memberId = this.membersSearch.data[0].id
             }
+            if(this.club === null){
+                this.$buefy.toast.open({message: `Du skal vælge en klub`, type: "is-danger", duration: 5000})
+                return
+            }
             this.$apollo
                 .mutate({
                             mutation: gql`
@@ -173,7 +177,7 @@ export default {
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
-                <p>Spilleren bliver oprettet på ranglisten <strong>{{ versionMonth }}</strong>, spilleren kan ses af <strong>alle</strong> som har klubben tilknyttet.</p>
+                <p>Spilleren bliver oprettet på ranglisten <strong>{{ versionMonth }}</strong>. Spilleren kan ses af <strong>alle</strong>, som har klubben tilknyttet.</p>
                 <hr/>
                 <b-field grouped label="Badmintonplayer ID">
                     <b-field expanded>
@@ -188,13 +192,13 @@ export default {
                     <b-input
                         type="text"
                         v-model="name"
-                        placeholder="Name"
+                        placeholder="Navn"
                         required>
                     </b-input>
                 </b-field>
                 <b-field label="Køn">
                     <b-select v-model="gender" required expanded>
-                        <option value="MEN">Mand</option>
+                        <option value="MEN">Herre</option>
                         <option value="WOMEN">Dame</option>
                     </b-select>
                 </b-field>
@@ -209,7 +213,7 @@ export default {
                     </b-select>
                 </b-field>
                 <hr/>
-                <label class="label">Points</label>
+                <label class="label">Point</label>
                 <b-field horizontal :label="point.label" v-for="point in this.points" :key="point.category">
                     <b-input type="number" v-model.number="point.points" required></b-input>
                 </b-field>

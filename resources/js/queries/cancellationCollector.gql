@@ -1,0 +1,42 @@
+query cancellationCollector(
+    $id: ID!
+    $hasDates: CancellationCollectorCancellationsHasDatesWhereHasConditions
+    $orderBy: [CancellationCollectorCancellationsOrderByOrderByClause!]
+    $page: Int!
+    $first: Int!
+){
+    cancellationCollector(id: $id){
+        id
+        email
+        cancellations(first: $first, page: $page, hasDates: $hasDates, orderBy: $orderBy){
+            data{
+                id
+                member {
+                    id
+                    name
+                    clubs {
+                        id
+                        name1
+                    }
+                }
+                dates {
+                    date
+                }
+                email
+                message
+                createdAt
+            }
+            paginatorInfo {
+                count
+                total
+            }
+        }
+        clubs {
+            id
+            name1
+        }
+        createdAt
+        updatedAt
+        sharingId
+    }
+}

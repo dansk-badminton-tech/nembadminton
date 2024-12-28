@@ -7,8 +7,7 @@ namespace FlyCompany\Members;
 use App\Models\Member;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Query\JoinClause;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MemberSearch
@@ -26,96 +25,33 @@ class MemberSearch
         $version = $args['version'] ?? null;
         $builder = Member::query();
         $teamId = $args['teamId'];
+        $rankingList = $args['rankingList'];
         if ($version !== null) {
-            $builder->select(['members.*'])
-                ->join('points', 'members.id', '=', 'points.member_id')
-                ->where('points.points', '!=', 0)
-                ->orderBy('points.points', 'desc');
-            $builder->notCancelled($teamId);
+            $builder
+                ->select(['members.*'])
+                ->join('points', function(JoinClause $builder) use ($rankingList, $version) {
+                    $builder->on('members.id', '=', 'points.member_id');
+                    $builder->where('points.version', '=', $version);
+                    $this->applyRanking($builder, $rankingList);
+                })
+                ->orderBy('points', 'desc');
+            $builder
+                ->whereHas('points', function (Builder $query) use ($rankingList, $version) {
+                    $query->where('points', '!=', 0);
+                    $query->where('version', $version);
+                    $this->applyRanking($query, $rankingList);
+                });
             $builder->notOnSquad($teamId);
-            if (Arr::has($args, 'rankingList')) {
-                $this->applyRankingList($builder, $args['rankingList'], $version);
-            }
         }
+
         return $builder;
     }
 
-    private function applyRankingList(Builder $builder, string $rankingList, Carbon $version)
-    {
-        if ($rankingList === 'ALL_LEVEL') {
-            $builder->whereNull('points.category')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'MEN_LEVEL') {
-            $builder->where('members.gender', '=', 'M');
-            $builder->whereNull('points.category')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'WOMEN_LEVEL') {
-            $builder->where('members.gender', '=', 'K');
-            $builder->whereNull('points.category')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'WOMEN_SINGLE') {
-            $builder->where('points.category', '=', 'DS')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'WOMENS_DOUBLE') {
-            $builder->where('points.category', '=', 'DD')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'WOMEN_MIX') {
-            $builder->where('points.category', '=', 'MxD')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'MEN_SINGLE') {
-            $builder->where('points.category', '=', 'HS')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'MENS_DOUBLE') {
-            $builder->where('points.category', '=', 'HD')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
-        }
-        if ($rankingList === 'MEN_MIX') {
-            $builder->where('points.category', '=', 'MxH')
-                ->where(
-                    'points.version',
-                    '=',
-                    $version
-                );
+    private function applyRanking(\Illuminate\Contracts\Database\Query\Builder $builder, string $rankingList): void{
+        if($rankingList === 'ALL'){
+            $builder->whereIn('category', ['DS', 'DD', 'MxD', 'HS', 'HD', 'MxH']);
+        }else{
+            $builder->where('category', '=', $rankingList);
         }
     }
-
 }
