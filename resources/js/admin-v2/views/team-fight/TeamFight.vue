@@ -57,7 +57,6 @@
                     Slet holdrunden
                 </b-dropdown-item>
             </b-dropdown>
-            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Opret afbudslink</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
