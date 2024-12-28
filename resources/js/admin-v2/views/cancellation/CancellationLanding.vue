@@ -21,7 +21,7 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <section class="section is-main-section">
-            <h1 class="title"></h1>
+            <h1 class="title">Sådan fungerer det:</h1>
             <div class="columns is-multiline">
                 <div class="column is-one-third">
                     <div class="box">

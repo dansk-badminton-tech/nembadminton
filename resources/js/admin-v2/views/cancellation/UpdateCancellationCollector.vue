@@ -13,7 +13,7 @@ export default {
     },
     data() {
         return {
-            titleStack: ['Admin', 'Rediger'],
+            titleStack: ['Admin', 'Afbud'],
             submitting: false,
             email: '',
             clubs: [],
@@ -110,12 +110,12 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Afbuds indsamling
+            Rediger afbudslink
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.loading" :is-full-page="false"></b-loading>
             <form @submit.prevent="updateCancellation">
-                <b-field addons label="Email" message="Email til notifikationer når et afbud modtages">
+                <b-field addons label="Email" message="Angiv email som notifikationer må sendes til, når et afbud modtages.">
                     <div class="control">
                       <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
                     </div>
@@ -123,7 +123,7 @@ export default {
                       <b-input :disabled="noNotification" type="email" v-model="email"></b-input>
                     </div>
                 </b-field>
-                <b-field label="Clubs">
+                <b-field label="Klubber">
                     <b-taginput
                         @typing="getFilteredClubs"
                         v-model="clubs"
@@ -134,7 +134,7 @@ export default {
                         aria-close-label="Delete this tag">
                     </b-taginput>
                 </b-field>
-                <b-button :loading="submitting" native-type="submit">Opdater</b-button>
+                <b-button :loading="submitting" native-type="submit">Gem</b-button>
             </form>
         </section>
     </div>

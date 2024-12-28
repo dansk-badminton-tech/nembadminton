@@ -14,7 +14,7 @@ export default [
         {
             to: '/cancellations/redirect',
             icon: 'cancel',
-            label: 'Afbud'
+            label: 'Afbud (NYT 🤩)'
         },
 //        {
 //            to: '/calendar',

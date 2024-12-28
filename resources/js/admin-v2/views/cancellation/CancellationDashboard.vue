@@ -118,8 +118,9 @@ export default {
         },
         confirmDeleteCancellationCollector() {
             this.$buefy.dialog.confirm({
-                                           message: 'Sikker på du vil slette? Alle eksiterende afbud fra spiller bliver slettet.',
-                                           onConfirm: () => this.deleteCancellationCollector()
+                                           message: 'Er du sikker på, at du vil slette afbudslinket og alle afbud registreret af spillerne?',
+                                           onConfirm: () => this.deleteCancellationCollector(),
+                                        cancelText: 'Fortryd'
                                        })
         },
         deleteCancellationCollector() {
