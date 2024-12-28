@@ -3,9 +3,9 @@
 
     Hej {{ $name }},
 
-    Vi har modtaget dine afbud. Her er detaljerne:
+    Vi har modtaget din registrering af afbud. Her er detaljerne:
 
-    Datoer hvor du ikke kan spille:
+    Datoer, hvor du ikke kan spille:
     @foreach ($unavailableDates as $date)
         - {{ $date }}
     @endforeach
@@ -15,7 +15,7 @@
         {{ $optionalMessage }}
     @endif
 
-    Tak fordi du brugt nembadminton!
+    Tak fordi du brugte nembadminton!
 
     Med venlig hilsen,
     Nembadminton

@@ -151,6 +151,10 @@ export default {
                 })
         },
         confirmCancellation() {
+            if(this.form.selectedPlayer === null || !this.form.selectedPlayer.hasOwnProperty('name')){
+                this.$buefy.toast.open({message: `Du skal vælge en spiller`, type: "is-danger", duration: 5000});
+                return
+            }
             if (this.isAtleastOneDateSelected) {
                 const resolveSelectedDatesIntoHtml = this.resolveSelectedDatesIntoHtml;
                 this.$buefy.dialog.confirm({
@@ -183,7 +187,7 @@ export default {
         <h2 class="title is-4">Meld afbud for {{ showClubNames }}</h2>
         <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
         <form @submit.prevent="confirmCancellation">
-            <b-field label="Dit navn" message="Der kan kun søges på spillere fra badmintonplayer.dk.">
+            <b-field label="Vælg spiller" message="Der kan kun søges på spillere fra badmintonplayer.dk.">
                 <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
             <b-field label="Din email" message="Hertil sendes en kvittering.">
