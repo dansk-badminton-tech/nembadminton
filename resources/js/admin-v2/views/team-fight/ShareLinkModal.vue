@@ -2,13 +2,13 @@
     <div class="card">
         <div class="card-content">
             <div class="content">
-                <p>Alle som har linket kan kun se holdet, ikke rediger. Man behøver ikke at være logget ind for
+                <p>Alle med linket kan udelukkende se holdet - ikke redigere. Du behøver ikke at være logget ind for
                     at se holdet. Hvis holdet opdateres efterfølgende bliver det afspejlet med det samme.</p>
                 <pre>{{ shareUrl }}</pre>
             </div>
         </div>
         <footer class="card-footer">
-            <a :href="shareUrl" class="card-footer-item" target="_blank">Vis (Nyt vindue)</a>
+            <a :href="shareUrl" class="card-footer-item" target="_blank">Vis (nyt vindue)</a>
             <a class="card-footer-item" @click.prevent="copyToClipboard">Kopier</a>
             <a class="card-footer-item" @click.prevent="$emit('close')">Luk</a>
         </footer>

@@ -1,18 +1,18 @@
 <template>
     <div>
         <b-field grouped>
-            <b-field expanded class="" label="Indsamling link" message="Dette link kan du give til alle i din klub">
+            <b-field expanded class="" label="Afbudslink" message="Dette link kan du dele med alle spillere i din klub.">
                 <b-input expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
                 <p class="control">
-                    <b-button @click="copyToClipboard(shareUrl)">Kopier Link</b-button>
-                    <b-button @click="openLink(shareUrl)">Åben Link</b-button>
+                    <b-button @click="copyToClipboard(shareUrl)">Kopier link</b-button>
+                    <b-button @click="openLink(shareUrl)">Åbn link</b-button>
                 </p>
             </b-field>
         </b-field>
-        <b-field expanded label="Email" message="Email til notifikationer når et afbud modtages">
+        <b-field expanded label="Email" message="Email som notifikationer sendes til, når et afbud modtages.">
             <p>{{resolveEmail}}</p>
         </b-field>
-        <b-field expanded label="Klubber" message="Bestemmer hvilke spiller som der kan søges i på afbuds siden">
+        <b-field expanded label="Klubber" message="Afgrænser hvilke spillere, der kan søges frem via afbudslinket.">
             <p>{{resolvedClubs}}</p>
         </b-field>
     </div>
@@ -32,13 +32,13 @@ export default {
             return getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/cancellation/" + this.cancellationCollector?.sharingId + '/public-cancellation';
         },
         resolvedClubs(){
-            return this.cancellationCollector?.clubs?.map(club => club.name1).join(',') || []
+            return this.cancellationCollector?.clubs?.map(club => club.name1).join(', ') || []
         },
         resolveEmail(){
             if(this.cancellationCollector.email === null){
-                return 'Ingen email angivet, notifikationer vil ikke sendes'
+                return 'Ingen email angivet.'
             }
-            return cancellationCollector.email
+            return this.cancellationCollector.email
         }
     },
     methods: {

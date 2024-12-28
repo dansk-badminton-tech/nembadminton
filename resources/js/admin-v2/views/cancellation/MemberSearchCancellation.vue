@@ -11,7 +11,7 @@
         required
         :readonly="selected !== null"
         @keyup.native="clearOnBackspace"
-        placeholder="Søg efter medlem"
+        placeholder="Søg på spiller"
         keep-first
     >
         <template v-slot:default="{ option }">

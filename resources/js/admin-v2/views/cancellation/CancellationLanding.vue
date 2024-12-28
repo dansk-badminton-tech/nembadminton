@@ -26,19 +26,19 @@ export default {
                 <div class="column is-one-third">
                     <div class="box">
                         <h1 class="title is-4">1. Opsætning</h1>
-                        <p>Indstil hvilke(n) klub(ber) du vil indsamle afbud fra. Samt hvilken en klub email til notifikationer som afbudene skal sendes til.</p>
+                        <p>Angiv hvilke(n) klub(ber) du vil indsamle afbud fra.</p>
                     </div>
                 </div>
                 <div class="column is-one-third">
                     <div class="box">
-                        <h1 class="title is-4">2. Del indsamlings link</h1>
-                        <p>Del indsamlings linket til alle spiller i klubben. Spillerne melder afbud på de datoer de ikke kan spille.</p>
+                        <h1 class="title is-4">2. Del afbudslink</h1>
+                        <p>Del afbudslinket med alle spillere i klubben, så de har mulighed for at melde afbud på datoer, hvor de ikke kan spille.</p>
                     </div>
                 </div>
                 <div class="column is-one-third">
                     <div class="box">
-                        <h1 class="title is-4">3. Opret holdrunde</h1>
-                        <p>Baseret på spille dato'en vil afbud automatisk blive en del af holdrunden</p>
+                        <h1 class="title is-4">3. Afbud i holdrunden</h1>
+                        <p>Afbud vil automatisk blive registreret for holdrunden på de pågældende spilledatoer.</p>
                     </div>
                 </div>
                 <div class="column is-offset-one-quarter is-half">

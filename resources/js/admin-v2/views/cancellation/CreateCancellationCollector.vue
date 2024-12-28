@@ -14,7 +14,7 @@ export default {
             submitting: false,
             email: '',
             clubs: [],
-            titleStack: ['Afbuds indsamling'],
+            titleStack: ['Admin', 'Afbud'],
             me: {
                 clubs: []
             },
@@ -68,7 +68,7 @@ export default {
                 .then(({data}) => {
                 this.$router.push({name: 'cancellation-view', params: {collectorId: data.createCancellationCollector.id}})
             }).catch(() => {
-                this.$buefy.toast.open({message: `Fejl: Kunne ikke lave afbudslink`, type: "is-danger", duration: 5000})
+                this.$buefy.toast.open({message: `Fejl: Kunne ikke oprette afbudslink`, type: "is-danger", duration: 5000})
             }).finally(() => {
                 this.submitting = false
             })
@@ -81,19 +81,19 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Opret afbuds indsamling
+            Opret afbudslink
         </hero-bar>
         <section class="section is-main-section">
             <form @submit.prevent="submitCancellation">
-                <b-field addons label="Email" message="Email til notifikationer når et afbud modtages">
+                <b-field addons label="Email" message="Angiv email som notifikationer må sendes til, når et afbud modtages.">
                     <div class="control">
                         <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
                     </div>
                     <div class="control is-expanded">
-                        <b-input :disabled="noNotification" v-model="email"></b-input>
+                        <b-input :disabled="noNotification" placeholder="fx daniel@gmail.com" v-model="email"></b-input>
                     </div>
                 </b-field>
-                <b-field label="Clubs">
+                <b-field label="Klubber">
                     <b-taginput
                         @typing="getFilteredClubs"
                         v-model="clubs"

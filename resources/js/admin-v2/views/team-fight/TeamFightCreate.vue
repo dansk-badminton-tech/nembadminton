@@ -9,7 +9,7 @@
                 <b-field label="Navn">
                     <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                 </b-field>
-                <b-field label="Spille dato">
+                <b-field label="Spilledato">
                     <b-datepicker
                         v-model="gameDate"
                         icon="calendar"

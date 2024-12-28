@@ -157,7 +157,8 @@ export default {
                                          title: 'Besked',
                                          message: row.message || 'Ingen besked tilgængelig.',
                                          confirmText: 'OK',
-                                         type: 'is-info'
+                                         type: 'is-info',
+                                         canCancel: true
                                      });
         },
         showEmail(row) {
@@ -165,7 +166,8 @@ export default {
                                          title: 'Email som har meldt afbud',
                                          message: row.email || 'Ingen email tilgængelig.',
                                          confirmText: 'OK',
-                                         type: 'is-info'
+                                         type: 'is-info',
+                                         canCancel: true
                                      });
         },
         selectedDateRangeInput(input){
@@ -241,12 +243,12 @@ export default {
                         {{ props.row.member.clubs.map(c => c.name1).join(", ") }}
                     </b-table-column>
 
-                    <b-table-column searchable field="dates" label="Afbuds datoer">
+                    <b-table-column searchable field="dates" label="Afbudsdatoer">
                         <template
                             v-slot:searchable="props">
                             <b-field grouped>
                                 <b-datepicker
-                                    placeholder="Søg på afbuds datoer"
+                                    placeholder="Søg på afbudsdatoer"
                                     :value="selectedDateRange"
                                     @input="selectedDateRangeInput"
                                     size="is-small"
@@ -255,7 +257,7 @@ export default {
                                     range>
                                 </b-datepicker>
                                 <p class="control">
-                                    <b-button size="is-small" @click="resetSelectedDateRange">Reset</b-button>
+                                    <b-button size="is-small" @click="resetSelectedDateRange">Nulstil</b-button>
                                 </p>
                             </b-field>
                         </template>
@@ -295,9 +297,9 @@ export default {
                     </template>
                 </b-table>
                 <hr>
-                <h1 class="title is-3">Holdkamp kalender (Beta)</h1>
-                <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }} senior for mine klubber. Data'en er hentet direkte fra badmintonplayer.dk</h2>
-                <TeamMatchCalendar :clubs="cancellationCollector?.clubs"/>
+                <h1 class="title is-3">Kalender for holdkampe (Beta)</h1>
+                <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }}. Dataen er hentet direkte fra badmintonplayer.dk.</h2>
+                <TeamMatchCalendar :cancellation-collector="cancellationCollector" :clubs="cancellationCollector?.clubs"/>
             </div>
         </section>
     </div>

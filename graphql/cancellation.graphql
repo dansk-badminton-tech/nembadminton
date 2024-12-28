@@ -6,6 +6,7 @@ extend type Query{
     ): [Member!]! @paginate
     cancellationCollector(id: ID! @eq) : CancellationCollector @find @guard
     cancellationCollectorPublic(sharingId: String! @eq(key: "sharing_id")) : CancellationCollector @find
+    cancellationEvents("CancellationCollector ID" id: ID!) : [Event!]! @guard @field(resolver: "App\\GraphQL\\Queries\\CancellationEvents")
 }
 
 extend type Mutation {

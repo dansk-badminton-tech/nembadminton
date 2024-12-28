@@ -120,7 +120,7 @@ export default {
                       <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
                     </div>
                     <div class="control is-expanded">
-                      <b-input :disabled="noNotification" v-model="email"></b-input>
+                      <b-input :disabled="noNotification" type="email" v-model="email"></b-input>
                     </div>
                 </b-field>
                 <b-field label="Clubs">

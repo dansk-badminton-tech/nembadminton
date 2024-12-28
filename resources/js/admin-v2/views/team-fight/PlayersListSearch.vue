@@ -15,6 +15,7 @@
                 Tilføj spiller
             </b-button>
         </b-field>
+        {{resolveHelperTextForCancellation}}
         <b-table
             class="mt-5"
             :data="membersList"
@@ -70,12 +71,12 @@
                     <td>Oprettet af</td>
                     <td>Funktioner</td>
                 </tr>
-                <tr v-for="cancellation in props.row.cancellations" :key="cancellation.id">
+                <tr v-if="props.row.playable" v-for="cancellation in props.row.cancellations" :key="cancellation.id">
                     <td colspan="3">{{ cancellation.createdAt }}</td>
                     <td>{{ cancellation.dates.map(d => d.date).join(", ") }}</td>
                     <td>{{ resolveCancellationCreatedBy(cancellation) }}</td>
                     <td>
-                        <b-tooltip type="is-info" position="is-top" :active="!!cancellation?.cancellationCollector?.id" label="Du kan ikke slette afbud fra spiller. Du kan stadig søge spilleren frem via 'Søg på spiller'">
+                        <b-tooltip type="is-info" position="is-top" :active="!!cancellation?.cancellationCollector?.id" label="Du kan ikke slette afbud fra spiller.">
                             <b-button
                                 :disabled="cancellation?.cancellationCollector?.id"
                                 size="is-small" type="is-danger"
@@ -83,6 +84,9 @@
                                 @click="deleteCancellation(cancellation)"></b-button>
                         </b-tooltip>
                     </td>
+                </tr>
+                <tr v-if="!props.row.playable">
+                    <td colspan="6">Spilleren er markeret som permanent afbud</td>
                 </tr>
             </template>
         </b-table>
@@ -120,9 +124,9 @@ export default {
         gameDate: Date
     },
     computed: {
-        resolveHelperText(){
+        resolveHelperTextForCancellation(){
             if(this.showCancellation){
-                return 'Viser afbud som overlapper med '+this.gameDate.toISOString().slice(0, 10)+' og dine afbud'
+                return 'Inkluderer afbud for datoen '+this.gameDate.toISOString().substring(0, 10)
             }
         },
         membersList() {

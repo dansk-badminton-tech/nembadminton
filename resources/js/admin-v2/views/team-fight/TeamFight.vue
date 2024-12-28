@@ -15,7 +15,7 @@
             <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Export</span>
+                    <span>Eksporter</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
@@ -34,7 +34,7 @@
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
                     <b-icon icon="brain"></b-icon>
-                    Validere hold
+                    Valider holdrunden
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
                     <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
@@ -45,19 +45,19 @@
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
                     <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
                         <b-icon icon="update"></b-icon>
-                        Opdater spiller point
+                        Opdater spillerpoint
                     </b-tooltip>
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
                     <b-icon icon="content-copy"></b-icon>
-                    Kopier hele holdet
+                    Kopier hele holdrunden
                 </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                     <b-icon icon="trash-can"></b-icon>
-                    Slet holdet
+                    Slet holdrunden
                 </b-dropdown-item>
             </b-dropdown>
-            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Indsammel afbud</b-button>
+            <b-button class="ml-2" icon-right="open-in-new" @click="openLinkSharingCancellationModel">Opret afbudslink</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
@@ -107,7 +107,7 @@
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj extra klub)</router-link>
+                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ekstra klub)</router-link>
                     </h1>
                     <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
                                        :version="new Date(version)" :game-date="gameDate"/>
@@ -651,9 +651,6 @@ export default {
                             })
                     }
                 })
-        },
-        selectClub(id) {
-            this.clubId = id
         },
         addedPlayerNotification(squadIndex, category) {
             this.$buefy.snackbar.open(

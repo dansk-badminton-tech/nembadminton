@@ -15,6 +15,11 @@ export default {
             type: Array,
             required: false,
             default: () => ([])
+        },
+        cancellationCollector: {
+            type: Object,
+            required: false,
+            default: () => ({})
         }
     },
     data(){
@@ -22,7 +27,9 @@ export default {
             showModal: false,
             selectedEvent: {},
             showDate: new Date(),
-            eventItems: []
+            eventItems: [],
+            cancellationEvents: [],
+            currentDate: new Date(),
         }
     },
     computed: {
@@ -42,11 +49,41 @@ export default {
                 title: e.title,
                 classes: e.classes || ''
             }))
+            const cancellationsAggregate = this.cancellationEvents.map(e => ({
+                id: e.start,
+                startDate: e.start,
+                endDate: e.end,
+                title: e.title,
+                url: e.contentFull,
+                classes: 'has-background-danger-light'
+            }))
             events.push(...selectedDates)
+            events.push(...cancellationsAggregate)
             return events
         }
     },
     apollo: {
+        cancellationEvents: {
+            query: gql`
+                query cancellationEvents($id: ID!){
+                    cancellationEvents(id: $id){
+                        content
+                        contentFull
+                        end
+                        start
+                        title
+                    }
+                },
+            `,
+            variables(){
+                return {
+                    id: this.cancellationCollector.id
+                }
+            },
+            skip(){
+                return !this.cancellationCollector.hasOwnProperty('id')
+            }
+        },
         calendarEvents: {
             query: gql`
                 query calendarEvents($clubIds: [Int!]!){
@@ -83,12 +120,6 @@ export default {
         onClickItem(item, e) {
             this.selectedEvent = item
             this.showModal = true
-        },
-        onSelectionFinish([startDate, endDate, windowEvent]){
-            console.log(startDate, endDate, windowEvent)
-        },
-        onClickDate(selectedDate){
-            console.log(selectedDate)
         }
     }
 }
@@ -99,20 +130,20 @@ export default {
         <strong class="title is-4" v-show="$apollo.queries.calendarEvents.loading">Henter kalender fra badmintonplayer.dk... <b-icon icon="loading" customClass="mdi-spin" /></strong>
         <div class="calendar-parent">
             <calendar-view
+                v-model="currentDate"
                 :items="eventsAndCancellations"
                 :show-date="showDate"
                 :startingDayOfWeek="1"
                 :displayWeekNumbers="true"
                 :enable-date-selection="true"
-                @date-selection-finish="onSelectionFinish"
                 @click-item="onClickItem"
-                @click-date="onClickDate"
                 class="theme-default">
                 <calendar-view-header
                     slot="header"
                     slot-scope="t"
                     :header-props="t.headerProps"
-                    @input="setShowDate" />
+                    @input="setShowDate">
+                </calendar-view-header>
             </calendar-view>
         </div>
         <b-modal v-model="showModal">
@@ -126,7 +157,7 @@ export default {
                     <div class="content">
                         <div v-html="selectedEvent?.originalItem?.url"></div>
                         <br>
-                        <strong>Event details:</strong>
+                        <strong>Detaljer:</strong>
                         <ul>
                             <li>Start: {{ selectedEvent?.originalItem?.startDate}}</li>
                         </ul>

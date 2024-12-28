@@ -29,9 +29,6 @@ export default {
         }
     },
     computed: {
-        hasSelectedPlayer() {
-            return Object.keys(this.form.selectedPlayer).length > 0
-        },
         showClubNames() {
             if (this.cancellationCollectorPublic.clubs.length === 0) {
                 return "Ingen klubber"
@@ -56,7 +53,6 @@ export default {
             }
             return dateObjects;
         }
-
     },
     apollo: {
         cancellationCollectorPublic: {
@@ -184,18 +180,18 @@ export default {
 
 <template>
     <section>
-        <h2 class="title is-4">Afbud for {{ showClubNames }}</h2>
+        <h2 class="title is-4">Meld afbud for {{ showClubNames }}</h2>
         <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
         <form @submit.prevent="confirmCancellation">
-            <b-field label="Navn" message="Søg efter dit navn fra badmintonplayer.">
+            <b-field label="Dit navn" message="Der kan kun søges på spillere fra badmintonplayer.dk.">
                 <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
-            <b-field label="Email" message="Bruges til at sende en kvittering">
+            <b-field label="Din email" message="Hertil sendes en kvittering.">
                 <b-input placeholder="badminton@badminton.dk" type="email" v-model="form.email" required/>
             </b-field>
-            <b-field label="Vælge afbuds datoer" message="Vælge mindst 1 dato. Er kan vælge mere end 1 dato">
+            <b-field label="Vælg afbudsdatoer" message="Vælg mindst én dato. Der kan vælges flere datoer.">
                 <b-datepicker
-                    placeholder="Vælge datoer du ikke kan spille..."
+                    placeholder="Angiv datoer"
                     v-model="form.selectedDates"
                     :first-day-of-week="1"
                     multiple
@@ -219,11 +215,11 @@ export default {
 
                 </b-datepicker>
             </b-field>
-            <b-field label="Besked med afbudet. Valgfrit">
-                <b-input type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder="Besked sammen med afbud"/>
+            <b-field label="Besked (Valgfrit)">
+                <b-input type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder=""/>
             </b-field>
-            <h2 class="title is-4">Holdkamp kalender (Beta)</h2>
-            <h2 class="subtitle">Viser alle holdkampe for senior. Dage som du har meldt afbud på markeres med rød</h2>
+            <h2 class="title is-4">Kalender for holdkampe (Beta)</h2>
+            <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }}. Dataen er hentet direkte fra badmintonplayer.dk. Dine afbudsdatoer markeres med rød.</h2>
             <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs"/>
             <b-button :loading="sendingCancellation" native-type="submit" class="mt-4" expanded size="is-medium">Meld afbud</b-button>
         </form>

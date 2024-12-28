@@ -2,7 +2,7 @@
     <fragment v-if="!$apollo.loading">
         <h1 class="title">{{ team.name }} - {{ team.club.name1 }}
         </h1>
-        <h2 class="subtitle">Spille dato: {{ team.gameDate }}</h2>
+        <h2 class="subtitle">Spilledato: {{ team.gameDate }}</h2>
         <div class="columns is-multiline">
             <div v-for="(squad, index) in team.squads" :key="squad.id" class="column is-half">
                 <table class="table is-striped mt-5 is-fullwidth">

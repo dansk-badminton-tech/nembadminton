@@ -20,8 +20,8 @@ export default {
 
 <template>
     <section class="section">
-        <h2 class="title is-4">Tak for dit afbud. 😎</h2>
-        <h1 class="subtitle">Vi har send en email til klubben samt en kvittering til dig</h1>
+        <h2 class="title is-4">Tak for at registrere afbud 😎🏸</h2>
+        <h1 class="subtitle">Vi har sendt en email til din klub samt en kvittering til dig.</h1>
         <b-button type="is-info" @click="redirect" expanded>Opret nyt afbud</b-button>
     </section>
 </template>
