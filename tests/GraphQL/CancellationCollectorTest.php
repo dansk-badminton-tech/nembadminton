@@ -1,7 +1,7 @@
 <?php
 
 
-namespace GraphQL;
+namespace Tests\GraphQL;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase;
@@ -15,7 +15,6 @@ class CancellationCollectorTest extends TestCase
     use MakesGraphQLRequests;
 
     /**
-     * @test
      * @skip
      * */
     public function it_can_create_a_cancellation_collector()
