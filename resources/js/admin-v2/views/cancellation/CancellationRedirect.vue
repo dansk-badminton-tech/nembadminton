@@ -8,9 +8,9 @@ export default {
             query: ME,
             result({data}) {
                 if (data.me.cancellationCollector === null) {
-                    this.$router.push({name: "cancellation-landing"})
+                    this.$router.replace({name: "cancellation-landing"})
                 } else {
-                    this.$router.push({name: "cancellation-view", params: {collectorId: data.me.cancellationCollector.id}});
+                    this.$router.replace({name: "cancellation-view", params: {collectorId: data.me.cancellationCollector.id}});
                 }
             }
         }
