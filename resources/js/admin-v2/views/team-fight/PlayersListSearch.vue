@@ -508,9 +508,6 @@ export default {
                         ],
                     }
                 }
-            },
-            skip() {
-                return false
             }
         },
         memberSearch: {

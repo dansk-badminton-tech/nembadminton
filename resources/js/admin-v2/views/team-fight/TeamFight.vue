@@ -814,7 +814,7 @@ export default {
                 .then(({data}) => {
                     this.savingIcon = 'check';
                     setTimeout(() => {
-                        this.savingIcon = 'save';
+                        this.savingIcon = 'content-save';
                     }, 2000);
                 })
                 .catch((error) => {
