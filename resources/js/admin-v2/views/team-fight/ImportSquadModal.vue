@@ -24,7 +24,6 @@ export default {
         },
         addSquadFromBP(teamFight){
             this.addSquad()
-            console.log(teamFight)
         }
     },
     computed: {

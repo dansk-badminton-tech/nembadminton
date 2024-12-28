@@ -85,7 +85,6 @@ export default {
                         }
                     });
                 }
-                console.log(data)
             },
             fetchPolicy: "network-only"
         }

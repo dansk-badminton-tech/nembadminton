@@ -707,7 +707,6 @@ export default {
                         }
                     }
                 }
-                console.log(player)
             if (foundPlace === false) {
                 this.$buefy.snackbar.open(
                     {
