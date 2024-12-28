@@ -28,7 +28,6 @@ class CancellationConfirmationClubMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: 'afbud@nembadminton.dk',
             subject: 'Du har modtaget et afbud fra '.$this->cancellation->member->name,
         );
     }

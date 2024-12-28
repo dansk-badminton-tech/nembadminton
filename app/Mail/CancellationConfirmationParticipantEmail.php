@@ -28,7 +28,6 @@ class CancellationConfirmationParticipantEmail extends Mailable implements Shoul
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: 'afbud@nembadminton.dk',
             subject: 'Vi har modtaget dit afbud',
         );
     }
