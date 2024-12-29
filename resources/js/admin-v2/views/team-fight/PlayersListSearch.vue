@@ -48,9 +48,11 @@
             <b-table-column field="name" v-slot="props">
                 <div class="buttons" v-if="showCancellation">
                     <b-button size="is-small" v-show="!hasPermanentCancellation(props.row)" title="Lav afbud permanent (Alle holdrunder)"
-                              icon-right="account-injury" @click="makeCancellationPermanent(props.row)"></b-button>
+                              icon-right="account-injury" @click.stop="makeCancellationPermanent(props.row)"></b-button>
                     <b-button size="is-small" type="is-danger" v-show="hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
-                              icon-right="account-injury" @click="removePermanentCancellation(props.row)"></b-button>
+                              icon-right="account-injury" @click.stop="removePermanentCancellation(props.row)"></b-button>
+                    <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
+                              @click.stop="addPlayerCustom(props.row)"></b-button>
                 </div>
                 <div class="buttons" v-if="!showCancellation">
                     <b-button size="is-small" type="is-danger" v-show="props.row.ownerId" icon-right="delete" @click="deleteMember(props.row)"></b-button>
