@@ -222,10 +222,10 @@ export default {
             <b-field label="Besked (Valgfrit)">
                 <b-input type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder=""/>
             </b-field>
+            <b-button :loading="sendingCancellation" type="is-info" native-type="submit" class="mb-4" expanded size="is-medium">Meld afbud</b-button>
             <h2 class="title is-4">Kalender for holdkampe (Beta)</h2>
             <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }}. Dataen er hentet direkte fra badmintonplayer.dk. Dine afbudsdatoer markeres med rød.</h2>
             <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs"/>
-            <b-button :loading="sendingCancellation" native-type="submit" class="mt-4" expanded size="is-medium">Meld afbud</b-button>
         </form>
     </section>
 </template>

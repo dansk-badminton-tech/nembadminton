@@ -15,7 +15,7 @@
                 Tilføj spiller
             </b-button>
         </b-field>
-        {{resolveHelperTextForCancellation}}
+        <span v-html="resolveHelperTextForCancellation"></span>
         <b-table
             class="mt-5"
             :data="membersList"
@@ -126,7 +126,7 @@ export default {
     computed: {
         resolveHelperTextForCancellation(){
             if(this.showCancellation){
-                return 'Inkluderer afbud for datoen '+this.gameDate.toISOString().substring(0, 10)
+                return 'Inkluderer afbud fra afbudslink for datoen <strong>'+this.gameDate.toISOString().substring(0, 10)+'</strong>'
             }
         },
         membersList() {
@@ -393,7 +393,7 @@ export default {
                 return "Dig"
             }
             if (cancellation.cancellationCollector) {
-                return "Afbuds indsamler"
+                return "Afbudslink"
             }
         },
         hasPermanentCancellation(player) {
