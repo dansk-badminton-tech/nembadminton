@@ -14,8 +14,9 @@
             <b-button icon-left="plus" @click="openAddMemberModal">
                 Tilføj spiller
             </b-button>
+            <b-switch v-show="showCancellation" v-model="showPlayable">Vis permanent afbud</b-switch>
         </b-field>
-        <span v-html="resolveHelperTextForCancellation"></span>
+        <p class="mt-4" v-html="resolveHelperTextForCancellation"></p>
         <b-table
             class="mt-5"
             :data="membersList"
@@ -124,9 +125,9 @@ export default {
         gameDate: Date
     },
     computed: {
-        resolveHelperTextForCancellation(){
-            if(this.showCancellation){
-                return 'Inkluderer afbud fra afbudslink for datoen <strong>'+this.gameDate.toISOString().substring(0, 10)+'</strong>'
+        resolveHelperTextForCancellation() {
+            if (this.showCancellation) {
+                return 'Inkluderer afbud fra afbudslink for datoen <strong>' + this.gameDate.toISOString().substring(0, 10) + '</strong>'
             }
         },
         membersList() {
@@ -189,16 +190,17 @@ export default {
                 MEN_SINGLE: 'Herre Single',
                 MENS_DOUBLE: 'Herre Double',
                 MEN_MIX: 'Herre Mix'
-            }
+            },
+            showPlayable: false
         }
     },
     methods: {
-        refreshMembers(){
+        refreshMembers() {
             this.$apollo.queries.memberSearch.refresh()
             this.$apollo.queries.memberSearchCancellation.refresh()
         },
         openDetailedRow(obj) {
-            if(this.showCancellation){
+            if (this.showCancellation) {
                 const index = this.openedDetailed.indexOf(obj.id);
                 if (index !== -1) {
                     // If obj.id exists in the array, remove it
@@ -430,6 +432,68 @@ export default {
             update: data => data.membersSearch,
             fetchPolicy: "network-only",
             variables() {
+
+                let whereCondition
+
+                let baseCondition = {
+                    HAS: {
+                        relation: 'cancellations',
+                        condition: {
+                            OR: [
+                                {
+                                    column: 'TEAM_ID',
+                                    value: this.teamId
+                                },
+                                {
+                                    AND: [
+                                        {
+                                            HAS: {
+                                                relation: 'cancellationCollector',
+                                                condition: {
+                                                    column: 'USER_ID',
+                                                    value: this.me?.id
+                                                }
+                                            }
+                                        },
+                                        {
+                                            HAS: {
+                                                relation: 'dates',
+                                                condition: {
+                                                    column: 'DATE',
+                                                    operator: 'BETWEEN',
+                                                    value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
+                                                }
+                                            }
+                                        }
+                                    ],
+                                }
+                            ]
+                        }
+                    }
+                }
+
+                if (this.showPlayable) {
+                    whereCondition = {
+                        OR: [
+                            {
+                                column: 'PLAYABLE',
+                                value: false
+                            },
+                            baseCondition
+                        ]
+                    }
+                } else {
+                    whereCondition = {
+                        AND: [
+                            {
+                                column: 'PLAYABLE',
+                                value: true
+                            },
+                            baseCondition
+                        ]
+                    }
+                }
+
                 return {
                     page: this.currentPage,
                     first: this.perPage,
@@ -462,51 +526,7 @@ export default {
                             ],
                         }]
                     },
-                    whereCancellations: {
-                        OR: [
-                            {
-                                column: 'PLAYABLE',
-                                value: false
-                            },
-                            {
-                                HAS: {
-                                    relation: 'cancellations',
-                                    condition: {
-                                        OR: [
-                                            {
-                                                column: 'TEAM_ID',
-                                                value: this.teamId
-                                            },
-                                            {
-                                                AND: [
-                                                    {
-                                                        HAS: {
-                                                            relation: 'cancellationCollector',
-                                                            condition: {
-                                                                column: 'USER_ID',
-                                                                value: this.me?.id
-                                                            }
-                                                        }
-                                                    },
-                                                    {
-                                                        HAS: {
-                                                            relation: 'dates',
-                                                            condition: {
-                                                                column: 'DATE',
-                                                                operator: 'BETWEEN',
-                                                                value: [this.gameDate.toISOString().slice(0, 10), this.gameDate.toISOString().slice(0, 10)]
-                                                            }
-                                                        }
-                                                    }
-                                                ],
-                                            }
-                                        ]
-                                    }
-                                }
-
-                            }
-                        ],
-                    }
+                    whereCancellations: whereCondition
                 }
             }
         },
