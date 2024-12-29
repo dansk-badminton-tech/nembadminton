@@ -24,7 +24,6 @@ class MemberSearch
     {
         $version = $args['version'] ?? null;
         $builder = Member::query();
-        $teamId = $args['teamId'];
         $rankingList = $args['rankingList'];
         if ($version !== null) {
             $builder
@@ -41,6 +40,9 @@ class MemberSearch
                     $query->where('version', $version);
                     $this->applyRanking($query, $rankingList);
                 });
+        }
+        $teamId = $args['teamId'] ?? null;
+        if($teamId !== null){
             $builder->notOnSquad($teamId);
         }
 

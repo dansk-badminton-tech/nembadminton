@@ -5,21 +5,6 @@
             {{ me?.club?.name1 }}
         </hero-bar>
         <section class="section is-main-section">
-            <notification-bar class="is-info">
-                Nembadminton er ændret til at understøtte reglementsændringerne for 2024/2025-sæsonen, så du forsat kan sætte hold nemt og bekymringsfrit.
-                <a
-                    slot="right"
-                    href="https://badminton.dk/2024/07/01/reglementsaendringer-til-2024-2025-saesonen/"
-                    target="_blank"
-                    class="button is-white is-small"
-                >
-                    <b-icon
-                        icon="open-in-new"
-                        custom-size="default"
-                    />
-                    <span>Læs nyheden her</span>
-                </a>
-            </notification-bar>
             <tiles-block>
                 <card-widget
                     class="tile is-child"
@@ -43,31 +28,39 @@
                     label="Kvinder"
                 />
             </tiles-block>
-            <h1 class="title">Medlemmer</h1>
-            <h2 class="subtitle">Viser niveau ranglisten for indeværende måned</h2>
-            <b-field label="Søg på navn">
-                <b-input expanded @input="setName"></b-input>
-            </b-field>
-            <b-table :data="members.data"
-                     :loading="$apollo.queries.members.loading"
-                     :per-page="20"
-                     :total="members.paginatorInfo.total"
-                     backend-pagination
-                     paginated
-                     @page-change="onPageChange">
-                <b-table-column v-slot="props" field="points" label="Points">
-                    {{ props.row.latestLevelPoints }}
-                </b-table-column>
-                <b-table-column v-slot="props" field="vintage" label="Aldersgruppe">
-                    {{ props.row.vintage }}
-                </b-table-column>
-                <b-table-column v-slot="props" field="name" label="Navn">
-                    {{ props.row.name }}
-                </b-table-column>
-                <b-table-column v-slot="props" field="refId" label="Badminton ID">
-                    {{ props.row.refId }}
-                </b-table-column>
-            </b-table>
+            <b-tabs size="is-medium" position="is-centered" class="block">
+                <b-tab-item label="Single">
+                    <div class="columns">
+                        <div class="column">
+                            <CategoryPoints ranking-list="MEN_SINGLE"/>
+                        </div>
+                        <div class="column">
+                            <CategoryPoints ranking-list="WOMEN_SINGLE"/>
+                        </div>
+                    </div>
+                </b-tab-item>
+                <b-tab-item label="Double">
+                    <div class="columns">
+                        <div class="column">
+                            <CategoryPoints ranking-list="MENS_DOUBLE"/>
+                        </div>
+                        <div class="column">
+                            <CategoryPoints ranking-list="WOMENS_DOUBLE"/>
+                        </div>
+                    </div>
+                </b-tab-item>
+                <b-tab-item label="Mix">
+                    <div class="columns">
+                        <div class="column">
+                            <CategoryPoints ranking-list="MEN_MIX"/>
+                        </div>
+                        <div class="column">
+                            <CategoryPoints ranking-list="WOMEN_MIX"/>
+
+                        </div>
+                    </div>
+                </b-tab-item>
+            </b-tabs>
             <ActivityLog/>
         </section>
     </div>
@@ -84,10 +77,11 @@ import HeroBar from "../../components/HeroBar.vue";
 import TilesBlock from "../../components/TilesBlock.vue";
 import CardWidget from "../../components/CardWidget.vue";
 import NotificationBar from "@/components/NotificationBar.vue";
+import CategoryPoints from "@/views/dashboard/CategoryPoints.vue";
 
 export default {
     name: "ClubDashboard",
-    components: {NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
+    components: {CategoryPoints, NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
     apollo: {
         clubStats: {
             query: gql`
@@ -103,45 +97,12 @@ export default {
         me: {
             query: MeQuery,
         },
-        members: {
-            query: gql`
-                query members($page: Int, $name: String, $orderBy: [QueryMembersOrderByOrderByClause!]){
-                    members(page: $page, name: $name, orderBy: $orderBy){
-                        paginatorInfo{
-                          total
-                        }
-                        data{
-                          id
-                          name
-                          refId
-                          vintage
-                          latestLevelPoints
-                          latestLevelPosition
-                          latestLevelVersion
-                        }
-                      }
-                }
-            `,
-            variables() {
-                return {
-                    name: '%' + this.name + '%',
-                    orderBy: [{column: 'LATEST_LEVEL_POINTS', order: 'DESC'}],
-                    page: this.page
-                }
-            }
-        }
     },
     data() {
         return {
             titleStack: ['Admin', 'Dashboard'],
             name: '',
             page: 0,
-            members: {
-                data: [],
-                paginatorInfo: {
-                    total: 0
-                }
-            },
             columns: [
                 {
                     field: 'id',

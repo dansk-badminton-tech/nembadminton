@@ -3,8 +3,8 @@ query memberSearchPoints(
     $page: Int,
     $first: Int,
     $name: String,
-    $teamId: String!,
-    $rankingList: MemberSearchOrderBy!
+    $teamId: String,
+    $rankingList: RankingList!
     $playable: Boolean
     $whereCancellations: QueryMemberSearchPointsWhereCancellationsWhereConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions

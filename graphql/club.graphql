@@ -16,10 +16,10 @@ extend type Query{
         notOnSquad: String @scope
     ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs"]) @guard
     memberSearchPoints(
-        teamId: String!
         version: Date!
+        teamId: String
         name: String @where(operator: "like")
-        rankingList: MemberSearchOrderBy! = WOMEN_LEVEL
+        rankingList: RankingList! = WOMEN_LEVEL
         playable: Boolean @where
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
@@ -92,7 +92,7 @@ enum Gender {
     WOMEN @enum(value: "K")
 }
 
-enum MemberSearchOrderBy {
+enum RankingList {
     ALL_LEVEL @enum(value: "ALL")
     WOMEN_SINGLE @enum(value: "DS")
     WOMENS_DOUBLE @enum(value: "DD")
