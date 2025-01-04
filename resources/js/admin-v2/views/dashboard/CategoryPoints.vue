@@ -108,6 +108,9 @@ export default {
             <b-table-column v-slot="props" field="refId" label="Badminton ID">
                 {{ props.row.refId }}
             </b-table-column>
+            <b-table-column v-slot="props" label="Stats">
+                <b-button size="is-small" tag="router-link" :to="'/player/'+props.row.id+'/stats'" title="Ranking progression" icon-right="chart-bell-curve-cumulative"></b-button>
+            </b-table-column>
         </b-table>
     </div>
 </template>

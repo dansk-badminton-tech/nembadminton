@@ -118,4 +118,8 @@ class Member extends Model
         return Carbon::createFromFormat('ymd', substr($this->refId, 0, 6));
     }
 
+    public function isWomen() : bool{
+        return $this->gender === 'K';
+    }
+
 }
