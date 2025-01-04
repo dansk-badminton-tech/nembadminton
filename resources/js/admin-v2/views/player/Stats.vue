@@ -55,21 +55,21 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Ranging progression for <i>{{ memberStats.member.name }}</i>
+            Ranging progression for <i>{{ memberStats.member?.name }}</i>
         </hero-bar>
         <section class="section is-main-section">
             <div class="columns is-multiline">
                 <div class="column is-half">
                     <h1 class="title is-4">Mix</h1>
-                    <MemberRankingProgression :data="memberStats.mix"/>
+                    <MemberRankingProgression :member-data-sets="[{member: memberStats.member, data: memberStats.mix}]"/>
                 </div>
                 <div class="column is-half">
                     <h1 class="title is-4">Single</h1>
-                    <MemberRankingProgression :data="memberStats.single"/>
+                    <MemberRankingProgression :member-data-sets="[{member: memberStats.member, data: memberStats.single}]"/>
                 </div>
                 <div class="column is-half">
                     <h1 class="title is-4">Double</h1>
-                    <MemberRankingProgression :data="memberStats.double"/>
+                    <MemberRankingProgression :member-data-sets="[{member: memberStats.member, data: memberStats.double}]"/>
                 </div>
             </div>
         </section>

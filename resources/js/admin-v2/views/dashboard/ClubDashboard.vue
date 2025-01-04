@@ -61,7 +61,7 @@
                     </div>
                 </b-tab-item>
             </b-tabs>
-            <ActivityLog/>
+<!--            <ActivityLog/>-->
         </section>
     </div>
 </template>
@@ -85,14 +85,22 @@ export default {
     apollo: {
         clubStats: {
             query: gql`
-                query clubStats{
-                    clubStats{
+                query clubStats($id: ID!){
+                    clubStats(id: $id){
                         players
                         womenPlayers
                         menPlayers
                     }
                 }
-            `
+            `,
+            variables() {
+                return {
+                    id: this.me?.club?.id
+                }
+            },
+            skip(){
+                return this.me?.club === undefined
+            }
         },
         me: {
             query: MeQuery,

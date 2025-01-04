@@ -1,68 +1,84 @@
 <script>
 import LineChart from "@/components/Charts/LineChart.vue";
 
-function pluck(array, key) {
-    return array.map(o => o[key]);
-}
+const randomColor = () => {
+    const randomInt = () => Math.floor(Math.random() * 256); // Random number between 0 and 255
+    return `rgb(${randomInt()}, ${randomInt()}, ${randomInt()})`; // Generate RGB color string
+};
 
-const datasetObject = (data) => {
+const datasetObject = (data, label) => {
+    const color = randomColor(); // Call randomColor here
     return {
         fill: false,
-        borderColor: '#00D1B2',
+        label: label,
+        borderColor: color, // Assign the random color
         borderWidth: 2,
         borderDash: [],
         borderDashOffset: 0.0,
-        pointBackgroundColor: '#00D1B2',
+        pointBackgroundColor: color, // Use the same random color
         pointBorderColor: 'rgba(255,255,255,0)',
-        pointHoverBackgroundColor: '#00D1B2',
+        pointHoverBackgroundColor: color,
         pointBorderWidth: 20,
         pointHoverRadius: 4,
         pointHoverBorderWidth: 15,
         pointRadius: 4,
         data: data,
-        tension: 0.5,
-        cubicInterpolationMode: 'default'
+        tension: 0.5
     }
 }
+
 export default {
     name: "MemberRankingProgression",
     props: {
-        data: {
+        memberDataSets: {
             type: Array,
-            default: []
-        }
+            default: () => []
+        },
+        title: String,
     },
     components: {LineChart},
-    data(){
+    data() {
         return {
             chartOptions: {
-                responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'month'
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
-                        display: true
-                    }
+                        display: true,
+                        position: 'bottom',
+                    },
+                    title: {
+                        display: true,
+                        text: this.title
+                    },
                 }
             }
         }
     },
     computed: {
-        chartData(){
-            if(this.data.length > 0){
-                const labels = pluck(this.data, 'version')
-                const data = pluck(this.data, 'points')
+        chartData() {
+            if (this.memberDataSets.length > 0) {
+                const datasets = this.memberDataSets.map(member => {
+                    return datasetObject(
+                        member.data.map(point => ({y: point.points, x: point.version})),
+                        member.member?.name
+                    )
+                })
                 return {
-                    labels: labels,
-                    datasets: [
-                        datasetObject(data)
-                    ]
+                    datasets
                 }
-            }else{
+            } else {
                 return {
-                    labels: [],
                     datasets: [
                         {
-                            label: 'Data One',
+                            label: 'Loading',
                             backgroundColor: '#f87979',
                             data: []
                         }
@@ -78,7 +94,7 @@ export default {
     <LineChart
         :chart-data="chartData"
         :chart-options="chartOptions"
-        :style="{height: '100%'}"
+        :style="{height: '50vh'}"
     />
 </template>
 

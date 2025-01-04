@@ -1,24 +1,29 @@
 extend type Query {
-    memberStats(id: ID!) : MemberStats @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@stats")
-    clubStats : ClubInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubStats")
+    memberStats(
+        "Member ID"
+        id: ID!
+    ) : MemberStats! @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@stats")
+    membersStats(
+        "Members ID"
+        ids: [ID!]!
+    ) : [MemberStats!]! @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@bulkStats")
+    clubStats(
+        "Club Id"
+        id: ID!
+    ) : ClubInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubStats")
 }
 
 type ClubInfo {
     players: Int!
     womenPlayers: Int!
     menPlayers: Int!
-    highestPlayers: HighestPlayerList
+    rankingProgression: RankingProgression
 }
 
-type HighestPlayerList {
-    DL: Member
-    HL: Member
-    DS: Member
-    HS: Member
-    HD: Member
-    DD: Member
-    MxD: Member
-    MxH: Member
+type RankingProgression {
+    single: [MemberStats!]!
+    double: [MemberStats!]!
+    mix: [MemberStats!]!
 }
 
 type DataPoint{

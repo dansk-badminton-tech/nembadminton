@@ -1,8 +1,10 @@
 <script>
 import gql from "graphql-tag";
+import BulkMemberRankingProgression from "@/views/dashboard/BulkMemberRankingProgression.vue";
 
 export default {
     name: "CategoryPoints",
+    components: {BulkMemberRankingProgression},
     props: {
         rankingList: String
     },
@@ -23,15 +25,23 @@ export default {
                 "MENS_DOUBLE": "Herre double",
                 "MEN_MIX": "Herre mix"
             },
+            latestRankingVersion: "2025-01-02",
             page: 1,
-            perPage: 20
+            perPage: 20,
+            checkedMembers: []
         }
     },
     apollo: {
+        latestRankingVersion: {
+            query: gql`
+                query latestRankingVersion{
+                    latestRankingVersion
+                }`
+        },
         memberSearchPoints: {
             query: gql`
-                query memberSearchPoints($rankingList: RankingList!, $category: Mixed, $page: Int, $first: Int){
-                    memberSearchPoints(version: "2024-12-02", playable: true, rankingList: $rankingList, first: $first, page: $page){
+                query memberSearchPoints($version: Date!, $rankingList: RankingList!, $category: Mixed, $page: Int, $first: Int){
+                    memberSearchPoints(version: $version, playable: true, rankingList: $rankingList, first: $first, page: $page){
                         paginatorInfo{
                           total
                         }
@@ -40,7 +50,7 @@ export default {
                           name
                           refId
                           vintage
-                          points(version: "2024-12-02", where: {column: CATEGORY, value: $category}){
+                          points(version: $version, where: {column: CATEGORY, value: $category}){
                             points
                             position
                             category
@@ -50,6 +60,9 @@ export default {
                       }
                 }
             `,
+            result(result) {
+                this.checkedMembers = result.data.memberSearchPoints.data.slice(0, 5);
+            },
             variables() {
                 const mapping = {
                     "ALL_LEVEL": "ALL",
@@ -64,7 +77,8 @@ export default {
                     category: mapping[this.rankingList],
                     rankingList: this.rankingList,
                     first: this.perPage,
-                    page: this.page
+                    page: this.page,
+                    version: this.latestRankingVersion
                 }
             }
         }
@@ -72,6 +86,9 @@ export default {
     computed: {
         categoryTitle(){
             return this.categoryToTitle[this.rankingList]
+        },
+        memberIdsForStats(){
+            return this.checkedMembers.map(m => m.id)
         }
     },
     methods: {
@@ -85,6 +102,8 @@ export default {
 <template>
     <div>
         <h1 class="title">{{ categoryTitle }}</h1>
+        <BulkMemberRankingProgression :member-ids="memberIdsForStats" :ranking-list="rankingList" />
+        <hr />
         <b-table :data="memberSearchPoints.data"
                  :loading="$apollo.queries.memberSearchPoints.loading"
                  :per-page="20"
@@ -92,6 +111,9 @@ export default {
                  backend-pagination
                  paginated
                  @page-change="onPageChange"
+                 checkable
+                 :checked-rows.sync="checkedMembers"
+                 checkbox-type="is-info"
                  >
             <b-table-column v-slot="props">
                 # {{ ((page-1)*perPage) + props.index + 1}}
@@ -109,7 +131,7 @@ export default {
                 {{ props.row.refId }}
             </b-table-column>
             <b-table-column v-slot="props" label="Stats">
-                <b-button size="is-small" tag="router-link" :to="'/player/'+props.row.id+'/stats'" title="Ranking progression" icon-right="chart-bell-curve-cumulative"></b-button>
+                <b-button size="is-small" tag="router-link" :to="'/player/'+props.row.id+'/stats'" title="Ranging progression" icon-right="chart-bell-curve-cumulative"></b-button>
             </b-table-column>
         </b-table>
     </div>
