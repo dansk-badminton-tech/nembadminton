@@ -6,12 +6,18 @@ namespace FlyCompany\Stats\GraphQL\Queries;
 
 use App\Models\Member;
 use App\Models\Point;
+use FlyCompany\Members\Enums\Category;
+use FlyCompany\Stats\Stats;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class PlayerStats
 {
+
+    public function __construct(private Stats $stats)
+    {
+    }
 
     /**
      * Return a value for the field.
@@ -27,38 +33,44 @@ class PlayerStats
     {
         $memberId = $args['id'];
 
-        /** @var Member $member */
-        $member = Member::query()->where('id', $memberId)->firstOrFail();
+        return $this->getData($memberId);
+    }
 
-        $data = [
-            'member'      => $member
-        ];
+    public function bulkStats($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
+        $memberIds = $args['ids'];
 
-        if($member->isWomen()){
-            $data['mix'] = $this->getCategoryPointAndPosition($memberId, 'MxD');
-            $data['single'] = $this->getCategoryPointAndPosition($memberId, 'DS');
-            $data['double'] = $this->getCategoryPointAndPosition($memberId, 'DD');
-        }else{
-            $data['mix'] = $this->getCategoryPointAndPosition($memberId, 'MxH');
-            $data['single'] = $this->getCategoryPointAndPosition($memberId, 'HS');
-            $data['double'] = $this->getCategoryPointAndPosition($memberId, 'HD');
+        $data = [];
+
+        foreach ($memberIds as $memberId) {
+            $data[] = $this->getData($memberId);
         }
 
         return $data;
     }
 
     /**
-     * @param string $memberId
-     * @param string $category
+     * @param mixed $memberId
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Member[]
      */
-    protected function getCategoryPointAndPosition(string $memberId, string $category) : \Illuminate\Database\Eloquent\Collection
+    public function getData(mixed $memberId) : array
     {
-        return Point::query()
-                    ->where('category', $category)
-                    ->whereHas('member', function (Builder $query) use ($memberId) {
-                        $query->where('id', $memberId);
-                    })->orderBy('version')->get();
+        /** @var Member $member */
+        $member = Member::query()->where('id', $memberId)->firstOrFail();
+        $data = [
+            'member' => $member,
+        ];
+        if ($member->isWomen()) {
+            $data['mix'] = $this->stats->getCategoryPoint($memberId, Category::from('MxD'));
+            $data['single'] = $this->stats->getCategoryPoint($memberId, Category::from('DS'));
+            $data['double'] = $this->stats->getCategoryPoint($memberId, Category::from('DD'));
+        } else {
+            $data['mix'] = $this->stats->getCategoryPoint($memberId, Category::from('MxH'));
+            $data['single'] = $this->stats->getCategoryPoint($memberId, Category::from('HS'));
+            $data['double'] = $this->stats->getCategoryPoint($memberId, Category::from('HD'));
+        }
+
+        return $data;
     }
 }
