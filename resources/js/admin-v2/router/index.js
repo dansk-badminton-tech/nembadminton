@@ -16,6 +16,16 @@ const routes = [
     },
     {
         meta: {
+            title: 'Spiller statistik',
+            requiresAuth: true
+        },
+        path: '/player/:playerID/stats',
+        name: 'player-stats',
+        component: () => import('@/views/player/Stats.vue'),
+        props: route => ({playerId: route.params.playerID})
+    },
+    {
+        meta: {
             title: 'Holdrunder',
             requiresAuth: true
         },

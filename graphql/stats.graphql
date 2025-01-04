@@ -1,5 +1,5 @@
 extend type Query {
-    playerStats(badmintonId: String) : PlayerStats @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@stats")
+    memberStats(id: ID!) : MemberStats @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@stats")
     clubStats : ClubInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubStats")
 }
 
@@ -21,19 +21,14 @@ type HighestPlayerList {
     MxH: Member
 }
 
-type StatsPunkt{
-    position: Int
+type DataPoint{
     points: Int!
     version: Date
 }
 
-type PlayerStats {
-    player: Member!
-    level: [StatsPunkt!]
-    mixWomen: [StatsPunkt!]
-    mixMen: [StatsPunkt!]
-    singleWomen: [StatsPunkt!]
-    singleMen: [StatsPunkt!]
-    doubleWomen: [StatsPunkt!]
-    doubleMen: [StatsPunkt!]
+type MemberStats {
+    member: Member!
+    mix: [DataPoint!]
+    single: [DataPoint!]
+    double: [DataPoint!]
 }
