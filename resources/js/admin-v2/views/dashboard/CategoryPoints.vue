@@ -61,7 +61,9 @@ export default {
                 }
             `,
             result(result) {
-                this.checkedMembers = result.data.memberSearchPoints.data.slice(0, 5);
+                if(this.checkedMembers.length === 0){
+                    this.checkedMembers = result.data.memberSearchPoints.data.slice(0, 5);
+                }
             },
             variables() {
                 const mapping = {
@@ -114,6 +116,7 @@ export default {
                  checkable
                  :checked-rows.sync="checkedMembers"
                  checkbox-type="is-info"
+                 :custom-is-checked="(objA, objB) => {return objA.id === objB.id}"
                  >
             <b-table-column v-slot="props">
                 # {{ ((page-1)*perPage) + props.index + 1}}
