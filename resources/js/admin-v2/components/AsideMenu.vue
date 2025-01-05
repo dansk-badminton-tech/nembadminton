@@ -8,7 +8,7 @@
         class="navbar-item is-hidden-touch is-hidden-widescreen is-desktop-icon-only"
         @click="asideToggleDesktopOnly"
       >
-        <b-icon icon="menu" />
+        <b-icon pack="mdi" icon="backburger" />
       </a>
       <div class="aside-tools-label">
         <span><b>Nembadminton</b></span>

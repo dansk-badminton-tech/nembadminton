@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Cancellation;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CancellationPolicy
 {
@@ -45,7 +44,15 @@ class CancellationPolicy
      */
     public function update(User $user, Cancellation $cancellation): bool
     {
-        //
+        if ($cancellation->team !== null) {
+            return $cancellation->team->user_id === $user->getAuthIdentifier();
+        }
+
+        if($cancellation->cancellationCollector !== null) {
+            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+        }
+
+        return false;
     }
 
     /**
@@ -53,7 +60,15 @@ class CancellationPolicy
      */
     public function delete(User $user, Cancellation $cancellation): bool
     {
-        //
+        if ($cancellation->team !== null) {
+            return $cancellation->team->user_id === $user->getAuthIdentifier();
+        }
+
+        if($cancellation->cancellationCollector !== null) {
+            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+        }
+
+        return false;
     }
 
     /**
