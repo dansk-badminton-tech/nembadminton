@@ -4,7 +4,7 @@ extend type Query{
         name: String @where(operator: "like"),
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate
-    cancellationCollector(id: ID! @eq) : CancellationCollector @find @guard
+    cancellationCollector(id: ID! @eq) : CancellationCollector @find @canFind(ability: "view", find: "id") @guard
     cancellationCollectorPublic(sharingId: String! @eq(key: "sharing_id")) : CancellationCollector @find
     cancellationEvents("CancellationCollector ID" id: ID!) : [Event!]! @guard @field(resolver: "App\\GraphQL\\Queries\\CancellationEvents")
 }
