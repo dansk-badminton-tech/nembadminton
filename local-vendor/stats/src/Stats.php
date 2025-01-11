@@ -31,8 +31,10 @@ class Stats
                     ->orderBy('version')->get();
     }
 
-    public function getLowToHighestPoints(int $clubID, Category $category, int $limit, string $orderBy) : array
+    public function getLowToHighestPoints(array $clubIDs, Category $category, int $limit, string $orderBy) : array
     {
+        $clubIds = implode(',', $clubIDs);
+
         $results = DB::select("
             WITH member_points AS (
                 SELECT
@@ -62,14 +64,13 @@ class Stats
             WHERE member_id IN (
                 SELECT member_id
                 FROM club_member
-                WHERE club_id = :clubId
+                WHERE club_id IN ($clubIds)
             )
             GROUP BY member_id, earliest_points, latest_points
             ORDER BY total_increase $orderBy
             LIMIT :limit
         ", [
             'category' => $category->value,
-            'clubId' => $clubID,
             'version' => BadmintonPlayerHelper::getCurrentSeasonStart(),
             'limit' => $limit
         ]);

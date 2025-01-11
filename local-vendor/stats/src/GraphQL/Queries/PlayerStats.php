@@ -6,6 +6,7 @@ namespace FlyCompany\Stats\GraphQL\Queries;
 
 use App\Models\Member;
 use App\Models\Point;
+use App\Models\User;
 use FlyCompany\Members\Enums\Category;
 use FlyCompany\Stats\Stats;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -51,7 +52,10 @@ class PlayerStats
 
     public function highestPointGain($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        return $this->stats->getLowToHighestPoints($context->user()->club->id, Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
+        /** @var User $user */
+        $user = $context->user();
+
+        return $this->stats->getLowToHighestPoints($user->clubs()->pluck('id')->toArray(), Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
     }
 
     /**
