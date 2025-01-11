@@ -51,7 +51,7 @@ class PlayerStats
 
     public function highestPointGain($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        return $this->stats->getLowToHighestPoints(1622, Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
+        return $this->stats->getLowToHighestPoints($context->user()->club->id, Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
     }
 
     /**
