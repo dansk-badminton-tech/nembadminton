@@ -7,10 +7,22 @@ extend type Query {
         "Members ID"
         ids: [ID!]!
     ) : [MemberStats!]! @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@bulkStats")
+    highestPointGain(
+        category: Category!
+        limit: Int!
+        orderBy: SortOrder!
+    ) : [BarPoint] @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@highestPointGain")
     clubStats(
         "Club Id"
         id: ID!
     ) : ClubInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubStats")
+}
+
+type BarPoint {
+    member: Member!
+    earliestPoints: Int!
+    latestPoints: Int!
+    totalIncrease: Int!
 }
 
 type ClubInfo {

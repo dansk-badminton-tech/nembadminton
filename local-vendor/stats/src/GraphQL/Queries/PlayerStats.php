@@ -49,12 +49,17 @@ class PlayerStats
         return $data;
     }
 
+    public function highestPointGain($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
+        return $this->stats->getLowToHighestPoints(1622, Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
+    }
+
     /**
      * @param mixed $memberId
      *
      * @return Member[]
      */
-    public function getData(mixed $memberId) : array
+    private function getData(mixed $memberId) : array
     {
         /** @var Member $member */
         $member = Member::query()->where('id', $memberId)->firstOrFail();

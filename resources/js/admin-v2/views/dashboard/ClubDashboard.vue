@@ -31,37 +31,37 @@
             <b-tabs size="is-medium" position="is-centered" class="block">
                 <b-tab-item label="Single">
                     <div class="columns">
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="MEN_SINGLE"/>
                         </div>
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="WOMEN_SINGLE"/>
                         </div>
                     </div>
                 </b-tab-item>
                 <b-tab-item label="Double">
                     <div class="columns">
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="MENS_DOUBLE"/>
                         </div>
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="WOMENS_DOUBLE"/>
                         </div>
                     </div>
                 </b-tab-item>
                 <b-tab-item label="Mix">
                     <div class="columns">
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="MEN_MIX"/>
                         </div>
-                        <div class="column">
+                        <div class="column is-half">
                             <CategoryPoints ranking-list="WOMEN_MIX"/>
 
                         </div>
                     </div>
                 </b-tab-item>
             </b-tabs>
-            <ActivityLog/>
+<!--            <ActivityLog/>-->
         </section>
     </div>
 </template>

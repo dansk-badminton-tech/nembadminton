@@ -16,6 +16,11 @@ export default [
             icon: 'cancel',
             label: 'Afbud (NYT 🤩)'
         },
+        {
+            to: '/analytics',
+            icon: 'google-analytics',
+            label: 'Analytics'
+        }
 //        {
 //            to: '/calendar',
 //            icon: 'calendar',
