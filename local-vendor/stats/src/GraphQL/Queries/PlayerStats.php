@@ -55,7 +55,7 @@ class PlayerStats
         /** @var User $user */
         $user = $context->user();
 
-        return $this->stats->getLowToHighestPoints($user->clubs()->pluck('id')->toArray(), Category::tryFrom($args['category']), $args['limit'], $args['orderBy']);
+        return $this->stats->getLowToHighestPoints($user->clubs()->pluck('id')->toArray(), Category::tryFrom($args['category']), $args['limit'], $args['orderBy'], $args['vintages']);
     }
 
     /**

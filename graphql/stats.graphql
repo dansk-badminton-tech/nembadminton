@@ -11,6 +11,7 @@ extend type Query {
         category: Category!
         limit: Int!
         orderBy: SortOrder!
+        vintages: [Vintage!]!
     ) : [BarPoint] @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats@highestPointGain")
     clubStats(
         "Club Id"

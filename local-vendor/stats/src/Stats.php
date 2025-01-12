@@ -31,9 +31,21 @@ class Stats
                     ->orderBy('version')->get();
     }
 
-    public function getLowToHighestPoints(array $clubIDs, Category $category, int $limit, string $orderBy) : array
+    /**
+     * @param array    $clubIDs
+     * @param Category $category
+     * @param int      $limit
+     * @param string   $orderBy
+     * @param string[] $vintages
+     *
+     * @return array
+     */
+    public function getLowToHighestPoints(array $clubIDs, Category $category, int $limit, string $orderBy, array $vintages) : array
     {
-        $clubIds = implode(',', $clubIDs);
+
+        $clubIds = implode(',', array_filter($clubIDs, static fn($clubId) => is_int($clubId)));
+
+        $vintageResolved = implode(", ", array_map(static fn($vintage) => DB::escape($vintage), $vintages));
 
         $results = DB::select("
             WITH member_points AS (
@@ -54,6 +66,7 @@ class Stats
                 FROM points
                 WHERE category = :category
                   AND version >= :version
+                  AND vintage in ($vintageResolved)
             )
             SELECT
                 member_id,
@@ -71,18 +84,18 @@ class Stats
             LIMIT :limit
         ", [
             'category' => $category->value,
-            'version' => BadmintonPlayerHelper::getCurrentSeasonStart(),
-            'limit' => $limit
+            'version'  => BadmintonPlayerHelper::getCurrentSeasonStart(),
+            'limit'    => $limit,
         ]);
 
         $data = [];
 
         foreach ($results as $result) {
             $data[] = [
-                'member' => Member::query()->find($result->member_id),
+                'member'         => Member::query()->find($result->member_id),
                 'earliestPoints' => $result->earliest_points,
-                'latestPoints' => $result->latest_points,
-                'totalIncrease' => $result->total_increase,
+                'latestPoints'   => $result->latest_points,
+                'totalIncrease'  => $result->total_increase,
             ];
         }
 

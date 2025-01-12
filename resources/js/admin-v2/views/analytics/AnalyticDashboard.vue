@@ -12,7 +12,17 @@ export default {
             titleStack: ['Admin', 'Analytics'],
             category: 'HS',
             limit: 10,
-            orderBy: 'DESC'
+            orderBy: 'DESC',
+            selectedVintage: ["SEN"],
+            vintages: [
+                "SEN",
+                "U19",
+                "U17",
+                "U15",
+                "U13",
+                "U11",
+                "U9"
+            ]
         }
     },
     computed: {
@@ -32,7 +42,7 @@ export default {
         </hero-bar>
         <div class="section">
             <h1 class="title">Netto stigning i ranglistepoint pr. spiller for {{currentSeason}}</h1>
-            <b-field grouped grouped-multiline>
+            <b-field group-multiline grouped>
                 <b-field label="Sortering">
                     <b-select v-model="orderBy">
                         <option value="DESC">Høj til lav</option>
@@ -52,8 +62,13 @@ export default {
                 <b-field label="Antal spiller">
                     <b-numberinput step="5" v-model="limit" />
                 </b-field>
+                <b-field label="Række">
+                    <b-checkbox-button v-for="vintage in vintages" v-model="selectedVintage" :native-value="vintage" type="is-info">
+                        <span>{{vintage}}</span>
+                    </b-checkbox-button>
+                </b-field>
             </b-field>
-            <HighestPointGainChart :category="category" :limit="limit" :orderBy="orderBy" />
+            <HighestPointGainChart :category="category" :limit="limit" :orderBy="orderBy" :vintages="selectedVintage" />
         </div>
     </div>
 </template>
