@@ -72,7 +72,11 @@ export default {
                     tooltip: {
                         callbacks: {
                             footer(tooltipItems) {
-                                return 'Lavpunkt: '+tooltipItems[0].raw.earliestPoints+', Højdepunkt: '+tooltipItems[0].raw.latestPoints
+                                if (this.orderBy === 'DESC'){
+                                    return 'Lavpunkt: '+tooltipItems[0].raw.earliestPoints+', Højdepunkt: '+tooltipItems[0].raw.latestPoints
+                                }else{
+                                    return 'Lavpunkt: '+tooltipItems[0].raw.latestPoints+', Højdepunkt: '+tooltipItems[0].raw.earliestPoints
+                                }
                             },
                         }
                     }
