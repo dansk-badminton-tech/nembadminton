@@ -63,7 +63,7 @@ export default {
                     <b-numberinput step="5" v-model="limit" />
                 </b-field>
                 <b-field label="Række">
-                    <b-checkbox-button v-for="vintage in vintages" v-model="selectedVintage" :native-value="vintage" type="is-info">
+                    <b-checkbox-button v-for="vintage in vintages" :key="vintage" v-model="selectedVintage" :native-value="vintage" type="is-info">
                         <span>{{vintage}}</span>
                     </b-checkbox-button>
                 </b-field>
