@@ -77,7 +77,7 @@ const routes = [
         },
         path: '/my-clubs',
         name: 'my-clubs',
-        component: () => import(/* webpackChunkName: "profile" */ '@/views/my-club/MyClubs.vue')
+        redirect: {name: 'my-club-house'}
     },
     {
         meta: {
@@ -134,6 +134,15 @@ const routes = [
         path: '/analytics',
         name: 'analytics',
         component: () => import('@/views/analytics/AnalyticDashboard.vue')
+    },
+    {
+        meta: {
+            title: 'Klubhus',
+            requiresAuth: true
+        },
+        path: '/club-house',
+        name: 'my-club-house',
+        component: () => import('@/views/club-house/ClubHouseDashboard.vue')
     },
     {
         path: '/superadmin/notification',

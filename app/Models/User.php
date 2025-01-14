@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string              player_id
@@ -23,7 +24,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory;
+    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles;
 
     /**
      * The attributes that are mass assignable.

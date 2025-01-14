@@ -65,7 +65,7 @@
                             <span>Min Profil</span>
                         </router-link>
                         <router-link
-                            :to="{name: 'my-clubs'}"
+                            :to="{name: 'my-club-house'}"
                             class="navbar-item"
                             exact-active-class="is-active"
                         >
@@ -73,7 +73,7 @@
                                 icon="home"
                                 custom-size="default"
                             />
-                            <span>Mine Klubber</span>
+                            <span>Mit klubhus</span>
                         </router-link>
                         <hr class="navbar-divider">
                         <a @click="logout" class="navbar-item">

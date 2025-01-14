@@ -1,0 +1,12 @@
+extend type Query{
+    clubhouse(id: ID!): ClubHouse
+}
+
+type ClubHouse {
+    id: ID!
+    name: String!
+    email: String!
+    clubs: [Club!]!
+}
+
+
