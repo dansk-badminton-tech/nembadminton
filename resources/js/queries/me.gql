@@ -17,5 +17,10 @@ query me{
             id
         }
         organization_id
+        clubhouse{
+            id
+            email
+            name
+        }
     }
 }

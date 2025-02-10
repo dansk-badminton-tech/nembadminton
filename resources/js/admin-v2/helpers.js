@@ -50,43 +50,43 @@ export function isYoungPlayer(player) {
     return player.vintage.toUpperCase() === 'U17' || player.vintage.toUpperCase() === 'U19'
 }
 
-export function resolveGenderFromCategoryShort(category){
-    if(['HS', 'HD'].includes(category.toUpperCase())){
+export function resolveGenderFromCategoryShort(category) {
+    if (['HS', 'HD'].includes(category.toUpperCase())) {
         return 'M'
     }
-    if(['DS', 'DD'].includes(category.toUpperCase())){
+    if (['DS', 'DD'].includes(category.toUpperCase())) {
         return 'K'
     }
     return null
 }
 
-export function resolveGenderFromCategory(category){
-    if(['HS', 'HD'].includes(category.toUpperCase())){
+export function resolveGenderFromCategory(category) {
+    if (['HS', 'HD'].includes(category.toUpperCase())) {
         return ['MEN']
     }
-    if(['DS', 'DD'].includes(category.toUpperCase())){
+    if (['DS', 'DD'].includes(category.toUpperCase())) {
         return ['WOMEN']
     }
     return ['MEN', 'WOMEN']
 }
 
-export function convertRankingToCategory(categoryEnum){
-    if(categoryEnum === 'MEN_LEVEL' || categoryEnum === 'WOMEN_LEVEL' || categoryEnum === 'ALL_LEVEL'){
+export function convertRankingToCategory(categoryEnum) {
+    if (categoryEnum === 'MEN_LEVEL' || categoryEnum === 'WOMEN_LEVEL' || categoryEnum === 'ALL_LEVEL') {
         return null
     }
-    if(categoryEnum === 'WOMEN_SINGLE'){
+    if (categoryEnum === 'WOMEN_SINGLE') {
         return 'DS'
     }
-    if(categoryEnum === 'WOMENS_DOUBLE'){
+    if (categoryEnum === 'WOMENS_DOUBLE') {
         return 'DD'
     }
-    if(categoryEnum === 'WOMEN_MIX' || categoryEnum === 'MEN_MIX'){
+    if (categoryEnum === 'WOMEN_MIX' || categoryEnum === 'MEN_MIX') {
         return 'MD'
     }
-    if(categoryEnum === 'MEN_SINGLE'){
+    if (categoryEnum === 'MEN_SINGLE') {
         return 'HS'
     }
-    if(categoryEnum === 'MENS_DOUBLE'){
+    if (categoryEnum === 'MENS_DOUBLE') {
         return 'HD'
     }
 }
@@ -137,7 +137,7 @@ export function findPositions(member, show = 'all') {
         }
     }
 
-    if(summary.length === 0){
+    if (summary.length === 0) {
         return null
     }
 
@@ -181,7 +181,8 @@ export function isPlayingToHigh(playingToHighPlayers, player, category) {
 }
 
 export function isPlayingToHighByName(playingToHighPlayers, player, category) {
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name && toHighPlayer.category === category) !== undefined;
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.name === player.name && toHighPlayer.category
+                                                     === category) !== undefined;
 }
 
 export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) {
@@ -189,15 +190,17 @@ export function isPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player,
 }
 
 export function getPlayingToHighByBadmintonPlayerId(playingToHighPlayers, player, category) {
-    if(category === undefined){
+    if (category === undefined) {
         return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId)
-    }else{
-        return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category === category)
+    } else {
+        return playingToHighPlayers.find(toHighPlayer => toHighPlayer.refId === player.refId && toHighPlayer.category
+                                                         === category)
     }
 }
 
 export function getPlayingToHigh(playingToHighPlayers, player, category) {
-    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category === category)
+    return playingToHighPlayers.find(toHighPlayer => toHighPlayer.id === player.id && toHighPlayer.category
+                                                     === category)
 }
 
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category, ignoreYouth = false) {
@@ -236,7 +239,12 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
 export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
     let msg = []
     let resolveNames = (playerWithBelowPlayers) => {
-        let names = playerWithBelowPlayers.belowPlayer.map(x => (x.category ? x.category+': ' : '')+'' + x.name + (x.balance ? ' (Forskel: '+x.balance+')' : '' ))
+        let names = playerWithBelowPlayers.belowPlayer.map(x => (x.category
+                                                                 ? x.category + ': '
+                                                                 : '') + '' + x.name + (x.balance
+                                                                                        ? ' (Forskel: ' + x.balance
+                                                                + ')'
+                                                                                        : ''))
         return names.join('<br />')
     }
     let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player)
@@ -250,7 +258,7 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
         msg.push("<b>Spiller på for lavt hold:</b> <br/>" + resolveNames(playerWithBelowPlayersCrossSquads));
     }
     if (playerWithBelowPlayersSquad !== undefined) {
-        if(!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner){
+        if (!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner) {
             msg.push("OBS: Har U17/U19 makker")
         }
         msg.push("<b>Spiller for højt på holdet i kategorien:</b> <br />" + resolveNames(playerWithBelowPlayersSquad))
@@ -322,20 +330,20 @@ export function swapObject(obj, from, to) {
     obj[from] = toItem
 }
 
-export function getCurrentSeason(){
-        const now = new Date()
-        if (now.getMonth()+1 > 6) {
-            return now.getFullYear();
-        }
-        return now.getFullYear() - 1;
+export function getCurrentSeason() {
+    const now = new Date()
+    if (now.getMonth() + 1 > 6) {
+        return now.getFullYear();
+    }
+    return now.getFullYear() - 1;
 }
 
-export function getCurrentSeasonStart(){
+export function getCurrentSeasonStart() {
     const currentYear = getCurrentSeason()
     return new Date(currentYear, 6)
 }
 
-export function subAYear(date, year){
+export function subAYear(date, year) {
     date.setFullYear(date.getFullYear() - year);
     return date
 }
@@ -345,16 +353,18 @@ export function addAYear(date, year) {
     return date
 }
 
-export function getCurrentSeasonInterval(){
+export function getCurrentSeasonInterval() {
     const now = new Date()
-    if (now.getMonth()+1 > 6) {
+    if (now.getMonth() + 1 > 6) {
         return now.getFullYear();
     }
     return now.getFullYear() - 1;
 }
 
 export function formatDateTime(date) {
-    const pad = (num) => (num < 10 ? '0' + num : num);
+    const pad = (num) => (num < 10
+                          ? '0' + num
+                          : num);
 
     const year = date.getFullYear();
     const month = pad(date.getMonth() + 1); // getMonth() returns 0-11
@@ -367,7 +377,7 @@ export function formatDateTime(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export function parseDate(dateString){
+export function parseDate(dateString) {
     const [year, month, day] = dateString.split('-').map(Number);
     return new Date(year, month - 1, day);
 }
@@ -393,16 +403,16 @@ export function compareDatesByYearMonthDay(date1, date2) {
     return year1 === year2 && month1 === month2 && day1 === day2;
 }
 
-export function categories(gender){
-    if (gender){
-        if(gender === 'WOMEN'){
+export function categories(gender) {
+    if (gender) {
+        if (gender === 'WOMEN') {
             return [
                 'MxD',
                 'DD',
                 'DS'
             ]
         }
-        if(gender === 'MEN'){
+        if (gender === 'MEN') {
             return [
                 'MxH',
                 'HD',
@@ -420,3 +430,18 @@ export function categories(gender){
         'HS'
     ]
 }
+
+export const roles = [
+    {
+        label: 'Klub admin',
+        value: 'CLUB_ADMIN'
+    },
+    {
+        label: 'Træner',
+        value: 'COACH'
+    },
+    {
+        label: 'Spiller',
+        value: 'PLAYER'
+    }
+]

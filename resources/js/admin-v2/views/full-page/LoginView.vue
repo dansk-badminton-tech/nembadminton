@@ -85,7 +85,8 @@ export default defineComponent({
                                                        id: data.me.id,
                                                        name: data.me.name,
                                                        email: data.me.email,
-                                                       avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg'
+                                                       avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg',
+                                                       clubhouse: data.me.clubhouse
                                                    })
                                                })
                                        },
@@ -94,12 +95,12 @@ export default defineComponent({
                                            this.$apollo.mutate(
                                                {
                                                    mutation: gql`
-                        mutation ($input: LoginInput){
-                          login(input: $input){
-                            access_token
-                          }
-                        }
-                    `,
+                                                        mutation ($input: LoginInput){
+                                                          login(input: $input){
+                                                            access_token
+                                                          }
+                                                        }
+                                                    `,
                                                    variables: {
                                                        input: {
                                                            username: this.form.email,

@@ -24,6 +24,7 @@
           custom-size="default"
         />
       </a>
+        <slot name="header" />
     </header>
     <div class="card-content">
       <slot />

@@ -54,11 +54,14 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete members'
         ]);
 
-        Role::create(['name' => 'member'])->givePermissionTo([
+        Role::create(['name' => 'player'])->givePermissionTo([
             'view teams'
         ]);
 
         $role = Role::create(['name' => 'super-admin']);
+        $role->givePermissionTo(Permission::all());
+
+        $role = Role::create(['name' => 'club-admin']);
         $role->givePermissionTo(Permission::all());
     }
 }

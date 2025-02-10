@@ -1,12 +1,79 @@
 extend type Query{
-    clubhouse(id: ID!): ClubHouse
+    clubhouse(id: ID! @eq): Clubhouse @find
+    invitation(token: ID! @eq): Invitation @find
 }
 
-type ClubHouse {
+extend type Mutation {
+    # Send an invitation to a user
+    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard
+
+    # Accept an invitation
+    acceptInvitation(id: ID!): Invitation @update @guard
+
+    # Decline an invitation
+    declineInvitation(id: ID!): Invitation @update @guard
+
+    # Delete an invitation
+    deleteInvitation(id: ID!): Boolean @delete @guard
+}
+
+input AcceptInvitation {
+    token: ID!
+    name: String!
+}
+
+input CreateInvitationInput {
+    email: String! @rename(attribute: "invitee_email")
+    inviter: CreateUserBelongsTo!
+    clubhouse: CreateClubhouseBelongsTo!
+    role: MemberRole
+}
+
+enum MemberRole {
+    COACH @enum(value: "coach")
+    PLAYER @enum(value: "player")
+    CLUB_ADMIN @enum(value: "club-admin")
+}
+
+input CreateClubhouseBelongsTo {
+    connect: ID
+}
+
+input CreateUserBelongsTo {
+    connect: ID
+}
+
+type Invitation {
+    id: ID!
+    inviteeEmail: String @rename(attribute: "invitee_email")
+    role: String!
+    status: InvitationStatus!
+    clubhouse: Clubhouse! @belongsTo
+    inviter: User! @belongsTo
+    invitee: User @belongsTo
+    expiresAt: DateTime @rename(attribute: "expires_at")
+    acceptedAt: DateTime @rename(attribute: "accepted_at")
+    createdAt: DateTime @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+enum InvitationStatus {
+    PENDING @enum(value: "pending")
+    ACCEPTED @enum(value: "accepted")
+    DECLINED @enum(value: "declined")
+}
+
+
+type Clubhouse {
     id: ID!
     name: String!
     email: String!
-    clubs: [Club!]!
+    clubs: [Club!]! @belongsToMany
+    users: [User!]! @belongsToMany
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
 }
 
 

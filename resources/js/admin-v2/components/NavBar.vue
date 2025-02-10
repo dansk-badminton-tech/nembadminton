@@ -65,7 +65,7 @@
                             <span>Min Profil</span>
                         </router-link>
                         <router-link
-                            :to="{name: 'my-club-house'}"
+                            :to="{path: '/c-'+clubhouseId+'/club-house'}"
                             class="navbar-item"
                             exact-active-class="is-active"
                         >
@@ -105,6 +105,7 @@ export default defineComponent(
             UserAvatar,
             NavBarMenu
         },
+        inject: ['clubhouseId'],
         data() {
             return {
                 isMenuActive: false

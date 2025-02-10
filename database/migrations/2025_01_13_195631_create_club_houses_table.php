@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_houses', function (Blueprint $table) {
+        Schema::create('clubhouses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email');
             $table->timestamps();
         });
 
-        Schema::create('club_houses_clubs', function (Blueprint $table) {
-            $table->unsignedBigInteger('club_house_id');
-            $table->foreign('club_house_id')->references('id')->on('club_houses');
+        Schema::create('clubhouse_club', function (Blueprint $table) {
+            $table->unsignedBigInteger('clubhouse_id');
+            $table->foreign('clubhouse_id')->references('id')->on('clubhouses');
             $table->unsignedBigInteger('club_id');
             $table->foreign('club_id')->references('id')->on('clubs');
         });
@@ -31,7 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_houses_clubs');
-        Schema::dropIfExists('club_houses');
+        Schema::dropIfExists('clubhouse_club');
+        Schema::dropIfExists('clubhouses');
     }
 };

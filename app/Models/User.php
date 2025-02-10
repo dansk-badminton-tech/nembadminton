@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Club::class);
     }
 
+    public function clubhouses() : BelongsToMany
+    {
+        return $this->belongsToMany(Clubhouse::class);
+    }
+
     public function subscriptionSettings() : HasOne
     {
         return $this->hasOne(SubscriptionSetting::class);
@@ -81,6 +86,10 @@ class User extends Authenticatable
     public function cancellationCollector() : HasOne
     {
         return $this->hasOne(CancellationCollector::class);
+    }
+
+    public function clubhouse() : BelongsTo {
+        return $this->belongsTo(Clubhouse::class, 'clubhouse_id', 'id');
     }
 
 }

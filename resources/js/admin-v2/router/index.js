@@ -6,154 +6,6 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        meta: {
-            title: 'Dashboard',
-            requiresAuth: true
-        },
-        path: '/home',
-        name: 'home',
-        component: () => import('@/views/dashboard/ClubDashboard.vue')
-    },
-    {
-        meta: {
-            title: 'Spiller statistik',
-            requiresAuth: true
-        },
-        path: '/player/:playerID/stats',
-        name: 'player-stats',
-        component: () => import('@/views/player/Stats.vue'),
-        props: route => ({playerId: route.params.playerID})
-    },
-    {
-        meta: {
-            title: 'Holdrunder',
-            requiresAuth: true
-        },
-        path: '/team-fight/dashboard',
-        name: 'team-fight-dashboard',
-        component: () => import("../views/team-fight/TeamFightList.vue")
-    },
-    {
-        meta: {
-            title: 'Opret Holdrunde',
-            requiresAuth: true
-        },
-        path: '/team-fight/create',
-        name: 'team-fight-create',
-        component: () => import("../views/team-fight/TeamFightCreate.vue")
-    },
-    {
-        meta: {
-            title: 'Rediger holdrunde',
-            requiresAuth: true
-        },
-        path: '/team-fight/:teamUUID/edit',
-        name: 'team-fight-edit',
-        component: () => import("../views/team-fight/TeamFight.vue"),
-        props: route => ({teamFightId: route.params.teamUUID})
-    },
-    {
-        path: '/calendar',
-        name: 'calendar',
-        component: () => import("../views/calendar/Calendar.vue"),
-        meta: {
-            title: 'Kalender',
-            requiresAuth: true
-        }
-    },
-    {
-        meta: {
-            title: 'Profile',
-            requiresAuth: true
-        },
-        path: '/profile',
-        name: 'profile',
-        component: () => import(/* webpackChunkName: "profile" */ '@/views/ProfileView.vue')
-    },
-    {
-        meta: {
-            title: 'Mine klubber',
-            requiresAuth: true
-        },
-        path: '/my-clubs',
-        name: 'my-clubs',
-        redirect: {name: 'my-club-house'}
-    },
-    {
-        meta: {
-            title: 'Afbud - landing',
-            requiresAuth: true
-        },
-        path: '/cancellations/landing',
-        name: 'cancellation-landing',
-        component: () => import('@/views/cancellation/CancellationLanding.vue')
-    },
-    {
-        meta: {
-            title: 'Afbud',
-            requiresAuth: true
-        },
-        path: '/cancellations/redirect',
-        name: 'cancellation-redirect',
-        component: () => import('@/views/cancellation/CancellationRedirect.vue')
-    },
-    {
-        meta: {
-            title: 'Afbud',
-            requiresAuth: true
-        },
-        path: '/cancellations/view/:collectorId',
-        name: 'cancellation-view',
-        component: () => import('@/views/cancellation/CancellationDashboard.vue'),
-        props: route => ({collectorId: route.params.collectorId})
-    },
-    {
-        meta: {
-            title: 'Opret afbudslink',
-            requiresAuth: true
-        },
-        path: '/cancellations/create',
-        name: 'cancellation-create',
-        component: () => import('@/views/cancellation/CreateCancellationCollector.vue')
-    },
-    {
-        meta: {
-            title: 'Rediger afbudslink',
-            requiresAuth: true
-        },
-        path: '/cancellations/edit/:collectorId',
-        name: 'cancellation-update',
-        component: () => import('@/views/cancellation/UpdateCancellationCollector.vue'),
-        props: route => ({collectorId: route.params.collectorId})
-    },
-    {
-        meta: {
-            title: 'Analytics',
-            requiresAuth: true
-        },
-        path: '/analytics',
-        name: 'analytics',
-        component: () => import('@/views/analytics/AnalyticDashboard.vue')
-    },
-    {
-        meta: {
-            title: 'Klubhus',
-            requiresAuth: true
-        },
-        path: '/club-house',
-        name: 'my-club-house',
-        component: () => import('@/views/club-house/ClubHouseDashboard.vue')
-    },
-    {
-        path: '/superadmin/notification',
-        name: 'superadmin-notification',
-        component: () => import('../views/superadmin/Notification.vue'),
-        meta: {
-            title: 'Send Notification',
-            requiresAuth: true
-        },
-    },
-    {
         path: '/full-page',
         component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullPageView.vue'),
         children: [
@@ -180,7 +32,7 @@ const routes = [
                 path: '/forgot-password-finish',
                 name: 'forgot-password-finish',
                 component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/FinishForgotPassword.vue'),
-                props: route => ({ token: route.query.token, email: route.query.email })
+                props: route => ({token: route.query.token, email: route.query.email})
             },
             {
                 meta: {
@@ -189,6 +41,15 @@ const routes = [
                 path: '/sign-up',
                 name: 'sign-up',
                 component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUser.vue')
+            },
+            {
+                meta: {
+                    title: 'Opret bruger med invitation'
+                },
+                path: '/sign-up/invitation/:token',
+                name: 'sign-up-invititaion',
+                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUserInvitation.vue'),
+                props: route => ({token: route.params.token})
             },
         ]
     },
@@ -241,73 +102,201 @@ const routes = [
                 }
             }
         ]
+    },{
+        path: '/main-app',
+        component: () => import(/* webpackChunkName: "main-app" */ '@/views/App.vue'),
+        children: [
+            {
+                meta: {
+                    title: 'Spiller statistik',
+                    requiresAuth: true
+                },
+                path: '/player/:playerID/stats',
+                name: 'player-stats',
+                component: () => import('@/views/player/Stats.vue'),
+                props: route => ({playerId: route.params.playerID})
+            },
+            {
+                meta: {
+                    title: 'Opret Holdrunde',
+                    requiresAuth: true
+                },
+                path: '/team-fight/create',
+                name: 'team-fight-create',
+                component: () => import("../views/team-fight/TeamFightCreate.vue")
+            },
+            {
+                meta: {
+                    title: 'Rediger holdrunde',
+                    requiresAuth: true
+                },
+                path: '/team-fight/:teamUUID/edit',
+                name: 'team-fight-edit',
+                component: () => import("../views/team-fight/TeamFight.vue"),
+                props: route => ({teamFightId: route.params.teamUUID})
+            },
+            {
+                path: '/calendar',
+                name: 'calendar',
+                component: () => import("../views/calendar/Calendar.vue"),
+                meta: {
+                    title: 'Kalender',
+                    requiresAuth: true
+                }
+            },
+            {
+                meta: {
+                    title: 'Profile',
+                    requiresAuth: true
+                },
+                path: '/profile',
+                name: 'profile',
+                component: () => import(/* webpackChunkName: "profile" */ '@/views/ProfileView.vue')
+            },
+            {
+                meta: {
+                    title: 'Mine klubber',
+                    requiresAuth: true
+                },
+                path: '/my-clubs',
+                name: 'my-clubs',
+                redirect: {name: 'my-club-house'}
+            },
+            {
+                meta: {
+                    title: 'Afbud - landing',
+                    requiresAuth: true
+                },
+                path: '/cancellations/landing',
+                name: 'cancellation-landing',
+                component: () => import('@/views/cancellation/CancellationLanding.vue')
+            },
+            {
+                meta: {
+                    title: 'Afbud',
+                    requiresAuth: true
+                },
+                path: '/cancellations/redirect',
+                name: 'cancellation-redirect',
+                component: () => import('@/views/cancellation/CancellationRedirect.vue')
+            },
+            {
+                meta: {
+                    title: 'Afbud',
+                    requiresAuth: true
+                },
+                path: '/cancellations/view/:collectorId',
+                name: 'cancellation-view',
+                component: () => import('@/views/cancellation/CancellationDashboard.vue'),
+                props: route => ({collectorId: route.params.collectorId})
+            },
+            {
+                meta: {
+                    title: 'Opret afbudslink',
+                    requiresAuth: true
+                },
+                path: '/cancellations/create',
+                name: 'cancellation-create',
+                component: () => import('@/views/cancellation/CreateCancellationCollector.vue')
+            },
+            {
+                meta: {
+                    title: 'Rediger afbudslink',
+                    requiresAuth: true
+                },
+                path: '/cancellations/edit/:collectorId',
+                name: 'cancellation-update',
+                component: () => import('@/views/cancellation/UpdateCancellationCollector.vue'),
+                props: route => ({collectorId: route.params.collectorId})
+            },
+            {
+                meta: {
+                    title: 'Analytics',
+                    requiresAuth: true
+                },
+                path: '/analytics',
+                name: 'analytics',
+                component: () => import('@/views/analytics/AnalyticDashboard.vue')
+            },
+            {
+                path: '/superadmin/notification',
+                name: 'superadmin-notification',
+                component: () => import('../views/superadmin/Notification.vue'),
+                meta: {
+                    title: 'Send Notification',
+                    requiresAuth: true
+                },
+            },
+            {
+                path: '/faq',
+                meta: {
+                    title: 'FAQ'
+                },
+                name: 'faq',
+                component: () => import('@/views/faq/Faq.vue')
+            },
+            {
+                path: '/about-us',
+                meta: {
+                    title: 'Om os'
+                },
+                name: 'about-us',
+                component: () => import('@/views/about/About.vue')
+            },
+            {
+                path: '/onboarding',
+                name: 'onboarding',
+                component: () => import('../views/onboarding/Onboarding.vue'),
+                meta: {
+                    requiresAuth: true,
+                    title: 'Klargør din klub'
+                }
+            },
+            {
+                path: '/c-:clubhouseId',
+                component: () => import('@/views/tenant/Default.vue'),
+                children: [
+                    {
+                        meta: {
+                            title: 'Dashboard',
+                            requiresAuth: true
+                        },
+                        path: 'home',
+                        name: 'home',
+                        component: () => import('@/views/dashboard/ClubDashboard.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Holdrunder',
+                            requiresAuth: true
+                        },
+                        path: 'team-fight/dashboard',
+                        name: 'team-fight-dashboard',
+                        component: () => import("../views/team-fight/TeamFightList.vue"),
+                        props: routes => ({clubhouseId: routes.params.clubhouseId})
+                    },
+                    {
+                        meta: {
+                            title: 'Klubhus',
+                            requiresAuth: true
+                        },
+                        path: 'club-house',
+                        name: 'my-club-house',
+                        component: () => import('@/views/club-house/ClubHouseDashboard.vue')
+                    },
+                ]
+            },
+            {
+                path: '/:pathMatch(.*)*',
+                component: () => import('@/views/PageNotFound.vue')
+            }
+        ]
     },
-    {
-        path: '/faq',
-        meta: {
-            title: 'FAQ'
-        },
-        name: 'faq',
-        component: () => import('@/views/faq/Faq.vue')
-    },
-    {
-        path: '/about-us',
-        meta: {
-            title: 'Om os'
-        },
-        name: 'about-us',
-        component: () => import('@/views/about/About.vue')
-    },
-    {
-        path: '/onboarding',
-        name: 'onboarding',
-        component: () => import('../views/onboarding/Onboarding.vue'),
-        meta: {
-            requiresAuth: true,
-            title: 'Klargør din klub'
-        }
-    },
-    //    {
-//        meta: {
-//            title: 'Tables'
-//        },
-//        path: '/tables',
-//        name: 'tables',
-//        // route level code-splitting
-//        // this generates a separate chunk (about.[hash].js) for this route
-//        // which is lazy-loaded when the route is visited.
-//        component: () => import(/* webpackChunkName: "tables" */ '@/views/TablesView.vue')
-//    },
-//    {
-//        meta: {
-//            title: 'Forms'
-//        },
-//        path: '/forms',
-//        name: 'forms',
-//        component: () => import(/* webpackChunkName: "forms" */ '@/views/FormsView.vue')
-//    },
-//    {
-//        meta: {
-//            title: 'New Client'
-//        },
-//        path: '/client/new',
-//        name: 'client.new',
-//        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue')
-//    },
-//    {
-//        meta: {
-//            title: 'Edit Client'
-//        },
-//        path: '/client/:id',
-//        name: 'client.edit',
-//        component: () => import(/* webpackChunkName: "client-form" */ '@/views/ClientFormView.vue'),
-//        props: true
-//    },
 ]
 
 const router = new VueRouter({
                                  mode: 'history',
-    base: '/app',
+                                 base: '/app',
                                  routes,
                                  scrollBehavior(to, from, savedPosition) {
                                      if (savedPosition) {
@@ -321,10 +310,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !isLoggedIn()) {
         next({
-            path: '/login',
-            query: { redirect: to.fullPath },
-        })
-    }else{
+                 path: '/login',
+                 query: {redirect: to.fullPath},
+             })
+    } else {
         next()
     }
 })

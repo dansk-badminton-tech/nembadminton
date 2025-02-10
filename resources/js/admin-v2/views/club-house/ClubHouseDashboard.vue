@@ -4,21 +4,56 @@ import HeroBar from "@/components/HeroBar.vue";
 import CardComponent from "@/components/CardComponent.vue";
 import MyClubs from "@/views/club-house/MyClubs.vue";
 import MemberList from "@/views/club-house/MemberList.vue";
+import gql from "graphql-tag";
 
 export default {
     name: "ClubHouseDashboard" ,
     components: {MemberList, MyClubs, CardComponent, HeroBar, TitleBar},
+    inject: ['clubhouseId'],
     data(){
         return {
             titleStack: ['Admin', 'Klubhus'],
             name: '',
             email: '',
             isLoading: false,
+            clubhouse: {
+                users: []
+            }
         }
     },
     methods: {
         submit(){
             this.isLoading = true;
+        }
+    },
+    apollo: {
+        clubhouse: {
+            query: gql`
+                query clubhouse($id: ID!){
+                    clubhouse(id: $id){
+                        id
+                        name
+                        email
+                        clubs {
+                            id
+                            name1
+                        }
+                        users {
+                            id
+                            name
+                            roles {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            `,
+            variables() {
+                return {
+                    id: this.clubhouseId
+                }
+            }
         }
     }
 }
@@ -75,7 +110,7 @@ export default {
                     </b-field>
                 </form>
             </card-component>
-            <member-list />
+            <member-list :users="clubhouse.users" />
             <my-clubs/>
         </section>
     </div>

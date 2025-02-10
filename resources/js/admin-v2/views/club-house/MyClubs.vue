@@ -44,7 +44,7 @@ export default {
     apollo: {
         me: {
             query: ME,
-            pollInterval: 5000
+            pollInterval: 0
         }
     },
     methods: {

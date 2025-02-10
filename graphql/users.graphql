@@ -38,8 +38,19 @@ type User {
     organization_id: Int!
     subscriptionSettings: SubscriptionSetting
     cancellationCollector: CancellationCollector
+    "Roles"
+    roles: [Role!]!
+    "Selected primary clubhouse"
+    clubhouse: Clubhouse
+    "Clubhouse membership"
+    clubhouses: [Clubhouse!]!
     created_at: DateTime!
     updated_at: DateTime!
+}
+
+type Role {
+    id: ID!
+    name: String!
 }
 
 type SubscriptionSetting {

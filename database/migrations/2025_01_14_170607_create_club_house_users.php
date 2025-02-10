@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_houses_users', function (Blueprint $table) {
-            $table->unsignedBigInteger('club_house_id');
-            $table->foreign('club_house_id')->references('id')->on('club_houses');
+        Schema::create('clubhouse_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('clubhouse_id');
+            $table->foreign('clubhouse_id')->references('id')->on('clubhouses');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_houses_users');
+        Schema::dropIfExists('clubhouse_user');
     }
 };
