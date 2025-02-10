@@ -5,6 +5,12 @@
             {{ me?.club?.name1 }}
         </hero-bar>
         <section class="section is-main-section">
+            <b-message
+                title="Manglende februarrangliste"
+                type="is-danger"
+                aria-close-label="Close message">
+                Der er desværre en fejl i integrationen mellem Nembadminton og Badmintonplayer, hvilket resulterer i en manglende februarrangliste. Vi arbejder på sagen, men der er pt. ingen kendt tidshorisont.
+            </b-message>
             <tiles-block>
                 <card-widget
                     class="tile is-child"
