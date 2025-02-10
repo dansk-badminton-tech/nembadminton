@@ -39,6 +39,13 @@ class Handler extends ExceptionHandler
         parent::report($exception);
     }
 
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
+            Integration::captureUnhandledException($e);
+        });
+    }
+
     /**
      * Render an exception into an HTTP response.
      *

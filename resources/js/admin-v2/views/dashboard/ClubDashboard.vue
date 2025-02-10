@@ -67,7 +67,7 @@
                     </div>
                 </b-tab-item>
             </b-tabs>
-<!--            <ActivityLog/>-->
+            <ActivityLog/>
         </section>
     </div>
 </template>
