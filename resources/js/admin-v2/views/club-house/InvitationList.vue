@@ -115,6 +115,9 @@ export default {
                             />
                         </div>
                     </b-table-column>
+                    <template v-slot:empty>
+                        Ingen invitationer fundet
+                    </template>
                 </b-table>
             </template>
         </card-component>

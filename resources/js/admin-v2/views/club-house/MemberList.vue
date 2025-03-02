@@ -1,8 +1,8 @@
 <script>
 import CardComponent from "@/components/CardComponent.vue";
 import CreateInvitationModal from "@/views/club-house/CreateInvitationModal.vue";
-import gql from "graphql-tag";
 import clubhouse from "../../../queries/clubhouse.gql";
+import gql from "graphql-tag";
 
 export default {
     name: "MemberList",
@@ -12,23 +12,32 @@ export default {
     apollo: {},
     data() {
         return {
-            showModal: false
+            showModal: false,
+            isDeleting: false
         }
     },
     methods: {
-        deleteMembership(user){
+        deleteMembership(user) {
+            this.isDeleting = true;
             this.$apollo.mutate({
-                mutation: gql`
-                    mutation deleteMembership($userId: ID!, $clubhouseId: ID!){
-                        deleteMembership(userId: $userId, clubhouseId: $clubhouseId)
-                    }
-                `,
-                variables: {
-                    userId: user.id,
-                    clubhouseId: user.clubhouse.id
-                },
+                                    mutation: gql`mutation deleteMembership($userId: ID!, $clubhouseId: ID!){
+                                        deleteMembership(userId: $userId, clubhouseId: $clubhouseId)
+                                    }`,
+                                    variables: {
+                                        userId: user.id,
+                                        clubhouseId: user.clubhouse.id
+                                    },
                                     refetchQueries: [{query: clubhouse, variables: {id: this.clubhouseId}}]
                                 })
+                .then(() => {
+                    this.$buefy.snackbar.open({message: `Medlem slettet`, type: "is-success", duration: 5000});
+                })
+                .catch((err) => {
+                    this.$buefy.snackbar.open({message: `Fejl kunne ikke slette medlem`, type: "is-danger", duration: 5000});
+                })
+                .finally(() => {
+                    this.isDeleting = false;
+                })
         }
     }
 }
@@ -41,7 +50,7 @@ export default {
             has-modal-card
         >
             <template v-slot:default="props">
-                <CreateInvitationModal @close="props.close" />
+                <CreateInvitationModal @close="props.close"/>
             </template>
         </b-modal>
         <card-component
@@ -56,7 +65,7 @@ export default {
             <template v-slot:default>
                 <b-table
                     :data="users"
-                    :loading="loading"
+                    :loading="loading || isDeleting"
                 >
                     <b-table-column field="id" label="ID" numeric v-slot="props">
                         {{ props.row.id }}
@@ -75,11 +84,14 @@ export default {
                             icon-left="delete"
                             size="is-small"
                             type="is-danger"
-                            title="Slet invitation"
+                            title="Fjern medlem fra klubben"
                             @click="deleteMembership(props.row)"
                             :disabled="props.row.id === user.id"
                         />
                     </b-table-column>
+                    <template v-slot:empty>
+                        Ingen medlemmer fundet
+                    </template>
                 </b-table>
             </template>
         </card-component>

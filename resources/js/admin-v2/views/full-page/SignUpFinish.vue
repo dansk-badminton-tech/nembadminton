@@ -50,7 +50,7 @@ export default {
                 refetchQueries: [ME]
                 })
                 .then(({data}) => {
-                    this.$router.push({name: 'home', params: {clubhouseId: data.createClubhouse.id}})
+                    this.$router.push({name: 'onboarding'})
                 })
                 .catch((err) => {
                     console.log(err)

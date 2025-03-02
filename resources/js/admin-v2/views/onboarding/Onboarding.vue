@@ -24,6 +24,7 @@ import HeroBar from "../../components/HeroBar.vue";
 export default {
     name: "Onboarding",
     components: {HeroBar, TitleBar, ActivityLog},
+    inject: ['clubhouseId'],
     computed: {
         isCompleted() {
             return this.me?.club?.initialized;
@@ -47,7 +48,7 @@ export default {
             result({data}) {
                 if (data.me.club.initialized) {
                     setTimeout(() => {
-                        this.$router.push({name: 'home'})
+                        this.$router.push({name: 'home', params: {clubhouseId: this.clubhouseId}})
                     }, 3000)
                 }
             }

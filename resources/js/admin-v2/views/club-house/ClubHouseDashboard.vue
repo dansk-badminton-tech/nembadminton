@@ -6,12 +6,13 @@ import MyClubs from "@/views/club-house/MyClubs.vue";
 import MemberList from "@/views/club-house/MemberList.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import InvitationList from "@/views/club-house/InvitationList.vue";
+import gql from "graphql-tag";
 
 export default {
-    name: "ClubHouseDashboard" ,
+    name: "ClubHouseDashboard",
     components: {InvitationList, MemberList, MyClubs, CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
-    data(){
+    data() {
         return {
             titleStack: ['Admin', 'Klubhus'],
             name: '',
@@ -23,8 +24,49 @@ export default {
         }
     },
     methods: {
-        submit(){
+        updateClubhouse() {
             this.isLoading = true;
+            this.$apollo.mutate({
+                            mutation: gql`
+                    mutation updateClubhouse($input: UpdateClubhouseInput!){
+                        updateClubhouse(input: $input){
+                            id
+                            name
+                            email
+                        }
+                    }`,
+                            variables: {
+                                input: {
+                                    id: this.clubhouse.id,
+                                    name: this.name,
+                                    email: this.email
+                                }
+                            },
+                            refetchQueries: [
+                                {
+                                    query: clubhouse,
+                                    variables: {
+                                        id: this.clubhouseId
+                                    }
+                                }
+                            ]
+                        }).then(({data}) => {
+                this.$buefy.snackbar.open(
+                    {
+                        message: 'Klubhus opdateret',
+                        type: 'is-success',
+                        duration: 5000
+                    })
+            }).catch((error) => {
+                this.$buefy.snackbar.open(
+                    {
+                        message: 'Klubhus kunne ikke opdateres',
+                        type: 'is-danger',
+                        duration: 5000
+                    })
+            }).finally(() => {
+                this.isLoading = false;
+            })
         }
     },
     apollo: {
@@ -35,7 +77,7 @@ export default {
                     id: this.clubhouseId
                 }
             },
-            skip(){
+            skip() {
                 return !this.clubhouseId
             },
             result({data}) {
@@ -58,7 +100,7 @@ export default {
                 title="Rediger Klubhus"
                 icon="home"
             >
-                <form @submit.prevent="submit">
+                <form @submit.prevent="updateClubhouse">
                     <b-field
                         horizontal
                         label="Name"
@@ -100,10 +142,10 @@ export default {
             </card-component>
             <b-tabs>
                 <b-tab-item label="Medlemmer">
-                    <member-list :loading="$apollo.loading" :users="clubhouse?.users" />
+                    <member-list :loading="$apollo.loading" :users="clubhouse?.users || []"/>
                 </b-tab-item>
                 <b-tab-item label="Invitationer">
-                    <invitation-list :loading="$apollo.loading" :invitations="clubhouse?.invitations" />
+                    <invitation-list :loading="$apollo.loading" :invitations="clubhouse?.invitations || []"/>
                 </b-tab-item>
             </b-tabs>
             <my-clubs/>

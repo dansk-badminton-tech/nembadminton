@@ -7,8 +7,11 @@ extend type Mutation {
     # Create a clubhouse
     createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @create
 
+    # Update a clubhouse
+    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @canFind(ability: "update", find: "id") @update @hasPermission(name: "edit clubhouse")
+
     # Send an invitation to a user
-    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @event(dispatch: "App\\Events\\InvitationCreated")
+    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\InvitationCreated")
 
     # Accept an invitation
     acceptInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@acceptInvitation")
@@ -17,10 +20,16 @@ extend type Mutation {
     declineInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@declineInvitation")
 
     # Delete an invitation
-    deleteInvitation(id: ID! @eq): Invitation @guard @delete @canFind(ability: "delete", find: "id")
+    deleteInvitation(id: ID! @eq): Invitation @guard @delete @canFind(ability: "delete", find: "id") @hasPermission(name: "edit clubhouse")
 
     # Delete membership
-    deleteMembership(clubhouseId: ID!, userId: ID!): Boolean @guard @hasPermission(name: "delete members") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@delete")
+    deleteMembership(clubhouseId: ID!, userId: ID!): Boolean @guard @hasPermission(name: "edit clubhouse") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@delete")
+}
+
+input UpdateClubhouseInput {
+    id: ID!
+    email: String!
+    name: String!
 }
 
 input CreateClubhouseInput {
@@ -80,14 +89,13 @@ enum InvitationStatus {
     DECLINED @enum(value: "declined")
 }
 
-
 type Clubhouse {
     id: ID!
     name: String!
     email: String!
     clubs: [Club!]! @belongsToMany
-    users: [User!]! @hasMany
-    invitations: [Invitation!]! @hasMany
+    users: [User!] @hasMany @canRoot(ability: "viewUsers", action: RETURN_VALUE, returnValue: null)
+    invitations: [Invitation!] @hasMany @canRoot(ability: "viewInvitations", action: RETURN_VALUE, returnValue: null)
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"

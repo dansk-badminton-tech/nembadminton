@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Permission;
+use App\Enums\Permission as SystemPermission;
 use App\Enums\Role as SystemRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -40,24 +40,24 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // or may be done by chaining
         Role::create(['name' => SystemRole::COACH->value])->givePermissionTo([
-            Permission::VIEW_TEAMROUNDS->value,
-            Permission::CREATE_TEAMROUNDS->value,
-            Permission::EDIT_TEAMROUNDS->value,
-            Permission::DELETE_TEAMROUNDS->value,
-            Permission::VIEW_CANCELLATIONS_COLLECTORS->value,
-            Permission::CREATE_CANCELLATIONS_COLLECTORS->value,
-            Permission::EDIT_CANCELLATIONS_COLLECTORS->value,
-            Permission::DELETE_CANCELLATIONS_COLLECTORS->value,
-            Permission::VIEW_CLUBHOUSE->value,
-            Permission::EDIT_CLUBHOUSE->value,
-            Permission::VIEW_MEMBERS->value,
-            Permission::EDIT_MEMBERS->value,
-            Permission::CREATE_MEMBERS->value,
-            Permission::DELETE_MEMBERS->value,
+            SystemPermission::VIEW_TEAMROUNDS->value,
+            SystemPermission::CREATE_TEAMROUNDS->value,
+            SystemPermission::EDIT_TEAMROUNDS->value,
+            SystemPermission::DELETE_TEAMROUNDS->value,
+            SystemPermission::VIEW_CANCELLATIONS_COLLECTORS->value,
+            SystemPermission::CREATE_CANCELLATIONS_COLLECTORS->value,
+            SystemPermission::EDIT_CANCELLATIONS_COLLECTORS->value,
+            SystemPermission::DELETE_CANCELLATIONS_COLLECTORS->value,
+            SystemPermission::VIEW_CLUBHOUSE->value,
+            SystemPermission::EDIT_CLUBHOUSE->value,
+            SystemPermission::VIEW_MEMBERS->value,
+            SystemPermission::EDIT_MEMBERS->value,
+            SystemPermission::CREATE_MEMBERS->value,
+            SystemPermission::DELETE_MEMBERS->value,
         ]);
 
         Role::create(['name' => SystemRole::PLAYER->value])->givePermissionTo([
-            Permission::VIEW_TEAMS->value,
+            SystemPermission::VIEW_TEAMS->value,
         ]);
 
         $role = Role::create(['name' => SystemRole::SUPERADMIN->value]);

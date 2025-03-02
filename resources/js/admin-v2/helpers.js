@@ -440,8 +440,8 @@ export const roles = [
         label: 'Træner',
         value: 'COACH'
     },
-    {
-        label: 'Spiller',
-        value: 'PLAYER'
-    }
+//    {
+//        label: 'Spiller',
+//        value: 'PLAYER'
+//    }
 ]
