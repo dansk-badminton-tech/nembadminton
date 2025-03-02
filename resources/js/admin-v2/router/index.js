@@ -40,15 +40,24 @@ const routes = [
                 },
                 path: '/sign-up',
                 name: 'sign-up',
-                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUser.vue')
+                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUser.vue'),
+                props: route => ({invitationToken: route.query.invitationToken})
             },
             {
                 meta: {
-                    title: 'Opret bruger med invitation'
+                    title: 'Klub tilknytning'
                 },
-                path: '/sign-up/invitation/:token',
-                name: 'sign-up-invititaion',
-                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CreateUserInvitation.vue'),
+                path: '/sign-up/finish',
+                name: 'sign-up-finish',
+                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/SignUpFinish.vue')
+            },
+            {
+                meta: {
+                    title: 'Accepter invitation'
+                },
+                path: '/invitation/:token',
+                name: 'invitation',
+                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/UserInvitation.vue'),
                 props: route => ({token: route.params.token})
             },
         ]

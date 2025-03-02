@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Permission;
+use App\Enums\Role as SystemRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -37,31 +39,31 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // or may be done by chaining
-        Role::create(['name' => 'coach'])->givePermissionTo([
-            'view teamrounds',
-            'create teamrounds',
-            'edit teamrounds',
-            'delete teamrounds',
-            'view cancellations collectors',
-            'create cancellations collectors',
-            'edit cancellations collectors',
-            'delete cancellations collectors',
-            'view clubhouse',
-            'edit clubhouse',
-            'view members',
-            'edit members',
-            'create members',
-            'delete members'
+        Role::create(['name' => SystemRole::COACH->value])->givePermissionTo([
+            Permission::VIEW_TEAMROUNDS->value,
+            Permission::CREATE_TEAMROUNDS->value,
+            Permission::EDIT_TEAMROUNDS->value,
+            Permission::DELETE_TEAMROUNDS->value,
+            Permission::VIEW_CANCELLATIONS_COLLECTORS->value,
+            Permission::CREATE_CANCELLATIONS_COLLECTORS->value,
+            Permission::EDIT_CANCELLATIONS_COLLECTORS->value,
+            Permission::DELETE_CANCELLATIONS_COLLECTORS->value,
+            Permission::VIEW_CLUBHOUSE->value,
+            Permission::EDIT_CLUBHOUSE->value,
+            Permission::VIEW_MEMBERS->value,
+            Permission::EDIT_MEMBERS->value,
+            Permission::CREATE_MEMBERS->value,
+            Permission::DELETE_MEMBERS->value,
         ]);
 
-        Role::create(['name' => 'player'])->givePermissionTo([
-            'view teams'
+        Role::create(['name' => SystemRole::PLAYER->value])->givePermissionTo([
+            Permission::VIEW_TEAMS->value,
         ]);
 
-        $role = Role::create(['name' => 'super-admin']);
+        $role = Role::create(['name' => SystemRole::SUPERADMIN->value]);
         $role->givePermissionTo(Permission::all());
 
-        $role = Role::create(['name' => 'club-admin']);
+        $role = Role::create(['name' => SystemRole::CLUB_ADMIN->value]);
         $role->givePermissionTo(Permission::all());
     }
 }

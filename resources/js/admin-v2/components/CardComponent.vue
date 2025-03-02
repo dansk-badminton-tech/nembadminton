@@ -29,6 +29,7 @@
     <div class="card-content">
       <slot />
     </div>
+      <slot name="footer" />
   </div>
 </template>
 

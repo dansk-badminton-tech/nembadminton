@@ -56,7 +56,8 @@ export default defineComponent(
             fetchMe() {
                 this.$apollo
                     .query({
-                               query: ME
+                               query: ME,
+                               fetchPolicy: "network-only"
                     })
                     .then(({data}) => {
                         this.me = data.me

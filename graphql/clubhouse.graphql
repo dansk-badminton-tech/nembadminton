@@ -4,17 +4,33 @@ extend type Query{
 }
 
 extend type Mutation {
+    # Create a clubhouse
+    createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @create
+
     # Send an invitation to a user
-    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard
+    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @event(dispatch: "App\\Events\\InvitationCreated")
 
     # Accept an invitation
-    acceptInvitation(id: ID!): Invitation @update @guard
+    acceptInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@acceptInvitation")
 
     # Decline an invitation
-    declineInvitation(id: ID!): Invitation @update @guard
+    declineInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@declineInvitation")
 
     # Delete an invitation
-    deleteInvitation(id: ID!): Boolean @delete @guard
+    deleteInvitation(id: ID! @eq): Invitation @guard @delete @canFind(ability: "delete", find: "id")
+
+    # Delete membership
+    deleteMembership(clubhouseId: ID!, userId: ID!): Boolean @guard @hasPermission(name: "delete members") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@delete")
+}
+
+input CreateClubhouseInput {
+    email: String!
+    name: String!
+    users: CreateUserBelongsToMany!
+}
+
+input CreateUserBelongsToMany {
+    connect: [ID!]
 }
 
 input AcceptInvitation {
@@ -51,6 +67,7 @@ type Invitation {
     clubhouse: Clubhouse! @belongsTo
     inviter: User! @belongsTo
     invitee: User @belongsTo
+    url: String!
     expiresAt: DateTime @rename(attribute: "expires_at")
     acceptedAt: DateTime @rename(attribute: "accepted_at")
     createdAt: DateTime @rename(attribute: "created_at")
@@ -69,7 +86,8 @@ type Clubhouse {
     name: String!
     email: String!
     clubs: [Club!]! @belongsToMany
-    users: [User!]! @belongsToMany
+    users: [User!]! @hasMany
+    invitations: [Invitation!]! @hasMany
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"

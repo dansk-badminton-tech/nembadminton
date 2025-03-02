@@ -30,6 +30,7 @@ class OnceAssignUsersRoles extends Command
 
         foreach (User::all() as $user) {
             $user->assignRole('coach');
+            $user->assignRole('club-admin');
         }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -21,13 +22,18 @@ class Clubhouse extends Model
         return $this->belongsToMany(Club::class, 'clubhouse_club');
     }
 
-    public function users() : BelongsToMany
+    public function users() : HasMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 
     public function user() : HasOne
     {
         return $this->hasOne(User::class);
+    }
+
+    public function invitations() : HasMany
+    {
+        return $this->hasMany(Invitation::class);
     }
 }

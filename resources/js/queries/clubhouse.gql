@@ -1,0 +1,33 @@
+query clubhouse($id: ID!){
+    clubhouse(id: $id){
+        id
+        name
+        email
+        clubs {
+            id
+            name1
+        }
+        users {
+            id
+            name
+            email
+            clubhouse {
+                id
+            }
+            roles {
+                id
+                name
+            }
+        }
+        invitations {
+            id
+            status
+            role
+            url
+            inviteeEmail
+            expiresAt
+            acceptedAt
+            createdAt
+        }
+    }
+}

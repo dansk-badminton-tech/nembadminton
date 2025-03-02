@@ -4,11 +4,12 @@ import HeroBar from "@/components/HeroBar.vue";
 import CardComponent from "@/components/CardComponent.vue";
 import MyClubs from "@/views/club-house/MyClubs.vue";
 import MemberList from "@/views/club-house/MemberList.vue";
-import gql from "graphql-tag";
+import clubhouse from "../../../queries/clubhouse.gql";
+import InvitationList from "@/views/club-house/InvitationList.vue";
 
 export default {
     name: "ClubHouseDashboard" ,
-    components: {MemberList, MyClubs, CardComponent, HeroBar, TitleBar},
+    components: {InvitationList, MemberList, MyClubs, CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
     data(){
         return {
@@ -28,31 +29,18 @@ export default {
     },
     apollo: {
         clubhouse: {
-            query: gql`
-                query clubhouse($id: ID!){
-                    clubhouse(id: $id){
-                        id
-                        name
-                        email
-                        clubs {
-                            id
-                            name1
-                        }
-                        users {
-                            id
-                            name
-                            roles {
-                                id
-                                name
-                            }
-                        }
-                    }
-                }
-            `,
+            query: clubhouse,
             variables() {
                 return {
                     id: this.clubhouseId
                 }
+            },
+            skip(){
+                return !this.clubhouseId
+            },
+            result({data}) {
+                this.name = data.clubhouse.name
+                this.email = data.clubhouse.email
             }
         }
     }
@@ -110,7 +98,14 @@ export default {
                     </b-field>
                 </form>
             </card-component>
-            <member-list :users="clubhouse.users" />
+            <b-tabs>
+                <b-tab-item label="Medlemmer">
+                    <member-list :loading="$apollo.loading" :users="clubhouse?.users" />
+                </b-tab-item>
+                <b-tab-item label="Invitationer">
+                    <invitation-list :loading="$apollo.loading" :invitations="clubhouse?.invitations" />
+                </b-tab-item>
+            </b-tabs>
             <my-clubs/>
         </section>
     </div>

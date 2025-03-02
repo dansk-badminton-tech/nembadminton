@@ -20,6 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property SubscriptionSetting subscriptionSettings
  * @property club                club
  * @property int                 organization_id
+ * @property int                 clubhouse_id
  */
 class User extends Authenticatable
 {

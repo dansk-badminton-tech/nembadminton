@@ -7,6 +7,7 @@ use App\Util\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 
 /**
  * Represents an invitation entity within the application.
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $accepted_at The datetime when the invitation was accepted.
  * @property Carbon|null $created_at The datetime when the invitation was created.
  * @property Carbon|null $updated_at The datetime when the invitation was last updated.
+ * @property string $url The Url for the invitation
  *
  * @property Clubhouse   $clubhouse The clubhouse (tenant) associated with this invitation.
  * @property User        $inviter The user who sent the invitation.
@@ -37,6 +39,8 @@ class Invitation extends Model
      * @var string
      */
     protected $table = 'invitations';
+
+    protected $appends = ['url'];
 
     /**
      * The attributes that are mass assignable.
@@ -94,5 +98,18 @@ class Invitation extends Model
     public function invitee() : BelongsTo
     {
         return $this->belongsTo(User::class, 'invitee_user_id');
+    }
+
+    public function getUrlAttribute() : string {
+        return URL::query('/app/invitation/'.$this->token);
+    }
+
+    public function accept() {
+        $this->accepted_at = Carbon::now();
+        $this->status = 'accepted';
+    }
+
+    public function decline() {
+        $this->status = 'declined';
     }
 }

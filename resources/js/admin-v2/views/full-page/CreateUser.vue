@@ -58,7 +58,11 @@ export default {
     name: "CreateUser",
     components: {CardComponent, BadmintonPlayerClubs},
     props: {
-        afterRegister: Function
+        afterRegister: Function,
+        invitationToken: {
+            type: String,
+            default: null
+        }
     },
     data() {
         return {
@@ -98,8 +102,11 @@ export default {
                 })
                 .then(({data}) => {
                     setAuthToken(data.register.tokens.access_token)
-                    this.$root.$emit('loggedIn')
-                    this.$router.push({name: 'onboarding'})
+                    if(this.invitationToken !== null){
+                        this.$router.push({name: 'invitation', params: {token: this.invitationToken}})
+                    }else{
+                        this.$router.push({name: 'sign-up-finish'})
+                    }
                 })
                 .catch(({graphQLErrors}) => {
                     let errors = extractErrors(graphQLErrors)
