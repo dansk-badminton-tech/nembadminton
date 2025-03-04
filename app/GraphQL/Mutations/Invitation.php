@@ -3,6 +3,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Enums\Role;
 use App\Models\Invitation as InvitationModel;
 use App\Models\User;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -42,12 +43,13 @@ class Invitation
 
     private function assignRole(User $user, InvitationModel $invitation) : void
     {
-        $user->assignRole($invitation->role);
+        $user->assignRole(Role::from($invitation->role));
     }
 
     private function connectClubhouse(User $user, InvitationModel $invitation) : void
     {
         $user->clubhouse()->associate($invitation->clubhouse);
+        $user->clubhouses()->attach($invitation->clubhouse);
         $user->save();
     }
 

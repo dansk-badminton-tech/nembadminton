@@ -35,6 +35,12 @@ export default {
                             id
                             name
                             email
+                            users {
+                                id
+                            }
+                            clubs {
+                                id
+                            }
                         }
                     }
                 `,
@@ -42,8 +48,14 @@ export default {
                     input: {
                         name: this.name,
                         email: this.email,
+                        user: {
+                            connect: [this.me.id]
+                        },
                         users: {
                             connect: [this.me.id]
+                        },
+                        clubs: {
+                            connect: [this.me.club.id]
                         }
                     }
                 },
@@ -70,7 +82,7 @@ export default {
                 <h2 class="subtitle">Du er allerede tilknyttet et klubhus</h2>
                 <b-button @click="toDashboard">Videre</b-button>
             </div>
-            <form @submit.prevent="createClubhouse">
+            <form v-show="!hasClubhouse" @submit.prevent="createClubhouse">
                 <b-field
                     horizontal
                     label="Name"

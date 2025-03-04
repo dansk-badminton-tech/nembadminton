@@ -23,14 +23,14 @@ class Clubhouse extends Model
         return $this->belongsToMany(Club::class, 'clubhouse_club');
     }
 
-    public function users() : HasMany
+    public function users() : BelongsToMany
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class);
     }
 
-    public function user() : HasOne
+    public function user() : HasMany
     {
-        return $this->hasOne(User::class);
+        return $this->hasMany(User::class, 'clubhouse_id', 'id');
     }
 
     public function invitations() : HasMany

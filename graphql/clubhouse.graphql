@@ -5,7 +5,7 @@ extend type Query{
 
 extend type Mutation {
     # Create a clubhouse
-    createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @create
+    createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @guard @create @event(dispatch: "App\\Events\\ClubhouseCreated")
 
     # Update a clubhouse
     updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @canFind(ability: "update", find: "id") @update @hasPermission(name: "edit clubhouse")
@@ -35,7 +35,17 @@ input UpdateClubhouseInput {
 input CreateClubhouseInput {
     email: String!
     name: String!
+    user: CreateUserHasMany!
     users: CreateUserBelongsToMany!
+    clubs: CreateClubBelongsToMany!
+}
+
+input CreateUserHasMany {
+    connect: [ID!]
+}
+
+input CreateClubBelongsToMany {
+    connect: [ID!]
 }
 
 input CreateUserBelongsToMany {

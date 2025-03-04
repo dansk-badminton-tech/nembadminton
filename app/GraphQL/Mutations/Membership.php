@@ -33,6 +33,10 @@ final readonly class Membership
             throw new UserError('You cannot delete someone elses membership');
         }
 
+        if($user->hasRole('club-admin')){
+            throw new UserError('You cannot delete a club-admin');
+        }
+
         $user->clubhouse()->dissociate();
         $user->save();
 

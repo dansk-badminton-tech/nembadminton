@@ -10,6 +10,7 @@ use App\Events\UserUpdate;
 use App\Listeners\AddedClubConnection;
 use App\Listeners\ConfirmationEmail;
 use App\Listeners\EnsureClubConnection;
+use App\Listeners\GrantRoleToClubhouse;
 use App\Listeners\InitializeClub;
 use App\Listeners\SendInvitationEmail;
 use Illuminate\Auth\Events\Registered;
@@ -36,6 +37,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         InvitationCreated::class => [
             SendInvitationEmail::class
+        ],
+        ClubhouseCreated::class => [
+            GrantRoleToClubhouse::class
         ]
     ];
 

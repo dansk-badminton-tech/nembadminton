@@ -21,6 +21,9 @@ query me{
             id
             email
             name
+        },
+        clubhouses {
+            id
         }
     }
 }
