@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Clubhouse;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class OnceCreateMembershipToClubhouse extends Command
 {
@@ -35,6 +36,7 @@ class OnceCreateMembershipToClubhouse extends Command
             ], [
                 'name' => $user->club()->first()->name1
             ]);
+            Log::info("Adding clubhouse {$user->email} {$user->club()->first()->name1}");
 
             $clubHouse->users()->sync($user);
             $user->clubhouse()->associate($clubHouse)->save();

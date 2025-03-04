@@ -19,21 +19,21 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => 'view teamrounds']);
-        Permission::create(['name' => 'create teamrounds']);
-        Permission::create(['name' => 'edit teamrounds']);
-        Permission::create(['name' => 'delete teamrounds']);
-        Permission::create(['name' => 'view cancellations collectors']);
-        Permission::create(['name' => 'create cancellations collectors']);
-        Permission::create(['name' => 'edit cancellations collectors']);
-        Permission::create(['name' => 'delete cancellations collectors']);
-        Permission::create(['name' => 'view clubhouse']);
-        Permission::create(['name' => 'edit clubhouse']); // This gives permissions to edit permissions
-        Permission::create(['name' => 'view members']);
-        Permission::create(['name' => 'edit members']);
-        Permission::create(['name' => 'create members']);
-        Permission::create(['name' => 'delete members']);
-        Permission::create(['name' => 'view teams']);
+        Permission::create(['name' => SystemPermission::VIEW_TEAMROUNDS->value]);
+        Permission::create(['name' => SystemPermission::CREATE_TEAMROUNDS->value]);
+        Permission::create(['name' => SystemPermission::EDIT_TEAMROUNDS->value]);
+        Permission::create(['name' => SystemPermission::DELETE_TEAMROUNDS->value]);
+        Permission::create(['name' => SystemPermission::VIEW_CANCELLATIONS_COLLECTORS->value]);
+        Permission::create(['name' => SystemPermission::CREATE_CANCELLATIONS_COLLECTORS->value]);
+        Permission::create(['name' => SystemPermission::EDIT_CANCELLATIONS_COLLECTORS->value]);
+        Permission::create(['name' => SystemPermission::DELETE_CANCELLATIONS_COLLECTORS->value]);
+        Permission::create(['name' => SystemPermission::VIEW_CLUBHOUSE->value]);
+        Permission::create(['name' => SystemPermission::EDIT_CLUBHOUSE->value]); // This gives permissions to edit permissions
+        Permission::create(['name' => SystemPermission::VIEW_MEMBERS->value]);
+        Permission::create(['name' => SystemPermission::EDIT_MEMBERS->value]);
+        Permission::create(['name' => SystemPermission::CREATE_MEMBERS->value]);
+        Permission::create(['name' => SystemPermission::DELETE_MEMBERS->value]);
+        Permission::create(['name' => SystemPermission::VIEW_TEAMS->value]);
 
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();

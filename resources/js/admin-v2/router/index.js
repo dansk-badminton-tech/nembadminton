@@ -49,7 +49,8 @@ const routes = [
                 },
                 path: '/sign-up/finish',
                 name: 'sign-up-finish',
-                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/SignUpFinish.vue')
+                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/SignUpFinish.vue'),
+                props: route => ({error: route.query.error})
             },
             {
                 meta: {

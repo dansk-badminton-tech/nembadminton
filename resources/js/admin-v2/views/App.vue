@@ -68,6 +68,10 @@ export default defineComponent(
                             avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg',
                             clubhouse: data.me.clubhouse
                         })
+
+                        if (this.me.clubhouse === null) {
+                            this.$router.push({name: 'sign-up-finish', query: {error: 'missingClubhouse'}})
+                        }
                     })
                     .catch(({message}) => {
                         if (message.match(/Unauthenticated/i)) {
