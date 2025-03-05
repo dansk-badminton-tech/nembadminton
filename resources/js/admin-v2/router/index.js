@@ -117,6 +117,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "main-app" */ '@/views/App.vue'),
         children: [
             {
+                path: '/home-redirect',
+                name: 'home-redirect',
+                component: () => import('@/views/HomeView.vue')
+            },
+            {
                 meta: {
                     title: 'Spiller statistik',
                     requiresAuth: true
@@ -162,15 +167,6 @@ const routes = [
                 path: '/profile',
                 name: 'profile',
                 component: () => import(/* webpackChunkName: "profile" */ '@/views/ProfileView.vue')
-            },
-            {
-                meta: {
-                    title: 'Mine klubber',
-                    requiresAuth: true
-                },
-                path: '/my-clubs',
-                name: 'my-clubs',
-                redirect: {name: 'my-club-house'}
             },
             {
                 meta: {
@@ -318,6 +314,10 @@ const router = new VueRouter({
                              })
 
 router.beforeEach((to, from, next) => {
+    if (to.path === '/') {
+        next({path: '/home-redirect'})
+    }
+
     if (to.meta.requiresAuth && !isLoggedIn()) {
         next({
                  path: '/login',
