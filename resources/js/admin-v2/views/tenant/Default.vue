@@ -1,6 +1,14 @@
 <script>
+import {computed} from "vue";
+
 export default {
-    name: "Default"
+    name: "Default",
+    props: ['clubhouseId'],
+    provide(){
+        return {
+            clubhouseId: computed(() => this.clubhouseId ?? null)
+        }
+    }
 }
 </script>
 

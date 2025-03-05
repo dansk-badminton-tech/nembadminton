@@ -261,6 +261,7 @@ const routes = [
             {
                 path: '/c-:clubhouseId',
                 component: () => import('@/views/tenant/Default.vue'),
+                props: route => ({clubhouseId: route.params.clubhouseId}),
                 children: [
                     {
                         meta: {
@@ -278,8 +279,7 @@ const routes = [
                         },
                         path: 'team-fight/dashboard',
                         name: 'team-fight-dashboard',
-                        component: () => import("../views/team-fight/TeamFightList.vue"),
-                        props: routes => ({clubhouseId: routes.params.clubhouseId})
+                        component: () => import("../views/team-fight/TeamFightList.vue")
                     },
                     {
                         meta: {
