@@ -74,6 +74,8 @@ export default {
                 <b-table
                     :data="invitations"
                     :loading="loading"
+                    paginated
+                    pagination-rounded
                 >
                     <b-table-column sortable field="id" label="ID" numeric v-slot="props">
                         {{ props.row.id }}

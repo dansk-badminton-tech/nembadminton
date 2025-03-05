@@ -66,14 +66,16 @@ export default {
                 <b-table
                     :data="users"
                     :loading="loading || isDeleting"
+                    paginated
+                    pagination-rounded
                 >
                     <b-table-column field="id" label="ID" numeric v-slot="props">
                         {{ props.row.id }}
                     </b-table-column>
-                    <b-table-column sortable field="name" label="Navn" v-slot="props">
+                    <b-table-column sortable field="name" searchable label="Navn" v-slot="props">
                         {{ props.row.name }}
                     </b-table-column>
-                    <b-table-column sortable field="email" label="Email" v-slot="props">
+                    <b-table-column sortable field="email" searchable label="Email" v-slot="props">
                         {{ props.row.email }}
                     </b-table-column>
                     <b-table-column field="roles" label="Roles" numeric v-slot="props">
