@@ -26,9 +26,10 @@ class OnceAssignUsersRoles extends Command
      */
     public function handle()
     {
-        User::query()->where('email', 'danielflynygaard@gmail.com')->first()->assignRole('super-admin');
+        //User::query()->where('email', 'danielflynygaard@gmail.com')->first()->assignRole('super-admin');
 
         foreach (User::all() as $user) {
+            setPermissionsTeamId($user->clubhouse_id);
             $user->assignRole('coach');
             $user->assignRole('club-admin');
         }

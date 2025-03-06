@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Kernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 

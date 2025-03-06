@@ -1,5 +1,5 @@
 extend type Query{
-    clubhouse(id: ID! @eq): Clubhouse @find
+    clubhouse(id: ID! @eq): Clubhouse @find @guard @canFind(ability: "view", find: "id")
     invitation(token: ID! @eq): Invitation @find
 }
 
@@ -8,7 +8,7 @@ extend type Mutation {
     createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @guard @create @event(dispatch: "App\\Events\\ClubhouseCreated")
 
     # Update a clubhouse
-    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @canFind(ability: "update", find: "id") @update @hasPermission(name: "edit clubhouse")
+    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @update @canFind(ability: "update", find: "id") @hasPermission(name: "edit clubhouse")
 
     # Send an invitation to a user
     invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\InvitationCreated")

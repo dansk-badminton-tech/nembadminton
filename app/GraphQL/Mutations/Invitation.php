@@ -22,7 +22,6 @@ class Invitation
         $invitation->saveOrFail();
 
         $this->connectClubhouse($context->user(), $invitation);
-
         $this->assignRole($context->user(), $invitation);
 
         return $invitation;
@@ -34,15 +33,12 @@ class Invitation
         $invitation->decline();
         $invitation->saveOrFail();
 
-        $this->connectClubhouse($context->user(), $invitation);
-
-        $this->assignRole($context->user(), $invitation);
-
         return $invitation;
     }
 
     private function assignRole(User $user, InvitationModel $invitation) : void
     {
+        setPermissionsTeamId($user->clubhouse_id);
         $user->assignRole(Role::from($invitation->role));
     }
 

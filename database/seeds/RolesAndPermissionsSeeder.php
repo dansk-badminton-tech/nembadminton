@@ -39,7 +39,7 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // or may be done by chaining
-        Role::create(['name' => SystemRole::COACH->value])->givePermissionTo([
+        Role::create(['name' => SystemRole::COACH->value, 'clubhouse_id' => null])->givePermissionTo([
             SystemPermission::VIEW_TEAMROUNDS->value,
             SystemPermission::CREATE_TEAMROUNDS->value,
             SystemPermission::EDIT_TEAMROUNDS->value,
@@ -56,14 +56,14 @@ class RolesAndPermissionsSeeder extends Seeder
             SystemPermission::DELETE_MEMBERS->value,
         ]);
 
-        Role::create(['name' => SystemRole::PLAYER->value])->givePermissionTo([
+        Role::create(['name' => SystemRole::PLAYER->value, 'clubhouse_id' => null])->givePermissionTo([
             SystemPermission::VIEW_TEAMS->value,
         ]);
 
-        $role = Role::create(['name' => SystemRole::SUPERADMIN->value]);
+        $role = Role::create(['name' => SystemRole::SUPERADMIN->value, 'clubhouse_id' => null]);
         $role->givePermissionTo(Permission::all());
 
-        $role = Role::create(['name' => SystemRole::CLUB_ADMIN->value]);
+        $role = Role::create(['name' => SystemRole::CLUB_ADMIN->value, 'clubhouse_id' => null]);
         $role->givePermissionTo(Permission::all());
     }
 }

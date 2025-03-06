@@ -32,7 +32,7 @@ class ClubhousePolicy
      */
     public function view(User $user, Clubhouse $clubhouse): bool
     {
-        return false;
+        return $clubhouse->id === $user->clubhouse_id;
     }
 
     /**
