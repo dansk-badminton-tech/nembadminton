@@ -7,10 +7,10 @@ export default {
         me: {
             query: ME,
             result({data}) {
-                if (data.me.cancellationCollector === null) {
+                if (data.me.clubhouse.cancellationCollector === null) {
                     this.$router.replace({name: "cancellation-landing"})
                 } else {
-                    this.$router.replace({name: "cancellation-view", params: {collectorId: data.me.cancellationCollector.id}});
+                    this.$router.replace({name: "cancellation-view", params: {collectorId: data.me.clubhouse.cancellationCollector.id}});
                 }
             }
         }

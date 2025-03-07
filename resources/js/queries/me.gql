@@ -21,6 +21,9 @@ query me{
             id
             email
             name
+            cancellationCollector {
+                id
+            }
         },
         clubhouses {
             id

@@ -4,7 +4,7 @@ extend type Query{
         name: String @where(operator: "like"),
         orderBy: _ @orderBy(columns: ["name"])
     ): [Member!]! @paginate
-    cancellationCollector(id: ID! @eq) : CancellationCollector @find @canFind(ability: "view", find: "id") @guard
+    cancellationCollector(id: ID! @eq) : CancellationCollector @find @guard @canFind(ability: "view", find: "id")
     cancellationCollectorPublic(sharingId: String! @eq(key: "sharing_id")) : CancellationCollector @find
     cancellationEvents("CancellationCollector ID" id: ID!) : [Event!]! @guard @field(resolver: "App\\GraphQL\\Queries\\CancellationEvents")
 }
@@ -12,7 +12,7 @@ extend type Query{
 extend type Mutation {
     createCancellation(input: CancellationInput! @spread) : Cancellation @create @event(dispatch: "App\\Events\\CancellationCreated")
     deleteCancellation(id: ID! @eq) : Cancellation @delete @guard @canFind(ability: "delete", find: "id")
-    createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id")
+    createCancellationCollector(input: CancellationCollectionInput! @spread) : CancellationCollector @create @guard @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
     updateCancellationCollector(id: ID!, input: CancellationCollectionInput! @spread) : CancellationCollector @update @guard @canFind(ability: "update", find: "id")
     deleteCancellationCollector(id: ID! @eq) : CancellationCollector @delete @canFind(ability: "delete", find: "id") @guard
 }

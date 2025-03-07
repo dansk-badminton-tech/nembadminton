@@ -37,4 +37,9 @@ class Clubhouse extends Model
     {
         return $this->hasMany(Invitation::class);
     }
+
+    public function cancellationCollector() : HasOne
+    {
+        return $this->hasOne(CancellationCollector::class);
+    }
 }

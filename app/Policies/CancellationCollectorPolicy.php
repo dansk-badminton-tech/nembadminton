@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Models\CancellationCollector;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -21,7 +22,7 @@ class CancellationCollectorPolicy
      */
     public function view(User $user, CancellationCollector $cancellationCollector): bool
     {
-        return $user->getAuthIdentifier() === $cancellationCollector->user_id;
+        return $user->clubhouse_id === $cancellationCollector->clubhouse_id && $user->hasPermissionTo(Permission::VIEW_CANCELLATIONS_COLLECTORS);
     }
 
     /**
@@ -37,7 +38,7 @@ class CancellationCollectorPolicy
      */
     public function update(User $user, CancellationCollector $cancellationCollector): bool
     {
-        return $cancellationCollector->user_id === $user->getAuthIdentifier();
+        return $user->clubhouse_id === $cancellationCollector->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_CANCELLATIONS_COLLECTORS);
     }
 
     /**
@@ -45,7 +46,7 @@ class CancellationCollectorPolicy
      */
     public function delete(User $user, CancellationCollector $cancellationCollector): bool
     {
-        return $cancellationCollector->user_id === $user->getAuthIdentifier();
+        return $user->clubhouse_id === $cancellationCollector->clubhouse_id && $user->hasPermissionTo(Permission::DELETE_CANCELLATIONS_COLLECTORS);
     }
 
     /**

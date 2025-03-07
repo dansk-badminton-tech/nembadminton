@@ -101,11 +101,18 @@ enum InvitationStatus {
 
 type Clubhouse {
     id: ID!
+    "Club name"
     name: String!
+    "Club email"
     email: String!
+    "Clubs associated with the clubhouse"
     clubs: [Club!]! @belongsToMany
+    "Members of the clubhouse"
     users: [User!] @hasMany @canRoot(ability: "viewUsers", action: RETURN_VALUE, returnValue: null)
+    "Invitations"
     invitations: [Invitation!] @hasMany @canRoot(ability: "viewInvitations", action: RETURN_VALUE, returnValue: null)
+    "Cancellation Collector"
+    cancellationCollector: CancellationCollector
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
