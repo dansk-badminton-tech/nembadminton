@@ -92,6 +92,7 @@ import CategoryPoints from "@/views/dashboard/CategoryPoints.vue";
 
 export default {
     name: "ClubDashboard",
+    inject: ['clubhouseId'],
     components: {CategoryPoints, NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
     apollo: {
         clubStats: {

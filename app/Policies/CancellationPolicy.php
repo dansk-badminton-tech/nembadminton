@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Models\Cancellation;
 use App\Models\User;
 
@@ -25,7 +26,7 @@ class CancellationPolicy
         }
 
         if($cancellation->cancellationCollector !== null) {
-            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+            return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 
         return false;
@@ -49,7 +50,7 @@ class CancellationPolicy
         }
 
         if($cancellation->cancellationCollector !== null) {
-            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+            return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 
         return false;
@@ -65,7 +66,7 @@ class CancellationPolicy
         }
 
         if($cancellation->cancellationCollector !== null) {
-            return $cancellation->cancellationCollector->user_id === $user->getAuthIdentifier();
+            return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 
         return false;

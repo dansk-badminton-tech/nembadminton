@@ -4,11 +4,15 @@ declare(strict_types = 1);
 namespace App\Providers;
 
 use App\Events\CancellationCreated;
+use App\Events\ClubhouseCreated;
+use App\Events\InvitationCreated;
 use App\Events\UserUpdate;
 use App\Listeners\AddedClubConnection;
 use App\Listeners\ConfirmationEmail;
 use App\Listeners\EnsureClubConnection;
+use App\Listeners\GrantRoleToClubhouse;
 use App\Listeners\InitializeClub;
+use App\Listeners\SendInvitationEmail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -30,6 +34,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         CancellationCreated::class => [
             ConfirmationEmail::class
+        ],
+        InvitationCreated::class => [
+            SendInvitationEmail::class
+        ],
+        ClubhouseCreated::class => [
+            GrantRoleToClubhouse::class
         ]
     ];
 

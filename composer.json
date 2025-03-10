@@ -41,6 +41,7 @@
         "spatie/eloquent-sortable": "^4.0",
         "spatie/icalendar-generator": "^2.5",
         "spatie/laravel-ignition": "^2.0",
+        "spatie/laravel-permission": "^6.10",
         "spatie/laravel-prometheus": "^1.0",
         "symfony/property-access": "^6.0",
         "symfony/property-info": "^6.0",

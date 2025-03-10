@@ -35,6 +35,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('admin', static function (User $user) {
             return $user->email === 'danielflynygaard@gmail.com';
         });
+
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('super-admin') ? true : null;
+        });
+
         $this->registerPolicies();
     }
 }

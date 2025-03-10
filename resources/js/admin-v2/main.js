@@ -10,11 +10,11 @@ import router from './router'
 import store from './store'
 
 /* Vue. Main component */
-import App from './App.vue'
+import Skeleton from './Skeleton.vue'
 import apolloProvider from "../graphql";
 import VueApollo from "vue-apollo";
 
-import { Fragment } from 'vue-frag'
+import {Fragment} from 'vue-frag'
 import VueClipboard from "vue-clipboard2";
 
 import Kustomer from './components/Kustomer/Kustomer.vue'
@@ -24,14 +24,14 @@ const defaultDocumentTitle = 'Nembadminton'
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
-  store.commit('asideMobileStateToggle', false)
-  store.dispatch('asideDesktopOnlyToggle', false)
+    store.commit('asideMobileStateToggle', false)
+    store.dispatch('asideDesktopOnlyToggle', false)
 
-  if (to.meta && to.meta.title) {
-    document.title = `${to.meta.title} — ${defaultDocumentTitle}`
-  } else {
-    document.title = defaultDocumentTitle
-  }
+    if (to.meta && to.meta.title) {
+        document.title = `${to.meta.title} — ${defaultDocumentTitle}`
+    } else {
+        document.title = defaultDocumentTitle
+    }
 })
 
 Vue.config.productionTip = false
@@ -43,8 +43,9 @@ Vue.component('Fragment', Fragment)
 Vue.component('kustomer', Kustomer);
 
 new Vue({
-  router,
-  store,
-    apolloProvider,
-  render: h => h(App)
-}).$mount('#app')
+            router,
+            store,
+            apolloProvider,
+            render: h => h(Skeleton)
+        })
+    .$mount('#app')

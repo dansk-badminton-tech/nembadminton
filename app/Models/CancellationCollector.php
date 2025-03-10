@@ -16,12 +16,13 @@ use Illuminate\Support\Facades\Auth;
  * @property int $user_id
  * @property string $email
  * @property Cancellation[] $cancellations
+ * @property int $clubhouse_id
  */
 class CancellationCollector extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email', 'user_id', 'club_id'];
+    protected $fillable = ['email', 'user_id', 'clubhouse_id'];
 
     protected static function booted()
     {
@@ -43,5 +44,15 @@ class CancellationCollector extends Model
     public function cancellations() : HasMany
     {
         return $this->hasMany(Cancellation::class);
+    }
+
+    public function user() : BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function clubhouse() : BelongsTo
+    {
+        return $this->belongsTo(Clubhouse::class);
     }
 }

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
 import {clearAuthToken} from "../../auth";
 import {ApolloClientInstance} from "../../graphql";
 
@@ -14,6 +13,7 @@ const store = new Vuex.Store(
             userName: null,
             userEmail: null,
             userAvatar: null,
+            clubhouse: null,
 
             /* NavBar */
             isNavBarVisible: true,
@@ -47,6 +47,9 @@ const store = new Vuex.Store(
                 }
                 if (payload.avatar) {
                     state.userAvatar = payload.avatar
+                }
+                if(payload.clubhouse) {
+                    state.clubhouse = payload.clubhouse
                 }
             },
 
@@ -108,21 +111,6 @@ const store = new Vuex.Store(
                 document.documentElement.classList[!payload
                                                    ? 'add'
                                                    : 'remove']('has-aside-left', 'has-navbar-fixed-top')
-            },
-            fetch({commit}, payload) {
-                axios
-                    .get(`data-sources/${payload}.json`)
-                    .then((r) => {
-                        if (r.data && r.data.data) {
-                            commit('basic', {
-                                key: payload,
-                                value: r.data.data
-                            })
-                        }
-                    })
-                    .catch(error => {
-                        alert(error.message)
-                    })
             }
         }
     })

@@ -24,10 +24,12 @@
           custom-size="default"
         />
       </a>
+        <slot name="header" />
     </header>
     <div class="card-content">
       <slot />
     </div>
+      <slot name="footer" />
   </div>
 </template>
 

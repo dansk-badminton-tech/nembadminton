@@ -13,17 +13,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string              player_id
  * @property SubscriptionSetting subscriptionSettings
  * @property club                club
  * @property int                 organization_id
+ * @property int                 clubhouse_id
  */
 class User extends Authenticatable
 {
 
-    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory;
+    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -67,6 +69,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Club::class);
     }
 
+    public function clubhouses() : BelongsToMany
+    {
+        return $this->belongsToMany(Clubhouse::class);
+    }
+
     public function subscriptionSettings() : HasOne
     {
         return $this->hasOne(SubscriptionSetting::class);
@@ -80,6 +87,10 @@ class User extends Authenticatable
     public function cancellationCollector() : HasOne
     {
         return $this->hasOne(CancellationCollector::class);
+    }
+
+    public function clubhouse() : BelongsTo {
+        return $this->belongsTo(Clubhouse::class, 'clubhouse_id', 'id');
     }
 
 }

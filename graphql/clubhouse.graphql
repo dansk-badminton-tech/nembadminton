@@ -1,0 +1,122 @@
+extend type Query{
+    clubhouse(id: ID! @eq): Clubhouse @find @guard @canFind(ability: "view", find: "id")
+    invitation(token: ID! @eq): Invitation @find
+}
+
+extend type Mutation {
+    # Create a clubhouse
+    createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @guard @create @event(dispatch: "App\\Events\\ClubhouseCreated")
+
+    # Update a clubhouse
+    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @update @canFind(ability: "update", find: "id") @hasPermission(name: "edit clubhouse")
+
+    # Send an invitation to a user
+    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\InvitationCreated")
+
+    # Accept an invitation
+    acceptInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@acceptInvitation")
+
+    # Decline an invitation
+    declineInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@declineInvitation")
+
+    # Delete an invitation
+    deleteInvitation(id: ID! @eq): Invitation @guard @delete @canFind(ability: "delete", find: "id") @hasPermission(name: "edit clubhouse")
+
+    # Delete membership
+    deleteMembership(clubhouseId: ID!, userId: ID!): Boolean @guard @hasPermission(name: "edit clubhouse") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@delete")
+}
+
+input UpdateClubhouseInput {
+    id: ID!
+    email: String!
+    name: String!
+}
+
+input CreateClubhouseInput {
+    email: String!
+    name: String!
+    user: CreateUserHasMany!
+    users: CreateUserBelongsToMany!
+    clubs: CreateClubBelongsToMany!
+}
+
+input CreateUserHasMany {
+    connect: [ID!]
+}
+
+input CreateClubBelongsToMany {
+    connect: [ID!]
+}
+
+input CreateUserBelongsToMany {
+    connect: [ID!]
+}
+
+input AcceptInvitation {
+    token: ID!
+    name: String!
+}
+
+input CreateInvitationInput {
+    email: String! @rename(attribute: "invitee_email")
+    inviter: CreateUserBelongsTo!
+    clubhouse: CreateClubhouseBelongsTo!
+    role: MemberRole
+}
+
+enum MemberRole {
+    COACH @enum(value: "coach")
+    PLAYER @enum(value: "player")
+    CLUB_ADMIN @enum(value: "club-admin")
+}
+
+input CreateClubhouseBelongsTo {
+    connect: ID
+}
+
+input CreateUserBelongsTo {
+    connect: ID
+}
+
+type Invitation {
+    id: ID!
+    inviteeEmail: String @rename(attribute: "invitee_email")
+    role: String!
+    status: InvitationStatus!
+    clubhouse: Clubhouse! @belongsTo
+    inviter: User! @belongsTo
+    invitee: User @belongsTo
+    url: String!
+    expiresAt: DateTime @rename(attribute: "expires_at")
+    acceptedAt: DateTime @rename(attribute: "accepted_at")
+    createdAt: DateTime @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+enum InvitationStatus {
+    PENDING @enum(value: "pending")
+    ACCEPTED @enum(value: "accepted")
+    DECLINED @enum(value: "declined")
+}
+
+type Clubhouse {
+    id: ID!
+    "Club name"
+    name: String!
+    "Club email"
+    email: String!
+    "Clubs associated with the clubhouse"
+    clubs: [Club!]! @belongsToMany
+    "Members of the clubhouse"
+    users: [User!] @hasMany @canRoot(ability: "viewUsers", action: RETURN_VALUE, returnValue: null)
+    "Invitations"
+    invitations: [Invitation!] @hasMany @canRoot(ability: "viewInvitations", action: RETURN_VALUE, returnValue: null)
+    "Cancellation Collector"
+    cancellationCollector: CancellationCollector
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+}
+
+
