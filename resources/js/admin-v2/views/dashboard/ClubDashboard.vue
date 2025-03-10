@@ -5,17 +5,6 @@
             {{ me?.club?.name1 }}
         </hero-bar>
         <section class="section is-main-section">
-            <b-message
-                title="Manglende februar rangliste - LØST"
-                type="is-success"
-                aria-close-label="Close message">
-                10-02-25:
-                Der er desværre en fejl i integrationen mellem Nembadminton og Badmintonplayer, hvilket resulterer i en manglende februar rangliste. Vi arbejder på sagen, men der er pt. ingen kendt tidshorisont.
-                <br>
-                <br>
-                18-02-25:
-                Februar ranglisten er nu tilgængelig. Husk at skifte rangliste på jeres holdrunde, point opdateres når du vælger den nye rangliste.
-            </b-message>
             <tiles-block>
                 <card-widget
                     class="tile is-child"
