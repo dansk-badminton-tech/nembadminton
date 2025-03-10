@@ -39,8 +39,8 @@
             <footer class="card-footer">
                 <a v-if="!isLoggedIn" class="card-footer-item" @click="goToSignUp">Opret bruger</a>
                 <a v-if="isLoggedIn && !isInvitationPending" class="card-footer-item" @click="goToDashboard">Videre</a>
-                <a v-if="isLoggedIn && isInvitationPending" class="card-footer-item" @click="acceptInvitation">Accepter</a>
                 <a v-if="isLoggedIn && isInvitationPending" class="card-footer-item" @click="declineInvitation">Afvis</a>
+                <a v-if="isLoggedIn && isInvitationPending" class="card-footer-item" @click="acceptInvitation">Accepter</a>
             </footer>
         </template>
     </card-component>
