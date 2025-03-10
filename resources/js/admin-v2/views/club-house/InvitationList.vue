@@ -83,7 +83,7 @@ export default {
                     <b-table-column searchable sortable field="inviteeEmail" label="Email" v-slot="props">
                         {{ props.row.inviteeEmail }}
                     </b-table-column>
-                    <b-table-column field="roles" label="Roles" v-slot="props">
+                    <b-table-column field="roles" label="Roller" v-slot="props">
                         {{ props.row.role }}
                     </b-table-column>
                     <b-table-column field="status" sortable label="Status" v-slot="props">

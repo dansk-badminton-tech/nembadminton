@@ -7,8 +7,8 @@ Du er blevet inviteret til {{$invitation->clubhouse->name}}. Brug følgende link
     Accepter invitation
 </x-mail::button>
 
-Tak fordi du valgte nembadminton!
+Tak fordi du valgte NemBadminton!
 
 Med venlig hilsen,
-Nembadminton
+NemBadminton
 </x-mail::message>

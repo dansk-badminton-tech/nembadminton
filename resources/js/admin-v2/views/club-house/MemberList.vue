@@ -54,7 +54,7 @@ export default {
             </template>
         </b-modal>
         <card-component
-            title="Medlems liste"
+            title="Medlemmer"
             icon="home"
         >
             <template v-slot:header>
@@ -78,7 +78,7 @@ export default {
                     <b-table-column sortable field="email" searchable label="Email" v-slot="props">
                         {{ props.row.email }}
                     </b-table-column>
-                    <b-table-column field="roles" label="Roles" numeric v-slot="props">
+                    <b-table-column field="roles" label="Roller" numeric v-slot="props">
                         {{ props.row.roles.map(r => r.name).join(', ') }}
                     </b-table-column>
                     <b-table-column label="Funktioner" numeric v-slot="props">

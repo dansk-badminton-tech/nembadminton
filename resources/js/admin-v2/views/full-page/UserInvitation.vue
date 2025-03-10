@@ -1,16 +1,16 @@
 <template>
     <card-component
-        title="Tilslut klub"
+        title="Tilmeld klub"
         icon="lock"
     >
         <template v-slot:default>
             <div>
                 <b-message
                     v-if="!me"
-                    title="Du skal oprette en bruger først"
+                    title="Opret bruger"
                     type="is-info"
                     aria-close-label="Close message">
-                    Du skal oprette dig som bruger først, før du kan accepter invitation.
+                    Du skal oprette dig som bruger først, før du kan acceptere invitationen.
                 </b-message>
                 <h2 class="subtitle">Invitation</h2>
                 <div class="content">
@@ -18,7 +18,7 @@
                         Invitation til: {{ invitation?.clubhouse?.name }}
                     </p>
                     <p>
-                        Role: {{ invitation?.role }}
+                        Rolle: {{ invitation?.role }}
                     </p>
                     <p>
                         Status: {{ invitation?.status }}
@@ -27,7 +27,7 @@
                         Udløber: {{ invitation?.expiresAt }}
                     </p>
                     <p>
-                        Accepted: {{ invitation?.acceptedAt }}
+                        Accepteret: {{ invitation?.acceptedAt }}
                     </p>
                     <p>
                         Inviteret af: {{ invitation?.inviter?.name }} ({{ invitation?.inviter?.email }})

@@ -11,13 +11,13 @@
                     <b-input
                         v-model="formData.email"
                         type="email"
-                        placeholder="Enter invitee's email"
+                        placeholder="daniel@gmail.com"
                         required>
                     </b-input>
                 </b-field>
 
                 <!-- Dropdown to select the role -->
-                <b-field label="Role" message="Hvilken en role som skal tildeles denne person?">
+                <b-field label="Rolle" message="Hvilken en rolle som skal tildeles denne person?">
                     <b-select v-model="formData.role" placeholder="Vælge en role" required>
                         <option :value="role.value" :key="role.value" v-for="role in roles">{{role.label}}</option>
                     </b-select>
@@ -26,8 +26,8 @@
         </section>
 
         <footer class="modal-card-foot">
-            <b-button type="is-success" :loading="isSubmitting" @click="handleSubmit">Send Invitation</b-button>
             <b-button @click="$emit('close')">Cancel</b-button>
+            <b-button type="is-info" :loading="isSubmitting" @click="handleSubmit">Send Invitation</b-button>
         </footer>
     </div>
 </template>

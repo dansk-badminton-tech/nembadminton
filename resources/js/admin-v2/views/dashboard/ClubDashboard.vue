@@ -11,7 +11,7 @@
                     type="is-primary"
                     icon="account-multiple"
                     :number="clubStats?.players"
-                    label="Spiller total"
+                    label="Spillere totalt"
                 />
                 <card-widget
                     class="tile is-child"
