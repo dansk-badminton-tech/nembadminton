@@ -15,7 +15,7 @@ export default function resolveMenu(clubhouseId) {
             {
                 to: '/cancellations/redirect',
                 icon: 'cancel',
-                label: 'Afbud (NYT 🤩)'
+                label: 'Afbud'
             },
             {
                 to: '/analytics',
