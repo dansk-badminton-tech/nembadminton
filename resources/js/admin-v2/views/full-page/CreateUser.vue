@@ -37,11 +37,10 @@
                 class="control"
                 tag="router-link"
                 to="/login"
-                type="is-link"
             >
                 Tilbage
             </b-button>
-            <b-button class="control" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
+            <b-button class="control" type="is-link" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
         </b-field>
     </div>
     </card-component>

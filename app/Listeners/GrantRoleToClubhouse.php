@@ -24,6 +24,7 @@ class GrantRoleToClubhouse
      */
     public function handle(ClubhouseCreated $event): void
     {
+        setPermissionsTeamId($event->clubhouse->id);
         /** @var User $user */
         $user = auth()->user();
         $user->assignRole(Role::CLUB_ADMIN->value);
