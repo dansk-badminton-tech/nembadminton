@@ -26,8 +26,8 @@
         <label class="label">Vigtig info</label>
         <article class="message is-warning-passive">
             <div class="message-body">Værktøjet nembadminton.dk er udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig. Badminton Danmark har hverken valideret eller kontrolleret beregningerne.
-                Alle udregninger er lavet på baggrund af reglementet for <a href="https://badminton.dk/om-badminton-danmark/love-regler/reglementer/holdturneringer">DH turneringen</a>. Det er altid jer som klub og bruger, der har ansvaret for, at opstillingerne er korrekte og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH reglementet.
-                Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint, hvis spillere f.eks. har karantæne ses det ikke her.</div>
+                Alle udregninger er lavet på baggrund af reglementet for <a href="https://badminton.dk/om-badminton-danmark/love-regler/reglementer/holdturneringer">DH turneringen</a>. Det er altid jer som klub og bruger, der har ansvaret for, at opstillingerne er korrekte, og I har selv ansvaret for at kontrollere i forhold til ranglister på badmintonplayer og DH reglementet.
+                Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint. Hvis spillere f.eks. har karantæne ses det ikke her.</div>
         </article>
         <b-field>
             <b-checkbox v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
