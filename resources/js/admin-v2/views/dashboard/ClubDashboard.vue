@@ -10,25 +10,25 @@
                     class="tile is-child"
                     type="is-primary"
                     icon="account-multiple"
-                    :number="clubStats?.players"
+                    :number="clubhouseStats?.players"
                     label="Spillere totalt"
                 />
                 <card-widget
                     class="tile is-child"
                     type="is-info"
                     icon="human-male"
-                    :number="clubStats?.menPlayers"
+                    :number="clubhouseStats?.menPlayers"
                     label="Mænd"
                 />
                 <card-widget
                     class="tile is-child"
                     type="is-success"
                     icon="human-female"
-                    :number="clubStats?.womenPlayers"
+                    :number="clubhouseStats?.womenPlayers"
                     label="Kvinder"
                 />
             </tiles-block>
-            <b-tabs size="is-medium" position="is-centered" class="block">
+            <b-tabs v-model="activeTab" size="is-medium" position="is-centered" class="block">
                 <b-tab-item label="Single">
                     <div class="columns">
                         <div class="column is-half">
@@ -42,20 +42,20 @@
                 <b-tab-item label="Double">
                     <div class="columns">
                         <div class="column is-half">
-                            <CategoryPoints ranking-list="MENS_DOUBLE"/>
+                            <CategoryPoints v-if="activeTab === 1" ranking-list="MENS_DOUBLE"/>
                         </div>
                         <div class="column is-half">
-                            <CategoryPoints ranking-list="WOMENS_DOUBLE"/>
+                            <CategoryPoints v-if="activeTab === 1" ranking-list="WOMENS_DOUBLE"/>
                         </div>
                     </div>
                 </b-tab-item>
                 <b-tab-item label="Mix">
                     <div class="columns">
                         <div class="column is-half">
-                            <CategoryPoints ranking-list="MEN_MIX"/>
+                            <CategoryPoints v-if="activeTab === 2" ranking-list="MEN_MIX"/>
                         </div>
                         <div class="column is-half">
-                            <CategoryPoints ranking-list="WOMEN_MIX"/>
+                            <CategoryPoints v-if="activeTab === 2" ranking-list="WOMEN_MIX"/>
 
                         </div>
                     </div>
@@ -84,10 +84,10 @@ export default {
     inject: ['clubhouseId'],
     components: {CategoryPoints, NotificationBar, CardWidget, TilesBlock, HeroBar, TitleBar, ActivityLog},
     apollo: {
-        clubStats: {
+        clubhouseStats: {
             query: gql`
-                query clubStats($id: ID!){
-                    clubStats(id: $id){
+                query clubhouseStats($id: ID!){
+                    clubhouseStats(id: $id){
                         players
                         womenPlayers
                         menPlayers
@@ -96,11 +96,11 @@ export default {
             `,
             variables() {
                 return {
-                    id: this.me?.club?.id
+                    id: this.clubhouseId
                 }
             },
             skip(){
-                return this.me?.club === undefined
+                return this.clubhouseId === undefined
             }
         },
         me: {
@@ -110,6 +110,7 @@ export default {
     data() {
         return {
             titleStack: ['Admin', 'Dashboard'],
+            activeTab: 0,
             name: '',
             page: 0,
             columns: [

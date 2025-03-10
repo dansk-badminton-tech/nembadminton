@@ -18,7 +18,7 @@ export default function resolveMenu(clubhouseId) {
                 label: 'Afbud'
             },
             {
-                to: '/analytics',
+                to: '/c-'+clubhouseId+'/analytics',
                 icon: 'google-analytics',
                 label: 'Analytics'
             }

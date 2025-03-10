@@ -7,6 +7,7 @@ import {getCurrentSeasonStart} from "@/helpers.js";
 export default {
     name: "Analytics" ,
     components: {HighestPointGainChart, TitleBar, HeroBar},
+    inject: ['clubhouseId'],
     data: () => {
         return {
             titleStack: ['Admin', 'Analytics'],
@@ -68,7 +69,7 @@ export default {
                     </b-checkbox-button>
                 </b-field>
             </b-field>
-            <HighestPointGainChart :category="category" :limit="limit" :orderBy="orderBy" :vintages="selectedVintage" />
+            <HighestPointGainChart :clubhouse-id="clubhouseId" :category="category" :limit="limit" :orderBy="orderBy" :vintages="selectedVintage" />
         </div>
     </div>
 </template>

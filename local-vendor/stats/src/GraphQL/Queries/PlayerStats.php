@@ -4,13 +4,11 @@ declare(strict_types = 1);
 
 namespace FlyCompany\Stats\GraphQL\Queries;
 
+use App\Models\Clubhouse;
 use App\Models\Member;
-use App\Models\Point;
-use App\Models\User;
 use FlyCompany\Members\Enums\Category;
 use FlyCompany\Stats\Stats;
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Database\Eloquent\Builder;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class PlayerStats
@@ -52,10 +50,9 @@ class PlayerStats
 
     public function highestPointGain($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        /** @var User $user */
-        $user = $context->user();
+        $clubhouse = Clubhouse::query()->findOrFail($args['clubhouseId']);
 
-        return $this->stats->getLowToHighestPoints($user->clubs()->pluck('id')->toArray(), Category::tryFrom($args['category']), $args['limit'], $args['orderBy'], $args['vintages']);
+        return $this->stats->getLowToHighestPoints($clubhouse->clubs()->pluck('id')->toArray(), Category::tryFrom($args['category']), $args['limit'], $args['orderBy'], $args['vintages']);
     }
 
     /**

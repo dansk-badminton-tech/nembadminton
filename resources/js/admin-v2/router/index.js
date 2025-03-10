@@ -216,15 +216,6 @@ const routes = [
                 props: route => ({collectorId: route.params.collectorId})
             },
             {
-                meta: {
-                    title: 'Analytics',
-                    requiresAuth: true
-                },
-                path: '/analytics',
-                name: 'analytics',
-                component: () => import('@/views/analytics/AnalyticDashboard.vue')
-            },
-            {
                 path: '/superadmin/notification',
                 name: 'superadmin-notification',
                 component: () => import('../views/superadmin/Notification.vue'),
@@ -289,6 +280,15 @@ const routes = [
                         path: 'club-house',
                         name: 'my-club-house',
                         component: () => import('@/views/club-house/ClubHouseDashboard.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Analytics',
+                            requiresAuth: true
+                        },
+                        path: 'analytics',
+                        name: 'analytics',
+                        component: () => import('@/views/analytics/AnalyticDashboard.vue')
                     },
                 ]
             },

@@ -4,12 +4,12 @@ import BarChart from "@/components/Charts/BarChart.vue";
 
 export default {
     name: "HighestPointGainChart",
-    props: {category: String, limit: Number, orderBy: String, vintages: Array},
+    props: {category: String, limit: Number, orderBy: String, vintages: Array, clubhouseId: String},
     components: {BarChart},
     apollo: {
         highestPointGain: {
-            query: gql`query highestPointGain($category: Category!, $limit: Int!, $orderBy: SortOrder!, $vintages: [Vintage!]!){
-                highestPointGain(category: $category, limit: $limit, orderBy: $orderBy, vintages: $vintages){
+            query: gql`query highestPointGain($clubhouseId: ID!, $category: Category!, $limit: Int!, $orderBy: SortOrder!, $vintages: [Vintage!]!){
+                highestPointGain(clubhouseId: $clubhouseId, category: $category, limit: $limit, orderBy: $orderBy, vintages: $vintages){
                     earliestPoints
                     latestPoints
                     totalIncrease
@@ -24,7 +24,8 @@ export default {
                     category: this.category,
                     limit: this.limit,
                     orderBy: this.orderBy,
-                    vintages: this.vintages
+                    vintages: this.vintages,
+                    clubhouseId: this.clubhouseId,
                 }
             }
         }
