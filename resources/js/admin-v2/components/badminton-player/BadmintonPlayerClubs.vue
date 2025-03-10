@@ -1,5 +1,5 @@
 <template>
-    <b-select :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælge klub" @input="handleInput">
+    <b-select :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælg klub" @input="handleInput">
         <option
             v-for="option in clubs"
             :key="option.id"
