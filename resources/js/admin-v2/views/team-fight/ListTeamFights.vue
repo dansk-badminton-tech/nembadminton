@@ -20,7 +20,7 @@
             @sort="onSort"
         >
             <b-table-column v-slot="props" field="id" label="Navn">
-                <router-link v-bind:to="'/team-fight/'+props.row.id+'/edit'">{{ props.row.name }}</router-link>
+                <router-link v-bind:to="props.row.id+'/edit'">{{ props.row.name }}</router-link>
             </b-table-column>
             <b-table-column v-slot="props" sortable field="gameDate" label="Spilledato">
                 {{ props.row.gameDate }}
@@ -36,7 +36,7 @@
                     size="is-small"
                     tag="router-link"
                     type="is-link"
-                    v-bind:to="'/team-fight/'+props.row.id+'/edit'">Rediger
+                    v-bind:to="props.row.id+'/edit'">Rediger
                 </b-button>
             </b-table-column>
         </b-table>
@@ -58,6 +58,7 @@ const generateGameDate = (seasonStartDate)=>{
 export default {
     name: 'ListTeamFights',
     components: {CreateTeamFightAction},
+    inject: ['clubhouseId'],
     props: {
         loading: Boolean,
     },
@@ -120,8 +121,8 @@ export default {
     apollo: {
         teams: {
             query: gql`
-                query Teams($first: Int!, $page: Int, $order: [QueryTeamsOrderOrderByClause!], $gameDate: DateRange){
-                    teams(order: $order, first: $first, page: $page, gameDate: $gameDate){
+                query Teams($clubhouseId: ID!, $first: Int!, $page: Int, $order: [QueryTeamsOrderOrderByClause!], $gameDate: DateRange){
+                    teams(clubhouseId: $clubhouseId, order: $order, first: $first, page: $page, gameDate: $gameDate){
                         data{
                             id,
                             name,
@@ -142,7 +143,8 @@ export default {
                     first: this.perPage,
                     page: this.currentPage,
                     order: this.order,
-                    gameDate: this.gameDate
+                    gameDate: this.gameDate,
+                    clubhouseId: this.clubhouseId
                 }
             },
             fetchPolicy: 'network-only'

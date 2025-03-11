@@ -1,6 +1,10 @@
 extend type Query {
     team(id: ID! @eq) : Teams @find
-    teams(order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]), gameDate: DateRange @whereBetween(key: "game_date")) : [Teams!]! @paginate(defaultCount: 20, scopes: ["currentUser"]) @guard
+    teams(
+        clubhouseId: ID! @eq(key: "clubhouse_id"),
+        order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),
+        gameDate: DateRange @whereBetween(key: "game_date")
+    ) : [Teams!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view")
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard
@@ -18,10 +22,10 @@ extend type Mutation {
     updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
     moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp")
     moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown")
-    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @inject(context: "user.id", name: "user_id")
-    createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @inject(context: "user.id", name: "user_id")
+    updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @canFind(ability: "update", find: "id")
+    createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
-    deleteTeam(id: ID! @eq) : Teams! @guard @delete @inject(context: "user.id", name: "user_id")
+    deleteTeam(id: ID! @eq) : Teams! @guard @delete @canFind(ability: "delete", find: "id")
     notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
     "Changes all player points to the new version. Does not update if squad has a specific version"
     updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")

@@ -18,13 +18,14 @@ use Illuminate\Support\Facades\Auth;
  * @property Carbon  version
  * @property Squad[] squads
  * @property integer $user_id
+ * @property User    $user
  */
 class Teams extends Model
 {
 
     public    $incrementing = false;
 
-    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id'];
+    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id'];
 
     protected static function booted()
     {
@@ -50,9 +51,19 @@ class Teams extends Model
         return $this->belongsTo(Club::class);
     }
 
-    public function squads() : hasMany
+    public function squads() : HasMany
     {
         return $this->hasMany(Squad::class)->orderBy('order');
+    }
+
+    public function user() : BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function clubhouse() : BelongsTo
+    {
+        return $this->belongsTo(Clubhouse::class);
     }
 
 }

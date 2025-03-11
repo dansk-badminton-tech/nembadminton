@@ -106,7 +106,7 @@
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubs'}">(tilføj ekstra klub)</router-link>
+                        <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}}">(tilføj ekstra klub)</router-link>
                     </h1>
                     <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
                                        :version="new Date(version)" :game-date="gameDate"/>
@@ -178,6 +178,11 @@ export default {
     },
     props: {
         teamFightId: String
+    },
+    inject: {
+        clubhouseId: {
+            default: 0
+        }
     },
     computed: {
         hasMultipleClubs() {

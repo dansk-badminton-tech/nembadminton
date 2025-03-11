@@ -132,25 +132,6 @@ const routes = [
                 props: route => ({playerId: route.params.playerID})
             },
             {
-                meta: {
-                    title: 'Opret Holdrunde',
-                    requiresAuth: true
-                },
-                path: '/team-fight/create',
-                name: 'team-fight-create',
-                component: () => import("../views/team-fight/TeamFightCreate.vue")
-            },
-            {
-                meta: {
-                    title: 'Rediger holdrunde',
-                    requiresAuth: true
-                },
-                path: '/team-fight/:teamUUID/edit',
-                name: 'team-fight-edit',
-                component: () => import("../views/team-fight/TeamFight.vue"),
-                props: route => ({teamFightId: route.params.teamUUID})
-            },
-            {
                 path: '/calendar',
                 name: 'calendar',
                 component: () => import("../views/calendar/Calendar.vue"),
@@ -278,8 +259,27 @@ const routes = [
                             requiresAuth: true
                         },
                         path: 'club-house',
-                        name: 'my-club-house',
+                        name: 'my-clubhouse',
                         component: () => import('@/views/club-house/ClubHouseDashboard.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Rediger holdrunde',
+                            requiresAuth: true
+                        },
+                        path: 'team-fight/:teamUUID/edit',
+                        name: 'team-fight-edit',
+                        component: () => import("../views/team-fight/TeamFight.vue"),
+                        props: route => ({teamFightId: route.params.teamUUID})
+                    },
+                    {
+                        meta: {
+                            title: 'Opret Holdrunde',
+                            requiresAuth: true
+                        },
+                        path: 'team-fight/create',
+                        name: 'team-fight-create',
+                        component: () => import("../views/team-fight/TeamFightCreate.vue")
                     },
                     {
                         meta: {

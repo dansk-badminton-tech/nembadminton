@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Models\Teams;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -21,7 +22,7 @@ class TeamsPolicy
      */
     public function view(User $user, Teams $teams): bool
     {
-        //
+        return $user->clubhouse_id === $teams->clubhouse_id && $user->hasPermissionTo(Permission::VIEW_TEAMROUNDS);
     }
 
     /**
@@ -29,7 +30,7 @@ class TeamsPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasPermissionTo(Permission::CREATE_TEAMROUNDS);
     }
 
     /**
@@ -37,7 +38,7 @@ class TeamsPolicy
      */
     public function update(User $user, Teams $teams): bool
     {
-        return $teams->user_id === $user->getAuthIdentifier();
+        return $user->clubhouse_id === $teams->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_TEAMROUNDS);
     }
 
     /**
@@ -45,7 +46,7 @@ class TeamsPolicy
      */
     public function delete(User $user, Teams $teams): bool
     {
-        //
+        return $user->clubhouse_id === $teams->clubhouse_id && $user->hasPermissionTo(Permission::DELETE_TEAMROUNDS);
     }
 
     /**
