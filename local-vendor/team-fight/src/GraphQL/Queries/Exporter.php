@@ -33,7 +33,7 @@ class Exporter
     {
         /** @var Teams $team */
         $teamId = $args['teamId'];
-        $team = Teams::query()->where('id', $teamId)->where('user_id', $context->user()->getAuthIdentifier())->firstOrFail();
+        $team = Teams::query()->where('id', $teamId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
         $csvData = $this->exporter->exportToCSV($team);
 
         $randomNumber = date('d-m-Y_H-i-s');

@@ -33,4 +33,10 @@ class PlayersRankingCollection extends Collection
         });
     }
 
+    public function getByPlayerNumbers(string $playerNumber){
+        return $this->filter(static function(PlayerRanking $playerRanking) use ($playerNumber) {
+            return $playerRanking->playerNumber === $playerNumber;
+        });
+    }
+
 }

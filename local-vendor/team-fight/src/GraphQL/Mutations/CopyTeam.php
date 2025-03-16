@@ -25,7 +25,7 @@ class CopyTeam
     {
         /** @var Teams $sourceTeam */
         $sourceTeam = Teams::query()
-             ->where('user_id', $context->user()->getAuthIdentifier())
+             ->where('clubhouse_id', $context->user()->clubhouse_id)
              ->where('id', $args['id'])->lockForUpdate()->firstOrFail();
         $newTeam = $this->teamManager->copyTeam($sourceTeam);
         foreach ($sourceTeam->squads as $squad){

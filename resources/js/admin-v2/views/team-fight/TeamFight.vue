@@ -57,6 +57,7 @@
                     Slet holdrunden
                 </b-dropdown-item>
             </b-dropdown>
+            <b-button class="ml-2 is-pulled-right" icon-right="update" @click="refreshTeam">Genindlæs holdrunden</b-button>
             <div class="columns mt-2">
                 <div class="column">
                     <b-field label="Navn">
@@ -270,6 +271,9 @@ export default {
         }
     },
     methods: {
+        refreshTeam(){
+            this.$apollo.queries.team.refetch();
+        },
         openLinkSharingModal() {
             this.$buefy.modal.open({
                                        parent: this,
