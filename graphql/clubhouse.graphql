@@ -8,7 +8,7 @@ extend type Mutation {
     createClubhouse(input: CreateClubhouseInput! @spread) : Clubhouse @guard @create @event(dispatch: "App\\Events\\ClubhouseCreated")
 
     # Update a clubhouse
-    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @update @canFind(ability: "update", find: "id") @hasPermission(name: "edit clubhouse")
+    updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @update @canFind(ability: "update", find: "id") @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\ClubhouseUpdated")
 
     # Send an invitation to a user
     invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\InvitationCreated")
@@ -28,8 +28,9 @@ extend type Mutation {
 
 input UpdateClubhouseInput {
     id: ID!
-    email: String!
-    name: String!
+    email: String
+    name: String
+    clubs: CreateClubBelongsToMany
 }
 
 input CreateClubhouseInput {
@@ -46,6 +47,7 @@ input CreateUserHasMany {
 
 input CreateClubBelongsToMany {
     connect: [ID!]
+    disconnect: [ID!]
 }
 
 input CreateUserBelongsToMany {

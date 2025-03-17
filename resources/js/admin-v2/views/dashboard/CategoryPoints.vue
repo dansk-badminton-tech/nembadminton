@@ -5,6 +5,7 @@ import BulkMemberRankingProgression from "@/views/dashboard/BulkMemberRankingPro
 export default {
     name: "CategoryPoints",
     components: {BulkMemberRankingProgression},
+    inject: ['clubhouseId'],
     props: {
         rankingList: String
     },
@@ -40,8 +41,8 @@ export default {
         },
         memberSearchPoints: {
             query: gql`
-                query memberSearchPoints($version: Date!, $rankingList: RankingList!, $category: Mixed, $page: Int, $first: Int){
-                    memberSearchPoints(version: $version, playable: true, rankingList: $rankingList, first: $first, page: $page){
+                query memberSearchPoints($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $category: Mixed, $page: Int, $first: Int){
+                    memberSearchPoints(clubhouse: $clubhouse, version: $version, playable: true, rankingList: $rankingList, first: $first, page: $page){
                         paginatorInfo{
                           total
                         }
@@ -76,6 +77,7 @@ export default {
                     "MEN_MIX": "MxH",
                 }
                 return {
+                    clubhouse: this.clubhouseId,
                     category: mapping[this.rankingList],
                     rankingList: this.rankingList,
                     first: this.perPage,

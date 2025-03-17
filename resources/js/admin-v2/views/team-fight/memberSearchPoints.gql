@@ -1,15 +1,17 @@
 query memberSearchPoints(
-    $version: Date!,
-    $page: Int,
-    $first: Int,
-    $name: String,
-    $teamId: String,
+    $clubhouse: Int!
+    $version: Date!
+    $page: Int
+    $first: Int
+    $name: String
+    $teamId: String
     $rankingList: RankingList!
     $playable: Boolean
     $whereCancellations: QueryMemberSearchPointsWhereCancellationsWhereConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions
 ){
     memberSearchPoints(
+        clubhouse: $clubhouse,
         version: $version,
         name: $name,
         page: $page,

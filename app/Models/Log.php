@@ -26,8 +26,10 @@ class Log extends Model
         return $builder->orderBy('created_at', 'desc');
     }
 
-    public function scopeMyClub(Builder $builder) : Builder
+    public function scopeClubhouse(Builder $builder, int $clubhouseId)
     {
-        return $builder->where('club_id', Auth::user()->organization_id);
+        return $builder->whereHas('club.clubhouses', function (Builder $builder) use ($clubhouseId) {
+            $builder->where('id', $clubhouseId);
+        });
     }
 }

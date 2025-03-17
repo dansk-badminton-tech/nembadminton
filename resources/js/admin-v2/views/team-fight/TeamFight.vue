@@ -109,7 +109,7 @@
                         }} {{ clubsNames }}
                         <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}}">(tilføj ekstra klub)</router-link>
                     </h1>
-                    <PlayersListSearch :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
+                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
@@ -162,6 +162,7 @@ import TeamTable from "./TeamTable.vue";
 import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
+import clubhouse from "../../../queries/clubhouse.gql";
 
 export default {
     name: "TeamFight",
@@ -187,10 +188,10 @@ export default {
     },
     computed: {
         hasMultipleClubs() {
-            return this.me?.clubs.length > 1;
+            return this.clubhouse?.clubs?.length > 1;
         },
         clubsNames() {
-            return this.me?.clubs.map((club) => {
+            return this.clubhouse?.clubs?.map((club) => {
                 return club.name1
             }).join(', ')
         },
@@ -251,8 +252,13 @@ export default {
         }
     },
     apollo: {
-        me: {
-            query: ME
+        clubhouse: {
+            query: clubhouse,
+            variables(){
+                return {
+                    id: this.clubhouseId
+                }
+            }
         },
         team: {
             query: TeamQuery,

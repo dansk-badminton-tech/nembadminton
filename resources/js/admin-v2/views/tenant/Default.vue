@@ -6,7 +6,7 @@ export default {
     props: ['clubhouseId'],
     provide(){
         return {
-            clubhouseId: computed(() => this.clubhouseId ?? null)
+            clubhouseId: computed(() => parseInt(this.clubhouseId) ?? null)
         }
     }
 }

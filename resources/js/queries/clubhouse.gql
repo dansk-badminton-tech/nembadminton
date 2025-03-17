@@ -6,6 +6,7 @@ query clubhouse($id: ID!){
         clubs {
             id
             name1
+            initialized
         }
         users {
             id

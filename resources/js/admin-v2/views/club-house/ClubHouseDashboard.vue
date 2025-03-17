@@ -2,15 +2,15 @@
 import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
 import CardComponent from "@/components/CardComponent.vue";
-import MyClubs from "@/views/club-house/MyClubs.vue";
 import MemberList from "@/views/club-house/MemberList.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import InvitationList from "@/views/club-house/InvitationList.vue";
 import gql from "graphql-tag";
+import MyClubhouseClubs from "@/views/club-house/MyClubhouseClubs.vue";
 
 export default {
     name: "ClubHouseDashboard",
-    components: {InvitationList, MemberList, MyClubs, CardComponent, HeroBar, TitleBar},
+    components: {MyClubhouseClubs, InvitationList, MemberList, CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
     data() {
         return {
@@ -148,7 +148,7 @@ export default {
                     <invitation-list :loading="$apollo.loading" :invitations="clubhouse?.invitations || []"/>
                 </b-tab-item>
             </b-tabs>
-            <my-clubs/>
+            <my-clubhouse-clubs />
         </section>
     </div>
 </template>

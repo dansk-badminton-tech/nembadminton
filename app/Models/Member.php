@@ -48,13 +48,21 @@ class Member extends Model
         return $this->hasMany(Cancellation::class, 'refId', 'refId');
     }
 
-    public function owner() : BelongsTo {
+    public function owner() : BelongsTo
+    {
         return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
     public function squadMember() : HasMany
     {
         return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
+    }
+
+    public function scopeClubhouse(Builder $builder, int $clubhouseId)
+    {
+        return $builder->whereHas('clubs.clubhouses', function (Builder $builder) use ($clubhouseId) {
+            $builder->where('id', $clubhouseId);
+        });
     }
 
     public function scopeNotCancelled(Builder $builder, string $teamId) : Builder
@@ -80,34 +88,6 @@ class Member extends Model
         return $query;
     }
 
-    public function scopeClubs(Builder $builder, array $clubIds) : Builder
-    {
-        return $builder->whereHas('clubs', function (Builder $builder) use ($clubIds) {
-            $builder->whereIn('id', $clubIds);
-        });
-    }
-
-    public function scopeClub(Builder $builder, int $clubId) : Builder
-    {
-        return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
-            $builder->where('id', $clubId);
-        });
-    }
-
-    public function scopeMyClub(Builder $builder) : Builder
-    {
-        return $builder->whereHas('clubs', function (Builder $builder) {
-            $builder->where('id', Auth::user()->organization_id);
-        });
-    }
-
-    public function scopeMyClubs(Builder $builder) : Builder
-    {
-        return $builder->whereHas('clubs.users', function (Builder $builder) {
-            $builder->where('id', Auth::user()->getAuthIdentifier());
-        });
-    }
-
     public function getVintage() : string
     {
         return Util::calculateVintage($this->getBirthday())->value;
@@ -118,7 +98,8 @@ class Member extends Model
         return Carbon::createFromFormat('ymd', substr($this->refId, 0, 6));
     }
 
-    public function isWomen() : bool{
+    public function isWomen() : bool
+    {
         return $this->gender === 'K';
     }
 

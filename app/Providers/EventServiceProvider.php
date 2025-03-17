@@ -29,9 +29,7 @@ class EventServiceProvider extends ServiceProvider
             InitializeClub::class,
             EnsureClubConnection::class
         ],
-        UserUpdate::class => [
-            AddedClubConnection::class
-        ],
+        UserUpdate::class => [],
         CancellationCreated::class => [
             ConfirmationEmail::class
         ],
@@ -40,6 +38,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ClubhouseCreated::class => [
             GrantRoleToClubhouse::class
+        ],
+        ClubhouseUpdated::class => [
+            AddedClubConnection::class
         ]
     ];
 

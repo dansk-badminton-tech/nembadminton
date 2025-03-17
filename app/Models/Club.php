@@ -33,7 +33,7 @@ class Club extends Model
 
     public function clubhouses() : BelongsToMany
     {
-        return $this->belongsToMany(Clubhouse::class);
+        return $this->belongsToMany(Clubhouse::class, 'clubhouse_club');
     }
 
     public function scopeOrderByName(Builder $builder) : Builder

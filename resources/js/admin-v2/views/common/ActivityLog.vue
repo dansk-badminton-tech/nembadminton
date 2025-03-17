@@ -28,6 +28,7 @@ import gql from "graphql-tag"
 
 export default {
     name: 'ActivityLog',
+    inject: ['clubhouseId'],
     data() {
         return {
             page: 1,
@@ -41,8 +42,8 @@ export default {
     apollo: {
         logs: {
             query: gql`
-                query logs($page: Int!){
-                    logs(page: $page){
+                query logs($page: Int!, $clubhouse: Int!){
+                    logs(page: $page, clubhouse: $clubhouse){
                         paginatorInfo{
                             total
                             lastPage
@@ -59,7 +60,8 @@ export default {
             pollInterval: 2000,
             variables() {
                 return {
-                    page: this.page
+                    page: this.page,
+                    clubhouse: this.clubhouseId
                 }
             }
         },

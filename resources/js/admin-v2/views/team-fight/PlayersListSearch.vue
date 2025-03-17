@@ -119,6 +119,7 @@ import ME from "../../../queries/me.gql";
 export default {
     name: 'PlayersListSearch',
     props: {
+        clubhouseId: Number,
         clubId: String,
         teamId: String,
         addPlayer: Function,
@@ -497,6 +498,7 @@ export default {
                 }
 
                 return {
+                    clubhouse: this.clubhouseId,
                     page: this.currentPage,
                     first: this.perPage,
                     notOnSquad: this.teamId,
@@ -618,6 +620,7 @@ export default {
                 }
 
                 params.teamId = this.teamId;
+                params.clubhouse = this.clubhouseId;
 
                 return params
             }
