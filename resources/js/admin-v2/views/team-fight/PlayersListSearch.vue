@@ -5,7 +5,7 @@
             <b-select v-model="rankingList">
                 <option v-for="(label, value) in rankings" :value="value">{{ label }}</option>
             </b-select>
-            <b-checkbox-button type="is-info" v-model="showCancellation">
+            <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
                 <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
                 <span v-if="showCancellation">Skjul afbud</span>
                 <b-icon size="is-small" v-if="!showCancellation" icon="account-off"></b-icon>
