@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('squad_points', function (Blueprint $table) {
-            $table->date('version')->nullable();
+            $table->addColumn('date', 'version')->nullable();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('squad_points', function (Blueprint $table) {
-            $table->date('version');
+            $table->dropColumn('version');
         });
     }
 };
