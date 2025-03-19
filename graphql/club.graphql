@@ -1,10 +1,8 @@
 extend type Query{
-    membersSearchPublic(
-        name: String @where(operator: "like"),
-        gender: [Gender!] @in,
-        orderBy: _ @orderBy(columns: ["name"])
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["hasPoints"])
+    "Search for players in a clubhouse"
     membersSearch(
+        "Clubhouse"
+        clubhouse: Int! @scope
         name: String @where(operator: "like")
         refId: String @where
         gender: [Gender!] @in
@@ -14,25 +12,29 @@ extend type Query{
         hasPoints: Boolean @scope
         "If specified will not show members that is part of Team ID"
         notOnSquad: String @scope
-    ): [Member!]! @paginate(defaultCount: 10, scopes: ["myClubs"]) @guard
+    ): [Member!]! @paginate(defaultCount: 10) @guard
+    "Search by point for players in a clubhouse"
     memberSearchPoints(
+        "Clubhouse"
+        clubhouse: Int! @scope
         version: Date!
         teamId: String
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL
         playable: Boolean @where
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamId", "user_id"])
-    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints", scopes: ["myClubs"]) @guard
+    ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints") @guard
+    "Search for players in a squad"
     memberSearchTeamFight(
         name: String!
         squadId: Int!
         gender: [Gender!]
     ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder") @guard @can(ability: "view", resolved: true)
+    "Search for badmintonplayer clubs"
     clubsSearch(
         name: String @where(operator: "like", key: "name1"),
         orderBy: _ @orderBy(columns: ["name1"])
     ): [Club!]! @paginate(defaultCount: 10)
-    members(name: String @where(operator: "like"), orderBy: _ @orderBy(columns: ["name", "latest_level_points"])): [MemberWithLatestPoints!]! @guard @paginate(defaultCount: 20, model: "FlyCompany\\Members\\Models\\MemberWithLatestPoints", scopes: ["myClub"])
     "Ranking versions based on the data from this system."
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
     "Latest Ranking version"
@@ -40,7 +42,10 @@ extend type Query{
     "Clubs"
     clubs: [Club!]! @all(scopes: ["OrderByName"])
     "Event log"
-    logs: [Log!]! @guard @paginate(defaultCount: 10, scopes: ["myClub", "orderByCreated"])
+    logs(
+        "Clubhouse"
+        clubhouse: Int! @scope
+    ): [Log!]! @guard @paginate(defaultCount: 10, scopes: ["orderByCreated"])
 }
 
 extend type Mutation {

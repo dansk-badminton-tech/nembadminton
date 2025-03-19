@@ -90,7 +90,7 @@ class User extends Authenticatable
     }
 
     public function clubhouse() : BelongsTo {
-        return $this->belongsTo(Clubhouse::class, 'clubhouse_id', 'id');
+        return $this->belongsTo(Clubhouse::class);
     }
 
 }

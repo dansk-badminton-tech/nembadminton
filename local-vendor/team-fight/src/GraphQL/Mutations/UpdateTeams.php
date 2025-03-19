@@ -129,7 +129,7 @@ class UpdateTeams
         $squadId = (int)$args['id'];
         $version = $args['version'];
 
-        return $this->squadManager->updatePoints($context->user()->getAuthIdentifier(), $squadId, $version);
+        return $this->squadManager->updatePoints($squadId, $version);
     }
 
     /**
@@ -166,7 +166,7 @@ class UpdateTeams
     private function getTeamOrFail(GraphQLContext $context, string $teamId): Teams
     {
         return Teams::query()
-            ->where('user_id', $context->user()->getAuthIdentifier())
+            ->where('clubhouse_id', $context->user()->clubhouse_id)
             ->where('id', $teamId)->lockForUpdate()->firstOrFail();
     }
 }

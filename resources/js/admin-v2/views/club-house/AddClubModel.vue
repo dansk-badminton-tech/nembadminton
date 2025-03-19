@@ -5,6 +5,7 @@ import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerC
 export default {
     name: "AddClubModel",
     components: {BadmintonPlayerClubs},
+    inject: ['clubhouseId'],
     data() {
         return {
             loading: false,
@@ -17,8 +18,8 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation updateMe($input: UpdateMe!){
-                            updateMe(input: $input){
+                        mutation updateClubhouse($input: UpdateClubhouseInput!){
+                            updateClubhouse(input: $input){
                                 id
                                 clubs {
                                     id
@@ -30,6 +31,7 @@ export default {
                     `,
                     variables: {
                         input: {
+                            id: this.clubhouseId,
                             clubs: {
                                 connect: [this.clubId]
                             }

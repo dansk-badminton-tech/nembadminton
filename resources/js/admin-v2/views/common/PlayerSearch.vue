@@ -49,6 +49,7 @@ import AddSquadMemberModal from "../team-fight/AddSquadMemberModal.vue";
 
 export default {
     name: "PlayerSearch",
+    inject: ['clubhouseId'],
     methods: {
         findPositions,
         addMember(player, event) {
@@ -120,8 +121,8 @@ export default {
             }
         },
         membersSearch: {
-            query: gql`query membersSearch($name: String, $version: Date, $gender: [Gender!]){
-                      membersSearch(name: $name, orderBy: { column: NAME, order: ASC }, gender: $gender) {
+            query: gql`query membersSearch($clubhouse: Int!, $name: String, $version: Date, $gender: [Gender!]){
+                      membersSearch(clubhouse: $clubhouse, name: $name, orderBy: { column: NAME, order: ASC }, gender: $gender) {
                         data {
                           id
                           name
@@ -144,6 +145,7 @@ export default {
             },
             variables() {
                 let params = {
+                    clubhouse: this.clubhouseId,
                     name: '%' + this.querySearchName + '%',
                     gender: resolveGenderFromCategory(this.category.category)
                 }

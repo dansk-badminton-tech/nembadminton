@@ -5,7 +5,7 @@
             <b-select v-model="rankingList">
                 <option v-for="(label, value) in rankings" :value="value">{{ label }}</option>
             </b-select>
-            <b-checkbox-button v-model="showCancellation">
+            <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
                 <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
                 <span v-if="showCancellation">Skjul afbud</span>
                 <b-icon size="is-small" v-if="!showCancellation" icon="account-off"></b-icon>
@@ -119,6 +119,7 @@ import ME from "../../../queries/me.gql";
 export default {
     name: 'PlayersListSearch',
     props: {
+        clubhouseId: Number,
         clubId: String,
         teamId: String,
         addPlayer: Function,
@@ -497,6 +498,7 @@ export default {
                 }
 
                 return {
+                    clubhouse: this.clubhouseId,
                     page: this.currentPage,
                     first: this.perPage,
                     notOnSquad: this.teamId,
@@ -618,6 +620,7 @@ export default {
                 }
 
                 params.teamId = this.teamId;
+                params.clubhouse = this.clubhouseId;
 
                 return params
             }

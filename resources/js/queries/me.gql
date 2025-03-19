@@ -24,6 +24,11 @@ query me{
             cancellationCollector {
                 id
             }
+            clubs {
+                id
+                name1
+                initialized
+            }
         },
         clubhouses {
             id

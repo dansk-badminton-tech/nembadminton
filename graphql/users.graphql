@@ -3,7 +3,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateMe(input: UpdateMe! @spread) : User! @update @guard @inject(context: "user.id", name: "id") @event(dispatch: "App\\Events\\UserUpdate")
+    updateMe(input: UpdateMe! @spread) : User! @update @guard @inject(context: "user.id", name: "id")
 }
 
 input UpsertSubscriptionSettingBelongTo {

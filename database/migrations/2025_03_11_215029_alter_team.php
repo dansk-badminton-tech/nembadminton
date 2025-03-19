@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('squad_points', function (Blueprint $table) {
-            $table->addColumn('date', 'version')->nullable();
+        Schema::table('teams', function (Blueprint $table) {
+            $table->unsignedBigInteger('clubhouse_id')->nullable();
+            $table->foreign('clubhouse_id')->references('id')->on('clubhouses');
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('squad_points', function (Blueprint $table) {
-            $table->dropColumn('version');
+        Schema::table('teams', function (Blueprint $table) {
+            $table->dropForeign(['clubhouse_id']);
+            $table->dropColumn('clubhouse_id');
         });
     }
 };

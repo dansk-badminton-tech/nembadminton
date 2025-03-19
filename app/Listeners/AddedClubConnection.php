@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\ClubhouseUpdated;
 use App\Events\UserUpdate;
 use App\Jobs\BridgeToHorizon;
 use App\Models\Club;
@@ -28,10 +29,10 @@ class AddedClubConnection
      *
      * @return void
      */
-    public function handle(UserUpdate $event)
+    public function handle(ClubhouseUpdated $event)
     {
         /** @var Club[] $clubs */
-        $clubs = $event->getUser()->clubs()->get();
+        $clubs = $event->clubhouse->clubs()->get();
         foreach ($clubs as $club){
             if($club->initialized === false){
                 BridgeToHorizon::dispatch($club->id)->onConnection('database');

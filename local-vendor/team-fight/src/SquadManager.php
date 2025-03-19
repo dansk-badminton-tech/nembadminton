@@ -177,15 +177,15 @@ class SquadManager
      *
      * @return SquadModel
      */
-    private function getSquadOrFail(int $userId, int $squadId): \App\Models\Squad
+    private function getSquadOrFail(int $squadId): \App\Models\Squad
     {
-        return \App\Models\Squad::query()->whereRelation('team', 'user_id', $userId)->where('id', '=', $squadId)->firstOrFail();
+        return \App\Models\Squad::query()->where('id', '=', $squadId)->firstOrFail();
     }
 
-    public function updatePoints(int $userId, int $squadId, ?string $version) : SquadModel{
+    public function updatePoints(int $squadId, ?string $version) : SquadModel{
 
-        return DB::transaction(function() use ($userId, $squadId, $version) {
-            $squad = $this->getSquadOrFail($userId, $squadId);
+        return DB::transaction(function() use ($squadId, $version) {
+            $squad = $this->getSquadOrFail($squadId);
             $squad->fill(['version' => $version]);
             $squad->saveOrFail();
 

@@ -5,10 +5,10 @@
     >
     <div class="mb-2">
         <b-field label="Navn">
-            <b-input v-model="name" icon="account" placeholder="Dit navn"></b-input>
+            <b-input v-model="name" dusk="name-input" icon="account" placeholder="Dit navn"></b-input>
         </b-field>
         <b-field label="Email">
-            <b-input v-model="email" icon="email" placeholder="din@email.dk" type="email"></b-input>
+            <b-input v-model="email" dusk="email-input" icon="email" placeholder="din@email.dk" type="email"></b-input>
         </b-field>
         <b-field label="Badmintonklub">
             <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
@@ -18,10 +18,10 @@
 <!--        </b-field>-->
 <!--        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>-->
         <b-field label="Adgangskode">
-            <b-input v-model="password" icon="lock" placeholder="********" type="password"></b-input>
+            <b-input v-model="password" dusk="password-input" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
         <b-field label="Gentag adgangskode">
-            <b-input v-model="password_confirmation" icon="lock" placeholder="********" type="password"></b-input>
+            <b-input v-model="password_confirmation" dusk="password-confirmation-input" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
         <label class="label">Vigtig info</label>
         <article class="message is-warning-passive">
@@ -30,7 +30,7 @@
                 Værktøjet hjælper kun med opstillinger internt og mellem hold i forhold til ranglistepoint. Hvis spillere f.eks. har karantæne, ses det ikke her.</div>
         </article>
         <b-field>
-            <b-checkbox v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
+            <b-checkbox dusk="term-checkbox" v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
         </b-field>
         <b-field grouped>
             <b-button
@@ -40,7 +40,7 @@
             >
                 Tilbage
             </b-button>
-            <b-button class="control" type="is-link" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
+            <b-button dusk="signup-button" class="control" type="is-link" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
         </b-field>
     </div>
     </card-component>

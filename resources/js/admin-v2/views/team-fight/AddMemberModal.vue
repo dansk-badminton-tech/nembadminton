@@ -5,6 +5,7 @@ import ME from "../../../queries/me.gql";
 
 export default {
     name: "AddPlayerModal",
+    inject: ['clubhouseId'],
     props: {
         version: Date
     },
@@ -41,8 +42,8 @@ export default {
             query: ME
         },
         membersSearch: {
-            query: gql`query membersSearch($refId: String, $version: Date){
-                      membersSearch(refId: $refId) {
+            query: gql`query membersSearch($clubhouse: Int!, $refId: String, $version: Date){
+                      membersSearch(clubhouse: $clubhouse, refId: $refId) {
                         data {
                           id
                           gender
@@ -67,6 +68,7 @@ export default {
                 `,
             variables() {
                 return {
+                    clubhouse: this.clubhouseId,
                     refId: this.refId,
                     version: this.version.toISOString().slice(0, 10)
                 }

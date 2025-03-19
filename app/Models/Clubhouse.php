@@ -30,7 +30,7 @@ class Clubhouse extends Model
 
     public function user() : HasMany
     {
-        return $this->hasMany(User::class, 'clubhouse_id', 'id');
+        return $this->hasMany(User::class);
     }
 
     public function invitations() : HasMany

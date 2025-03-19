@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('squad_points', function (Blueprint $table) {
-            $table->addColumn('date', 'version')->nullable();
-        });
+        DB::statement($this->dropView());
     }
 
     /**
@@ -21,8 +19,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('squad_points', function (Blueprint $table) {
-            $table->dropColumn('version');
-        });
+        //
+    }
+
+    private function dropView() : string
+    {
+        return <<<SQL
+DROP VIEW IF EXISTS `members_with_latest_points`;
+SQL;
     }
 };
