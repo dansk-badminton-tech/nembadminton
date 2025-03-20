@@ -30,6 +30,7 @@
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.0",
         "laravel/passport": "^12.0",
+        "laravel/reverb": "^1.0",
         "laravel/tinker": "^2.0",
         "mll-lab/graphql-php-scalars": "^6.0",
         "mll-lab/laravel-graphiql": "^3.0",

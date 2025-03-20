@@ -349,7 +349,7 @@ return [
             'pusher' => [
                 'driver' => 'pusher',
                 'routes' => \Nuwave\Lighthouse\Subscriptions\SubscriptionRouter::class.'@pusher',
-                'connection' => 'pusher',
+                'connection' => 'reverb',
             ],
         ],
     ],

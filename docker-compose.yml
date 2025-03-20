@@ -36,6 +36,25 @@ services:
       - smtp
       - redis
 
+  websocket:
+    image: flycompany/holdkamp
+    entrypoint: "php artisan reverb:start --debug"
+    user: "33:33"
+    ports:
+      - "8081:8081"
+    environment:
+      TELESCOPE_ENABLED: "false"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - .:/var/www/html
+      - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
+    depends_on:
+      - database
+      - redis
+
   worker:
     image: flycompany/holdkamp
     entrypoint: "php artisan horizon"
