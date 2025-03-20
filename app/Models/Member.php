@@ -65,6 +65,13 @@ class Member extends Model
         });
     }
 
+    public function scopeClub(Builder $builder, int $clubId) : Builder
+    {
+        return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
+            $builder->where('id', $clubId);
+        });
+    }
+
     public function scopeNotCancelled(Builder $builder, string $teamId) : Builder
     {
         return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamId) {
