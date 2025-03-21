@@ -65,17 +65,7 @@ export default {
     name: "TeamFightPublic",
     methods: {
         isYoungPlayer,
-        findPositions,
-        sendNotification() {
-            this.loading = true
-            this.$apollo.mutate({
-                mutation: gql`
-                                    mutation{
-                                        sendNotification
-                                    }
-                                `
-            })
-        }
+        findPositions
     },
     data() {
         return {

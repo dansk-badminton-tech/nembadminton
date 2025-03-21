@@ -5,6 +5,7 @@ RUN composer install --no-dev
 FROM php:8.3-apache as base
 RUN apt-get update && apt-get install -y libzip-dev zip libgmp-dev
 RUN pecl install redis && docker-php-ext-enable redis
+RUN pecl install ev && docker-php-ext-enable ev
 RUN docker-php-ext-install pdo_mysql gettext zip pcntl gmp
 RUN a2enmod headers rewrite
 COPY --chown=www-data:www-data --from=build /app .
