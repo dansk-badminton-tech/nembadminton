@@ -1,7 +1,6 @@
 extend type Mutation {
     subscribeWebPush(input: SubscribeWebPushInput!) : PushSubscription @field(resolver: "App\\GraphQL\\Mutations\\Subscription@subscribe")
     unsubscribeWebPush(input: UnsubscribeWebPushInput!) : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@unsubscribe")
-    sendNotification : Boolean @field(resolver: "App\\GraphQL\\Mutations\\Subscription@sendNotification")
     notificationRead : Boolean @field(resolver: "FlyCompany\\Notification\\GraphQL\\Mutation\\Notification@read")
     notificationSend(input: NotificationSendInput!) : Boolean! @field(resolver: "FlyCompany\\Notification\\GraphQL\\Mutation\\Notification@send") @guard
 }

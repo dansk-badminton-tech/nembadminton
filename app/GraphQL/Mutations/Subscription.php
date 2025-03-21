@@ -56,21 +56,4 @@ class Subscription
     {
 
     }
-
-    /**
-     * @param                      $rootValue
-     * @param array<string, mixed> $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
-     *
-     * @return bool
-     */
-    public function sendNotification($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
-    {
-        /** @var User $user */
-        $user = $context->user();
-        $user->notify(new TeamUpdated());
-
-        return true;
-    }
 }
