@@ -21,7 +21,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
           cache: 'yarn'
 
       - name: Frontend build
@@ -30,6 +30,11 @@ jobs:
           export VITE_PUSHER_HOST="ws.platform.nembadminton.dk"
           export VITE_PUSHER_PORT="443"
           export VITE_PUSHER_SCHEME="https"
+          export VITE_REVERB_APP_KEY="BFA9mqh3bek.wtz4xub"
+          export VITE_REVERB_HOST="ws.platform.nembadminton.dk"
+          export VITE_REVERB_PORT="443"
+          export VITE_REVERB_SCHEME="https"
+
           yarn install --frozen-lockfile
           yarn run build
 
