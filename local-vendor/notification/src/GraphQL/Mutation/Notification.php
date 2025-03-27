@@ -6,6 +6,7 @@ namespace FlyCompany\Notification\GraphQL\Mutation;
 use App\Models\User;
 use App\Notifications\Release;
 use FlyCompany\Notification\Enum\NotificationType;
+use FlyCompany\Notification\Enum\SubscriptionField;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
@@ -69,7 +70,7 @@ class Notification
 
         foreach ($receivers as $receiver){
             $notification = $receiver->notifications()->first();
-            Subscription::broadcast('notifications', $notification);
+            Subscription::broadcast(SubscriptionField::Notifications->value, $notification);
         }
 
         return true;
