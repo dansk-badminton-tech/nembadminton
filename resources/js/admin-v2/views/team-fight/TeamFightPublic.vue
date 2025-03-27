@@ -28,9 +28,8 @@
                     <tr v-for="category in squad.categories" :key="category.name">
                         <th>{{ category.name }}</th>
                         <td>
-                            <div v-for="player in category.players" class="is-clearfix mt-1">
-
-                                <p class="fa-pull-left">
+                            <div v-for="player in category.players" class="mt-1">
+                                <p>
                                     <b-icon
                                         v-show="player.gender === 'MEN'"
                                         icon="mars"
@@ -45,8 +44,8 @@
                                     ({{
                                         findPositions(player, category.category)
                                     }})
+                                    <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                                 </p>
-                                <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                             </div>
                         </td>
                     </tr>

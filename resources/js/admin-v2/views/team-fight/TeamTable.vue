@@ -65,8 +65,8 @@
                                     </b-icon>
                                     {{ player.name }}
                                     ({{findPositions(player, category.category) }})
+                                    <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                                 </p>
-                                <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
                             </b-tooltip>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
