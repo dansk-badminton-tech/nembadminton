@@ -214,7 +214,7 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
             }
         }
         return {
-            'has-background-warning': true
+            'has-background-danger': true
         }
     }
     if (playerInfoInSquad !== undefined) {

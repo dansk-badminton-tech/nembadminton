@@ -7,6 +7,11 @@ import vitePluginGraphqlLoader from "vite-plugin-graphql-loader";
 
 export default defineConfig(
     {
+        server: {
+            watch: {
+                ignored: ['**/storage/**/*'],
+            },
+        },
         plugins: [
             laravel([
                         'resources/js/admin-v2/main.js'
