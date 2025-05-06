@@ -64,7 +64,7 @@ class BadmintonPlayerAPI
      *
      * @return BadmintonPlayerAPI
      */
-    public static function make(string $email, string $password, Repository $cache) : BadmintonPlayerAPI
+    public static function make(string $email, #[\SensitiveParameter] string $password, Repository $cache) : BadmintonPlayerAPI
     {
         static::$username = $email;
         static::$password = $password;
@@ -101,7 +101,7 @@ class BadmintonPlayerAPI
      * @throws GuzzleException
      * @throws JsonException
      */
-    private static function getAccessToken(Client $client, string $email, string $password) : string
+    private static function getAccessToken(Client $client, string $email, #[\SensitiveParameter] string $password) : string
     {
         $response = $client->post('Authenticate', ['json' => ['email' => $email, 'password' => $password]]);
         $response = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
