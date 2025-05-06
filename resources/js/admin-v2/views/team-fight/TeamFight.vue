@@ -48,10 +48,6 @@
                         Opdater spillerpoint
                     </b-tooltip>
                 </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="copyTeamFight">
-                    <b-icon icon="content-copy"></b-icon>
-                    Kopier hele holdrunden
-                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
                     <b-icon icon="trash-can"></b-icon>
                     Slet holdrunden
@@ -842,36 +838,6 @@ export default {
                 })
                 .finally(() => {
                     this.saving = false;
-                })
-        },
-        copyTeamFight() {
-            this.$buefy.dialog.confirm(
-                {
-                    message: 'Sikker på du vil kopier helt holdet? <br><br> Holdet kommer til at hedde "Kopi af ...." og du kan altid skifte ranglisten på det kopiret hold',
-                    onConfirm: () => {
-                        this.$apollo.mutate(
-                            {
-                                mutation: gql`
-                                    mutation ($id: ID!){
-                                        copyTeam(id: $id){
-                                            id
-                                            name
-                                        }
-                                    }
-                                `,
-                                variables: {
-                                    id: this.teamFightId
-                                }
-                            }).then(({data}) => {
-                            this.$buefy.snackbar.open(
-                                {
-                                    duration: 5000,
-                                    type: 'is-success',
-                                    message: "Dit nye hold hedder \"" + data?.copyTeam?.name + "\""
-                                })
-                            this.$router.push({name: 'team-fight-dashboard'})
-                        })
-                    }
                 })
         },
         deleteTeamFight() {

@@ -32,12 +32,20 @@
                 {{ props.row.createdAt }}
             </b-table-column>
             <b-table-column v-slot="props" label="Funktioner">
-                <b-button
-                    size="is-small"
-                    tag="router-link"
-                    type="is-link"
-                    v-bind:to="props.row.id+'/edit'">Rediger
-                </b-button>
+                <div class="buttons">
+                    <b-button
+                        size="is-small"
+                        tag="router-link"
+                        type="is-link"
+                        v-bind:to="props.row.id+'/edit'">Rediger
+                    </b-button>
+                    <b-button
+                        icon-left="content-copy"
+                        title="Kopier holdrunden"
+                        size="is-small"
+                        @click="copyTeamFight(props.row.id)">
+                    </b-button>
+                </div>
             </b-table-column>
         </b-table>
         <CreateTeamFightAction v-if="teams?.data?.length === 0"></CreateTeamFightAction>
@@ -90,6 +98,36 @@ export default {
         }
     },
     methods: {
+        copyTeamFight(teamFightId) {
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Sikker på du vil kopier hele holdrunden? <br><br> Holdrunden kommer til at hedde "Kopi af ...." og du kan skifte ranglisten efter kopiring',
+                    onConfirm: () => {
+                        this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                    mutation ($id: ID!){
+                                        copyTeam(id: $id){
+                                            id
+                                            name
+                                        }
+                                    }
+                                `,
+                                variables: {
+                                    id: teamFightId
+                                }
+                            }).then(({data}) => {
+                            this.$buefy.snackbar.open(
+                                {
+                                    duration: 5000,
+                                    type: 'is-success',
+                                    message: "Holdrunden kopiret. Den hedder \"" + data?.copyTeam?.name + "\""
+                                })
+                            this.$apollo.queries.teams.refetch()
+                        })
+                    }
+                })
+        },
         setGameDateToRest(){
             let date = new Date(this.previousSeason.getTime())
             this.gameDate = {
