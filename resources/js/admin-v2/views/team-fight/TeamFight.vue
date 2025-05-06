@@ -48,10 +48,6 @@
                         Opdater spillerpoint
                     </b-tooltip>
                 </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="deleteTeamFight">
-                    <b-icon icon="trash-can"></b-icon>
-                    Slet holdrunden
-                </b-dropdown-item>
             </b-dropdown>
             <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam">Genindlæs holdrunden</b-button>
             <div class="columns mt-2">
@@ -838,29 +834,6 @@ export default {
                 })
                 .finally(() => {
                     this.saving = false;
-                })
-        },
-        deleteTeamFight() {
-            this.$buefy.dialog.confirm(
-                {
-                    message: 'Sikker på du vil slette helt holdet?',
-                    onConfirm: () => {
-                        this.$apollo.mutate(
-                            {
-                                mutation: gql`
-                                    mutation ($id: ID!){
-                                        deleteTeam(id: $id){
-                                            id
-                                        }
-                                    }
-                                `,
-                                variables: {
-                                    id: this.teamFightId
-                                }
-                            }).then(() => {
-                            this.$router.push({name: 'team-fight-dashboard'})
-                        })
-                    }
                 })
         }
     }

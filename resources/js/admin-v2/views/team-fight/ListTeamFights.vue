@@ -34,16 +34,25 @@
             <b-table-column v-slot="props" label="Funktioner">
                 <div class="buttons">
                     <b-button
+                        icon-left="pencil"
                         size="is-small"
                         tag="router-link"
                         type="is-link"
-                        v-bind:to="props.row.id+'/edit'">Rediger
+                        title="Rediger holdrunden"
+                        v-bind:to="props.row.id+'/edit'">
                     </b-button>
                     <b-button
                         icon-left="content-copy"
                         title="Kopier holdrunden"
                         size="is-small"
                         @click="copyTeamFight(props.row.id)">
+                    </b-button>
+                    <b-button
+                        icon-left="trash-can"
+                        title="Slet holdrunden"
+                        size="is-small"
+                        type="is-danger"
+                        @click="deleteTeamFight(props.row.id)">
                     </b-button>
                 </div>
             </b-table-column>
@@ -98,6 +107,35 @@ export default {
         }
     },
     methods: {
+        deleteTeamFight(teamFightId) {
+            this.$buefy.dialog.confirm(
+                {
+                    message: 'Sikker på du vil slette helt holdet?',
+                    onConfirm: () => {
+                        this.$apollo.mutate(
+                            {
+                                mutation: gql`
+                                    mutation ($id: ID!){
+                                        deleteTeam(id: $id){
+                                            id
+                                        }
+                                    }
+                                `,
+                                variables: {
+                                    id: teamFightId
+                                }
+                            }).then(() => {
+                            this.$buefy.snackbar.open(
+                                {
+                                    duration: 5000,
+                                    type: 'is-success',
+                                    message: "Holdrunden er nu slettet."
+                                })
+                            this.$apollo.queries.teams.refetch()
+                        })
+                    }
+                })
+        },
         copyTeamFight(teamFightId) {
             this.$buefy.dialog.confirm(
                 {
