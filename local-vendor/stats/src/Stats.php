@@ -3,8 +3,12 @@
 
 namespace FlyCompany\Stats;
 
+use App\Models\Club;
 use App\Models\Member;
 use App\Models\Point;
+use App\Models\Squad;
+use App\Models\Teams;
+use Carbon\Carbon;
 use FlyCompany\Members\Enums\Category;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +17,62 @@ use Illuminate\Support\Facades\DB;
 
 class Stats
 {
+
+    public function getMetric(Metric $metric)
+    {
+        return match ($metric) {
+            Metric::TEAMROUNDS_COUNT => $this->teamRoundsCount(),
+            Metric::TEAMS_COUNT => $this->getTeamRoundsCount(),
+            Metric::IMPORTED_CLUBS_COUNT => $this->getImportedClubsCount(),
+        };
+    }
+
+    private function getTeamRoundsCount() : array{
+        return Squad::query()
+                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+                    ->groupBy('date')
+                    ->orderBy('date', 'desc')
+                    ->get()
+                    ->map(function (Squad $data) {
+                        return [
+                            'points'  => $data['count'],
+                            'version' => Carbon::createFromFormat('Y-m',$data['date']),
+                        ];
+                    })->toArray();
+    }
+
+    private function getImportedClubsCount(){
+        return Club::query()
+                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+                    ->where('initialized', '=', 1)
+                    ->groupBy('date')
+                    ->orderBy('date', 'desc')
+                    ->get()
+                    ->map(function (Club $data) {
+                        return [
+                            'points'  => $data['count'],
+                            'version' => Carbon::createFromFormat('Y-m',$data['date']),
+                        ];
+                    })->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    private function teamRoundsCount() : array
+    {
+        return Teams::query()
+                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+                    ->groupBy('date')
+                    ->orderBy('date', 'desc')
+                    ->get()
+                    ->map(function (Teams $data) {
+                return [
+                    'points'  => $data['count'],
+                    'version' => Carbon::createFromFormat('Y-m',$data['date']),
+                ];
+            })->toArray();
+    }
 
     /**
      * @param string   $memberId

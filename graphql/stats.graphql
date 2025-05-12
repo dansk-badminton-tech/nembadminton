@@ -18,6 +18,15 @@ extend type Query {
         "Clubhouse Id"
         id: ID!
     ) : ClubhouseInfo @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\ClubhouseStats")
+    stats(
+        metric: Metric!
+    ) : [DataPoint] @field(resolver: "FlyCompany\\Stats\\GraphQL\\Queries\\Stats")
+}
+
+enum Metric {
+    TEAMROUNDS_COUNT
+    TEAMS_COUNT
+    IMPORTED_CLUBS_COUNT
 }
 
 type BarPoint {
