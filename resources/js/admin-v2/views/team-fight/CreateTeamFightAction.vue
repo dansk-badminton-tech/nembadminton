@@ -9,7 +9,7 @@
         <p>Kom i gang med din næste holdrunde planlægning her</p>
         <b-button
             tag="router-link"
-            to="/team-fight/create"
+            :to="{name: 'team-fight-create'}"
             type="is-primary">
             Opret holdrunde
         </b-button>
