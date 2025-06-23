@@ -10,7 +10,7 @@
         <b-button
             tag="router-link"
             :to="{name: 'team-fight-create'}"
-            type="is-primary">
+            type="is-link">
             Opret holdrunde
         </b-button>
     </div>
