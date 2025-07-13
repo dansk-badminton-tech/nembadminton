@@ -62,6 +62,8 @@ type CancellationCollector {
     email: String @guard
     "Clubs"
     clubs: [Club!]!
+    "Clubhouse"
+    clubhouse: Clubhouse!
     "Sharing ID"
     sharingId: String! @rename(attribute: "sharing_id")
     "Cancellations"
