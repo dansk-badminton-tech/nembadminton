@@ -84,7 +84,7 @@ export default {
         icon="lock"
     >
         <template v-slot:default>
-            <b-message type="is-info" v-if="showMissingClubhouseMessage">
+            <b-message type="is-info" v-if="!hasClubhouse | showMissingClubhouseMessage">
                 Du er ikke tilknyttet et klubhus. Opret din egen eller blev inviteret af en klubhus administrator fra en anden klub.
             </b-message>
             <div v-show=""></div>
