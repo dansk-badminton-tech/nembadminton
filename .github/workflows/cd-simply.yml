@@ -25,6 +25,10 @@ jobs:
           cache: 'yarn'
 
       - name: Frontend build
+        env:
+          VITE_SENTRY_DSN_PUBLIC: ${{ vars.VITE_SENTRY_DSN_PUBLIC }}
+          VITE_SENTRY_ENVIRONMENT: ${{ vars.VITE_SENTRY_ENVIRONMENT }}
+          VITE_SENTRY_SAMPLE_RATE: ${{ vars.VITE_SENTRY_SAMPLE_RATE }}
         run: |
           export VITE_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
           export VITE_PUSHER_HOST="ws.platform.nembadminton.dk"
