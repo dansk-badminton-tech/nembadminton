@@ -5,10 +5,12 @@ namespace App\Providers;
 
 use App\Events\CancellationCreated;
 use App\Events\ClubhouseCreated;
+use App\Events\ClubhouseUpdated;
 use App\Events\InvitationCreated;
 use App\Events\UserUpdate;
 use App\Listeners\AddedClubConnection;
 use App\Listeners\ConfirmationEmail;
+use App\Listeners\CreateContactInLoops;
 use App\Listeners\EnsureClubConnection;
 use App\Listeners\GrantRoleToClubhouse;
 use App\Listeners\InitializeClub;
@@ -29,7 +31,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             InitializeClub::class,
             EnsureClubConnection::class,
-            UpdateContactInLoops::class
+            CreateContactInLoops::class
         ],
         UserUpdate::class => [
             UpdateContactInLoops::class
