@@ -12,6 +12,13 @@ export default defineConfig(
                 ignored: ['**/storage/**/*'],
             },
         },
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    silenceDeprecations: ["color-functions", "global-builtin", "import"]
+                }
+            }
+        },
         plugins: [
             laravel([
                         'resources/js/admin-v2/main.js'
