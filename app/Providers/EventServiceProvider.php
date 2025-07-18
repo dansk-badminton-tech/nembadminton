@@ -13,6 +13,7 @@ use App\Listeners\EnsureClubConnection;
 use App\Listeners\GrantRoleToClubhouse;
 use App\Listeners\InitializeClub;
 use App\Listeners\SendInvitationEmail;
+use App\Listeners\UpdateContactInLoops;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -27,9 +28,12 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             InitializeClub::class,
-            EnsureClubConnection::class
+            EnsureClubConnection::class,
+            UpdateContactInLoops::class
         ],
-        UserUpdate::class => [],
+        UserUpdate::class => [
+            UpdateContactInLoops::class
+        ],
         CancellationCreated::class => [
             ConfirmationEmail::class
         ],

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c2f533faa1ab9e5da348a6dd487cf96",
+    "content-hash": "ff2cdf107f26ad090d7ea237f0b86aec",
     "packages": [
         {
             "name": "brick/math",
@@ -3604,6 +3604,45 @@
                 }
             ],
             "time": "2024-12-08T08:18:47+00:00"
+        },
+        {
+            "name": "loops-so/loops",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Loops-so/loops-php.git",
+                "reference": "4bce58618b2fc522df5b9e58633411528018eba2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Loops-so/loops-php/zipball/4bce58618b2fc522df5b9e58633411528018eba2",
+                "reference": "4bce58618b2fc522df5b9e58633411528018eba2",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.9",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Loops\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "The official Loops PHP client.",
+            "homepage": "https://github.com/Loops-so/loops-php",
+            "support": {
+                "issues": "https://github.com/Loops-so/loops-php/issues",
+                "source": "https://github.com/Loops-so/loops-php/tree/v1.0.2"
+            },
+            "time": "2025-05-29T16:15:59+00:00"
         },
         {
             "name": "minishlink/web-push",

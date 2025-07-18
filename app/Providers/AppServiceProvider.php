@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use App\Http\Kernel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Reverb\Application;
+use Loops\LoopsClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(LoopsClient::class, function () {
+            return new LoopsClient(env('LOOPS_API_KEY'));
+        });
     }
 
     /**

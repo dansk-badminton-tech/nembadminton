@@ -25,7 +25,7 @@ class AddedClubConnection
     /**
      * Handle the event.
      *
-     * @param UserUpdate $event
+     * @param ClubhouseUpdated $event
      *
      * @return void
      */
