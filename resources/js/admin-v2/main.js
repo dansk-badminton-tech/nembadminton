@@ -14,7 +14,6 @@ import Skeleton from './Skeleton.vue'
 import apolloProvider from "../graphql";
 import VueApollo from "vue-apollo";
 
-import {Fragment} from 'vue-frag'
 import VueClipboard from "vue-clipboard2";
 
 import Kustomer from './components/Kustomer/Kustomer.vue'
@@ -50,7 +49,6 @@ Vue.config.productionTip = false
 Vue.use(Buefy)
 Vue.use(VueApollo)
 Vue.use(VueClipboard)
-Vue.component('Fragment', Fragment)
 Vue.component('kustomer', Kustomer);
 
 new Vue({

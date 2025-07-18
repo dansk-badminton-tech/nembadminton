@@ -7,7 +7,7 @@
             :style="{'background-color': params.colors.primary}"
             :class="{
                 'is-kustomer-trigger-spinning': isSpinning && isFeedbackPopupOpen,
-                'is-kustomer-trigger-spinning-reverse': isSpinning && !isFeedbackPopupOpen,
+                'is-kustomer-trigger-spinning-reverse': isSpinning && !isFeedbackPopupOpen
             }"
         >
             <img :src="icon" alt="Give feedback" />
