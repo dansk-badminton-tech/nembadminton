@@ -46,7 +46,7 @@ export default {
     <div>
         <title-bar :title-stack="titleStack" />
         <hero-bar :has-right-visible="false">
-            📅 Tilføj holdkampe direkte til din kalender
+            📅 Automatisk kalender
         </hero-bar>
         
         <!-- Quick Overview Card -->
