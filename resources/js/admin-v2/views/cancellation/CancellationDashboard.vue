@@ -31,7 +31,8 @@ export default {
             orderBy: [{
                 column: 'CREATED_AT',
                 order: 'DESC'
-            }]
+            }],
+            showCalendar: false
         }
     },
     components: {TeamMatchCalendar, CancellationCollector, TitleBar, HeroBar},
@@ -175,6 +176,9 @@ export default {
             const final = [input[0]]
             final[1] = new Date(input[1].getTime() + 24 * 60 * 60 * 1000 - 1);
             this.selectedDateRange = final
+        },
+        toggleCalendar() {
+            this.showCalendar = !this.showCalendar;
         }
     },
     computed: {
@@ -192,6 +196,12 @@ export default {
                 return ''
             }
             return 'Søgte mellem ' + this.selectedDateRange?.map(d => d.toLocaleDateString()).join(" - ")
+        },
+        totalCancellations() {
+            return this.cancellationCollector?.cancellations?.paginatorInfo?.total || 0
+        },
+        hasAnyData() {
+            return this.totalCancellations > 0
         }
     }
 }
@@ -200,108 +210,212 @@ export default {
 <template>
     <div>
         <title-bar :title-stack="titleStack"/>
+        <hero-bar :has-right-visible="false">
+            <b-icon icon="account-cancel" size="is-small"></b-icon>
+            Afbud
+        </hero-bar>
+        
         <section class="section is-main-section">
-            <b-button
-                v-if="hasCancellationLink"
-                tag="router-link"
-                :to="'/cancellations/edit/'+collectorId">Rediger
-            </b-button>
-            <b-button
-                v-if="hasCancellationLink"
-                :loading="isDeleting"
-                @click="confirmDeleteCancellationCollector"
-                class="ml-2"
-            >
-                Slet
-            </b-button>
-            <hr>
-            <CancellationCollector v-if="!!cancellationCollector" :cancellationCollector="cancellationCollector"/>
-            <hr>
-            <div v-if="!!cancellationCollector">
-                <h1 class="title is-3">Oversigt over afbud</h1>
-                <b-table
-                    :data="cancellationCollector?.cancellations.data || []"
-                    :narrowed="true"
-                    :loading="$apollo.queries.cancellationCollector.loading"
-                    :paginated="true"
-                    :backend-pagination="true"
-                    :total="cancellationCollector?.cancellations.paginatorInfo.total"
-                    :per-page="perPage"
-                    @page-change="page => this.currentPage = page"
-                    backend-sorting
-                    :default-sort="['createdAt', 'desc']"
-                    @sort="onSort"
-                >
-                    <b-table-column field="createdAt" label="Oprettet" sortable v-slot="props">
-                        {{ props.row.createdAt }}
-                    </b-table-column>
-
-                    <b-table-column field="member.name" label="Navn" v-slot="props">
-                        {{ props.row.member.name }}
-                    </b-table-column>
-
-                    <b-table-column field="member.clubs" label="Klub" v-slot="props">
-                        {{ props.row.member.clubs.map(c => c.name1).join(", ") }}
-                    </b-table-column>
-
-                    <b-table-column searchable field="dates" label="Afbudsdatoer">
-                        <template
-                            v-slot:searchable="props">
-                            <b-field grouped>
-                                <b-datepicker
-                                    placeholder="Søg på afbudsdatoer"
-                                    :value="selectedDateRange"
-                                    @input="selectedDateRangeInput"
-                                    size="is-small"
-                                    :first-day-of-week="1"
-                                    locale="da-DK"
-                                    range>
-                                </b-datepicker>
-                                <p class="control">
-                                    <b-button size="is-small" @click="resetSelectedDateRange">Nulstil</b-button>
-                                </p>
-                            </b-field>
-                        </template>
-                        <template v-slot="props">
-                            {{ props.row.dates.map(d => d.date).join(", ") }}
-                        </template>
-                    </b-table-column>
-                    <b-table-column v-slot="props">
-                        <div class="buttons">
-                            <b-button
-                                icon-left="message"
-                                size="is-small"
-                                @click="showMessage(props.row)"
-                                aria-label="Vis besked"
-                                title="Vis besked"
-                                v-if="props.row.message"
-                            />
-                            <b-button
-                                icon-left="email"
-                                size="is-small"
-                                @click="showEmail(props.row)"
-                                aria-label="Vis email"
-                                title="Vis email"
-                            />
-                            <b-button
-                                icon-left="delete"
-                                type="is-danger"
-                                size="is-small"
-                                @click="confirmDeleteCancellation(props.row)"
-                                aria-label="Slet afbud"
-                                title="Slet afbud"
-                            />
+            <!-- Cancellation Collector Info Card -->
+            <div class="card" v-if="!!cancellationCollector">
+                <div class="card-content">
+                    <div class="level">
+                        <div class="level-left">
+                            <div class="level-item">
+                                <div class="is-flex is-align-items-center">
+                                    <h1 class="title is-4 mb-0 mr-3 is-flex is-align-items-center">
+                                        <b-icon icon="link" size="is-small" class="mr-2"></b-icon>
+                                        Afbudslink
+                                    </h1>
+                                </div>
+                            </div>
                         </div>
-                    </b-table-column>
-                    <template v-slot:empty="props">
-                        <p>Ingen afbud fundet. {{ showSelectedDateRange }}</p>
-                    </template>
-                </b-table>
-                <hr>
-                <h1 class="title is-3">Se afbud i kalender</h1>
-                <h2 class="subtitle">Viser alle afbud for {{ showClubNames }}.</h2>
-                <TeamMatchCalendar :cancellation-collector="cancellationCollector" :clubs="cancellationCollector?.clubs"/>
+                        <div class="level-right">
+                            <div class="level-item">
+                                <div class="buttons">
+                                    <b-button
+                                        v-if="hasCancellationLink"
+                                        tag="router-link"
+                                        :to="'/cancellations/edit/'+collectorId"
+                                        type="is-info"
+                                        icon-left="pencil">
+                                        Rediger
+                                    </b-button>
+                                    <b-button
+                                        v-if="hasCancellationLink"
+                                        :loading="isDeleting"
+                                        @click="confirmDeleteCancellationCollector"
+                                        type="is-danger"
+                                        icon-left="delete">
+                                        Slet
+                                    </b-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <CancellationCollector :cancellationCollector="cancellationCollector"/>
+                </div>
+            </div>
+
+            <!-- Cancellations Table Card -->
+            <div class="card" v-if="!!cancellationCollector">
+                <div class="card-header">
+                    <div class="card-header-title">
+                        <b-icon icon="table" size="is-small"></b-icon>
+                        <span class="ml-2">Oversigt over afbud</span>
+                        <span class="tag is-info ml-2" v-if="hasAnyData">{{ totalCancellations }}</span>
+                    </div>
+                    <div class="card-header-icon">
+                        <b-button
+                            @click="toggleCalendar"
+                            :icon-left="showCalendar ? 'calendar-minus' : 'calendar-plus'"
+                            type="is-info"
+                            outlined
+                            size="is-small">
+                            {{ showCalendar ? 'Skjul kalender' : 'Vis kalender' }}
+                        </b-button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <b-table
+                        :data="cancellationCollector?.cancellations.data || []"
+                        :narrowed="true"
+                        :loading="$apollo.queries.cancellationCollector.loading"
+                        :paginated="true"
+                        :backend-pagination="true"
+                        :total="cancellationCollector?.cancellations.paginatorInfo.total"
+                        :per-page="perPage"
+                        @page-change="page => this.currentPage = page"
+                        backend-sorting
+                        :default-sort="['createdAt', 'desc']"
+                        @sort="onSort"
+                    >
+                        <b-table-column field="createdAt" label="Oprettet" sortable v-slot="props">
+                            <b-icon icon="clock" size="is-small" type="is-grey"></b-icon>
+                            <span class="ml-1">{{ props.row.createdAt }}</span>
+                        </b-table-column>
+
+                        <b-table-column field="member.name" label="Navn" v-slot="props">
+                            <b-icon icon="account" size="is-small" type="is-grey"></b-icon>
+                            <span class="ml-1">{{ props.row.member.name }}</span>
+                        </b-table-column>
+
+                        <b-table-column field="member.clubs" label="Klub" v-slot="props">
+                            <b-icon icon="home" size="is-small" type="is-grey"></b-icon>
+                            <span class="ml-1">{{ props.row.member.clubs.map(c => c.name1).join(", ") }}</span>
+                        </b-table-column>
+
+                        <b-table-column searchable field="dates" label="Afbudsdatoer">
+                            <template v-slot:searchable>
+                                <b-field grouped>
+                                    <b-datepicker
+                                        placeholder="Søg på afbudsdatoer"
+                                        :value="selectedDateRange"
+                                        @input="selectedDateRangeInput"
+                                        size="is-small"
+                                        :first-day-of-week="1"
+                                        locale="da-DK"
+                                        range>
+                                    </b-datepicker>
+                                    <p class="control">
+                                        <b-button size="is-small" @click="resetSelectedDateRange">Nulstil</b-button>
+                                    </p>
+                                </b-field>
+                            </template>
+                            <template v-slot="props">
+                                <b-icon icon="calendar" size="is-small" type="is-grey"></b-icon>
+                                <span class="ml-1">{{ props.row.dates.map(d => d.date).join(", ") }}</span>
+                            </template>
+                        </b-table-column>
+                        
+                        <b-table-column label="Handlinger" v-slot="props">
+                            <div class="buttons">
+                                <b-button
+                                    icon-left="message"
+                                    size="is-small"
+                                    @click="showMessage(props.row)"
+                                    aria-label="Vis besked"
+                                    title="Vis besked"
+                                    v-if="props.row.message"
+                                />
+                                <b-button
+                                    icon-left="email"
+                                    size="is-small"
+                                    @click="showEmail(props.row)"
+                                    aria-label="Vis email"
+                                    title="Vis email"
+                                />
+                                <b-button
+                                    icon-left="delete"
+                                    type="is-danger"
+                                    size="is-small"
+                                    @click="confirmDeleteCancellation(props.row)"
+                                    aria-label="Slet afbud"
+                                    title="Slet afbud"
+                                />
+                            </div>
+                        </b-table-column>
+                        
+                        <template v-slot:empty>
+                            <div class="has-text-centered py-6">
+                                <b-icon icon="calendar-remove" size="is-large" type="is-grey-light"></b-icon>
+                                <p class="title is-5 has-text-grey-light mt-3">Ingen afbud fundet</p>
+                                <p class="subtitle is-6 has-text-grey">
+                                    <span v-if="showSelectedDateRange">{{ showSelectedDateRange }}</span>
+                                    <span v-else>Der er endnu ikke registreret nogen afbud.</span>
+                                </p>
+                            </div>
+                        </template>
+                    </b-table>
+                </div>
+            </div>
+
+            <!-- Calendar Card (Collapsible) -->
+            <div class="card" v-if="!!cancellationCollector && showCalendar">
+                <div class="card-header">
+                    <div class="card-header-title">
+                        <b-icon icon="calendar" size="is-small"></b-icon>
+                        <span class="ml-2">Afbud i kalender</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p class="subtitle is-6 mb-4">
+                        Kalendervisning af alle afbud for {{ showClubNames }}
+                    </p>
+                    <TeamMatchCalendar :cancellation-collector="cancellationCollector" :clubs="cancellationCollector?.clubs"/>
+                </div>
+            </div>
+
+            <!-- No Data State -->
+            <div class="card" v-if="!cancellationCollector && !$apollo.queries.cancellationCollector.loading">
+                <div class="card-content has-text-centered py-6">
+                    <b-icon icon="link-off" size="is-large" type="is-grey-light"></b-icon>
+                    <p class="title is-4 has-text-grey-light mt-3">Afbudslink ikke fundet</p>
+                    <p class="subtitle is-6 has-text-grey">Dette afbudslink eksisterer ikke eller er blevet slettet.</p>
+                    <b-button type="is-primary" tag="router-link" to="/cancellations" class="mt-3">
+                        Gå til afbud oversigt
+                    </b-button>
+                </div>
             </div>
         </section>
     </div>
 </template>
+
+<style scoped>
+.level {
+    margin-bottom: 1rem;
+}
+
+.card + .card {
+    margin-top: 1.5rem;
+}
+
+.columns + .card {
+    margin-top: 1.5rem;
+}
+
+.tag {
+    margin-left: 0.5rem;
+}
+</style>
