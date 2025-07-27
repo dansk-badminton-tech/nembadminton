@@ -4,7 +4,7 @@ import BarChart from "@/components/Charts/BarChart.vue";
 
 export default {
     name: "HighestPointGainChart",
-    props: {category: String, limit: Number, orderBy: String, vintages: Array, clubhouseId: String},
+    props: {category: String, limit: Number, orderBy: String, vintages: Array, clubhouseId: Number},
     components: {BarChart},
     apollo: {
         highestPointGain: {
@@ -33,9 +33,15 @@ export default {
     computed:{
         highestPointGainDataset() {
             if (this.highestPointGain.length === 0) {
-                return {}
+                return {
+                    datasets: [
+                        {
+                            data: []
+                        }
+                    ]
+                }
             }
-
+            
             function getRandomInt() {
                 const min = 1;  // Minimum value (inclusive)
                 const max = 100; // Maximum value (inclusive)
