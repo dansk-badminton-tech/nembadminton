@@ -298,8 +298,8 @@ export default {
                     </template>
                 </b-table>
                 <hr>
-                <h1 class="title is-3">Kalender for holdkampe (Beta)</h1>
-                <h2 class="subtitle">Viser alle holdkampe for {{ showClubNames }}. Dataen er hentet direkte fra badmintonplayer.dk.</h2>
+                <h1 class="title is-3">Se afbud i kalender</h1>
+                <h2 class="subtitle">Viser alle afbud for {{ showClubNames }}.</h2>
                 <TeamMatchCalendar :cancellation-collector="cancellationCollector" :clubs="cancellationCollector?.clubs"/>
             </div>
         </section>
