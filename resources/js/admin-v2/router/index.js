@@ -95,15 +95,6 @@ const routes = [
                 }
             },
             {
-                path: '/calendar-generator/:teamUUID',
-                name: 'calendar-generator-public-view',
-                component: () => import("../views/calendar/CalendarGenerator.vue"),
-                props: route => ({teamId: route.params.teamUUID}),
-                meta: {
-                    title: 'Kalendar generator'
-                }
-            },
-            {
                 path: '/team-fight/check',
                 name: 'team-fight-check',
                 component: () => import("../views/check-team-fight/CheckTeamFight.vue"),
@@ -289,6 +280,15 @@ const routes = [
                         path: 'analytics',
                         name: 'analytics',
                         component: () => import('@/views/analytics/AnalyticDashboard.vue')
+                    },
+                    {
+                        path: 'calendar-generator',
+                        name: 'calendar-generator-public-view',
+                        component: () => import("../views/calendar/CalendarGenerator.vue"),
+                        props: route => ({teamId: route.params.teamUUID}),
+                        meta: {
+                            title: 'Kalendar generator'
+                        }
                     },
                 ]
             },

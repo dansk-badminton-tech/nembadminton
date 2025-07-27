@@ -13,6 +13,18 @@ export default function resolveMenu(clubhouseId) {
                 label: 'Holdrunder'
             },
             {
+                label: 'Kalender',
+                subLabel: 'Submenus Example',
+                icon: 'calendar',
+                menu: [
+                    {
+                        to: '/c-'+clubhouseId+'/calendar-generator',
+                        icon: 'calendar-sync-outline',
+                        label: 'Automatisk kalender'
+                    }
+                ]
+            },
+            {
                 to: '/cancellations/redirect',
                 icon: 'cancel',
                 label: 'Afbud'
@@ -65,21 +77,21 @@ export default function resolveMenu(clubhouseId) {
 //            label: 'Login',
 //            icon: 'lock'
 //        },
-//        {
-//            label: 'Submenus',
-//            subLabel: 'Submenus Example',
-//            icon: 'view-list',
-//            menu: [
-//                {
-//                    href: '#void',
-//                    label: 'Sub-item One'
-//                },
-//                {
-//                    href: '#void',
-//                    label: 'Sub-item Two'
-//                }
-//            ]
-//        }
+    //    {
+    //        label: 'Submenus',
+    //        subLabel: 'Submenus Example',
+    //        icon: 'view-list',
+    //        menu: [
+    //            {
+    //                href: '#void',
+    //                label: 'Sub-item One'
+    //            },
+    //            {
+    //                href: '#void',
+    //                label: 'Sub-item Two'
+    //            }
+    //        ]
+    //    }
 //    ],
     ]
 }
