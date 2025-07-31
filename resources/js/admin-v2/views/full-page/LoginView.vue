@@ -59,7 +59,7 @@
                     expanded
                 >
                     <b-icon icon="account-plus" size="is-small" class="mr-2"></b-icon>
-                    Opret dig
+                    Opret bruger
                 </b-button>
             </div>
         </form>
