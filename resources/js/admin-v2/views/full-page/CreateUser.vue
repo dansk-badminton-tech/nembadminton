@@ -33,15 +33,30 @@
             <b-checkbox dusk="term-checkbox" v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
         </b-field>
         <b-field grouped>
-            <b-button
-                class="control"
-                tag="router-link"
-                to="/login"
-            >
-                Tilbage
-            </b-button>
-            <b-button dusk="signup-button" class="control" type="is-link" :disabled="!accepted" :loading="loading" @click="create">Opret</b-button>
+            <b-button 
+                dusk="signup-button" 
+                class="control" 
+                type="is-link" 
+                :disabled="!accepted" 
+                :loading="loading"
+                expanded 
+                @click="create">Opret</b-button>
         </b-field>
+        <hr class="my-5">
+
+            <div class="has-text-centered">
+                <p class="mb-3">Har du allerede en bruger?</p>
+                <b-button
+                    tag="router-link"
+                    to="/login"
+                    type="is-link"
+                    outlined
+                    expanded
+                >
+                    <b-icon icon="login" size="is-small" class="mr-2"></b-icon>
+                    Login
+                </b-button>
+            </div>
     </div>
     </card-component>
 </template>

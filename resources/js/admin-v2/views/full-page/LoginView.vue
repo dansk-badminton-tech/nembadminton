@@ -35,26 +35,50 @@
                 <div class="control">
                     <b-button
                         native-type="submit"
-                        type="is-black"
+                        type="is-info"
                         :loading="isLoading"
+                        expanded
+                        size="is-medium"
                     >
+                        <b-icon icon="login" size="is-small" class="mr-2"></b-icon>
                         Login
                     </b-button>
                 </div>
-                <div class="control">
-                    <b-button
-                        tag="router-link"
-                        to="/sign-up"
-                        type="is-link"
-                        :loading="isLoading"
-                    >
-                        Opret dig
-                    </b-button>
-                </div>
             </b-field>
+
+            <hr class="my-5">
+
+            <div class="has-text-centered">
+                <p class="mb-3">Har du ingen bruger?</p>
+                <b-button
+                    tag="router-link"
+                    to="/sign-up"
+                    type="is-link"
+                    :loading="isLoading"
+                    outlined
+                    expanded
+                >
+                    <b-icon icon="account-plus" size="is-small" class="mr-2"></b-icon>
+                    Opret dig
+                </b-button>
+            </div>
         </form>
     </card-component>
 </template>
+
+<style scoped>
+
+.field.is-grouped .control {
+    flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .card-component {
+        margin: 1rem;
+        max-width: none;
+    }
+}
+</style>
 
 <script>
 import {defineComponent} from 'vue'
