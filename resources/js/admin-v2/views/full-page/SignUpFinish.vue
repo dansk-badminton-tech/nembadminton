@@ -107,7 +107,7 @@ export default {
                 <b-field
                     horizontal
                     label="E-mail"
-                    message="Klubbens email eller primær kontaktperson">
+                    message="Klubbens email eller primær kontaktperson. Du må gerne bruge din egen email, du kan altid ændre den senere igen. :D">
                     <b-input
                         v-model="email"
                         name="email"
