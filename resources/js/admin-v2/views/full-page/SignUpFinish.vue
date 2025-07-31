@@ -80,7 +80,7 @@ export default {
 
 <template>
     <card-component
-        title="Tilslut klub"
+        title="Tilslut klubhus"
         icon="lock"
     >
         <template v-slot:default>
@@ -96,7 +96,7 @@ export default {
                 <b-field
                     horizontal
                     label="Name"
-                    message="Navnet på klubben">
+                    message="Navnet på klubhuset. Oftes klubbens navn">
                     <b-input
                         v-model="name"
                         name="name"
