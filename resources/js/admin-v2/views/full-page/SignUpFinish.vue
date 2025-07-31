@@ -95,7 +95,7 @@ export default {
             <form v-show="!hasClubhouse" @submit.prevent="createClubhouse">
                 <b-field
                     horizontal
-                    label="Name"
+                    label="Navn"
                     message="Navnet på klubhuset. Oftes klubbens navn">
                     <b-input
                         v-model="name"
