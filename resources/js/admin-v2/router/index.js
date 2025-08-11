@@ -83,16 +83,7 @@ const routes = [
                 meta: {
                     title: 'Kalendar generator'
                 }
-            },
-            {
-                path: 'team-fight/:teamUUID/public-view',
-                name: 'team-fight-public-view-2',
-                component: () => import("../views/team-fight/TeamFightPublic.vue"),
-                props: route => ({teamId: route.params.teamUUID}),
-                meta: {
-                    title: 'Holdkamp'
-                }
-            },
+            }
         ]
     },
     {
