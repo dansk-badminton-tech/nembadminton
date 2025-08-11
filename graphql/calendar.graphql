@@ -1,5 +1,10 @@
 extend type Query {
     calendarEvents(clubIds: [Int!]!): [Event!]! @field(resolver: "FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar")
+    calendarGenerator(clubhouseId: Int!): CalendarGenerator! @field(resolver: "App\\GraphQL\\Queries\\CalendarGenerator")
+}
+
+type CalendarGenerator {
+    clubs: [Club]
 }
 
 type Event {

@@ -64,6 +64,30 @@ const routes = [
         ]
     },
     {
+        path: '/c-:clubhouseId/player',
+        component: () => import (/* webpackChunkName: "player" */ '@/views/PlayerApp.vue'),
+        props: route => ({clubhouseId: route.params.clubhouseId}),
+        children: [
+            {
+                path: 'calendar-generator',
+                name: 'calendar-generator-public-view',
+                component: () => import("../views/calendar/CalendarGenerator.vue"),
+                meta: {
+                    title: 'Kalendar generator'
+                }
+            },
+            {
+                path: 'team-fight/:teamUUID/public-view',
+                name: 'team-fight-public-view-2',
+                component: () => import("../views/team-fight/TeamFightPublic.vue"),
+                props: route => ({teamId: route.params.teamUUID}),
+                meta: {
+                    title: 'Holdkamp'
+                }
+            },
+        ]
+    },
+    {
         path: '/full-width-page',
         component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullWidthView.vue'),
         children: [
@@ -280,16 +304,7 @@ const routes = [
                         path: 'analytics',
                         name: 'analytics',
                         component: () => import('@/views/analytics/AnalyticDashboard.vue')
-                    },
-                    {
-                        path: 'calendar-generator',
-                        name: 'calendar-generator-public-view',
-                        component: () => import("../views/calendar/CalendarGenerator.vue"),
-                        props: route => ({teamId: route.params.teamUUID}),
-                        meta: {
-                            title: 'Kalendar generator'
-                        }
-                    },
+                    }
                 ]
             },
             {
