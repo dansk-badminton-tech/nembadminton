@@ -25,7 +25,8 @@ export default defineComponent(
 
 <template>
     <div id="app">
-        <aside-menu title="Nembadminton spiller" :menu="menu"/>
+        <nav-bar :hide-right-nav="true"/>
+        <aside-menu title="Spillerportal" :menu="menu"/>
         <router-view/>
     </div>
 </template>

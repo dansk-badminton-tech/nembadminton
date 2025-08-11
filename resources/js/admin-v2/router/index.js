@@ -69,6 +69,14 @@ const routes = [
         props: route => ({clubhouseId: route.params.clubhouseId}),
         children: [
             {
+                path: '',
+                name: 'player-home',
+                component: () => import("../views/PlayerDashboard.vue"),
+                meta: {
+                    title: 'Spillerportal'
+                }
+            },
+            {
                 path: 'calendar-generator',
                 name: 'calendar-generator-public-view',
                 component: () => import("../views/calendar/CalendarGenerator.vue"),

@@ -32,7 +32,7 @@ export default {
     },
     data() {
         return {
-            titleStack: ['Admin', 'Automatisk kalender'],
+            titleStack: ['Spillerportal', 'Automatisk kalender'],
             calendarGenerator: {
                 clubs: []
             },
@@ -238,7 +238,7 @@ export default {
                 <b-icon icon="account-group" size="is-small"></b-icon>
                 Vælg hold
             </h3>
-            <p class="subtitle is-6 mb-4">Klik på det hold, du vil generere kalender-link for</p>
+            <p class="subtitle is-6 mb-4">Vælge hvilke hold du vil følge og generere et kalender-link.</p>
 
             <div class="columns is-multiline">
                 <div class="column is-half" v-for="team in calendarGenerator?.clubs" :key="team.id">
@@ -255,7 +255,7 @@ export default {
                                 </div>
                                 <div class="media-content">
                                     <p class="title is-5">{{team.name1}}</p>
-                                    <p class="subtitle is-6">Generér kalender-link</p>
+                                    <p class="subtitle is-6">Vælge de hold du vil følge og generér kalender-link</p>
                                 </div>
                             </div>
 
