@@ -40,6 +40,16 @@ export default function resolveMenu(clubhouseId) {
                 label: 'FAQ',
                 icon: 'frequently-asked-questions'
             },
+        ],
+        'Til spiller',
+        [
+            {
+                to: '/c-'+clubhouseId+'/player',
+                icon: 'calendar-sync-outline',
+                iconRight: 'open-in-new',
+                label: 'Spillerportalen',
+                target: '_blank'
+            }
         ]
     ]
 }

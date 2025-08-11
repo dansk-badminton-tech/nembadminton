@@ -21,6 +21,12 @@
       >
         {{ item.label }}
       </span>
+        <b-icon
+            v-if="item.iconRight"
+            :icon="item.iconRight"
+            custom-size="default"
+            class="icon-right"
+        />
       <div
         v-if="hasDropdown"
         class="dropdown-icon"
