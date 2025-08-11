@@ -45,7 +45,7 @@ export default function resolveMenu(clubhouseId) {
         [
             {
                 to: '/c-'+clubhouseId+'/player',
-                icon: 'calendar-sync-outline',
+                icon: 'badminton',
                 iconRight: 'open-in-new',
                 label: 'Spillerportalen',
                 target: '_blank'
