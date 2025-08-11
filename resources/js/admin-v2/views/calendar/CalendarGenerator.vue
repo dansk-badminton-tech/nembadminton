@@ -12,19 +12,28 @@ export default {
     components: { TitleBar, HeroBar, ICalGenerator },
     inject: ["clubhouseId"],
     apollo: {
-        clubhouse: {
-            query: clubhouse,
+        calendarGenerator: {
+            query: gql`
+                query calendarGenerator($clubhouseId: Int!) {
+                    calendarGenerator(clubhouseId: $clubhouseId){
+                        clubs {
+                            id
+                            name1
+                        }
+                    }
+                }
+            `,
             variables() {
                 return {
-                    id: this.clubhouseId
+                    clubhouseId: this.clubhouseId
                 };
             }
         }
     },
     data() {
         return {
-            titleStack: ['Admin', 'Automatisk kalender'],
-            clubhouse: {
+            titleStack: ['Spillerportal', 'Automatisk kalender'],
+            calendarGenerator: {
                 clubs: []
             },
             activeTab: 'google',
@@ -48,7 +57,7 @@ export default {
         <hero-bar :has-right-visible="false">
             📅 Automatisk kalender
         </hero-bar>
-        
+
         <!-- Quick Overview Card -->
         <div class="section">
             <div class="card">
@@ -64,8 +73,8 @@ export default {
                             </p>
                         </div>
                         <div class="column is-narrow">
-                            <b-button 
-                                @click="toggleInstructions" 
+                            <b-button
+                                @click="toggleInstructions"
                                 :icon-left="showInstructions ? 'chevron-up' : 'chevron-down'"
                                 type="is-info"
                                 outlined>
@@ -73,7 +82,7 @@ export default {
                             </b-button>
                         </div>
                     </div>
-                    
+
                     <div class="columns">
                         <div class="column">
                             <div class="content">
@@ -138,7 +147,7 @@ export default {
                     <!-- Platform Instructions Tabs -->
                     <div class="mt-5">
                         <h4 class="title is-6">Vejledning for din kalender:</h4>
-                        
+
                         <div class="tabs is-boxed">
                             <ul>
                                 <li :class="{ 'is-active': activeTab === 'google' }">
@@ -167,7 +176,7 @@ export default {
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="tab-content">
                             <div v-show="activeTab === 'google'" class="tab-pane">
                                 <div class="box">
@@ -187,7 +196,7 @@ export default {
                                     </b-message>
                                 </div>
                             </div>
-                            
+
                             <div v-show="activeTab === 'outlook'" class="tab-pane">
                                 <div class="box">
                                     <h5 class="title is-6">
@@ -202,7 +211,7 @@ export default {
                                     </ol>
                                 </div>
                             </div>
-                            
+
                             <div v-show="activeTab === 'apple'" class="tab-pane">
                                 <div class="box">
                                     <h5 class="title is-6">
@@ -222,23 +231,23 @@ export default {
                 </div>
             </div>
         </div>
-        
+
         <!-- Team Calendar Generators -->
         <div class="section">
             <h3 class="title is-4">
                 <b-icon icon="account-group" size="is-small"></b-icon>
                 Vælg hold
             </h3>
-            <p class="subtitle is-6 mb-4">Klik på det hold, du vil generere kalender-link for</p>
-            
+            <p class="subtitle is-6 mb-4">Vælge hvilke hold du vil følge og generere et kalender-link.</p>
+
             <div class="columns is-multiline">
-                <div class="column is-half" v-for="team in clubhouse?.clubs" :key="team.id">
+                <div class="column is-half" v-for="team in calendarGenerator?.clubs" :key="team.id">
                     <div class="card">
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-left">
                                     <figure class="image is-48x48">
-                                        <div class="is-flex is-align-items-center is-justify-content-center" 
+                                        <div class="is-flex is-align-items-center is-justify-content-center"
                                              style="width: 48px; height: 48px; background: #3273dc; border-radius: 6px;">
                                             <b-icon icon="account-group" type="is-white" size="is-small"></b-icon>
                                         </div>
@@ -246,17 +255,17 @@ export default {
                                 </div>
                                 <div class="media-content">
                                     <p class="title is-5">{{team.name1}}</p>
-                                    <p class="subtitle is-6">Generér kalender-link</p>
+                                    <p class="subtitle is-6">Vælge de hold du vil følge og generér kalender-link</p>
                                 </div>
                             </div>
-                            
+
                             <ICalGenerator :team-id="team.id" />
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div v-if="!clubhouse?.clubs?.length" class="has-text-centered py-6">
+
+            <div v-if="!calendarGenerator?.clubs?.length" class="has-text-centered py-6">
                 <b-icon icon="calendar" size="is-large" type="is-grey-light"></b-icon>
                 <p class="title is-5 has-text-grey-light mt-3">Ingen hold fundet</p>
                 <p class="subtitle is-6 has-text-grey">Der er endnu ikke registreret nogen hold.</p>

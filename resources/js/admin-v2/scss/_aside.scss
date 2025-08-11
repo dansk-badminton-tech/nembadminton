@@ -39,6 +39,17 @@ aside.aside {
       display: inline-block;
     }
 
+    .icon-right {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+
     li.is-active {
       ul {
         display: block;

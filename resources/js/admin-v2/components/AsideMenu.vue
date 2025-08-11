@@ -11,7 +11,7 @@
         <b-icon pack="mdi" icon="backburger" />
       </a>
       <div class="aside-tools-label">
-        <span><b>Nembadminton</b></span>
+        <span><b>{{title}}</b></span>
       </div>
     </div>
     <div class="menu is-menu-main">
@@ -43,6 +43,7 @@ export default defineComponent({
   name: 'AsideMenu',
   components: { AsideMenuList },
   props: {
+      title: String,
     menu: {
       type: Array,
       default: () => []

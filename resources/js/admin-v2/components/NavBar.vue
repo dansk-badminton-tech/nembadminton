@@ -38,6 +38,7 @@
             </a>
         </div>
         <div
+            v-if="!hideRightNav"
             class="navbar-menu fadeIn animated faster"
             :class="{ 'is-active': isMenuActive }"
         >
@@ -100,6 +101,12 @@ import NotificationDropdown from "./NotificationDropdown.vue";
 export default defineComponent(
     {
         name: 'NavBar',
+        props: {
+            hideRightNav: {
+                type: Boolean,
+                default: false
+            }
+        },
         components: {
             NotificationDropdown,
             UserAvatar,

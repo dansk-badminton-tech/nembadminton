@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <nav-bar/>
-        <aside-menu :menu="computedMenu"/>
+        <aside-menu title="Nembadminton" :menu="computedMenu"/>
         <router-view/>
         <footer-bar/>
         <Kustomer :params="this.params" :labels="this.labels"/>
