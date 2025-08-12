@@ -33,6 +33,7 @@ final readonly class Membership
             throw new UserError('You cannot delete someone elses membership');
         }
 
+        $user->clubhouses()->detach();
         $user->clubhouse()->dissociate();
         $user->save();
 
