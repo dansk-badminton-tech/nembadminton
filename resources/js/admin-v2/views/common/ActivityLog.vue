@@ -61,7 +61,7 @@ export default {
             variables() {
                 return {
                     page: this.page,
-                    clubhouse: this.clubhouseId
+                    clubhouse: parseInt(this.clubhouseId)
                 }
             }
         },
