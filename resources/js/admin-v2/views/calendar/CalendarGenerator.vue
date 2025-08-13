@@ -69,7 +69,7 @@ export default {
                                 Automatisk kalender-sync
                             </h2>
                             <p class="subtitle is-6">
-                                Få dine holdkampe direkte i Google Kalender, Outlook eller Apple Kalender
+                                Tilføj dine holdkampe direkte til din kalender med ét klik
                             </p>
                         </div>
                         <div class="column is-narrow">
@@ -120,25 +120,25 @@ export default {
                                         <span class="tag is-primary is-rounded">1</span>
                                         Vælg dit hold
                                     </h4>
-                                    <p>Find dit hold nedenfor</p>
+                                    <p>Find dit hold og vælg de hold du vil følge</p>
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="box has-background-light">
                                     <h4 class="title is-6">
                                         <span class="tag is-primary is-rounded">2</span>
-                                        Kopiér linket
+                                        Klik på din kalender
                                     </h4>
-                                    <p>Kopier det genererede kalender-link</p>
+                                    <p>Tryk på Google, Apple eller Outlook knappen</p>
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="box has-background-light">
                                     <h4 class="title is-6">
                                         <span class="tag is-primary is-rounded">3</span>
-                                        Tilføj til kalender
+                                        Færdig!
                                     </h4>
-                                    <p>Følg vejledningen for din kalender-app</p>
+                                    <p>Kampprogrammet vises nu i din kalender</p>
                                 </div>
                             </div>
                         </div>
@@ -146,7 +146,7 @@ export default {
 
                     <!-- Platform Instructions Tabs -->
                     <div class="mt-5">
-                        <h4 class="title is-6">Vejledning for din kalender:</h4>
+                        <h4 class="title is-6">Hvad sker der efter du klikker på knappen:</h4>
 
                         <div class="tabs is-boxed">
                             <ul>
@@ -184,16 +184,19 @@ export default {
                                         <b-icon icon="google" size="is-small"></b-icon>
                                         Google Kalender
                                     </h5>
-                                    <ol>
-                                        <li>Gå til <strong>Google Kalender</strong></li>
-                                        <li>Klik på <strong>"Tilføj kalender"</strong> → <strong>"Fra URL"</strong></li>
-                                        <li>Indsæt linket og tryk <strong>"Tilføj kalender"</strong></li>
-                                        <li>Kampprogrammet vises som en ny kalender</li>
-                                    </ol>
-                                    <b-message type="is-info" size="is-small">
-                                        <b-icon icon="information" size="is-small"></b-icon>
-                                        Google opdaterer eksterne kalendere med nogle timers mellemrum
-                                    </b-message>
+                                    <div class="content">
+                                        <p>Når du klikker på <strong>"Google Calendar"</strong> knappen:</p>
+                                        <ol>
+                                            <li>Du bliver sendt til Google Calendar</li>
+                                            <li>Bekræft at du vil tilføje kalenderen</li>
+                                            <li>Vælg hvilken Google-konto du vil tilføje den til</li>
+                                            <li>Kampprogrammet vises nu i din Google Calendar</li>
+                                        </ol>
+                                        <b-message type="is-info" size="is-small">
+                                            <b-icon icon="information" size="is-small"></b-icon>
+                                            Google opdaterer eksterne kalendere automatisk med nogle timers mellemrum
+                                        </b-message>
+                                    </div>
                                 </div>
                             </div>
 
@@ -201,14 +204,17 @@ export default {
                                 <div class="box">
                                     <h5 class="title is-6">
                                         <b-icon icon="microsoft" size="is-small"></b-icon>
-                                        Outlook (web-version)
+                                        Outlook
                                     </h5>
-                                    <ol>
-                                        <li>Gå til <strong>Outlook Kalender</strong></li>
-                                        <li>Klik på <strong>"Tilføj kalender"</strong> → <strong>"Abonner fra web"</strong></li>
-                                        <li>Indsæt linket og giv kalenderen et navn</li>
-                                        <li>Klik <strong>"Importér"</strong></li>
-                                    </ol>
+                                    <div class="content">
+                                        <p>Når du klikker på <strong>"Outlook"</strong> knappen:</p>
+                                        <ol>
+                                            <li>Du bliver sendt til Outlook Calendar</li>
+                                            <li>Giv kalenderen et navn</li>
+                                            <li>Klik <strong>"Importér"</strong> for at tilføje den</li>
+                                            <li>Kampprogrammet vises nu i din Outlook kalender</li>
+                                        </ol>
+                                    </div>
                                 </div>
                             </div>
 
@@ -216,14 +222,21 @@ export default {
                                 <div class="box">
                                     <h5 class="title is-6">
                                         <b-icon icon="apple" size="is-small"></b-icon>
-                                        Apple Kalender (Mac)
+                                        Apple Kalender
                                     </h5>
-                                    <ol>
-                                        <li>Åbn <strong>Apple Kalender</strong></li>
-                                        <li>Gå til <strong>Arkiv</strong> → <strong>"Nyt kalenderabonnement…"</strong></li>
-                                        <li>Indsæt linket og klik <strong>"Abonner"</strong></li>
-                                        <li>Vælg opdateringsfrekvens og klik <strong>OK</strong></li>
-                                    </ol>
+                                    <div class="content">
+                                        <p>Når du klikker på <strong>"Apple Calendar"</strong> knappen:</p>
+                                        <ol>
+                                            <li>Apple Calendar app åbner automatisk</li>
+                                            <li>Bekræft at du vil abonnere på kalenderen</li>
+                                            <li>Vælg opdateringsfrekvens (anbefaler "Hver time")</li>
+                                            <li>Kampprogrammet vises nu i Apple Calendar</li>
+                                        </ol>
+                                        <b-message type="is-warning" size="is-small">
+                                            <b-icon icon="information" size="is-small"></b-icon>
+                                            Virker kun på Mac/iPhone med Apple Calendar app installeret
+                                        </b-message>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +251,7 @@ export default {
                 <b-icon icon="account-group" size="is-small"></b-icon>
                 Vælg hold
             </h3>
-            <p class="subtitle is-6 mb-4">Vælge hvilke hold du vil følge og generere et kalender-link.</p>
+            <p class="subtitle is-6 mb-4">Vælg hvilke hold du vil følge og tilføj direkte til din kalender.</p>
 
             <div class="columns is-multiline">
                 <div class="column is-half" v-for="team in calendarGenerator?.clubs" :key="team.id">
@@ -255,7 +268,7 @@ export default {
                                 </div>
                                 <div class="media-content">
                                     <p class="title is-5">{{team.name1}}</p>
-                                    <p class="subtitle is-6">Vælge de hold du vil følge og generér kalender-link</p>
+                                    <p class="subtitle is-6">Klik på dine kalender-knapper efter at have valgt hold</p>
                                 </div>
                             </div>
 
