@@ -1,16 +1,15 @@
-import {defineConfig} from 'vite';
-import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue2';
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import vue from "@vitejs/plugin-vue";
 import path from "path";
 import vitePluginGraphqlLoader from "vite-plugin-graphql-loader";
-
 
 export default defineConfig(
     {
         server: {
             watch: {
-                ignored: ['**/storage/**/*'],
-            },
+                ignored: ["**/storage/**/*"]
+            }
         },
         css: {
             preprocessorOptions: {
@@ -21,21 +20,27 @@ export default defineConfig(
         },
         plugins: [
             laravel([
-                        'resources/js/admin-v2/main.js'
+                        "resources/js/admin-v2/main.js"
                     ]),
             vue({
                     template: {
+                        compilerOptions: {
+                            compatConfig: {
+                                MODE: 2
+                            }
+                        },
                         transformAssetUrls: {
                             base: null,
-                            includeAbsolute: false,
-                        },
-                    },
+                            includeAbsolute: false
+                        }
+                    }
                 }),
             vitePluginGraphqlLoader()
         ],
         resolve: {
             alias: {
-                '@': path.join(__dirname, 'resources/js/admin-v2')
+                "@": path.join(__dirname, "resources/js/admin-v2"),
+                vue: "@vue/compat"
             }
         }
     });

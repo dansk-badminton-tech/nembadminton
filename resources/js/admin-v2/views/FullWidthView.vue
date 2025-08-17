@@ -17,7 +17,7 @@ export default defineComponent({
   created () {
     this.$store.dispatch('toggleFullPage', true)
   },
-  beforeDestroy () {
+    beforeUnmount () {
     this.$store.dispatch('toggleFullPage', false)
   }
 })
