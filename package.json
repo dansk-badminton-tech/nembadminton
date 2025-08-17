@@ -24,6 +24,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@sentry/vue": "^9.38.0",
+        "@vue/apollo-option": "^4.2.2",
         "@vue/compat": "^3.5.17",
         "buefy": "^1.0.1",
         "bulma": "^0.9.4",
@@ -40,15 +41,14 @@
         "pusher-js": "^8.3.0",
         "vee-validate": "^4.15.1",
         "vue": "^3.5.17",
-        "vue-apollo": "^3.0.4",
         "vue-cal": "^3.11.0",
         "vue-chartjs": "^4.0",
         "vue-clipboard2": "^0.3.1",
         "vue-i18n": "^8.21.1",
-        "vue-router": "^3.4.3",
+        "vue-router": "^4.0.0",
         "vue-simple-calendar": "^5.0",
         "vuedraggable": "^2.24.3",
-        "vuex": "^3.0"
+        "vuex": "^4.0"
     },
     "type": "module"
 }
