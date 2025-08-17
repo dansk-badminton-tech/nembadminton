@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         getFilteredClubs(text) {
-            this.filteredClubs = this.me.clubs.filter((option) => {
+            this.filteredClubs = this.me.clubhouse.clubs.filter((option) => {
                 return option.name1
                              .toString()
                              .toLowerCase()

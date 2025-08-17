@@ -7,12 +7,11 @@ Kør følgende kommandoer i din terminal
 ```
 docker-compose run --rm composer install
 cp .env.example .env
-sudo chown -R $USER:33 storage
-sudo chmod -R g+w storage
 docker-compose up -d app
 docker-compose run --rm artisan key:generate
 docker-compose run --rm artisan migrate
 docker-compose run --rm artisan badmintonplayer-import:clubs
+docker-compose run --rm artisan db:seed RolesAndPermissionsSeeder
 yarn install
 yarn run dev
 ```

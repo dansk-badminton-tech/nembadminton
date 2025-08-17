@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:color";
 
 aside.aside {
   @include transition(left);
@@ -38,6 +39,17 @@ aside.aside {
       display: inline-block;
     }
 
+    .icon-right {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+
     li.is-active {
       ul {
         display: block;
@@ -60,7 +72,7 @@ aside.aside {
       ul {
         display: none;
         border-left: 0;
-        background-color: darken($base-color, 2.5%);
+        background-color: color.adjust($base-color, $lightness: -2.5%);
         padding-left: 0;
         margin: 0 0 $default-padding * .5;
 

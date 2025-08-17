@@ -40,46 +40,16 @@ export default function resolveMenu(clubhouseId) {
                 label: 'FAQ',
                 icon: 'frequently-asked-questions'
             },
-//        {
-//            href: 'https://nembadminton.voteboards.com/',
-//            label: 'Forslå ide',
-//            icon: 'lightbulb',
-//            target: '_blank'
-//        },
+        ],
+        'Til spiller',
+        [
+            {
+                to: '/c-'+clubhouseId+'/player',
+                icon: 'badminton',
+                iconRight: 'open-in-new',
+                label: 'Spillerportal',
+                target: '_blank'
+            }
         ]
-//    'Examples',
-//    [
-//        {
-//            to: '/tables',
-//            label: 'Tables',
-//            icon: 'table',
-//            updateMark: true
-//        },
-//        {
-//            to: '/forms',
-//            label: 'Forms',
-//            icon: 'square-edit-outline'
-//        },
-//        {
-//            to: '/login',
-//            label: 'Login',
-//            icon: 'lock'
-//        },
-//        {
-//            label: 'Submenus',
-//            subLabel: 'Submenus Example',
-//            icon: 'view-list',
-//            menu: [
-//                {
-//                    href: '#void',
-//                    label: 'Sub-item One'
-//                },
-//                {
-//                    href: '#void',
-//                    label: 'Sub-item Two'
-//                }
-//            ]
-//        }
-//    ],
     ]
 }
