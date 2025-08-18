@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int    id
@@ -34,6 +35,11 @@ class Club extends Model
     public function clubhouses() : BelongsToMany
     {
         return $this->belongsToMany(Clubhouse::class, 'clubhouse_club');
+    }
+
+    public function leagueTeams(): HasMany
+    {
+        return $this->hasMany(LeagueTeam::class);
     }
 
     public function scopeOrderByName(Builder $builder) : Builder
