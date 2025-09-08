@@ -186,7 +186,13 @@ export default {
             ],
             clubId: null,
             playerTeams: [],
-            season: new Date().getFullYear(),
+            season: (() => {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth();
+                // Only use current year as default if we're 6+ months into it
+                return currentMonth >= 6 ? currentYear : currentYear - 1;
+            })(),
             teamFight: null,
             selectedTeamMatches: {},
             selectedVersionsForTeamMatches: [],
@@ -211,12 +217,17 @@ export default {
     },
     computed: {
         availableSeasons() {
-            const currentYear = new Date().getFullYear();
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth(); // 0-based (0 = January, 5 = June)
             const seasons = [];
             
-            // Generate 5 seasons: current year and 4 years back
+            // Only include current year if we're 6+ months into it (July or later)
+            const startYear = currentMonth >= 6 ? currentYear : currentYear - 1;
+            
+            // Generate 5 seasons: start year and 4 years back
             for (let i = 0; i < 5; i++) {
-                const year = currentYear - i;
+                const year = startYear - i;
                 seasons.push({
                     value: year,
                     label: `${year}/${year + 1}`
@@ -452,9 +463,19 @@ export default {
                         input: wrapInTeamAndSquads(this.teams.map(team => team.squad))
                     }
                 }
-            ).then(({data}) => {
+            )
+            .then(({data}) => {
                 this.playingToHighInLevel = data.validateCrossSquads
-            }).finally(() => {
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateCrossSquads) <br/> ${error.graphQLErrors.map((error) => {return error.message}).join(', ')}`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+            .finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingCrossSquad = false
             })
@@ -486,7 +507,16 @@ export default {
                 }
             ).then(({data}) => {
                 this.playingToHighInCategory = data.validateSquads
-            }).finally(() => {
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateSquads) <br/> ${error.graphQLErrors.map((error) => {return error.message}).join(', ')}`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+            .finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingSquad = false
             })
