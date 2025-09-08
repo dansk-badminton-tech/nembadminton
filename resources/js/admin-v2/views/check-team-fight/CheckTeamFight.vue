@@ -10,12 +10,9 @@
                         </b-field>
                         <b-field label="Sæson">
                             <b-select v-model.number="season" expanded placeholder="Vælge sæson">
-                                <option value="2019">2019/2020</option>
-                                <option value="2020">2020/2021</option>
-                                <option value="2021">2021/2022</option>
-                                <option value="2022">2022/2023</option>
-                                <option value="2023">2023/2024</option>
-                                <option value="2024">2024/2025</option>
+                                <option v-for="seasonOption in availableSeasons" :key="seasonOption.value" :value="seasonOption.value">
+                                    {{ seasonOption.label }}
+                                </option>
                             </b-select>
                         </b-field>
                     </b-step-item>
@@ -189,7 +186,7 @@ export default {
             ],
             clubId: null,
             playerTeams: [],
-            season: null,
+            season: new Date().getFullYear(),
             teamFight: null,
             selectedTeamMatches: {},
             selectedVersionsForTeamMatches: [],
@@ -213,6 +210,21 @@ export default {
         }
     },
     computed: {
+        availableSeasons() {
+            const currentYear = new Date().getFullYear();
+            const seasons = [];
+            
+            // Generate 5 seasons: current year and 4 years back
+            for (let i = 0; i < 5; i++) {
+                const year = currentYear - i;
+                seasons.push({
+                    value: year,
+                    label: `${year}/${year + 1}`
+                });
+            }
+            
+            return seasons;
+        },
         errorSquadCheck() {
             if(this.markYouthAsError){
                 return this.currentPlayingToHighInCategory?.length > 0
