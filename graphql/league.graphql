@@ -1,0 +1,145 @@
+extend type Query {
+    # Seasons
+    season(id: ID! @eq): Season @find @guard
+    seasons(
+        orderBy: _ @orderBy(columns: ["year", "created_at"])
+    ): [Season!]! @paginate(defaultCount: 20) @guard
+
+    # Divisions
+    division(id: ID! @eq): Division @find @guard
+    divisions(
+        orderBy: _ @orderBy(columns: ["display_order", "name", "created_at"])
+    ): [Division!]! @paginate(defaultCount: 20) @guard
+
+    # Age Groups
+    ageGroup(id: ID! @eq): AgeGroup @find @guard
+    ageGroups(
+        orderBy: _ @orderBy(columns: ["name", "created_at"])
+    ): [AgeGroup!]! @paginate(defaultCount: 20) @guard
+
+    # Venues
+    venue(id: ID! @eq): Venue @find @guard
+    venues(
+        orderBy: _ @orderBy(columns: ["name", "created_at"])
+    ): [Venue!]! @paginate(defaultCount: 20) @guard
+}
+
+extend type Mutation {
+    # Seasons
+    createSeason(input: CreateSeasonInput! @spread): Season! @create @guard
+    updateSeason(input: UpdateSeasonInput! @spread): Season! @update @guard
+    deleteSeason(id: ID!): Season @delete @guard
+
+    # Divisions
+    createDivision(input: CreateDivisionInput! @spread): Division! @create @guard
+    updateDivision(input: UpdateDivisionInput! @spread): Division! @update @guard
+    deleteDivision(id: ID!): Division @delete @guard
+
+    # Age Groups
+    createAgeGroup(input: CreateAgeGroupInput! @spread): AgeGroup! @create @guard
+    updateAgeGroup(input: UpdateAgeGroupInput! @spread): AgeGroup! @update @guard
+    deleteAgeGroup(id: ID!): AgeGroup @delete @guard
+
+    # Venues
+    createVenue(input: CreateVenueInput! @spread): Venue! @create @guard
+    updateVenue(input: UpdateVenueInput! @spread): Venue! @update @guard
+    deleteVenue(id: ID!): Venue @delete @guard
+}
+
+# Types
+type Season {
+    id: ID!
+    year: Int!
+    name: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    
+    # Relationships
+    leagueMatches: [LeagueMatch!]! @hasMany
+}
+
+type Division {
+    id: ID!
+    name: String!
+    code: String!
+    display_order: Int!
+    clubhouse_id: ID
+    created_by_system: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+    
+    # Relationships
+    clubhouse: Clubhouse @belongsTo
+    leagueTeams: [LeagueTeam!]! @hasMany
+    leagueMatches: [LeagueMatch!]! @hasMany
+}
+
+type AgeGroup {
+    id: ID!
+    name: String!
+    code: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    
+    # Relationships
+    leagueMatches: [LeagueMatch!]! @hasMany
+}
+
+type Venue {
+    id: ID!
+    name: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    
+    # Relationships
+    leagueMatches: [LeagueMatch!]! @hasMany
+}
+
+# Inputs
+input CreateSeasonInput {
+    year: Int! @rules(apply: ["required", "integer", "unique:seasons,year"])
+    name: String! @rules(apply: ["required", "string", "max:255"])
+}
+
+input UpdateSeasonInput {
+    id: ID! @rules(apply: ["required", "exists:seasons,id"])
+    year: Int @rules(apply: ["integer"])
+    name: String @rules(apply: ["string", "max:255"])
+}
+
+input CreateDivisionInput {
+    name: String! @rules(apply: ["required", "string", "max:255"])
+    code: String! @rules(apply: ["required", "string", "max:50", "unique:divisions,code"])
+    display_order: Int! @rules(apply: ["required", "integer"])
+    clubhouse_id: ID @rules(apply: ["nullable", "exists:clubhouses,id"])
+    created_by_system: Boolean! @rules(apply: ["required", "boolean"])
+}
+
+input UpdateDivisionInput {
+    id: ID! @rules(apply: ["required", "exists:divisions,id"])
+    name: String @rules(apply: ["string", "max:255"])
+    code: String @rules(apply: ["string", "max:50"])
+    display_order: Int @rules(apply: ["integer"])
+    clubhouse_id: ID @rules(apply: ["nullable", "exists:clubhouses,id"])
+    created_by_system: Boolean @rules(apply: ["boolean"])
+}
+
+input CreateAgeGroupInput {
+    name: String! @rules(apply: ["required", "string", "max:255"])
+    code: String! @rules(apply: ["required", "string", "max:50", "unique:age_groups,code"])
+}
+
+input UpdateAgeGroupInput {
+    id: ID! @rules(apply: ["required", "exists:age_groups,id"])
+    name: String @rules(apply: ["string", "max:255"])
+    code: String @rules(apply: ["string", "max:50"])
+}
+
+input CreateVenueInput {
+    name: String! @rules(apply: ["required", "string", "max:255"])
+}
+
+input UpdateVenueInput {
+    id: ID! @rules(apply: ["required", "exists:venues,id"])
+    name: String @rules(apply: ["string", "max:255"])
+}
