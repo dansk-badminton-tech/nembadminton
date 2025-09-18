@@ -23,7 +23,9 @@
                     <RankingVersionSelect v-model="version" :playing-date="gameDate" expanded/>
                 </b-field>
                 <b-field label="Klub">
-                    <b-input v-model="me.club.name1" disabled="true"></b-input>
+                    <b-select v-model="clubId" expanded>
+                        <option v-for="club in me.clubhouse.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
+                    </b-select>
                 </b-field>
                 <b-button class="mt-2" icon-left="plus" :loading="loading" @click="createTeam">Opret</b-button>
             </div>
@@ -54,13 +56,13 @@ export default {
     },
     apollo: {
         me: {
-            query: ME
+            query: ME,  
+            result({data}) {
+                this.clubId = data.me.clubhouse.clubs[0].id
+            }
         }
     },
     methods: {
-        selectClub(id) {
-            this.clubId = id
-        },
         createTeam() {
             this.loading = true
             const createTeamGQL = gql`
@@ -82,7 +84,7 @@ export default {
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                                 version: this.version,
                                 club: {
-                                    connect: this.me.organization_id
+                                    connect: this.clubId
                                 }
                             }
                         }

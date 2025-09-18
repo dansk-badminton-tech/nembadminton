@@ -10,12 +10,9 @@
                         </b-field>
                         <b-field label="Sæson">
                             <b-select v-model.number="season" expanded placeholder="Vælge sæson">
-                                <option value="2019">2019/2020</option>
-                                <option value="2020">2020/2021</option>
-                                <option value="2021">2021/2022</option>
-                                <option value="2022">2022/2023</option>
-                                <option value="2023">2023/2024</option>
-                                <option value="2024">2024/2025</option>
+                                <option v-for="seasonOption in availableSeasons" :key="seasonOption.value" :value="seasonOption.value">
+                                    {{ seasonOption.label }}
+                                </option>
                             </b-select>
                         </b-field>
                     </b-step-item>
@@ -189,7 +186,13 @@ export default {
             ],
             clubId: null,
             playerTeams: [],
-            season: null,
+            season: (() => {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth();
+                // Only use current year as default if we're 6+ months into it
+                return currentMonth >= 6 ? currentYear : currentYear - 1;
+            })(),
             teamFight: null,
             selectedTeamMatches: {},
             selectedVersionsForTeamMatches: [],
@@ -213,6 +216,26 @@ export default {
         }
     },
     computed: {
+        availableSeasons() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth(); // 0-based (0 = January, 5 = June)
+            const seasons = [];
+            
+            // Only include current year if we're 6+ months into it (July or later)
+            const startYear = currentMonth >= 6 ? currentYear : currentYear - 1;
+            
+            // Generate 5 seasons: start year and 4 years back
+            for (let i = 0; i < 5; i++) {
+                const year = startYear - i;
+                seasons.push({
+                    value: year,
+                    label: `${year}/${year + 1}`
+                });
+            }
+            
+            return seasons;
+        },
         errorSquadCheck() {
             if(this.markYouthAsError){
                 return this.currentPlayingToHighInCategory?.length > 0
@@ -440,9 +463,19 @@ export default {
                         input: wrapInTeamAndSquads(this.teams.map(team => team.squad))
                     }
                 }
-            ).then(({data}) => {
+            )
+            .then(({data}) => {
                 this.playingToHighInLevel = data.validateCrossSquads
-            }).finally(() => {
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateCrossSquads) <br/> ${error.graphQLErrors.map((error) => {return error.message}).join(', ')}`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+            .finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingCrossSquad = false
             })
@@ -474,7 +507,16 @@ export default {
                 }
             ).then(({data}) => {
                 this.playingToHighInCategory = data.validateSquads
-            }).finally(() => {
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateSquads) <br/> ${error.graphQLErrors.map((error) => {return error.message}).join(', ')}`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+            .finally(() => {
                 this.fetchingAndValidating = false
                 this.validatingSquad = false
             })

@@ -39,7 +39,7 @@ export default {
             return this.form.selectedDates.length > 0
         },
         resolveSelectedDatesIntoHtml() {
-            return this.form.selectedDates.map(d => '<li>' + d.toISOString().substring(0, 10) + '</li>').join("")
+            return this.form.selectedDates.map(d => '<li>' + this.formatDateForDisplay(d) + '</li>').join("")
         },
         convertToEvents() {
             const dateObjects = []
@@ -104,6 +104,20 @@ export default {
         }
     },
     methods: {
+        formatDateForDisplay(date) {
+            // Format date for display in Danish locale (YYYY-MM-DD)
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
+        formatDateForServer(date) {
+            // Format date for server submission (YYYY-MM-DD in local timezone)
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
         resetForm() {
             this.form = {
                 selectedPlayer: {},
@@ -133,7 +147,7 @@ export default {
                                 connect: this.cancellationCollectorPublic.id
                             },
                             dates: {
-                                create: this.form.selectedDates.map(d => ({date: d.toISOString().substring(0, 10)}))
+                                create: this.form.selectedDates.map(d => ({date: this.formatDateForServer(d)}))
                             }
                         }
                     }
