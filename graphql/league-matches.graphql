@@ -1,0 +1,75 @@
+extend type Query {
+    leagueMatch(id: ID! @eq): LeagueMatch @find @guard
+    leagueMatches(
+        orderBy: _ @orderBy(columns: ["match_time", "created_at", "updated_at"])
+        division_id: ID @eq
+        season_id: ID @eq
+        team1_id: ID @eq
+        team2_id: ID @eq
+        venue_id: ID @eq
+    ): [LeagueMatch!]! @paginate(defaultCount: 20) @guard
+}
+
+extend type Mutation {
+    createLeagueMatch(input: CreateLeagueMatchInput! @spread): LeagueMatch! @create @guard
+    updateLeagueMatch(input: UpdateLeagueMatchInput! @spread): LeagueMatch! @update @guard
+    deleteLeagueMatch(id: ID!): LeagueMatch @delete @guard
+}
+
+type LeagueMatch {
+    id: ID!
+    external_match_id: Int!
+    division_id: ID!
+    age_group_id: ID!
+    team1_id: ID!
+    team2_id: ID!
+    venue_id: ID
+    season_id: ID!
+    clubhouse_id: ID
+    created_by_system: Boolean!
+    match_time: DateTime
+    score1: Int
+    score2: Int
+    created_at: DateTime!
+    updated_at: DateTime!
+    
+    # Relationships
+    division: Division @belongsTo
+    ageGroup: AgeGroup @belongsTo
+    team1: LeagueTeam @belongsTo
+    team2: LeagueTeam @belongsTo
+    venue: Venue @belongsTo
+    season: Season @belongsTo
+    clubhouse: Clubhouse @belongsTo
+}
+
+input CreateLeagueMatchInput {
+    external_match_id: Int! @rules(apply: ["required", "integer", "unique:league_matches,external_match_id"])
+    division_id: ID! @rules(apply: ["required", "exists:divisions,id"])
+    age_group_id: ID! @rules(apply: ["required", "exists:age_groups,id"])
+    team1_id: ID! @rules(apply: ["required", "exists:league_teams,id"])
+    team2_id: ID! @rules(apply: ["required", "exists:league_teams,id", "different:team1_id"])
+    venue_id: ID @rules(apply: ["nullable", "exists:venues,id"])
+    season_id: ID! @rules(apply: ["required", "exists:seasons,id"])
+    clubhouse_id: ID @rules(apply: ["nullable", "exists:clubhouses,id"])
+    created_by_system: Boolean! @rules(apply: ["required", "boolean"])
+    match_time: DateTime @rules(apply: ["nullable", "date"])
+    score1: Int @rules(apply: ["nullable", "integer", "min:0"])
+    score2: Int @rules(apply: ["nullable", "integer", "min:0"])
+}
+
+input UpdateLeagueMatchInput {
+    id: ID! @rules(apply: ["required", "exists:league_matches,id"])
+    external_match_id: Int @rules(apply: ["integer"])
+    division_id: ID @rules(apply: ["exists:divisions,id"])
+    age_group_id: ID @rules(apply: ["exists:age_groups,id"])
+    team1_id: ID @rules(apply: ["exists:league_teams,id"])
+    team2_id: ID @rules(apply: ["exists:league_teams,id", "different:team1_id"])
+    venue_id: ID @rules(apply: ["nullable", "exists:venues,id"])
+    season_id: ID @rules(apply: ["exists:seasons,id"])
+    clubhouse_id: ID @rules(apply: ["nullable", "exists:clubhouses,id"])
+    created_by_system: Boolean @rules(apply: ["boolean"])
+    match_time: DateTime @rules(apply: ["nullable", "date"])
+    score1: Int @rules(apply: ["nullable", "integer", "min:0"])
+    score2: Int @rules(apply: ["nullable", "integer", "min:0"])
+}
