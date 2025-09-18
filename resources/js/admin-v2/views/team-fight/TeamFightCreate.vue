@@ -56,9 +56,9 @@ export default {
     },
     apollo: {
         me: {
-            query: ME,
+            query: ME,  
             result({data}) {
-                this.clubId = data.me.clubs[0].id
+                this.clubId = data.me.clubhouse.clubs[0].id
             }
         }
     },
