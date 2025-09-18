@@ -28,11 +28,6 @@ class Season extends Model
         'end_date' => 'date',
     ];
 
-    public function groups(): HasMany
-    {
-        return $this->hasMany(Group::class);
-    }
-
     public function leagueMatches(): HasMany
     {
         return $this->hasMany(LeagueMatch::class);

@@ -303,6 +303,15 @@ const routes = [
                         path: 'analytics',
                         name: 'analytics',
                         component: () => import('@/views/analytics/AnalyticDashboard.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Hold',
+                            requiresAuth: true
+                        },
+                        path: 'league',
+                        name: 'league',
+                        component: () => import('@/views/league-teams/LeagueTeams.vue')
                     }
                 ]
             },

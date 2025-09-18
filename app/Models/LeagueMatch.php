@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $team1_id
  * @property int $team2_id
  * @property int|null $venue_id
- * @property int $group_id
  * @property int $season_id
+ * @property int|null $clubhouse_id
+ * @property bool $created_by_system
  * @property \Illuminate\Support\Carbon|null $match_time
  * @property int|null $score1
  * @property int|null $score2
@@ -26,8 +27,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property LeagueTeam $team1
  * @property LeagueTeam $team2
  * @property Venue $venue
- * @property Group $group
  * @property Season $season
+ * @property Clubhouse|null $clubhouse
  */
 class LeagueMatch extends Model
 {
@@ -38,8 +39,9 @@ class LeagueMatch extends Model
         'team1_id',
         'team2_id',
         'venue_id',
-        'group_id',
         'season_id',
+        'clubhouse_id',
+        'created_by_system',
         'match_time',
         'score1',
         'score2',
@@ -47,6 +49,7 @@ class LeagueMatch extends Model
 
     protected $casts = [
         'match_time' => 'datetime',
+        'created_by_system' => 'boolean',
     ];
 
     public function division(): BelongsTo
@@ -74,14 +77,14 @@ class LeagueMatch extends Model
         return $this->belongsTo(Venue::class);
     }
 
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
-    }
-
     public function season(): BelongsTo
     {
         return $this->belongsTo(Season::class);
+    }
+
+    public function clubhouse(): BelongsTo
+    {
+        return $this->belongsTo(Clubhouse::class);
     }
 
     public function scopeUpcoming(Builder $query): Builder

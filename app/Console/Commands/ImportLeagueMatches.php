@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\AgeGroup;
 use App\Models\Club;
 use App\Models\Division;
-use App\Models\Group;
 use App\Models\LeagueMatch;
 use App\Models\LeagueTeam;
 use App\Models\Season;
@@ -21,7 +20,7 @@ class ImportLeagueMatches extends Command
      *
      * @var string
      */
-    protected $signature = 'import:league-matches';
+    protected $signature = 'badmintonplayer-api-import:league-matches';
 
     /**
      * The console command description.
@@ -70,7 +69,6 @@ class ImportLeagueMatches extends Command
         $ageGroups = [];
         $venues = [];
         $leagueTeams = [];
-        $groups = [];
         $processedMatches = [];
 
         foreach ($matchData as $match) {
@@ -107,34 +105,24 @@ class ImportLeagueMatches extends Command
                 $venueId = $venues[$venueKey]->id;
             }
 
+            $teamName1 = $match['teamName1'] . ' ' . $match['groupName'];
             // Create/get teams
-            $team1Key = $this->getTeamKey($match['teamName1'], $match['clubId1'], $match['leagueTeamId1']);
+            $team1Key = $this->getTeamKey($teamName1, $match['clubId1']);
             if (!isset($leagueTeams[$team1Key])) {
                 $leagueTeams[$team1Key] = $this->createOrGetLeagueTeam(
-                    $match['teamName1'],
+                    $teamName1,
                     $match['clubId1'],
-                    $match['leagueTeamId1'],
-                    null
+                    $divisions[$divisionKey]->id
                 );
             }
 
-            $team2Key = $this->getTeamKey($match['teamName2'], $match['clubId2'], $match['leagueTeamId2']);
+            $teamName2 = $match['teamName2'] . ' ' . $match['groupName'];
+            $team2Key = $this->getTeamKey($teamName2, $match['clubId2']);
             if (!isset($leagueTeams[$team2Key])) {
                 $leagueTeams[$team2Key] = $this->createOrGetLeagueTeam(
-                    $match['teamName2'],
+                    $teamName2,
                     $match['clubId2'],
-                    $match['leagueTeamId2'],
-                    $match['teamNumber2'] ?? null
-                );
-            }
-
-            // Create/get group
-            $groupKey = $match['groupName'] . '_' . $divisions[$divisionKey]->id . '_' . $seasons[$match['seasonId']]->id;
-            if (!isset($groups[$groupKey])) {
-                $groups[$groupKey] = $this->createOrGetGroup(
-                    $match['groupName'],
-                    $divisions[$divisionKey]->id,
-                    $seasons[$match['seasonId']]->id
+                    $divisions[$divisionKey]->id
                 );
             }
 
@@ -146,7 +134,6 @@ class ImportLeagueMatches extends Command
                 'venue_id' => $venueId,
                 'team1_id' => $leagueTeams[$team1Key]->id,
                 'team2_id' => $leagueTeams[$team2Key]->id,
-                'group_id' => $groups[$groupKey]->id,
             ]);
 
             $processedMatches[$match['leagueMatchId']] = true;
@@ -194,52 +181,50 @@ class ImportLeagueMatches extends Command
         );
     }
 
-    private function createOrGetLeagueTeam(string $name, ?int $clubId, ?int $externalTeamId, ?int $teamNumber): LeagueTeam
+    private function createOrGetLeagueTeam(string $name, ?int $clubId, int $divisionId): LeagueTeam
     {
-        $attributes = ['name' => $name];
+        $attributes = [
+            'name' => $name,
+            'division_id' => $divisionId,
+            'created_by_system' => true, // Teams imported from external system are system-created
+        ];
         
         // If we have a club ID, try to link it
         if ($clubId && Club::find($clubId)) {
             $attributes['club_id'] = $clubId;
         }
-        
-        if ($externalTeamId) {
-            $attributes['external_team_id'] = $externalTeamId;
-        }
-        
-        if ($teamNumber) {
-            $attributes['team_number'] = $teamNumber;
-        }
 
-        // Try to find existing team by external_team_id first, then by name and club
+        // Try to find existing team by name, club
         $existingTeam = null;
-        if ($externalTeamId) {
-            $existingTeam = LeagueTeam::where('external_team_id', $externalTeamId)->first();
-        }
         
-        if (!$existingTeam && $clubId) {
+        if ($clubId) {
             $existingTeam = LeagueTeam::where('name', $name)
                 ->where('club_id', $clubId)
+                ->where('division_id', $divisionId)
+                ->where('created_by_system', true)
                 ->first();
         }
         
         if (!$existingTeam) {
             $existingTeam = LeagueTeam::where('name', $name)
                 ->whereNull('club_id')
+                ->where('division_id', $divisionId)
+                ->where('created_by_system', true)
+                ->first();
+        }
+
+        // If we still don't have a team, try to find by name, division and system-created
+        if (!$existingTeam) {
+            $existingTeam = LeagueTeam::where('name', $name)
+                ->where('division_id', $divisionId)
+                ->where('created_by_system', true)
                 ->first();
         }
 
         return $existingTeam ?: LeagueTeam::create($attributes);
     }
 
-    private function createOrGetGroup(string $name, int $divisionId, int $seasonId): Group
-    {
-        return Group::firstOrCreate([
-            'name' => $name,
-            'division_id' => $divisionId,
-            'season_id' => $seasonId,
-        ]);
-    }
+
 
     private function createLeagueMatch(array $match, array $relationships): void
     {
@@ -257,20 +242,16 @@ class ImportLeagueMatches extends Command
             'team1_id' => $relationships['team1_id'],
             'team2_id' => $relationships['team2_id'],
             'venue_id' => $relationships['venue_id'],
-            'group_id' => $relationships['group_id'],
             'season_id' => $relationships['season_id'],
+            'created_by_system' => true, // Matches imported from external system are system-created
             'match_time' => $match['matchTime'],
             'score1' => $match['score1'],
             'score2' => $match['score2'],
         ]);
     }
 
-    private function getTeamKey(string $teamName, ?int $clubId, ?int $externalTeamId): string
+    private function getTeamKey(string $teamName, ?int $clubId): string
     {
-        if ($externalTeamId) {
-            return "external_{$externalTeamId}";
-        }
-        
         if ($clubId) {
             return "club_{$clubId}_{$teamName}";
         }

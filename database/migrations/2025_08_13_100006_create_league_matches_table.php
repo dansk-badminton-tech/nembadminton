@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('team1_id')->constrained('league_teams')->onDelete('cascade');
             $table->foreignId('team2_id')->constrained('league_teams')->onDelete('cascade');
             $table->foreignId('venue_id')->nullable()->constrained('venues')->onDelete('set null');
-            $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');
             $table->foreignId('season_id')->constrained('seasons')->onDelete('cascade');
             $table->dateTime('match_time')->nullable();
             $table->integer('score1')->nullable();
