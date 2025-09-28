@@ -34,7 +34,11 @@ class RankingVersions
         /** @var User $user */
         $user = $context->user();
 
-        return RankingVersionUtil::getRankingVersionByClub($user->organization_id);
+        $rankings = [];
+        foreach ($user->clubhouse->clubs as $club) {
+            $rankings = array_merge(RankingVersionUtil::getRankingVersionByClub($club->id), $rankings);
+        }
+        return array_unique($rankings);
     }
 
 }

@@ -210,7 +210,7 @@ export default {
                 </b-field>
                 <b-field label="Klub">
                     <b-select v-model="club" expanded required>
-                        <option v-for="club in me?.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
+                        <option v-for="club in me?.clubhouse.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
                     </b-select>
                 </b-field>
                 <hr/>

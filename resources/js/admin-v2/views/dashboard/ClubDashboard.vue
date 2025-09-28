@@ -2,7 +2,7 @@
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            {{ me?.club?.name1 }}
+            {{ me?.clubhouse.name }}
         </hero-bar>
         <section class="section is-main-section">
             <tiles-block>
