@@ -47,7 +47,11 @@ export function findPlayersInCategory(categories, searchCategory, gender) {
 }
 
 export function isYoungPlayer(player) {
-    return player.vintage.toUpperCase() === 'U17' || player.vintage.toUpperCase() === 'U19'
+    return player.vintage.toUpperCase() === 'U17' || player.vintage.toUpperCase() === 'U19' || player.vintage.toUpperCase() === 'U15';
+}
+
+export function ageGroupLabel(player) {
+    return player.vintage.toUpperCase()
 }
 
 export function resolveGenderFromCategoryShort(category) {
@@ -251,7 +255,7 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
     let playerWithBelowPlayersSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category)
     if (playerWithBelowPlayersSquad !== undefined || playerWithBelowPlayersCrossSquads !== undefined) {
         if (isYoungPlayer(player, null)) {
-            msg.push("OBS: U17/U19 spiller");
+            msg.push("OBS: U15/U17/U19 spiller");
         }
     }
     if (playerWithBelowPlayersCrossSquads !== undefined) {
@@ -259,7 +263,7 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
     }
     if (playerWithBelowPlayersSquad !== undefined) {
         if (!playerWithBelowPlayersSquad.isYouthPlayer && playerWithBelowPlayersSquad.hasYouthPlayerPartner) {
-            msg.push("OBS: Har U17/U19 makker")
+            msg.push("OBS: Har U15/U17/U19 makker")
         }
         msg.push("<b>Spiller for højt på holdet i kategorien:</b> <br />" + resolveNames(playerWithBelowPlayersSquad))
     }

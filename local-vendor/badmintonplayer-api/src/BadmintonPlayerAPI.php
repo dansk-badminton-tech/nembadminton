@@ -47,6 +47,8 @@ class BadmintonPlayerAPI
 
     private static string $password;
 
+    private string $accessToken;
+
     private static string $base_url      = 'https://badmintonplayer.dk/publicapi/v1/';
 
     private bool          $overrideCache = false;
@@ -76,10 +78,12 @@ class BadmintonPlayerAPI
             'read_timeout'    => 600,
         ]);
 
+        $accessToken = static::getRequestAccessToken($client, static::$username, static::$password);
+
         $handler = new CurlHandler();
         $stack = HandlerStack::create($handler);
-        $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use ($client) {
-            return $request->withHeader('Authorization', 'Bearer ' . static::getAccessToken($client, static::$username, static::$password));
+        $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use ($accessToken) {
+            return $request->withHeader('Authorization', 'Bearer ' . $accessToken);
         }));
         $client = new Client([
             'base_uri'        => self::$base_url,
@@ -89,7 +93,10 @@ class BadmintonPlayerAPI
             'handler'         => $stack,
         ]);
 
-        return new self($client, $cache);
+        $badmintonPlayerAPI = new self($client, $cache);
+        $badmintonPlayerAPI->accessToken = $accessToken;
+
+        return $badmintonPlayerAPI;
     }
 
     /**
@@ -101,12 +108,17 @@ class BadmintonPlayerAPI
      * @throws GuzzleException
      * @throws JsonException
      */
-    private static function getAccessToken(Client $client, string $email, #[\SensitiveParameter] string $password) : string
+    private static function getRequestAccessToken(Client $client, string $email, #[\SensitiveParameter] string $password) : string
     {
         $response = $client->post('Authenticate', ['json' => ['email' => $email, 'password' => $password]]);
         $response = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
         return $response['access_token'];
+    }
+
+    public function getAccessToken(): string
+    {
+        return $this->accessToken;
     }
 
     public function overrideCache() : void
@@ -181,9 +193,14 @@ class BadmintonPlayerAPI
                 'query' => array_filter([
                     'rankingType' => $periodType->value,
                     'start'       => 0,
-                    'end'         => 100,
+                    'stop'         => 100,
                 ]),
-                'json'  => [1, 6, 7],
+                'json'  => [
+                    AgeGroup::SEN->value,
+                    AgeGroup::U17->value,
+                    AgeGroup::U19->value,
+                    AgeGroup::U15->value
+                ],
             ]);
             $contents = $response->getBody()->getContents();
             $this->cache->put($cacheKey, $contents, self::CACHE_TTL);

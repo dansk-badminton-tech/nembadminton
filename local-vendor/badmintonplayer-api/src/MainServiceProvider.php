@@ -2,6 +2,7 @@
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
+use FlyCompany\BadmintonPlayerAPI\Commands\AuthenticationCommand;
 use FlyCompany\BadmintonPlayerAPI\Commands\CacheWarmUp;
 use FlyCompany\BadmintonPlayerAPI\Commands\LeagueMatch;
 use FlyCompany\BadmintonPlayerAPI\Commands\LeagueMatchLineup;
@@ -21,7 +22,8 @@ class MainServiceProvider extends ServiceProvider
             LeagueMatch::class,
             LeagueMatchLineup::class,
             RankingPoints::class,
-            CacheWarmUp::class
+            CacheWarmUp::class,
+            AuthenticationCommand::class
         ]);
     }
 

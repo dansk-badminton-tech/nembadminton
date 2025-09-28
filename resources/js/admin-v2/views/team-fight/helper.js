@@ -79,6 +79,7 @@ export function wrapInTeamAndSquads(squads) {
 
 export function vintageOptions(){
     return [
+        {value: "U15", label: "U15"},
         {value: "U17", label: "U17"},
         {value: "U19", label: "U19"},
         {value: "SEN", label: "SEN"}

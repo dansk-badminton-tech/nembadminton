@@ -44,7 +44,7 @@
                                     ({{
                                         findPositions(player, category.category)
                                     }})
-                                    <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
+                                    <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
                                 </p>
                             </div>
                         </td>
@@ -58,11 +58,12 @@
 
 <script>
 import gql from 'graphql-tag'
-import {findPositions, getCurrentSeason, isYoungPlayer} from "../../helpers";
+import {ageGroupLabel, findPositions, getCurrentSeason, isYoungPlayer} from "../../helpers";
 
 export default {
     name: "TeamFightPublic",
     methods: {
+        ageGroupLabel,
         isYoungPlayer,
         findPositions
     },

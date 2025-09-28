@@ -4,13 +4,12 @@
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
 use Carbon\Carbon;
+use FlyCompany\BadmintonPlayerAPI\AgeGroup;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Contracts\Cache\Lock;
 use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -100,7 +99,12 @@ class PlayerRankingIterator implements \Iterator
                         'start'       => $start,
                         'stop'        => $this->chunkSize,
                     ],
-                    'json'  => [1, 6, 7],
+                    'json'  => [
+                        AgeGroup::SEN->value,
+                        AgeGroup::U17->value,
+                        AgeGroup::U19->value,
+                        AgeGroup::U15->value,
+                    ],
                 ]);
                 $content = $response->getBody()->getContents();
                 $this->cache->put($cacheKey, $content, static::CACHE_TTL);

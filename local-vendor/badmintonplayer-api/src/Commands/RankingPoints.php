@@ -16,7 +16,7 @@ class RankingPoints extends Command
     protected $description = 'Fetch all ranking points';
 
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int{
-        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::from($this->argument('ranking-period')));
+        $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::from(ucfirst(strtolower($this->argument('ranking-period')))));
 
         $name = $this->option('name');
         if($name !== null){
@@ -31,6 +31,11 @@ class RankingPoints extends Command
         $refId = $this->option('ref-id');
         if($refId !== null){
             $rankingList = $rankingList->getPlayerRankingCollection()->getByPlayerNumbers($refId);
+        }
+
+        if($refId === null && $name === null && $clubId === null){
+            $this->error('No search options provided. Please provide one of the following: --name, --club-id, --ref-id');
+            return 1;
         }
 
         echo json_encode($rankingList, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);

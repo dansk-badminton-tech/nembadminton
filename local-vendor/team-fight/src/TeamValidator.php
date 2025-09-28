@@ -369,7 +369,7 @@ class TeamValidator
             foreach ($player->points as $point) {
                 if ($point->vintage !== null && $point->vintage !== ''
                     && in_array(strtoupper($point->vintage),
-                        ['U17', 'U19'])) {
+                        ['U15', 'U17', 'U19'])) {
                     return true;
                 }
             }

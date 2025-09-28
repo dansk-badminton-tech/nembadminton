@@ -143,7 +143,7 @@
                             <p v-bind:class="highlight(player, props.row.category)">{{ player.name }}
                                 ({{findPositions(player, props.row.category) }})
                             </p>
-                            <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
+                            <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
                         </b-tooltip>
                     </b-table-column>
                     <b-table-column width="30%" :td-attrs="(row, column) => resolveAttrs(row, column, team)" v-slot="props" field="results" label="Result">
@@ -159,7 +159,15 @@
 import BadmintonPlayerClubs from "../../components/badminton-player/BadmintonPlayerClubs.vue";
 import BadmintonPlayerTeamFights from "../../components/badminton-player/BadmintonPlayerTeamFights.vue";
 import gql from "graphql-tag";
-import {findPositions, highlight as simpleHighlight, isPlayingToHighByBadmintonPlayerId, isYoungPlayer, resolveToolTip, swapObject} from "../../helpers";
+import {
+    ageGroupLabel,
+    findPositions,
+    highlight as simpleHighlight,
+    isPlayingToHighByBadmintonPlayerId,
+    isYoungPlayer,
+    resolveToolTip,
+    swapObject
+} from "../../helpers";
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect.vue";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 import OptionalRanking from "./OptionalRanking.vue";
@@ -221,10 +229,10 @@ export default {
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth(); // 0-based (0 = January, 5 = June)
             const seasons = [];
-            
+
             // Only include current year if we're 6+ months into it (July or later)
             const startYear = currentMonth >= 6 ? currentYear : currentYear - 1;
-            
+
             // Generate 5 seasons: start year and 4 years back
             for (let i = 0; i < 5; i++) {
                 const year = startYear - i;
@@ -233,7 +241,7 @@ export default {
                     label: `${year}/${year + 1}`
                 });
             }
-            
+
             return seasons;
         },
         errorSquadCheck() {
@@ -253,6 +261,7 @@ export default {
         }
     },
     methods: {
+        ageGroupLabel,
         isYoungPlayer,
         resolveAttrs(row, column, team){
             let winnerSide = this.determineBadmintonMatchWinner(row.results);

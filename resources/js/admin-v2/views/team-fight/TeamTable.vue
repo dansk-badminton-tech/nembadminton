@@ -52,21 +52,23 @@
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
                                 </template>
-                                <p class="fa-pull-left handle" v-bind:class="highlight(player, category.category)">
-                                    <b-icon
-                                        v-show="player.gender === 'MEN'"
-                                        icon="gender-male"
-                                        size="is-small">
-                                    </b-icon>
-                                    <b-icon
-                                        v-show="player.gender === 'WOMEN'"
-                                        icon="gender-female"
-                                        size="is-small">
-                                    </b-icon>
-                                    {{ player.name }}
-                                    ({{findPositions(player, category.category) }})
-                                    <b-tag v-if="isYoungPlayer(player)">U17/U19</b-tag>
-                                </p>
+                                <div class="is-flex is-justify-content-space-between is-align-items-center ml-2">
+                                    <p class="handle" v-bind:class="highlight(player, category.category)">
+                                        <b-icon
+                                            v-show="player.gender === 'MEN'"
+                                            icon="gender-male"
+                                            size="is-small">
+                                        </b-icon>
+                                        <b-icon
+                                            v-show="player.gender === 'WOMEN'"
+                                            icon="gender-female"
+                                            size="is-small">
+                                        </b-icon>
+                                        {{ player.name }}
+                                        ({{findPositions(player, category.category) }})
+                                    </p>
+                                    <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
+                                </div>
                             </b-tooltip>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
@@ -128,6 +130,7 @@
 <script>
 import Draggable from "vuedraggable"
 import {
+    ageGroupLabel,
     compareDatesByYearMonthDay,
     findPositions as findPositionHelper,
     getCurrentSeason,
@@ -203,6 +206,7 @@ export default {
             }
         },
         isYoungPlayer,
+        ageGroupLabel,
         isDouble(category) {
             return isDoubleCategory(category)
         },

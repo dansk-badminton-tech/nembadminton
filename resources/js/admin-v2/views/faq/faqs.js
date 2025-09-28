@@ -42,8 +42,8 @@ const faqs = [
         text: `Valideringen tager udgangspunkt i DH-reglementet (<a href="https://badminton.dk/holdturneringsregler/">https://badminton.dk/holdturneringsregler/</a>).<br>Mellem holdene kontrolleres det, om der er spillere på et lavere rangerende hold, der er bedre placeret på NIVEAU-ranglisten (plus-minus buffer).<br>Internt på holdet kontrolleres det, om der er spillere, der står for lavt i en kategori internt på holdet. Det gøres både i single (buffer 50 point) og double (buffer 100 point).`,
     },
     {
-        title: "Er der taget højde for U17/U19 spillere?",
-        text: `U17/U19 spillere markeres på opstillingen og ranglistepointene for spillerne hentes, men der markeres aldrig for ulovligt hold pga. U17/U19 spillere..`,
+        title: "Er der taget højde for U15/U17/U19 spillere?",
+        text: `U15/U17/U19 spillere markeres på opstillingen og ranglistepointene for spillerne hentes, men der markeres aldrig for ulovligt hold pga. U17/U19 spillere..`,
     },
     {
         title: "Vi har tabt en protest efter at have stillet med et hold valideret på nembadminton.dk. Hvem betaler boden?",
