@@ -37,7 +37,7 @@ export default defineComponent({
   mounted () {
     window.addEventListener('click', this.forceClose)
   },
-  beforeDestroy () {
+    beforeUnmount () {
     window.removeEventListener('click', this.forceClose)
   },
   methods: {

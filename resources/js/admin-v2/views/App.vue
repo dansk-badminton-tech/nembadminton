@@ -4,7 +4,6 @@
         <aside-menu title="Nembadminton" :menu="computedMenu"/>
         <router-view/>
         <footer-bar/>
-        <Kustomer :params="this.params" :labels="this.labels"/>
     </div>
 </template>
 
@@ -14,7 +13,6 @@ import menu from '@/menu.js'
 import NavBar from '@/components/NavBar.vue'
 import AsideMenu from '@/components/AsideMenu.vue'
 import FooterBar from '@/components/FooterBar.vue'
-import Kustomer from '../components/Kustomer/Kustomer.vue'
 import ME from "../../queries/me.gql";
 
 export default defineComponent(
@@ -24,7 +22,6 @@ export default defineComponent(
             FooterBar,
             AsideMenu,
             NavBar,
-            Kustomer
         },
         data() {
             return {
