@@ -135,7 +135,7 @@ export default defineComponent({
                                            ).then(({data}) => {
                                                setAuthToken(data.login.access_token)
                                                this.fetchUser()
-                                               this.$router.push({name: 'home'})
+                                               this.$router.push({name: 'home-redirect'})
                                            }).catch(({graphQLErrors}) => {
                                                this.$buefy.snackbar.open(
                                                    {
