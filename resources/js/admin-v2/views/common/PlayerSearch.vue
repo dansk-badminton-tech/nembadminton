@@ -113,8 +113,17 @@ export default {
                 }
             },
             fetchPolicy: "network-only",
-            result({data}) {
-                this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
+            result({data, error}) {
+                if(error){
+                    this.memberSearchTeamFightResult = []
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-danger',
+                        message: `Kunne ikke hente spillere fra holdrunde: ${error.message}`
+                    })
+                }else{
+                    this.memberSearchTeamFightResult = data.memberSearchTeamFight.data
+                }
             },
             skip() {
                 return !this.focusedFlag || this.squad.id == null
