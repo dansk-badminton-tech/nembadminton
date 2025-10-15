@@ -1,0 +1,42 @@
+extend type Query {
+    leagueTeam(id: ID! @eq): LeagueTeam @find @guard
+    leagueTeams(
+        orderBy: _ @orderBy(columns: ["name", "created_at", "updated_at"])
+        club_id: [ID!] @in
+        division_id: ID @eq
+    ): [LeagueTeam!]! @paginate(defaultCount: 20) @guard
+}
+
+extend type Mutation {
+    createLeagueTeam(input: CreateLeagueTeamInput! @spread): LeagueTeam! 
+    @inject(context: "user.clubhouse_id", name: "clubhouse_id")
+    @create @guard
+    updateLeagueTeam(input: UpdateLeagueTeamInput! @spread): LeagueTeam! @update @guard
+    deleteLeagueTeam(id: ID!): LeagueTeam @delete @guard
+}
+
+type LeagueTeam {
+    id: ID!
+    name: String!
+    created_by_system: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+    club: Club @belongsTo
+    division: Division @belongsTo
+    clubhouse: Clubhouse @belongsTo
+    homeMatches: [LeagueMatch!]! @hasMany(relation: "homeMatches")
+    awayMatches: [LeagueMatch!]! @hasMany(relation: "awayMatches")
+}
+
+input CreateLeagueTeamInput {
+    name: String! @rules(apply: ["required", "string", "max:255"])
+    club_id: ID! @rules(apply: ["nullable", "exists:clubs,id"])
+    division_id: ID! @rules(apply: ["exists:divisions,id"])
+}
+
+input UpdateLeagueTeamInput {
+    id: ID! @rules(apply: ["required", "exists:league_teams,id"])
+    name: String @rules(apply: ["string", "max:255"])
+    club_id: ID @rules(apply: ["nullable", "exists:clubs,id"])
+    division_id: ID @rules(apply: ["nullable", "exists:divisions,id"])
+}
