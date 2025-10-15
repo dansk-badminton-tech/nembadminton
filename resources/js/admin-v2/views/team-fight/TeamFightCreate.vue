@@ -5,9 +5,9 @@
             Opret holdrunde
         </hero-bar>
         <section class="section is-main-section">
-            <div v-if="!$apollo.queries.me.loading" class="column">
+            <form @submit.prevent="createTeam" v-if="!$apollo.queries.me.loading" class="column">
                 <b-field label="Navn">
-                    <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
+                    <b-input v-model="name" required placeholder="fx. Runde 1"></b-input>
                 </b-field>
                 <b-field label="Spilledato">
                     <b-datepicker
@@ -20,15 +20,15 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste">
-                    <RankingVersionSelect v-model="version" :playing-date="gameDate" expanded/>
+                    <RankingVersionSelect required v-model="version" :playing-date="gameDate" expanded/>
                 </b-field>
                 <b-field label="Klub">
                     <b-select v-model="clubId" expanded>
                         <option v-for="club in me.clubhouse.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
                     </b-select>
                 </b-field>
-                <b-button class="mt-2" icon-left="plus" :loading="loading" @click="createTeam">Opret</b-button>
-            </div>
+                <b-button class="mt-2" native-type="submit" label="Opret" icon-left="plus" :loading="loading" />
+            </form>
         </section>
     </div>
 </template>
@@ -56,7 +56,7 @@ export default {
     },
     apollo: {
         me: {
-            query: ME,  
+            query: ME,
             result({data}) {
                 this.clubId = data.me.clubhouse.clubs[0].id
             }
@@ -64,6 +64,16 @@ export default {
     },
     methods: {
         createTeam() {
+            if(this.gameDate === null){
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    position: 'is-top',
+                    type: 'is-danger',
+                    message: `Du mangler at sætte en spilledato`
+                })
+                return false
+            }
+
             this.loading = true
             const createTeamGQL = gql`
                         mutation ($input: CreateTeamInput!){

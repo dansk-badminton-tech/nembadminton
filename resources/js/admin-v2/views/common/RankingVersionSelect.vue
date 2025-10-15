@@ -1,5 +1,5 @@
 <template>
-    <b-select :loading="$apollo.queries.rankingVersions.loading" @focus="onFocus" v-model="version" :expanded="expanded" :placeholder="placeholder">
+    <b-select :required="required" :loading="$apollo.queries.rankingVersions.loading" @focus="onFocus" v-model="version" :expanded="expanded" :placeholder="placeholder">
         <option
             v-for="version in rankingVersions"
             :key="version"
@@ -26,6 +26,10 @@ export default {
         'placeholder': {
             type: String,
             default: "Vælge rangliste"
+        },
+        required: {
+            type: Boolean,
+            default: false
         }
     },
     methods: {
