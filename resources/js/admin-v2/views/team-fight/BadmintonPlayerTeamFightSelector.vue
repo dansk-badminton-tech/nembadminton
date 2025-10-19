@@ -22,7 +22,7 @@ export default {
             if (this.$apollo.loading) {
                 return 0
             }
-            return parseInt(this.me?.club?.id)
+            return parseInt(this.me?.clubhouse?.clubs[0]?.id)
         }
     },
     apollo: {

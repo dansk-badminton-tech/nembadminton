@@ -36,6 +36,17 @@ export default {
             this.$router.push({name: 'home', params: {clubhouseId: this.me.clubhouse.id}})
         },
         createClubhouse(){
+            if(this.clubId === null){
+                this.$buefy.snackbar.open(
+                    {
+                        message: 'Du skal vælge en klub',
+                        type: 'is-danger',
+                        duration: 5000
+                    }
+                )
+                return
+            }
+
             this.$apollo.mutate({
                 mutation: gql`
                     mutation createClubhouse($input: CreateClubhouseInput!){
@@ -129,7 +140,7 @@ export default {
                     horizontal
                     message="Dit klubhus skal have tilknyttet en badmintonplayer klub. Vælg den her. Du kan altid ændre det senere igen."
                 >
-                    <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
+                    <BadmintonPlayerClubs required v-model="clubId"></BadmintonPlayerClubs>
                 </b-field>
                 <b-button
                     native-type="submit"
