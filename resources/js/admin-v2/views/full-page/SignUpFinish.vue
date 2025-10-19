@@ -115,7 +115,7 @@ export default {
                 <b-field
                     horizontal
                     label="E-mail"
-                    message="Klubbens email eller primær kontaktperson. Du må gerne bruge din egen email, du kan altid ændre den senere igen. :D">
+                    message="Klubbens email eller primær kontaktperson. Du må gerne bruge din egen email, du kan altid ændre den senere igen.">
                     <b-input
                         v-model="email"
                         name="email"
@@ -124,7 +124,11 @@ export default {
                         required
                     />
                 </b-field>
-                <b-field label="Badmintonklub">
+                <b-field
+                    label="Badmintonklub"
+                    horizontal
+                    message="Dit klubhus skal have tilknyttet en badmintonplayer klub. Vælg den her. Du kan altid ændre det senere igen."
+                >
                     <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
                 </b-field>
                 <b-button

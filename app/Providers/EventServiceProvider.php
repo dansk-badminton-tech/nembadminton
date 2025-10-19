@@ -11,7 +11,6 @@ use App\Events\UserUpdate;
 use App\Listeners\AddedClubConnection;
 use App\Listeners\ConfirmationEmail;
 use App\Listeners\CreateContactInLoops;
-use App\Listeners\EnsureClubConnection;
 use App\Listeners\GrantRoleToClubhouse;
 use App\Listeners\InitializeClub;
 use App\Listeners\SendInvitationEmail;
@@ -30,8 +29,6 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [
-            InitializeClub::class,
-            EnsureClubConnection::class,
             CreateContactInLoops::class
         ],
         UserUpdate::class => [
@@ -45,7 +42,8 @@ class EventServiceProvider extends ServiceProvider
         ],
         ClubhouseCreated::class => [
             GrantRoleToClubhouse::class,
-            UpdateClubNameInLoops::class
+            UpdateClubNameInLoops::class,
+            InitializeClub::class,
         ],
         ClubhouseUpdated::class => [
             AddedClubConnection::class
