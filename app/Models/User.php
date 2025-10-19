@@ -21,7 +21,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string              $player_id
  * @property SubscriptionSetting $subscriptionSettings
  * @property Club                $club
- * @property int                 $organization_id
  * @property int                 $clubhouse_id
  * @property string              $name
  * @property string              $email
@@ -46,7 +45,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'organization_id',
         'player_id',
     ];
 
@@ -68,11 +66,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function club() : BelongsTo
-    {
-        return $this->belongsTo(Club::class, 'organization_id', 'id');
-    }
 
     public function clubs() : BelongsToMany
     {

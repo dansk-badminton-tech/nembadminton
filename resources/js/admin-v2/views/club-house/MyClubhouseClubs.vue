@@ -2,7 +2,6 @@
 import CardComponent from "@/components/CardComponent.vue";
 import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
-import ME from "../../../queries/me.gql";
 import AddClubModel from "@/views/club-house/AddClubModel.vue";
 import gql from "graphql-tag";
 import clubhouse from "../../../queries/clubhouse.gql"

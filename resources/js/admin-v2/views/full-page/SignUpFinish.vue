@@ -2,10 +2,11 @@
 import ME from "../../../queries/me.gql";
 import CardComponent from "@/components/CardComponent.vue";
 import gql from "graphql-tag";
+import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerClubs.vue";
 
 export default {
     name: "SignUpFinish",
-    components: {CardComponent},
+    components: {BadmintonPlayerClubs, CardComponent},
     props: {
         error: String|null
     },
@@ -13,7 +14,8 @@ export default {
         return {
             isLoading: false,
             email: null,
-            name: null
+            name: null,
+            clubId: null
         }
     },
     apollo: {
@@ -61,7 +63,7 @@ export default {
                             connect: [this.me.id]
                         },
                         clubs: {
-                            connect: [this.me.club.id]
+                            connect: [this.clubId]
                         }
                     }
                 },
@@ -71,7 +73,13 @@ export default {
                     this.$router.push({name: 'onboarding'})
                 })
                 .catch((err) => {
-                    console.log(err)
+                    this.$buefy.snackbar.open(
+                        {
+                            message: 'Klubhus kunne ikke oprettes',
+                            type: 'is-danger',
+                            duration: 5000
+                        }
+                    )
                 })
         },
     }
@@ -115,6 +123,9 @@ export default {
                         placeholder="info@nembadminton.dk"
                         required
                     />
+                </b-field>
+                <b-field label="Badmintonklub">
+                    <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
                 </b-field>
                 <b-button
                     native-type="submit"

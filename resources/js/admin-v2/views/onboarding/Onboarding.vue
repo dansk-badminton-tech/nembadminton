@@ -27,10 +27,10 @@ export default {
     inject: ['clubhouseId'],
     computed: {
         isCompleted() {
-            return this.me?.club?.initialized;
+            return this.me?.clubhouse?.clubs?.every(club => club.initialized);
         },
         progress() {
-            return this.me?.club?.initialized
+            return this.isCompleted
                    ? 100
                    : undefined;
         }
@@ -46,7 +46,14 @@ export default {
             pollInterval: 2000,
             fetchPolicy: "network-only",
             result({data}) {
-                if (data.me.club.initialized) {
+                const allInitialized = data.me.clubhouse.clubs.every(club => club.initialized);
+                if (allInitialized) {
+                    this.$buefy.snackbar.open({
+                            message: 'Klubberne er nu importeret!',
+                            type: 'is-danger',
+                            duration: 5000
+                        }
+                    )
                     setTimeout(() => {
                         this.$router.push({name: 'home', params: {clubhouseId: this.clubhouseId}})
                     }, 3000)

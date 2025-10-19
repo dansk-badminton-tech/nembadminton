@@ -33,9 +33,7 @@ type User {
     name: String!
     email: String!
     player_id: String
-    club: Club!
     clubs: [Club!]! @hasMany
-    organization_id: Int!
     subscriptionSettings: SubscriptionSetting
     cancellationCollector: CancellationCollector
     "Roles"

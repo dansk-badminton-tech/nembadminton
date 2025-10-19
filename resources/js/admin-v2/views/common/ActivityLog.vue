@@ -63,6 +63,9 @@ export default {
                     page: this.page,
                     clubhouse: parseInt(this.clubhouseId)
                 }
+            },
+            skip(){
+                return this.clubhouseId === null || this.clubhouseId === undefined
             }
         },
     },

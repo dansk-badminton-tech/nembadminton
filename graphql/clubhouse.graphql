@@ -36,7 +36,9 @@ input UpdateClubhouseInput {
 input CreateClubhouseInput {
     email: String!
     name: String!
+    # Attach the clubhouse to the user (setting it on the user object, needed for signalling what the primary clubhouse is)
     user: CreateUserHasMany!
+    # Making the user a member of the clubhouse. (Normal membership relation)
     users: CreateUserBelongsToMany!
     clubs: CreateClubBelongsToMany!
 }
