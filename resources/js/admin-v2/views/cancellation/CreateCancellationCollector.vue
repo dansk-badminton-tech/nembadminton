@@ -25,8 +25,8 @@ export default {
         me: {
             query: ME,
             result({data}) {
-                this.clubs = data.me.clubs
-                this.filteredClubs = data.me.clubs
+                this.clubs = data.me.clubhouse.clubs
+                this.filteredClubs = data.me.clubhouse.clubs
             }
         }
     },
