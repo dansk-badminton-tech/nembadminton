@@ -67,11 +67,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function clubs() : BelongsToMany
-    {
-        return $this->belongsToMany(Club::class);
-    }
-
     public function clubhouses() : BelongsToMany
     {
         return $this->belongsToMany(Clubhouse::class);
@@ -92,6 +87,10 @@ class User extends Authenticatable
         return $this->hasOne(CancellationCollector::class);
     }
 
+    /**
+     * Get the clubhouse that the user belongs to. This is the primary clubhouse for the user
+     * @return BelongsTo
+     */
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);

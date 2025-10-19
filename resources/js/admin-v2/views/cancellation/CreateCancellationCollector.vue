@@ -100,8 +100,8 @@ export default {
                         :data="filteredClubs"
                         autocomplete
                         ellipsis
-                        field="name1"
-                        aria-close-label="Delete this tag">
+                        open-on-focus
+                        field="name1">
                     </b-taginput>
                 </b-field>
                 <b-button :loading="submitting" native-type="submit">Opret</b-button>
