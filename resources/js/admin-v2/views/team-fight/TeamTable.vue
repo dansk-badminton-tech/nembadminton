@@ -47,7 +47,7 @@
                                 type="is-info"
                                 class="is-pulled-left"
                                 size="is-large"
-                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category)"
+                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category) || !hasPointsInCategory(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
@@ -133,7 +133,7 @@ import {
     ageGroupLabel,
     compareDatesByYearMonthDay,
     findPositions as findPositionHelper,
-    getCurrentSeason,
+    getCurrentSeason, hasPointsInCategory,
     highlight as simpleHighlight,
     isDoubleCategory,
     isPlayingToHighByBadmintonPlayerId,
@@ -207,6 +207,7 @@ export default {
         },
         isYoungPlayer,
         ageGroupLabel,
+        hasPointsInCategory,
         isDouble(category) {
             return isDoubleCategory(category)
         },
