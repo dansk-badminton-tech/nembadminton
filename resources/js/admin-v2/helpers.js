@@ -207,9 +207,19 @@ export function getPlayingToHigh(playingToHighPlayers, player, category) {
                                                      === category)
 }
 
+export function hasPointsInCategory(player, category) {
+    return findPositions(player, category) !== null
+}
+
 export function highlight(playingToHighCrossSquads, playingToHighInSquad, player, category, ignoreYouth = false) {
     const playerInfoCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player);
     const playerInfoInSquad = getPlayingToHighByBadmintonPlayerId(playingToHighInSquad, player, category);
+
+    if (!hasPointsInCategory(player, category)) {
+        return {
+            'has-background-danger': true
+        }
+    }
 
     if (playerInfoCrossSquads !== undefined) {
         if (!ignoreYouth && playerInfoCrossSquads.isYouthPlayer) {
@@ -266,6 +276,9 @@ export function resolveToolTip(player, category, league, playingToHighCrossSquad
             msg.push("OBS: Har U15/U17/U19 makker")
         }
         msg.push("<b>Spiller for højt på holdet i kategorien:</b> <br />" + resolveNames(playerWithBelowPlayersSquad))
+    }
+    if(!hasPointsInCategory(player, category)) {
+        msg.push("Ingen point i kategorien. Spilleren skal være indplaceret i kategori ranglisten")
     }
     return msg.join("<br />--------<br />");
 }
