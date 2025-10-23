@@ -21,7 +21,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string              $player_id
  * @property SubscriptionSetting $subscriptionSettings
  * @property Club                $club
- * @property int                 $organization_id
  * @property int                 $clubhouse_id
  * @property string              $name
  * @property string              $email
@@ -46,7 +45,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'organization_id',
         'player_id',
     ];
 
@@ -69,16 +67,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function club() : BelongsTo
-    {
-        return $this->belongsTo(Club::class, 'organization_id', 'id');
-    }
-
-    public function clubs() : BelongsToMany
-    {
-        return $this->belongsToMany(Club::class);
-    }
-
     public function clubhouses() : BelongsToMany
     {
         return $this->belongsToMany(Clubhouse::class);
@@ -99,6 +87,10 @@ class User extends Authenticatable
         return $this->hasOne(CancellationCollector::class);
     }
 
+    /**
+     * Get the clubhouse that the user belongs to. This is the primary clubhouse for the user
+     * @return BelongsTo
+     */
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);

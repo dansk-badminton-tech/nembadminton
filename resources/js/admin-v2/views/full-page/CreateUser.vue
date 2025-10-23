@@ -10,13 +10,6 @@
         <b-field label="Email">
             <b-input v-model="email" dusk="email-input" icon="email" placeholder="din@email.dk" type="email"></b-input>
         </b-field>
-        <b-field label="Badmintonklub">
-            <BadmintonPlayerClubs v-model="clubId"></BadmintonPlayerClubs>
-        </b-field>
-<!--        <b-field label="Badminton Player ID (Valgfrit)">-->
-<!--            <b-input v-model="playerId" icon="user-alt" placeholder="900910-17" type="text"></b-input>-->
-<!--        </b-field>-->
-<!--        <a class="is-clearfix" href="https://www.badmintonplayer.dk/DBF/Ranglister/" target="_blank">Find dit Badminton ID på ranglisten</a>-->
         <b-field label="Adgangskode">
             <b-input v-model="password" dusk="password-input" icon="lock" placeholder="********" type="password"></b-input>
         </b-field>
@@ -33,13 +26,13 @@
             <b-checkbox dusk="term-checkbox" v-model="accepted">Jeg har læst og forstået overstående</b-checkbox>
         </b-field>
         <b-field grouped>
-            <b-button 
-                dusk="signup-button" 
-                class="control" 
-                type="is-link" 
-                :disabled="!accepted" 
+            <b-button
+                dusk="signup-button"
+                class="control"
+                type="is-link"
+                :disabled="!accepted"
                 :loading="loading"
-                expanded 
+                expanded
                 @click="create">Opret</b-button>
         </b-field>
         <hr class="my-5">
@@ -107,7 +100,6 @@ export default {
                         input: {
                             name: this.name,
                             email: this.email,
-                            organization_id: this.clubId,
                             player_id: this.playerId,
                             password: this.password,
                             password_confirmation: this.password_confirmation

@@ -41,7 +41,7 @@ export default {
                     ]
                 }
             }
-            
+
             function getRandomInt() {
                 const min = 1;  // Minimum value (inclusive)
                 const max = 100; // Maximum value (inclusive)
@@ -78,7 +78,7 @@ export default {
                     },
                     tooltip: {
                         callbacks: {
-                            footer(tooltipItems) {
+                            footer: (tooltipItems) => {
                                 if (this.orderBy === 'DESC'){
                                     return 'Lavpunkt: '+tooltipItems[0].raw.earliestPoints+', Højdepunkt: '+tooltipItems[0].raw.latestPoints
                                 }else{

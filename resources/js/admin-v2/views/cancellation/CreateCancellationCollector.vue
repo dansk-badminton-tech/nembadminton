@@ -25,8 +25,8 @@ export default {
         me: {
             query: ME,
             result({data}) {
-                this.clubs = data.me.clubs
-                this.filteredClubs = data.me.clubs
+                this.clubs = data.me.clubhouse.clubs
+                this.filteredClubs = data.me.clubhouse.clubs
             }
         }
     },
@@ -100,8 +100,8 @@ export default {
                         :data="filteredClubs"
                         autocomplete
                         ellipsis
-                        field="name1"
-                        aria-close-label="Delete this tag">
+                        open-on-focus
+                        field="name1">
                     </b-taginput>
                 </b-field>
                 <b-button :loading="submitting" native-type="submit">Opret</b-button>

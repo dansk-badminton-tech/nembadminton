@@ -3,20 +3,9 @@ query me{
         id
         name
         email
-        club{
-            id
-            name1
-            initialized
-        }
-        clubs{
-            id
-            name1
-            initialized
-        }
         cancellationCollector {
             id
         }
-        organization_id
         clubhouse{
             id
             email

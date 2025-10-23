@@ -38,7 +38,6 @@ class LoopsUpdateContact implements ShouldQueue
                 'name'       => $this->user->name,
                 'firstName'  => $this->user->name,
                 'lastName'   => '',
-                'clubId'     => $this->user->organization_id,
                 'createdAt'  => $this->user->created_at,
                 'source'     => 'api',
                 'subscribed' => true,
