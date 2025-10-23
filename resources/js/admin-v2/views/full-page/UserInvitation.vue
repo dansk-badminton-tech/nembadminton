@@ -105,10 +105,6 @@ export default {
                 return {
                     token: this.token
                 }
-            },
-            result({data}){
-                this.email = data.invitation.inviteeEmail
-                this.role = this.resolveLabel(data.invitation.role)
             }
         }
     },
@@ -118,10 +114,6 @@ export default {
         },
         goToDashboard(){
             this.$router.push({name: 'home', params: {clubhouseId: this.invitation.clubhouse.id}})
-        },
-        resolveLabel(role){
-            role = roles.find(r => r.value.toLowerCase() === role.toLowerCase())
-            return role.label
         },
         declineInvitation() {
             this.$apollo.mutate(
