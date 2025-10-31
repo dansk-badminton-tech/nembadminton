@@ -11,7 +11,7 @@
 
 <script>
 import {defineComponent} from 'vue'
-import {Line as LineChartElement} from 'vue-chartjs/legacy'
+import {Line as LineChartElement} from 'vue-chartjs'
 import {
     Chart,
     LineElement,

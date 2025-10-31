@@ -1,11 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
+
 import {clearAuthToken} from "../../auth";
 import {ApolloClientInstance} from "../../graphql";
 
-Vue.use(Vuex)
-
-const store = new Vuex.Store(
+const store = createStore(
     {
         state: {
             /* User */
