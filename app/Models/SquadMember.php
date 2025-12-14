@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\Auth;
  * @property int           id
  * @property SquadPoint[]  points
  * @property SquadCategory $category
+ * @property User          $user
  * @package App\Models
  */
 class SquadMember extends Model
 {
-
     use HasFactory;
 
     protected $fillable = ['member_ref_id', 'squad_category_id', 'name', 'gender'];

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
  * @property Squad[] squads
  * @property integer $user_id
  * @property User    $user
+ * @property boolean $publish
+ * @property string  $message
  */
 class Teams extends Model
 {

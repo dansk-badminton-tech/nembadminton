@@ -288,6 +288,16 @@ const routes = [
                     },
                     {
                         meta: {
+                            title: 'Notificer holdrunde',
+                            requiresAuth: true
+                        },
+                        path: 'team-fight/:teamUUID/notify',
+                        name: 'team-fight-notify',
+                        component: () => import("../views/team-fight/TeamFightNotify.vue"),
+                        props: route => ({teamFightId: route.params.teamUUID})
+                    },
+                    {
+                        meta: {
                             title: 'Opret Holdrunde',
                             requiresAuth: true
                         },

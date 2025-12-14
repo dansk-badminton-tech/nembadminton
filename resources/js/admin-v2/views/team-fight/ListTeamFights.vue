@@ -223,7 +223,15 @@ export default {
                     clubhouseId: this.clubhouseId
                 }
             },
-            fetchPolicy: 'network-only'
+            fetchPolicy: 'network-only',
+            error(error){
+                this.$buefy.snackbar.open(
+                    {
+                        duration: 5000,
+                        type: 'is-danger',
+                        message: "Kunne ikke hente holdrunder"
+                    })
+            }
         }
     }
 

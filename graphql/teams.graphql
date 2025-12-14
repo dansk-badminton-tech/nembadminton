@@ -8,6 +8,8 @@ extend type Query {
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard
+    "Information about players with a connected user"
+    squadMembers(id: ID!) : [SquadMember!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\TeamSubcribers")
 }
 
 extend type Mutation {
@@ -26,11 +28,22 @@ extend type Mutation {
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @canFind(ability: "delete", find: "id")
-    notify(id: ID!) : Boolean @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@notify")
+    "Publish team for all players. Sending notifications to all players"
+    publishTeam(id: ID!, message: String) : Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@publish")
     "Changes all player points to the new version. Does not update if squad has a specific version"
     updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
+}
+
+type TeamSubscribers {
+    amount: Int!
+    players: [TeamSubscriber!]!
+}
+
+type TeamSubscriber {
+    name: String!
+    refId: String
 }
 
 input UpdateSquadMemberInput {
@@ -182,6 +195,7 @@ type SquadMember {
     vintage: Vintage! @method(name: "getVintage")
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
+    user: User @belongsTo(scopes: ["myClubhouse"])
 }
 
 type SquadPoint {
@@ -242,6 +256,10 @@ type Teams {
     version: Date
     "Runde"
     round: Int
+    "Team is published to the players"
+    published: Boolean!
+    "Message when publishing"
+    message: String
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
     "Updated at"

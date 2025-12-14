@@ -12,7 +12,6 @@
                           @click="saveTeams">Gem
                 </b-button>
             </b-tooltip>
-            <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Eksporter</span>
@@ -49,6 +48,7 @@
                     </b-tooltip>
                 </b-dropdown-item>
             </b-dropdown>
+            <b-button class="ml-2" icon-left="bell" @click="publish">Notificer</b-button>
             <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam">Genindlæs holdrunden</b-button>
             <div class="columns mt-2">
                 <div class="column">
@@ -56,11 +56,6 @@
                         <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                     </b-field>
                 </div>
-                <!--                <div class="column">-->
-                <!--                    <b-field label="Runde">-->
-                <!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
-                <!--                    </b-field>-->
-                <!--                </div>-->
                 <div class="column">
                     <b-field label="Spilledato">
                         <b-datepicker
@@ -155,6 +150,7 @@ import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
+import PublishModal from "@/views/team-fight/PublishModal.vue";
 
 export default {
     name: "TeamFight",
@@ -269,6 +265,9 @@ export default {
         }
     },
     methods: {
+        publish(){
+            this.$router.push({name: 'team-fight-notify', params: {teamFightId: this.teamFightId}})
+        },
         refreshTeam(){
             this.$apollo.queries.team.refetch();
         },

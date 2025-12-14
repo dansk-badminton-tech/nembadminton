@@ -10,6 +10,8 @@ use App\Models\SquadMember;
 use App\Models\SquadPoint;
 use App\Models\Teams;
 use App\Models\User;
+use App\Notifications\SquadPublish;
+use App\Notifications\TeamPublish;
 use App\Notifications\TeamUpdated;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\SerializerHelper;
@@ -48,26 +50,33 @@ class UpdateTeams
 
     /**
      * @param                $rootValue
-     * @param array          $args
+     * @param array $args
      * @param GraphQLContext $context
-     * @param ResolveInfo    $resolveInfo
+     * @param ResolveInfo $resolveInfo
+     * @return Teams
      */
-    public function notify($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : void
+    public function publish($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
     {
         $team = $args['id'];
-        $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($team) {
-            $builder->where('id', $team);
-        })->with('user')->get();
-        $users = $members->pluck('user')->unique('id')->filter(function ($value) {
-            return $value !== null;
-        });
-
         /** @var Teams $team */
         $team = Teams::query()->findOrFail($team);
-        /** @var User[] $users */
-        foreach ($users as $user) {
-            $user->notify(new TeamUpdated($team));
+        $team->publish = true;
+        $team->message = $args['message'];
+        $team->saveOrFail();
+
+        foreach ($team->squads as $squad){
+            $notified = [];
+            foreach ($squad->categories as $category){
+                foreach ($category->players as $player){
+                    if($player->user !== null && $player->user->clubhouse_id === $team->clubhouse_id && !in_array($player->user->id, $notified, true)){
+                        $notified[] = $player->user->id;
+                        $player->user->notifyNow(new SquadPublish($squad, $team));
+                    }
+                }
+            }
         }
+
+        return $team;
     }
 
     /**
