@@ -20,7 +20,8 @@ class SquadPublish extends Notification
      */
     public function __construct(
         private Squad $squad,
-        private Teams $team
+        private Teams $team,
+        private ?string $customSubject = null
     )
     {
         //
@@ -37,40 +38,12 @@ class SquadPublish extends Notification
     }
 
     /**
-     * @param SquadCategory $category
-     * @param User $user
-     * @return SquadMember|null
-     */
-    public function findPartner(\App\Models\SquadCategory $category, User $user): SquadMember|null
-    {
-        return $category->players->first(function (SquadMember $squadMember) use ($user) {
-            return $squadMember->member_ref_id !== $user->player_id;
-        });
-    }
-
-    /**
-     * @param User $user
-     * @return array|SquadCategory[]
-     */
-    private function resolveCategories(User $user): array
-    {
-        $categories = $this->squad->playingIn($user);
-        return array_map(function ($category) use ($user) {
-            $squadMember = $this->findPartner($category, $user);
-            return [
-                'name' => $category->name,
-                'partner' => $squadMember !== null ? $squadMember->name : '-',
-            ];
-        }, $categories);
-    }
-
-    /**
      * Get the mail representation of the notification.
      */
     public function toMail(User $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Så er holdrunden klar!')
+            ->subject($this->customSubject ?? 'Holdrunden er klar!')
             ->markdown('mail.SquadPublish', [
                 'team' => $this->team,
                 'squad' => $this->squad,

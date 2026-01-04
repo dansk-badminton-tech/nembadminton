@@ -1,24 +1,18 @@
 <x-mail::message>
 # {{$teamName}}
 
-Du skal spille på {{$squadName}} i kategorierne:
+Besked fra træneren:
+@component('mail::panel')
+    @foreach(explode("\n", $message) as $line)
+        {{ $line }}<br>
+    @endforeach
+@endcomponent
 
-@foreach($categories as $category)
-- {{ $category['name'] }} @if($category['partner'])sammen med {{$category['partner']}} @endif <br>
-@endforeach
-
-<x-mail::table>
-| Kategori       | Makker            |
-|----------------|-------------------|
-@foreach($categories as $category)
-    | {{ $category['name'] }} | {{ $category['partner'] ?? '—' }} |
-@endforeach
-</x-mail::table>
+# Se holdrunden via linket
 
 <x-mail::button :url="$url">
 Se holdrunden
 </x-mail::button>
 
-Thanks,<br>
-{{ config('app.name') }}
+Denne email er sendt fra {{ config('app.name') }}
 </x-mail::message>

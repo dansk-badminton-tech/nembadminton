@@ -10,7 +10,7 @@ import {extractErrorMessages} from "@/helpers.js";
 
 export default {
     components: {TitleBar, HeroBar},
-    inject: ['clubhouseId'],
+    inject: ['clubhouseId', 'user'],
     props: {
         teamFightId: String
     },
@@ -29,8 +29,35 @@ export default {
         },
         // Added: Disable publish when no recipients
         cannotPublish() {
-            return this.squadMembersWithUserCount === 0 || this.loading;
-        }
+            if (this.loading) return true;
+            if (!this.notificationType) return true;
+
+            if (this.recipientType === 'platform_users') {
+                return this.squadMembersWithUserCount === 0;
+            } else if (this.recipientType === 'manual_emails') {
+                return !this.manualEmails.trim();
+            } else if (this.recipientType === 'test_self') {
+                return false;
+            }
+            return true;
+        },
+        hasValidRecipients() {
+            if (!this.notificationType) return false;
+            if (this.recipientType === 'platform_users') {
+                return this.squadMembersWithUserCount > 0;
+            } else if (this.recipientType === 'manual_emails') {
+                return this.manualEmails.trim().length > 0;
+            } else if (this.recipientType === 'test_self') {
+                return true;
+            }
+            return false;
+        },
+        manualEmailsSanitized(){
+            return this.manualEmails
+                .split(/[,\n]/)
+                .map(email => email.trim())
+                .filter(email => email.length > 0);
+        },
     },
     data() {
         return {
@@ -39,7 +66,13 @@ export default {
             message: '',
             team: {
                 squads: []
-            }
+            },
+            activityLogs: [],
+            expandedLogs: [],
+            expandedEmailLogs: [],
+            recipientType: null, // null, 'platform' or 'manual'
+            notificationType: 'team_publish',
+            manualEmails: '',
         }
     },
     apollo: {
@@ -51,44 +84,180 @@ export default {
                 }
             }
         },
+        activityLogs: {
+            query: gql`
+                query teamNotificationActivity($id: ID!) {
+                    teamNotificationActivity(id: $id) {
+                        id
+                        action
+                        recipientType
+                        recipientCount
+                        recipientsSummary
+                        message
+                        metadata
+                        createdAt
+                        user {
+                            name
+                        }
+                    }
+                }
+            `,
+            variables: function () {
+                return {
+                    id: this.teamFightId
+                }
+            },
+            update: data => {
+                return data.teamNotificationActivity.map(log => {
+                    let parsedMetadata = null;
+                    if (log.metadata) {
+                        try {
+                            parsedMetadata = typeof log.metadata === 'string' ? JSON.parse(log.metadata) : log.metadata;
+                        } catch (e) {
+                            console.error("Failed to parse metadata", e);
+                        }
+                    }
+                    return {
+                        ...log,
+                        parsedMetadata
+                    };
+                });
+            },
+            pollInterval: 10000, // Poll every 10 seconds to keep the log updated
+        }
     },
     methods: {
         publish(){
             // Added: loading and guard
             if (this.cannotPublish) return;
             this.loading = true;
+
+            if (this.recipientType === 'test_self') {
+                this.$buefy.snackbar.open({
+                    duration: 3000,
+                    type: 'is-info',
+                    message: 'Sender test email til dig selv...'
+                });
+            }
+
             this.$apollo.mutate({
                 mutation: gql`
-                    mutation publishTeam($id: ID!, $message: String){
-                        publishTeam(id: $id, message: $message){
+                    mutation sendTeamNotification($input: SendTeamNotificationInput!){
+                        sendTeamNotification(input: $input){
                             id
                             message
                         }
                     }
                 `,
                 variables: {
-                    id: this.teamFightId,
-                    message: this.message
+                    input: {
+                        id: this.teamFightId,
+                        type: this.notificationType.toUpperCase(),
+                        message: this.message,
+                        receivers: {
+                            method: this.recipientType.toUpperCase(),
+                            emails: this.recipientType === 'manual_emails' ? this.manualEmailsSanitized : []
+                        }
+                    }
                 }
             }).then(({data}) => {
-                this.$buefy.snackbar.open({
-                    duration: 4000,
-                    type: 'is-success',
-                    message: 'Holdet er nu publiceret'
-                })
-                // Close modal and inform parent
-                this.$emit('published', data?.publishTeam);
-                this.$emit('close');
+                if (this.recipientType === 'test_self') {
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Test email sendt til ${this.user.email}`
+                    });
+                } else {
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: 'Holdet er nu publiceret'
+                    })
+                }
+                this.$apollo.queries.activityLogs.refetch();
             }).catch(({graphQLErrors}) => {
                 const errorMessages = extractErrorMessages(graphQLErrors);
+                const prefix = this.recipientType === 'test_self' ? 'Kunne ikke sende test email: ' : 'Kunne ikke publicere holdet: ';
                 this.$buefy.snackbar.open({
                     duration: 5000,
                     type: 'is-danger',
-                    message: 'Kunne ikke publicere holdet: ' + errorMessages.join(', ')
+                    message: prefix + errorMessages.join(', ')
                 })
             }).finally(() => {
                 this.loading = false;
             })
+        },
+        getMarkerClass(action) {
+            const classes = {
+                'team_publish': 'is-info',
+                'test_email_sent': 'is-warning',
+                'team_updated': 'is-primary'
+            };
+            return classes[action.toLowerCase()] || 'is-grey';
+        },
+        getIcon(action) {
+            const icons = {
+                'team_publish': 'email-check',
+                'test_email_sent': 'flask-outline',
+                'team_updated': 'pencil-circle',
+            };
+            return icons[action.toLowerCase()] || 'information';
+        },
+        getLogTitle(log) {
+            const action = log.action.toLowerCase();
+            if (action === 'team_publish') return 'Holdkamp offentliggjort';
+            if (action === 'test_email_sent') return 'Test email afsendt';
+            if (action === 'team_updated') return 'Holdkamp opdateret';
+            return log.action;
+        },
+        formatDateTime(dateString) {
+            return new Date(dateString).toLocaleString('da-DK', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        },
+        toggleLogDetails(logId) {
+            const index = this.expandedLogs.indexOf(logId);
+            if (index > -1) {
+                this.expandedLogs.splice(index, 1);
+            } else {
+                this.expandedLogs.push(logId);
+            }
+        },
+        isLogExpanded(logId) {
+            return this.expandedLogs.includes(logId);
+        },
+        toggleEmails(logId) {
+            const index = this.expandedEmailLogs.indexOf(logId);
+            if (index > -1) {
+                this.expandedEmailLogs.splice(index, 1);
+            } else {
+                this.expandedEmailLogs.push(logId);
+            }
+        },
+        isEmailExpanded(logId) {
+            return this.expandedEmailLogs.includes(logId);
+        },
+        getVisibleEmails(log, limit = 10) {
+            if (!log.parsedMetadata?.emails) return [];
+            if (this.isEmailExpanded(log.id)) return log.parsedMetadata.emails;
+            return log.parsedMetadata.emails.slice(0, limit);
+        },
+        copyEmailsToClipboard(emails) {
+            if (!emails || emails.length === 0) return;
+            const emailList = emails.join(', ');
+            navigator.clipboard.writeText(emailList).then(() => {
+                this.$buefy.snackbar.open({
+                    duration: 3000,
+                    type: 'is-success',
+                    message: 'Email adresser kopieret til udklipsholder'
+                });
+            }).catch(err => {
+                console.error('Failed to copy emails', err);
+            });
         }
     }
 }
@@ -101,66 +270,279 @@ export default {
             Dashboard
         </hero-bar>
         <div class="section">
+            <div class="content">
+            <b-button icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamFightId+'/edit'" @click="publish">Tilbage</b-button>
+            </div>
             <div class="columns">
                 <div class="column is-half">
                     <form @submit.prevent="publish">
-                            <b-field label="Besked til spillerne (valgfrit)">
+                        <!-- Section 1: Message -->
+                        <div class="box">
+                            <h4 class="title is-5 mb-4">
+                                <b-icon icon="mailbox-open" size="is-small"></b-icon>
+                                1. Besked
+                            </h4>
+                            <b-field label="Besked til modtagerne (valgfrit)">
                                 <b-input
                                     type="textarea"
                                     v-model="message"
-                                    placeholder="Skriv en besked til spillerne"
+                                    placeholder="Skriv en besked..."
                                     rows="4"
                                     expanded
                                     maxlength="500"
                                     has-counter />
                             </b-field>
+                        </div>
 
-                            <b-notification type="is-info" aria-close-label="Luk" :closable="false" class="mb-3">
-                                <strong>{{ squadMembersWithUserCount }}</strong> ud af <strong>{{ squadMembers.length }}</strong> spillere vil modtage en mail.
-                            </b-notification>
+                        <!-- Section 2: Action Type -->
+                        <div class="box">
+                            <h4 class="title is-5 mb-4">
+                                <b-icon icon="lightning-bolt" size="is-small"></b-icon>
+                                2. Type af handling
+                            </h4>
+                            <p class="mb-4 has-text-grey">Vælg hvad denne besked drejer sig om</p>
+                            <b-field>
+                                <b-select v-model="notificationType" expanded>
+                                    <option value="team_publish">Holdkamp offentliggjort</option>
+                                    <option value="team_updated">Holdkamp opdateret</option>
+                                </b-select>
+                            </b-field>
+                        </div>
 
-                            <b-notification v-if="squadMembersWithUserCount === 0" type="is-warning" aria-close-label="Luk" :closable="false" class="mb-3">
-                                Ingen spillere vil modtage mailen, fordi ingen spillere er tilknyttet en bruger endnu.
-                            </b-notification>
+                        <!-- Section 3: Recipients -->
+                        <div class="box">
+                            <h4 class="title is-5 mb-4">
+                                <b-icon icon="account-group" size="is-small"></b-icon>
+                                3. Modtagere
+                            </h4>
 
-                            <strong>Spillere tilknytning til klubben</strong>
-                            <p class="is-size-7 has-text-grey">Se hvilke spiller som mangler at tilknytte sig klubben.</p>
-                            <hr/>
-                            <b-table
-                                :data="squadMembers"
-                                per-page="10"
-                                paginated
-                                :mobile-cards="true"
-                                :row-class="(row, index) => (row.user !== null ? 'has-background-success-light' : '')"
-                            >
-                                <b-table-column field="name" label="First Name" v-slot="props">
-                                    {{ props.row.name }}
-                                </b-table-column>
-                                <b-table-column label="Har email?" v-slot="props">
-                                    <b-icon
-                                        :type="props.row.user ? 'is-success' : 'is-danger'"
-                                        :icon="props.row.user ? 'check' : 'close'"
-                                    ></b-icon>
-                                </b-table-column>
-                                <template v-slot:empty>
-                                    <section class="section has-text-centered">
-                                        <p>Alle spillere er tilknyttet — godt gået!</p>
-                                    </section>
-                                </template>
-                            </b-table>
+                            <p class="mb-4 has-text-grey">Vælg hvordan du vil sende beskeden</p>
+
+                            <div class="recipient-options">
+                                <div
+                                    class="is-hidden recipient-option"
+                                    :class="{'is-selected': recipientType === 'platform_users'}"
+                                    @click="recipientType = 'platform_users'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="account-group" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Platformbrugere</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send til spillere der er tilknyttet klubben på platformen
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="recipient-option"
+                                    :class="{'is-selected': recipientType === 'manual_emails'}"
+                                    @click="recipientType = 'manual_emails'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="mail" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Manuel indtastning</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Indtast email adresser manuelt til modtagere uden for platformen
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="recipient-option"
+                                    :class="{'is-selected': recipientType === 'test_self'}"
+                                    @click="recipientType = 'test_self'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="flask" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Test til mig selv</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send en test email til din egen adresse <strong v-if="user.email">({{ user.email }})</strong> for at se hvordan den ser ud
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Platform users option -->
+                            <div v-if="recipientType === 'platform_users'" class="mt-5">
+                                <b-notification type="is-info" aria-close-label="Luk" :closable="false" class="mb-3">
+                                    <strong>{{ squadMembersWithUserCount }}</strong> ud af <strong>{{ squadMembers.length }}</strong> spillere vil modtage en mail.
+                                </b-notification>
+
+                                <b-notification v-if="squadMembersWithUserCount === 0" type="is-warning" aria-close-label="Luk" :closable="false" class="mb-3">
+                                    Ingen spillere vil modtage mailen, fordi ingen spillere er tilknyttet en bruger endnu.
+                                </b-notification>
+
+                                <strong>Spillere tilknytning til klubben</strong>
+                                <p class="is-size-7 has-text-grey mb-2">Se hvilke spiller som mangler at tilknytte sig klubben.</p>
+
+                                <b-table
+                                    :data="squadMembers"
+                                    per-page="5"
+                                    paginated
+                                    :mobile-cards="true"
+                                    :row-class="(row, index) => (row.user !== null ? 'has-background-success-light' : '')"
+                                >
+                                    <b-table-column field="name" label="Navn" v-slot="props">
+                                        {{ props.row.name }}
+                                    </b-table-column>
+                                    <b-table-column label="Har email?" v-slot="props">
+                                        <b-icon
+                                            :type="props.row.user ? 'is-success' : 'is-danger'"
+                                            :icon="props.row.user ? 'check' : 'close'"
+                                        ></b-icon>
+                                    </b-table-column>
+                                    <template v-slot:empty>
+                                        <section class="section has-text-centered">
+                                            <p>Alle spillere er tilknyttet — godt gået!</p>
+                                        </section>
+                                    </template>
+                                </b-table>
+                            </div>
+
+                            <!-- Manual email input option -->
+                            <div v-if="recipientType === 'manual_emails'" class="mt-4">
+                                <b-field label="Email adresser" message="Adskil emails med komma eller linjeskift">
+                                    <b-input
+                                        type="textarea"
+                                        v-model="manualEmails"
+                                        placeholder="email1@example.com, email2@example.com"
+                                        rows="3"
+                                        expanded />
+                                </b-field>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Send Options -->
+                        <div class="box">
+                            <h4 class="title is-5 mb-4">
+                                <b-icon icon="send" size="is-small"></b-icon>
+                                4. Udsend
+                            </h4>
+
                             <div class="buttons">
-                                <b-tooltip :label="squadMembersWithUserCount === 0 ? 'Ingen modtagere' : null" :active="squadMembersWithUserCount === 0">
+                                <b-tooltip
+                                    :label="!hasValidRecipients ? 'Ingen modtagere valgt' : null"
+                                    :active="!hasValidRecipients">
                                     <b-button
                                         :loading="loading"
                                         :disabled="cannotPublish"
                                         native-type="submit"
                                         type="is-info"
-                                        label="Send notification"/>
+                                        :icon-left="recipientType === 'test_self' ? 'flask' : 'send'">
+                                        {{ recipientType === 'test_self' ? 'Send test email' : 'Send til alle modtagere' }}
+                                    </b-button>
                                 </b-tooltip>
                             </div>
-                        </form>
+                        </div>
+                    </form>
                 </div>
-                <div class="column is-half"></div>
+                <div class="column is-half">
+                    <div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
+                        <div>
+                            <h1 class="title is-4 mb-1">Aktivitetslog</h1>
+                            <p class="subtitle mt-2 is-6 has-text-grey">Historik over handlinger på denne holdkamp</p>
+                        </div>
+                        <div class="buttons">
+                            <b-button
+                                size="is-small"
+                                icon-left="refresh"
+                                :loading="$apollo.queries.activityLogs.loading"
+                                @click="$apollo.queries.activityLogs.refetch()">
+                                Opdater
+                            </b-button>
+                        </div>
+                    </div>
+
+                    <div v-if="activityLogs.length === 0" class="box has-text-centered has-text-grey py-6">
+                        <b-icon icon="history" size="is-large" class="mb-3"></b-icon>
+                        <p class="is-size-5">Ingen aktivitet endnu</p>
+                        <p class="is-size-7">Her vil du kunne se en historik over sendte notifikationer og ændringer.</p>
+                    </div>
+
+                    <div v-else class="activity-feed">
+                        <div v-for="(log, index) in activityLogs" :key="log.id" class="activity-item" :class="{'is-latest': index === 0}">
+                            <div class="activity-marker" :class="getMarkerClass(log.action)">
+                                <b-icon :icon="getIcon(log.action)" size="is-small"></b-icon>
+                            </div>
+                            <div class="activity-content card">
+                                <div class="card-content p-4">
+                                    <div class="is-flex is-justify-content-space-between is-align-items-start mb-2">
+                                        <div>
+                                            <h5 class="title is-6 mb-1">
+                                                {{ getLogTitle(log) }}
+                                            </h5>
+                                            <p v-if="log.parsedMetadata && log.parsedMetadata.emails" class="is-size-7 font-weight-bold">Antal modtagere: {{ log.parsedMetadata.emails.length }}</p>
+                                        </div>
+                                        <div class="is-flex is-flex-direction-column is-align-items-end">
+                                            <span class="is-size-7 has-text-grey whitespace-nowrap mb-1">
+                                                {{ formatDateTime(log.createdAt) }}
+                                            </span>
+                                            <b-button
+                                                v-if="log.action === 'team_publish' || log.action === 'test_email_sent' || log.message || log.recipientsSummary"
+                                                size="is-small"
+                                                type="is-ghost"
+                                                class="p-0 height-auto"
+                                                @click="toggleLogDetails(log.id)"
+                                            >
+                                                {{ isLogExpanded(log.id) ? 'Skjul detaljer' : 'Vis detaljer' }}
+                                            </b-button>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="isLogExpanded(log.id)" class="activity-details is-size-7 mt-3 pt-3 border-top-dashed">
+                                        <div v-if="log.parsedMetadata" class="mt-2">
+                                            <div v-if="log.parsedMetadata.emails && log.parsedMetadata.emails.length > 0">
+                                                <div class="is-flex is-justify-content-space-between is-align-items-center mb-1">
+                                                    <p class="is-size-7 font-weight-bold">Email modtagere ({{ log.parsedMetadata.emails.length }}):</p>
+                                                    <b-button
+                                                        size="is-small"
+                                                        type="is-text"
+                                                        icon-left="content-copy"
+                                                        class="p-0 height-auto is-size-7"
+                                                        @click="copyEmailsToClipboard(log.parsedMetadata.emails)"
+                                                    >
+                                                        Kopier alle emails
+                                                    </b-button>
+                                                </div>
+                                                <div class="tags">
+                                                    <span v-for="email in getVisibleEmails(log)" :key="email" class="tag is-small is-white border">
+                                                        {{ email }}
+                                                    </span>
+                                                    <b-button
+                                                        v-if="log.parsedMetadata.emails.length > 10"
+                                                        size="is-small"
+                                                        type="is-ghost"
+                                                        class="p-0 height-auto ml-2"
+                                                        @click="toggleEmails(log.id)"
+                                                    >
+                                                        {{ isEmailExpanded(log.id) ? 'Vis færre' : 'Vis alle (' + (log.parsedMetadata.emails.length - 10) + ' mere)' }}
+                                                    </b-button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="log.message" class="message-bubble mt-2 p-2 has-background-light is-italic">
+                                            "{{ log.message }}"
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-2 pt-2 border-top is-flex is-align-items-center has-text-grey">
+                                        <b-icon icon="account" size="is-small" class="mr-1"></b-icon>
+                                        <span class="is-size-7">
+                                            Udført af:
+                                            <span :class="{'has-text-info font-weight-bold': log.user, 'has-text-grey-light italic': !log.user}">
+                                                {{ log.user ? log.user.name : 'System' }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -168,5 +550,141 @@ export default {
 </template>
 
 <style scoped>
+.recipient-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
+.recipient-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 2px solid #dbdbdb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.recipient-option:hover {
+    border-color: #3e8ed0;
+    background-color: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recipient-option.is-selected {
+    border-color: #3e8ed0;
+    background-color: #eef6fc;
+    box-shadow: 0 2px 4px rgba(62, 142, 208, 0.2);
+}
+
+.recipient-option-icon {
+    color: #7a7a7a;
+    flex-shrink: 0;
+}
+
+.recipient-option.is-selected .recipient-option-icon {
+    color: #3e8ed0;
+}
+
+.recipient-option-content {
+    flex: 1;
+}
+
+.recipient-option-content .title {
+    margin-bottom: 0.25rem;
+}
+
+.activity-feed {
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.activity-feed::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #f5f5f5;
+}
+
+.activity-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.activity-marker {
+    position: absolute;
+    left: -1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    color: white;
+    box-shadow: 0 0 0 4px white;
+}
+
+.activity-content {
+    margin-left: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.activity-content:hover {
+    transform: translateX(5px);
+}
+
+.activity-item.is-latest .activity-content {
+    border: 1px solid #3e8ed0;
+    box-shadow: 0 4px 12px rgba(62, 142, 208, 0.15);
+}
+
+.message-bubble {
+    border-radius: 4px;
+    border-left: 3px solid #dbdbdb;
+}
+
+.border-top {
+    border-top: 1px solid #f5f5f5;
+}
+
+.border-top-dashed {
+    border-top: 1px dashed #dbdbdb;
+}
+
+.height-auto {
+    height: auto !important;
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.activity-marker.is-info { background-color: #3e8ed0; }
+.activity-marker.is-warning { background-color: #ffe08a; color: rgba(0, 0, 0, 0.7); }
+.activity-marker.is-success { background-color: #48c78e; }
+.activity-marker.is-primary { background-color: #00d1b2; }
+.activity-marker.is-danger { background-color: #f14668; }
+.activity-marker.is-link { background-color: #485fc7; }
+.activity-marker.is-grey { background-color: #dbdbdb; }
+.border {
+    border: 1px solid #dbdbdb;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
 </style>

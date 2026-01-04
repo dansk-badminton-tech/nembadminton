@@ -3,10 +3,9 @@
 namespace App\Notifications;
 
 use App\Models\Teams;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 
 class TeamPublish extends Notification implements ShouldQueue
@@ -16,7 +15,7 @@ class TeamPublish extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(private Teams $team, private User $user)
+    public function __construct(private Teams $team)
     {
         //
     }
@@ -34,25 +33,9 @@ class TeamPublish extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): Mailable
     {
-        return (new MailMessage)
-            ->subject($this->user->name.', så er holdrunden klar!')
-            ->markdown('mail.TeamPublish', [
-                'teamName' => $this->team->name,
-                'squadName' => 'Hold 1',
-                'categories' => [
-                    [
-                        'name' => 'Herre double',
-                        'partner' => 'Mikkel Hansen',
-                    ],
-                    [
-                        'name' => 'Herre single',
-                        'partner' => null,
-                    ]
-                ],
-                'url' => url("/app/team-fight/{$this->team->id}/public-view")
-            ]);
+        return new \App\Mail\TeamMail($this->team);
     }
 
     /**

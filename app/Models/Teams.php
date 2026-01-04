@@ -68,4 +68,9 @@ class Teams extends Model
         return $this->belongsTo(Clubhouse::class);
     }
 
+    public function activityLogs() : HasMany
+    {
+        return $this->hasMany(TeamActivityLog::class, 'team_id')->orderBy('created_at', 'desc');
+    }
+
 }

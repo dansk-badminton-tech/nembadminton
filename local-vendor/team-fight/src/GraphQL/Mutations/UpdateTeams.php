@@ -9,13 +9,8 @@ use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
 use App\Models\Teams;
-use App\Models\User;
-use App\Notifications\SquadPublish;
-use App\Notifications\TeamPublish;
-use App\Notifications\TeamUpdated;
-use FlyCompany\TeamFight\Models\Player;
+use App\Models\Squad;
 use FlyCompany\TeamFight\Models\SerializerHelper;
-use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,6 +32,7 @@ class UpdateTeams
      */
     private SquadManager $squadManager;
 
+
     public function __construct(SquadManager $squadManager)
     {
         $this->serializer = SerializerHelper::getSerializer();
@@ -48,36 +44,6 @@ class UpdateTeams
      */
     private Serializer $serializer;
 
-    /**
-     * @param                $rootValue
-     * @param array $args
-     * @param GraphQLContext $context
-     * @param ResolveInfo $resolveInfo
-     * @return Teams
-     */
-    public function publish($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
-    {
-        $team = $args['id'];
-        /** @var Teams $team */
-        $team = Teams::query()->findOrFail($team);
-        $team->publish = true;
-        $team->message = $args['message'];
-        $team->saveOrFail();
-
-        foreach ($team->squads as $squad){
-            $notified = [];
-            foreach ($squad->categories as $category){
-                foreach ($category->players as $player){
-                    if($player->user !== null && $player->user->clubhouse_id === $team->clubhouse_id && !in_array($player->user->id, $notified, true)){
-                        $notified[] = $player->user->id;
-                        $player->user->notifyNow(new SquadPublish($squad, $team));
-                    }
-                }
-            }
-        }
-
-        return $team;
-    }
 
     /**
      * @param                $rootValue

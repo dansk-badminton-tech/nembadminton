@@ -10,6 +10,8 @@ extend type Query {
     squadMember(id: ID! @eq) : SquadMember @find @guard
     "Information about players with a connected user"
     squadMembers(id: ID!) : [SquadMember!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\TeamSubcribers")
+    "Team notification activity"
+    teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC)
 }
 
 extend type Mutation {
@@ -28,12 +30,41 @@ extend type Mutation {
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @canFind(ability: "delete", find: "id")
-    "Publish team for all players. Sending notifications to all players"
-    publishTeam(id: ID!, message: String) : Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@publish")
+    "Sending notifications to all players"
+    sendTeamNotification(input: SendTeamNotificationInput! @spread) : Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
     updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
+}
+
+
+
+input SendTeamNotificationInput {
+    "Team Fight ID"
+    id: ID!
+    "Type of message"
+    type: TeamNotificationType!
+    "Message to players"
+    message: String
+    "Receivers"
+    receivers: ReceiverInput!
+}
+
+enum TeamNotificationType {
+    TEAM_PUBLISH @enum(value: "team_publish")
+    TEAM_UPDATED @enum(value: "team_updated")
+}
+
+input ReceiverInput {
+    method: ReceiverMethod!
+    emails: [String!]
+}
+
+enum ReceiverMethod {
+    MANUAL_EMAILS
+    PLATFORM_USERS
+    TEST_SELF
 }
 
 type TeamSubscribers {
@@ -266,4 +297,41 @@ type Teams {
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"
     createdAt: DateTime @rename(attribute: "created_at")
+    "Activity logs"
+    activityLogs: [TeamActivityLog!]! @hasMany
+}
+
+type TeamActivityLog {
+    "ID"
+    id: ID!
+    "Team ID"
+    teamId: ID! @rename(attribute: "team_id")
+    "Action"
+    action: ActivityAction!
+    "Recipient type"
+    recipientType: ReceiverMethod @rename(attribute: "recipient_type")
+    "Recipient count"
+    recipientCount: Int @rename(attribute: "recipient_count")
+    "Recipients summary"
+    recipientsSummary: String @rename(attribute: "recipients_summary")
+    "Message"
+    message: String
+    "Metadata"
+    metadata: String! @rename(attribute: "raw_metadata")
+    "User ID"
+    userId: ID @rename(attribute: "user_id")
+    "Created at"
+    createdAt: DateTime @rename(attribute: "created_at")
+    "Updated at"
+    updatedAt: DateTime @rename(attribute: "updated_at")
+    "Team"
+    team: Teams! @belongsTo
+    "User"
+    user: User @belongsTo
+}
+
+enum ActivityAction {
+    TEAM_PUBLISH @enum(value: "team_publish")
+    TEST_EMAIL_SENT @enum(value: "test_email_sent")
+    TEAM_UPDATED @enum(value: "team_updated")
 }
