@@ -139,7 +139,6 @@ import {
 } from "../../helpers";
 import TeamQuery from "../../../queries/team.graphql"
 import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
-import ME from "../../../queries/me.gql";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
@@ -150,7 +149,6 @@ import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
-import PublishModal from "@/views/team-fight/PublishModal.vue";
 
 export default {
     name: "TeamFight",

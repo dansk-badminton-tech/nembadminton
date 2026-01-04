@@ -8,8 +8,6 @@ extend type Query {
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard
-    "Information about players with a connected user"
-    squadMembers(id: ID!) : [SquadMember!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\TeamSubcribers")
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC)
 }
@@ -63,7 +61,6 @@ input ReceiverInput {
 
 enum ReceiverMethod {
     MANUAL_EMAILS
-    PLATFORM_USERS
     TEST_SELF
 }
 

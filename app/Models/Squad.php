@@ -20,8 +20,6 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property int                        $teams_id
  * @property int                        $order
  * @property int|null                   $external_team_fight_id
- * @property string|null                $name
- * @property string|null                $resolvedName
  * @property Carbon|null                $playing_datetime
  * @property string|null                $playing_place
  * @property string|null                $playing_address
@@ -73,26 +71,4 @@ class Squad extends Model implements Sortable
     {
         return $this->belongsTo(Teams::class, 'teams_id');
     }
-
-    public function getResolvedNameAttribute(): string
-    {
-        return $this->name ?? 'Hold '.$this->order;
-    }
-
-    /**
-     * @param User $user
-     * @return array|SquadCategory[]
-     */
-    public function playingIn(User $user) : array{
-        $categories = [];
-        foreach ($this->categories as $category) {
-            foreach ($category->players as $player) {
-                if($player->member_ref_id === $user->player_id){
-                    $categories[] = $category;
-                }
-            }
-        }
-        return $categories;
-    }
-
 }

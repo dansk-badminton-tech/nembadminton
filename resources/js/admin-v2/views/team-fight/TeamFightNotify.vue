@@ -3,7 +3,6 @@
 import {defineComponent} from "vue";
 import HeroBar from "@/components/HeroBar.vue";
 import TitleBar from "@/components/TitleBar.vue";
-import {uniqBy} from "lodash/array.js";
 import TeamQuery from "../../../queries/team.graphql";
 import gql from "graphql-tag";
 import {extractErrorMessages} from "@/helpers.js";
@@ -15,26 +14,11 @@ export default {
         teamFightId: String
     },
     computed: {
-        squadMembers() {
-            const allMembers = uniqBy(this.team.squads
-                .flatMap(squad => squad.categories)
-                .flatMap(category => category.players), 'refId');
-            return allMembers
-        },
-        squadMembersWithUserCount(){
-            return this.squadMembers.filter(player => player.user !== null).length;
-        },
-        squadMembersWithoutAttachedUser(){
-            return this.squadMembers.filter(player => player.user === null);
-        },
-        // Added: Disable publish when no recipients
         cannotPublish() {
             if (this.loading) return true;
             if (!this.notificationType) return true;
 
-            if (this.recipientType === 'platform_users') {
-                return this.squadMembersWithUserCount === 0;
-            } else if (this.recipientType === 'manual_emails') {
+            if (this.recipientType === 'manual_emails') {
                 return !this.manualEmails.trim();
             } else if (this.recipientType === 'test_self') {
                 return false;
@@ -43,9 +27,7 @@ export default {
         },
         hasValidRecipients() {
             if (!this.notificationType) return false;
-            if (this.recipientType === 'platform_users') {
-                return this.squadMembersWithUserCount > 0;
-            } else if (this.recipientType === 'manual_emails') {
+            if (this.recipientType === 'manual_emails') {
                 return this.manualEmails.trim().length > 0;
             } else if (this.recipientType === 'test_self') {
                 return true;
@@ -320,21 +302,6 @@ export default {
 
                             <div class="recipient-options">
                                 <div
-                                    class="is-hidden recipient-option"
-                                    :class="{'is-selected': recipientType === 'platform_users'}"
-                                    @click="recipientType = 'platform_users'">
-                                    <div class="recipient-option-icon">
-                                        <b-icon icon="account-group" size="is-large"></b-icon>
-                                    </div>
-                                    <div class="recipient-option-content">
-                                        <h5 class="title is-6 mb-2">Platformbrugere</h5>
-                                        <p class="is-size-7 has-text-grey">
-                                            Send til spillere der er tilknyttet klubben på platformen
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div
                                     class="recipient-option"
                                     :class="{'is-selected': recipientType === 'manual_emails'}"
                                     @click="recipientType = 'manual_emails'">
@@ -363,43 +330,6 @@ export default {
                                         </p>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Platform users option -->
-                            <div v-if="recipientType === 'platform_users'" class="mt-5">
-                                <b-notification type="is-info" aria-close-label="Luk" :closable="false" class="mb-3">
-                                    <strong>{{ squadMembersWithUserCount }}</strong> ud af <strong>{{ squadMembers.length }}</strong> spillere vil modtage en mail.
-                                </b-notification>
-
-                                <b-notification v-if="squadMembersWithUserCount === 0" type="is-warning" aria-close-label="Luk" :closable="false" class="mb-3">
-                                    Ingen spillere vil modtage mailen, fordi ingen spillere er tilknyttet en bruger endnu.
-                                </b-notification>
-
-                                <strong>Spillere tilknytning til klubben</strong>
-                                <p class="is-size-7 has-text-grey mb-2">Se hvilke spiller som mangler at tilknytte sig klubben.</p>
-
-                                <b-table
-                                    :data="squadMembers"
-                                    per-page="5"
-                                    paginated
-                                    :mobile-cards="true"
-                                    :row-class="(row, index) => (row.user !== null ? 'has-background-success-light' : '')"
-                                >
-                                    <b-table-column field="name" label="Navn" v-slot="props">
-                                        {{ props.row.name }}
-                                    </b-table-column>
-                                    <b-table-column label="Har email?" v-slot="props">
-                                        <b-icon
-                                            :type="props.row.user ? 'is-success' : 'is-danger'"
-                                            :icon="props.row.user ? 'check' : 'close'"
-                                        ></b-icon>
-                                    </b-table-column>
-                                    <template v-slot:empty>
-                                        <section class="section has-text-centered">
-                                            <p>Alle spillere er tilknyttet — godt gået!</p>
-                                        </section>
-                                    </template>
-                                </b-table>
                             </div>
 
                             <!-- Manual email input option -->

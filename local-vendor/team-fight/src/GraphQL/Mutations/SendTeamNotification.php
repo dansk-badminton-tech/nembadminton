@@ -43,10 +43,6 @@ class SendTeamNotification
         $method = RecipientType::from($receivers['method']);
         $teamNotificationType = TeamNotificationType::from($type);
 
-        if ($method === RecipientType::PLATFORM_USERS) {
-            $this->notifier->sendPlatformNotifications($team, $message, $teamNotificationType);
-        }
-
         if ($method === RecipientType::MANUAL_EMAILS) {
             $this->notifier->sendManualEmails($team, $receivers['emails'], $message, $teamNotificationType);
         }

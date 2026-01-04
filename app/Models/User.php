@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Events\UserUpdate;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
@@ -96,11 +94,6 @@ class User extends Authenticatable
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
-    }
-
-    public function scopeMyClubhouse(Builder $builder) : Builder {
-        $clubhouseId = Auth::user()->clubhouse_id;
-        return $builder->where('clubhouse_id', $clubhouseId);
     }
 
 }
