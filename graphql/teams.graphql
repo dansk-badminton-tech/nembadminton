@@ -9,8 +9,8 @@ extend type Query {
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard
     "Team notification activity"
-    teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC)
-    teamReceiver(team_id: ID! @eq(key: "team_id")) : TeamReceivers @find
+    teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @canResolved(ability: "view")
+    teamReceiver(team_id: ID! @eq(key: "team_id")) : TeamReceivers @find @canResolved(ability: "view")
 }
 
 extend type Mutation {
