@@ -55,7 +55,21 @@ export default {
             recipientType: null, // null, 'platform' or 'manual'
             notificationType: 'team_publish',
             manualEmails: '',
-            saveManualEmails: true
+            saveManualEmails: true,
+            predefinedTexts: [
+                {
+                    label: 'Holdrunden er klar',
+                    text: 'Holdopstillingen er nu klar. Gå ind og se om du er sat på holdet.'
+                },
+                {
+                    label: 'Ændringer foretaget',
+                    text: 'Der er foretaget ændringer i holdopstillingen. Tjek venligst det opdaterede hold.'
+                },
+                {
+                    label: 'Vigtig info',
+                    text: 'Husk at give besked hvis du er forhindret i at spille. Se holdet her.'
+                }
+            ]
         }
     },
     created() {
@@ -271,6 +285,28 @@ export default {
             }).catch(err => {
                 console.error('Failed to copy emails', err);
             });
+        },
+        usePredefinedText(predefined) {
+            const confirmMessage = `
+                <div class="content">
+                    <p>Er du sikker på, at du vil bruge denne skabelon?</p>
+                    <div class="notification is-light italic">
+                        "${predefined.text}"
+                    </div>
+                    ${this.message && this.message.trim() !== '' ? '<p class="has-text-danger"><strong>Bemærk:</strong> Dette vil overskrive din nuværende besked.</p>' : ''}
+                </div>
+            `;
+
+            this.$buefy.dialog.confirm({
+                title: `Brug skabelon: ${predefined.label}`,
+                message: confirmMessage,
+                confirmText: 'Brug skabelon',
+                cancelText: 'Annuller',
+                type: 'is-info',
+                onConfirm: () => {
+                    this.message = predefined.text;
+                }
+            });
         }
     }
 }
@@ -305,6 +341,25 @@ export default {
                                     maxlength="500"
                                     has-counter />
                             </b-field>
+                            <div class="mt-4">
+                                <p class="is-size-7 has-text-grey mb-2">
+                                    <b-icon icon="text-box-multiple-outline" size="is-small" class="mr-1"></b-icon>
+                                    Brug en af de foruddefinerede skabeloner:
+                                </p>
+                                <div class="buttons">
+                                    <b-button
+                                        v-for="(predefined, index) in predefinedTexts"
+                                        :key="index"
+                                        size="is-small"
+                                        type="is-light"
+                                        icon-left="text-box-plus"
+                                        @click="usePredefinedText(predefined)">
+                                        <b-tooltip :label="predefined.text" multilined position="is-top" size="is-large" type="is-dark">
+                                            {{ predefined.label }}
+                                        </b-tooltip>
+                                    </b-button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Section 2: Action Type -->
