@@ -33,11 +33,6 @@ query team($id: ID!){
                         corrected_manually
                         version
                     }
-                    user{
-                        id
-                        name
-                        player_id
-                    }
                 }
             }
         }

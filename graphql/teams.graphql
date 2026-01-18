@@ -10,6 +10,7 @@ extend type Query {
     squadMember(id: ID! @eq) : SquadMember @find @guard
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC)
+    teamReceiver(team_id: ID! @eq(key: "team_id")) : TeamReceivers @find
 }
 
 extend type Mutation {
@@ -36,7 +37,11 @@ extend type Mutation {
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
 }
 
-
+type TeamReceivers {
+    id: ID!
+    team: Teams @belongsTo
+    emails: [String!]!
+}
 
 input SendTeamNotificationInput {
     "Team Fight ID"
@@ -56,6 +61,9 @@ enum TeamNotificationType {
 
 input ReceiverInput {
     method: ReceiverMethod!
+    "Only used for ReceiverMethod MANUAL_EMAILS"
+    saveEmails: Boolean
+    "Only used for ReceiverMethod MANUAL_EMAILS"
     emails: [String!]
 }
 
@@ -223,7 +231,6 @@ type SquadMember {
     vintage: Vintage! @method(name: "getVintage")
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
-    user: User @belongsTo(scopes: ["myClubhouse"])
 }
 
 type SquadPoint {
@@ -284,10 +291,6 @@ type Teams {
     version: Date
     "Runde"
     round: Int
-    "Team is published to the players"
-    published: Boolean!
-    "Message when publishing"
-    message: String
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
     "Updated at"
@@ -296,6 +299,8 @@ type Teams {
     createdAt: DateTime @rename(attribute: "created_at")
     "Activity logs"
     activityLogs: [TeamActivityLog!]! @hasMany
+    "Team receivers"
+    receiver: TeamReceivers @hasOne
 }
 
 type TeamActivityLog {

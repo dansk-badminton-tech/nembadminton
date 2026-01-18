@@ -9,7 +9,6 @@ use App\Mail\TeamMail;
 use App\Models\TeamActivityLog;
 use App\Models\Teams;
 use App\Models\User;
-use App\Notifications\SquadPublish;
 use Illuminate\Support\Facades\Mail;
 
 class Notifier
@@ -17,7 +16,7 @@ class Notifier
 
     public function sendManualEmails(Teams $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
     {
-        Mail::bcc($emails)->send($this->getMailable($team, $notificationType));
+        Mail::bcc($emails)->send($this->getMailable($team, $message, $notificationType));
 
         TeamActivityLog::create([
             'team_id' => $team->id,
@@ -36,7 +35,7 @@ class Notifier
 
     public function sendTestSelf(Teams $team, User $user, ?string $message, TeamNotificationType $notificationType) : void
     {
-        Mail::bcc($user->email)->send($this->getMailable($team, $notificationType));
+        Mail::bcc($user->email)->send($this->getMailable($team, $message, $notificationType));
 
         TeamActivityLog::logTestEmailSent(
             $team->id,
@@ -52,18 +51,20 @@ class Notifier
 
     /**
      * @param Teams $team
+     * @param string|null $message
+     * @param TeamNotificationType $type
      * @return TeamMail
      */
-    public function getMailable(Teams $team, TeamNotificationType $type): TeamMail
+    public function getMailable(Teams $team, ?string $message, TeamNotificationType $type): TeamMail
     {
-        return (new TeamMail($team))->subject($this->resolveSubject($type));
+        return (new TeamMail($team, $message))->subject($this->resolveSubject($type));
     }
 
     private function resolveSubject(TeamNotificationType $action) : string
     {
         return match ($action) {
-            TeamNotificationType::TEAM_PUBLISH => 'Holdkamp offentliggjort',
-            TeamNotificationType::TEAM_UPDATED => 'Holdkamp opdateret',
+            TeamNotificationType::TEAM_PUBLISH => 'Holdrunden er klar! 📢',
+            TeamNotificationType::TEAM_UPDATED => 'Ændringer til holdrunden! 🔄',
         };
     }
 

@@ -1,7 +1,7 @@
 <x-mail::message>
 # {{$teamName}}
 
-Besked fra træneren:
+Besked:
 @component('mail::panel')
     @foreach(explode("\n", $message) as $line)
         {{ $line }}<br>

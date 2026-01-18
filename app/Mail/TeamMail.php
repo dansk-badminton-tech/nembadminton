@@ -17,7 +17,7 @@ class TeamMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private Teams $team)
+    public function __construct(private Teams $team, private ?string $message)
     {
         //
     }
@@ -41,7 +41,7 @@ class TeamMail extends Mailable
             markdown: 'mail.TeamPublish',
             with: [
                 'teamName' => $this->team->name,
-                'message' => $this->team->message,
+                'message' => $this->message ?? 'Ingen besked',
                 'url' => url("/app/team-fight/{$this->team->id}/public-view")
             ]
         );

@@ -55,9 +55,39 @@ export default {
             recipientType: null, // null, 'platform' or 'manual'
             notificationType: 'team_publish',
             manualEmails: '',
+            saveManualEmails: true
+        }
+    },
+    created() {
+        const savedMessage = localStorage.getItem('team_notification_message');
+        if (savedMessage) {
+            this.message = savedMessage;
+        }
+    },
+    watch: {
+        message(newVal) {
+            localStorage.setItem('team_notification_message', newVal);
         }
     },
     apollo: {
+        receiver: {
+            query: gql`
+                query receiver($team_id: ID!){
+                    receiver : teamReceiver(team_id: $team_id){
+                        id
+                        emails
+                    }
+                }
+            `,
+            variables(){
+                return {
+                    team_id: this.teamFightId
+                }
+            },
+            result({data}){
+                this.manualEmails = data.receiver.emails.join(', ')
+            }
+        },
         team: {
             query: TeamQuery,
             variables: function () {
@@ -105,7 +135,6 @@ export default {
                     };
                 });
             },
-            pollInterval: 10000, // Poll every 10 seconds to keep the log updated
         }
     },
     methods: {
@@ -127,7 +156,6 @@ export default {
                     mutation sendTeamNotification($input: SendTeamNotificationInput!){
                         sendTeamNotification(input: $input){
                             id
-                            message
                         }
                     }
                 `,
@@ -138,11 +166,14 @@ export default {
                         message: this.message,
                         receivers: {
                             method: this.recipientType.toUpperCase(),
+                            saveEmails: this.saveManualEmails,
                             emails: this.recipientType === 'manual_emails' ? this.manualEmailsSanitized : []
                         }
                     }
                 }
             }).then(({data}) => {
+                localStorage.removeItem('team_notification_message');
+
                 if (this.recipientType === 'test_self') {
                     this.$buefy.snackbar.open({
                         duration: 4000,
@@ -187,9 +218,9 @@ export default {
         },
         getLogTitle(log) {
             const action = log.action.toLowerCase();
-            if (action === 'team_publish') return 'Holdkamp offentliggjort';
+            if (action === 'team_publish') return 'Holdrunden er klar';
             if (action === 'test_email_sent') return 'Test email afsendt';
-            if (action === 'team_updated') return 'Holdkamp opdateret';
+            if (action === 'team_updated') return 'Ændringer til holdrunden';
             return log.action;
         },
         formatDateTime(dateString) {
@@ -283,12 +314,38 @@ export default {
                                 2. Type af handling
                             </h4>
                             <p class="mb-4 has-text-grey">Vælg hvad denne besked drejer sig om</p>
-                            <b-field>
-                                <b-select v-model="notificationType" expanded>
-                                    <option value="team_publish">Holdkamp offentliggjort</option>
-                                    <option value="team_updated">Holdkamp opdateret</option>
-                                </b-select>
-                            </b-field>
+
+                            <div class="recipient-options">
+                                <div
+                                    class="recipient-option"
+                                    :class="{'is-selected': notificationType === 'team_publish'}"
+                                    @click="notificationType = 'team_publish'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="bullhorn" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Holdrunden er klar</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send besked om at holdrunden er klar og kan sendes til spillerne
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div
+                                    class="recipient-option"
+                                    :class="{'is-selected': notificationType === 'team_updated'}"
+                                    @click="notificationType = 'team_updated'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="update" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Holdrunden er opdateret</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send besked om ændringer i en allerede offentliggjort holdrunde
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Section 3: Recipients -->
@@ -326,23 +383,28 @@ export default {
                                     <div class="recipient-option-content">
                                         <h5 class="title is-6 mb-2">Test til mig selv</h5>
                                         <p class="is-size-7 has-text-grey">
-                                            Send en test email til din egen adresse <strong v-if="user.email">({{ user.email }})</strong> for at se hvordan den ser ud
+                                            Send en test email til din egen adresse <strong v-if="user?.email">({{ user?.email }})</strong> for at se hvordan den ser ud
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Manual email input option -->
-                            <div v-if="recipientType === 'manual_emails'" class="mt-4">
-                                <b-field label="Email adresser" message="Adskil emails med komma eller linjeskift">
-                                    <b-input
-                                        type="textarea"
-                                        v-model="manualEmails"
-                                        placeholder="email1@example.com, email2@example.com"
-                                        rows="3"
-                                        expanded />
-                                </b-field>
-                            </div>
+                        <!-- Manual email input option -->
+                        <div v-if="recipientType === 'manual_emails'" class="mt-4">
+                            <b-field label="Email adresser" message="Adskil emails med komma eller linjeskift">
+                                <b-input
+                                    type="textarea"
+                                    v-model="manualEmails"
+                                    placeholder="email1@example.com, email2@example.com"
+                                    rows="3"
+                                    expanded />
+                            </b-field>
+                            <b-field>
+                                <b-checkbox v-model="saveManualEmails">
+                                    Gem email adresser til næste gang (denne holdrunde)
+                                </b-checkbox>
+                            </b-field>
+                        </div>
                         </div>
 
                         <!-- Section 4: Send Options -->

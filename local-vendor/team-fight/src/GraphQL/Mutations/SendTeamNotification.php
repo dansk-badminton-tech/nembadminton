@@ -5,6 +5,7 @@ namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
+use App\Models\TeamReceivers;
 use App\Models\Teams;
 use App\Models\User;
 use FlyCompany\TeamFight\Notifier;
@@ -36,12 +37,19 @@ class SendTeamNotification
 
         /** @var Teams $team */
         $team = Teams::query()->findOrFail($team);
-        $team->publish = true;
-        $team->message = $message;
-        $team->saveOrFail();
 
         $method = RecipientType::from($receivers['method']);
         $teamNotificationType = TeamNotificationType::from($type);
+
+        if($receivers['saveEmails'] ?? false){
+            TeamReceivers::upsert(
+                [
+                    'team_id' => $team->id,
+                    'emails' => json_encode($receivers['emails'], JSON_THROW_ON_ERROR)
+                ],
+                ['team_id']
+            );
+        }
 
         if ($method === RecipientType::MANUAL_EMAILS) {
             $this->notifier->sendManualEmails($team, $receivers['emails'], $message, $teamNotificationType);

@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('team_fight_activity_logs');
+        Schema::dropIfExists('team_activity_logs');
     }
 };
