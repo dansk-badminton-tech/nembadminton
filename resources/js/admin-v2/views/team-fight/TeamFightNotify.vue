@@ -517,7 +517,7 @@ export default {
                             <b-message type="is-info" size="is-small">
                                 <p class="mb-2"><strong>Information om afsendelse:</strong></p>
                                 <ul style="list-style-type: disc; margin-left: 1.5rem;">
-                                    <li><strong>Afsender:</strong> E-mailen sendes fra <code>info@nembadminton.dk</code>.</li>
+                                    <li><strong>Afsender:</strong> E-mailen sendes fra <code>robot@nembadminton.dk</code>.</li>
                                     <li><strong>BCC (Blind Carbon Copy):</strong> Alle modtagere sættes i BCC. Det betyder, at spillerne ikke kan se hinandens e-mailadresser, hvilket beskytter deres privatliv.</li>
                                 </ul>
                             </b-message>

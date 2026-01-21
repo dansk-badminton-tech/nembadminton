@@ -35,7 +35,7 @@ class Notifier
 
     public function sendTestSelf(Teams $team, User $user, ?string $message, TeamNotificationType $notificationType) : void
     {
-        Mail::bcc($user->email)->send($this->getMailable($team, $message, $notificationType));
+        Mail::bcc($user->email)->queue($this->getMailable($team, $message, $notificationType));
 
         TeamActivityLog::logTestEmailSent(
             $team->id,
