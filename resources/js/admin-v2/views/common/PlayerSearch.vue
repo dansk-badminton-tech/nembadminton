@@ -165,8 +165,15 @@ export default {
                 }
                 return params
             },
-            result({data}) {
-                this.memberSearchResult = data.membersSearch.data
+            result(ApolloQueryResult, key) {
+                if(ApolloQueryResult.hasOwnProperty('error')){
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-danger',
+                        message: 'Kunne ikke hente spillere fra holdrunde'
+                    })
+                }
+                this.memberSearchResult = ApolloQueryResult.data.membersSearch.data
             }
         }
     }

@@ -151,14 +151,14 @@ export function findPositions(member, show = 'all') {
 export function extractErrors(graphqlErrors) {
     let errors = [];
     for (let graphqlError of graphqlErrors) {
-        if (graphqlError.extensions.hasOwnProperty('validation')) {
+        if (graphqlError.extensions?.hasOwnProperty('validation')) {
             for (let validationKey in graphqlError.extensions.validation) {
                 for (let error of graphqlError.extensions.validation[validationKey]) {
                     errors.push(error)
                 }
             }
         }
-        if (graphqlError.extensions.category === 'notifications') {
+        if (graphqlError.extensions?.category === 'notifications') {
             errors.push(graphqlError.extensions.reason)
         }
     }
@@ -457,8 +457,8 @@ export const roles = [
         label: 'Træner',
         value: 'COACH'
     },
-//    {
-//        label: 'Spiller',
-//        value: 'PLAYER'
-//    }
+    {
+        label: 'Spiller',
+        value: 'PLAYER'
+    }
 ]

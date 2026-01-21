@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -64,6 +65,16 @@ class Teams extends Model
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
+    }
+
+    public function receiver() : HasOne
+    {
+        return $this->hasOne(TeamReceivers::class, 'team_id');
+    }
+
+    public function activityLogs() : HasMany
+    {
+        return $this->hasMany(TeamActivityLog::class, 'team_id')->orderBy('created_at', 'desc');
     }
 
 }

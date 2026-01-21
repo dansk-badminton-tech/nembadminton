@@ -3,6 +3,7 @@ query me{
         id
         name
         email
+        player_id
         cancellationCollector {
             id
         }

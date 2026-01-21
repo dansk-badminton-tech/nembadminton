@@ -9,11 +9,8 @@ use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
 use App\Models\Teams;
-use App\Models\User;
-use App\Notifications\TeamUpdated;
-use FlyCompany\TeamFight\Models\Player;
+use App\Models\Squad;
 use FlyCompany\TeamFight\Models\SerializerHelper;
-use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\SquadManager;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +32,7 @@ class UpdateTeams
      */
     private SquadManager $squadManager;
 
+
     public function __construct(SquadManager $squadManager)
     {
         $this->serializer = SerializerHelper::getSerializer();
@@ -46,29 +44,6 @@ class UpdateTeams
      */
     private Serializer $serializer;
 
-    /**
-     * @param                $rootValue
-     * @param array          $args
-     * @param GraphQLContext $context
-     * @param ResolveInfo    $resolveInfo
-     */
-    public function notify($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : void
-    {
-        $team = $args['id'];
-        $members = SquadMember::query()->whereHas('category.squad.team', function (Builder $builder) use ($team) {
-            $builder->where('id', $team);
-        })->with('user')->get();
-        $users = $members->pluck('user')->unique('id')->filter(function ($value) {
-            return $value !== null;
-        });
-
-        /** @var Teams $team */
-        $team = Teams::query()->findOrFail($team);
-        /** @var User[] $users */
-        foreach ($users as $user) {
-            $user->notify(new TeamUpdated($team));
-        }
-    }
 
     /**
      * @param                $rootValue

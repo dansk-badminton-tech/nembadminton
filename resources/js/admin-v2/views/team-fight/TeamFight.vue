@@ -2,7 +2,7 @@
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Dashboard
+            {{name}}
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
@@ -12,7 +12,6 @@
                           @click="saveTeams">Gem
                 </b-button>
             </b-tooltip>
-            <!--        <b-button icon-left="bell" @click="notify">Notificer</b-button>-->
             <b-dropdown aria-role="list" class="ml-2">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Eksporter</span>
@@ -49,6 +48,7 @@
                     </b-tooltip>
                 </b-dropdown-item>
             </b-dropdown>
+            <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
             <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam">Genindlæs holdrunden</b-button>
             <div class="columns mt-2">
                 <div class="column">
@@ -56,11 +56,6 @@
                         <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
                     </b-field>
                 </div>
-                <!--                <div class="column">-->
-                <!--                    <b-field label="Runde">-->
-                <!--                        <b-numberinput v-model="round" :min="0" :max="10"></b-numberinput>-->
-                <!--                    </b-field>-->
-                <!--                </div>-->
                 <div class="column">
                     <b-field label="Spilledato">
                         <b-datepicker
@@ -144,7 +139,6 @@ import {
 } from "../../helpers";
 import TeamQuery from "../../../queries/team.graphql"
 import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
-import ME from "../../../queries/me.gql";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
@@ -269,6 +263,9 @@ export default {
         }
     },
     methods: {
+        notify(){
+            this.$router.push({name: 'team-fight-notify', params: {teamFightId: this.teamFightId}})
+        },
         refreshTeam(){
             this.$apollo.queries.team.refetch();
         },
