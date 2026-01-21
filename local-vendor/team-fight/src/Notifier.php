@@ -16,7 +16,7 @@ class Notifier
 
     public function sendManualEmails(Teams $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
     {
-        Mail::bcc($emails)->send($this->getMailable($team, $message, $notificationType));
+        Mail::bcc($emails)->queue($this->getMailable($team, $message, $notificationType));
 
         TeamActivityLog::create([
             'team_id' => $team->id,
