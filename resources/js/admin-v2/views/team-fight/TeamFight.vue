@@ -2,7 +2,7 @@
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Dashboard
+            {{name}}
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
@@ -48,7 +48,7 @@
                     </b-tooltip>
                 </b-dropdown-item>
             </b-dropdown>
-            <b-button class="ml-2" icon-left="email-fast" @click="publish">Send hold til spillere</b-button>
+            <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
             <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam">Genindlæs holdrunden</b-button>
             <div class="columns mt-2">
                 <div class="column">
@@ -263,7 +263,7 @@ export default {
         }
     },
     methods: {
-        publish(){
+        notify(){
             this.$router.push({name: 'team-fight-notify', params: {teamFightId: this.teamFightId}})
         },
         refreshTeam(){

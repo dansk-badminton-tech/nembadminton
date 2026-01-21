@@ -186,7 +186,7 @@ export default {
 
             this.$buefy.dialog.confirm({
                 title: 'Bekræft afsendelse',
-                message: `Er du klar til at sende holdet ud?<br><br>Der vil blive sendt en e-mail til ${recipientCount} spillere.`,
+                message: `Er du klar til at sende beskeden ud?<br><br>Der vil blive sendt ${recipientCount} e-mail(s)`,
                 confirmText: 'Ja, send nu',
                 cancelText: 'Annuller',
                 type: 'is-info',
@@ -240,13 +240,13 @@ export default {
                     this.$buefy.snackbar.open({
                         duration: 4000,
                         type: 'is-success',
-                        message: 'Holdet er nu publiceret'
+                        message: 'Beskeden er blevet sendt'
                     })
                 }
                 this.$apollo.queries.activityLogs.refetch();
             }).catch(({graphQLErrors}) => {
                 const errorMessages = extractErrorMessages(graphQLErrors);
-                const prefix = this.recipientType === 'test_self' ? 'Kunne ikke sende test email: ' : 'Kunne ikke publicere holdet: ';
+                const prefix = this.recipientType === 'test_self' ? 'Kunne ikke sende test email: ' : 'Kunne ikke sende beskeden: ';
                 this.$buefy.snackbar.open({
                     duration: 5000,
                     type: 'is-danger',
@@ -358,7 +358,7 @@ export default {
     <div>
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
-            Dashboard
+            {{ team?.name }}
         </hero-bar>
         <div class="section">
             <div class="content">
