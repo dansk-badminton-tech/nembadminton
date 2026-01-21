@@ -19,20 +19,37 @@ export default {
             if (!this.notificationType) return true;
 
             if (this.recipientType === 'manual_emails') {
-                return !this.manualEmails.trim();
+                return this.manualEmailsSanitized.length === 0;
             } else if (this.recipientType === 'test_self') {
                 return false;
+            } else if (this.recipientType === 'platform') {
+                return this.totalPlayersCount === 0;
             }
             return true;
         },
         hasValidRecipients() {
             if (!this.notificationType) return false;
             if (this.recipientType === 'manual_emails') {
-                return this.manualEmails.trim().length > 0;
+                return this.manualEmailsSanitized.length > 0;
             } else if (this.recipientType === 'test_self') {
                 return true;
+            } else if (this.recipientType === 'platform') {
+                return this.totalPlayersCount > 0;
             }
             return false;
+        },
+        totalPlayersCount() {
+            let playerIds = new Set();
+            this.team.squads.forEach(squad => {
+                squad.categories.forEach(category => {
+                    category.players.forEach(player => {
+                        if (player.id) {
+                            playerIds.add(player.id);
+                        }
+                    });
+                });
+            });
+            return playerIds.size;
         },
         manualEmailsSanitized(){
             return this.manualEmails
@@ -43,7 +60,7 @@ export default {
     },
     data() {
         return {
-            titleStack: ['Admin', 'Notifikation'],
+            titleStack: ['Admin', 'E-mail notifikationer'],
             loading: false,
             message: '',
             team: {
@@ -59,15 +76,15 @@ export default {
             predefinedTexts: [
                 {
                     label: 'Holdrunden er klar',
-                    text: 'Holdopstillingen er nu klar. Gå ind og se om du er sat på holdet.'
+                    text: 'Holdopstillingen er nu klar. Gå ind og tjek holdene.'
                 },
                 {
                     label: 'Ændringer foretaget',
-                    text: 'Der er foretaget ændringer i holdopstillingen. Tjek venligst det opdaterede hold.'
+                    text: 'Der er foretaget ændringer i holdopstillingen. Tjek venligst den opdateret runde.'
                 },
                 {
                     label: 'Vigtig info',
-                    text: 'Husk at give besked hvis du er forhindret i at spille. Se holdet her.'
+                    text: 'Husk at give besked hvis du er forhindret i at spille. Se holdrunden her.'
                 }
             ]
         }
@@ -152,7 +169,32 @@ export default {
         }
     },
     methods: {
-        publish(){
+        publish() {
+            if (this.cannotPublish) return;
+
+            if (this.recipientType === 'test_self') {
+                this.performPublish();
+                return;
+            }
+
+            let recipientCount = 0;
+            if (this.recipientType === 'manual_emails') {
+                recipientCount = this.manualEmailsSanitized.length;
+            } else if (this.recipientType === 'platform') {
+                recipientCount = this.totalPlayersCount;
+            }
+
+            this.$buefy.dialog.confirm({
+                title: 'Bekræft afsendelse',
+                message: `Er du klar til at sende holdet ud?<br><br>Der vil blive sendt en e-mail til ${recipientCount} spillere.`,
+                confirmText: 'Ja, send nu',
+                cancelText: 'Annuller',
+                type: 'is-info',
+                hasIcon: true,
+                onConfirm: () => this.performPublish()
+            })
+        },
+        performPublish(){
             // Added: loading and guard
             if (this.cannotPublish) return;
             this.loading = true;
@@ -360,6 +402,9 @@ export default {
                                     </b-button>
                                 </div>
                             </div>
+                            <b-message class="mt-4" type="is-info">
+                                Email'en vil automatisk indeholde et link til holdrunden.
+                            </b-message>
                         </div>
 
                         <!-- Section 2: Action Type -->
@@ -468,6 +513,14 @@ export default {
                                 <b-icon icon="send" size="is-small"></b-icon>
                                 4. Udsend
                             </h4>
+
+                            <b-message type="is-info" size="is-small">
+                                <p class="mb-2"><strong>Information om afsendelse:</strong></p>
+                                <ul style="list-style-type: disc; margin-left: 1.5rem;">
+                                    <li><strong>Afsender:</strong> E-mailen sendes fra <code>info@nembadminton.dk</code>.</li>
+                                    <li><strong>BCC (Blind Carbon Copy):</strong> Alle modtagere sættes i BCC. Det betyder, at spillerne ikke kan se hinandens e-mailadresser, hvilket beskytter deres privatliv.</li>
+                                </ul>
+                            </b-message>
 
                             <div class="buttons">
                                 <b-tooltip

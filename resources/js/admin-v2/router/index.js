@@ -288,7 +288,7 @@ const routes = [
                     },
                     {
                         meta: {
-                            title: 'Notificer holdrunde',
+                            title: 'E-mail notifikationer',
                             requiresAuth: true
                         },
                         path: 'team-fight/:teamUUID/notify',
