@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, h } from 'vue'
 import chunk from 'lodash/chunk'
 
 export default defineComponent({
@@ -10,15 +10,15 @@ export default defineComponent({
       default: 5
     }
   },
-  render (createElement) {
-    const renderAncestor = elements => createElement(
+  render () {
+    const renderAncestor = elements => h(
       'div',
-      { attrs: { class: 'tile is-ancestor' } },
+      { class: 'tile is-ancestor' },
       elements.map((element) => {
           if(element.context === undefined){
               return;
           }
-        return createElement('div', { attrs: { class: 'tile is-parent' } }, [
+        return h('div', { class: 'tile is-parent' }, [
           element
         ])
       })
@@ -27,9 +27,9 @@ export default defineComponent({
     if (this.$slots.default.length <= this.maxPerRow) {
       return renderAncestor(this.$slots.default)
     } else {
-      return createElement(
+      return h(
         'div',
-        { attrs: { class: 'is-tiles-wrapper' } },
+        { class: 'is-tiles-wrapper' },
         chunk(this.$slots.default, this.maxPerRow).map((group) => {
           return renderAncestor(group)
         })

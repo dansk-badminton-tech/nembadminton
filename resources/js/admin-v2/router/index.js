@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import {isLoggedIn} from "../../auth";
-
-Vue.use(VueRouter)
 
 const routes = [
     {
@@ -318,15 +315,15 @@ const routes = [
             },
             {
                 path: '/:pathMatch(.*)*',
+                name: 'not-found',
                 component: () => import('@/views/PageNotFound.vue')
             }
         ]
     },
 ]
 
-const router = new VueRouter({
-                                 mode: 'history',
-                                 base: '/app',
+const router = createRouter({
+                                 history: createWebHistory('/app'),
                                  routes,
                                  scrollBehavior(to, from, savedPosition) {
                                      if (savedPosition) {
@@ -355,7 +352,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-
-export function useRouter() {
-    return router
-}
