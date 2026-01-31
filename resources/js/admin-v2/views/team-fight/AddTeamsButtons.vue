@@ -52,7 +52,6 @@
 import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
 import TeamQuery from "../../../queries/team.graphql";
-import AddSquadMemberModal from "./AddSquadMemberModal.vue";
 import AddCustomSquadModal from "./AddCustomSquadModal.vue";
 import ImportSquadModal from "./ImportSquadModal.vue";
 
