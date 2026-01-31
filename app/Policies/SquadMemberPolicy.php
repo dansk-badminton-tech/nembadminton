@@ -41,7 +41,7 @@ class SquadMemberPolicy
      */
     public function create(User $user)
     {
-        //
+
     }
 
     /**
@@ -53,7 +53,7 @@ class SquadMemberPolicy
      */
     public function update(User $user, SquadMember $squadMember)
     {
-        //
+        return $user->getAuthIdentifier() === $squadMember->category->squad->team->user_id;
     }
 
     /**
@@ -65,7 +65,7 @@ class SquadMemberPolicy
      */
     public function delete(User $user, SquadMember $squadMember)
     {
-        //
+        return $user->getAuthIdentifier() === $squadMember->category->squad->team->user_id;
     }
 
     /**

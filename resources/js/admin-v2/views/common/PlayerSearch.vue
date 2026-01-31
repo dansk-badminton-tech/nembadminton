@@ -32,7 +32,6 @@
                         </div>
                     </div>
                 </template>
-<!--                <template slot="empty"><b-button @click="openAddSquadMemberModal" type="is-light" class="is-paddingless" expanded>Tilføjer spiller</b-button></template>-->
                 <template slot="empty">Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
@@ -45,7 +44,6 @@ import gql from 'graphql-tag'
 import {groupBy} from "lodash/collection";
 
 import MemberSearchTeamFight from "../../../queries/memberSearchTeamFight.gql";
-import AddSquadMemberModal from "../team-fight/AddSquadMemberModal.vue";
 
 export default {
     name: "PlayerSearch",
@@ -61,23 +59,6 @@ export default {
         searchMembers: debounce(function (name) {
             this.querySearchName = name
         }, 300),
-        openAddSquadMemberModal(){
-            this.$buefy.modal.open({
-                                       parent: this,
-                                       props: {
-                                           version: this.version,
-                                           category: this.category
-                                       },
-                                       events: {
-                                           close(){}
-                                       },
-                                       canCancel: ["x"],
-                                       component: AddSquadMemberModal,
-                                       hasModalCard: true,
-                                       trapFocus: true
-                                   })
-        }
-
     },
     props: {
         clubId: String,

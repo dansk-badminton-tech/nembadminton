@@ -444,7 +444,7 @@ export default {
                         condition: {
                             OR: [
                                 {
-                                    column: 'TEAM_ID',
+                                    column: 'TEAMID',
                                     value: this.teamId
                                 },
                                 {
@@ -504,7 +504,7 @@ export default {
                     notOnSquad: this.teamId,
                     cancellationWhere: {
                         OR: [{
-                            column: 'TEAM_ID',
+                            column: 'TEAMID',
                             value: this.teamId
                         }, {
                             AND: [
@@ -556,7 +556,7 @@ export default {
 
                 params.cancellationWhere = {
                     OR: [{
-                        column: 'TEAM_ID',
+                        column: 'TEAMID',
                         value: this.teamId
                     }, {
                         AND: [
@@ -589,7 +589,7 @@ export default {
                         amount: 1,
                         condition: {
                             OR: [{
-                                column: 'TEAM_ID',
+                                column: 'TEAMID',
                                 value: this.teamId
                             }, {
                                 AND: [

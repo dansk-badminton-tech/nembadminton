@@ -3,13 +3,19 @@
 namespace App\Providers;
 
 use App\Models\Member;
+use App\Models\Squad;
+use App\Models\SquadCategory;
 use App\Models\SquadMember;
+use App\Models\SquadPoint;
 use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\Teams;
 use App\Models\User;
 use App\Policies\MemberPolicy;
+use App\Policies\SquadCategoryPolicy;
 use App\Policies\SquadMemberPolicy;
+use App\Policies\SquadPointPolicy;
+use App\Policies\SquadPolicy;
 use App\Policies\TeamActivityLogPolicy;
 use App\Policies\TeamReceiversPolicy;
 use App\Policies\TeamsPolicy;
@@ -29,6 +35,9 @@ class AuthServiceProvider extends ServiceProvider
         Teams::class => TeamsPolicy::class,
         TeamReceivers::class => TeamReceiversPolicy::class,
         TeamActivityLog::class => TeamActivityLogPolicy::class,
+        SquadCategory::class => SquadCategoryPolicy::class,
+        Squad::class => SquadPolicy::class,
+        SquadPoint::class => SquadPointPolicy::class,
     ];
 
     /**
