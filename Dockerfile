@@ -1,8 +1,8 @@
-FROM composer:2 as build
+FROM composer:2 AS build
 ADD . .
 RUN composer install --no-dev
 
-FROM php:8.3-apache as base
+FROM php:8.4-apache AS base
 RUN apt-get update && apt-get install -y libzip-dev zip libgmp-dev
 RUN pecl install redis && docker-php-ext-enable redis
 RUN pecl install ev && docker-php-ext-enable ev
@@ -14,12 +14,12 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-FROM base as dev
+FROM base AS dev
 RUN pecl install excimer
 RUN docker-php-ext-enable excimer
 RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-FROM base as prod
+FROM base AS prod
 RUN mv php-production.ini "$PHP_INI_DIR/php.ini"
