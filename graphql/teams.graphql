@@ -7,30 +7,28 @@ extend type Query {
     ) : [Teams!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view")
     teamsByBadmintonId : [Teams!]! @guard @field(resolver: "App\\GraphQL\\Queries\\TeamsByBadmintonId")
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
-    squadMember(id: ID! @eq) : SquadMember @find @guard
+    squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @canResolved(ability: "view")
     teamReceiver(team_id: ID! @eq(key: "team_id")) : TeamReceivers @find @canResolved(ability: "view")
 }
 
 extend type Mutation {
-    updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard
-    deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard
-    updateSquadMember(input: UpdateSquadMemberInput! @spread) : SquadMember @update @guard
-    createSquadMember(input: CreateSquadMemberInput! @spread) : SquadMember @create @guard
-    addSquadMemberByRefId(input: AddSquadMemberByRefIdInput! @spread) : SquadMember @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId")
-    updateCategory(input: UpdateCategoryInputNew! @spread) : SquadCategory @update @guard
-    deleteSquad(id: ID! @eq) : Squad @guard @delete
-    createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard
-    updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard
-    moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp")
-    moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown")
+    updateSquadPoint(input: UpdateSquadPointInput! @spread) : SquadPoint @update @guard @canFind(ability: "update", find: "id")
+    deleteSquadMember(id: ID! @eq) : SquadMember @delete @guard @canFind(ability: "delete", find: "id")
+    updateSquadMember(input: UpdateSquadMemberInput! @spread) : SquadMember @update @guard @canFind(ability: "update", find: "id")
+    addSquadMemberByRefId(input: AddSquadMemberByRefIdInput! @spread) : SquadMember @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId") @canFind(ability: "update", find: "categoryId", model: "SquadCategory")
+    deleteSquad(id: ID! @eq) : Squad @guard @delete @canFind(ability: "delete", find: "id")
+    createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard @canFind(ability: "view", find: "team.connect", model: "Teams")
+    updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard @canFind(ability: "update", find: "id")
+    moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp") @canFind(ability: "update", find: "id")
+    moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown") @canFind(ability: "update", find: "id")
     updateTeam(input: UpdateTeamInput! @spread): Teams! @guard @update @canFind(ability: "update", find: "id")
     createTeam(input: CreateTeamInput! @spread) : Teams! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
     copyTeam(id: ID!) : Teams! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeam(id: ID! @eq) : Teams! @guard @delete @canFind(ability: "delete", find: "id")
     "Sending notifications to all players"
-    sendTeamNotification(input: SendTeamNotificationInput! @spread) : Teams! @guard @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
+    sendTeamNotification(input: SendTeamNotificationInput! @spread) : Teams! @guard @canFind(ability: "update", find: "id") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
     updatePointsTeam(id: ID!, version: String!) : Teams @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
     "Changes all player points to the new version."
@@ -105,20 +103,6 @@ input UpdateSquadPointInput {
 input DateRange {
     from: Date!
     to: Date!
-}
-
-input UpdateCategoryInputNew {
-    id: ID
-    category: String
-    name: String
-}
-
-input CreateSquadMemberInput {
-    category: CreateCategoryBelongsTo!
-    gender: Gender!
-    name: String!
-    refId: String! @rename(attribute: "member_ref_id")
-    points: CreatePointHasManyInput!
 }
 
 input CreateCategoryBelongsTo {
