@@ -1,0 +1,16 @@
+name: Enforce labels
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, opened, edited, synchronize]
+    branches:
+      - master
+
+jobs:
+  enforce-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yogevbd/enforce-label-action@2.2.2
+        with:
+          REQUIRED_LABELS_ANY: "release:minor,release:major,release:patch,norelease"
+          REQUIRED_LABELS_ANY_DESCRIPTION: "Select at least one label ['release:minor','release:major','release:patch','norelease']"
