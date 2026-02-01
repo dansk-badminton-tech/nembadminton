@@ -22,11 +22,6 @@
                 <b-field label="Rangliste">
                     <RankingVersionSelect required v-model="version" :playing-date="gameDate" expanded/>
                 </b-field>
-                <b-field label="Klub">
-                    <b-select v-model="clubId" expanded>
-                        <option v-for="club in me.clubhouse.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
-                    </b-select>
-                </b-field>
                 <b-button class="mt-2" native-type="submit" label="Opret" icon-left="plus" :loading="loading" />
             </form>
         </section>
@@ -92,10 +87,7 @@ export default {
                             input: {
                                 name: this.name,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                                version: this.version,
-                                club: {
-                                    connect: this.clubId
-                                }
+                                version: this.version
                             }
                         }
                     })

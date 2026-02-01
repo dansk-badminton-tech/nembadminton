@@ -47,11 +47,6 @@ class Teams extends Model
         return $query->where('user_id', Auth::user()->id);
     }
 
-    public function club() : BelongsTo
-    {
-        return $this->belongsTo(Club::class);
-    }
-
     public function squads() : HasMany
     {
         return $this->hasMany(Squad::class)->orderBy('order');

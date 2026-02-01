@@ -183,7 +183,6 @@ input CreateCategoryInput {
 }
 
 input CreateTeamInput {
-    club: CreateTeamBelongsTo
     name: String
     version: Date
     gameDate: Date @rename(attribute: "game_date")
@@ -269,8 +268,6 @@ type Teams {
     squads: [Squad!]! @hasMany,
     "Name of the team"
     name: String,
-    "Club"
-    club: Club
     "Version"
     version: Date
     "Runde"
@@ -285,6 +282,8 @@ type Teams {
     activityLogs: [TeamActivityLog!]! @hasMany
     "Team receivers"
     receiver: TeamReceivers @hasOne
+    "Clubhouse"
+    clubhouse: Clubhouse @belongsTo
 }
 
 type TeamActivityLog {

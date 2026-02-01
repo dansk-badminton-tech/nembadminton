@@ -74,14 +74,6 @@
                                               @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
                     </b-field>
                 </div>
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Klub</label>
-                        <div class="control is-clearfix">
-                            {{ team.club.name1 }}
-                        </div>
-                    </div>
-                </div>
             </div>
             <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
                               :invalid-level="resolveInvalidLevel"/>
@@ -94,9 +86,9 @@
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}}">(tilføj ekstra klub)</router-link>
+                        <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">(tilføj ekstra klub)</router-link>
                     </h1>
-                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId" :club-id="team.club.id"
+                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId"
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
@@ -114,7 +106,6 @@
                                :squads="team.squads"
                                :teams-base-validations="validateBasicSquads"
                                :version="new Date(version)"
-                               :club-id="team.club.id"
                                :loading="saving"
                     />
                     <hr>

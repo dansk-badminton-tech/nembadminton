@@ -1,7 +1,7 @@
 <template>
     <fragment v-if="!$apollo.loading">
         <div v-if="team">
-            <h1 class="title">{{ team.name }} - {{ team.club.name1 }}
+            <h1 class="title">{{ team.name }} - {{ team.clubhouse.name }}
             </h1>
             <h2 class="subtitle">Spilledato: {{ team.gameDate }}</h2>
             <div class="columns is-multiline">
@@ -90,6 +90,9 @@ export default {
                     id
                     name
                     gameDate
+                      clubhouse {
+                          name
+                      }
                     squads{
                         id
                         playerLimit
@@ -119,10 +122,6 @@ export default {
                                 }
                             }
                         }
-                    }
-                    club {
-                        id
-                        name1
                     }
                   }
                 }`,

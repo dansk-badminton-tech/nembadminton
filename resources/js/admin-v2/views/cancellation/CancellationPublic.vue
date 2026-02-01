@@ -3,7 +3,6 @@ import gql from "graphql-tag";
 import _ from "lodash/fp.js";
 import TeamFights from "@/views/cancellation/TeamFights.vue";
 import {getCurrentSeason} from "@/helpers.js";
-import Form from "@/components/Kustomer/Partials/Form.vue";
 import Teams from "@/views/cancellation/Teams.vue";
 import MemberSearchCancellation from "./MemberSearchCancellation.vue";
 import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";

@@ -94,6 +94,7 @@ export default {
 
 <template>
     <card-component
+        id="add-clubs"
         title="Tilknyttet klubber"
         icon="home"
     >
