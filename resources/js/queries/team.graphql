@@ -40,9 +40,5 @@ query team($id: ID!){
         gameDate
         version
         round
-        club {
-            id
-            name1
-        }
     }
 }
