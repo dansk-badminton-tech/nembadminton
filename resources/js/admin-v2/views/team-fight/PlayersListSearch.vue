@@ -120,7 +120,6 @@ export default {
     name: 'PlayersListSearch',
     props: {
         clubhouseId: Number,
-        clubId: String,
         teamId: String,
         addPlayer: Function,
         version: Date,

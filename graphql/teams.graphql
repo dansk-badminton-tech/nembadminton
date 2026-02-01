@@ -183,7 +183,6 @@ input CreateCategoryInput {
 }
 
 input CreateTeamInput {
-    club: CreateTeamBelongsTo
     name: String
     version: Date
     gameDate: Date @rename(attribute: "game_date")

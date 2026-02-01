@@ -98,7 +98,6 @@
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
-                            :club-id="clubId"
                             :version="resolveVersionToUse(squad)"
                             :category="category"/>
                         <PlayerSearch
@@ -107,7 +106,6 @@
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
                             :disabled="loading"
-                            :club-id="clubId"
                             :version="resolveVersionToUse(squad)" :category="category"/>
                     </td>
                 </tr>
@@ -150,7 +148,6 @@ export default {
     components: {EditPlayerModal, PlayerSearch, Draggable},
     props: {
         version: Date,
-        clubId: String,
         confirmDelete: Function,
         moveSquadOrderUp: Function,
         moveSquadOrderDown: Function,

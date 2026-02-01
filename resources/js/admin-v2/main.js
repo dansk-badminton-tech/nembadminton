@@ -17,8 +17,6 @@ import VueApollo from "vue-apollo";
 import {Fragment} from 'vue-frag'
 import VueClipboard from "vue-clipboard2";
 
-import Kustomer from './components/Kustomer/Kustomer.vue'
-
 /* Sentry */
 import * as Sentry from "@sentry/vue";
 
@@ -51,7 +49,6 @@ Vue.use(Buefy)
 Vue.use(VueApollo)
 Vue.use(VueClipboard)
 Vue.component('Fragment', Fragment)
-Vue.component('kustomer', Kustomer);
 
 new Vue({
             router,

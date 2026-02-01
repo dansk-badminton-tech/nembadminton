@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff2cdf107f26ad090d7ea237f0b86aec",
+    "content-hash": "c0583e8da6f1afb009a908333f46355f",
     "packages": [
         {
             "name": "brick/math",
@@ -3945,65 +3945,6 @@
                 }
             ],
             "time": "2026-01-02T08:56:05+00:00"
-        },
-        {
-            "name": "mydnic/laravel-kustomer",
-            "version": "v1.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mydnic/volet.git",
-                "reference": "531b69ee0a4397c4f3fd4c1450b252a9b9f836aa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mydnic/volet/zipball/531b69ee0a4397c4f3fd4c1450b252a9b9f836aa",
-                "reference": "531b69ee0a4397c4f3fd4c1450b252a9b9f836aa",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "^7.0|^8.0|^9.0|^10.0|^11.0",
-                "php": ">=8.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.3",
-                "orchestra/testbench": "^3.7.8|^9.0",
-                "phpunit/phpunit": "^7.5|^10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Mydnic\\Kustomer\\KustomerServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Mydnic\\Kustomer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Clément Rigo",
-                    "email": "rigoclement@mydnic.be"
-                }
-            ],
-            "description": "Open Source Feedback Interface for Laravel",
-            "homepage": "https://github.com/mydnic/laravel-feedback-component",
-            "keywords": [
-                "customer",
-                "feedback",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/mydnic/volet/issues",
-                "source": "https://github.com/mydnic/volet/tree/v1.11.0"
-            },
-            "time": "2025-01-11T09:56:27+00:00"
         },
         {
             "name": "nesbot/carbon",

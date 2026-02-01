@@ -61,7 +61,6 @@ export default {
         }, 300),
     },
     props: {
-        clubId: String,
         category: Object,
         version: Date,
         squad: Object,
