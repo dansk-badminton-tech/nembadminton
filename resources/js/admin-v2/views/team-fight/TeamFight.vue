@@ -103,7 +103,7 @@
                                :player-move="playerMove"
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
-                               :squads="team.squads"
+                               :squads="teamRound.squads"
                                :teams-base-validations="validateBasicSquads"
                                :version="new Date(version)"
                                :loading="saving"
@@ -128,7 +128,7 @@ import {
     isWomenDouble,
     isWomensSingle
 } from "../../helpers";
-import TeamQuery from "../../../queries/team.graphql"
+import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
@@ -237,18 +237,18 @@ export default {
                 }
             }
         },
-        team: {
-            query: TeamQuery,
+        teamRound: {
+            query: TeamRoundQuery,
             variables: function () {
                 return {
                     id: this.teamFightId
                 }
             },
             result({data}) {
-                this.gameDate = new Date(data.team.gameDate);
-                this.version = data.team.version;
-                this.name = data.team.name;
-                this.round = data.team.round;
+                this.gameDate = new Date(data.teamRound.gameDate);
+                this.version = data.teamRound.version;
+                this.name = data.teamRound.name;
+                this.round = data.teamRound.round;
                 this.validate()
             }
         }
@@ -258,7 +258,7 @@ export default {
             this.$router.push({name: 'team-fight-notify', params: {teamFightId: this.teamFightId}})
         },
         refreshTeam(){
-            this.$apollo.queries.team.refetch();
+            this.$apollo.queries.teamRound.refetch();
         },
         openLinkSharingModal() {
             this.$buefy.modal.open({
@@ -400,7 +400,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                     ],
                     awaitRefetchQueries: true
                 })
@@ -435,7 +435,7 @@ export default {
                                        id: player.id
                                    },
                                    refetchQueries: [
-                                       {query: TeamQuery, variables: {id: this.teamFightId}}
+                                       {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                                    ],
                                    awaitRefetchQueries: true
                                })
@@ -473,7 +473,7 @@ export default {
                                    version: version
                                },
                                refetchQueries: [
-                                   {query: TeamQuery, variables: {id: this.teamFightId}}
+                                   {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                                ]
                            })
                        .then(({data}) => {
@@ -519,7 +519,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: wrapSquadsInTeamWithoutLeague(this.team.squads)
+                        input: wrapSquadsInTeamWithoutLeague(this.teamRound.squads)
                     }
                 })
                 .then(({data}) => {
@@ -559,7 +559,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: wrapInTeamAndSquads(this.team.squads)
+                        input: wrapInTeamAndSquads(this.teamRound.squads)
                     }
                 })
                 .then(({data}) => {
@@ -597,7 +597,7 @@ export default {
                         }
                     `,
                     variables: {
-                        input: wrapInTeamAndSquads(this.team.squads)
+                        input: wrapInTeamAndSquads(this.teamRound.squads)
                     }
                 })
                 .then(({data}) => {
@@ -625,7 +625,7 @@ export default {
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(
                 {
-                    message: 'Sikker på du vil slette hold ' + (this.team.squads.indexOf(targetSquad) + 1) + '?',
+                    message: 'Sikker på du vil slette hold ' + (this.teamRound.squads.indexOf(targetSquad) + 1) + '?',
                     onConfirm: () => {
                         this.$apollo.mutate(
                             {
@@ -640,7 +640,7 @@ export default {
                                     id: targetSquad.id
                                 },
                                 refetchQueries: [
-                                    {query: TeamQuery, variables: {id: this.teamFightId}}
+                                    {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                                 ]
                             })
                     }
@@ -659,7 +659,7 @@ export default {
             let foundPlace = false;
             let addPlayerPromise;
             outside:
-                for (const [index, squad] of this.team.squads.entries()) {
+                for (const [index, squad] of this.teamRound.squads.entries()) {
                     for (const category of squad.categories) {
                         if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'WOMEN') {
                             this.addedPlayerNotification(index, category.name)
@@ -728,7 +728,7 @@ export default {
                                         input: squad.id
                                     },
                                     refetchQueries: [
-                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                                     ]
                                 })
                 .catch((error) => {
@@ -759,7 +759,7 @@ export default {
                                         input: squad.id
                                     },
                                     refetchQueries: [
-                                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                                     ]
                                 })
                 .catch((error) => {
@@ -803,7 +803,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamQuery, variables: {id: this.teamFightId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
                     ]
                 })
                 .then(({data}) => {

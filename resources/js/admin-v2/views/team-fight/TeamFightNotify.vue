@@ -1,9 +1,8 @@
 <script>
 
-import {defineComponent} from "vue";
 import HeroBar from "@/components/HeroBar.vue";
 import TitleBar from "@/components/TitleBar.vue";
-import TeamQuery from "../../../queries/team.graphql";
+import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import gql from "graphql-tag";
 import {extractErrorMessages} from "@/helpers.js";
 
@@ -40,7 +39,7 @@ export default {
         },
         totalPlayersCount() {
             let playerIds = new Set();
-            this.team.squads.forEach(squad => {
+            this.teamRound.squads.forEach(squad => {
                 squad.categories.forEach(category => {
                     category.players.forEach(player => {
                         if (player.id) {
@@ -119,8 +118,8 @@ export default {
                 this.manualEmails = data.receiver.emails.join(', ')
             }
         },
-        team: {
-            query: TeamQuery,
+        teamRound: {
+            query: TeamRoundQuery,
             variables: function () {
                 return {
                     id: this.teamFightId

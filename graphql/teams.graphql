@@ -1,5 +1,5 @@
 extend type Query {
-    team(id: ID! @eq) : TeamRound @find
+    teamRound(id: ID! @eq) : TeamRound @find
     teams(
         clubhouseId: ID! @eq(key: "clubhouse_id"),
         order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),

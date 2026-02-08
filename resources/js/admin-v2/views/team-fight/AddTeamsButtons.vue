@@ -51,7 +51,7 @@
 <script>
 import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
-import TeamQuery from "../../../queries/team.graphql";
+import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import AddCustomSquadModal from "./AddCustomSquadModal.vue";
 import ImportSquadModal from "./ImportSquadModal.vue";
 
@@ -96,7 +96,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamQuery, variables: {id: this.teamId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamId}}
                     ],
                 }).then(() => {
                 this.$emit('team-added')

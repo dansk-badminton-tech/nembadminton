@@ -1,5 +1,5 @@
-query team($id: ID!){
-    team(id: $id){
+query teamRound($id: ID!){
+    teamRound(id: $id){
         id
         squads{
             id
