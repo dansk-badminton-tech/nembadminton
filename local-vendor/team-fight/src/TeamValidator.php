@@ -14,14 +14,6 @@ use RuntimeException;
 class TeamValidator
 {
 
-    private array $categories = [
-        'MD',
-        'DS',
-        'DD',
-        'HS',
-        'HD',
-    ];
-
     public function validateCrossSquadsLeagueV3(array $squads) : Collection
     {
         $count = count($squads);
@@ -193,41 +185,6 @@ class TeamValidator
             }
         }
     }
-    /**
-     * @param Squad $squad
-     *
-     * @return array
-     */
-    public function validateSquad(Squad $squad) : array
-    {
-        $limit = 50;
-        $limitDouble = 100;
-        $playingToHigh = [];
-        foreach ($this->categories as $category) {
-            if ($this->isDoubles($category)) {
-                $playingToHigh = $this->handleDouble($squad, $category, $limitDouble, $playingToHigh);
-            } else {
-                $playingToHigh = $this->handleSingle($squad, $category, $limit, $playingToHigh);
-            }
-        }
-
-        return $playingToHigh;
-    }
-
-    private function addOrAppend(array $playingToHigh, array $item) : array
-    {
-        foreach ($playingToHigh as &$player) {
-            if ($player['refId'] === $item['refId'] && $player['category'] === $item['category']) {
-                $player['belowPlayer'] = array_merge($player['belowPlayer'], $item['belowPlayer']);
-
-                return $playingToHigh;
-            }
-        }
-        unset($player);
-        $playingToHigh[] = $item;
-
-        return $playingToHigh;
-    }
 
     /**
      * @param array  $pair
@@ -245,49 +202,6 @@ class TeamValidator
     private function isDoubles(string $category) : bool
     {
         return in_array($category, ['MD', 'HD', 'DD'], false);
-    }
-
-    /**
-     * @param array|Category[] $categories
-     * @param string           $category
-     * @param string|null      $gender
-     *
-     * @return Collection|Player[]
-     */
-    private function getPlayersByCategory(array $categories, string $category, ?string $gender = null) : Collection
-    {
-        $categoriesGrouped = (new Collection($categories))->groupBy('category');
-        /** @var Collection $category */
-        $category = $categoriesGrouped->get($category, new Collection());
-
-        $players = $category->pluck('players')->flatten(1);
-
-        if ($gender !== null) {
-            $players = $players->filter(static function (Player $value, $key) use ($gender) {
-                return $value->gender === $gender;
-            });
-        }
-
-        return $players;
-    }
-
-    /**
-     * @param array|Category[] $categories
-     * @param string           $category
-     *
-     * @return Collection
-     */
-    private function getPairByCategory(array $categories, string $category) : Collection
-    {
-        $categoriesGrouped = (new Collection($categories))->groupBy('category');
-        $pairs = [];
-        /** @var Category $specificCategory */
-        $currentCategory = $categoriesGrouped->get($category, new Collection());
-        foreach ($currentCategory as $specificCategory) {
-            $pairs[] = $specificCategory->players;
-        }
-
-        return new Collection($pairs);
     }
 
     private function getPlayerCategoryPoint(Player $player, string $category)
@@ -386,137 +300,6 @@ class TeamValidator
     private function isYoungPlayer(Player $player) : bool
     {
         return $this->hasYoungPlayer([$player]);
-    }
-
-    /**
-     * @param Squad $squad
-     * @param       $category
-     * @param int   $limitDouble
-     * @param array $playingToHigh
-     *
-     * @return array
-     */
-    private function handleDouble(Squad $squad, $category, int $limitDouble, array $playingToHigh) : array
-    {
-        $pairsInCategory = $this->getPairByCategory($squad->categories, $category);
-        while ($pairsInCategory->count() > 1) {
-            $belowPair = $pairsInCategory->pop();
-            if (count($belowPair) !== 2) {
-                continue;
-            }
-            $belowPairsPoints = $this->getPairPoints($belowPair, $category);
-            foreach ($pairsInCategory as $abovePair) {
-                $abovePairsPoints = $this->getPairPoints($abovePair, $category);
-                [$player1, $player2] = $abovePair;
-                if (($belowPairsPoints > $abovePairsPoints + $limitDouble)
-                    && (!$this->hasYoungPlayer([
-                            $belowPair[0],
-                            $belowPair[1],
-                        ])
-                        || $this->hasYoungPlayer([$player1, $player2]))) {
-                    $playingToHigh = $this->addOrAppend($playingToHigh, [
-                        'id'                    => $player1->id ?? 0,
-                        'refId'                 => $player1->refId,
-                        'name'                  => $player1->name,
-                        'gender'                => $player1->gender,
-                        'category'              => $category,
-                        'isYouthPlayer'         => $this->isYoungPlayer($player1),
-                        'hasYouthPlayerPartner' => $this->isYoungPlayer($player2),
-                        'belowPlayer'           => [
-                            [
-                                'id'       => $belowPair[0]->id ?? 0,
-                                'refId'    => $belowPair[0]->refId,
-                                'name'     => $belowPair[0]->name,
-                                'gender'   => $belowPair[0]->gender,
-                                'category' => $category,
-                            ],
-                            [
-                                'id'       => $belowPair[1]->id ?? 0,
-                                'refId'    => $belowPair[1]->refId,
-                                'name'     => $belowPair[1]->name,
-                                'gender'   => $belowPair[1]->gender,
-                                'category' => $category,
-                            ],
-                        ],
-                    ]);
-                    $playingToHigh = $this->addOrAppend($playingToHigh, [
-                        'id'                    => $player2->id ?? 0,
-                        'refId'                 => $player2->refId,
-                        'name'                  => $player2->name,
-                        'gender'                => $player2->gender,
-                        'category'              => $category,
-                        'isYouthPlayer'         => $this->isYoungPlayer($player2),
-                        'hasYouthPlayerPartner' => $this->isYoungPlayer($player1),
-                        'belowPlayer'           => [
-                            [
-                                'id'       => $belowPair[0]->id ?? 0,
-                                'refId'    => $belowPair[0]->refId,
-                                'name'     => $belowPair[0]->name,
-                                'category' => $category,
-                                'gender'   => $belowPair[0]->gender,
-                            ],
-                            [
-                                'id'       => $belowPair[1]->id ?? 0,
-                                'refId'    => $belowPair[1]->refId,
-                                'name'     => $belowPair[1]->name,
-                                'gender'   => $belowPair[1]->gender,
-                                'category' => $category,
-                            ],
-                        ],
-                    ]);
-                }
-            }
-        }
-
-        return $playingToHigh;
-    }
-
-    /**
-     * @param Squad $squad
-     * @param       $category
-     * @param int   $limit
-     * @param       $playingToHigh
-     *
-     * @return array|mixed
-     */
-    private function handleSingle(Squad $squad, $category, int $limit, $playingToHigh)
-    {
-        $playersInCategory = $this->getPlayersByCategory($squad->categories, $category);
-        while ($playersInCategory->count() > 1) {
-            $belowPlayer = $playersInCategory->pop();
-            try {
-                $belowPlayerPoints = $this->getPlayerCategoryPoint($belowPlayer, $category);
-                /** @var Player $belowPlayer */
-                foreach ($playersInCategory as $abovePlayer) {
-                    $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
-                    if ($belowPlayerPoints > $abovePlayerPoints + $limit && (!$this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
-                        $playingToHigh = $this->addOrAppend($playingToHigh, [
-                            'id'                    => $abovePlayer->id ?? 0,
-                            'refId'                 => $abovePlayer->refId,
-                            'name'                  => $abovePlayer->name,
-                            'category'              => $category,
-                            'gender'                => $abovePlayer->gender,
-                            'isYouthPlayer'         => $this->isYoungPlayer($abovePlayer),
-                            'hasYouthPlayerPartner' => false,
-                            // Always false because its single and you don't have a partner in singles
-                            'belowPlayer'           => [
-                                [
-                                    'id'       => $belowPlayer->id ?? 0,
-                                    'refId'    => $belowPlayer->refId,
-                                    'name'     => $belowPlayer->name,
-                                    'category' => $category,
-                                    'gender'   => $belowPlayer->gender,
-                                ],
-                            ],
-                        ]);
-                    }
-                }
-            } catch (PointNotFoundInCategoryException $exception) {
-                continue;
-            }
-        }
-
-        return $playingToHigh;
     }
 
 }
