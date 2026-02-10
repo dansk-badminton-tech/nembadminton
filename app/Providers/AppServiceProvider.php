@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Gate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Reverb\Application;
 use Loops\LoopsClient;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,5 +30,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         DB::prohibitDestructiveCommands($this->app->isProduction());
+        // Hack to prevent unauthorized exception on null returns
+        Gate::define('view', static function (?User $user, $model) {
+            return $model === null;
+        });
     }
 }
