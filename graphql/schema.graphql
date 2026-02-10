@@ -19,3 +19,6 @@ type Subscription
 #import calendar.graphql
 #import cancellation.graphql
 #import clubhouse.graphql
+#import league.graphql
+#import league-teams.graphql
+#import league-matches.graphql

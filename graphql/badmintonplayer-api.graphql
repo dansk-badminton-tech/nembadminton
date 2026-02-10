@@ -1,6 +1,6 @@
 extend type Query {
     "Team matches for a club"
-    badmintonPlayerApiTeamMatches(input: BadmintonPlayerApiTeamsInput @spread) : [Division!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatches")
+    badmintonPlayerApiTeamMatches(input: BadmintonPlayerApiTeamsInput @spread) : [ApiDivision!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatches")
     "Converts team matches into validation structure"
     teamMatchesFormattedForValidation(input: TeamMatchesFormattedForValidationInput! @spread) : [ImportTeam!]! @field(resolver: "FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatchesValidationFormat")
     "Available ranking versions. Limit to previous and current month"
@@ -17,7 +17,7 @@ input BadmintonPlayerApiTeamsInput {
     clubId: Int!
 }
 
-type Division {
+type ApiDivision {
     divisionName: String!
     lineups: [Lineup!]!
 }
