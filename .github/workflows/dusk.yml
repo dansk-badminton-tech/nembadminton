@@ -73,7 +73,7 @@ jobs:
           APP_ENV=ci
           APP_KEY=
           APP_DEBUG=true
-          APP_URL=http://host.docker.internal:8000
+          APP_URL=http://127.0.0.1:8000
 
           DB_CONNECTION=mysql
           DB_HOST=127.0.0.1
@@ -112,6 +112,6 @@ jobs:
       - name: Run Dusk tests
         env:
           APP_ENV: ci
-          APP_URL: http://host.docker.internal:8000
+          APP_URL: http://127.0.0.1:8000
           DUSK_DRIVER_URL: http://127.0.0.1:4444/wd/hub
         run: php artisan dusk
