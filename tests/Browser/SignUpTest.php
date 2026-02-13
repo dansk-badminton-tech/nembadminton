@@ -17,7 +17,6 @@ class SignUpTest extends DuskTestCase
             $browser->visit('/app/sign-up')
                     ->type('@name-input', 'Daniel Fly Nygaard')
                     ->type('@email-input', 'daniel@gmail.com')
-                    ->select('@club-select', '1622')
                     ->type('@password-input', 'Test1234')
                     ->type('@password-confirmation-input', 'Test1234')
                     ->type('@name-input', 'Daniel Fly Nygaard')
