@@ -73,7 +73,7 @@ jobs:
           APP_ENV=ci
           APP_KEY=
           APP_DEBUG=true
-          APP_URL=http://127.0.0.1:8000
+          APP_URL=http://host.docker.internal:8000
 
           DB_CONNECTION=mysql
           DB_HOST=127.0.0.1
@@ -82,7 +82,7 @@ jobs:
           DB_USERNAME=root
           DB_PASSWORD=root
 
-          DUSK_DRIVER_URL=http://127.0.0.1:4444
+          DUSK_DRIVER_URL=http://127.0.0.1:4444/wd/hub
           EOF
 
       - name: Migrate database
@@ -96,10 +96,22 @@ jobs:
         run: php artisan migrate --force
 
       - name: Start app server
-        run: php artisan serve --host=127.0.0.1 --port=8000 >/tmp/laravel.log 2>&1 &
+        run: php artisan serve --host=0.0.0.0 --port=8000 >/tmp/laravel.log 2>&1 &
+
+      - name: Wait for app
+        run: |
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000 >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "App did not start in time"
+          exit 1
 
       - name: Run Dusk tests
         env:
           APP_ENV: ci
-          DUSK_DRIVER_URL: http://127:0:0:1:4444
+          APP_URL: http://host.docker.internal:8000
+          DUSK_DRIVER_URL: http://127.0.0.1:4444/wd/hub
         run: php artisan dusk
