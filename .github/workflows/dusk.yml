@@ -101,4 +101,5 @@ jobs:
       - name: Run Dusk tests
         env:
           APP_ENV: ci
+          DUSK_DRIVER_URL: http://127:0:0:1:4444
         run: php artisan dusk
