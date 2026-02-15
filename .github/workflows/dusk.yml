@@ -9,6 +9,10 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  DB_HOST: localhost
+  APP_URL: http://127.0.0.1:8000
+
 jobs:
   dusk:
     runs-on: ubuntu-latest
