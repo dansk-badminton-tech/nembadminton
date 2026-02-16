@@ -72,7 +72,6 @@ jobs:
 
       - name: Migrate database
         run: |
-          printenv
           php artisan migrate --force --env dusk.local
 
       - name: Start app server
@@ -90,6 +89,4 @@ jobs:
           exit 1
 
       - name: Run Dusk tests
-        env:
-          APP_ENV: ci
-        run: php artisan dusk --env dusk.local
+        run: php artisan dusk
