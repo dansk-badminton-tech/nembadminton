@@ -88,4 +88,4 @@ jobs:
           exit 1
 
       - name: Run Dusk tests
-        run: php artisan dusk
+        run: php artisan dusk -vvv
