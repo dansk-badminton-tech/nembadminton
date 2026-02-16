@@ -135,6 +135,16 @@ services:
     volumes:
       - .:/var/www/html
 
+  selenium:
+    image: 'selenium/standalone-chromium'
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '/dev/shm:/dev/shm'
+
 volumes:
   db-data:
     driver: local
