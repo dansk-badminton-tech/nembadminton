@@ -12,6 +12,7 @@ on:
 env:
   DB_HOST: 127.0.0.1
   APP_URL: http://127.0.0.1:8000
+  DUSK_DRIVER_URL: http://127.0.0.1:4444
 
 jobs:
   dusk:
