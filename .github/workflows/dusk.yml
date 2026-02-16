@@ -33,7 +33,7 @@ jobs:
         ports:
           - 4444:4444
         options: >-
-          --shm-size="2g"
+          --shm-size="2g" --add-host=host.docker.internal:host-gateway
     steps:
       - uses: actions/checkout@v4
 
@@ -89,3 +89,11 @@ jobs:
 
       - name: Run Dusk tests
         run: php artisan dusk -vvv
+
+      - name: Upload Laravel Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-logs
+          path: /tmp/laravel.log
+          if-no-files-found: ignore
