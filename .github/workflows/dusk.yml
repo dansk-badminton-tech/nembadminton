@@ -92,36 +92,6 @@ jobs:
       - name: Run Dusk tests
         run: php artisan dusk -vvv
 
-      - name: Install ImageMagick
-        if: always()
-        run: sudo apt-get update && sudo apt-get install -y imagemagick
-
-      - name: Display screenshots in Job Summary
-        if: always()
-        run: |
-          if [ -d "tests/Browser/screenshots" ]; then
-            FILES=$(find tests/Browser/screenshots -name "*.png")
-            if [ -n "$FILES" ]; then
-              echo "## 📸 Dusk Screenshots" >> $GITHUB_STEP_SUMMARY
-              count=0
-              for file in $FILES; do
-                if [ $count -ge 10 ]; then
-                  echo "*(Only showing first 10 screenshots. Download artifacts for more)*" >> $GITHUB_STEP_SUMMARY
-                  break
-                fi
-                echo "<details><summary>$(basename "$file")</summary>" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
-                # Resize and compress to stay under 1MB Job Summary limit
-                convert "$file" -resize 800x -quality 60 temp.jpg
-                echo "![$(basename "$file")](data:image/jpeg;base64,$(base64 -w 0 temp.jpg))" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
-                echo "</details>" >> $GITHUB_STEP_SUMMARY
-                rm temp.jpg
-                count=$((count+1))
-              done
-            fi
-          fi
-
       - name: Upload Dusk screenshots
         if: always()
         uses: actions/upload-artifact@v4
