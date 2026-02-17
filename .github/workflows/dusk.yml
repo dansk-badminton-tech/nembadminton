@@ -92,6 +92,10 @@ jobs:
       - name: Run Dusk tests
         run: php artisan dusk -vvv
 
+      - name: Install ImageMagick
+        if: always()
+        run: sudo apt-get update && sudo apt-get install -y imagemagick
+
       - name: Display screenshots in Job Summary
         if: always()
         run: |
