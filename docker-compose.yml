@@ -76,6 +76,18 @@ services:
       - redis
       - websocket
 
+  artisan-serve:
+    image: flycompany/holdkamp
+    entrypoint: "php artisan serve --host=0.0.0.0 --port=8000 --no-reload"
+    user: "1000:33"
+    ports:
+      - "8000:8000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+
   artisan:
     image: flycompany/holdkamp
     user: "1000:33"

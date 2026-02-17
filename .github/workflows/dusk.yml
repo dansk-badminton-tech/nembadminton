@@ -70,8 +70,10 @@ jobs:
         run: php artisan passport:keys
 
       - name: Migrate database
-        run: |
-          php artisan migrate --force --env dusk.ci
+        run: php artisan migrate --force --env dusk.ci
+
+      - name: seed database
+        run: php artisan --env dusk.ci db:seed TestingDataSeeder
 
       - name: Start app server
         run: php artisan serve --host=0.0.0.0 --port=8000 --env dusk.ci --no-reload >/tmp/laravel.log 2>&1 &
