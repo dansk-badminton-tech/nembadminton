@@ -3,11 +3,17 @@
 namespace Tests\Browser;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
 class SignUpTest extends DuskTestCase
 {
+
+    use DatabaseTruncation;
+
+    protected string $seeder = 'TestingDataSeeder';
+
     /**
      * A Dusk test example.
      */
