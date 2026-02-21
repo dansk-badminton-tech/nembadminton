@@ -32,5 +32,11 @@ class TestingDataSeeder extends Seeder
 
         DB::table('club_member')->insert($club_member_relation);
 
+        $oauth_clients = require __DIR__ . '/oauth_clients_data.php';
+
+        DB::table('oauth_clients')->insert($oauth_clients);
+
+        $this->call(RolesAndPermissionsSeeder::class);
+
     }
 }

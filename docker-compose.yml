@@ -78,10 +78,10 @@ services:
 
   artisan-serve:
     image: flycompany/holdkamp
-    entrypoint: "php artisan serve --host=0.0.0.0 --port=8000 --no-reload"
+    entrypoint: "php artisan serve --host=0.0.0.0 --port=80 --no-reload --env dusk.ci"
     user: "1000:33"
     ports:
-      - "8000:8000"
+      - "80:80"
     build:
       context: .
       dockerfile: Dockerfile
@@ -147,6 +147,7 @@ services:
     volumes:
       - .:/var/www/html
 
+  # http://localhost:7900/?autoconnect=1&resize=scale&password=secret
   selenium:
     image: 'selenium/standalone-chromium'
     ports:

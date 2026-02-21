@@ -72,9 +72,6 @@ jobs:
       - name: Migrate database
         run: php artisan migrate --force --env dusk.ci
 
-      - name: seed database
-        run: php artisan --env dusk.ci db:seed TestingDataSeeder
-
       - name: Start app server
         run: php artisan serve --host=0.0.0.0 --port=8000 --env dusk.ci --no-reload >/tmp/laravel.log 2>&1 &
 
@@ -107,3 +104,10 @@ jobs:
           name: laravel-logs
           path: /tmp/laravel.log
           if-no-files-found: ignore
+
+      - name: Upload Console Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: console
+          path: tests/Browser/console
