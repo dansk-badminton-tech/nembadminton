@@ -21,7 +21,7 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           cache: 'yarn'
 
       - name: Frontend build
@@ -73,10 +73,10 @@ jobs:
           script: |
             cd /var/www/nembadminton.dk/projects/holdkamp
             git pull
-            php83 /usr/local/bin/composer install --ignore-platform-reqs
-            php83 artisan migrate --force
-            php83 artisan lighthouse:clear-cache
-            php83 artisan lighthouse:cache
+            php84 /usr/local/bin/composer install --ignore-platform-reqs
+            php84 artisan migrate --force
+            php84 artisan lighthouse:clear-cache
+            php84 artisan lighthouse:cache
 
       - name: Create Sentry release
         uses: getsentry/action-release@v3
