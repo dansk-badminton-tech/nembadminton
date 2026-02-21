@@ -21,7 +21,7 @@ class UpdateAllClubs extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-api-import:update-all-clubs';
+    protected $signature = 'badmintonplayer-api-import:update-all-clubs {--sync}';
 
     /**
      * The console command description.
@@ -40,10 +40,14 @@ class UpdateAllClubs extends Command
         $clubs = Club::query()->where('initialized', '=', 1)->get();
         foreach ($clubs as $club){
             $clubId = $club->id;
-            ImportMembers::withChain([
+            $chain = ImportMembers::withChain([
                 new ImportPoints($clubId, RankingPeriodType::CURRENT),
                 new ImportPoints($clubId, RankingPeriodType::PREVIOUS)
-            ])->dispatch([$clubId]);
+            ]);
+            if ($this->option('sync')) {
+                $chain->onConnection('sync');
+            }
+            $chain->dispatch([$clubId]);
         }
         return 0;
     }

@@ -76,6 +76,18 @@ services:
       - redis
       - websocket
 
+  artisan-serve:
+    image: flycompany/holdkamp
+    entrypoint: "php artisan serve --host=0.0.0.0 --port=80 --no-reload --env dusk.ci"
+    user: "1000:33"
+    ports:
+      - "80:80"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+
   artisan:
     image: flycompany/holdkamp
     user: "1000:33"
@@ -134,6 +146,17 @@ services:
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+
+  # http://localhost:7900/?autoconnect=1&resize=scale&password=secret
+  selenium:
+    image: 'selenium/standalone-chromium'
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    volumes:
+      - '/dev/shm:/dev/shm'
 
 volumes:
   db-data:

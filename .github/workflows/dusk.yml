@@ -1,0 +1,129 @@
+name: Dusk
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  APP_ENV: dusk.ci
+
+jobs:
+  dusk:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: holdkamp_browertesting
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size="2g" --add-host=host.docker.internal:host-gateway
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - uses: php-actions/composer@v6
+        with:
+          php_version: 8.4
+          version: 2
+          args: --ignore-platform-reqs
+
+      - name: Install frontend deps
+        run: yarn install --frozen-lockfile
+
+      - name: Build frontend
+        run: yarn build
+
+      - name: Generate key
+        run: php artisan key:generate
+
+      - name: Generate passport keys
+        run: php artisan passport:keys
+
+      - name: Migrate database
+        run: php artisan migrate --force
+
+      - name: Start app server
+        run: php artisan serve --host=0.0.0.0 --port=8000 --no-reload >/tmp/laravel.log 2>&1 &
+
+      - name: Wait for app
+        run: |
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000 >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "App did not start in time"
+          exit 1
+
+      - name: Run Dusk tests
+        run: php artisan dusk -vvv
+
+      - name: Upload Dusk screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dusk-screenshots
+          path: tests/Browser/screenshots
+          if-no-files-found: ignore
+
+      - name: Echo Server Access Logs
+        if: always()
+        run: cat /tmp/laravel.log
+
+      - name: Upload Server Access Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-server-access-logs
+          path: /tmp/laravel.log
+          if-no-files-found: ignore
+
+      - name: Echo laravel logs
+        if: always()
+        run: cat storage/logs/laravel.log
+
+      - name: Upload Laravel Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-logs
+          path: storage/logs/laravel.log
+          if-no-files-found: ignore
+
+      - name: Upload Console Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: console
+          path: tests/Browser/console
