@@ -97,12 +97,28 @@ jobs:
           path: tests/Browser/screenshots
           if-no-files-found: ignore
 
-      - name: Upload Laravel Logs
+      - name: Echo Server Access Logs
+        if: always()
+        run: cat /tmp/laravel.log
+
+      - name: Upload Server Access Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: laravel-logs
           path: /tmp/laravel.log
+          if-no-files-found: ignore
+
+      - name: Echo laravel logs
+        if: always()
+        run: cat storage/logs/laravel.log
+
+      - name: Upload Laravel Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laravel-logs
+          path: storage/logs/laravel.log
           if-no-files-found: ignore
 
       - name: Upload Console Logs
