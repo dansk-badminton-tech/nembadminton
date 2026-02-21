@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  APP_ENV: ci
+  APP_ENV: dusk.ci
 
 jobs:
   dusk:
@@ -70,10 +70,10 @@ jobs:
         run: php artisan passport:keys
 
       - name: Migrate database
-        run: php artisan migrate --force --env dusk.ci
+        run: php artisan migrate --force
 
       - name: Start app server
-        run: php artisan serve --host=0.0.0.0 --port=8000 --env dusk.ci --no-reload >/tmp/laravel.log 2>&1 &
+        run: php artisan serve --host=0.0.0.0 --port=8000 --no-reload >/tmp/laravel.log 2>&1 &
 
       - name: Wait for app
         run: |
