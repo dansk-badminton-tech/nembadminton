@@ -107,7 +107,7 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div dusk="update-cancellation-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             Rediger afbudslink
@@ -117,14 +117,15 @@ export default {
             <form @submit.prevent="updateCancellation">
                 <b-field addons label="Email" message="Angiv email som notifikationer må sendes til, når et afbud modtages.">
                     <div class="control">
-                      <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
+                      <b-checkbox dusk="no-notification-checkbox" v-model="noNotification">Ingen notifikationer</b-checkbox>
                     </div>
                     <div class="control is-expanded">
-                      <b-input :disabled="noNotification" type="email" v-model="email"></b-input>
+                      <b-input dusk="email-input" :disabled="noNotification" type="email" v-model="email"></b-input>
                     </div>
                 </b-field>
                 <b-field label="Klubber">
                     <b-taginput
+                        dusk="clubs-taginput"
                         @typing="getFilteredClubs"
                         v-model="clubs"
                         :data="filteredClubs"
@@ -134,7 +135,7 @@ export default {
                         open-on-focus>
                     </b-taginput>
                 </b-field>
-                <b-button :loading="submitting" native-type="submit">Gem</b-button>
+                <b-button dusk="submit-button" :loading="submitting" native-type="submit">Gem</b-button>
             </form>
         </section>
     </div>

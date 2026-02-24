@@ -6,10 +6,12 @@
         <form
             method="POST"
             @submit.prevent="submit"
+            dusk="login-form"
         >
             <b-field label="E-mail Address">
                 <b-input
                     v-model="form.email"
+                    dusk="email-input"
                     name="email"
                     type="email"
                     icon="email"
@@ -21,6 +23,7 @@
             <b-field label="Password">
                 <b-input
                     v-model="form.password"
+                    dusk="password-input"
                     type="password"
                     name="password"
                     icon="lock"
@@ -34,6 +37,7 @@
             <b-field grouped>
                 <div class="control">
                     <b-button
+                        dusk="login-button"
                         native-type="submit"
                         type="is-info"
                         :loading="isLoading"
@@ -113,6 +117,9 @@ export default defineComponent({
                                                        clubhouse: data.me.clubhouse
                                                    })
                                                })
+                                               .catch((error) => {
+                                                   console.error('Login error:', error)
+                                               })
                                        },
                                        submit() {
                                            this.isLoading = true
@@ -133,6 +140,12 @@ export default defineComponent({
                                                    }
                                                }
                                            ).then(({data}) => {
+                                               this.$buefy.snackbar.open(
+                                                   {
+                                                       duration: 6000,
+                                                       type: 'is-success',
+                                                       message: `Velkommen tilbage!`
+                                                   })
                                                setAuthToken(data.login.access_token)
                                                this.fetchUser()
                                                this.$router.push({name: 'home-redirect'})

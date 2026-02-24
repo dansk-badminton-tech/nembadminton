@@ -78,7 +78,7 @@ services:
 
   artisan-serve:
     image: flycompany/holdkamp
-    entrypoint: "php artisan serve --host=0.0.0.0 --port=80 --no-reload --env dusk.ci"
+    entrypoint: "php artisan serve --host=0.0.0.0 --port=80 --no-reload --env dusk.local"
     user: "1000:33"
     ports:
       - "80:80"

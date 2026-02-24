@@ -38,5 +38,7 @@ class TestingDataSeeder extends Seeder
 
         $this->call(RolesAndPermissionsSeeder::class);
 
+        $this->callWith(ClubhouseSeeder::class, ['params' => ['email' => 'testing@gmail.com']]);
+
     }
 }

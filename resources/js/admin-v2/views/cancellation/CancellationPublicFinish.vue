@@ -19,10 +19,10 @@ export default {
 </script>
 
 <template>
-    <section class="section">
+    <section class="section" dusk="public-cancellation-finish-page">
         <h2 class="title is-4">Tak for at registrere afbud 😎🏸</h2>
         <h1 class="subtitle">Vi har sendt en email til din klub samt en kvittering til dig.</h1>
-        <b-button type="is-info" @click="redirect" expanded>Opret nyt afbud</b-button>
+        <b-button dusk="new-cancellation-button" type="is-info" @click="redirect" expanded>Opret nyt afbud</b-button>
     </section>
 </template>
 
