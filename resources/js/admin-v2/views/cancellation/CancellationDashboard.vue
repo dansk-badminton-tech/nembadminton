@@ -208,13 +208,13 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div dusk="cancellation-dashboard-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             <b-icon icon="account-cancel" size="is-small"></b-icon>
             Afbud
         </hero-bar>
-        
+
         <section class="section is-main-section">
             <!-- Cancellation Collector Info Card -->
             <div class="card" v-if="!!cancellationCollector">
@@ -234,6 +234,7 @@ export default {
                             <div class="level-item">
                                 <div class="buttons">
                                     <b-button
+                                        dusk="edit-button"
                                         v-if="hasCancellationLink"
                                         tag="router-link"
                                         :to="'/cancellations/edit/'+collectorId"
@@ -242,6 +243,7 @@ export default {
                                         Rediger
                                     </b-button>
                                     <b-button
+                                        dusk="delete-button"
                                         v-if="hasCancellationLink"
                                         :loading="isDeleting"
                                         @click="confirmDeleteCancellationCollector"
@@ -253,7 +255,7 @@ export default {
                             </div>
                         </div>
                     </div>
-                    
+
                     <CancellationCollector :cancellationCollector="cancellationCollector"/>
                 </div>
             </div>
@@ -279,6 +281,7 @@ export default {
                 </div>
                 <div class="card-content">
                     <b-table
+                        dusk="cancellations-table"
                         :data="cancellationCollector?.cancellations.data || []"
                         :narrowed="true"
                         :loading="$apollo.queries.cancellationCollector.loading"
@@ -328,7 +331,7 @@ export default {
                                 <span class="ml-1">{{ props.row.dates.map(d => d.date).join(", ") }}</span>
                             </template>
                         </b-table-column>
-                        
+
                         <b-table-column label="Handlinger" v-slot="props">
                             <div class="buttons">
                                 <b-button
@@ -356,7 +359,7 @@ export default {
                                 />
                             </div>
                         </b-table-column>
-                        
+
                         <template v-slot:empty>
                             <div class="has-text-centered py-6">
                                 <b-icon icon="calendar-remove" size="is-large" type="is-grey-light"></b-icon>
