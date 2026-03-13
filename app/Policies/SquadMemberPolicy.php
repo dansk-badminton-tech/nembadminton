@@ -30,7 +30,7 @@ class SquadMemberPolicy
      */
     public function view(User $user, SquadMember $squadMember)
     {
-        return $user->getAuthIdentifier() === $squadMember->category->squad->team->user_id;
+        return $user->clubhouse_id === $squadMember->category->squad->team->clubhouse_id;
     }
 
     /**
@@ -53,7 +53,7 @@ class SquadMemberPolicy
      */
     public function update(User $user, SquadMember $squadMember)
     {
-        return $user->getAuthIdentifier() === $squadMember->category->squad->team->user_id;
+        return $user->clubhouse_id === $squadMember->category->squad->team->clubhouse_id;
     }
 
     /**
@@ -65,7 +65,7 @@ class SquadMemberPolicy
      */
     public function delete(User $user, SquadMember $squadMember)
     {
-        return $user->getAuthIdentifier() === $squadMember->category->squad->team->user_id;
+        return $user->clubhouse_id === $squadMember->category->squad->team->clubhouse_id;
     }
 
     /**
