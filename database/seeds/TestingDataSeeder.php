@@ -40,5 +40,7 @@ class TestingDataSeeder extends Seeder
 
         $this->callWith(ClubhouseSeeder::class, ['params' => ['email' => 'testing@gmail.com']]);
 
+        $this->call(ModelHasRoleSeeder::class);
+
     }
 }

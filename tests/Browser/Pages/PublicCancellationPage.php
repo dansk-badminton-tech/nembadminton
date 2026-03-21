@@ -38,7 +38,8 @@ class PublicCancellationPage extends Page
     {
         return [
             '@page' => "[dusk='public-cancellation-page']",
-            '@player-search' => "[dusk='player-search'] input",
+            '@player-search' => "[dusk='player-search']",
+            '@player-search-results-first' => "[dusk='player-search'] .dropdown-menu .dropdown-item.is-hovered",
             '@email' => "[dusk='email-input']",
             '@datepicker' => "[dusk='datepicker-input'] input",
             '@message' => "[dusk='message-input']",
@@ -51,9 +52,12 @@ class PublicCancellationPage extends Page
      */
     public function submitCancellation(Browser $browser, string $playerName, string $email, string $message = ''): void
     {
-        $browser->type('@player-search', $playerName)
+        $browser->waitUntilEnabled('@player-search')
+            ->type('@player-search', $playerName)
             ->waitForText($playerName)
-            ->keys('@player-search', ['{enter}'])
+            ->waitFor('@player-search-results-first')
+            ->click('@player-search-results-first')
+            ->pause(5000)
             ->type('@email', $email)
             ->click('@datepicker')
             ->waitFor('.datepicker')

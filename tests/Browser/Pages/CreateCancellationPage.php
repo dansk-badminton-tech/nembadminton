@@ -33,7 +33,7 @@ class CreateCancellationPage extends Page
             '@page' => "[dusk='create-cancellation-page']",
             '@no-notification' => "[dusk='no-notification-checkbox']",
             '@email' => "[dusk='email-input']",
-            '@clubs' => "[dusk='clubs-taginput'] input",
+            '@clubs' => "[dusk='clubs-taginput'].input",
             '@submit' => "[dusk='submit-button']",
         ];
     }
@@ -41,14 +41,21 @@ class CreateCancellationPage extends Page
     /**
      * Create a cancellation collector.
      */
-    public function createCollector(Browser $browser, string $email = null): void
+    public function createCollector(Browser $browser, string $club, string $email = null): void
     {
+        $browser->type('@clubs', $club)
+            ->waitForText($club)
+            ->keys('@clubs', ['{enter}']);
+
         if ($email) {
             $browser->type('@email', $email);
         } else {
             $browser->check('@no-notification');
         }
 
-        $browser->click('@submit');
+        $browser->click('@email');
+
+        $browser->waitUntilEnabled('@submit')
+            ->click('@submit');
     }
 }

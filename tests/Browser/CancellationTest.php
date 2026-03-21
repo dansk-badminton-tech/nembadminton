@@ -34,15 +34,12 @@ class CancellationTest extends DuskTestCase
 
             // 3. Create cancellation collector
             $browser->on(new CreateCancellationPage())
-                ->type('@clubs', 'BC37 Amager')
-                ->waitForText('BC37 Amager')
-                ->keys('@clubs', ['{enter}'])
-                ->createCollector('notif@example.com');
+                ->createCollector('BC37 Amager', 'notif@example.com');
 
             // 4. Verify on Dashboard
             $browser->on(new CancellationDashboardPage())
-                ->assertSee('Afbudslink')
-                ->assertSee('BC37 Amager');
+                ->waitForText('Afbudslink')
+                ->waitForText('BC37 Amager');
 
             // Get sharing ID from the page (this might be tricky in Dusk without specific tags)
             // But I can see it in the URL of the public link if I can find it.
@@ -54,7 +51,7 @@ class CancellationTest extends DuskTestCase
 
             // 5. Submit a public cancellation
             $browser->visit(new PublicCancellationPage($uuid))
-                ->submitCancellation('Daniel Fly Nygaard', 'daniel@example.com', 'I cannot play today');
+                ->submitCancellation('Daniel Nygaard', 'daniel@example.com', 'I cannot play today');
 
             // 6. Verify finish page
             $browser->on(new PublicCancellationFinishPage($uuid))
