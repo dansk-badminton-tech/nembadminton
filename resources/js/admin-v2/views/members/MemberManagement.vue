@@ -162,6 +162,17 @@ export default {
             Spillere
         </hero-bar>
         <section class="section is-main-section">
+            <b-message type="is-info" has-icon>
+                <p class="mb-2"><strong>Om spillere:</strong></p>
+                <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
+                <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
+                <ul class="ml-4">
+                    <li><strong>Inaktiv:</strong> Spilleren er permanent stoppet med at spille badminton. Når en spiller markeres som inaktiv, vil de blive filtreret fra automatisk i holdrunder og andre spillerlister.</li>
+                    <li><strong>Midlertidigt utilgængelig:</strong> Spilleren er skadet eller midlertidigt utilgængelig, men er stadig aktiv medlem. Dette håndteres via afbudssystemet i holdrunder.</li>
+                </ul>
+                <p class="mt-2"><em>Bemærk: Importering fra badmintonplayer.dk vil ikke ændre en spillers inaktiv-status, så manuelle ændringer bevares.</em></p>
+            </b-message>
+
             <card-component
                 title="Spillere i klubhuset"
                 icon="account-multiple"
