@@ -6,6 +6,7 @@ extend type Query{
         name: String @where(operator: "like")
         refId: String @where
         gender: [Gender!] @in
+        inactive: Boolean @where
         orderBy: _ @orderBy(columns: ["name"])
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamid", "user_id", "playable"])
         "Need to have at least one point"
@@ -22,6 +23,7 @@ extend type Query{
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL
         playable: Boolean @where
+        inactive: Boolean @where
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamid", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints") @guard
     "Search for players in a squad"
@@ -62,6 +64,7 @@ input CreateMemberInput {
     points: UpsertPointMemberInput
     clubs: UpsertClubsInput
     playable: Boolean
+    inactive: Boolean
 }
 
 input UpsertClubsInput {
@@ -153,6 +156,7 @@ type Member {
     clubs: [Club!]! @belongsToMany
     cancellations(where: _ @whereConditions(columns: ["teamid", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
     playable: Boolean!
+    inactive: Boolean!
 }
 
 type Point {

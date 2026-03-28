@@ -22,6 +22,7 @@ class MemberManager
 
         $memberModel = \App\Models\Member::query()->where('refId', $refId)->first();
         if ($memberModel !== null) {
+            // Only update name and gender, preserve inactive status set by admins
             $memberModel->update([
                 'name'   => $name,
                 'gender' => $gender,

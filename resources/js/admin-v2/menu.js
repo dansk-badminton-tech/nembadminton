@@ -18,6 +18,11 @@ export default function resolveMenu(clubhouseId) {
                 label: 'Afbud'
             },
             {
+                to: '/c-'+clubhouseId+'/members',
+                icon: 'account-multiple',
+                label: 'Spillere'
+            },
+            {
                 to: '/c-'+clubhouseId+'/analytics',
                 icon: 'google-analytics',
                 label: 'Analytics'

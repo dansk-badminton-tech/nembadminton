@@ -1,3 +1,19 @@
+## Domain Model
+
+### Members vs Users
+- **Members** (spillere): Badminton players with ranking data from badmintonplayer.dk
+  - Table: `members`
+  - Key fields: refId, name, gender, birthday, playable, inactive
+  - Represents players tracked in the system (may or may not have user accounts)
+  - Can be marked as `inactive=true` (stopped playing badminton permanently)
+  - Can be marked as `playable=false` (temporarily unavailable/injured)
+
+- **Users** (brugere): System accounts with login credentials
+  - Table: `users`
+  - Key fields: email, password, name, roles
+  - Can be associated with a clubhouse for access control
+  - Used for authentication and authorization
+
 Testing:
 
 ## End-to-end browser testing:
