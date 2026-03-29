@@ -18,7 +18,7 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div dusk="cancellation-landing-page">
         <title-bar :title-stack="titleStack"/>
         <section class="section is-main-section">
             <h1 class="title">Sådan fungerer det:</h1>
@@ -43,7 +43,7 @@ export default {
                 </div>
                 <div class="column is-offset-one-quarter is-half">
                     <div>
-                        <b-button type="is-info" @click="redirect" expanded>Kom igang!</b-button>
+                        <b-button dusk="get-started-button" type="is-info" @click="redirect" expanded>Kom igang!</b-button>
                     </div>
                 </div>
             </div>
