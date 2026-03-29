@@ -162,7 +162,7 @@ export default {
             Spillere
         </hero-bar>
         <section class="section is-main-section">
-            <b-message type="is-info" has-icon>
+            <b-message type="is-info" has-icon dusk="info-message">
                 <p class="mb-2"><strong>Om spillere:</strong></p>
                 <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
                 <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
@@ -176,6 +176,7 @@ export default {
             <card-component
                 title="Spillere i klubhuset"
                 icon="account-multiple"
+                dusk="member-management-card"
             >
                 <template v-slot:default>
                     <b-field grouped group-multiline>
@@ -185,10 +186,11 @@ export default {
                                 @input="search"
                                 placeholder="Indtast navn..."
                                 icon="magnify"
+                                dusk="search-name-input"
                             ></b-input>
                         </b-field>
                         <b-field label="Køn">
-                            <b-select v-model="selectedGender" @input="search">
+                            <b-select v-model="selectedGender" @input="search" dusk="gender-select">
                                 <option
                                     v-for="option in genderOptions"
                                     :key="option.value"
@@ -199,7 +201,7 @@ export default {
                             </b-select>
                         </b-field>
                         <b-field label="Vis inaktive">
-                            <b-switch v-model="showInactive" @input="search"></b-switch>
+                            <b-switch v-model="showInactive" @input="search" dusk="show-inactive-switch"></b-switch>
                         </b-field>
                     </b-field>
 
@@ -215,6 +217,7 @@ export default {
                         :pagination-rounded="true"
                         :hoverable="true"
                         :striped="true"
+                        dusk="members-table"
                     >
                         <b-table-column field="name" label="Navn" sortable v-slot="props">
                             <span :class="{'has-text-grey-light': props.row.inactive}">
@@ -252,6 +255,7 @@ export default {
                                 :type="props.row.inactive ? 'is-success' : 'is-danger'"
                                 :icon-left="props.row.inactive ? 'account-check' : 'account-off'"
                                 @click="toggleInactiveStatus(props.row)"
+                                :dusk="`toggle-inactive-${props.row.id}`"
                             >
                                 {{ props.row.inactive ? 'Marker som aktiv' : 'Marker som inaktiv' }}
                             </b-button>

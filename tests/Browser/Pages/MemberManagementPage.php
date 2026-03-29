@@ -38,11 +38,12 @@ class MemberManagementPage extends Page
     public function elements(): array
     {
         return [
-            '@search-input' => 'input[placeholder="Indtast navn..."]',
-            '@gender-select' => '.field:has(label:contains("Køn")) select',
-            '@show-inactive-toggle' => '.field:has(label:contains("Vis inaktive")) .switch',
-            '@members-table' => 'table',
-            '@info-message' => '.message.is-info',
+            '@search-input' => '[dusk="search-name-input"]',
+            '@gender-select' => '[dusk="gender-select"]',
+            '@show-inactive-switch' => '[dusk="show-inactive-switch"]',
+            '@members-table' => '[dusk="member-management-card"]',
+            '@info-message' => '[dusk="info-message"]',
+            '@card' => '[dusk="member-management-card"]',
         ];
     }
 
@@ -70,17 +71,26 @@ class MemberManagementPage extends Page
      */
     public function toggleShowInactive(Browser $browser): self
     {
-        $browser->click('@show-inactive-toggle');
+        $browser->click('@show-inactive-switch');
         return $this;
     }
 
     /**
-     * Toggle inactive status for a member
+     * Toggle inactive status for a member by member ID
+     */
+    public function toggleMemberInactiveStatusById(Browser $browser, int $memberId): self
+    {
+        $browser->click("[dusk='toggle-inactive-{$memberId}']");
+        return $this;
+    }
+
+    /**
+     * Toggle inactive status for a member by name (fallback method)
      */
     public function toggleMemberInactiveStatus(Browser $browser, string $memberName): self
     {
         $browser->waitForText($memberName)
-                ->with('table tbody', function ($table) use ($memberName) {
+                ->with('@members-table tbody', function ($table) use ($memberName) {
                     $table->assertSee($memberName)
                           ->clickLink('Marker som inaktiv');
                 });

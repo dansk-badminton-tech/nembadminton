@@ -34,6 +34,10 @@ class Member extends Model
 
     protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable', 'inactive'];
 
+    protected $casts    = [
+        'inactive' => 'boolean',
+    ];
+
     public function clubs() : BelongsToMany
     {
         return $this->belongsToMany(Club::class);

@@ -8,9 +8,10 @@ use App\Models\Clubhouse;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\MemberManagementPage;
+use Tests\Browser\Pages\LoginPage;
 use Tests\DuskTestCase;
 
-class MemberManagementTestDeactivated extends DuskTestCase
+class MemberManagementTest extends DuskTestCase
 {
     use DatabaseTruncation;
 
@@ -22,10 +23,10 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testMemberManagementPageLoads(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->assertSee('Spillere i klubhuset')
                     ->assertSee('Om spillere:')
@@ -41,13 +42,13 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testSearchMembersByName(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
             $member = Member::whereHas('clubs', function ($query) use ($clubhouse) {
                 $query->where('club_id', $clubhouse->clubs->first()->id);
             })->first();
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->waitForText($member->name)
                     ->searchMember($member->name)
@@ -63,10 +64,10 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testFilterMembersByGender(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->waitFor('@members-table')
                     ->filterByGender('MEN')
@@ -84,7 +85,6 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testToggleMemberInactiveStatus(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
 
             // Get an active member
@@ -96,18 +96,18 @@ class MemberManagementTestDeactivated extends DuskTestCase
                 $this->markTestSkipped('No active member found for testing');
             }
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
-                    ->with('table tbody', function ($table) use ($member) {
-                        // Find the row with the member and click the inactive button
-                        $table->whenAvailable("tr:contains('{$member->name}')", function ($row) {
-                            $row->press('Marker som inaktiv');
-                        });
-                    })
+                    ->toggleMemberInactiveStatusById($member->id)
                     ->waitForText('Spiller markeret som inaktiv')
                     ->pause(1000)
+                    ->visit(new MemberManagementPage($clubhouse->id))
+                    ->searchMember($member->name)
+                    ->toggleShowInactive()
+                    ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Inaktiv')
                     ->screenshot('member-marked-as-inactive');
 
@@ -125,7 +125,6 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testToggleShowInactiveMembers(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
 
             // Create an inactive member for testing
@@ -137,7 +136,8 @@ class MemberManagementTestDeactivated extends DuskTestCase
                 $inactiveMember->update(['inactive' => true]);
             }
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->waitFor('@members-table')
                     // Inactive members should not be visible by default
@@ -157,10 +157,10 @@ class MemberManagementTestDeactivated extends DuskTestCase
     public function testInformationMessageIsDisplayed(): void
     {
         $this->browse(function (Browser $browser) {
-            $user = User::first();
             $clubhouse = Clubhouse::first();
 
-            $browser->loginAs($user)
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->assertSee('Om spillere:')
                     ->assertSee('badmintonplayer.dk API')
