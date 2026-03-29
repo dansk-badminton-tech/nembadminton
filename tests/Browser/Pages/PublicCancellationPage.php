@@ -53,7 +53,7 @@ class PublicCancellationPage extends Page
     public function submitCancellation(Browser $browser, string $playerName, string $email, string $message = ''): void
     {
         $browser->waitUntilEnabled('@player-search')
-            ->type('@player-search', substr($playerName, 0, -1))
+            ->typeSlowly('@player-search', $playerName)
             ->waitForText($playerName)
             ->waitFor('@player-search-results-first')
             ->keys('@player-search', '{enter}')

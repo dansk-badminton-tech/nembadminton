@@ -51,7 +51,7 @@ class CancellationTest extends DuskTestCase
 
             // 5. Submit a public cancellation
             $browser->visit(new PublicCancellationPage($uuid))
-                ->submitCancellation('Daniel Nygaard', 'daniel@example.com', 'I cannot play today');
+                ->submitCancellation('Daniel Nygaar', 'daniel@example.com', 'I cannot play today');
 
             // 6. Verify finish page
             $browser->on(new PublicCancellationFinishPage($uuid))
