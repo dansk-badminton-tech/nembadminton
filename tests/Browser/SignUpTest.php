@@ -32,8 +32,7 @@ class SignUpTest extends DuskTestCase
                     ->waitForText('Importering færdig. Sender dig til dashboard om 3 sekunder', 30)
                     ->on(new ClubDashboardPage())
                     ->assertSee("Mit klubhus")
-                    ->assertSee("Daniel Fly Nygaard")
-                    ->screenshot('signup-complete');
+                    ->assertSee("Daniel Fly Nygaard");
         });
     }
 }

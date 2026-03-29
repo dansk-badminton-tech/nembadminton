@@ -2,7 +2,7 @@
     <div>
         <b-field grouped>
             <b-field expanded class="" label="Afbudslink" message="Dette link kan du dele med alle spillere i din klub.">
-                <b-input expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
+                <b-input dusk="public-link" expanded type="text" readonly :value="shareUrl" @click="$event.target.select()"></b-input>
                 <p class="control">
                     <b-button @click="copyToClipboard(shareUrl)">Kopier link</b-button>
                     <b-button @click="openLink(shareUrl)">Åbn link</b-button>

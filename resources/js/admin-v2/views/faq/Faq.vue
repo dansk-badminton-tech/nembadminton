@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div dusk="faq-page">
         <title-bar :title-stack="titleStack" />
         <hero-bar :has-right-visible="false">
             FAQ
         </hero-bar>
-        <section class="section is-main-section">
+        <section class="section is-main-section" dusk="faq-content-section">
             <fragment v-for="faq in faqs" :key="faq.title">
                 <strong>{{faq.title}}</strong>
                 <p v-html="faq.text"></p>
