@@ -4,15 +4,14 @@ namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
 
-class CancellationDashboardPage extends Page
+class FaqPage extends Page
 {
-
     /**
      * Get the URL for the page.
      */
     public function url(): string
     {
-        return '/app/cancellations/redirect';
+        return '/app/faq';
     }
 
     /**
@@ -20,7 +19,7 @@ class CancellationDashboardPage extends Page
      */
     public function assert(Browser $browser): void
     {
-        $browser->waitFor('@page');
+        $browser->waitFor('@faq-page');
     }
 
     /**
@@ -31,11 +30,8 @@ class CancellationDashboardPage extends Page
     public function elements(): array
     {
         return [
-            '@page' => "[dusk='cancellation-dashboard-page']",
-            '@edit' => "[dusk='edit-button']",
-            '@delete' => "[dusk='delete-button']",
-            '@table' => "[dusk='cancellations-div'] .table",
-            '@first-message-button' => "[dusk='show-message-button']",
+            '@faq-page' => "[dusk='faq-page']",
+            '@faq-content-section' => "[dusk='faq-content-section']",
         ];
     }
 }

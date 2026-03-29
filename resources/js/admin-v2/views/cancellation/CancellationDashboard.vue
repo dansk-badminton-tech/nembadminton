@@ -279,9 +279,8 @@ export default {
                         </b-button>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="card-content" dusk="cancellations-div">
                     <b-table
-                        dusk="cancellations-table"
                         :data="cancellationCollector?.cancellations.data || []"
                         :narrowed="true"
                         :loading="$apollo.queries.cancellationCollector.loading"
@@ -335,6 +334,7 @@ export default {
                         <b-table-column label="Handlinger" v-slot="props">
                             <div class="buttons">
                                 <b-button
+                                    dusk="show-message-button"
                                     icon-left="message"
                                     size="is-small"
                                     @click="showMessage(props.row)"

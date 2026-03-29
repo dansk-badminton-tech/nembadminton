@@ -52,6 +52,8 @@ class UpdateCancellationPage extends Page
     {
         if ($email) {
             $browser->uncheck('@no-notification')
+                ->waitUntilEnabled('@email')
+                ->clear('@email')
                 ->type('@email', $email);
         } else {
             $browser->check('@no-notification');

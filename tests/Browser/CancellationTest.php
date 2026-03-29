@@ -61,8 +61,10 @@ class CancellationTest extends DuskTestCase
             $browser->visit(new CancellationDashboardPage())
                 ->on(new CancellationDashboardPage())
                 ->waitFor('@table')
-                ->assertSee('Daniel Fly Nygaard')
-                ->assertSee('I cannot play today');
+                ->assertSee('Daniel Nygaard')
+                ->click('@first-message-button')
+                ->waitForText('I cannot play today')
+                ->press("OK");
 
             // 8. Update collector
             $browser->click('@edit')
@@ -70,12 +72,12 @@ class CancellationTest extends DuskTestCase
                 ->updateCollector('updated@example.com');
 
             $browser->on(new CancellationDashboardPage())
-                ->assertSee('updated@example.com');
+                ->waitForText('updated@example.com');
 
             // 9. Delete collector
             $browser->click('@delete')
-                ->waitForText('Er du sikker?')
-                ->click('.modal-card-foot .button.is-danger');
+                ->waitForText('Er du sikker')
+                ->press('OK');
 
             $browser->on(new CancellationLandingPage());
         });
