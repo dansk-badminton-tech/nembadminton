@@ -3,7 +3,7 @@
         title="Opret bruger"
         icon="lock"
     >
-    <div class="mb-2">
+    <div class="mb-2" dusk="sign-up-form">
         <b-field label="Navn">
             <b-input v-model="name" dusk="name-input" icon="account" placeholder="Dit navn"></b-input>
         </b-field>

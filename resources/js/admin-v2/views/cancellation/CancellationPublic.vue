@@ -1,6 +1,5 @@
 <script>
 import gql from "graphql-tag";
-import _ from "lodash/fp.js";
 import TeamFights from "@/views/cancellation/TeamFights.vue";
 import {getCurrentSeason} from "@/helpers.js";
 import Teams from "@/views/cancellation/Teams.vue";
@@ -10,7 +9,7 @@ import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";
 export default {
     name: "CancellationPublic",
     props: {"sharingId": String},
-    components: {TeamMatchCalendar, Teams, Form, TeamFights, MemberSearchCancellation},
+    components: {TeamMatchCalendar, Teams, TeamFights, MemberSearchCancellation},
     data() {
         return {
             form: {
@@ -196,18 +195,19 @@ export default {
 </script>
 
 <template>
-    <section>
+    <section dusk="public-cancellation-page">
         <h2 class="title is-4">Meld afbud for {{ showClubNames }}</h2>
         <b-loading v-model="$apollo.queries.badmintonPlayerTeamFightsBulk.loading"></b-loading>
         <form @submit.prevent="confirmCancellation">
             <b-field label="Vælg spiller" message="Der kan kun søges på spillere fra badmintonplayer.dk.">
-                <MemberSearchCancellation v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
+                <MemberSearchCancellation dusk="player-search" v-model="form.selectedPlayer" :clubs="cancellationCollectorPublic.clubs"></MemberSearchCancellation>
             </b-field>
             <b-field label="Din email" message="Hertil sendes en kvittering.">
-                <b-input placeholder="badminton@badminton.dk" type="email" v-model="form.email" required/>
+                <b-input dusk="email-input" placeholder="badminton@badminton.dk" type="email" v-model="form.email" required/>
             </b-field>
             <b-field label="Vælg afbudsdatoer" message="Vælg mindst én dato. Der kan vælges flere datoer.">
                 <b-datepicker
+                    dusk="datepicker-input"
                     placeholder="Angiv datoer"
                     v-model="form.selectedDates"
                     :first-day-of-week="1"
@@ -233,9 +233,9 @@ export default {
                 </b-datepicker>
             </b-field>
             <b-field label="Besked (Valgfrit)">
-                <b-input type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder=""/>
+                <b-input dusk="message-input" type="textarea" maxlength="200" v-model="form.additionalInfo" placeholder=""/>
             </b-field>
-            <b-button :loading="sendingCancellation" type="is-info" native-type="submit" class="mb-4" expanded size="is-medium">Meld afbud</b-button>
+            <b-button dusk="submit-button" :loading="sendingCancellation" type="is-info" native-type="submit" class="mb-4" expanded size="is-medium">Meld afbud</b-button>
             <h2 class="title is-4">Se din afbud i kalenderen</h2>
             <h2 class="subtitle">Dine afbudsdatoer markeres med rød.</h2>
             <TeamMatchCalendar :selected-dates="convertToEvents" :clubs="cancellationCollectorPublic.clubs"/>

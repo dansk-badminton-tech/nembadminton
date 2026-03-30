@@ -111,13 +111,14 @@ export default {
                 <h2 class="subtitle">Du er allerede tilknyttet et klubhus</h2>
                 <b-button @click="toDashboard">Videre</b-button>
             </div>
-            <form v-show="!hasClubhouse" @submit.prevent="createClubhouse">
+            <form v-show="!hasClubhouse" @submit.prevent="createClubhouse" dusk="sign-up-finish-form">
                 <b-field
                     horizontal
                     label="Navn"
                     message="Navnet på klubhuset. Oftes klubbens navn">
                     <b-input
                         v-model="name"
+                        dusk="clubhouse-name-input"
                         name="name"
                         placeholder="SAIF"
                         required
@@ -129,6 +130,7 @@ export default {
                     message="Klubbens email eller primær kontaktperson. Du må gerne bruge din egen email, du kan altid ændre den senere igen.">
                     <b-input
                         v-model="email"
+                        dusk="clubhouse-email-input"
                         name="email"
                         type="email"
                         placeholder="info@nembadminton.dk"
@@ -145,6 +147,7 @@ export default {
                 <b-button
                     native-type="submit"
                     type="is-info"
+                    dusk="create-clubhouse-button"
                     :loading="isLoading">
                     Opret
                 </b-button>

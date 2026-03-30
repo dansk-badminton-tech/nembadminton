@@ -78,7 +78,7 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div dusk="create-cancellation-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             Opret afbudslink
@@ -87,14 +87,15 @@ export default {
             <form @submit.prevent="submitCancellation">
                 <b-field addons label="Email" message="Angiv email som notifikationer må sendes til, når et afbud modtages.">
                     <div class="control">
-                        <b-checkbox v-model="noNotification">Ingen notifikationer</b-checkbox>
+                        <b-checkbox dusk="no-notification-checkbox" v-model="noNotification">Ingen notifikationer</b-checkbox>
                     </div>
                     <div class="control is-expanded">
-                        <b-input :disabled="noNotification" placeholder="fx daniel@gmail.com" v-model="email"></b-input>
+                        <b-input dusk="email-input" :disabled="noNotification" placeholder="fx daniel@gmail.com" v-model="email"></b-input>
                     </div>
                 </b-field>
                 <b-field label="Klubber">
                     <b-taginput
+                        dusk="clubs-taginput"
                         @typing="getFilteredClubs"
                         v-model="clubs"
                         :data="filteredClubs"
@@ -104,7 +105,7 @@ export default {
                         field="name1">
                     </b-taginput>
                 </b-field>
-                <b-button :loading="submitting" native-type="submit">Opret</b-button>
+                <b-button dusk="submit-button" :loading="submitting" native-type="submit">Opret</b-button>
             </form>
         </section>
     </div>

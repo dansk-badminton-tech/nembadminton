@@ -7,6 +7,7 @@ query memberSearchPoints(
     $teamId: String
     $rankingList: RankingList!
     $playable: Boolean
+    $inactive: Boolean
     $whereCancellations: QueryMemberSearchPointsWhereCancellationsWhereConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions
 ){
@@ -18,6 +19,7 @@ query memberSearchPoints(
         first: $first,
         teamId: $teamId,
         playable: $playable,
+        inactive: $inactive,
         whereCancellations: $whereCancellations,
         rankingList: $rankingList
     ) {

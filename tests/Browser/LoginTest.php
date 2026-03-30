@@ -10,6 +10,8 @@ class LoginTest extends DuskTestCase
 {
     use DatabaseTruncation;
 
+    protected $seeder = 'TestingDataSeeder';
+
     /**
      * A Dusk test example.
      */

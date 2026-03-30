@@ -313,6 +313,15 @@ const routes = [
                         path: 'analytics',
                         name: 'analytics',
                         component: () => import('@/views/analytics/AnalyticDashboard.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Spillere',
+                            requiresAuth: true
+                        },
+                        path: 'members',
+                        name: 'members',
+                        component: () => import('@/views/members/MemberManagement.vue')
                     }
                 ]
             },

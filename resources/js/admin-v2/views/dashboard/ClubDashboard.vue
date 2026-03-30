@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div dusk="club-dashboard-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             {{ me?.clubhouse.name }}

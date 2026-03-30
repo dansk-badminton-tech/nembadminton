@@ -2,7 +2,6 @@
 
 namespace FlyCompany\BadmintonPlayer\Commands;
 
-use App\Jobs\BadmintonPlayerImportPoints;
 use FlyCompany\BadmintonPlayer\Jobs\ImportPoints;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\Members\PointsManager;
@@ -17,7 +16,7 @@ class PointsImporter extends Command
      *
      * @var string
      */
-    protected $signature = 'badmintonplayer-api-import:points {club-id : BadmintonPlayer club id}';
+    protected $signature = 'badmintonplayer-api-import:points {club-id : BadmintonPlayer club id} {--sync}';
 
     /**
      * The console command description.
@@ -34,8 +33,14 @@ class PointsImporter extends Command
      */
     public function handle() : int
     {
-        ImportPoints::dispatch((int)$this->argument('club-id'), RankingPeriodType::CURRENT);
-        ImportPoints::dispatch((int)$this->argument('club-id'), RankingPeriodType::PREVIOUS);
+        $clubId = (int)$this->argument('club-id');
+        if ($this->option('sync')) {
+            ImportPoints::dispatchSync($clubId, RankingPeriodType::CURRENT);
+            ImportPoints::dispatchSync($clubId, RankingPeriodType::PREVIOUS);
+        } else {
+            ImportPoints::dispatch($clubId, RankingPeriodType::CURRENT);
+            ImportPoints::dispatch($clubId, RankingPeriodType::PREVIOUS);
+        }
 
         return 0;
     }

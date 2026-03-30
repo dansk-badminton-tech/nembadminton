@@ -541,7 +541,8 @@ export default {
                 let params = {
                     page: this.currentPage,
                     first: this.perPage,
-                    playable: true
+                    playable: true,
+                    inactive: false
                 }
                 if (this.searchName.trim() !== '') {
                     params.name = '%' + this.searchName + '%'
