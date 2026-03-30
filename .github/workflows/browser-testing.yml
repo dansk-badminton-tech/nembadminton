@@ -1,4 +1,4 @@
-name: Dusk
+name: Browser testing
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ env:
   APP_ENV: dusk.ci
 
 jobs:
-  dusk:
+  browser-tests:
     runs-on: ubuntu-latest
     services:
       mysql:

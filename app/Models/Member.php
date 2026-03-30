@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string  gender
  * @property string  email
  * @property boolean playable
+ * @property boolean inactive
  * @property Point[] points
  * @property User    owner
  * @package App\Models
@@ -31,7 +32,11 @@ use Illuminate\Support\Facades\Auth;
 class Member extends Model
 {
 
-    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable'];
+    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable', 'inactive'];
+
+    protected $casts    = [
+        'inactive' => 'boolean',
+    ];
 
     public function clubs() : BelongsToMany
     {
@@ -100,6 +105,11 @@ class Member extends Model
         }
 
         return $query;
+    }
+
+    public function scopeActive(Builder $builder) : Builder
+    {
+        return $builder->where('inactive', '=', false);
     }
 
     public function getVintage() : string
