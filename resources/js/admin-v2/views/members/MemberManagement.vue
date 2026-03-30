@@ -91,7 +91,14 @@ export default {
             skip() {
                 return !this.clubhouseId
             },
-            fetchPolicy: "network-only"
+            fetchPolicy: "network-only",
+            error(error) {
+                this.$buefy.snackbar.open({
+                    message: 'Kunne ikke hente spillere',
+                    type: 'is-danger',
+                    duration: 5000
+                });
+            }
         }
     },
     methods: {

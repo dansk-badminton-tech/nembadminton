@@ -27,7 +27,7 @@ class MemberManagementPage extends Page
     public function assert(Browser $browser): void
     {
         $browser->assertPathIs($this->url())
-                ->assertSee('Spillere i klubhuset');
+                ->waitForText('Spillere i klubhuset');
     }
 
     /**
