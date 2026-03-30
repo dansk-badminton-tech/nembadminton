@@ -8,6 +8,7 @@
                 <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b></p>
             </div>
         </div>
+        <div dusk="team-fights-table">
         <b-table
             :data="teams?.data"
             :loading="$apollo.loading"
@@ -57,6 +58,7 @@
                 </div>
             </b-table-column>
         </b-table>
+        </div>
         <CreateTeamFightAction v-if="teams?.data?.length === 0"></CreateTeamFightAction>
     </fragment>
 </template>

@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div dusk="team-fight-dashboard-page">
         <title-bar :title-stack="titleStack" />
         <hero-bar :has-right-visible="false">
             Holdrunder
         </hero-bar>
         <section class="section is-main-section">
             <div class="mb-3 mt-3">
-                <b-button :to="{name: 'team-fight-create'}" type="is-link" icon-left="plus" tag="router-link">Opret holdrunde</b-button>
+                <b-button dusk="create-team-fight-link" :to="{name: 'team-fight-create'}" type="is-link" icon-left="plus" tag="router-link">Opret holdrunde</b-button>
             </div>
             <card-component
                 title="Holdrunde"

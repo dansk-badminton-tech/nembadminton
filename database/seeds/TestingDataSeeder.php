@@ -42,5 +42,7 @@ class TestingDataSeeder extends Seeder
 
         $this->call(ModelHasRoleSeeder::class);
 
+        $this->call(PointSeeder::class);
+
     }
 }
