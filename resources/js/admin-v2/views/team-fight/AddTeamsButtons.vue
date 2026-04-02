@@ -1,5 +1,5 @@
 <template>
-    <div class="content has-text-grey has-text-centered">
+    <div dusk="add-teams-section" class="content has-text-grey has-text-centered">
         <p>
             <b-icon
                 icon="account-group"
@@ -27,6 +27,7 @@
                 11-kamps hold
             </b-button>
             <b-button
+                dusk="add-13-kamps-hold-button"
                 :loading="loading"
                 type="is-link"
                 @click="addSquad10">

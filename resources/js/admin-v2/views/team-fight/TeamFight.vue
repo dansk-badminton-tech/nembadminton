@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div dusk="team-fight-edit-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             {{name}}
@@ -217,7 +217,7 @@ export default {
             oldVersion: null,
             savingIcon: 'content-save',
             showLinkSharing: false,
-            team: {
+            teamRound: {
                 squads: [],
                 club: {}
             },
