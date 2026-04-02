@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\TeamFightCreatePage;
+use Tests\Browser\Pages\TeamFightEditPage;
 use Tests\DuskTestCase;
 
 /**
@@ -126,132 +127,6 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
         ];
     }
 
-    /**
-     * Fill an inline autocomplete slot within a specific squad and category.
-     *
-     * Finds the empty <input placeholder="Søg på spiller..."> inside the row
-     * whose <th> matches the given category name (e.g. "1. DD") within the
-     * given squad's table (by squad index).
-     *
-     * Approach:
-     *   1. Tag the target input with a temporary unique ID via JS so Dusk can
-     *      address it with ->keys() for real keyboard input
-     *   2. Use Dusk ->click() + ->keys() to type the search term — this fires
-     *      real keyboard events that Buefy's @typing handler picks up
-     *      (the native value setter approach does NOT trigger Buefy events)
-     *   3. Wait for the autocomplete dropdown to appear
-     *   4. Click the dropdown item whose text contains the player's name
-     *      (not just the first item — avoids picking the wrong player)
-     *
-     * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
-     * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD", "2. HD"
-     * @param string $playerName   Full player name to search for in the autocomplete
-     */
-    private function fillCategorySlot(Browser $browser, int $squadIndex, string $categoryName, string $playerName): void
-    {
-        $escapedCategory = addslashes($categoryName);
-        $escapedPlayer = addslashes($playerName);
-
-        // Use a unique temporary ID to let Dusk target the correct input.
-        // We tag the input via JS, then use a CSS selector to click/type into it.
-        $tempId = 'dusk-fill-target-' . $squadIndex . '-' . md5($categoryName . $playerName . microtime());
-
-        // Step 1: Find the empty input inside the correct squad table + category row.
-        //
-        // DOM structure: each squad is a <table> inside [dusk='team-table-section'].
-        // Within each table, rows have <th> with the category name (e.g. "1. DD")
-        // and <td> with PlayerSearch <input placeholder="Søg på spiller..."> when
-        // the slot is empty. We scroll to it and assign a temporary ID.
-        $found = $browser->script("
-            var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
-            var table = tables[{$squadIndex}];
-            if (!table) return false;
-            var rows = table.querySelectorAll('tbody tr');
-            for (var i = 0; i < rows.length; i++) {
-                var th = rows[i].querySelector('th');
-                if (th && th.textContent.trim() === '{$escapedCategory}') {
-                    var input = rows[i].querySelector('input[placeholder=\"Søg på spiller...\"]');
-                    if (input) {
-                        input.id = '{$tempId}';
-                        input.scrollIntoView({block: 'center'});
-                        return true;
-                    }
-                    return false;
-                }
-            }
-            return false;
-        ");
-
-        $this->assertTrue($found[0] ?? false, "Could not find empty input for squad {$squadIndex}, category '{$categoryName}'");
-
-        // Step 2: Click to focus the input, then type the player name using real
-        // keyboard events. Buefy's b-autocomplete listens for @typing (keyboard input)
-        // to trigger the search — DOM 'input' events from native value setter don't work.
-        //
-        // The GraphQL query does a LIKE '%name%' match, so the full name works.
-        $selector = "#{$tempId}";
-        $browser->click($selector);
-        $browser->pause(200);
-
-        // Type using Dusk's keys() which sends real keystrokes.
-        $browser->keys($selector, $playerName);
-
-        // Step 3: Wait until the specific player name appears in a dropdown item.
-        //
-        // The autocomplete fires a debounced GraphQL search (300ms debounce + network).
-        // We must NOT just wait for any .dropdown-item — that could match stale/loading
-        // results from a previous search. Instead, poll until a dropdown item's text
-        // contains the exact player name we searched for.
-        $browser->waitUsing(10, 200, function () use ($browser, $escapedPlayer) {
-            $found = $browser->script("
-                var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-                for (var i = 0; i < items.length; i++) {
-                    if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                        return true;
-                    }
-                }
-                return false;
-            ");
-            return $found[0] ?? false;
-        }, "Timed out waiting for '{$playerName}' to appear in autocomplete dropdown (squad {$squadIndex}, {$categoryName})");
-
-        // Step 4: Click the dropdown item that contains the exact player name.
-        $browser->script("
-            var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                    items[i].click();
-                    return;
-                }
-            }
-        ");
-        $browser->pause(600);
-
-        // Clean up: remove the temporary ID to avoid DOM pollution
-        $browser->script("
-            var el = document.getElementById('{$tempId}');
-            if (el) el.removeAttribute('id');
-        ");
-    }
-
-    /**
-     * Fill all category slots for one squad using the category → players mapping.
-     *
-     * Iterates through all 13 categories in order and fills each player into
-     * the correct category row via inline autocomplete.
-     *
-     * @param int   $squadIndex    0-based squad index
-     * @param array $categorySlots Map of category name → [player1, player2, ...]
-     */
-    private function fillSquad(Browser $browser, int $squadIndex, array $categorySlots): void
-    {
-        foreach ($categorySlots as $categoryName => $players) {
-            foreach ($players as $playerName) {
-                $this->fillCategorySlot($browser, $squadIndex, $categoryName, $playerName);
-            }
-        }
-    }
-
     public function test_user_can_construct_holdrunde_with_3x_13_kamps_hold(): void
     {
         $this->browse(function (Browser $browser) {
@@ -262,63 +137,17 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
                 ->loginSPA('testing@gmail.com', 'Test1234');
 
             // ── Step 2: Create holdrunde ──
-            $browser->visit(new TeamFightCreatePage($clubhouse->id))
-                ->on(new TeamFightCreatePage($clubhouse->id));
+            $createPage = new TeamFightCreatePage($clubhouse->id);
+            $browser->visit($createPage)
+                ->on($createPage);
 
             $browser->waitUntilEnabled('@name-input')
                 ->type('@name-input', '3x13 Kamps Holdrunde Test');
 
-            // Select date: July 14, 2025 via Buefy datepicker.
-            // Buefy datepicker month/year selects need JS value changes with
-            // event dispatching — Dusk's native select() doesn't work here.
-            $browser->click('@date-picker')
-                ->waitFor('.datepicker .dropdown-content');
+            $browser->on($createPage)
+                ->selectDate(7, 2025, 14)
+                ->selectRankingByText('Juli 2025');
 
-            // Set month to July (value=6 because months are 0-indexed)
-            $browser->script("
-                var monthSel = document.querySelector('.datepicker .datepicker-header .select select');
-                monthSel.value = '6';
-                monthSel.dispatchEvent(new Event('input'));
-                monthSel.dispatchEvent(new Event('change'));
-            ");
-            // Set year to 2025 (second <select> in the datepicker header)
-            $browser->script("
-                var yearSel = document.querySelectorAll('.datepicker .datepicker-header .select select')[1];
-                yearSel.value = '2025';
-                yearSel.dispatchEvent(new Event('input'));
-                yearSel.dispatchEvent(new Event('change'));
-            ");
-            $browser->pause(300);
-
-            // Click day 14, skipping "is-nearby" cells (days from adjacent months)
-            $browser->script("
-                var cells = document.querySelectorAll('.datepicker .datepicker-body a.datepicker-cell');
-                for (var i = 0; i < cells.length; i++) {
-                    if (cells[i].textContent.trim() === '14' && !cells[i].classList.contains('is-nearby')) {
-                        cells[i].click();
-                        break;
-                    }
-                }
-            ");
-            $browser->pause(300);
-
-            // Select Juli 2025 ranking from the ranking dropdown.
-            // Loops through <option> elements to find the one containing "Juli 2025".
-            $browser->waitFor('@ranking-select')
-                ->script("
-                    var sel = document.querySelector(\"[dusk='team-fight-ranking-select'] select\");
-                    var options = sel.options;
-                    for (var i = 0; i < options.length; i++) {
-                        if (options[i].text.indexOf('Juli 2025') !== -1) {
-                            sel.selectedIndex = i;
-                            sel.dispatchEvent(new Event('input'));
-                            sel.dispatchEvent(new Event('change'));
-                            break;
-                        }
-                    }
-                ");
-
-            // Submit the form and wait for redirect to the edit page
             $browser->click('@submit-button')
                 ->waitForText('Dit hold er gemt')
                 ->assertPathContains('/team-fight/')
@@ -326,16 +155,15 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
                 ->waitForText('Holdene i holdrunden')
                 ->waitForText('3x13 Kamps Holdrunde Test');
 
+            // Register TeamFightEditPage macros so we can call page object methods
+            $browser->on(new TeamFightEditPage());
+
             // ── Step 3: Add 3x 13-kamps hold ──
-            // JS click to avoid Buefy snackbar toast intercepting the button
             for ($i = 0; $i < 3; $i++) {
-                $browser->waitFor("[dusk='add-13-kamps-hold-button']")
-                    ->scrollTo("[dusk='add-13-kamps-hold-button']");
-                $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
+                $browser->add13KampsHold();
                 $browser->waitForText('Hold ' . ($i + 1));
             }
 
-            // Verify all 3 squads exist
             for ($i = 1; $i <= 3; $i++) {
                 $browser->assertSee("Hold {$i}");
             }
@@ -348,10 +176,6 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
             // Every player is placed directly into their category slot — no ranking
             // list or "+" button used. All assignments come from getSquadSlots().
             //
-            // Each squad must be fully filled before moving to the next, because
-            // the autocomplete search within a category only returns players who
-            // are already members of that squad's team fight.
-            //
             // To change who plays where, edit getSquadSlots().
             // =====================================================================
 
@@ -361,146 +185,20 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
                 $squadNum = $squadIdx + 1;
                 $browser->screenshot("3x13kamps-squad-{$squadNum}-before");
 
-                $this->fillSquad($browser, $squadIdx, $allSquadSlots[$squadIdx]);
+                $browser->fillSquad($squadIdx, $allSquadSlots[$squadIdx]);
 
                 $browser->screenshot("3x13kamps-squad-{$squadNum}-filled");
             }
 
-            // ── Step 5: Verify all squads are still visible and fully populated ──
+            // ── Step 5: Verify all squads are fully populated ──
             for ($i = 1; $i <= 3; $i++) {
                 $browser->assertSee("Hold {$i}");
             }
 
-            // Count remaining empty autocomplete inputs — should be zero
-            $emptyInputs = $browser->script("
-                return document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\").length;
-            ");
-            $this->assertEquals(0, $emptyInputs[0], 'All player slots should be filled');
+            $browser->assertAllSlotsFilled();
 
-            // ── Step 6: Verify each player ended up in the correct category ──
-            //
-            // Reads the actual player names from each squad's table in the DOM
-            // and compares them against our hardcoded getSquadSlots() mapping.
-            //
-            // JS returns a nested structure: squads → categories → player names.
-            // Each category row's <th> gives the category name (e.g. "1. DD"),
-            // and the <p class="handle"> elements inside that row contain the
-            // player names (with gender icon text and position info stripped).
-            $actualSquads = $browser->script("
-                var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
-                var result = [];
-                for (var t = 0; t < tables.length; t++) {
-                    var squad = {};
-                    var rows = tables[t].querySelectorAll('tbody tr');
-                    for (var r = 0; r < rows.length; r++) {
-                        var th = rows[r].querySelector('th');
-                        if (!th) continue;
-                        var categoryName = th.textContent.trim();
-                        var handles = rows[r].querySelectorAll('p.handle');
-                        var players = [];
-                        for (var h = 0; h < handles.length; h++) {
-                            // The handle contains: icon text + player name + ' (position info)'
-                            // Extract just the player name by removing the trailing parenthetical
-                            var text = handles[h].textContent.trim();
-                            var match = text.match(/^(.+?)\\s*\\(/);
-                            if (match) {
-                                players.push(match[1].trim());
-                            } else {
-                                players.push(text);
-                            }
-                        }
-                        squad[categoryName] = players;
-                    }
-                    result.push(squad);
-                }
-                return result;
-            ");
-
-            $actualSquadData = $actualSquads[0];
-
-            for ($squadIdx = 0; $squadIdx < 3; $squadIdx++) {
-                $squadNum = $squadIdx + 1;
-                $expectedCategories = $allSquadSlots[$squadIdx];
-                $actualCategories = $actualSquadData[$squadIdx];
-
-                foreach ($expectedCategories as $categoryName => $expectedPlayers) {
-                    $this->assertArrayHasKey(
-                        $categoryName,
-                        $actualCategories,
-                        "Squad {$squadNum}: category '{$categoryName}' not found in DOM"
-                    );
-
-                    $actualPlayers = $actualCategories[$categoryName];
-
-                    $this->assertCount(
-                        count($expectedPlayers),
-                        $actualPlayers,
-                        "Squad {$squadNum}, {$categoryName}: expected " . count($expectedPlayers)
-                            . " player(s) but found " . count($actualPlayers)
-                    );
-
-                    foreach ($expectedPlayers as $i => $expectedName) {
-                        $this->assertEquals(
-                            $expectedName,
-                            $actualPlayers[$i],
-                            "Squad {$squadNum}, {$categoryName}, slot {$i}: expected '{$expectedName}' but got '{$actualPlayers[$i]}'"
-                        );
-                    }
-                }
-            }
-
-            // ── Step 7: Verify validation status indicators ──
-            // After all categories are filled, the validation checks should run.
-            // Each indicator is a .tags.has-addons with a label span and a status span.
-            // Status: is-success + "OK" = pass, is-danger + "Fejl" = fail, is-light + "-" = disabled
-            $browser->scrollTo('.field.is-grouped')
-                ->pause(500);
-
-            // Assert "Fuldendt hold" shows OK (not Fejl)
-            $fuldendtStatus = $browser->script("
-                var spans = document.querySelectorAll('.tags.has-addons');
-                for (var i = 0; i < spans.length; i++) {
-                    if (spans[i].textContent.includes('Fuldendt hold')) {
-                        var statusSpan = spans[i].querySelector('.tag.is-medium:not(.is-light)') || spans[i].querySelectorAll('.tag')[1];
-                        return { text: statusSpan.textContent.trim(), isDanger: statusSpan.classList.contains('is-danger'), isSuccess: statusSpan.classList.contains('is-success') };
-                    }
-                }
-                return null;
-            ");
-            $this->assertNotNull($fuldendtStatus[0], '"Fuldendt hold" indicator should be present');
-            $this->assertEquals('OK', $fuldendtStatus[0]['text'], '"Fuldendt hold" should show OK');
-            $this->assertTrue($fuldendtStatus[0]['isSuccess'], '"Fuldendt hold" should have is-success class');
-            $this->assertFalse($fuldendtStatus[0]['isDanger'], '"Fuldendt hold" should not have is-danger class');
-
-            // Assert "Spiller på et forkert hold" shows OK (not Fejl)
-            $forkertHoldStatus = $browser->script("
-                var spans = document.querySelectorAll('.tags.has-addons');
-                for (var i = 0; i < spans.length; i++) {
-                    if (spans[i].textContent.includes('Spiller på et forkert hold')) {
-                        var statusSpan = spans[i].querySelectorAll('.tag')[1];
-                        return { text: statusSpan.textContent.trim(), isDanger: statusSpan.classList.contains('is-danger'), isSuccess: statusSpan.classList.contains('is-success') };
-                    }
-                }
-                return null;
-            ");
-            $this->assertNotNull($forkertHoldStatus[0], '"Spiller på et forkert hold" indicator should be present');
-            $this->assertNotEquals('Fejl', $forkertHoldStatus[0]['text'], '"Spiller på et forkert hold" should not show Fejl');
-            $this->assertFalse($forkertHoldStatus[0]['isDanger'], '"Spiller på et forkert hold" should not have is-danger class');
-
-            // Assert "Spiller for højt i kategorien" shows OK (not Fejl)
-            $forHoejtStatus = $browser->script("
-                var spans = document.querySelectorAll('.tags.has-addons');
-                for (var i = 0; i < spans.length; i++) {
-                    if (spans[i].textContent.includes('Spiller for højt i kategorien')) {
-                        var statusSpan = spans[i].querySelectorAll('.tag')[1];
-                        return { text: statusSpan.textContent.trim(), isDanger: statusSpan.classList.contains('is-danger'), isSuccess: statusSpan.classList.contains('is-success') };
-                    }
-                }
-                return null;
-            ");
-            $this->assertNotNull($forHoejtStatus[0], '"Spiller for højt i kategorien" indicator should be present');
-            $this->assertNotEquals('Fejl', $forHoejtStatus[0]['text'], '"Spiller for højt i kategorien" should not show Fejl');
-            $this->assertFalse($forHoejtStatus[0]['isDanger'], '"Spiller for højt i kategorien" should not have is-danger class');
+            // ── Step 6: Verify validation status indicators ──
+            $browser->assertValidationPassing();
 
             $browser->screenshot('3x13kamps-test-complete');
         });

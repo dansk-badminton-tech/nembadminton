@@ -7,6 +7,7 @@
                     :label="incompleteTeamTip">
                     <span class="tag is-light is-medium">Fuldendt hold</span>
                     <span
+                        dusk="validation-incomplete-team"
                         v-bind:class="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}"
                         class="tag is-medium">{{ incompleteTeamText }}</span>
                 </b-tooltip>
@@ -19,6 +20,7 @@
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller på et forkert hold</span>
                     <span
+                        dusk="validation-invalid-level"
                         v-bind:class="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}"
                         class="tag is-medium">{{ invalidLevelText }}</span>
                 </div>
@@ -31,6 +33,7 @@
                 <div class="tags has-addons">
                     <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
                     <span
+                        dusk="validation-invalid-category"
                         v-bind:class="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}"
                         class="tag is-medium">{{ invalidCategoryText }}</span>
                 </div>
