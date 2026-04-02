@@ -10,7 +10,7 @@ cp .env.example .env
 docker-compose up -d app
 docker-compose run --rm artisan key:generate
 docker-compose run --rm artisan migrate
-docker-compose run --rm artisan badmintonplayer-import:clubs
+docker-compose run --rm artisan badmintonplayer-api-import:club
 docker-compose run --rm artisan db:seed RolesAndPermissionsSeeder
 yarn install
 yarn run dev

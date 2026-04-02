@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TestingDataSeeder extends Seeder
 {
@@ -12,29 +11,13 @@ class TestingDataSeeder extends Seeder
      */
     public function run(): void
     {
-        $clubs = require __DIR__ . '/clubs_data.php';
+        $this->call(ClubSeeder::class);
 
-        foreach ($clubs as $club) {
-            \App\Models\Club::query()->updateOrCreate([
-                'id' => $club['id'],
-            ], $club);
-        }
+        $this->call(MemberSeeder::class);
 
-        $members = require __DIR__ . '/members_data.php';
+        $this->call(ClubMemberSeeder::class);
 
-        foreach ($members as $member) {
-            \App\Models\Member::query()->updateOrCreate([
-                'id' => $member['id'],
-            ], $member);
-        }
-
-        $club_member_relation = require __DIR__ . '/club_member_relation_data.php';
-
-        DB::table('club_member')->insert($club_member_relation);
-
-        $oauth_clients = require __DIR__ . '/oauth_clients_data.php';
-
-        DB::table('oauth_clients')->insert($oauth_clients);
+        $this->call(OAuthClientSeeder::class);
 
         $this->call(RolesAndPermissionsSeeder::class);
 
@@ -43,6 +26,5 @@ class TestingDataSeeder extends Seeder
         $this->call(ModelHasRoleSeeder::class);
 
         $this->call(PointSeeder::class);
-
     }
 }
