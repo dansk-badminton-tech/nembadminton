@@ -209,6 +209,7 @@ class TeamFightEditPage extends Page
         // and returns true if the input was found. This is called both initially
         // and as a retry inside waitUsing if the dropdown doesn't appear.
         $triggerSearchJs = "
+            // Dismiss any lingering dropdown from a previous fillCategorySlot call
             document.body.click();
             var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
             var table = tables[{$squadIndex}];
@@ -228,7 +229,10 @@ class TeamFightEditPage extends Page
             input.focus();
             input.click();
 
-            // Walk up from <input> to find PlayerSearch and Buefy autocomplete.
+            // Walk up from <input> to find PlayerSearch Vue instance and Buefy
+            // autocomplete instance. PlayerSearch has 'querySearchName' (search
+            // text) and 'focusedFlag' (gates Apollo queries). Buefy autocomplete
+            // has 'isActive' (controls dropdown visibility) and 'newValue'.
             var query = '{$escapedSearch}';
             var el = input;
             var playerSearch = null;
@@ -244,10 +248,13 @@ class TeamFightEditPage extends Page
                 }
                 el = el.parentElement;
             }
+            // Set focusedFlag=true to ungate the Apollo search queries,
+            // then set the search string to trigger a reactive refetch.
             if (playerSearch) {
                 playerSearch.focusedFlag = true;
                 playerSearch.querySearchName = query;
             }
+            // Open dropdown and sync displayed value with the search query.
             if (autocomplete) {
                 autocomplete.isActive = true;
                 autocomplete.newValue = query;
@@ -256,47 +263,109 @@ class TeamFightEditPage extends Page
             return true;
         ";
 
-        // Step 1: Initial trigger
-        $found = $browser->script($triggerSearchJs);
-        Assert::assertTrue($found[0] ?? false, "Could not find empty input for squad {$squadIndex}, category '{$categoryName}'");
+        // JS snippet that checks whether the player has been placed into the
+        // category row — looks for a <p class="handle"> containing the player
+        // name within the target squad/category row. Returns true if found.
+        $verifyPlacedJs = "
+            var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
+            var table = tables[{$squadIndex}];
+            if (!table) return false;
+            var rows = table.querySelectorAll('tbody tr');
+            for (var i = 0; i < rows.length; i++) {
+                var th = rows[i].querySelector('th');
+                if (th && th.textContent.trim() === '{$escapedCategory}') {
+                    var handles = rows[i].querySelectorAll('p.handle');
+                    for (var j = 0; j < handles.length; j++) {
+                        if (handles[j].textContent.indexOf('{$escapedPlayer}') !== -1) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+            return false;
+        ";
 
-        // Step 2: Wait for the player name in dropdown. On each poll, re-trigger
-        // the search if the dropdown isn't showing results yet (handles cases
-        // where a previous autocomplete's lingering state blocks the new one).
-        $retryCount = 0;
-        $browser->waitUsing(15, 300, function () use ($browser, $escapedPlayer, $triggerSearchJs, &$retryCount) {
-            $found = $browser->script("
+        // Outer retry loop: attempts the full search → wait → click → verify
+        // sequence up to 3 times. In CI, the dropdown click can silently fail
+        // (dropdown closes between detection and click), so we must verify the
+        // player was actually placed and retry the entire sequence if not.
+        $maxAttempts = 3;
+        $placed = false;
+
+        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+            // Step 1: Trigger the search
+            $found = $browser->script($triggerSearchJs);
+            Assert::assertTrue(
+                $found[0] ?? false,
+                "Could not find empty input for squad {$squadIndex}, category '{$categoryName}' (attempt {$attempt})"
+            );
+
+            // Step 2: Wait for the player name to appear in the dropdown.
+            // Re-trigger the search every ~900ms if the dropdown isn't populated.
+            $retryCount = 0;
+            try {
+                $browser->waitUsing(15, 300, function () use ($browser, $escapedPlayer, $triggerSearchJs, &$retryCount) {
+                    $found = $browser->script("
+                        var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
+                        for (var i = 0; i < items.length; i++) {
+                            if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    ");
+                    if ($found[0] ?? false) {
+                        return true;
+                    }
+                    $retryCount++;
+                    if ($retryCount % 3 === 0) {
+                        $browser->script($triggerSearchJs);
+                    }
+                    return false;
+                }, "dropdown-wait-attempt-{$attempt}");
+            } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
+                // If this is the last attempt, fail hard
+                if ($attempt === $maxAttempts) {
+                    Assert::fail("Timed out waiting for '{$playerName}' in autocomplete dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
+                }
+                continue;
+            }
+
+            // Step 3: Click the dropdown item matching the player name.
+            $browser->script("
                 var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
                 for (var i = 0; i < items.length; i++) {
                     if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                        return true;
+                        items[i].click();
+                        return;
                     }
                 }
-                return false;
             ");
-            if ($found[0] ?? false) {
-                return true;
-            }
-            // Retry the search trigger every 3 polls (~900ms)
-            $retryCount++;
-            if ($retryCount % 3 === 0) {
-                $browser->script($triggerSearchJs);
-            }
-            return false;
-        }, "Timed out waiting for '{$playerName}' in autocomplete dropdown (squad {$squadIndex}, {$categoryName})");
 
-        // Step 3: Click the dropdown item matching the player name.
-        $browser->script("
-            var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-            for (var i = 0; i < items.length; i++) {
-                if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                    items[i].click();
-                    return;
+            // Step 4: Verify the player was actually placed into the category row.
+            // Vue needs a moment to process the selection — poll for up to 3 seconds.
+            try {
+                $browser->waitUsing(3, 200, function () use ($browser, $verifyPlacedJs) {
+                    $result = $browser->script($verifyPlacedJs);
+                    return $result[0] ?? false;
+                }, "verify-placed-attempt-{$attempt}");
+                $placed = true;
+                break;
+            } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
+                // Player was not placed — the click silently failed. If we have
+                // remaining attempts, dismiss the stale dropdown and retry.
+                if ($attempt < $maxAttempts) {
+                    $browser->script("document.body.click();");
+                    $browser->pause(300);
                 }
             }
-        ");
-        // Brief pause for Vue to process the selection and update the DOM
-        $browser->pause(300);
+        }
+
+        Assert::assertTrue($placed, "Failed to place '{$playerName}' into squad {$squadIndex}, category '{$categoryName}' after {$maxAttempts} attempts");
+
+        // Brief pause for Vue to finish processing before the next fill call
+        $browser->pause(200);
     }
 
     /**
