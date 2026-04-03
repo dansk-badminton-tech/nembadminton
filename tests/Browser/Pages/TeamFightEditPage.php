@@ -180,17 +180,18 @@ class TeamFightEditPage extends Page
     /**
      * Fill an inline autocomplete slot within a specific squad and category.
      *
-     * Targets the empty <input placeholder="Søg på spiller..."> inside the row
-     * whose <th> matches the given category name within the given squad's table.
+     * Uses dusk selectors for targeting:
+     *   - [dusk='squad-{N}'] scopes to the correct squad
+     *   - [dusk='player-search-autocomplete-{slug}'] scopes to the correct category
      *
      * Approach — all done via JS to avoid Dusk CSS selector lookups that break
      * when Vue re-renders destroy/recreate the input element after scrollIntoView:
      *
-     *   1. Find the target input, scroll to it, focus it, and dispatch keyboard
-     *      events character-by-character so Buefy's @typing handler fires
-     *   2. Poll (via waitUsing) until the specific player name appears in the
-     *      autocomplete dropdown (300ms debounce + GraphQL round-trip)
+     *   1. Find the target input via dusk selectors, scroll, focus, and trigger
+     *      a search via Vue internals (set focusedFlag + querySearchName)
+     *   2. Poll (via waitUsing) until the player name appears in the dropdown
      *   3. Click the matching dropdown item via JS
+     *   4. Verify the player was placed — retry the full sequence if not
      *
      * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
      * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD"
@@ -198,31 +199,27 @@ class TeamFightEditPage extends Page
      */
     public function fillCategorySlot(Browser $browser, int $squadIndex, string $categoryName, string $playerName): void
     {
-        $escapedCategory = addslashes($categoryName);
         $escapedPlayer = addslashes($playerName);
+        $categorySlug = self::slugifyCategory($categoryName);
         // Use only the first 5 chars of the name as the search query — enough
         // to narrow results, fast to dispatch, and avoids issues with special chars.
-        $searchQuery = mb_substr($playerName, 0, 5);
-        $escapedSearch = addslashes($searchQuery);
+        $escapedSearch = addslashes(mb_substr($playerName, 0, 5));
 
-        // JS snippet that finds the input, triggers the search via Vue internals,
-        // and returns true if the input was found. This is called both initially
-        // and as a retry inside waitUsing if the dropdown doesn't appear.
+        // CSS selector scoped to the correct squad + category via dusk attributes.
+        // Buefy's <b-autocomplete> passes the dusk attribute down to the <input>
+        // element directly, so no trailing " input" is needed.
+        // Doubles categories (DD/HD/MD) can have two inputs — we always target
+        // the first available one.
+        $duskSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$categorySlug}']";
+
+        // JS snippet: find the input via dusk selector, trigger search via Vue
+        // internals, and return true if the input was found.
         $triggerSearchJs = "
             // Dismiss any lingering dropdown from a previous fillCategorySlot call
             document.body.click();
-            var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
-            var table = tables[{$squadIndex}];
-            if (!table) return false;
-            var rows = table.querySelectorAll('tbody tr');
-            var input = null;
-            for (var i = 0; i < rows.length; i++) {
-                var th = rows[i].querySelector('th');
-                if (th && th.textContent.trim() === '{$escapedCategory}') {
-                    input = rows[i].querySelector('input[placeholder=\"Søg på spiller...\"]');
-                    break;
-                }
-            }
+
+            // Find first available input for this squad + category
+            var input = document.querySelector(\"{$duskSelector}\");
             if (!input) return false;
 
             input.scrollIntoView({block: 'center'});
@@ -263,24 +260,15 @@ class TeamFightEditPage extends Page
             return true;
         ";
 
-        // JS snippet that checks whether the player has been placed into the
-        // category row — looks for a <p class="handle"> containing the player
-        // name within the target squad/category row. Returns true if found.
+        // JS snippet: check whether the player name appears in a <p class="handle">
+        // inside the squad wrapper. Confirms the dropdown click actually worked.
         $verifyPlacedJs = "
-            var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
-            var table = tables[{$squadIndex}];
-            if (!table) return false;
-            var rows = table.querySelectorAll('tbody tr');
-            for (var i = 0; i < rows.length; i++) {
-                var th = rows[i].querySelector('th');
-                if (th && th.textContent.trim() === '{$escapedCategory}') {
-                    var handles = rows[i].querySelectorAll('p.handle');
-                    for (var j = 0; j < handles.length; j++) {
-                        if (handles[j].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                            return true;
-                        }
-                    }
-                    return false;
+            var squad = document.querySelector(\"[dusk='squad-{$squadIndex}']\");
+            if (!squad) return false;
+            var handles = squad.querySelectorAll('p.handle');
+            for (var i = 0; i < handles.length; i++) {
+                if (handles[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
+                    return true;
                 }
             }
             return false;
@@ -325,7 +313,6 @@ class TeamFightEditPage extends Page
                     return false;
                 }, "dropdown-wait-attempt-{$attempt}");
             } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
-                // If this is the last attempt, fail hard
                 if ($attempt === $maxAttempts) {
                     Assert::fail("Timed out waiting for '{$playerName}' in autocomplete dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
                 }
@@ -343,8 +330,7 @@ class TeamFightEditPage extends Page
                 }
             ");
 
-            // Step 4: Verify the player was actually placed into the category row.
-            // Vue needs a moment to process the selection — poll for up to 3 seconds.
+            // Step 4: Verify the player was actually placed — poll for up to 3s.
             try {
                 $browser->waitUsing(3, 200, function () use ($browser, $verifyPlacedJs) {
                     $result = $browser->script($verifyPlacedJs);
@@ -384,6 +370,22 @@ class TeamFightEditPage extends Page
     }
 
     // ─── Assertion methods ──────────────────────────────────────────────
+
+    /**
+     * Slugify a category name the same way the JS slugify() helper does.
+     *
+     * "1. MD" → "1-md", "3. HS" → "3-hs", "2. DD" → "2-dd", etc.
+     * Must match resources/js/admin-v2/helpers.js slugify() exactly.
+     */
+    public static function slugifyCategory(string $text): string
+    {
+        $text = mb_strtolower($text);
+        $text = preg_replace('/\s+/', '-', $text);       // spaces → dashes
+        $text = preg_replace('/[^\w-]+/', '', $text);     // remove non-word chars (except dash)
+        $text = preg_replace('/--+/', '-', $text);        // collapse multiple dashes
+        $text = trim($text, '-');                          // trim leading/trailing dashes
+        return $text;
+    }
 
     /**
      * Assert all player slots in the team table are filled (no empty autocomplete inputs).

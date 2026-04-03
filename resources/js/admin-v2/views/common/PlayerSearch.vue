@@ -15,7 +15,9 @@
                 @focus="focusedFlag = true"
                 @blur="focusedFlag = false"
                 @select="addMember"
-                @typing="searchMembers">
+                @typing="searchMembers"
+                :dusk="'player-search-autocomplete-' + slugify(category.name)"
+                >
                 <template slot-scope="props">
                     <div class="media">
                         <div class="media-content">
@@ -39,7 +41,7 @@
 </template>
 
 <script>
-import {debounce, findPositions, resolveGenderFromCategory} from "../../helpers";
+import {debounce, findPositions, resolveGenderFromCategory, slugify} from "../../helpers";
 import gql from 'graphql-tag'
 import {groupBy} from "lodash/collection";
 
@@ -50,6 +52,7 @@ export default {
     inject: ['clubhouseId'],
     methods: {
         findPositions,
+        slugify,
         addMember(player, event) {
             if (player === null) {
                 return;
