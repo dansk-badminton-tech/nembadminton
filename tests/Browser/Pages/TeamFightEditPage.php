@@ -113,36 +113,42 @@ class TeamFightEditPage extends Page
      * Fill the next empty inline autocomplete slot in the team table.
      *
      * Finds the first <input placeholder="Søg på spiller..."> in the team table,
-     * focuses it, triggers a search with a space character (to list all squad members),
-     * and clicks the first dropdown result.
+     * tags it with a temporary ID, uses Dusk ->keys() for real keyboard events
+     * (a space character triggers the squad member search), then clicks the first
+     * dropdown result.
      *
      * Used by the single-team test to auto-fill DD/HD categories with existing
      * squad members without specifying exact player names.
      */
     public function fillNextInlineSlot(Browser $browser): void
     {
-        // Focus the first empty autocomplete input
-        $browser->script("
-            var inputs = document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\");
-            if (inputs.length > 0) {
-                inputs[0].focus();
-                inputs[0].click();
-            }
-        ");
-        $browser->pause(500);
+        $tempId = 'dusk-next-slot-' . md5(microtime());
 
-        // Type a space to trigger the search for all squad members.
-        // Uses the native value setter because we just need any results here,
-        // not a specific player match.
-        $browser->script("
+        // Dismiss any open autocomplete dropdown from a previous fill,
+        // then tag the first empty input with a temporary ID and scroll to it.
+        $found = $browser->script("
+            // Close any lingering dropdown by clicking the document body
+            document.body.click();
             var inputs = document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\");
             if (inputs.length > 0) {
-                var input = inputs[0];
-                var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-                nativeInputValueSetter.call(input, ' ');
-                input.dispatchEvent(new Event('input', { bubbles: true }));
+                inputs[0].id = '{$tempId}';
+                inputs[0].scrollIntoView({block: 'center'});
+                return true;
             }
+            return false;
         ");
+
+        Assert::assertTrue($found[0] ?? false, 'No empty inline slot found');
+
+        // Wait for scroll to settle, then use real keyboard events.
+        // A space character triggers the Buefy @typing handler to list all squad members.
+        $selector = "#{$tempId}";
+        $browser->pause(300);
+        $browser->click($selector);
+        $browser->pause(200);
+        $browser->keys($selector, ' ');
+
+        // Wait for dropdown results to appear
         $browser->waitFor('.autocomplete .dropdown-menu .dropdown-content .dropdown-item', 10);
 
         // Click the first dropdown result
@@ -150,7 +156,13 @@ class TeamFightEditPage extends Page
             var dropdown = document.querySelector('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
             if (dropdown) dropdown.click();
         ");
-        $browser->pause(500);
+        $browser->pause(600);
+
+        // Clean up temporary ID
+        $browser->script("
+            var el = document.getElementById('{$tempId}');
+            if (el) el.removeAttribute('id');
+        ");
     }
 
     /**
@@ -180,10 +192,13 @@ class TeamFightEditPage extends Page
         // Unique temporary ID so Dusk can target this specific input
         $tempId = 'dusk-fill-target-' . $squadIndex . '-' . md5($categoryName . $playerName . microtime());
 
-        // Step 1: Find the empty input in the correct squad table + category row.
+        // Step 1: Dismiss any lingering dropdown from a previous fill, then find
+        // the empty input in the correct squad table + category row.
         // Each squad is a <table> inside [dusk='team-table-section']. Rows have
         // <th> with category name and <td> with PlayerSearch inputs when empty.
         $found = $browser->script("
+            // Close any open autocomplete dropdown first
+            document.body.click();
             var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
             var table = tables[{$squadIndex}];
             if (!table) return false;
@@ -205,15 +220,19 @@ class TeamFightEditPage extends Page
 
         Assert::assertTrue($found[0] ?? false, "Could not find empty input for squad {$squadIndex}, category '{$categoryName}'");
 
-        // Step 2: Click to focus, then type the player name with real keystrokes.
+        // Wait for scroll to settle before interacting (CI Chrome is slower)
         $selector = "#{$tempId}";
+        $browser->pause(300);
+
+        // Step 2: Click to focus, then type the player name with real keystrokes.
         $browser->click($selector);
         $browser->pause(200);
         $browser->keys($selector, $playerName);
 
         // Step 3: Wait until the specific player name appears in the dropdown.
         // Must NOT just wait for any .dropdown-item — that matches stale/loading results.
-        $browser->waitUsing(10, 200, function () use ($browser, $escapedPlayer) {
+        // Uses 15s timeout for CI where GraphQL responses can be slower.
+        $browser->waitUsing(15, 200, function () use ($browser, $escapedPlayer) {
             $found = $browser->script("
                 var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
                 for (var i = 0; i < items.length; i++) {
