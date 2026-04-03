@@ -113,56 +113,68 @@ class TeamFightEditPage extends Page
      * Fill the next empty inline autocomplete slot in the team table.
      *
      * Finds the first <input placeholder="Søg på spiller..."> in the team table,
-     * tags it with a temporary ID, uses Dusk ->keys() for real keyboard events
-     * (a space character triggers the squad member search), then clicks the first
-     * dropdown result.
+     * scrolls to it, focuses it via Dusk click + types a space via Dusk keys
+     * (real OS-level keyboard events that Buefy's @typing handler picks up),
+     * then clicks the first dropdown result.
      *
      * Used by the single-team test to auto-fill DD/HD categories with existing
      * squad members without specifying exact player names.
      */
     public function fillNextInlineSlot(Browser $browser): void
     {
-        $tempId = 'dusk-next-slot-' . md5(microtime());
+        // The CSS selector that always targets the first empty autocomplete input
+        $selector = "[dusk='team-table-section'] input[placeholder='Søg på spiller...']";
 
-        // Dismiss any open autocomplete dropdown from a previous fill,
-        // then tag the first empty input with a temporary ID and scroll to it.
-        $found = $browser->script("
-            // Close any lingering dropdown by clicking the document body
-            document.body.click();
-            var inputs = document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\");
-            if (inputs.length > 0) {
-                inputs[0].id = '{$tempId}';
-                inputs[0].scrollIntoView({block: 'center'});
-                return true;
-            }
-            return false;
+        // Count empty slots before this fill so we can verify one was consumed
+        $countBefore = $browser->script("
+            return document.querySelectorAll(\"{$selector}\").length;
         ");
+        $slotsBefore = $countBefore[0] ?? 0;
+        Assert::assertGreaterThan(0, $slotsBefore, 'No empty inline slot found');
 
-        Assert::assertTrue($found[0] ?? false, 'No empty inline slot found');
-
-        // Wait for scroll to settle, then use real keyboard events.
-        // A space character triggers the Buefy @typing handler to list all squad members.
-        $selector = "#{$tempId}";
-        $browser->pause(300);
-        $browser->click($selector);
+        // Close any lingering dropdown and scroll the first empty input into view
+        $browser->script("
+            document.body.click();
+            var input = document.querySelector(\"{$selector}\");
+            if (input) input.scrollIntoView({block: 'center'});
+        ");
         $browser->pause(200);
+
+        // Use Dusk click + keys for real keyboard events that Buefy reacts to.
+        // A space character triggers the @typing handler to list all squad members.
+        $browser->click($selector);
         $browser->keys($selector, ' ');
 
-        // Wait for dropdown results to appear
-        $browser->waitFor('.autocomplete .dropdown-menu .dropdown-content .dropdown-item', 10);
+        // Wait for dropdown result to appear. If it doesn't, retry the focus+type
+        // sequence — Vue may have re-rendered the input between click and keys.
+        $browser->waitUsing(10, 300, function () use ($browser, $selector) {
+            $hasDropdown = $browser->script("
+                return document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item').length > 0;
+            ");
+            if ($hasDropdown[0] ?? false) {
+                return true;
+            }
+            // Retry: re-focus and re-type
+            $browser->script("document.body.click();");
+            $browser->pause(200);
+            $browser->click($selector);
+            $browser->keys($selector, ' ');
+            return false;
+        }, 'Could not open autocomplete dropdown for inline slot');
 
-        // Click the first dropdown result
+        // Click the first dropdown result via JS
         $browser->script("
-            var dropdown = document.querySelector('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-            if (dropdown) dropdown.click();
+            var item = document.querySelector('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
+            if (item) item.click();
         ");
-        $browser->pause(600);
 
-        // Clean up temporary ID
-        $browser->script("
-            var el = document.getElementById('{$tempId}');
-            if (el) el.removeAttribute('id');
-        ");
+        // Wait until Vue processes the selection and the empty slot count decreases
+        $browser->waitUsing(5, 200, function () use ($browser, $selector, $slotsBefore) {
+            $countAfter = $browser->script("
+                return document.querySelectorAll(\"{$selector}\").length;
+            ");
+            return ($countAfter[0] ?? $slotsBefore) < $slotsBefore;
+        }, 'Slot was not consumed after clicking dropdown item');
     }
 
     /**
@@ -171,14 +183,14 @@ class TeamFightEditPage extends Page
      * Targets the empty <input placeholder="Søg på spiller..."> inside the row
      * whose <th> matches the given category name within the given squad's table.
      *
-     * Approach:
-     *   1. Tag the target input with a temporary unique ID via JS so Dusk can
-     *      address it with ->keys() for real keyboard input
-     *   2. Use Dusk ->click() + ->keys() to type the search — this fires real
-     *      keyboard events that Buefy's @typing handler picks up
-     *   3. Poll until the specific player name appears in the dropdown
-     *      (the autocomplete has a 300ms debounce + network round-trip)
-     *   4. Click the dropdown item matching the player name
+     * Approach — all done via JS to avoid Dusk CSS selector lookups that break
+     * when Vue re-renders destroy/recreate the input element after scrollIntoView:
+     *
+     *   1. Find the target input, scroll to it, focus it, and dispatch keyboard
+     *      events character-by-character so Buefy's @typing handler fires
+     *   2. Poll (via waitUsing) until the specific player name appears in the
+     *      autocomplete dropdown (300ms debounce + GraphQL round-trip)
+     *   3. Click the matching dropdown item via JS
      *
      * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
      * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD"
@@ -188,51 +200,71 @@ class TeamFightEditPage extends Page
     {
         $escapedCategory = addslashes($categoryName);
         $escapedPlayer = addslashes($playerName);
+        // Use only the first 5 chars of the name as the search query — enough
+        // to narrow results, fast to dispatch, and avoids issues with special chars.
+        $searchQuery = mb_substr($playerName, 0, 5);
+        $escapedSearch = addslashes($searchQuery);
 
-        // Unique temporary ID so Dusk can target this specific input
-        $tempId = 'dusk-fill-target-' . $squadIndex . '-' . md5($categoryName . $playerName . microtime());
-
-        // Step 1: Dismiss any lingering dropdown from a previous fill, then find
-        // the empty input in the correct squad table + category row.
-        // Each squad is a <table> inside [dusk='team-table-section']. Rows have
-        // <th> with category name and <td> with PlayerSearch inputs when empty.
-        $found = $browser->script("
-            // Close any open autocomplete dropdown first
+        // JS snippet that finds the input, triggers the search via Vue internals,
+        // and returns true if the input was found. This is called both initially
+        // and as a retry inside waitUsing if the dropdown doesn't appear.
+        $triggerSearchJs = "
             document.body.click();
             var tables = document.querySelectorAll(\"[dusk='team-table-section'] table.table\");
             var table = tables[{$squadIndex}];
             if (!table) return false;
             var rows = table.querySelectorAll('tbody tr');
+            var input = null;
             for (var i = 0; i < rows.length; i++) {
                 var th = rows[i].querySelector('th');
                 if (th && th.textContent.trim() === '{$escapedCategory}') {
-                    var input = rows[i].querySelector('input[placeholder=\"Søg på spiller...\"]');
-                    if (input) {
-                        input.id = '{$tempId}';
-                        input.scrollIntoView({block: 'center'});
-                        return true;
-                    }
-                    return false;
+                    input = rows[i].querySelector('input[placeholder=\"Søg på spiller...\"]');
+                    break;
                 }
             }
-            return false;
-        ");
+            if (!input) return false;
 
+            input.scrollIntoView({block: 'center'});
+            input.focus();
+            input.click();
+
+            // Walk up from <input> to find PlayerSearch and Buefy autocomplete.
+            var query = '{$escapedSearch}';
+            var el = input;
+            var playerSearch = null;
+            var autocomplete = null;
+            while (el) {
+                if (el.__vue__) {
+                    if (el.__vue__.hasOwnProperty('querySearchName')) {
+                        playerSearch = el.__vue__;
+                    }
+                    if (el.__vue__.hasOwnProperty('isActive') && typeof el.__vue__.onInput === 'function') {
+                        autocomplete = el.__vue__;
+                    }
+                }
+                el = el.parentElement;
+            }
+            if (playerSearch) {
+                playerSearch.focusedFlag = true;
+                playerSearch.querySearchName = query;
+            }
+            if (autocomplete) {
+                autocomplete.isActive = true;
+                autocomplete.newValue = query;
+                input.value = query;
+            }
+            return true;
+        ";
+
+        // Step 1: Initial trigger
+        $found = $browser->script($triggerSearchJs);
         Assert::assertTrue($found[0] ?? false, "Could not find empty input for squad {$squadIndex}, category '{$categoryName}'");
 
-        // Wait for scroll to settle before interacting (CI Chrome is slower)
-        $selector = "#{$tempId}";
-        $browser->pause(300);
-
-        // Step 2: Click to focus, then type the player name with real keystrokes.
-        $browser->click($selector);
-        $browser->pause(200);
-        $browser->keys($selector, $playerName);
-
-        // Step 3: Wait until the specific player name appears in the dropdown.
-        // Must NOT just wait for any .dropdown-item — that matches stale/loading results.
-        // Uses 15s timeout for CI where GraphQL responses can be slower.
-        $browser->waitUsing(15, 200, function () use ($browser, $escapedPlayer) {
+        // Step 2: Wait for the player name in dropdown. On each poll, re-trigger
+        // the search if the dropdown isn't showing results yet (handles cases
+        // where a previous autocomplete's lingering state blocks the new one).
+        $retryCount = 0;
+        $browser->waitUsing(15, 300, function () use ($browser, $escapedPlayer, $triggerSearchJs, &$retryCount) {
             $found = $browser->script("
                 var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
                 for (var i = 0; i < items.length; i++) {
@@ -242,10 +274,18 @@ class TeamFightEditPage extends Page
                 }
                 return false;
             ");
-            return $found[0] ?? false;
+            if ($found[0] ?? false) {
+                return true;
+            }
+            // Retry the search trigger every 3 polls (~900ms)
+            $retryCount++;
+            if ($retryCount % 3 === 0) {
+                $browser->script($triggerSearchJs);
+            }
+            return false;
         }, "Timed out waiting for '{$playerName}' in autocomplete dropdown (squad {$squadIndex}, {$categoryName})");
 
-        // Step 4: Click the dropdown item matching the player name.
+        // Step 3: Click the dropdown item matching the player name.
         $browser->script("
             var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
             for (var i = 0; i < items.length; i++) {
@@ -255,13 +295,8 @@ class TeamFightEditPage extends Page
                 }
             }
         ");
-        $browser->pause(600);
-
-        // Clean up temporary ID
-        $browser->script("
-            var el = document.getElementById('{$tempId}');
-            if (el) el.removeAttribute('id');
-        ");
+        // Brief pause for Vue to process the selection and update the DOM
+        $browser->pause(300);
     }
 
     /**
