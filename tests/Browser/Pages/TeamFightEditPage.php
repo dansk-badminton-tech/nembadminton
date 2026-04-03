@@ -420,4 +420,54 @@ class TeamFightEditPage extends Page
             ->assertDontSeeIn('@validation-invalid-level', 'Fejl')
             ->assertDontSeeIn('@validation-invalid-category', 'Fejl');
     }
+
+    /**
+     * Scroll the validation section into view and wait for it to render.
+     */
+    private function scrollToValidation(Browser $browser): void
+    {
+        $browser->waitFor('@validation-incomplete-team', 10);
+        $browser->script("
+            var el = document.querySelector(\"[dusk='validation-incomplete-team']\");
+            if (el) el.scrollIntoView({block: 'center'});
+        ");
+        $browser->pause(500);
+    }
+
+    /**
+     * Assert "Fuldendt hold" shows "Fejl" (incomplete team detected).
+     *
+     * When basic validation fails, the other two checks are gated and show "-".
+     */
+    public function assertIncompleteTeamFailing(Browser $browser): void
+    {
+        $this->scrollToValidation($browser);
+        $browser->assertSeeIn('@validation-incomplete-team', 'Fejl')
+            ->assertSeeIn('@validation-invalid-level', '-')
+            ->assertSeeIn('@validation-invalid-category', '-');
+    }
+
+    /**
+     * Assert "Spiller for højt i kategorien" shows "Fejl".
+     *
+     * Basic validation must pass (OK) for this check to run.
+     */
+    public function assertCategoryValidationFailing(Browser $browser): void
+    {
+        $this->scrollToValidation($browser);
+        $browser->assertSeeIn('@validation-incomplete-team', 'OK')
+            ->assertSeeIn('@validation-invalid-category', 'Fejl');
+    }
+
+    /**
+     * Assert "Spiller på et forkert hold" shows "Fejl".
+     *
+     * Basic validation must pass (OK) for this check to run.
+     */
+    public function assertLevelValidationFailing(Browser $browser): void
+    {
+        $this->scrollToValidation($browser);
+        $browser->assertSeeIn('@validation-incomplete-team', 'OK')
+            ->assertSeeIn('@validation-invalid-level', 'Fejl');
+    }
 }
