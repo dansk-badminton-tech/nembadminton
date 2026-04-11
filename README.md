@@ -25,6 +25,45 @@ docker-compose run --rm artisan passport:client --password
 
 Opret en bruger `http://localhost/new-user`
 
+## Testing
+
+### Browser tests (End-to-end)
+
+Browser tests use [Laravel Dusk](https://laravel.com/docs/11.x/dusk) and are located in `tests/Browser/`.
+
+**Run locally:**
+
+```bash
+docker compose run artisan dusk
+```
+
+**Re-run only failed tests:**
+
+```bash
+docker compose run artisan dusk:fails
+```
+
+**Run in CI:**
+
+Browser tests are **not** run automatically on push or PR — they must be triggered manually since they are time-consuming. Typically only needed before merging.
+
+From the GitHub UI: Go to Actions > "Browser testing" > "Run workflow".
+
+From the CLI (requires [GitHub CLI](https://cli.github.com/)):
+
+```bash
+# Run on the current branch
+gh workflow run "Browser testing"
+
+# Run on a specific branch
+gh workflow run "Browser testing" --ref my-branch
+
+# Watch the run progress
+gh run watch
+```
+
+Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.
+
 ## Projekt management
 
 **Forslår en feature:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
