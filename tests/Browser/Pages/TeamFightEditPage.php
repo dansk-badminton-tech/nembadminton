@@ -336,8 +336,7 @@ class TeamFightEditPage extends Page
             var el = document.querySelector(\"[dusk='validation-incomplete-team']\");
             if (el) el.scrollIntoView({block: 'center'});
         ");
-        $browser->pause(500)
-            ->assertSeeIn('@validation-incomplete-team', 'OK')
+        $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
             ->assertDontSeeIn('@validation-invalid-level', 'Fejl')
             ->assertDontSeeIn('@validation-invalid-category', 'Fejl');
     }
@@ -363,9 +362,9 @@ class TeamFightEditPage extends Page
     public function assertIncompleteTeamFailing(Browser $browser): void
     {
         $this->scrollToValidation($browser);
-        $browser->assertSeeIn('@validation-incomplete-team', 'Fejl')
-            ->assertSeeIn('@validation-invalid-level', '-')
-            ->assertSeeIn('@validation-invalid-category', '-');
+        $browser->waitForTextIn('@validation-incomplete-team', 'Fejl', 10)
+            ->waitForTextIn('@validation-invalid-level', '-', 10)
+            ->waitForTextIn('@validation-invalid-category', '-', 10);
     }
 
     /**
@@ -376,8 +375,8 @@ class TeamFightEditPage extends Page
     public function assertCategoryValidationFailing(Browser $browser): void
     {
         $this->scrollToValidation($browser);
-        $browser->assertSeeIn('@validation-incomplete-team', 'OK')
-            ->assertSeeIn('@validation-invalid-category', 'Fejl');
+        $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
+            ->waitForTextIn('@validation-invalid-category', 'Fejl', 10);
     }
 
     /**
@@ -388,7 +387,7 @@ class TeamFightEditPage extends Page
     public function assertLevelValidationFailing(Browser $browser): void
     {
         $this->scrollToValidation($browser);
-        $browser->assertSeeIn('@validation-incomplete-team', 'OK')
-            ->assertSeeIn('@validation-invalid-level', 'Fejl');
+        $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
+            ->waitForTextIn('@validation-invalid-level', 'Fejl', 10);
     }
 }
