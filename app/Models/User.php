@@ -79,7 +79,7 @@ class User extends Authenticatable
 
     public function teams() : HasMany
     {
-        return $this->hasMany(Teams::class);
+        return $this->hasMany(TeamRound::class);
     }
 
     public function cancellationCollector() : HasOne

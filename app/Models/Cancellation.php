@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property Teams|null $team
+ * @property TeamRound|null $team
  * @property CancellationCollector|null $cancellationCollector
  * @property Member $member
  * @property CancellationDate[]|Collection $dates
@@ -32,7 +32,7 @@ class Cancellation extends Model
     }
 
     public function team() : BelongsTo {
-        return $this->belongsTo(Teams::class, 'teamId', 'id');
+        return $this->belongsTo(TeamRound::class, 'teamId', 'id');
     }
 
     public function cancellationCollector() : BelongsTo{
