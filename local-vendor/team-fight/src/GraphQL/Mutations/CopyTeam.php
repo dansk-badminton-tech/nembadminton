@@ -3,7 +3,7 @@
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use FlyCompany\TeamFight\SquadManager;
 use FlyCompany\TeamFight\TeamManager;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
@@ -21,10 +21,10 @@ class CopyTeam
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
      */
-    public function copyTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
+    public function copyTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
     {
-        /** @var Teams $sourceTeam */
-        $sourceTeam = Teams::query()
+        /** @var TeamRound $sourceTeam */
+        $sourceTeam = TeamRound::query()
              ->where('clubhouse_id', $context->user()->clubhouse_id)
              ->where('id', $args['id'])->lockForUpdate()->firstOrFail();
         $newTeam = $this->teamManager->copyTeam($sourceTeam);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\GraphQL\Queries;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use FlyCompany\TeamFight\Export\Exporter as ConcreteExporter;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Facades\Storage;
@@ -31,9 +31,9 @@ class Exporter
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : string
     {
-        /** @var Teams $team */
+        /** @var TeamRound $team */
         $teamId = $args['teamId'];
-        $team = Teams::query()->where('id', $teamId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
+        $team = TeamRound::query()->where('id', $teamId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
         $csvData = $this->exporter->exportToCSV($team);
 
         $randomNumber = date('d-m-Y_H-i-s');
