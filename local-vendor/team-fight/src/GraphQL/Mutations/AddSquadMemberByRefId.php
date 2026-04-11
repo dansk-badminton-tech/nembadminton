@@ -3,7 +3,6 @@
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
-use App\Models\Teams;
 use FlyCompany\TeamFight\SquadManager;
 use FlyCompany\TeamFight\TeamManager;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
