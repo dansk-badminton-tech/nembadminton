@@ -7,7 +7,7 @@ namespace FlyCompany\TeamFight;
 use App\Models\Member;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
@@ -19,14 +19,14 @@ class TeamManager
      * @param Carbon $game_date
      * @param string $version
      *
-     * @return Teams
+     * @return TeamRound
      */
     public function createTeam(string $name, Carbon $game_date, string $version)
     {
-        return new Teams(compact('name', 'game_date', 'version'));
+        return new TeamRound(compact('name', 'game_date', 'version'));
     }
 
-    public function copyTeam(Teams $team) : Teams
+    public function copyTeam(TeamRound $team) : TeamRound
     {
         $copyTeam = $team->replicate();
         $copyTeam->name = "Kopi af $team->name";
