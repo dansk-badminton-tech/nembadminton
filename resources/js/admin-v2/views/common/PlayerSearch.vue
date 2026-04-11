@@ -3,8 +3,7 @@
         <b-field>
             <b-autocomplete
                 @input="searchMembers"
-                :readonly="disabled"
-                :open-on-focus="!disabled"
+                :open-on-focus="true"
                 :clear-on-select="true"
                 :clearable="true"
                 :data="searchResult"
@@ -66,8 +65,7 @@ export default {
     props: {
         category: Object,
         version: Date,
-        squad: Object,
-        disabled: Boolean
+        squad: Object
     },
     computed: {
         searchResult() {
@@ -109,7 +107,7 @@ export default {
                 }
             },
             skip() {
-                return !this.focusedFlag || this.squad.id == null
+                return !this.focusedFlag
             }
         },
         membersSearch: {

@@ -40,7 +40,6 @@
                              v-for="player in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
                              :key="player.id"
-                             :data-player-id="player.id"
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id"/>
                             <b-tooltip
@@ -97,7 +96,6 @@
                             v-if="category.players.length === 0"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
-                            :disabled="loading"
                             :version="resolveVersionToUse(squad)"
                             :category="category"/>
                         <PlayerSearch
@@ -105,7 +103,6 @@
                             v-if="isDouble(category) && category.players.length <= 1"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
-                            :disabled="loading"
                             :version="resolveVersionToUse(squad)" :category="category"/>
                     </td>
                 </tr>

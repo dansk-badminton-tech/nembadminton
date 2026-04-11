@@ -150,7 +150,7 @@ class TeamFightValidationRulesTest extends DuskTestCase
                 '1. HS' => ['Mathias Juul Hornbøll'],
                 '2. HS' => ['Nikolaj Zawadzki'],
                 '3. HS' => ['Frederik Balmer Odgaard'],
-                // '4. HS' intentionally left empty
+                '4. HS' => ['Lau Viskum Nielsen'],
                 '1. DD' => ['Emma Sejersen', 'Hanne Juul Christensen'],
                 '2. DD' => ['Amanda M. Sommer', 'Katrine Tingleff'],
                 '1. HD' => ['Simon Dømmestrup', 'Per Christophersen'],

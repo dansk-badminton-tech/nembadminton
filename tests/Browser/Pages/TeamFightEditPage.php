@@ -2,6 +2,7 @@
 
 namespace Tests\Browser\Pages;
 
+use Facebook\WebDriver\Exception\StaleElementReferenceException;
 use Laravel\Dusk\Browser;
 use PHPUnit\Framework\Assert;
 
@@ -184,14 +185,13 @@ class TeamFightEditPage extends Page
      *   - [dusk='squad-{N}'] scopes to the correct squad
      *   - [dusk='player-search-autocomplete-{slug}'] scopes to the correct category
      *
-     * Approach — all done via JS to avoid Dusk CSS selector lookups that break
-     * when Vue re-renders destroy/recreate the input element after scrollIntoView:
-     *
-     *   1. Find the target input via dusk selectors, scroll, focus, and trigger
-     *      a search via Vue internals (set focusedFlag + querySearchName)
-     *   2. Poll (via waitUsing) until the player name appears in the dropdown
-     *   3. Click the matching dropdown item via JS
-     *   4. Verify the player was placed — retry the full sequence if not
+     * Approach:
+     *   1. Dismiss any stale dropdown, scroll the input into view
+     *   2. Type the first 5 chars of the player name via Dusk (real keystrokes
+     *      that trigger Buefy's @typing handler and Apollo search)
+     *   3. Wait for the player name to appear in the autocomplete dropdown
+     *   4. Click the matching dropdown item
+     *   5. Verify the player was placed — retry the full sequence if not
      *
      * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
      * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD"
@@ -199,159 +199,75 @@ class TeamFightEditPage extends Page
      */
     public function fillCategorySlot(Browser $browser, int $squadIndex, string $categoryName, string $playerName): void
     {
-        $escapedPlayer = addslashes($playerName);
         $categorySlug = self::slugifyCategory($categoryName);
-        // Use only the first 5 chars of the name as the search query — enough
-        // to narrow results, fast to dispatch, and avoids issues with special chars.
-        $escapedSearch = addslashes(mb_substr($playerName, 0, 5));
 
-        // CSS selector scoped to the correct squad + category via dusk attributes.
-        // Buefy's <b-autocomplete> passes the dusk attribute down to the <input>
-        // element directly, so no trailing " input" is needed.
-        // Doubles categories (DD/HD/MD) can have two inputs — we always target
-        // the first available one.
-        $duskSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$categorySlug}']";
+        // Dusk selector scoped to the correct squad + category.
+        // Buefy passes the dusk attribute directly to the <input> element.
+        $inputSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$categorySlug}']";
 
-        // JS snippet: find the input via dusk selector, trigger search via Vue
-        // internals, and return true if the input was found.
-        $triggerSearchJs = "
-            // Dismiss any lingering dropdown from a previous fillCategorySlot call
-            document.body.click();
-
-            // Find first available input for this squad + category
-            var input = document.querySelector(\"{$duskSelector}\");
-            if (!input) return false;
-
-            input.scrollIntoView({block: 'center'});
-            input.focus();
-            input.click();
-
-            // Walk up from <input> to find PlayerSearch Vue instance and Buefy
-            // autocomplete instance. PlayerSearch has 'querySearchName' (search
-            // text) and 'focusedFlag' (gates Apollo queries). Buefy autocomplete
-            // has 'isActive' (controls dropdown visibility) and 'newValue'.
-            var query = '{$escapedSearch}';
-            var el = input;
-            var playerSearch = null;
-            var autocomplete = null;
-            while (el) {
-                if (el.__vue__) {
-                    if (el.__vue__.hasOwnProperty('querySearchName')) {
-                        playerSearch = el.__vue__;
-                    }
-                    if (el.__vue__.hasOwnProperty('isActive') && typeof el.__vue__.onInput === 'function') {
-                        autocomplete = el.__vue__;
-                    }
-                }
-                el = el.parentElement;
-            }
-            // Set focusedFlag=true to ungate the Apollo search queries,
-            // then set the search string to trigger a reactive refetch.
-            if (playerSearch) {
-                playerSearch.focusedFlag = true;
-                playerSearch.querySearchName = query;
-            }
-            // Open dropdown and sync displayed value with the search query.
-            if (autocomplete) {
-                autocomplete.isActive = true;
-                autocomplete.newValue = query;
-                input.value = query;
-            }
-            return true;
-        ";
-
-        // JS snippet: check whether the player name appears in a <p class="handle">
-        // inside the squad wrapper. Confirms the dropdown click actually worked.
-        $verifyPlacedJs = "
-            var squad = document.querySelector(\"[dusk='squad-{$squadIndex}']\");
-            if (!squad) return false;
-            var handles = squad.querySelectorAll('p.handle');
-            for (var i = 0; i < handles.length; i++) {
-                if (handles[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                    return true;
-                }
-            }
-            return false;
-        ";
-
-        // Outer retry loop: attempts the full search → wait → click → verify
-        // sequence up to 3 times. In CI, the dropdown click can silently fail
-        // (dropdown closes between detection and click), so we must verify the
-        // player was actually placed and retry the entire sequence if not.
         $maxAttempts = 3;
         $placed = false;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            // Step 1: Trigger the search
-            $found = $browser->script($triggerSearchJs);
-            Assert::assertTrue(
-                $found[0] ?? false,
-                "Could not find empty input for squad {$squadIndex}, category '{$categoryName}' (attempt {$attempt})"
-            );
+            // Brief pause to let Vue finish any pending re-renders from the
+            // previous player placement (prevents stale element references).
+            $browser->pause(300);
 
-            // Step 2: Wait for the player name to appear in the dropdown.
-            // Re-trigger the search every ~900ms if the dropdown isn't populated.
-            $retryCount = 0;
             try {
-                $browser->waitUsing(15, 300, function () use ($browser, $escapedPlayer, $triggerSearchJs, &$retryCount) {
-                    $found = $browser->script("
-                        var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-                        for (var i = 0; i < items.length; i++) {
-                            if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    ");
-                    if ($found[0] ?? false) {
-                        return true;
-                    }
-                    $retryCount++;
-                    if ($retryCount % 3 === 0) {
-                        $browser->script($triggerSearchJs);
-                    }
-                    return false;
-                }, "dropdown-wait-attempt-{$attempt}");
+                // Wait for the input to be present and enabled.
+                $browser->waitFor($inputSelector)
+                    ->waitUntilEnabled($inputSelector);
+
+                // type() clears the field and sends real keystrokes that trigger
+                // Buefy's @typing handler and the debounced Apollo search.
+                $browser->type($inputSelector, $playerName);
+
+                // Wait for the player name to appear in the autocomplete dropdown.
+                $browser->waitForTextIn(
+                    '.autocomplete .dropdown-content',
+                    $playerName,
+                    10
+                );
+            } catch (StaleElementReferenceException $e) {
+                // Vue re-rendered the input between find and interact — retry.
+                if ($attempt === $maxAttempts) {
+                    $browser->screenshot("debug-stale-squad{$squadIndex}-{$categorySlug}");
+                    Assert::fail("StaleElementReferenceException for '{$playerName}' (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
+                }
+                continue;
             } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
                 if ($attempt === $maxAttempts) {
-                    Assert::fail("Timed out waiting for '{$playerName}' in autocomplete dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
+                    $browser->screenshot("debug-dropdown-timeout-squad{$squadIndex}-{$categorySlug}");
+                    Assert::fail("Timed out waiting for '{$playerName}' in dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
                 }
                 continue;
             }
 
-            // Step 3: Click the dropdown item matching the player name.
+            // Click the dropdown item that contains the player name.
+            // Uses JS click (atomic find+click in one browser tick) to avoid
+            // StaleElementReferenceException when Vue re-renders the dropdown
+            // between WebDriver's find and click steps.
             $browser->script("
                 var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
                 for (var i = 0; i < items.length; i++) {
-                    if (items[i].textContent.indexOf('{$escapedPlayer}') !== -1) {
+                    if (items[i].textContent.indexOf('{$playerName}') !== -1) {
                         items[i].click();
-                        return;
+                        break;
                     }
                 }
             ");
 
-            // Step 4: Verify the player was actually placed — poll for up to 3s.
+            // Verify the player was placed (name appears within the squad div)
             try {
-                $browser->waitUsing(3, 200, function () use ($browser, $verifyPlacedJs) {
-                    $result = $browser->script($verifyPlacedJs);
-                    return $result[0] ?? false;
-                }, "verify-placed-attempt-{$attempt}");
+                $browser->waitForTextIn("[dusk='squad-{$squadIndex}']", $playerName, 3);
                 $placed = true;
                 break;
             } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
-                // Player was not placed — the click silently failed. If we have
-                // remaining attempts, dismiss the stale dropdown and retry.
-                if ($attempt < $maxAttempts) {
-                    $browser->script("document.body.click();");
-                    $browser->pause(300);
-                }
+                // Retry
             }
         }
 
         Assert::assertTrue($placed, "Failed to place '{$playerName}' into squad {$squadIndex}, category '{$categoryName}' after {$maxAttempts} attempts");
-
-        // Brief pause for Vue to finish processing before the next fill call
-        $browser->pause(200);
     }
 
     /**
@@ -392,10 +308,15 @@ class TeamFightEditPage extends Page
      */
     public function assertAllSlotsFilled(Browser $browser): void
     {
-        $emptyInputs = $browser->script("
-            return document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\").length;
-        ");
-        Assert::assertEquals(0, $emptyInputs[0], 'All player slots should be filled');
+        // Poll until Vue has finished re-rendering after the last player
+        // placement — the final autocomplete input may still be in the DOM
+        // for a brief moment after fillCategorySlot returns.
+        $browser->waitUsing(5, 200, function () use ($browser) {
+            $emptyInputs = $browser->script("
+                return document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\").length;
+            ");
+            return ($emptyInputs[0] ?? 0) === 0;
+        }, 'All player slots should be filled (still found empty autocomplete inputs after 5s)');
     }
 
     /**
