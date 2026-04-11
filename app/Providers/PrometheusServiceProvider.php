@@ -2,7 +2,7 @@
 namespace App\Providers;
 
 use App\Models\Club;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Prometheus\Collectors\Horizon\CurrentMasterSupervisorCollector;
@@ -27,13 +27,13 @@ class PrometheusServiceProvider extends ServiceProvider
         })->helpText('The total number of clubs initialized.');
 
         Prometheus::addGauge('team_fights_total')->value(static function () {
-            return Teams::query()->count();
+            return TeamRound::query()->count();
         })->helpText('The total number of team fights.');
 
         Prometheus::addGauge('team_fights')
             ->labels(['club_id', 'name'])
             ->value(static function () {
-                $teamsByClubs = Teams::query()->groupBy('club_id')->selectRaw('club_id, count(*) as total')->get();
+                $teamsByClubs = TeamRound::query()->groupBy('club_id')->selectRaw('club_id, count(*) as total')->get();
                 return $teamsByClubs->map(function($teamsByClub){
                     /** @var Club $club */
                     $club = Club::query()->where('id', '=',$teamsByClub->club_id)->firstOrFail();

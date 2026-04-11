@@ -7,7 +7,7 @@ use App\Models\Club;
 use App\Models\Member;
 use App\Models\Point;
 use App\Models\Squad;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use Carbon\Carbon;
 use FlyCompany\Members\Enums\Category;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
@@ -61,12 +61,12 @@ class Stats
      */
     private function teamRoundsCount() : array
     {
-        return Teams::query()
+        return TeamRound::query()
                     ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
                     ->groupBy('date')
                     ->orderBy('date', 'desc')
                     ->get()
-                    ->map(function (Teams $data) {
+                    ->map(function (TeamRound $data) {
                 return [
                     'points'  => $data['count'],
                     'version' => Carbon::createFromFormat('Y-m',$data['date']),

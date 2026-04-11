@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CancellationCollector;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -29,7 +29,7 @@ class OnceConnectTeamroundsWithClubhouse extends Command
     public function handle()
     {
 
-        foreach (Teams::all() as $team) {
+        foreach (TeamRound::all() as $team) {
             $user = $team->user;
             if($user !== null){
                 $clubhouse = $user->clubhouse;
