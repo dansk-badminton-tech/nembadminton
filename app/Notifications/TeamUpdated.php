@@ -3,7 +3,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,16 +19,16 @@ class TeamUpdated extends Notification implements ShouldQueue
     use Queueable;
 
     /**
-     * @var Teams
+     * @var TeamRound
      */
-    private Teams $team;
+    private TeamRound $team;
 
     /**
      * Create a new notification instance.
      *
-     * @param Teams $team
+     * @param TeamRound $team
      */
-    public function __construct(Teams $team)
+    public function __construct(TeamRound $team)
     {
         $this->team = $team;
     }

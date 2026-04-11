@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -15,7 +15,7 @@ class TeamPublish extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(private Teams $team)
+    public function __construct(private TeamRound $team)
     {
         //
     }
