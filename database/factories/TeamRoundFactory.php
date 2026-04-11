@@ -4,10 +4,10 @@ namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Teams;
+use App\Models\TeamRound;
 use Faker\Generator as Faker;
 
-$factory->define(Teams::class, function (Faker $faker) {
+$factory->define(TeamRound::class, function (Faker $faker) {
     return [
         //
     ];
