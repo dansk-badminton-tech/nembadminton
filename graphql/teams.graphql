@@ -261,30 +261,6 @@ type Squad {
     version: Date
 }
 
-type Teams {
-    id: ID!,
-    "Squads"
-    squads: [Squad!]! @hasMany,
-    "Name of the team"
-    name: String,
-    "Version"
-    version: Date
-    "Runde"
-    round: Int
-    "Game day"
-    gameDate: Date @rename(attribute: "game_date"),
-    "Updated at"
-    updatedAt: DateTime @rename(attribute: "updated_at")
-    "Created at"
-    createdAt: DateTime @rename(attribute: "created_at")
-    "Activity logs"
-    activityLogs: [TeamActivityLog!]! @hasMany
-    "Team receivers"
-    receiver: TeamReceivers @hasOne
-    "Clubhouse"
-    clubhouse: Clubhouse @belongsTo
-}
-
 type TeamRound {
     id: ID!,
     "Squads"
