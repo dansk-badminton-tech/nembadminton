@@ -354,14 +354,14 @@ export default {
 </script>
 
 <template>
-    <div>
+    <div dusk="notify-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             {{ team?.name }}
         </hero-bar>
         <div class="section">
             <div class="content">
-            <b-button icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamFightId+'/edit'" @click="publish">Tilbage</b-button>
+            <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamFightId+'/edit'" @click="publish">Tilbage</b-button>
             </div>
             <div class="columns">
                 <div class="column is-half">
@@ -374,6 +374,7 @@ export default {
                             </h4>
                             <b-field label="Besked til modtagerne (valgfrit)">
                                 <b-input
+                                    dusk="notify-message-input"
                                     type="textarea"
                                     v-model="message"
                                     placeholder="Skriv en besked..."
@@ -416,6 +417,7 @@ export default {
 
                             <div class="recipient-options">
                                 <div
+                                    dusk="notify-type-publish"
                                     class="recipient-option"
                                     :class="{'is-selected': notificationType === 'team_publish'}"
                                     @click="notificationType = 'team_publish'">
@@ -431,6 +433,7 @@ export default {
                                 </div>
 
                                 <div
+                                    dusk="notify-type-updated"
                                     class="recipient-option"
                                     :class="{'is-selected': notificationType === 'team_updated'}"
                                     @click="notificationType = 'team_updated'">
@@ -458,6 +461,7 @@ export default {
 
                             <div class="recipient-options">
                                 <div
+                                    dusk="notify-recipient-manual"
                                     class="recipient-option"
                                     :class="{'is-selected': recipientType === 'manual_emails'}"
                                     @click="recipientType = 'manual_emails'">
@@ -473,6 +477,7 @@ export default {
                                 </div>
 
                                 <div
+                                    dusk="notify-recipient-test-self"
                                     class="recipient-option"
                                     :class="{'is-selected': recipientType === 'test_self'}"
                                     @click="recipientType = 'test_self'">
@@ -492,6 +497,7 @@ export default {
                         <div v-if="recipientType === 'manual_emails'" class="mt-4">
                             <b-field label="Email adresser" message="Adskil emails med komma eller linjeskift">
                                 <b-input
+                                    dusk="notify-manual-emails-input"
                                     type="textarea"
                                     v-model="manualEmails"
                                     placeholder="email1@example.com, email2@example.com"
@@ -499,7 +505,7 @@ export default {
                                     expanded />
                             </b-field>
                             <b-field>
-                                <b-checkbox v-model="saveManualEmails">
+                                <b-checkbox dusk="notify-save-emails-checkbox" v-model="saveManualEmails">
                                     Gem email adresser til næste gang (denne holdrunde)
                                 </b-checkbox>
                             </b-field>
@@ -526,6 +532,7 @@ export default {
                                     :label="!hasValidRecipients ? 'Ingen modtagere valgt' : null"
                                     :active="!hasValidRecipients">
                                     <b-button
+                                        dusk="notify-send-button"
                                         :loading="loading"
                                         :disabled="cannotPublish"
                                         native-type="submit"
@@ -555,13 +562,13 @@ export default {
                         </div>
                     </div>
 
-                    <div v-if="activityLogs.length === 0" class="box has-text-centered has-text-grey py-6">
+                    <div v-if="activityLogs.length === 0" dusk="notify-empty-activity" class="box has-text-centered has-text-grey py-6">
                         <b-icon icon="history" size="is-large" class="mb-3"></b-icon>
                         <p class="is-size-5">Ingen aktivitet endnu</p>
                         <p class="is-size-7">Her vil du kunne se en historik over sendte notifikationer og ændringer.</p>
                     </div>
 
-                    <div v-else class="activity-feed">
+                    <div v-else dusk="notify-activity-feed" class="activity-feed">
                         <div v-for="(log, index) in activityLogs" :key="log.id" class="activity-item" :class="{'is-latest': index === 0}">
                             <div class="activity-marker" :class="getMarkerClass(log.action)">
                                 <b-icon :icon="getIcon(log.action)" size="is-small"></b-icon>
