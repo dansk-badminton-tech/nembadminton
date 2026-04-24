@@ -10,6 +10,7 @@ use App\Models\TeamReceivers;
 use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
@@ -100,6 +101,47 @@ class TeamsTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_export_a_team()
+    {
+        Storage::fake('public');
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            query($teamId: ID!) {
+                export(teamId: $teamId)
+            }
+        ', [
+            'teamId' => $teamRound->id,
+        ]);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'export',
+            ],
+        ]);
+
+        $files = Storage::disk('public')->allFiles('team-fight/exports');
+
+        $this->assertCount(1, $files);
+        $this->assertStringStartsWith("team-fight/exports/{$teamRound->id}-", $files[0]);
+        $this->assertStringEndsWith('.csv', $files[0]);
+        $this->assertSame(Storage::disk('public')->url($files[0]), $response->json('data.export'));
     }
 
     /**
