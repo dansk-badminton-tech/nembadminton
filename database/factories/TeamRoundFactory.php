@@ -2,13 +2,28 @@
 
 namespace Database\Factories;
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-
 use App\Models\TeamRound;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(TeamRound::class, function (Faker $faker) {
-    return [
-        //
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TeamRound>
+ */
+class TeamRoundFactory extends Factory
+{
+    protected $model = TeamRound::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->words(3, true),
+            'game_date' => $this->faker->date(),
+            'version' => $this->faker->date(),
+            'round' => $this->faker->numberBetween(1, 10),
+        ];
+    }
+}

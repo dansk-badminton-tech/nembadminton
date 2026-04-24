@@ -25,3 +25,4 @@ programmatic-types.graphql
 schema-directives.graphql
 .phpunit.cache
 .aiassistant
+.opencode
