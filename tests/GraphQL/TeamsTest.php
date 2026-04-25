@@ -442,7 +442,7 @@ class TeamsTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('squads', [
-            'teams_id' => $teamRound->id,
+            'team_round_id' => $teamRound->id,
             'playerLimit' => 10
         ]);
     }
