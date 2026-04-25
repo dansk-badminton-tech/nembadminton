@@ -2,6 +2,9 @@ name: Browser testing
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
 
 env:
   APP_ENV: dusk.ci
