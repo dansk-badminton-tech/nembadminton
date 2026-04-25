@@ -118,7 +118,7 @@ export default {
                             {
                                 mutation: gql`
                                     mutation ($id: ID!){
-                                        deleteTeam(id: $id){
+                                        deleteTeamRound(id: $id){
                                             id
                                         }
                                     }
@@ -147,7 +147,7 @@ export default {
                             {
                                 mutation: gql`
                                     mutation ($id: ID!){
-                                        copyTeam(id: $id){
+                                        copyTeamRound(id: $id){
                                             id
                                             name
                                         }
@@ -161,7 +161,7 @@ export default {
                                 {
                                     duration: 5000,
                                     type: 'is-success',
-                                    message: "Holdrunden kopiret. Den hedder \"" + data?.copyTeam?.name + "\""
+                                    message: "Holdrunden kopiret. Den hedder \"" + data?.copyTeamRound?.name + "\""
                                 })
                             this.$apollo.queries.teams.refetch()
                         })
@@ -199,8 +199,8 @@ export default {
     apollo: {
         teams: {
             query: gql`
-                query Teams($clubhouseId: ID!, $first: Int!, $page: Int, $order: [QueryTeamsOrderOrderByClause!], $gameDate: DateRange){
-                    teams(clubhouseId: $clubhouseId, order: $order, first: $first, page: $page, gameDate: $gameDate){
+                query TeamRounds($clubhouseId: ID!, $first: Int!, $page: Int, $order: [QueryTeamRoundsOrderOrderByClause!], $gameDate: DateRange){
+                    teamRounds(clubhouseId: $clubhouseId, order: $order, first: $first, page: $page, gameDate: $gameDate){
                         data{
                             id,
                             name,
@@ -215,6 +215,9 @@ export default {
                     }
                 },
             `,
+            update(data) {
+                return data.teamRounds;
+            },
             variables () {
                 // Use vue reactive properties here
                 return {
