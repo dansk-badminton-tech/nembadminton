@@ -15,8 +15,6 @@ class TeamRound extends Model
 {
     use HasFactory;
 
-    protected $table = 'team_rounds';
-
     public    $incrementing = false;
 
     protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id'];
