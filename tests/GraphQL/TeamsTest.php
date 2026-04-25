@@ -15,6 +15,7 @@ use App\Models\TeamReceivers;
 use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
@@ -165,7 +166,7 @@ class TeamsTest extends TestCase
         ]);
 
         TeamActivityLog::factory()->create([
-            'team_id' => $teamRound->id,
+            'team_round_id' => $teamRound->id,
             'user_id' => $user->id,
             'recipient_type' => RecipientType::TEST_SELF,
             'recipient_count' => 1,
@@ -180,6 +181,7 @@ class TeamsTest extends TestCase
                 teamNotificationActivity(id: $id) {
                     id
                     message
+                    teamId
                 }
             }
         ', [
@@ -189,7 +191,8 @@ class TeamsTest extends TestCase
             'data' => [
                 'teamNotificationActivity' => [
                     [
-                        'message' => 'Notification sent'
+                        'message' => 'Notification sent',
+                        'teamId' => $teamRound->id,
                     ]
                 ]
             ]
@@ -212,7 +215,7 @@ class TeamsTest extends TestCase
         ]);
 
         TeamReceivers::create([
-            'team_id' => $teamRound->id,
+            'team_round_id' => $teamRound->id,
             'emails' => ['test@example.com']
         ]);
 
@@ -222,6 +225,9 @@ class TeamsTest extends TestCase
             query($team_id: ID!) {
                 teamReceiver(team_id: $team_id) {
                     emails
+                    team {
+                        id
+                    }
                 }
             }
         ', [
@@ -229,7 +235,10 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'teamReceiver' => [
-                    'emails' => ['test@example.com']
+                    'emails' => ['test@example.com'],
+                    'team' => [
+                        'id' => $teamRound->id,
+                    ],
                 ]
             ]
         ]);
@@ -934,6 +943,65 @@ class TeamsTest extends TestCase
                     'id' => $teamRound->id
                 ]
             ]
+        ]);
+
+        $this->assertDatabaseHas('team_activity_logs', [
+            'team_round_id' => $teamRound->id,
+            'recipient_type' => RecipientType::TEST_SELF->value,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_send_team_notification_and_store_receivers()
+    {
+        Mail::fake();
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: SendTeamNotificationInput!) {
+                sendTeamNotification(input: $input) {
+                    id
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'type' => 'TEAM_PUBLISH',
+                'message' => 'Hello team',
+                'receivers' => [
+                    'method' => 'MANUAL_EMAILS',
+                    'saveEmails' => true,
+                    'emails' => ['one@example.com', 'two@example.com'],
+                ]
+            ]
+        ])->assertJson([
+            'data' => [
+                'sendTeamNotification' => [
+                    'id' => $teamRound->id
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_receivers', [
+            'team_round_id' => $teamRound->id,
+        ]);
+
+        $this->assertDatabaseHas('team_activity_logs', [
+            'team_round_id' => $teamRound->id,
+            'recipient_type' => RecipientType::MANUAL_EMAILS->value,
         ]);
     }
 

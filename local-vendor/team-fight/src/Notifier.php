@@ -19,7 +19,7 @@ class Notifier
         Mail::bcc($emails)->queue($this->getMailable($team, $message, $notificationType));
 
         TeamActivityLog::create([
-            'team_id' => $team->id,
+            'team_round_id' => $team->id,
             'action' => ActivityAction::from($notificationType->value),
             'recipient_type' => RecipientType::MANUAL_EMAILS,
             'recipient_count' => count($emails),

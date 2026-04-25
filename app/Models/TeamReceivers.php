@@ -12,18 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * belongsTo relationship with the Teams model.
  *
  * @property int $id The primary key of the TeamReceivers table.
- * @property int $team_id The ID of the associated team.
+ * @property string $team_round_id The ID of the associated team round.
  * @property array $emails A JSON-encoded array of email addresses.
  *
  */
 class TeamReceivers extends Model
 {
 
-    protected $fillable = ['team_id','emails'];
+    protected $fillable = ['team_round_id','emails'];
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(TeamRound::class, 'team_round_id');
+    }
 
     public function teams(): BelongsTo
     {
-        return $this->belongsTo(TeamRound::class, 'team_id');
+        return $this->team();
     }
 
     protected function casts(): array

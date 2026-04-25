@@ -8,8 +8,8 @@ extend type Query {
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
-    teamNotificationActivity(id: ID! @eq(key: "team_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @guard @canResolved(ability: "view")
-    teamReceiver(team_id: ID! @eq(key: "team_id")) : TeamReceivers @find @guard @canResolved(ability: "view")
+    teamNotificationActivity(id: ID! @eq(key: "team_round_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @guard @canResolved(ability: "view")
+    teamReceiver(team_id: ID! @eq(key: "team_round_id")) : TeamReceivers @find @guard @canResolved(ability: "view")
 }
 
 extend type Mutation {
@@ -289,7 +289,7 @@ type TeamActivityLog {
     "ID"
     id: ID!
     "Team ID"
-    teamId: ID! @rename(attribute: "team_id")
+    teamId: ID! @rename(attribute: "team_round_id")
     "Action"
     action: ActivityAction!
     "Recipient type"
