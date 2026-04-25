@@ -1,5 +1,5 @@
 <template>
-    <div class="content has-text-grey has-text-centered">
+    <div dusk="add-teams-section" class="content has-text-grey has-text-centered">
         <p>
             <b-icon
                 icon="account-group"
@@ -27,6 +27,7 @@
                 11-kamps hold
             </b-button>
             <b-button
+                dusk="add-13-kamps-hold-button"
                 :loading="loading"
                 type="is-link"
                 @click="addSquad10">
@@ -51,7 +52,7 @@
 <script>
 import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
-import TeamQuery from "../../../queries/team.graphql";
+import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import AddCustomSquadModal from "./AddCustomSquadModal.vue";
 import ImportSquadModal from "./ImportSquadModal.vue";
 
@@ -96,7 +97,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamQuery, variables: {id: this.teamId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamId}}
                     ],
                 }).then(() => {
                 this.$emit('team-added')

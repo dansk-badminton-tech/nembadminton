@@ -7,14 +7,14 @@ use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
 use App\Mail\TeamMail;
 use App\Models\TeamActivityLog;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class Notifier
 {
 
-    public function sendManualEmails(Teams $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
+    public function sendManualEmails(TeamRound $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
     {
         Mail::bcc($emails)->queue($this->getMailable($team, $message, $notificationType));
 
@@ -33,7 +33,7 @@ class Notifier
         ]);
     }
 
-    public function sendTestSelf(Teams $team, User $user, ?string $message, TeamNotificationType $notificationType) : void
+    public function sendTestSelf(TeamRound $team, User $user, ?string $message, TeamNotificationType $notificationType) : void
     {
         Mail::bcc($user->email)->queue($this->getMailable($team, $message, $notificationType));
 
@@ -50,12 +50,12 @@ class Notifier
     }
 
     /**
-     * @param Teams $team
+     * @param TeamRound $team
      * @param string|null $message
      * @param TeamNotificationType $type
      * @return TeamMail
      */
-    public function getMailable(Teams $team, ?string $message, TeamNotificationType $type): TeamMail
+    public function getMailable(TeamRound $team, ?string $message, TeamNotificationType $type): TeamMail
     {
         return (new TeamMail($team, $message))->subject($this->resolveSubject($type));
     }

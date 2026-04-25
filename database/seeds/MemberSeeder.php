@@ -13,6 +13,12 @@ class MemberSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $members = require __DIR__ . '/members_data.php';
+
+        foreach ($members as $member) {
+            \App\Models\Member::query()->updateOrCreate([
+                'id' => $member['id'],
+            ], $member);
+        }
     }
 }

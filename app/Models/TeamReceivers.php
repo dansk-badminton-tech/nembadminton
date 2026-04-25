@@ -23,7 +23,7 @@ class TeamReceivers extends Model
 
     public function teams(): BelongsTo
     {
-        return $this->belongsTo(Teams::class, 'team_id');
+        return $this->belongsTo(TeamRound::class, 'team_id');
     }
 
     protected function casts(): array

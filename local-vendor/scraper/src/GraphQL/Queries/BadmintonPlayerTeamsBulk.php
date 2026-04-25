@@ -3,7 +3,6 @@
 
 namespace FlyCompany\Scraper\GraphQL\Queries;
 
-use App\Models\Teams;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Enricher;
 use FlyCompany\TeamFight\SquadManager;

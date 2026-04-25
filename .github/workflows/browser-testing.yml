@@ -1,13 +1,10 @@
 name: Browser testing
 
 on:
-  pull_request:
-    branches:
-      - master
+  workflow_dispatch:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 env:
   APP_ENV: dusk.ci
@@ -88,6 +85,10 @@ jobs:
 
       - name: Run Dusk tests
         run: php artisan dusk -vvv
+
+      - name: Retry failed Dusk tests
+        if: failure()
+        run: php artisan dusk:fails -vvv
 
       - name: Upload Dusk screenshots
         if: always()

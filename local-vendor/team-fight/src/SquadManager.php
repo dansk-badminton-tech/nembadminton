@@ -10,7 +10,7 @@ use App\Models\Squad as SquadModel;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Point;
@@ -25,11 +25,11 @@ class SquadManager
 
     /**
      * @param  Squad[]  $squads
-     * @param  Teams  $team
+     * @param  TeamRound  $team
      *
      * @throws \Throwable
      */
-    public function addOrUpdateSquads(array $squads, Teams $team): void
+    public function addOrUpdateSquads(array $squads, TeamRound $team): void
     {
         foreach ($squads as $index => $squadInput) {
             $squad = SquadModel::query()->whereHas('team', function(Builder $builder) use ($team){
@@ -49,11 +49,11 @@ class SquadManager
 
     /**
      * @param  Squad[]  $squads
-     * @param  Teams  $team
+     * @param  TeamRound  $team
      *
      * @throws \Throwable
      */
-    public function removeDeletedSquads(array $squads, Teams $team): void
+    public function removeDeletedSquads(array $squads, TeamRound $team): void
     {
         $shouldExistsIds = array_map('intval', Arr::pluck($squads, 'id'));
         foreach ($team->squads as $squad){
@@ -118,7 +118,7 @@ class SquadManager
         SquadPoint::query()->insert($values);
     }
 
-    public function copySquad(SquadModel $sourceSquad, Teams $targetTeam) : SquadModel
+    public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam) : SquadModel
     {
         $newSquad = $sourceSquad->replicate();
         $targetTeam->squads()->save($newSquad);

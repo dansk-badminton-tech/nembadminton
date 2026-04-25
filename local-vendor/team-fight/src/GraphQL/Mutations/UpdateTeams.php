@@ -8,7 +8,7 @@ use App\Models\Point;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\Squad;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\SquadManager;
@@ -51,7 +51,7 @@ class UpdateTeams
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
      */
-    public function updatePointsOnAllSquadsInTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
+    public function updatePointsOnAllSquadsInTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
     {
         $teamId = $args['id'];
         $version = $args['version'];
@@ -113,10 +113,10 @@ class UpdateTeams
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
      *
-     * @return Teams
+     * @return TeamRound
      * @throws \Throwable
      */
-    public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
+    public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
     {
         return DB::transaction(function() use ($args, $context) {
             $team = $this->getTeamOrFail($context, $args['id']);
@@ -136,11 +136,11 @@ class UpdateTeams
     /**
      * @param  GraphQLContext  $context
      * @param  mixed  $teamId
-     * @return Teams
+     * @return TeamRound
      */
-    private function getTeamOrFail(GraphQLContext $context, string $teamId): Teams
+    private function getTeamOrFail(GraphQLContext $context, string $teamId): TeamRound
     {
-        return Teams::query()
+        return TeamRound::query()
             ->where('clubhouse_id', $context->user()->clubhouse_id)
             ->where('id', $teamId)->lockForUpdate()->firstOrFail();
     }

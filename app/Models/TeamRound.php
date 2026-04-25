@@ -1,37 +1,30 @@
 <?php
-declare(strict_types = 1);
-
 
 namespace App\Models;
 
 use App\Util\Util;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * @property string  name
- * @property string  id
- * @property Carbon  version
- * @property Squad[] squads
- * @property integer $user_id
- * @property User    $user
- */
-class Teams extends Model
+class TeamRound extends Model
 {
+    use HasFactory;
+
+    protected $table = 'teams';
 
     public    $incrementing = false;
 
     protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id'];
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::creating(function (Teams $teams) {
-            $teams->id = Util::generateRandomString(24);
+        static::creating(static function (TeamRound $teamRound) {
+            $teamRound->id = Util::generateRandomString(24);
         });
     }
 
@@ -45,11 +38,6 @@ class Teams extends Model
     public function scopeCurrentUser(Builder $query) : Builder
     {
         return $query->where('user_id', Auth::user()->id);
-    }
-
-    public function squads() : HasMany
-    {
-        return $this->hasMany(Squad::class)->orderBy('order');
     }
 
     public function user() : BelongsTo
@@ -72,4 +60,8 @@ class Teams extends Model
         return $this->hasMany(TeamActivityLog::class, 'team_id')->orderBy('created_at', 'desc');
     }
 
+    public function squads() : HasMany
+    {
+        return $this->hasMany(Squad::class, 'teams_id', 'id')->orderBy('order');
+    }
 }

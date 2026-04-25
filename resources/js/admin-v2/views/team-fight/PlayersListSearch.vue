@@ -1,8 +1,8 @@
 <template>
-    <div class="sticky">
+    <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
-            <b-input @input="search" placeholder="Søg på navn"></b-input>
-            <b-select v-model="rankingList">
+            <b-input dusk="player-search-input" @input="search" placeholder="Søg på navn"></b-input>
+            <b-select dusk="ranking-list-select" v-model="rankingList">
                 <option v-for="(label, value) in rankings" :value="value">{{ label }}</option>
             </b-select>
             <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
@@ -18,6 +18,7 @@
         </b-field>
         <p class="mt-4" v-html="resolveHelperTextForCancellation"></p>
         <b-table
+            dusk="player-search-table"
             class="mt-5"
             :data="membersList"
             :paginated="true"
@@ -52,6 +53,7 @@
                     <b-button size="is-small" type="is-danger" v-show="hasPermanentCancellation(props.row)" title="Annuller permanent afbud"
                               icon-right="account-injury" @click.stop="removePermanentCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
+                              dusk="add-player-button"
                               @click.stop="addPlayerCustom(props.row)"></b-button>
                 </div>
                 <div class="buttons" v-if="!showCancellation">
@@ -59,6 +61,7 @@
                     <b-button size="is-small" title="Afbud (Denne holdrunde)"
                               icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
+                              dusk="add-player-button"
                               @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>

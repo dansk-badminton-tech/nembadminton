@@ -34,3 +34,32 @@ docker compose run artisan dusk
 ```
 
 This command will launch the browser tests defined in the `tests/Browser` directory.
+
+To re-run only the tests that failed in the last run:
+
+```bash
+docker compose run artisan dusk:fails
+```
+
+### Running browser tests in CI:
+
+Browser tests are **not** run automatically on push or PR. They must be triggered manually because they are time-consuming and typically only needed before merging.
+
+The workflow is defined in `.github/workflows/browser-testing.yml`.
+
+**From GitHub UI:** Go to Actions > "Browser testing" > "Run workflow".
+
+**From the CLI** (requires [GitHub CLI](https://cli.github.com/)):
+
+```bash
+# Run on the current branch
+gh workflow run "Browser testing"
+
+# Run on a specific branch
+gh workflow run "Browser testing" --ref my-branch
+
+# Watch the run progress
+gh run watch
+```
+
+Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.

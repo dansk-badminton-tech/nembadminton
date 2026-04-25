@@ -13,6 +13,12 @@ class ClubSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $clubs = require __DIR__ . '/clubs_data.php';
+
+        foreach ($clubs as $club) {
+            \App\Models\Club::query()->updateOrCreate([
+                'id' => $club['id'],
+            ], $club);
+        }
     }
 }

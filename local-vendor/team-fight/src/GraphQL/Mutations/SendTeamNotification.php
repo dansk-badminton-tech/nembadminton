@@ -6,7 +6,7 @@ namespace FlyCompany\TeamFight\GraphQL\Mutations;
 use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
 use App\Models\TeamReceivers;
-use App\Models\Teams;
+use App\Models\TeamRound;
 use App\Models\User;
 use FlyCompany\TeamFight\Notifier;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -26,17 +26,17 @@ class SendTeamNotification
      * @param array $args
      * @param GraphQLContext $context
      * @param ResolveInfo $resolveInfo
-     * @return Teams
+     * @return TeamRound
      */
-    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : Teams
+    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
     {
         $team = $args['id'];
         $message = $args['message'];
         $receivers = $args['receivers'];
         $type = $args['type'];
 
-        /** @var Teams $team */
-        $team = Teams::query()->findOrFail($team);
+        /** @var TeamRound $team */
+        $team = TeamRound::query()->findOrFail($team);
 
         $method = RecipientType::from($receivers['method']);
         $teamNotificationType = TeamNotificationType::from($type);

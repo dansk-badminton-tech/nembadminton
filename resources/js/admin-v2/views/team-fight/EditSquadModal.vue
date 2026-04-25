@@ -4,8 +4,6 @@ import gql from "graphql-tag";
 import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
-import TeamQuery from "../../../queries/team.graphql";
-import {timeToMonth} from "./helper";
 
 export default {
     name: "EditSquadModal",

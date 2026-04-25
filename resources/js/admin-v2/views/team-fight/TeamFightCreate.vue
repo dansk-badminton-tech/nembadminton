@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div dusk="team-fight-create-page">
         <title-bar :title-stack="titleStack"/>
         <hero-bar :has-right-visible="false">
             Opret holdrunde
@@ -7,10 +7,11 @@
         <section class="section is-main-section">
             <form @submit.prevent="createTeam" v-if="!$apollo.queries.me.loading" class="column">
                 <b-field label="Navn">
-                    <b-input v-model="name" required placeholder="fx. Runde 1"></b-input>
+                    <b-input dusk="team-fight-name-input" v-model="name" required placeholder="fx. Runde 1"></b-input>
                 </b-field>
                 <b-field label="Spilledato">
                     <b-datepicker
+                        dusk="team-fight-date-picker"
                         v-model="gameDate"
                         icon="calendar"
                         placeholder="Klik for at vælge dato..."
@@ -20,9 +21,9 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste">
-                    <RankingVersionSelect required v-model="version" :playing-date="gameDate" expanded/>
+                    <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" expanded/>
                 </b-field>
-                <b-button class="mt-2" native-type="submit" label="Opret" icon-left="plus" :loading="loading" />
+                <b-button dusk="team-fight-submit-button" class="mt-2" native-type="submit" label="Opret" icon-left="plus" :loading="loading" />
             </form>
         </section>
     </div>

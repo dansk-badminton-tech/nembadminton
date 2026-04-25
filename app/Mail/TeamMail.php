@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -17,7 +17,7 @@ class TeamMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private Teams $team, private ?string $message)
+    public function __construct(private TeamRound $team, private ?string $message)
     {
         //
     }

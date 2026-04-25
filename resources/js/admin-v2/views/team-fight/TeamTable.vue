@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div dusk="team-table-section">
         <b-loading :is-full-page="false" v-model="loading" :can-cancel="true"></b-loading>
-        <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full">
+        <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
                 <tr>
@@ -40,7 +40,6 @@
                              v-for="player in category.players"
                              @dragstart="startDrag($event, squad, category, player)"
                              :key="player.id"
-                             :data-player-id="player.id"
                              class="is-clearfix mt-1">
                             <input type="hidden" :data-player-id-input="player.id"/>
                             <b-tooltip
@@ -97,7 +96,6 @@
                             v-if="category.players.length === 0"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
-                            :disabled="loading"
                             :version="resolveVersionToUse(squad)"
                             :category="category"/>
                         <PlayerSearch
@@ -105,7 +103,6 @@
                             v-if="isDouble(category) && category.players.length <= 1"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
-                            :disabled="loading"
                             :version="resolveVersionToUse(squad)" :category="category"/>
                     </td>
                 </tr>

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\Export;
 
-use App\Models\Teams;
+use App\Models\TeamRound;
 use Illuminate\Support\Arr;
 
 class Exporter
 {
 
-    public function exportToCSV(Teams $team) : string{
+    public function exportToCSV(TeamRound $team) : string{
         $csv = [];
         foreach ($team->squads as $index => $squad){
             $i = $index + 1;

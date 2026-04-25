@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array   $metadata
  * @property int     $user_id
  * @property User    $user
- * @property Teams   $team
+ * @property TeamRound $team
  */
 class TeamActivityLog extends Model
 {
@@ -50,7 +50,7 @@ class TeamActivityLog extends Model
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Teams::class, 'team_id');
+        return $this->belongsTo(TeamRound::class, 'team_id');
     }
 
     /**
