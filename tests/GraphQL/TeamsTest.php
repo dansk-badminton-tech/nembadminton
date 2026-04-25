@@ -263,7 +263,7 @@ class TeamsTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseHas('teams', [
+        $this->assertDatabaseHas('team_rounds', [
             'name' => 'New Team',
             'clubhouse_id' => $clubhouse->id,
             'user_id' => $user->id
@@ -311,7 +311,7 @@ class TeamsTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseHas('teams', [
+        $this->assertDatabaseHas('team_rounds', [
             'id' => $teamRound->id,
             'name' => 'Updated Name'
         ]);
@@ -350,7 +350,7 @@ class TeamsTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseMissing('teams', [
+        $this->assertDatabaseMissing('team_rounds', [
             'id' => $teamRound->id
         ]);
     }
@@ -390,7 +390,7 @@ class TeamsTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseHas('teams', [
+        $this->assertDatabaseHas('team_rounds', [
             'name' => 'Kopi af Original Team',
             'clubhouse_id' => $clubhouse->id
         ]);
@@ -525,7 +525,7 @@ class TeamsTest extends TestCase
             ]
         ]);
 
-        $this->assertDatabaseHas('teams', [
+        $this->assertDatabaseHas('team_rounds', [
             'id' => $teamRound->id,
             'version' => '2023-01-01'
         ]);
