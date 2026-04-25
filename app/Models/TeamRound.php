@@ -15,7 +15,7 @@ class TeamRound extends Model
 {
     use HasFactory;
 
-    protected $table = 'teams';
+    protected $table = 'team_rounds';
 
     public    $incrementing = false;
 

@@ -19,7 +19,7 @@ class TeamFightSeeder extends Seeder
     {
         $data = require __DIR__ . '/team_fights_data.php';
 
-        DB::table('teams')->insert($data['teams']);
+        DB::table('team_rounds')->insert($data['teams']);
 
         foreach (array_chunk($data['squads'], 100) as $chunk) {
             DB::table('squads')->insert($chunk);
