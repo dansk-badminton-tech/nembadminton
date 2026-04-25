@@ -1,11 +1,11 @@
 <template>
     <fragment v-if="!$apollo.loading">
-        <div v-if="teamRound">
-            <h1 class="title">{{ teamRound.name }} - {{ teamRound.clubhouse.name }}
+        <div v-if="teamRound" dusk="team-fight-public-page">
+            <h1 class="title" dusk="team-fight-public-title">{{ teamRound.name }} - {{ teamRound.clubhouse.name }}
             </h1>
-            <h2 class="subtitle">Spilledato: {{ teamRound.gameDate }}</h2>
+            <h2 class="subtitle" dusk="team-fight-public-game-date">Spilledato: {{ teamRound.gameDate }}</h2>
             <div class="columns is-multiline">
-                <div v-for="(squad, index) in teamRound.squads" :key="squad.id" class="column is-half">
+                <div v-for="(squad, index) in teamRound.squads" :key="squad.id" class="column is-half" dusk="team-fight-public-squad">
                     <table class="table is-striped mt-5 is-fullwidth">
                         <thead>
                         <tr>
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        <section v-else class="section has-text-centered">
+        <section v-else class="section has-text-centered" dusk="team-fight-public-not-found">
             <h1 class="title">Kamp ikke fundet</h1>
             <p class="subtitle">Vi kunne ikke finde den ønskede kamp. Den kan være slettet, eller linket er forkert.</p>
         </section>
