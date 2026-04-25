@@ -5,6 +5,11 @@ namespace Tests\GraphQL;
 use App\Enums\Permission;
 use App\Enums\RecipientType;
 use App\Models\Clubhouse;
+use App\Models\Member;
+use App\Models\Point;
+use App\Models\Squad;
+use App\Models\SquadCategory;
+use App\Models\SquadMember;
 use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
@@ -442,8 +447,451 @@ class TeamsTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('squads', [
-            'teams_id' => $teamRound->id,
+            'team_round_id' => $teamRound->id,
             'playerLimit' => 10
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_a_squad()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateSquadInput!) {
+                updateSquad(input: $input) {
+                    id
+                    playerLimit
+                    league
+                    name
+                    playingPlace
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $squad->id,
+                'playerLimit' => 12,
+                'league' => 'LIGA',
+                'name' => 'Updated Squad',
+                'playingPlace' => 'Main Hall',
+            ]
+        ])->assertJson([
+            'data' => [
+                'updateSquad' => [
+                    'id' => (string)$squad->id,
+                    'playerLimit' => 12,
+                    'league' => 'LIGA',
+                    'name' => 'Updated Squad',
+                    'playingPlace' => 'Main Hall',
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('squads', [
+            'id' => $squad->id,
+            'playerLimit' => 12,
+            'league' => 'LIGA',
+            'name' => 'Updated Squad',
+            'playing_place' => 'Main Hall',
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_delete_a_squad()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                deleteSquad(id: $id) {
+                    id
+                }
+            }
+        ', [
+            'id' => $squad->id,
+        ])->assertJson([
+            'data' => [
+                'deleteSquad' => [
+                    'id' => (string)$squad->id,
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseMissing('squads', [
+            'id' => $squad->id,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_move_squad_order_up()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $first = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $second = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 2,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                moveSquadOrderUp(id: $id) {
+                    id
+                }
+            }
+        ', [
+            'id' => $second->id,
+        ])->assertJson([
+            'data' => [
+                'moveSquadOrderUp' => [
+                    'id' => (string)$second->id,
+                ]
+            ]
+        ]);
+
+        $first->refresh();
+        $second->refresh();
+
+        $this->assertSame(2, $first->order);
+        $this->assertSame(1, $second->order);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_move_squad_order_down()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $first = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $second = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 2,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                moveSquadOrderDown(id: $id) {
+                    id
+                }
+            }
+        ', [
+            'id' => $first->id,
+        ])->assertJson([
+            'data' => [
+                'moveSquadOrderDown' => [
+                    'id' => (string)$first->id,
+                ]
+            ]
+        ]);
+
+        $first->refresh();
+        $second->refresh();
+
+        $this->assertSame(2, $first->order);
+        $this->assertSame(1, $second->order);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_add_a_squad_member_by_ref_id()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+
+        $member = Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Member Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        Point::query()->create([
+            'member_id' => $member->id,
+            'points' => 100,
+            'position' => 1,
+            'category' => 'HS',
+            'vintage' => 'SEN',
+            'version' => '2024-01-01',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: AddSquadMemberByRefIdInput!) {
+                addSquadMemberByRefId(input: $input) {
+                    id
+                    refId
+                    name
+                    points {
+                        points
+                        category
+                    }
+                }
+            }
+        ', [
+            'input' => [
+                'refId' => $member->refId,
+                'categoryId' => $category->id,
+                'version' => '2024-01-01',
+            ]
+        ])->assertJson([
+            'data' => [
+                'addSquadMemberByRefId' => [
+                    'refId' => $member->refId,
+                    'name' => 'Member Player',
+                    'points' => [
+                        [
+                            'points' => 100,
+                            'category' => 'HS',
+                        ]
+                    ],
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('squad_members', [
+            'member_ref_id' => $member->refId,
+            'squad_category_id' => $category->id,
+            'name' => 'Member Player',
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_a_squad_member()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Member Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        $squadMember = SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'Member Player',
+            'gender' => 'M',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateSquadMemberInput!) {
+                updateSquadMember(input: $input) {
+                    id
+                    points {
+                        points
+                        category
+                        position
+                        corrected_manually
+                    }
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $squadMember->id,
+                'points' => [
+                    'create' => [
+                        [
+                            'category' => 'HS',
+                            'points' => 77,
+                            'position' => 2,
+                            'vintage' => 'SEN',
+                            'corrected_manually' => true,
+                            'version' => '2024-01-01',
+                        ],
+                    ],
+                ],
+            ],
+        ])->assertJsonFragment([
+            'id' => (string)$squadMember->id,
+            'points' => 77,
+            'category' => 'HS',
+            'position' => 2,
+            'corrected_manually' => true,
+        ]);
+
+        $this->assertDatabaseHas('squad_points', [
+            'squad_member_id' => $squadMember->id,
+            'points' => 77,
+            'category' => 'HS',
+            'position' => 2,
+            'vintage' => 'SEN',
+            'corrected_manually' => true,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_delete_a_squad_member()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Member Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        $squadMember = SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'Member Player',
+            'gender' => 'M',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                deleteSquadMember(id: $id) {
+                    id
+                }
+            }
+        ', [
+            'id' => $squadMember->id,
+        ])->assertJson([
+            'data' => [
+                'deleteSquadMember' => [
+                    'id' => (string)$squadMember->id,
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseMissing('squad_members', [
+            'id' => $squadMember->id,
         ]);
     }
 

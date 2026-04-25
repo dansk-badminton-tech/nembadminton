@@ -24,18 +24,18 @@ return [
 
     // ── squads table ──
     "squads" => [
-        ["id" => 1, "playerLimit" => 10, "teams_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 1],
-        ["id" => 2, "playerLimit" => 10, "teams_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 2],
-        ["id" => 3, "playerLimit" => 10, "teams_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 3],
-        ["id" => 4, "playerLimit" => 10, "teams_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 1],
-        ["id" => 5, "playerLimit" => 10, "teams_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 2],
-        ["id" => 6, "playerLimit" => 10, "teams_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 3],
-        ["id" => 7, "playerLimit" => 10, "teams_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 1],
-        ["id" => 8, "playerLimit" => 10, "teams_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 2],
-        ["id" => 9, "playerLimit" => 10, "teams_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 3],
-        ["id" => 10, "playerLimit" => 10, "teams_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 1],
-        ["id" => 11, "playerLimit" => 10, "teams_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 2],
-        ["id" => 12, "playerLimit" => 10, "teams_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 3],
+        ["id" => 1, "playerLimit" => 10, "team_round_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 1],
+        ["id" => 2, "playerLimit" => 10, "team_round_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 2],
+        ["id" => 3, "playerLimit" => 10, "team_round_id" => "OwcAGQZ8M0dEhtap6Cn2vPrL", "league" => "OTHER", "order" => 3],
+        ["id" => 4, "playerLimit" => 10, "team_round_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 1],
+        ["id" => 5, "playerLimit" => 10, "team_round_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 2],
+        ["id" => 6, "playerLimit" => 10, "team_round_id" => "YoeIdBfDEwuq0La74WjOcKs9", "league" => "OTHER", "order" => 3],
+        ["id" => 7, "playerLimit" => 10, "team_round_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 1],
+        ["id" => 8, "playerLimit" => 10, "team_round_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 2],
+        ["id" => 9, "playerLimit" => 10, "team_round_id" => "Vp9CWTb5aDxZoXcSmnw3YqtL", "league" => "OTHER", "order" => 3],
+        ["id" => 10, "playerLimit" => 10, "team_round_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 1],
+        ["id" => 11, "playerLimit" => 10, "team_round_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 2],
+        ["id" => 12, "playerLimit" => 10, "team_round_id" => "NKYyhglC5ai7pTz6IsFqQb1k", "league" => "OTHER", "order" => 3],
     ],
 
     // ── squad_categories table ──

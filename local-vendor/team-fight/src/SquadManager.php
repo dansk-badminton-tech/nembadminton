@@ -37,7 +37,7 @@ class SquadManager
             })->find($squadInput->id);
             if($squad === null){
                 $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
-                $squad->forceFill(['teams_id' => $team->id]);
+                $squad->forceFill(['team_round_id' => $team->id]);
                 $squad->saveOrFail();
             }else{
                 $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);

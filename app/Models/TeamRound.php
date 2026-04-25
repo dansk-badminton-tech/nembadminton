@@ -60,6 +60,6 @@ class TeamRound extends Model
 
     public function squads() : HasMany
     {
-        return $this->hasMany(Squad::class, 'teams_id', 'id')->orderBy('order');
+        return $this->hasMany(Squad::class, 'team_round_id', 'id')->orderBy('order');
     }
 }

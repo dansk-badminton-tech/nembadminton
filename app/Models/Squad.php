@@ -17,7 +17,7 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property int                        $id
  * @property Collection|SquadCategory[] $categories
  * @property TeamRound                  $team
- * @property int                        $teams_id
+ * @property string                     $team_round_id
  * @property int                        $order
  * @property int|null                   $external_team_fight_id
  * @property Carbon|null                $playing_datetime
@@ -46,7 +46,7 @@ class Squad extends Model implements Sortable
         'playerLimit',
         'league',
         'order',
-        'teams_id',
+        'team_round_id',
         'name',
         'external_team_fight_id',
         'playing_datetime',
@@ -59,7 +59,7 @@ class Squad extends Model implements Sortable
 
     public function buildSortQuery() : \Illuminate\Database\Eloquent\Builder
     {
-        return static::query()->where('teams_id', $this->teams_id);
+        return static::query()->where('team_round_id', $this->team_round_id);
     }
 
     public function categories() : hasMany
@@ -69,6 +69,6 @@ class Squad extends Model implements Sortable
 
     public function team() : BelongsTo
     {
-        return $this->belongsTo(TeamRound::class, 'teams_id');
+        return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 }

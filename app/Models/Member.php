@@ -94,7 +94,7 @@ class Member extends Model
     public function scopeNotOnSquad(Builder $builder, string $teamId) : Builder
     {
         return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamId) {
-            $builder->where('teams_id', '=', $teamId);
+            $builder->where('team_round_id', '=', $teamId);
         });
     }
 
