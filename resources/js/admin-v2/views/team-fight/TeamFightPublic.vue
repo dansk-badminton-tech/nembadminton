@@ -1,11 +1,11 @@
 <template>
     <fragment v-if="!$apollo.loading">
-        <div v-if="team">
-            <h1 class="title">{{ team.name }} - {{ team.clubhouse.name }}
+        <div v-if="teamRound">
+            <h1 class="title">{{ teamRound.name }} - {{ teamRound.clubhouse.name }}
             </h1>
-            <h2 class="subtitle">Spilledato: {{ team.gameDate }}</h2>
+            <h2 class="subtitle">Spilledato: {{ teamRound.gameDate }}</h2>
             <div class="columns is-multiline">
-                <div v-for="(squad, index) in team.squads" :key="squad.id" class="column is-half">
+                <div v-for="(squad, index) in teamRound.squads" :key="squad.id" class="column is-half">
                     <table class="table is-striped mt-5 is-fullwidth">
                         <thead>
                         <tr>
@@ -74,7 +74,7 @@ export default {
         return {
             searchPlayer: '',
             showNotificationPopUp: false,
-            team: null
+            teamRound: null
         }
     },
     props: {
@@ -84,9 +84,9 @@ export default {
         getCurrentSeason
     },
     apollo: {
-        team: {
-            query: gql` query ($id: ID!){
-                  team(id: $id){
+        teamRound: {
+            query: gql` query($id: ID!){
+                  teamRound(id: $id){
                     id
                     name
                     gameDate
