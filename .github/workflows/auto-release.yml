@@ -10,6 +10,12 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: rymndhng/release-on-push-action@master
+      - uses: rymndhng/release-on-push-action@v0.28.0
         with:
           bump_version_scheme: patch
+      - name: Check Output Parameters
+        run: |
+          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.release.outputs.version }}"
+          echo "Upload release artifacts to ${{ steps.release.outputs.upload_url }}"
+

@@ -71,3 +71,4 @@ Failed tests are automatically retried once via `dusk:fails` before the workflow
 **Fundet en fejl?:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
 
 **Project:** https://github.com/dansk-badminton-tech/nembadminton/projects/2
+
