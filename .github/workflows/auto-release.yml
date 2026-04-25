@@ -4,13 +4,19 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: rymndhng/release-on-push-action@v0.28.0
+      - id: release
+        name: Create release/tag
+        uses: rymndhng/release-on-push-action@v0.28.0
+        env:
+          # Use a PAT when available so tag push events can trigger downstream workflows.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_WORKFLOW_TOKEN || secrets.GITHUB_TOKEN }}
         with:
           bump_version_scheme: patch
       - name: Check Output Parameters
@@ -18,4 +24,3 @@ jobs:
           echo "Got tag name ${{ steps.release.outputs.tag_name }}"
           echo "Got release version ${{ steps.release.outputs.version }}"
           echo "Upload release artifacts to ${{ steps.release.outputs.upload_url }}"
-
