@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int     $id
- * @property string  $team_id
+ * @property string  $team_round_id
  * @property string  $action
  * @property string  $recipient_type
  * @property int     $recipient_count
@@ -29,7 +29,7 @@ class TeamActivityLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'team_id',
+        'team_round_id',
         'action',
         'recipient_type',
         'recipient_count',
@@ -50,7 +50,7 @@ class TeamActivityLog extends Model
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(TeamRound::class, 'team_id');
+        return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 
     /**
@@ -90,7 +90,7 @@ class TeamActivityLog extends Model
         ?int $userId = null
     ): self {
         return self::create([
-            'team_id' => $teamId,
+            'team_round_id' => $teamId,
             'action' => ActivityAction::TEAM_PUBLISH,
             'recipient_type' => $recipientType,
             'recipient_count' => $recipientCount,
@@ -117,7 +117,7 @@ class TeamActivityLog extends Model
         ?int $userId = null
     ): self {
         return self::create([
-            'team_id' => $teamId,
+            'team_round_id' => $teamId,
             'action' => ActivityAction::TEST_EMAIL_SENT,
             'recipient_type' => $recipientType,
             'recipient_count' => 1,

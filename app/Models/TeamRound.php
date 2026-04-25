@@ -50,12 +50,12 @@ class TeamRound extends Model
 
     public function receiver() : HasOne
     {
-        return $this->hasOne(TeamReceivers::class, 'team_id');
+        return $this->hasOne(TeamReceivers::class, 'team_round_id');
     }
 
     public function activityLogs() : HasMany
     {
-        return $this->hasMany(TeamActivityLog::class, 'team_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(TeamActivityLog::class, 'team_round_id')->orderBy('created_at', 'desc');
     }
 
     public function squads() : HasMany
