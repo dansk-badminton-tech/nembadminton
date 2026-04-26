@@ -89,7 +89,7 @@ export default {
                     variables: {
                         input: {
                             ...{
-                                team: {
+                                teamRound: {
                                     connect: this.teamId
                                 }
                             },

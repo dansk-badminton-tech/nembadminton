@@ -313,12 +313,12 @@ export default {
         exportToCSV() {
             this.$apollo.query({
                                    query: gql`
-                                        query exportToCSV($teamId: ID!){
-                                            export(teamId:$teamId)
+                                        query exportToCSV($teamRoundId: ID!){
+                                            export(teamRoundId:$teamRoundId)
                                         }
                                     `,
                                    variables: {
-                                       teamId: this.teamFightId
+                                       teamRoundId: this.teamFightId
                                    },
                                    fetchPolicy: "network-only"
                                }).then(({data}) => {
@@ -462,8 +462,8 @@ export default {
                        .mutate(
                            {
                                mutation: gql`
-                                    mutation updatePointsTeam($id: ID!, $version: String!){
-                                      updatePointsTeam(id: $id, version: $version){
+                                    mutation updatePointsTeamRound($id: ID!, $version: String!){
+                                      updatePointsTeamRound(id: $id, version: $version){
                                         id
                                       }
                                     }

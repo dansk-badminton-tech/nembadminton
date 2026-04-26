@@ -129,11 +129,11 @@ class TeamsTest extends TestCase
         $this->actingAs($user, 'api');
 
         $response = $this->graphQL(/** @lang GraphQL */ '
-            query($teamId: ID!) {
-                export(teamId: $teamId)
+            query($teamRoundId: ID!) {
+                export(teamRoundId: $teamRoundId)
             }
         ', [
-            'teamId' => $teamRound->id,
+            'teamRoundId' => $teamRound->id,
         ]);
 
         $response->assertJsonStructure([
@@ -437,7 +437,7 @@ class TeamsTest extends TestCase
             }
         ', [
             'input' => [
-                'team' => ['connect' => $teamRound->id],
+                'teamRound' => ['connect' => $teamRound->id],
                 'playerLimit' => 10,
                 'league' => 'LIGA',
                 'categories' => [
@@ -1008,7 +1008,7 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_update_points_team()
+    public function it_can_update_points_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
         $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
@@ -1024,7 +1024,7 @@ class TeamsTest extends TestCase
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($id: ID!, $version: String!) {
-                updatePointsTeam(id: $id, version: $version) {
+                updatePointsTeamRound(id: $id, version: $version) {
                     id
                     version
                 }
@@ -1034,7 +1034,7 @@ class TeamsTest extends TestCase
             'version' => '2023-01-01'
         ])->assertJson([
             'data' => [
-                'updatePointsTeam' => [
+                'updatePointsTeamRound' => [
                     'id' => $teamRound->id,
                     'version' => '2023-01-01'
                 ]
