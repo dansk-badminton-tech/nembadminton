@@ -406,7 +406,7 @@ class TeamsTest extends TestCase
         $this->actingAs($user, 'api');
 
         $this->graphQL(/** @lang GraphQL */ '
-            mutation($input: CreateTeamInput!) {
+            mutation($input: CreateTeamRoundInput!) {
                 createTeamRound(input: $input) {
                     id
                     name
@@ -452,7 +452,7 @@ class TeamsTest extends TestCase
         $this->actingAs($user, 'api');
 
         $this->graphQL(/** @lang GraphQL */ '
-            mutation($input: UpdateTeamInput!) {
+            mutation($input: UpdateTeamRoundInput!) {
                 updateTeamRound(input: $input) {
                     id
                     name

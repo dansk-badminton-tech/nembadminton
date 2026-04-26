@@ -72,7 +72,7 @@ export default {
 
             this.loading = true
             const createTeamRoundGQL = gql`
-                        mutation ($input: CreateTeamInput!){
+                        mutation ($input: CreateTeamRoundInput!){
                           createTeamRound(input: $input){
                             id
                             name
