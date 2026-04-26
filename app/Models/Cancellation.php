@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property TeamRound|null $teamRound
  * @property TeamRound|null $team
  * @property CancellationCollector|null $cancellationCollector
  * @property Member $member
@@ -31,8 +32,12 @@ class Cancellation extends Model
         return $this->belongsTo(Member::class, 'refId', 'refId');
     }
 
-    public function team() : BelongsTo {
+    public function teamRound() : BelongsTo {
         return $this->belongsTo(TeamRound::class, 'teamId', 'id');
+    }
+
+    public function team() : BelongsTo {
+        return $this->teamRound();
     }
 
     public function cancellationCollector() : BelongsTo{

@@ -32,7 +32,7 @@ class SquadManager
     public function addOrUpdateSquads(array $squads, TeamRound $team): void
     {
         foreach ($squads as $index => $squadInput) {
-            $squad = SquadModel::query()->whereHas('team', function(Builder $builder) use ($team){
+            $squad = SquadModel::query()->whereHas('teamRound', function(Builder $builder) use ($team){
                 $builder->where('id', $team->id);
             })->find($squadInput->id);
             if($squad === null){
@@ -189,7 +189,7 @@ class SquadManager
             $squad->fill(['version' => $version]);
             $squad->saveOrFail();
 
-            $pointVersion = $version ?? $squad->team->version;
+            $pointVersion = $version ?? $squad->teamRound->version;
 
             /** @var SquadCategory $category */
             foreach ($squad->categories()->with('players')->get() as $category){
