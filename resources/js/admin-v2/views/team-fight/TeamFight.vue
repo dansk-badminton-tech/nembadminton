@@ -9,7 +9,7 @@
             <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
                        position="is-bottom">
                 <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
-                          @click="saveTeams">Gem
+                          @click="saveTeamRound">Gem
                 </b-button>
             </b-tooltip>
             <b-dropdown aria-role="list" class="ml-2">
@@ -775,7 +775,7 @@ export default {
                     this.saving = false
                 })
         },
-        saveTeams() {
+        saveTeamRound() {
             if (this.saving === true) {
                 return
             }
@@ -783,8 +783,8 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation updateTeam($input: UpdateTeamInput!){
-                          updateTeam(input: $input){
+                        mutation updateTeamRound($input: UpdateTeamInput!){
+                          updateTeamRound(input: $input){
                             id
                             name
                             gameDate
@@ -827,4 +827,3 @@ export default {
     }
 }
 </script>
-
