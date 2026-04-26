@@ -183,11 +183,7 @@ class TeamsTest extends TestCase
                     id
                     message
                     teamRoundId
-                    teamId
                     teamRound {
-                        id
-                    }
-                    team {
                         id
                     }
                 }
@@ -201,11 +197,7 @@ class TeamsTest extends TestCase
                     [
                         'message' => 'Notification sent',
                         'teamRoundId' => $teamRound->id,
-                        'teamId' => $teamRound->id,
                         'teamRound' => [
-                            'id' => $teamRound->id,
-                        ],
-                        'team' => [
                             'id' => $teamRound->id,
                         ],
                     ]
@@ -217,7 +209,7 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_query_team_receiver_by_team_round_id()
+    public function it_can_query_team_round_receiver_by_team_round_id()
     {
         $clubhouse = Clubhouse::factory()->create();
         $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
@@ -238,21 +230,9 @@ class TeamsTest extends TestCase
 
         $this->graphQL(/** @lang GraphQL */ '
             query($teamRoundId: ID!) {
-                teamReceiver(teamRoundId: $teamRoundId) {
-                    emails
-                    teamRound {
-                        id
-                    }
-                    team {
-                        id
-                    }
-                }
                 teamRoundReceiver(teamRoundId: $teamRoundId) {
                     emails
                     teamRound {
-                        id
-                    }
-                    team {
                         id
                     }
                 }
@@ -261,21 +241,9 @@ class TeamsTest extends TestCase
             'teamRoundId' => $teamRound->id
         ])->assertJson([
             'data' => [
-                'teamReceiver' => [
-                    'emails' => ['test@example.com'],
-                    'teamRound' => [
-                        'id' => $teamRound->id,
-                    ],
-                    'team' => [
-                        'id' => $teamRound->id,
-                    ],
-                ],
                 'teamRoundReceiver' => [
                     'emails' => ['test@example.com'],
                     'teamRound' => [
-                        'id' => $teamRound->id,
-                    ],
-                    'team' => [
                         'id' => $teamRound->id,
                     ],
                 ],
@@ -405,7 +373,6 @@ class TeamsTest extends TestCase
                 createCancellation(input: $input) {
                     id
                     teamRoundId
-                    teamId
                 }
             }
         ', [
@@ -418,12 +385,11 @@ class TeamsTest extends TestCase
                     ],
                 ],
             ],
-        ])->assertJsonPath('data.createCancellation.teamRoundId', $teamRound->id)
-          ->assertJsonPath('data.createCancellation.teamId', $teamRound->id);
+        ])->assertJsonPath('data.createCancellation.teamRoundId', $teamRound->id);
 
         $this->assertDatabaseHas('cancellations', [
             'refId' => $member->refId,
-            'teamId' => $teamRound->id,
+            'team_round_id' => $teamRound->id,
         ]);
     }
 

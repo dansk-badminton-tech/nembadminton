@@ -82,11 +82,6 @@ class User extends Authenticatable
         return $this->hasMany(TeamRound::class);
     }
 
-    public function teams() : HasMany
-    {
-        return $this->teamRounds();
-    }
-
     public function cancellationCollector() : HasOne
     {
         return $this->hasOne(CancellationCollector::class);

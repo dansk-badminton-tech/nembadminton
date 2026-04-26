@@ -94,7 +94,7 @@ const routes = [
                 path: '/team-fight/:teamUUID/public-view',
                 name: 'team-fight-public-view',
                 component: () => import("../views/team-fight/TeamFightPublic.vue"),
-                props: route => ({teamId: route.params.teamUUID}),
+                props: route => ({teamRoundId: route.params.teamUUID}),
                 meta: {
                     title: 'Holdkamp'
                 }
@@ -284,7 +284,7 @@ const routes = [
                         path: 'team-fight/:teamUUID/edit',
                         name: 'team-fight-edit',
                         component: () => import("../views/team-fight/TeamFight.vue"),
-                        props: route => ({teamFightId: route.params.teamUUID})
+                        props: route => ({teamRoundId: route.params.teamUUID})
                     },
                     {
                         meta: {
@@ -294,7 +294,7 @@ const routes = [
                         path: 'team-fight/:teamUUID/notify',
                         name: 'team-fight-notify',
                         component: () => import("../views/team-fight/TeamFightNotify.vue"),
-                        props: route => ({teamFightId: route.params.teamUUID})
+                        props: route => ({teamRoundId: route.params.teamUUID})
                     },
                     {
                         meta: {

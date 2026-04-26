@@ -22,7 +22,7 @@ query membersSearch(
             cancellations(where: $cancellationWhere){
                 id
                 refId
-                teamId
+                teamRoundId
                 message
                 createdAt
                 cancellationCollector{

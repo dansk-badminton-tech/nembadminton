@@ -9,9 +9,6 @@ extend type Query {
     squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_round_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @guard @canResolved(ability: "view")
-    teamReceiver(
-        teamRoundId: ID @eq(key: "team_round_id")
-    ) : TeamReceivers @find @guard @canResolved(ability: "view")
     teamRoundReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
@@ -23,7 +20,7 @@ extend type Mutation {
     updateSquadMember(input: UpdateSquadMemberInput! @spread) : SquadMember @update @guard @canFind(ability: "update", find: "id")
     addSquadMemberByRefId(input: AddSquadMemberByRefIdInput! @spread) : SquadMember @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId") @canFind(ability: "update", find: "categoryId", model: "SquadCategory")
     deleteSquad(id: ID! @eq) : Squad @guard @delete @canFind(ability: "delete", find: "id")
-    createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard @canFind(ability: "view", find: "team.connect", model: "TeamRound")
+    createSquad(input: CreateSquadInput! @spread) : Squad! @create @guard @canFind(ability: "view", find: "teamRound.connect", model: "TeamRound")
     updateSquad(input: UpdateSquadInput! @spread) : Squad! @update @guard @canFind(ability: "update", find: "id")
     moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp") @canFind(ability: "update", find: "id")
     moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown") @canFind(ability: "update", find: "id")
@@ -42,7 +39,6 @@ extend type Mutation {
 type TeamReceivers {
     id: ID!
     teamRound: TeamRound @belongsTo(relation: "teamRound")
-    team: TeamRound @belongsTo
     emails: [String!]!
 }
 
@@ -151,7 +147,7 @@ input UpdateSquadInput {
 }
 
 input CreateSquadInput {
-    teamRound: SquadBelongsTo! @rename(attribute: "team")
+    teamRound: SquadBelongsTo!
     playerLimit: Int!
     league: LeagueType!
     categories: CreateCategoryHasManyInput!
@@ -296,8 +292,6 @@ type TeamActivityLog {
     id: ID!
     "Team Round ID"
     teamRoundId: ID! @rename(attribute: "team_round_id")
-    "Team ID"
-    teamId: ID! @rename(attribute: "team_round_id")
     "Action"
     action: ActivityAction!
     "Recipient type"
@@ -318,8 +312,6 @@ type TeamActivityLog {
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Team"
     teamRound: TeamRound! @belongsTo(relation: "teamRound")
-    "Team (legacy alias)"
-    team: TeamRound! @belongsTo
     "User"
     user: User @belongsTo
 }

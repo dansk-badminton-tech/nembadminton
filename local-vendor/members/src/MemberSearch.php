@@ -41,9 +41,9 @@ class MemberSearch
                     $this->applyRanking($query, $rankingList);
                 });
         }
-        $teamId = $args['teamRoundId'] ?? ($args['teamId'] ?? null);
-        if($teamId !== null){
-            $builder->notOnSquad($teamId);
+        $teamRoundId = $args['teamRoundId'] ?? null;
+        if($teamRoundId !== null){
+            $builder->notOnSquad($teamRoundId);
         }
 
         return $builder;

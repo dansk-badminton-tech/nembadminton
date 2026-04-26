@@ -26,16 +26,6 @@ class TeamReceivers extends Model
         return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 
-    public function team(): BelongsTo
-    {
-        return $this->teamRound();
-    }
-
-    public function teams(): BelongsTo
-    {
-        return $this->teamRound();
-    }
-
     protected function casts(): array
     {
         return [

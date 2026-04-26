@@ -19,8 +19,7 @@ extend type Mutation {
 
 input CancellationInput {
     refId: String!
-    teamRoundId: String @rename(attribute: "teamId")
-    teamId: String
+    teamRoundId: String @rename(attribute: "team_round_id")
     message: String
     email: String @rules(apply: ["email"])
     cancellationCollector: ConnectCancellationCollectorBelongsTo
@@ -81,8 +80,7 @@ type CancellationCollector {
 type Cancellation {
     id: ID
     refId: String!
-    teamRoundId: String @rename(attribute: "teamId")
-    teamId: String
+    teamRoundId: String @rename(attribute: "team_round_id")
     message: String
     member: Member!
     email: String!

@@ -17,7 +17,6 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property int                        $id
  * @property Collection|SquadCategory[] $categories
  * @property TeamRound                  $teamRound
- * @property TeamRound                  $team
  * @property string                     $team_round_id
  * @property int                        $order
  * @property int|null                   $external_team_fight_id
@@ -71,10 +70,5 @@ class Squad extends Model implements Sortable
     public function teamRound() : BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');
-    }
-
-    public function team() : BelongsTo
-    {
-        return $this->teamRound();
     }
 }

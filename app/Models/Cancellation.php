@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property TeamRound|null $teamRound
- * @property TeamRound|null $team
  * @property CancellationCollector|null $cancellationCollector
  * @property Member $member
  * @property CancellationDate[]|Collection $dates
@@ -21,7 +20,7 @@ class Cancellation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['refId', 'teamId', 'message', 'email'];
+    protected $fillable = ['refId', 'team_round_id', 'message', 'email'];
 
     public function dates() : HasMany
     {
@@ -33,11 +32,7 @@ class Cancellation extends Model
     }
 
     public function teamRound() : BelongsTo {
-        return $this->belongsTo(TeamRound::class, 'teamId', 'id');
-    }
-
-    public function team() : BelongsTo {
-        return $this->teamRound();
+        return $this->belongsTo(TeamRound::class, 'team_round_id', 'id');
     }
 
     public function cancellationCollector() : BelongsTo{

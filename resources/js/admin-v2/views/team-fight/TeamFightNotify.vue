@@ -10,7 +10,7 @@ export default {
     components: {TitleBar, HeroBar},
     inject: ['clubhouseId', 'user'],
     props: {
-        teamFightId: String
+        teamRoundId: String
     },
     computed: {
         cannotPublish() {
@@ -103,7 +103,7 @@ export default {
         receiver: {
             query: gql`
                 query receiver($teamRoundId: ID!){
-                    receiver : teamReceiver(teamRoundId: $teamRoundId){
+                    receiver : teamRoundReceiver(teamRoundId: $teamRoundId){
                         id
                         emails
                     }
@@ -111,7 +111,7 @@ export default {
             `,
             variables(){
                 return {
-                    teamRoundId: this.teamFightId
+                    teamRoundId: this.teamRoundId
                 }
             },
             result({data}){
@@ -122,7 +122,7 @@ export default {
             query: TeamRoundQuery,
             variables: function () {
                 return {
-                    id: this.teamFightId
+                    id: this.teamRoundId
                 }
             }
         },
@@ -146,7 +146,7 @@ export default {
             `,
             variables: function () {
                 return {
-                    id: this.teamFightId
+                    id: this.teamRoundId
                 }
             },
             update: data => {
@@ -216,7 +216,7 @@ export default {
                 `,
                 variables: {
                     input: {
-                        id: this.teamFightId,
+                        id: this.teamRoundId,
                         type: this.notificationType.toUpperCase(),
                         message: this.message,
                         receivers: {
@@ -361,7 +361,7 @@ export default {
         </hero-bar>
         <div class="section">
             <div class="content">
-            <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamFightId+'/edit'" @click="publish">Tilbage</b-button>
+            <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamRoundId+'/edit'" @click="publish">Tilbage</b-button>
             </div>
             <div class="columns">
                 <div class="column is-half">

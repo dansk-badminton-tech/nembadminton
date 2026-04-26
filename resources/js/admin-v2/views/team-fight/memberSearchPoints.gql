@@ -4,7 +4,7 @@ query memberSearchPoints(
     $page: Int
     $first: Int
     $name: String
-    $teamId: String
+    $teamRoundId: String
     $rankingList: RankingList!
     $playable: Boolean
     $inactive: Boolean
@@ -17,7 +17,7 @@ query memberSearchPoints(
         name: $name,
         page: $page,
         first: $first,
-        teamId: $teamId,
+        teamRoundId: $teamRoundId,
         playable: $playable,
         inactive: $inactive,
         whereCancellations: $whereCancellations,
@@ -39,7 +39,7 @@ query memberSearchPoints(
             cancellations(where: $cancellationWhere){
                 id
                 refId
-                teamId
+                teamRoundId
                 message
                 createdAt
                 cancellationCollector{

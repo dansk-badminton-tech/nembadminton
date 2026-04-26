@@ -123,7 +123,7 @@ export default {
     name: 'PlayersListSearch',
     props: {
         clubhouseId: Number,
-        teamId: String,
+        teamRoundId: String,
         addPlayer: Function,
         version: Date,
         loading: Boolean,
@@ -329,7 +329,7 @@ export default {
                                         createCancellation(input: $input){
                                             id
                                             refId
-                                            teamId
+                                            teamRoundId
                                             dates{
                                              date
                                              updatedAt
@@ -341,7 +341,7 @@ export default {
                         variables: {
                             input: {
                                 refId: player.refId,
-                                teamId: this.teamId,
+                                teamRoundId: this.teamRoundId,
                                 dates: {
                                     create: [{date: this.gameDate.toISOString().substring(0, 10)}]
                                 }
@@ -396,7 +396,7 @@ export default {
                 })
         },
         resolveCancellationCreatedBy(cancellation) {
-            if (cancellation.teamId) {
+            if (cancellation.teamRoundId) {
                 return "Dig"
             }
             if (cancellation.cancellationCollector) {
@@ -446,8 +446,8 @@ export default {
                         condition: {
                             OR: [
                                 {
-                                    column: 'TEAMID',
-                                    value: this.teamId
+                                    column: 'TEAM_ROUND_ID',
+                                    value: this.teamRoundId
                                 },
                                 {
                                     AND: [
@@ -503,11 +503,11 @@ export default {
                     clubhouse: this.clubhouseId,
                     page: this.currentPage,
                     first: this.perPage,
-                    notOnSquad: this.teamId,
+                    notOnSquad: this.teamRoundId,
                     cancellationWhere: {
                         OR: [{
-                            column: 'TEAMID',
-                            value: this.teamId
+                            column: 'TEAM_ROUND_ID',
+                            value: this.teamRoundId
                         }, {
                             AND: [
                                 {
@@ -559,8 +559,8 @@ export default {
 
                 params.cancellationWhere = {
                     OR: [{
-                        column: 'TEAMID',
-                        value: this.teamId
+                        column: 'TEAM_ROUND_ID',
+                        value: this.teamRoundId
                     }, {
                         AND: [
                             {
@@ -592,8 +592,8 @@ export default {
                         amount: 1,
                         condition: {
                             OR: [{
-                                column: 'TEAMID',
-                                value: this.teamId
+                                column: 'TEAM_ROUND_ID',
+                                value: this.teamRoundId
                             }, {
                                 AND: [
                                     {
@@ -622,7 +622,7 @@ export default {
                     }
                 }
 
-                params.teamId = this.teamId;
+                params.teamRoundId = this.teamRoundId;
                 params.clubhouse = this.clubhouseId;
 
                 return params

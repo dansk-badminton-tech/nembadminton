@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int     $user_id
  * @property User    $user
  * @property TeamRound $teamRound
- * @property TeamRound $team
  */
 class TeamActivityLog extends Model
 {
@@ -54,11 +53,6 @@ class TeamActivityLog extends Model
         return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 
-    public function team(): BelongsTo
-    {
-        return $this->teamRound();
-    }
-
     /**
      * Get the user who performed the action.
      */
@@ -87,7 +81,7 @@ class TeamActivityLog extends Model
      * Create a log entry for a notification sent.
      */
     public static function logNotificationSent(
-        string $teamId,
+        string $teamRoundId,
         RecipientType $recipientType,
         int $recipientCount,
         string $recipientsSummary,
@@ -96,7 +90,7 @@ class TeamActivityLog extends Model
         ?int $userId = null
     ): self {
         return self::create([
-            'team_round_id' => $teamId,
+            'team_round_id' => $teamRoundId,
             'action' => ActivityAction::TEAM_PUBLISH,
             'recipient_type' => $recipientType,
             'recipient_count' => $recipientCount,
@@ -116,14 +110,14 @@ class TeamActivityLog extends Model
      * Create a log entry for a test email sent.
      */
     public static function logTestEmailSent(
-        string $teamId,
+        string $teamRoundId,
         RecipientType $recipientType,
         ?string $message = null,
         ?array $metadata = null,
         ?int $userId = null
     ): self {
         return self::create([
-            'team_round_id' => $teamId,
+            'team_round_id' => $teamRoundId,
             'action' => ActivityAction::TEST_EMAIL_SENT,
             'recipient_type' => $recipientType,
             'recipient_count' => 1,

@@ -84,17 +84,17 @@ class Member extends Model
         });
     }
 
-    public function scopeNotCancelled(Builder $builder, string $teamId) : Builder
+    public function scopeNotCancelled(Builder $builder, string $teamRoundId) : Builder
     {
-        return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamId) {
-            $builder->where('teamId', '=', $teamId)->orWhereNull('teamId');
+        return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamRoundId) {
+            $builder->where('team_round_id', '=', $teamRoundId)->orWhereNull('team_round_id');
         });
     }
 
-    public function scopeNotOnSquad(Builder $builder, string $teamId) : Builder
+    public function scopeNotOnSquad(Builder $builder, string $teamRoundId) : Builder
     {
-        return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamId) {
-            $builder->where('team_round_id', '=', $teamId);
+        return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamRoundId) {
+            $builder->where('team_round_id', '=', $teamRoundId);
         });
     }
 

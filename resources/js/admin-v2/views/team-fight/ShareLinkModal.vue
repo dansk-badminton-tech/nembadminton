@@ -19,7 +19,7 @@
 
 export default {
     name: "ShareLinkModal",
-    props: ['teamId'],
+    props: ['teamRoundId'],
     data(){
         return {
             showShareLink: false
@@ -28,7 +28,7 @@ export default {
     computed: {
         shareUrl(){
             let getUrl = window.location;
-            return getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/team-fight/" + this.teamId + '/public-view';
+            return getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/team-fight/" + this.teamRoundId + '/public-view';
         }
     },
     methods: {

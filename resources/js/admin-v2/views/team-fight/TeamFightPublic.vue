@@ -78,7 +78,7 @@ export default {
         }
     },
     props: {
-        teamId: String,
+        teamRoundId: String,
     },
     computed: {
         getCurrentSeason
@@ -128,7 +128,7 @@ export default {
             fetchPolicy: "network-only",
             variables: function () {
                 return {
-                    id: this.teamId
+                    id: this.teamRoundId
                 }
             }
         }

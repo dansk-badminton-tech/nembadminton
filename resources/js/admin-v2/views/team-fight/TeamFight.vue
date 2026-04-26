@@ -88,7 +88,7 @@
                         }} {{ clubsNames }}
                         <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">(tilføj ekstra klub)</router-link>
                     </h1>
-                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-id="this.teamFightId"
+                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
@@ -109,7 +109,7 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-id="teamFightId"/>
+                    <AddTeamsButtons :team-round-id="teamRoundId"/>
                 </div>
             </div>
         </section>
@@ -156,7 +156,7 @@ export default {
         Draggable
     },
     props: {
-        teamFightId: String
+        teamRoundId: String
     },
     inject: {
         clubhouseId: {
@@ -241,7 +241,7 @@ export default {
             query: TeamRoundQuery,
             variables: function () {
                 return {
-                    id: this.teamFightId
+                    id: this.teamRoundId
                 }
             },
             result({data}) {
@@ -255,7 +255,7 @@ export default {
     },
     methods: {
         notify(){
-            this.$router.push({name: 'team-fight-notify', params: {teamFightId: this.teamFightId}})
+            this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
         refreshTeam(){
             this.$apollo.queries.teamRound.refetch();
@@ -265,7 +265,7 @@ export default {
                                        parent: this,
                                        component: ShareLinkModal,
                                        props: {
-                                           teamId: this.teamFightId
+                                           teamRoundId: this.teamRoundId
                                        },
                                        scroll: "keep",
                                        width: 640,
@@ -318,7 +318,7 @@ export default {
                                         }
                                     `,
                                    variables: {
-                                       teamRoundId: this.teamFightId
+                                       teamRoundId: this.teamRoundId
                                    },
                                    fetchPolicy: "network-only"
                                }).then(({data}) => {
@@ -400,7 +400,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                     ],
                     awaitRefetchQueries: true
                 })
@@ -435,7 +435,7 @@ export default {
                                        id: player.id
                                    },
                                    refetchQueries: [
-                                       {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                                       {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                                    ],
                                    awaitRefetchQueries: true
                                })
@@ -469,11 +469,11 @@ export default {
                                     }
                                 `,
                                variables: {
-                                   id: this.teamFightId,
+                                   id: this.teamRoundId,
                                    version: version
                                },
                                refetchQueries: [
-                                   {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                                   {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                                ]
                            })
                        .then(({data}) => {
@@ -640,7 +640,7 @@ export default {
                                     id: targetSquad.id
                                 },
                                 refetchQueries: [
-                                    {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                                 ]
                             })
                     }
@@ -728,7 +728,7 @@ export default {
                                         input: squad.id
                                     },
                                     refetchQueries: [
-                                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                                     ]
                                 })
                 .catch((error) => {
@@ -759,7 +759,7 @@ export default {
                                         input: squad.id
                                     },
                                     refetchQueries: [
-                                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                                     ]
                                 })
                 .catch((error) => {
@@ -795,7 +795,7 @@ export default {
                     `,
                     variables: {
                         input: {
-                            id: this.teamFightId,
+                            id: this.teamRoundId,
                             name: this.name,
                             version: this.version,
                             gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
@@ -803,7 +803,7 @@ export default {
                         }
                     },
                     refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamFightId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                     ]
                 })
                 .then(({data}) => {
