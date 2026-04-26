@@ -102,8 +102,8 @@ export default {
     apollo: {
         receiver: {
             query: gql`
-                query receiver($team_id: ID!){
-                    receiver : teamReceiver(team_id: $team_id){
+                query receiver($teamRoundId: ID!){
+                    receiver : teamReceiver(teamRoundId: $teamRoundId){
                         id
                         emails
                     }
@@ -111,7 +111,7 @@ export default {
             `,
             variables(){
                 return {
-                    team_id: this.teamFightId
+                    teamRoundId: this.teamFightId
                 }
             },
             result({data}){

@@ -112,6 +112,51 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_can_query_team_rounds_with_pagination()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        TeamRound::factory()->count(3)->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: ID!) {
+                teamRounds(clubhouseId: $clubhouseId, first: 10) {
+                    data {
+                        id
+                        name
+                    }
+                    paginatorInfo {
+                        total
+                        count
+                    }
+                }
+            }
+        ', [
+            'clubhouseId' => $clubhouse->id
+        ])->assertJsonCount(3, 'data.teamRounds.data')
+          ->assertJson([
+            'data' => [
+                'teamRounds' => [
+                    'paginatorInfo' => [
+                        'total' => 3,
+                        'count' => 3
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_export_a_team()
     {
         Storage::fake('public');
@@ -247,6 +292,51 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_can_query_team_receiver_by_team_round_id()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+
+        TeamReceivers::create([
+            'team_round_id' => $teamRound->id,
+            'emails' => ['test@example.com']
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($teamRoundId: ID!) {
+                teamReceiver(teamRoundId: $teamRoundId) {
+                    emails
+                    team {
+                        id
+                    }
+                }
+            }
+        ', [
+            'teamRoundId' => $teamRound->id
+        ])->assertJson([
+            'data' => [
+                'teamReceiver' => [
+                    'emails' => ['test@example.com'],
+                    'team' => [
+                        'id' => $teamRound->id,
+                    ],
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_create_a_team()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -279,6 +369,46 @@ class TeamsTest extends TestCase
 
         $this->assertDatabaseHas('team_rounds', [
             'name' => 'New Team',
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_create_a_team_round()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::CREATE_TEAMROUNDS->value);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: CreateTeamInput!) {
+                createTeamRound(input: $input) {
+                    id
+                    name
+                }
+            }
+        ', [
+            'input' => [
+                'name' => 'New Team Round',
+                'gameDate' => '2023-01-01',
+                'version' => '2023-01-01'
+            ]
+        ])->assertJson([
+            'data' => [
+                'createTeamRound' => [
+                    'name' => 'New Team Round'
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_rounds', [
+            'name' => 'New Team Round',
             'clubhouse_id' => $clubhouse->id,
             'user_id' => $user->id
         ]);
@@ -334,6 +464,53 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_can_update_a_team_round()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Old Name'
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateTeamInput!) {
+                updateTeamRound(input: $input) {
+                    id
+                    name
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'name' => 'Updated Team Round Name',
+                'gameDate' => '2023-02-01',
+                'version' => '2023-02-01'
+            ]
+        ])->assertJson([
+            'data' => [
+                'updateTeamRound' => [
+                    'id' => $teamRound->id,
+                    'name' => 'Updated Team Round Name'
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_rounds', [
+            'id' => $teamRound->id,
+            'name' => 'Updated Team Round Name'
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_delete_a_team()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -359,6 +536,44 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'deleteTeam' => [
+                    'id' => $teamRound->id
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseMissing('team_rounds', [
+            'id' => $teamRound->id
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_delete_a_team_round()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::DELETE_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                deleteTeamRound(id: $id) {
+                    id
+                }
+            }
+        ', [
+            'id' => $teamRound->id
+        ])->assertJson([
+            'data' => [
+                'deleteTeamRound' => [
                     'id' => $teamRound->id
                 ]
             ]
@@ -399,6 +614,47 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'copyTeam' => [
+                    'name' => 'Kopi af Original Team'
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_rounds', [
+            'name' => 'Kopi af Original Team',
+            'clubhouse_id' => $clubhouse->id
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_copy_a_team_round()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Original Team'
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                copyTeamRound(id: $id) {
+                    id
+                    name
+                }
+            }
+        ', [
+            'id' => $teamRound->id
+        ])->assertJson([
+            'data' => [
+                'copyTeamRound' => [
                     'name' => 'Kopi af Original Team'
                 ]
             ]
