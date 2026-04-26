@@ -783,7 +783,7 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation updateTeamRound($input: UpdateTeamInput!){
+                        mutation updateTeamRound($input: UpdateTeamRoundInput!){
                           updateTeamRound(input: $input){
                             id
                             name
