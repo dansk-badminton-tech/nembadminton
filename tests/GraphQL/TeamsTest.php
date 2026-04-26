@@ -4,6 +4,7 @@ namespace Tests\GraphQL;
 
 use App\Enums\Permission;
 use App\Enums\RecipientType;
+use App\Models\Club;
 use App\Models\Clubhouse;
 use App\Models\Member;
 use App\Models\Point;
@@ -181,6 +182,7 @@ class TeamsTest extends TestCase
                 teamNotificationActivity(id: $id) {
                     id
                     message
+                    teamRoundId
                     teamId
                     teamRound {
                         id
@@ -198,6 +200,7 @@ class TeamsTest extends TestCase
                 'teamNotificationActivity' => [
                     [
                         'message' => 'Notification sent',
+                        'teamRoundId' => $teamRound->id,
                         'teamId' => $teamRound->id,
                         'teamRound' => [
                             'id' => $teamRound->id,
@@ -244,6 +247,15 @@ class TeamsTest extends TestCase
                         id
                     }
                 }
+                teamRoundReceiver(teamRoundId: $teamRoundId) {
+                    emails
+                    teamRound {
+                        id
+                    }
+                    team {
+                        id
+                    }
+                }
             }
         ', [
             'teamRoundId' => $teamRound->id
@@ -257,8 +269,161 @@ class TeamsTest extends TestCase
                     'team' => [
                         'id' => $teamRound->id,
                     ],
-                ]
+                ],
+                'teamRoundReceiver' => [
+                    'emails' => ['test@example.com'],
+                    'teamRound' => [
+                        'id' => $teamRound->id,
+                    ],
+                    'team' => [
+                        'id' => $teamRound->id,
+                    ],
+                ],
             ]
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_query_member_search_points_with_team_round_id_filter()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $this->actingAs($user, 'api');
+
+        $club = Club::query()->create([
+            'name1' => 'Test Club',
+            'badmintonPlayerId' => 12345,
+        ]);
+        $clubhouse->clubs()->attach($club->id);
+
+        $member = Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Member Search Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        $member->clubs()->attach($club->id);
+
+        Point::query()->create([
+            'member_id' => $member->id,
+            'points' => 100,
+            'position' => 1,
+            'category' => 'HS',
+            'vintage' => 'SEN',
+            'version' => '2024-01-01',
+        ]);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'league' => 'OTHER',
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+        $category->players()->create([
+            'name' => $member->name,
+            'gender' => $member->gender,
+            'member_ref_id' => $member->refId,
+        ]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $teamRoundId: String!) {
+                memberSearchPoints(
+                    clubhouse: $clubhouse,
+                    version: $version,
+                    rankingList: $rankingList,
+                    teamRoundId: $teamRoundId
+                ) {
+                    data {
+                        refId
+                    }
+                }
+            }
+        ', [
+            'clubhouse' => $clubhouse->id,
+            'version' => '2024-01-01',
+            'rankingList' => 'MEN_SINGLE',
+            'teamRoundId' => $teamRound->id,
+        ])->assertJsonCount(0, 'data.memberSearchPoints.data');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!) {
+                memberSearchPoints(
+                    clubhouse: $clubhouse,
+                    version: $version,
+                    rankingList: $rankingList
+                ) {
+                    data {
+                        refId
+                    }
+                }
+            }
+        ', [
+            'clubhouse' => $clubhouse->id,
+            'version' => '2024-01-01',
+            'rankingList' => 'MEN_SINGLE',
+        ])->assertJsonCount(1, 'data.memberSearchPoints.data')
+          ->assertJsonPath('data.memberSearchPoints.data.0.refId', $member->refId);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_create_cancellation_with_team_round_id()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+
+        $member = Member::query()->create([
+            'refId' => '9001015555',
+            'name' => 'Cancellation Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: CancellationInput!) {
+                createCancellation(input: $input) {
+                    id
+                    teamRoundId
+                    teamId
+                }
+            }
+        ', [
+            'input' => [
+                'refId' => $member->refId,
+                'teamRoundId' => $teamRound->id,
+                'dates' => [
+                    'create' => [
+                        ['date' => '2024-01-01'],
+                    ],
+                ],
+            ],
+        ])->assertJsonPath('data.createCancellation.teamRoundId', $teamRound->id)
+          ->assertJsonPath('data.createCancellation.teamId', $teamRound->id);
+
+        $this->assertDatabaseHas('cancellations', [
+            'refId' => $member->refId,
+            'teamId' => $teamRound->id,
         ]);
     }
 

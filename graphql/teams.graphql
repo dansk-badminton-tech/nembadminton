@@ -12,6 +12,9 @@ extend type Query {
     teamReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
+    teamRoundReceiver(
+        teamRoundId: ID @eq(key: "team_round_id")
+    ) : TeamReceivers @find @guard @canResolved(ability: "view")
 }
 
 extend type Mutation {
@@ -291,6 +294,8 @@ type TeamRound {
 type TeamActivityLog {
     "ID"
     id: ID!
+    "Team Round ID"
+    teamRoundId: ID! @rename(attribute: "team_round_id")
     "Team ID"
     teamId: ID! @rename(attribute: "team_round_id")
     "Action"
