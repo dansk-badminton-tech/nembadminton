@@ -189,10 +189,6 @@ input CreateTeamRoundInput {
     gameDate: Date @rename(attribute: "game_date")
 }
 
-input CreateTeamRoundBelongsTo {
-    connect: ID
-}
-
 input UpdateTeamRoundInput {
     id: ID!
     name: String!
