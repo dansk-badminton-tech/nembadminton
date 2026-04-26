@@ -21,8 +21,8 @@ class CancellationPolicy
      */
     public function view(User $user, Cancellation $cancellation): bool
     {
-        if ($cancellation->team !== null) {
-            return $cancellation->team->clubhouse_id === $user->clubhouse_id;
+        if ($cancellation->teamRound !== null) {
+            return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
         if($cancellation->cancellationCollector !== null) {
@@ -45,8 +45,8 @@ class CancellationPolicy
      */
     public function update(User $user, Cancellation $cancellation): bool
     {
-        if ($cancellation->team !== null) {
-            return $cancellation->team->clubhouse_id === $user->clubhouse_id;
+        if ($cancellation->teamRound !== null) {
+            return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
         if($cancellation->cancellationCollector !== null) {
@@ -61,8 +61,8 @@ class CancellationPolicy
      */
     public function delete(User $user, Cancellation $cancellation): bool
     {
-        if ($cancellation->team !== null) {
-            return $cancellation->team->clubhouse_id === $user->clubhouse_id;
+        if ($cancellation->teamRound !== null) {
+            return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
         if($cancellation->cancellationCollector !== null) {

@@ -17,7 +17,7 @@ class TeamActivityLogPolicy
 
     public function view(User $user, TeamActivityLog $teamActivityLog): bool
     {
-        return $user->clubhouse_id === $teamActivityLog->team->clubhouse_id;
+        return $user->clubhouse_id === $teamActivityLog->teamRound->clubhouse_id;
     }
 
     public function create(User $user): bool

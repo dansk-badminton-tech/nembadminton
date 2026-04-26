@@ -17,7 +17,7 @@ class TeamReceiversPolicy
 
     public function view(User $user, TeamReceivers $teamReceivers): bool
     {
-        return $user->clubhouse_id === $teamReceivers->team->clubhouse_id;
+        return $user->clubhouse_id === $teamReceivers->teamRound->clubhouse_id;
     }
 
     public function create(User $user): bool

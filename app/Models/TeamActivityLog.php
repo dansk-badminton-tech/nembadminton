@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property array   $metadata
  * @property int     $user_id
  * @property User    $user
+ * @property TeamRound $teamRound
  * @property TeamRound $team
  */
 class TeamActivityLog extends Model
@@ -48,9 +49,14 @@ class TeamActivityLog extends Model
     /**
      * Get the team that owns the activity log.
      */
-    public function team(): BelongsTo
+    public function teamRound(): BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->teamRound();
     }
 
     /**

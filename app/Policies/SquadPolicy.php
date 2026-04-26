@@ -27,12 +27,12 @@ class SquadPolicy
 
     public function update(User $user, Squad $squad): bool
     {
-        return $user->clubhouse_id === $squad->team->clubhouse_id;
+        return $user->clubhouse_id === $squad->teamRound->clubhouse_id;
     }
 
     public function delete(User $user, Squad $squad): bool
     {
-        return $user->clubhouse_id === $squad->team->clubhouse_id;
+        return $user->clubhouse_id === $squad->teamRound->clubhouse_id;
     }
 
     public function restore(User $user, Squad $squad): bool
