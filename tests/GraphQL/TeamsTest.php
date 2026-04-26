@@ -67,51 +67,6 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_query_teams_with_pagination()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
-
-        TeamRound::factory()->count(3)->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            query($clubhouseId: ID!) {
-                teams(clubhouseId: $clubhouseId, first: 10) {
-                    data {
-                        id
-                        name
-                    }
-                    paginatorInfo {
-                        total
-                        count
-                    }
-                }
-            }
-        ', [
-            'clubhouseId' => $clubhouse->id
-        ])->assertJsonCount(3, 'data.teams.data')
-          ->assertJson([
-            'data' => [
-                'teams' => [
-                    'paginatorInfo' => [
-                        'total' => 3,
-                        'count' => 3
-                    ]
-                ]
-            ]
-        ]);
-    }
-
-    /**
-     * @test
-     */
     public function it_can_query_team_rounds_with_pagination()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -247,51 +202,6 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_query_team_receiver()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-
-        TeamReceivers::create([
-            'team_round_id' => $teamRound->id,
-            'emails' => ['test@example.com']
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            query($team_id: ID!) {
-                teamReceiver(team_id: $team_id) {
-                    emails
-                    team {
-                        id
-                    }
-                }
-            }
-        ', [
-            'team_id' => $teamRound->id
-        ])->assertJson([
-            'data' => [
-                'teamReceiver' => [
-                    'emails' => ['test@example.com'],
-                    'team' => [
-                        'id' => $teamRound->id,
-                    ],
-                ]
-            ]
-        ]);
-    }
-
-    /**
-     * @test
-     */
     public function it_can_query_team_receiver_by_team_round_id()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -337,46 +247,6 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_create_a_team()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::CREATE_TEAMROUNDS->value);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($input: CreateTeamInput!) {
-                createTeam(input: $input) {
-                    id
-                    name
-                }
-            }
-        ', [
-            'input' => [
-                'name' => 'New Team',
-                'gameDate' => '2023-01-01',
-                'version' => '2023-01-01'
-            ]
-        ])->assertJson([
-            'data' => [
-                'createTeam' => [
-                    'name' => 'New Team'
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseHas('team_rounds', [
-            'name' => 'New Team',
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-    }
-
-    /**
-     * @test
-     */
     public function it_can_create_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -411,53 +281,6 @@ class TeamsTest extends TestCase
             'name' => 'New Team Round',
             'clubhouse_id' => $clubhouse->id,
             'user_id' => $user->id
-        ]);
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_update_a_team()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id,
-            'name' => 'Old Name'
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($input: UpdateTeamInput!) {
-                updateTeam(input: $input) {
-                    id
-                    name
-                }
-            }
-        ', [
-            'input' => [
-                'id' => $teamRound->id,
-                'name' => 'Updated Name',
-                'gameDate' => '2023-02-01',
-                'version' => '2023-02-01'
-            ]
-        ])->assertJson([
-            'data' => [
-                'updateTeam' => [
-                    'id' => $teamRound->id,
-                    'name' => 'Updated Name'
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseHas('team_rounds', [
-            'id' => $teamRound->id,
-            'name' => 'Updated Name'
         ]);
     }
 
@@ -511,44 +334,6 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
-    public function it_can_delete_a_team()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::DELETE_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($id: ID!) {
-                deleteTeam(id: $id) {
-                    id
-                }
-            }
-        ', [
-            'id' => $teamRound->id
-        ])->assertJson([
-            'data' => [
-                'deleteTeam' => [
-                    'id' => $teamRound->id
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseMissing('team_rounds', [
-            'id' => $teamRound->id
-        ]);
-    }
-
-    /**
-     * @test
-     */
     public function it_can_delete_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -581,47 +366,6 @@ class TeamsTest extends TestCase
 
         $this->assertDatabaseMissing('team_rounds', [
             'id' => $teamRound->id
-        ]);
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_copy_a_team()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id,
-            'name' => 'Original Team'
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($id: ID!) {
-                copyTeam(id: $id) {
-                    id
-                    name
-                }
-            }
-        ', [
-            'id' => $teamRound->id
-        ])->assertJson([
-            'data' => [
-                'copyTeam' => [
-                    'name' => 'Kopi af Original Team'
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseHas('team_rounds', [
-            'name' => 'Kopi af Original Team',
-            'clubhouse_id' => $clubhouse->id
         ]);
     }
 
