@@ -5,18 +5,12 @@ extend type Query {
         order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),
         gameDate: DateRange @whereBetween(key: "game_date")
     ) : [TeamRound!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view")
-    teams(
-        clubhouseId: ID! @eq(key: "clubhouse_id"),
-        order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),
-        gameDate: DateRange @whereBetween(key: "game_date")
-    ) : [TeamRound!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view") @deprecated(reason: "Use teamRounds")
     export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_round_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @guard @canResolved(ability: "view")
     teamReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
-        team_id: ID @eq(key: "team_round_id") @deprecated(reason: "Use teamRoundId")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
 }
 
@@ -31,17 +25,9 @@ extend type Mutation {
     moveSquadOrderUp(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderUp") @canFind(ability: "update", find: "id")
     moveSquadOrderDown(id: ID!) : Squad! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering@moveSquadOrderDown") @canFind(ability: "update", find: "id")
     updateTeamRound(input: UpdateTeamInput! @spread): TeamRound! @guard @update @canFind(ability: "update", find: "id")
-    updateTeam(input: UpdateTeamInput! @spread): TeamRound! @guard @update @canFind(ability: "update", find: "id")
-        @deprecated(reason: "Use updateTeamRound")
     createTeamRound(input: CreateTeamInput! @spread) : TeamRound! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
-    createTeam(input: CreateTeamInput! @spread) : TeamRound! @create @guard @canModel(ability: "create") @inject(context: "user.id", name: "user_id") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
-        @deprecated(reason: "Use createTeamRound")
     copyTeamRound(id: ID!) : TeamRound! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
-    copyTeam(id: ID!) : TeamRound! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
-        @deprecated(reason: "Use copyTeamRound")
     deleteTeamRound(id: ID! @eq) : TeamRound! @guard @delete @canFind(ability: "delete", find: "id")
-    deleteTeam(id: ID! @eq) : TeamRound! @guard @delete @canFind(ability: "delete", find: "id")
-        @deprecated(reason: "Use deleteTeamRound")
     "Sending notifications to all players"
     sendTeamNotification(input: SendTeamNotificationInput! @spread) : TeamRound! @guard @canFind(ability: "update", find: "id") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
