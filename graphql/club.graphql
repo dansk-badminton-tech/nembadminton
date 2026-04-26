@@ -19,6 +19,7 @@ extend type Query{
         "Clubhouse"
         clubhouse: Int! @scope
         version: Date!
+        teamRoundId: String
         teamId: String
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL

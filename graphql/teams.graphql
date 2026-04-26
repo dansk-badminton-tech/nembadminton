@@ -12,6 +12,9 @@ extend type Query {
     teamReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
+    teamRoundReceiver(
+        teamRoundId: ID @eq(key: "team_round_id")
+    ) : TeamReceivers @find @guard @canResolved(ability: "view")
 }
 
 extend type Mutation {
@@ -38,6 +41,7 @@ extend type Mutation {
 
 type TeamReceivers {
     id: ID!
+    teamRound: TeamRound @belongsTo(relation: "team")
     team: TeamRound @belongsTo
     emails: [String!]!
 }
@@ -290,6 +294,8 @@ type TeamRound {
 type TeamActivityLog {
     "ID"
     id: ID!
+    "Team Round ID"
+    teamRoundId: ID! @rename(attribute: "team_round_id")
     "Team ID"
     teamId: ID! @rename(attribute: "team_round_id")
     "Action"
@@ -311,6 +317,7 @@ type TeamActivityLog {
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Team"
+    teamRound: TeamRound! @belongsTo(relation: "team")
     team: TeamRound! @belongsTo
     "User"
     user: User @belongsTo
