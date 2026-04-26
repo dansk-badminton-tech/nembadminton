@@ -5,7 +5,7 @@ extend type Query {
         order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),
         gameDate: DateRange @whereBetween(key: "game_date")
     ) : [TeamRound!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view")
-    export(teamId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
+    export(teamRoundId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
     teamNotificationActivity(id: ID! @eq(key: "team_round_id")) : [TeamActivityLog!]! @all @orderBy(column: "created_at", direction: DESC) @guard @canResolved(ability: "view")
@@ -31,7 +31,7 @@ extend type Mutation {
     "Sending notifications to all players"
     sendTeamNotification(input: SendTeamNotificationInput! @spread) : TeamRound! @guard @canFind(ability: "update", find: "id") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
-    updatePointsTeam(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
+    updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
 }
@@ -147,7 +147,7 @@ input UpdateSquadInput {
 }
 
 input CreateSquadInput {
-    team: SquadBelongsTo!
+    teamRound: SquadBelongsTo! @rename(attribute: "team")
     playerLimit: Int!
     league: LeagueType!
     categories: CreateCategoryHasManyInput!

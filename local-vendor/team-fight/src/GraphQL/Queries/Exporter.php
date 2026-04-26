@@ -32,12 +32,12 @@ class Exporter
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : string
     {
         /** @var TeamRound $team */
-        $teamId = $args['teamId'];
-        $team = TeamRound::query()->where('id', $teamId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
+        $teamRoundId = $args['teamRoundId'];
+        $team = TeamRound::query()->where('id', $teamRoundId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
         $csvData = $this->exporter->exportToCSV($team);
 
         $randomNumber = date('d-m-Y_H-i-s');
-        $filePath = "team-fight/exports/$teamId-$randomNumber.csv";
+        $filePath = "team-fight/exports/$teamRoundId-$randomNumber.csv";
         $success = Storage::disk('public')->put($filePath, (chr(0xEF).chr(0xBB).chr(0xBF)).$csvData);
         if($success === false){
             throw new \RuntimeException('Failed to save '.$filePath);
