@@ -25,7 +25,7 @@ class SquadPointPolicy
 
     public function update(User $user, SquadPoint $squadPoint): bool
     {
-        return $user->clubhouse_id === $squadPoint->member->category->squad->team->clubhouse_id;
+        return $user->clubhouse_id === $squadPoint->member->category->squad->teamRound->clubhouse_id;
     }
 
     public function delete(User $user, SquadPoint $squadPoint): bool

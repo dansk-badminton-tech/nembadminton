@@ -41,7 +41,7 @@ extend type Mutation {
 
 type TeamReceivers {
     id: ID!
-    teamRound: TeamRound @belongsTo(relation: "team")
+    teamRound: TeamRound @belongsTo(relation: "teamRound")
     team: TeamRound @belongsTo
     emails: [String!]!
 }
@@ -317,7 +317,8 @@ type TeamActivityLog {
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Team"
-    teamRound: TeamRound! @belongsTo(relation: "team")
+    teamRound: TeamRound! @belongsTo(relation: "teamRound")
+    "Team (legacy alias)"
     team: TeamRound! @belongsTo
     "User"
     user: User @belongsTo

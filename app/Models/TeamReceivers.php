@@ -21,14 +21,19 @@ class TeamReceivers extends Model
 
     protected $fillable = ['team_round_id','emails'];
 
-    public function team(): BelongsTo
+    public function teamRound(): BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 
+    public function team(): BelongsTo
+    {
+        return $this->teamRound();
+    }
+
     public function teams(): BelongsTo
     {
-        return $this->team();
+        return $this->teamRound();
     }
 
     protected function casts(): array

@@ -77,9 +77,14 @@ class User extends Authenticatable
         return $this->hasOne(SubscriptionSetting::class);
     }
 
-    public function teams() : HasMany
+    public function teamRounds() : HasMany
     {
         return $this->hasMany(TeamRound::class);
+    }
+
+    public function teams() : HasMany
+    {
+        return $this->teamRounds();
     }
 
     public function cancellationCollector() : HasOne
