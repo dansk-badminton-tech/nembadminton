@@ -182,6 +182,12 @@ class TeamsTest extends TestCase
                     id
                     message
                     teamId
+                    teamRound {
+                        id
+                    }
+                    team {
+                        id
+                    }
                 }
             }
         ', [
@@ -193,6 +199,12 @@ class TeamsTest extends TestCase
                     [
                         'message' => 'Notification sent',
                         'teamId' => $teamRound->id,
+                        'teamRound' => [
+                            'id' => $teamRound->id,
+                        ],
+                        'team' => [
+                            'id' => $teamRound->id,
+                        ],
                     ]
                 ]
             ]
@@ -225,6 +237,9 @@ class TeamsTest extends TestCase
             query($teamRoundId: ID!) {
                 teamReceiver(teamRoundId: $teamRoundId) {
                     emails
+                    teamRound {
+                        id
+                    }
                     team {
                         id
                     }
@@ -236,6 +251,9 @@ class TeamsTest extends TestCase
             'data' => [
                 'teamReceiver' => [
                     'emails' => ['test@example.com'],
+                    'teamRound' => [
+                        'id' => $teamRound->id,
+                    ],
                     'team' => [
                         'id' => $teamRound->id,
                     ],
