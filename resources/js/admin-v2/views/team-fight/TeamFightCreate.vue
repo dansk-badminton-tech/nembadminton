@@ -5,7 +5,7 @@
             Opret holdrunde
         </hero-bar>
         <section class="section is-main-section">
-            <form @submit.prevent="createTeam" v-if="!$apollo.queries.me.loading" class="column">
+            <form @submit.prevent="createTeamRound" v-if="!$apollo.queries.me.loading" class="column">
                 <b-field label="Navn">
                     <b-input dusk="team-fight-name-input" v-model="name" required placeholder="fx. Runde 1"></b-input>
                 </b-field>
@@ -59,7 +59,7 @@ export default {
         }
     },
     methods: {
-        createTeam() {
+        createTeamRound() {
             if(this.gameDate === null){
                 this.$buefy.snackbar.open({
                     duration: 4000,
@@ -71,9 +71,9 @@ export default {
             }
 
             this.loading = true
-            const createTeamGQL = gql`
+            const createTeamRoundGQL = gql`
                         mutation ($input: CreateTeamInput!){
-                          createTeam(input: $input){
+                          createTeamRound(input: $input){
                             id
                             name
                             gameDate
@@ -83,7 +83,7 @@ export default {
             this.$apollo
                 .mutate(
                     {
-                        mutation: createTeamGQL,
+                        mutation: createTeamRoundGQL,
                         variables: {
                             input: {
                                 name: this.name,
@@ -99,7 +99,7 @@ export default {
                             type: 'is-success',
                             message: `Dit hold er gemt`
                         })
-                    this.$router.push({name: 'team-fight-edit', params: {teamUUID: data.createTeam.id}})
+                    this.$router.push({name: 'team-fight-edit', params: {teamUUID: data.createTeamRound.id}})
                 }).finally(() => {
                 this.loading = false
             })
