@@ -8,7 +8,7 @@ extend type Query{
         gender: [Gender!] @in
         inactive: Boolean @where
         orderBy: _ @orderBy(columns: ["name"])
-        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamid", "user_id", "playable"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable"])
         "Need to have at least one point"
         hasPoints: Boolean @scope
         "If specified will not show members that is part of Team ID"
@@ -20,12 +20,11 @@ extend type Query{
         clubhouse: Int! @scope
         version: Date!
         teamRoundId: String
-        teamId: String
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL
         playable: Boolean @where
         inactive: Boolean @where
-        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "teamid", "user_id"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints") @guard
     "Search for players in a squad"
     memberSearchTeamFight(
@@ -155,7 +154,7 @@ type Member {
     birthday: Date! @method(name: "getBirthday")
     points(version: Date @eq, where: _ @whereConditions(columns: ["points", "category"]) ): [Point!]! @hasMany
     clubs: [Club!]! @belongsToMany
-    cancellations(where: _ @whereConditions(columns: ["teamid", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
+    cancellations(where: _ @whereConditions(columns: ["team_round_id", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
     playable: Boolean!
     inactive: Boolean!
 }

@@ -59,7 +59,7 @@ import ImportSquadModal from "./ImportSquadModal.vue";
 export default {
     name: "AddTeamsButtons",
     props: {
-        teamId: String
+        teamRoundId: String
     },
     data() {
         return {
@@ -90,14 +90,14 @@ export default {
                         input: {
                             ...{
                                 teamRound: {
-                                    connect: this.teamId
+                                    connect: this.teamRoundId
                                 }
                             },
                             ...team
                         }
                     },
                     refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamId}}
+                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
                     ],
                 }).then(() => {
                 this.$emit('team-added')
