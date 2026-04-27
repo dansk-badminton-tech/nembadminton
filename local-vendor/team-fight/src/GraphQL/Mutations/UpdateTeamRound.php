@@ -20,11 +20,11 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * Class UpdateTeams
+ * Class UpdateTeam
  *
  * @package App\GraphQL\Mutation
  */
-class UpdateTeams
+class UpdateTeamRound
 {
 
     /**
@@ -51,7 +51,7 @@ class UpdateTeams
      * @param GraphQLContext $context
      * @param ResolveInfo    $resolveInfo
      */
-    public function updatePointsOnAllSquadsInTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
+    public function updatePointsOnAllSquadsInTeamRound($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
     {
         $teamId = $args['id'];
         $version = $args['version'];
@@ -105,32 +105,6 @@ class UpdateTeams
         $version = $args['version'];
 
         return $this->squadManager->updatePoints($squadId, $version);
-    }
-
-    /**
-     * @param                $rootValue
-     * @param array          $args
-     * @param GraphQLContext $context
-     * @param ResolveInfo    $resolveInfo
-     *
-     * @return TeamRound
-     * @throws \Throwable
-     */
-    public function updateTeams($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
-    {
-        return DB::transaction(function() use ($args, $context) {
-            $team = $this->getTeamOrFail($context, $args['id']);
-            $team->fill(Arr::only($args, ['name', 'game_date', 'version']));
-            $team->saveOrFail();
-
-            $squads = $args['squads'];
-            /** @var Squad[] $squads */
-            $squads = $this->serializer->denormalize($squads, Squad::class . '[]');
-            $this->squadManager->removeDeletedSquads($squads, $team);
-            $this->squadManager->addOrUpdateSquads($squads, $team);
-
-            return $this->getTeamOrFail($context, $args['id']);
-        });
     }
 
     /**
