@@ -31,9 +31,9 @@ extend type Mutation {
     "Sending notifications to all players"
     sendTeamNotification(input: SendTeamNotificationInput! @spread) : TeamRound! @guard @canFind(ability: "update", find: "id") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
-    updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnAllSquadsInTeam")
+    updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnAllSquadsInTeamRound")
     "Changes all player points to the new version."
-    updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeams@updatePointsOnSquad")
+    updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnSquad")
 }
 
 type TeamReceivers {
@@ -69,16 +69,6 @@ input ReceiverInput {
 enum ReceiverMethod {
     MANUAL_EMAILS
     TEST_SELF
-}
-
-type TeamSubscribers {
-    amount: Int!
-    players: [TeamSubscriber!]!
-}
-
-type TeamSubscriber {
-    name: String!
-    refId: String
 }
 
 input UpdateSquadMemberInput {
