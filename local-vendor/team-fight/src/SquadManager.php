@@ -36,11 +36,11 @@ class SquadManager
                 $builder->where('id', $team->id);
             })->find($squadInput->id);
             if($squad === null){
-                $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
+                $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'order' => $index]);
                 $squad->forceFill(['team_round_id' => $team->id]);
                 $squad->saveOrFail();
             }else{
-                $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'league' => $squadInput->league, 'order' => $index]);
+                $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'order' => $index]);
             }
             $squad->categories()->delete();
             $this->createCategories($squadInput->categories, $squad);

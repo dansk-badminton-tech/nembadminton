@@ -116,7 +116,6 @@ input CreatePointInput {
 input UpdateSquadInput {
     id: ID!
     playerLimit: Int
-    league: LeagueType
     order: Int
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
@@ -139,7 +138,6 @@ input UpdateSquadInput {
 input CreateSquadInput {
     teamRound: SquadBelongsTo!
     playerLimit: Int!
-    league: LeagueType!
     categories: CreateCategoryHasManyInput!
     order: Int
     "BadmintonPlayer match ID"
@@ -226,8 +224,6 @@ type Squad {
     id: ID!
     "Number of players on the team"
     playerLimit: Int!
-    "What league the squad plays in"
-    league: LeagueType
     "Name"
     name: String
     "BadmintonPlayer match ID"

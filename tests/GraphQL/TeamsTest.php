@@ -627,7 +627,6 @@ class TeamsTest extends TestCase
             mutation($input: CreateSquadInput!) {
                 createSquad(input: $input) {
                     id
-                    league
                     playerLimit
                 }
             }
@@ -635,7 +634,6 @@ class TeamsTest extends TestCase
             'input' => [
                 'teamRound' => ['connect' => $teamRound->id],
                 'playerLimit' => 10,
-                'league' => 'LIGA',
                 'categories' => [
                     'create' => [
                         ['category' => 'HS', 'name' => '1. HS']
@@ -645,7 +643,6 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'createSquad' => [
-                    'league' => 'LIGA',
                     'playerLimit' => 10
                 ]
             ]

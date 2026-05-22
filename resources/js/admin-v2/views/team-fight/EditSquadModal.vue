@@ -15,7 +15,6 @@ export default {
     watch: {
         squad: {
             handler(newValue, oldValue) {
-                this.league = newValue.league
                 this.name = newValue.name
                 this.playingDatetime = newValue.playingDatetime
                                        ? new Date(newValue.playingDatetime)
@@ -46,15 +45,9 @@ export default {
             externalTeamFightID: null,
             address: [],
             version: null,
-            league: null,
             isFetching: false,
             showTeamFightSelector: false,
             oldVersion: null,
-            leagueOptions: [
-                {label: 'Normal', value: "OTHER"},
-                {label: "1. Division", value: "FIRSTDIVISION"},
-                {label: "Liga", value: "LIGA"}
-            ],
             changeOfRankingWarning: false
         }
     },
@@ -72,7 +65,6 @@ export default {
                                       updatePointsSquad(id: $id, version: $version){
                                         id
                                         playerLimit
-                                        league
                                         order
                                         name
                                         playingCity
@@ -138,7 +130,6 @@ export default {
                         mutation updateSquad($input: UpdateSquadInput!){
                             updateSquad(input: $input){
                                 id
-                                league
                                 name
                                 playingDatetime
                                 playingPlace,
@@ -153,7 +144,6 @@ export default {
                     variables: {
                         input: {
                             id: this.squad.id,
-                            league: this.league,
                             name: this.name,
                             externalTeamFightID: this.externalTeamFightID,
                             playingDatetime: this.playingDatetime
@@ -297,11 +287,6 @@ export default {
                         v-model="name"
                         placeholder="Danmarksserien Pulje 1">
                     </b-input>
-                </b-field>
-                <b-field label="Holdtype">
-                    <b-select expanded v-model="league" required>
-                        <option v-for="leagueOption in leagueOptions" :value="leagueOption.value" :key="leagueOption.value">{{ leagueOption.label }}</option>
-                    </b-select>
                 </b-field>
                 <hr/>
                 <b-field label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">

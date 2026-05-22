@@ -30,7 +30,6 @@ export class TeamFightHelper {
 
         return {
             playerLimit: playerLimit,
-            league: 'OTHER',
             categories: {
                 create: categories
             }
@@ -40,7 +39,6 @@ export class TeamFightHelper {
     static generateSquadWith10Players() {
         return {
             playerLimit: 10,
-            league: 'OTHER',
             categories: {
                 create: [{
                     name: "1. MD",
@@ -90,7 +88,6 @@ export class TeamFightHelper {
     static generateSquadWith8Players() {
         return {
             playerLimit: 8,
-            league: 'OTHER',
             categories: {
                 create: [{
                     name: "1. MD",
@@ -134,7 +131,6 @@ export class TeamFightHelper {
     static generateSquadWith6Players() {
         return {
             playerLimit: 6,
-            league: 'OTHER',
             categories: {
                 create: [{
                     name: "1. MD",
@@ -172,7 +168,6 @@ export class TeamFightHelper {
     static generateSquadSeries1() {
         return {
             playerLimit: 10,
-            league: 'OTHER',
             categories: {
                 create: [
                     {

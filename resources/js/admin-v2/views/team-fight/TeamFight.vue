@@ -21,7 +21,7 @@
             <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
             <b-dropdown aria-role="list">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Eksporter</span>
+                    <span>Del</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
@@ -38,10 +38,6 @@
                     <span>Indstillinger</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
-                <b-dropdown-item aria-role="listitem" @click="validateWithSnackbar">
-                    <b-icon icon="brain"></b-icon>
-                    Valider holdrunden
-                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
                     <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
                         <b-icon icon="cancel"></b-icon>
@@ -298,7 +294,6 @@ export default {
                         updateSquad(input: $input){
                             id
                             playerLimit
-                            league
                             order
                         }
                     }
@@ -307,7 +302,6 @@ export default {
                                         input: {
                                             id: squad.id,
                                             playerLimit: squad.playerLimit,
-                                            league: squad.league,
                                             order: squad.order
                                         }
                                     }
@@ -564,15 +558,6 @@ export default {
                             queue: false,
                             message: `Noget gik galt under valideringen af holdet (crossSquadsValidate)`
                         })
-                })
-        },
-        validateWithSnackbar() {
-            this.validate()
-            this.$buefy.snackbar.open(
-                {
-                    duration: 10000,
-                    type: 'is-success',
-                    message: `Hold valideret. Tjek om nogle spiller er markeret. Husk valideringen køre automatisk når der sker ændringer på holdet.`
                 })
         },
         validate() {

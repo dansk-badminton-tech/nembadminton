@@ -18,11 +18,6 @@ class Squad
     public int $playerLimit;
 
     /**
-     * @var string|null
-     */
-    public ?string $league;
-
-    /**
      * @var Category[]
      */
     public array $categories = [];

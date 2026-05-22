@@ -55,7 +55,6 @@ export function wrapInTeamAndSquads(squads) {
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
-            league: squad.league,
             categories: squad.categories.map((category) => ({
                 id: category.id,
                 category: category.category,
