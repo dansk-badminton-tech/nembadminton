@@ -5,14 +5,14 @@ namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use App\Models\TeamRound;
 use FlyCompany\TeamFight\SquadManager;
-use FlyCompany\TeamFight\TeamManager;
+use FlyCompany\TeamFight\TeamRoundManager;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class CopyTeam
 {
 
-    public function __construct(private readonly TeamManager $teamManager, private readonly SquadManager $squadManager)
+    public function __construct(private readonly TeamRoundManager $teamManager, private readonly SquadManager $squadManager)
     {}
 
     /**

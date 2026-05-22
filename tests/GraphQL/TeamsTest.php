@@ -483,6 +483,53 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_can_update_a_team_round_with_null_name()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Old Name'
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateTeamRoundInput!) {
+                updateTeamRound(input: $input) {
+                    id
+                    name
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'name' => null,
+                'gameDate' => '2023-02-01',
+                'version' => '2023-02-01'
+            ]
+        ])->assertJson([
+            'data' => [
+                'updateTeamRound' => [
+                    'id' => $teamRound->id,
+                    'name' => null
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_rounds', [
+            'id' => $teamRound->id,
+            'name' => null
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_delete_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();

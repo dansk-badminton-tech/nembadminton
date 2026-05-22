@@ -10,7 +10,7 @@ use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
-use FlyCompany\TeamFight\TeamManager;
+use FlyCompany\TeamFight\TeamRoundManager;
 use FlyCompany\TeamFight\TeamValidator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -40,7 +40,7 @@ class Test extends Command
      * @return int
      * @throws \JsonException
      */
-    public function handle(TeamManager $teamManager ,BadmintonPlayer $scraper)
+    public function handle(TeamRoundManager $teamManager , BadmintonPlayer $scraper)
     {
         Mail::to('danielflynygaard@gmail.com')->send(new \App\Mail\CancellationConfirmationParticipantEmail(Cancellation::query()->find(127)));
     }

@@ -176,12 +176,13 @@ input CreateCategoryInput {
 input CreateTeamRoundInput {
     name: String
     version: Date
+    round: Int
     gameDate: Date @rename(attribute: "game_date")
 }
 
 input UpdateTeamRoundInput {
     id: ID!
-    name: String!
+    name: String
     version: Date!
     round: Int
     gameDate: Date! @rename(attribute: "game_date")

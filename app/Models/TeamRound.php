@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Util\Util;
+use FlyCompany\TeamFight\SquadManager;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,14 @@ class TeamRound extends Model
     {
         static::creating(static function (TeamRound $teamRound) {
             $teamRound->id = Util::generateRandomString(24);
+        });
+        static::updated(static function (TeamRound $teamRound) {
+            if($teamRound->isDirty('version')){
+                $squadManager = new SquadManager();
+                foreach ($teamRound->squads as $squad){
+                    $squadManager->updatePoints($squad->id, $teamRound->version);
+                }
+            }
         });
     }
 

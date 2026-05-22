@@ -4,18 +4,20 @@
             v-for="version in rankingVersions"
             :key="version"
             :value="version">
-            {{ version }}
+            {{ timeToMonth(version) }}
         </option>
     </b-select>
 </template>
 
 <script>
 import gql from "graphql-tag";
+import {timeToMonth} from "../../views/team-fight/helper";
 
 export default {
     name: 'RankingListDropdown',
     props: ['value', 'season', 'useSystemRankings'],
     methods: {
+        timeToMonth,
         handleInput(value) {
             this.$emit('input', value)
         }

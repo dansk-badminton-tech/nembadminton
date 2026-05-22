@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
+import {timeToMonth} from "./helper";
 
 export default {
     name: "EditSquadModal",
@@ -58,6 +59,7 @@ export default {
         }
     },
     methods: {
+        timeToMonth,
         toggleRankingWarning(){
             this.changeOfRankingWarning = true;
         },
@@ -115,7 +117,7 @@ export default {
                                    type: 'is-success',
                                    queue: false,
                                    message: `Points er nu ` + (newVersion !== null
-                                                               ? newVersion + ' ranglisten'
+                                                               ? timeToMonth(newVersion) + ' ranglisten'
                                                                : 'ændret')
                                })
                        })

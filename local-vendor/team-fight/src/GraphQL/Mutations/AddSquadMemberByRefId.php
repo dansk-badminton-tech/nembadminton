@@ -4,7 +4,6 @@
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use FlyCompany\TeamFight\SquadManager;
-use FlyCompany\TeamFight\TeamManager;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 

@@ -27,7 +27,7 @@
                 {{ props.row.gameDate }}
             </b-table-column>
             <b-table-column v-slot="props" field="version" label="Rangliste">
-                {{ props.row.version }}
+                {{ timeToMonth(props.row.version) }}
             </b-table-column>
             <b-table-column v-slot="props" sortable field="updatedAt" label="Oprettet">
                 {{ props.row.createdAt }}
@@ -66,6 +66,7 @@
 import gql from "graphql-tag";
 import CreateTeamFightAction from "./CreateTeamFightAction.vue";
 import {subAYear, getCurrentSeasonStart, addAYear} from "../../helpers";
+import {timeToMonth} from "./helper";
 
 const generateGameDate = (seasonStartDate)=>{
     return {
@@ -109,6 +110,7 @@ export default {
         }
     },
     methods: {
+        timeToMonth,
         deleteTeamFight(teamFightId) {
             this.$buefy.dialog.confirm(
                 {

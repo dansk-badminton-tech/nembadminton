@@ -1,18 +1,25 @@
 <template>
     <div dusk="team-fight-edit-page">
         <title-bar :title-stack="titleStack"/>
-        <hero-bar :has-right-visible="false">
-            {{name}}
+        <hero-bar :has-right-visible="true">
+            {{ name || `Holdrunde nr. ${round}` }}
+            <template v-slot:subtitle>
+                <div class="is-flex is-align-items-center has-text-grey">
+                    <b-icon icon="calendar" size="is-small" class="mr-1"></b-icon>
+                    <span>Dato: {{ gameDate.toLocaleDateString('da-DK') }}</span>
+                    <template v-if="version">
+                        <b-icon icon="format-list-numbered" size="is-small" class="ml-3 mr-1"></b-icon>
+                        <span>Rangliste: {{ timeToMonth(version) }}</span>
+                    </template>
+                </div>
+            </template>
+            <template v-slot:right>
+                <b-button icon-left="pencil" @click="openSettingsModal">Rediger info</b-button>
+            </template>
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-tooltip type="is-info" label="Auto-save er slået til. Auto-save sker KUN når der sker ændringer på holdet"
-                       position="is-bottom">
-                <b-button :loading="saving" :class="{'is-success': this.savingIcon === 'check'}" :icon-left="savingIcon"
-                          @click="saveTeamRound">Gem
-                </b-button>
-            </b-tooltip>
-            <b-dropdown aria-role="list" class="ml-2">
+            <b-dropdown aria-role="list">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Eksporter</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
@@ -49,34 +56,7 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
-            <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam">Genindlæs holdrunden</b-button>
-            <div class="columns mt-2">
-                <div class="column">
-                    <b-field label="Navn">
-                        <b-input v-model="name" placeholder="fx. Runde 1"></b-input>
-                    </b-field>
-                </div>
-                <div class="column">
-                    <b-field label="Spilledato">
-                        <b-datepicker
-                            v-model="gameDate"
-                            icon="calendar"
-                            locale="da-DK"
-                            placeholder="Klik for at vælge dato..."
-                            :first-day-of-week="1"
-                            trap-focus>
-                        </b-datepicker>
-                    </b-field>
-                </div>
-                <div class="column">
-                    <b-field label="Rangliste">
-                        <RankingVersionSelect @focus="oldVersion = version" v-model="version"
-                                              @change="confirmChangeOfRankingList" expanded></RankingVersionSelect>
-                    </b-field>
-                </div>
-            </div>
-            <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
-                              :invalid-level="resolveInvalidLevel"/>
+            <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam" alt="Genindlæs holdrunden"></b-button>
             <hr/>
             <div class="columns">
                 <div class="column is-6">
@@ -94,6 +74,11 @@
                 <div class="column is-6 container">
                     <h1 class="title">Holdene i holdrunden</h1>
                     <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
+                    <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
+                                      :invalid-level="resolveInvalidLevel"
+                                      :basic-squads="validateBasicSquads"
+                                      :invalid-category-list="playingToHighSquadList"
+                                      :invalid-level-list="playingToHighList"/>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -129,13 +114,14 @@ import {
     isWomensSingle
 } from "../../helpers";
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
-import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "./helper";
+import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague, timeToMonth} from "./helper";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
 import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
+import TeamRoundSettingsModal from "./TeamRoundSettingsModal.vue";
 import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
@@ -152,6 +138,7 @@ export default {
         ValidationStatus,
         RankingVersionSelect,
         TeamTable,
+        TeamRoundSettingsModal,
         ValidateTeams,
         Draggable
     },
@@ -214,8 +201,6 @@ export default {
             version: null,
             round: null,
             name: '',
-            oldVersion: null,
-            savingIcon: 'content-save',
             showLinkSharing: false,
             teamRound: {
                 squads: [],
@@ -254,6 +239,7 @@ export default {
         }
     },
     methods: {
+        timeToMonth,
         notify(){
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
@@ -274,6 +260,23 @@ export default {
                                                this.$emit('input', false)
                                            }
                                        }
+                                   })
+        },
+        openSettingsModal() {
+            this.$buefy.modal.open({
+                                       parent: this,
+                                       component: TeamRoundSettingsModal,
+                                       props: {
+                                           teamRound: this.teamRound
+                                       },
+                                       scroll: "keep",
+                                        events: {
+                                            close: () => {},
+                                            save: () => {
+                                                this.refreshTeam();
+                                            }
+                                        },
+                                       width: 640
                                    })
         },
         openLinkSharingCancellationModel() {
@@ -338,19 +341,6 @@ export default {
                         message: `Kunne ikke download CSV :(`
                     })
             })
-        },
-        confirmChangeOfRankingList(newVersion) {
-            this.$buefy.dialog.confirm(
-                {
-                    message: 'Du er ved at skifte rangliste. Alle spillere på holdene vil bliver opdateret til den nye rangliste. Hold med en specifik rangliste vil ikke blive opdateret',
-                    confirmText: 'Skift og opdater spillere',
-                    onConfirm: () => {
-                        this.updateToRankingList()
-                    },
-                    onCancel: () => {
-                        this.version = this.oldVersion
-                    }
-                })
         },
         focusNext(player) {
             const element = document.querySelector('[data-player-id-input="' + player.id + '"]')
@@ -481,7 +471,7 @@ export default {
                                {
                                    duration: 4000,
                                    type: 'is-success',
-                                   message: `Points er nu ` + version + ' ranglisten'
+                                   message: `Points er nu ` + this.timeToMonth(version) + ' ranglisten'
                                })
                        })
                        .catch((error) => {
@@ -775,55 +765,6 @@ export default {
                     this.saving = false
                 })
         },
-        saveTeamRound() {
-            if (this.saving === true) {
-                return
-            }
-            this.saving = true;
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation updateTeamRound($input: UpdateTeamRoundInput!){
-                          updateTeamRound(input: $input){
-                            id
-                            name
-                            gameDate
-                            version
-                            round
-                          }
-                        }
-                    `,
-                    variables: {
-                        input: {
-                            id: this.teamRoundId,
-                            name: this.name,
-                            version: this.version,
-                            gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                            round: this.round
-                        }
-                    },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ]
-                })
-                .then(({data}) => {
-                    this.savingIcon = 'check';
-                    setTimeout(() => {
-                        this.savingIcon = 'content-save';
-                    }, 2000);
-                })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 2000,
-                            type: 'is-danger',
-                            message: `Kunne ikke gemme dit hold :(`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false;
-                })
-        }
     }
 }
 </script>
