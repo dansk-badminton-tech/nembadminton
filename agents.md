@@ -1,3 +1,7 @@
+## About this project
+
+A website for holding turnerings rules in badminton. https://badminton.dk/holdturneringsregler/
+
 ## Domain Model
 
 ### Members vs Users
