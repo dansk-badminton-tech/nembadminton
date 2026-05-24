@@ -4,7 +4,6 @@ query teamRound($id: ID!){
         squads{
             id
             playerLimit
-            league
             order
             name
             playingCity

@@ -15,6 +15,7 @@
             </template>
             <template v-slot:right>
                 <b-button icon-left="pencil" @click="openSettingsModal">Rediger info</b-button>
+                <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam" alt="Genindlæs holdrunden"></b-button>
             </template>
         </hero-bar>
         <section class="section is-main-section">
@@ -52,7 +53,6 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
-            <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam" alt="Genindlæs holdrunden"></b-button>
             <hr/>
             <div class="columns">
                 <div class="column is-6">
