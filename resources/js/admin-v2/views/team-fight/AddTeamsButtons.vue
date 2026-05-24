@@ -75,7 +75,6 @@ export default {
                         mutation createSquad($input: CreateSquadInput!){
                             createSquad(input: $input){
                                 id
-                                league
                                 playerLimit
                                 order
                                 categories {

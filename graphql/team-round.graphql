@@ -12,6 +12,27 @@ extend type Query {
     teamRoundReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
+    "Tournament groups for a season. Used as UI metadata when adding squads."
+    tournamentGroups(
+        seasonId: Int! @eq(key: "season_id")
+        phaseType: String @eq(key: "phase_type")
+        order: _ @orderBy(columns: ["group_name", "phase_type", "tier_id"])
+    ): [TournamentGroupOption!]! @all(model: "App\\Models\\TournamentGroup")
+}
+
+type TournamentGroupOption {
+    id: ID!
+    seasonId: Int! @rename(attribute: "season_id")
+    tierId: Int @rename(attribute: "tier_id")
+    groupName: String! @rename(attribute: "group_name")
+    phaseType: String! @rename(attribute: "phase_type")
+    tournamentTier: TournamentTierOption @belongsTo(relation: "tournamentTier")
+}
+
+type TournamentTierOption {
+    id: ID!
+    tierName: String @rename(attribute: "tier_name")
+    rankLevel: Int @rename(attribute: "rank_level")
 }
 
 extend type Mutation {

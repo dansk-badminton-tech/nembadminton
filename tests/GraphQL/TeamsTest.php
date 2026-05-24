@@ -671,7 +671,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
 
@@ -682,7 +681,6 @@ class TeamsTest extends TestCase
                 updateSquad(input: $input) {
                     id
                     playerLimit
-                    league
                     name
                     playingPlace
                 }
@@ -733,7 +731,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
 
@@ -777,13 +774,11 @@ class TeamsTest extends TestCase
         $first = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $second = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 2,
         ]);
 
@@ -829,13 +824,11 @@ class TeamsTest extends TestCase
         $first = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $second = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 2,
         ]);
 
@@ -881,7 +874,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -965,7 +957,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -1052,7 +1043,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([

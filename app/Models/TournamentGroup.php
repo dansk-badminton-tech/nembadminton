@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\TournamentPhaseType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,10 +14,6 @@ class TournamentGroup extends Model
         'season_id',
         'group_name',
         'phase_type',
-    ];
-
-    protected $casts = [
-        'phase_type' => TournamentPhaseType::class,
     ];
 
     public function season(): BelongsTo

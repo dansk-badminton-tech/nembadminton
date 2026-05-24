@@ -1,0 +1,14 @@
+query tournamentGroups($seasonId: Int!, $phaseType: String) {
+    tournamentGroups(seasonId: $seasonId, phaseType: $phaseType) {
+        id
+        seasonId
+        tierId
+        groupName
+        phaseType
+        tournamentTier {
+            id
+            tierName
+            rankLevel
+        }
+    }
+}
