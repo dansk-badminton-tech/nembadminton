@@ -293,7 +293,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -689,7 +688,6 @@ class TeamsTest extends TestCase
             'input' => [
                 'id' => $squad->id,
                 'playerLimit' => 12,
-                'league' => 'LIGA',
                 'name' => 'Updated Squad',
                 'playingPlace' => 'Main Hall',
             ]
@@ -698,7 +696,6 @@ class TeamsTest extends TestCase
                 'updateSquad' => [
                     'id' => (string)$squad->id,
                     'playerLimit' => 12,
-                    'league' => 'LIGA',
                     'name' => 'Updated Squad',
                     'playingPlace' => 'Main Hall',
                 ]
@@ -708,7 +705,6 @@ class TeamsTest extends TestCase
         $this->assertDatabaseHas('squads', [
             'id' => $squad->id,
             'playerLimit' => 12,
-            'league' => 'LIGA',
             'name' => 'Updated Squad',
             'playing_place' => 'Main Hall',
         ]);

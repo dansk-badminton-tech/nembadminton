@@ -11,7 +11,6 @@ return array (
       'squad' =>
       array (
         'playerLimit' => 10,
-        'league' => 'FIRSTDIVISION',
         'categories' =>
         array (
           0 =>
@@ -669,7 +668,6 @@ return array (
       'squad' =>
       array (
         'playerLimit' => 10,
-        'league' => 'OTHER',
         'categories' =>
         array (
           0 =>
@@ -1589,7 +1587,6 @@ return array (
       'squad' =>
       array (
         'playerLimit' => 10,
-        'league' => 'OTHER',
         'categories' =>
         array (
           0 =>
