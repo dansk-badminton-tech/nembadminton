@@ -34,18 +34,6 @@
                     Link
                 </b-dropdown-item>
             </b-dropdown>
-            <b-dropdown aria-role="list" class="ml-2">
-                <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Indstillinger</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
-                <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
-                    <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
-                        <b-icon icon="update"></b-icon>
-                        Opdater spillerpoint
-                    </b-tooltip>
-                </b-dropdown-item>
-            </b-dropdown>
             <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
             <hr/>
             <div class="columns">
@@ -433,47 +421,6 @@ export default {
                        })
                        .finally(() => {
                            this.saving = false
-                       })
-        },
-        updateToRankingList() {
-            this.updating = true;
-            let version = this.version;
-            return this.$apollo
-                       .mutate(
-                           {
-                               mutation: gql`
-                                    mutation updatePointsTeamRound($id: ID!, $version: String!){
-                                      updatePointsTeamRound(id: $id, version: $version){
-                                        id
-                                      }
-                                    }
-                                `,
-                               variables: {
-                                   id: this.teamRoundId,
-                                   version: version
-                               },
-                               refetchQueries: [
-                                   {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                               ]
-                           })
-                       .then(({data}) => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-success',
-                                   message: `Points er nu ` + this.timeToMonth(version) + ' ranglisten'
-                               })
-                       })
-                       .catch((error) => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-danger',
-                                   message: `Kunne ikke opdater points :(`
-                               })
-                       })
-                       .finally(() => {
-                           this.updating = false;
                        })
         },
         validateSquads() {
