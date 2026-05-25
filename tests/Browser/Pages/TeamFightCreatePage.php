@@ -28,10 +28,29 @@ class TeamFightCreatePage extends Page
         return [
             '@page' => "[dusk='team-fight-create-page']",
             '@name-input' => "[dusk='team-fight-name-input']",
+            '@round-input' => "[dusk='team-fight-round-input']",
             '@date-picker' => "[dusk='team-fight-date-picker']",
             '@ranking-select' => "[dusk='team-fight-ranking-select'] select",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
+    }
+
+    /**
+     * Set the round number on the b-numberinput.
+     *
+     * The dusk attribute on <b-numberinput> is forwarded directly to the
+     * inner <input>, so @round-input resolves to the input itself. We set
+     * the value via JS to ensure both the input and change events fire,
+     * which Buefy listens on to update its v-model.
+     */
+    public function setRound(Browser $browser, int $round): void
+    {
+        $browser->script("
+            var input = document.querySelector(\"[dusk='team-fight-round-input']\");
+            input.value = '{$round}';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        ");
     }
 
     /**

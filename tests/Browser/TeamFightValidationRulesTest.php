@@ -54,6 +54,7 @@ class TeamFightValidationRulesTest extends DuskTestCase
             ->type('@name-input', $name);
 
         $browser->on($createPage)
+            ->setRound(1)
             ->selectDate(7, 2025, 14)
             ->selectRankingByText('Juli 2025');
 

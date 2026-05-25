@@ -96,7 +96,6 @@ export default {
                     squads{
                         id
                         playerLimit
-                        league
                         name
                         playingDatetime
                         playingPlace
