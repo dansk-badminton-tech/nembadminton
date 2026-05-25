@@ -10,10 +10,18 @@
                         <span class="tag is-dark is-medium">Hold fuldendt</span>
                         <span
                             dusk="validation-incomplete-team"
-                            :class="statusClass(incompleteTeam)"
+                            :class="incompleteStatusClass"
                             class="tag is-medium">
-                            <b-icon :icon="statusIcon(incompleteTeam)" size="is-small" class="mr-1"></b-icon>
-                            {{ statusText(incompleteTeam) }}
+                            <b-icon :icon="incompleteStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ incompleteStatusText }}
+                        </span>
+                        <span class="tag is-medium is-white">
+                            <b-switch
+                                dusk="toggle-incomplete-team-check"
+                                size="is-small"
+                                :value="!ignoreIncompleteTeam"
+                                @input="$emit('update:ignoreIncompleteTeam', !$event)">
+                            </b-switch>
                         </span>
                     </div>
                 </b-tooltip>
@@ -99,6 +107,10 @@ export default {
             type: Boolean,
             default: false
         },
+        ignoreIncompleteTeam: {
+            type: Boolean,
+            default: false
+        },
         basicSquads: {
             type: Array,
             default: () => []
@@ -135,6 +147,18 @@ export default {
         }
     },
     computed: {
+        incompleteStatusClass() {
+            if (this.ignoreIncompleteTeam) return 'is-warning'
+            return this.statusClass(this.incompleteTeam)
+        },
+        incompleteStatusIcon() {
+            if (this.ignoreIncompleteTeam) return 'cancel'
+            return this.statusIcon(this.incompleteTeam)
+        },
+        incompleteStatusText() {
+            if (this.ignoreIncompleteTeam) return 'Deaktiveret'
+            return this.statusText(this.incompleteTeam)
+        },
         hasErrors() {
             return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true;
         },
@@ -162,7 +186,8 @@ export default {
             return errors;
         },
         incompleteTeamTip() {
-            if (this.incompleteTeam === null) return 'Deaktiveret af bruger eller afventer validering'
+            if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'
+            if (this.incompleteTeam === null) return 'Afventer validering'
             return this.incompleteTeam ? 'Der findes et eller flere hold der mangler spillere. Dette skal rettes før øvrige tjek kan gennemføres.' : 'Alle hold er fuldt besat.'
         },
         invalidCategoryTip() {

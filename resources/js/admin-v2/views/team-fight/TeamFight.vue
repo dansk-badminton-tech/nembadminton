@@ -39,12 +39,6 @@
                     <span>Indstillinger</span>
                     <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                 </button>
-                <b-dropdown-item aria-role="listitem" @click="deactivateIncompleteCheck">
-                    <b-tooltip type="is-info" label="Kan bruges hvis du ikke kan stille et fuld hold">
-                        <b-icon icon="cancel"></b-icon>
-                        {{ignoreIncompleteTeam ? 'Aktiver' : 'Deaktiver'}} "Fuldendt hold" check
-                    </b-tooltip>
-                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="updateToRankingList">
                     <b-tooltip type="is-info" label="Opdater spillernes point på holdene med den valgte rangliste.">
                         <b-icon icon="update"></b-icon>
@@ -74,7 +68,9 @@
                                       :invalid-level="resolveInvalidLevel"
                                       :basic-squads="validateBasicSquads"
                                       :invalid-category-list="playingToHighSquadList"
-                                      :invalid-level-list="playingToHighList"/>
+                                      :invalid-level-list="playingToHighList"
+                                      :ignore-incomplete-team="ignoreIncompleteTeam"
+                                      @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -278,8 +274,8 @@ export default {
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
         },
-        deactivateIncompleteCheck() {
-            this.ignoreIncompleteTeam = !this.ignoreIncompleteTeam
+        onIgnoreIncompleteTeamChange(value) {
+            this.ignoreIncompleteTeam = value
             this.validate()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
