@@ -21,7 +21,12 @@
             @sort="onSort"
         >
             <b-table-column v-slot="props" field="id" label="Navn">
-                <router-link v-bind:to="props.row.id+'/edit'">{{ props.row.name }}</router-link>
+                <router-link v-bind:to="props.row.id+'/edit'">
+                    {{ props.row.name === null ? 'Runde ' + props.row.round : props.row.name }}
+                </router-link>
+            </b-table-column>
+            <b-table-column v-slot="props" sortable field="round" label="Runde">
+                {{ props.row.round }}
             </b-table-column>
             <b-table-column v-slot="props" sortable field="gameDate" label="Spilledato">
                 {{ props.row.gameDate }}
@@ -204,11 +209,12 @@ export default {
                 query TeamRounds($clubhouseId: ID!, $first: Int!, $page: Int, $order: [QueryTeamRoundsOrderOrderByClause!], $gameDate: DateRange){
                     teamRounds(clubhouseId: $clubhouseId, order: $order, first: $first, page: $page, gameDate: $gameDate){
                         data{
-                            id,
-                            name,
-                            version,
-                            gameDate,
-                            createdAt,
+                            id
+                            name
+                            round
+                            version
+                            gameDate
+                            createdAt
                             updatedAt
                         }
                         paginatorInfo{
