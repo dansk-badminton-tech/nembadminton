@@ -8,7 +8,6 @@ query tournamentGroups($seasonId: Int!, $phaseType: String) {
         tournamentTier {
             id
             tierName
-            rankLevel
         }
     }
 }

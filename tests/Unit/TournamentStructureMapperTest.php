@@ -39,19 +39,6 @@ class TournamentStructureMapperTest extends TestCase
     /**
      * @test
      */
-    public function it_maps_rank_levels(): void
-    {
-        $this->assertSame(1, TournamentStructureMapper::rankLevelFromTierName('Badmintonligaen'));
-        $this->assertSame(2, TournamentStructureMapper::rankLevelFromTierName('1. division'));
-        $this->assertSame(3, TournamentStructureMapper::rankLevelFromTierName('2. division'));
-        $this->assertSame(4, TournamentStructureMapper::rankLevelFromTierName('3. division'));
-        $this->assertSame(5, TournamentStructureMapper::rankLevelFromTierName('Danmarksserien'));
-        $this->assertNull(TournamentStructureMapper::rankLevelFromTierName('Sjællandsserien'));
-    }
-
-    /**
-     * @test
-     */
     public function it_resolves_regular_season_groups(): void
     {
         $this->assertSame(TournamentPhaseType::REGULAR_SEASON, TournamentStructureMapper::phaseTypeFromGroupName('Grundspil'));

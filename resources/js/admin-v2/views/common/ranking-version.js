@@ -8,3 +8,21 @@ export function isRecommendedRankingVersionByPlayingDate(currentVersion, playing
 
     return lowerBound.getTime() <= playingDate.getTime() && playingDate.getTime() <= upperBound.getTime();
 }
+
+export function resolveRecommendedRankingVersion(rankingVersions, playingDate) {
+    if (playingDate === null || playingDate === undefined) {
+        return null;
+    }
+
+    const versions = Array.isArray(rankingVersions)
+                     ? rankingVersions
+                     : [];
+
+    for (const currentVersion of versions) {
+        if (isRecommendedRankingVersionByPlayingDate(currentVersion, playingDate)) {
+            return currentVersion;
+        }
+    }
+
+    return null;
+}

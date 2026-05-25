@@ -62,11 +62,7 @@ class TournamentStructureSyncService
         $tierId = null;
 
         if ($tierName !== null) {
-            $rankLevel = TournamentStructureMapper::rankLevelFromTierName($tierName);
-            if ($rankLevel === null) {
-                $stats['tier_rank_unknown']++;
-            }
-            $tierId = $this->syncTier($tierName, $rankLevel, $stats);
+            $tierId = $this->syncTier($tierName, $stats);
         } else {
             $stats['groups_with_null_tier']++;
         }
@@ -106,25 +102,16 @@ class TournamentStructureSyncService
         $stats['seasons_unchanged']++;
     }
 
-    private function syncTier(string $tierName, ?int $rankLevel, array &$stats): ?int
+    private function syncTier(string $tierName, array &$stats): ?int
     {
         $tier = TournamentTier::query()->where('tier_name', $tierName)->first();
         if ($tier === null) {
             $stats['tiers_created']++;
             $tier = TournamentTier::query()->create([
                 'tier_name' => $tierName,
-                'rank_level' => $rankLevel,
             ]);
 
             return $tier?->getAttribute('id');
-        }
-
-        if ($tier->rank_level !== $rankLevel) {
-            $stats['tiers_updated']++;
-            $tier->rank_level = $rankLevel;
-            $tier->save();
-
-            return $tier->getAttribute('id');
         }
 
         $stats['tiers_unchanged']++;
@@ -177,9 +164,7 @@ class TournamentStructureSyncService
             'seasons_updated' => 0,
             'seasons_unchanged' => 0,
             'tiers_created' => 0,
-            'tiers_updated' => 0,
             'tiers_unchanged' => 0,
-            'tier_rank_unknown' => 0,
             'groups_created' => 0,
             'groups_updated' => 0,
             'groups_unchanged' => 0,

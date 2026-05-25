@@ -18,6 +18,10 @@ extend type Query {
         phaseType: String @eq(key: "phase_type")
         order: _ @orderBy(columns: ["group_name", "phase_type", "tier_id"])
     ): [TournamentGroupOption!]! @all(model: "App\\Models\\TournamentGroup")
+    "All known tournament tiers. Used as suggestions when naming a squad."
+    tournamentTiers(
+        order: _ @orderBy(columns: ["tier_name"])
+    ): [TournamentTierOption!]! @all(model: "App\\Models\\TournamentTier")
 }
 
 type TournamentGroupOption {
@@ -32,7 +36,6 @@ type TournamentGroupOption {
 type TournamentTierOption {
     id: ID!
     tierName: String @rename(attribute: "tier_name")
-    rankLevel: Int @rename(attribute: "rank_level")
 }
 
 extend type Mutation {

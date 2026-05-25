@@ -90,7 +90,7 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-round-id="teamRoundId"/>
+                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :existing-squad-count="teamRound.squads.length"/>
                 </div>
             </div>
         </section>

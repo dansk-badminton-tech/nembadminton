@@ -1,0 +1,6 @@
+query tournamentTiers {
+    tournamentTiers {
+        id
+        tierName
+    }
+}

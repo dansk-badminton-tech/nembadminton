@@ -31,7 +31,6 @@ class TournamentGroupsTest extends TestCase
 
         $liga = TournamentTier::query()->create([
             'tier_name' => 'Badmintonligaen',
-            'rank_level' => 1,
         ]);
 
         TournamentGroup::query()->create([
@@ -61,7 +60,6 @@ class TournamentGroupsTest extends TestCase
                     phaseType
                     tournamentTier {
                         tierName
-                        rankLevel
                     }
                 }
             }
@@ -76,7 +74,6 @@ class TournamentGroupsTest extends TestCase
             'groupName' => 'Pulje 1',
             'phaseType' => TournamentPhaseType::REGULAR_SEASON->value,
             'tierName' => 'Badmintonligaen',
-            'rankLevel' => 1,
         ]);
         $response->assertJsonFragment([
             'seasonId' => 2025,
@@ -97,7 +94,6 @@ class TournamentGroupsTest extends TestCase
 
         $tier = TournamentTier::query()->create([
             'tier_name' => '1. division',
-            'rank_level' => 2,
         ]);
 
         TournamentGroup::query()->create([

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Util;
 
+use App\Enums\CanonicalTournamentTier;
 use App\Enums\TournamentPhaseType;
 
 class TournamentStructureMapper
@@ -22,40 +23,23 @@ class TournamentStructureMapper
 
         // Convert names like "1. division (grundspil)" -> "1. division"
         $normalized = (string) preg_replace('/\s*\([^)]*\)\s*$/u', '', $normalized);
+        $normalized = self::normalizeText($normalized);
+        if ($normalized === null) {
+            return null;
+        }
 
-        return self::normalizeText($normalized);
+        // Canonicalize via the enum so synced data lines up with seeded rows.
+        $canonical = CanonicalTournamentTier::tryFromRawName($normalized);
+        if ($canonical !== null) {
+            return $canonical->value;
+        }
+
+        return $normalized;
     }
 
     public static function normalizeGroupName(?string $groupName): ?string
     {
         return self::normalizeText($groupName);
-    }
-
-    public static function rankLevelFromTierName(?string $tierName): ?int
-    {
-        if ($tierName === null) {
-            return null;
-        }
-
-        $tier = mb_strtolower(trim($tierName));
-
-        if ($tier === 'badmintonligaen') {
-            return 1;
-        }
-        if (preg_match('/^1\.\s*division$/u', $tier) === 1) {
-            return 2;
-        }
-        if (preg_match('/^2\.\s*division$/u', $tier) === 1) {
-            return 3;
-        }
-        if (preg_match('/^3\.\s*division$/u', $tier) === 1) {
-            return 4;
-        }
-        if ($tier === 'danmarksserien') {
-            return 5;
-        }
-
-        return null;
     }
 
     public static function phaseTypeFromGroupName(?string $groupName): TournamentPhaseType

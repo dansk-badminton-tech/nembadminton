@@ -12,7 +12,6 @@ class TournamentTier extends Model
 
     protected $fillable = [
         'tier_name',
-        'rank_level',
     ];
 
     public function tournamentGroups(): HasMany
