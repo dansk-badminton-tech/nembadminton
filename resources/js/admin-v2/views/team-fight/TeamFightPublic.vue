@@ -1,7 +1,7 @@
 <template>
     <fragment v-if="!$apollo.loading">
         <div v-if="teamRound" dusk="team-fight-public-page">
-            <h1 class="title" dusk="team-fight-public-title">{{ teamRound.name }} - {{ teamRound.clubhouse.name }}
+            <h1 class="title" dusk="team-fight-public-title">{{ teamRound.name || `Holdrunde nr. ${teamRound.round}` }} - {{ teamRound.clubhouse.name }}
             </h1>
             <h2 class="subtitle" dusk="team-fight-public-game-date">Spilledato: {{ teamRound.gameDate }}</h2>
             <div class="columns is-multiline">
@@ -89,6 +89,7 @@ export default {
                   teamRound(id: $id){
                     id
                     name
+                      round
                     gameDate
                       clubhouse {
                           name
