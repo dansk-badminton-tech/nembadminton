@@ -186,7 +186,13 @@ import {
 } from "../../helpers";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditSquadModal from "./EditSquadModal.vue";
-import {timeToMonth} from "./helper";
+import {
+    timeToMonth,
+    formatPlayingDatetime,
+    formatPlayingDatetimeLong,
+    composedAddress,
+    badmintonPlayerUrl
+} from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 
 export default {
@@ -232,51 +238,19 @@ export default {
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },
-        timeToMonth: timeToMonth,
-        formatPlayingDatetime(value) {
-            if (!value) return ''
-            const date = new Date(value)
-            if (isNaN(date.getTime())) return ''
-            const datePart = date.toLocaleString('da-DK', {
-                weekday: 'short',
-                day: 'numeric',
-                month: 'short'
-            }).replace(/\.$/, '')
-            const timePart = date.toLocaleString('da-DK', {
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-            return `${datePart} kl. ${timePart}`
-        },
-        formatPlayingDatetimeLong(value) {
-            if (!value) return ''
-            const date = new Date(value)
-            if (isNaN(date.getTime())) return ''
-            return date.toLocaleString('da-DK', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        },
-        composedAddress(squad) {
-            const street = squad.playingAddress ? squad.playingAddress.trim() : ''
-            const zip = squad.playingZipCode ? squad.playingZipCode.trim() : ''
-            const city = squad.playingCity ? squad.playingCity.trim() : ''
-            const zipCity = [zip, city].filter(Boolean).join(' ')
-            return [street, zipCity].filter(Boolean).join(', ')
+        timeToMonth,
+        formatPlayingDatetime,
+        formatPlayingDatetimeLong,
+        composedAddress,
+        badmintonPlayerUrl(externalTeamFightID) {
+            return badmintonPlayerUrl(externalTeamFightID, getCurrentSeason())
         },
         placeTooltip(squad) {
             if (!squad.playingPlace) {
                 return 'Spillested er ikke angivet. Klik for at udfylde.'
             }
-            const address = this.composedAddress(squad)
+            const address = composedAddress(squad)
             return address || 'Ingen adresse angivet'
-        },
-        badmintonPlayerUrl(externalTeamFightID) {
-            return `https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,${getCurrentSeason()},,,,,${externalTeamFightID},,`
         },
         startDrag(evt, squad, category, player) {
             evt.dataTransfer.dropEffect = 'move'
