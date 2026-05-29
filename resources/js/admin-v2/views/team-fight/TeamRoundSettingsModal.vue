@@ -26,15 +26,6 @@
                         <b-field>
                             <template v-slot:label>
                                 Runde spilledato
-                                <b-tooltip type="is-light" position="is-left" multilined>
-                                    <template v-slot:content>
-                                        <div class="has-text-centered">
-                                            <img src="@/views/team-fight/tooltip-team-round-date.png" style="width: 300px;">
-                                            <p>Holdrunde dato kan findes under selve holdkampen på badmintonplayer (oftes spille dato'en)</p>
-                                        </div>
-                                    </template>
-                                    <b-icon icon="help-circle-outline" class="ml-2" />
-                                </b-tooltip>
                             </template>
                             <b-datepicker
                                 append-to-body

@@ -216,5 +216,46 @@ class SquadManager
             return $squad;
         });
     }
+    public function updatePointsOnAllSquadsInTeamRound(TeamRound $teamRound, string $version) : TeamRound
+    {
+        foreach ($teamRound->squads as $squad){
+            /** @var SquadMember $player */
+            $versionCurrent = $squad->version ?? $version;
+            /** @var SquadCategory $category */
+            foreach ($squad->categories()->with('players')->get() as $category){
+                foreach ($category->players as $member){
+                    $member->points()->delete();
+                    /** @var Point[] $points */
+                    $points = \App\Models\Point::query()
+                        ->where('version', $versionCurrent)
+                        ->whereHas('member', function (Builder $query) use ($member) {
+                            $query->where('refId', $member->member_ref_id);
+                        })->get();
+                    foreach ($points as $point) {
+                        $squadPoint = new SquadPoint();
+                        $squadPoint->position = $point->position;
+                        $squadPoint->category = $point->category;
+                        $squadPoint->points = $point->points;
+                        $squadPoint->vintage = $point->vintage;
+                        $squadPoint->version = $point->version;
+                        $squadPoint->squad_member_id = $member->id;
+                        $squadPoint->saveOrFail();
+                    }
+                }
+            }
+        }
+        return $teamRound;
+    }
+
+    /**
+     * @param  GraphQLContext  $context
+     * @param  mixed  $teamId
+     * @return TeamRound
+     */
+    private function getTeamOrFail(string $teamId): TeamRound
+    {
+        return TeamRound::query()
+            ->where('id', $teamId)->lockForUpdate()->firstOrFail();
+    }
 
 }

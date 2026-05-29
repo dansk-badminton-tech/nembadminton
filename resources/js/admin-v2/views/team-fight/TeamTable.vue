@@ -8,25 +8,35 @@
                     <th colspan="2">
                         <h2 class="is-pulled-left"><strong>Hold {{ index + 1 }}</strong> {{ squad.name || 'intet navn' }}</h2>
                         <b-taglist class="ml-2 is-pulled-left">
-                            <b-tag type="is-danger" v-if="hasEmptySpots(index)">
-                                Ugyldigt hold
-                            </b-tag>
-                            <b-tooltip type="is-info" label="Bruger en anden rangliste end holdrunden">
+                            <b-tooltip type="is-info" label="Rangliste">
                                 <b-tag type="is-info" v-if="squad.version !== null">
                                     {{timeToMonth(squad.version)}}
                                 </b-tag>
                             </b-tooltip>
                         </b-taglist>
-                        <div class="buttons is-pulled-right">
-                            <b-button title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
-                            <b-button :disabled="index === 0" @click="moveSquadOrderUp(squad)" title="Flyt hold op" icon-left="arrow-up"></b-button>
-                            <b-button :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)" title="Flyt hold ned" icon-left="arrow-down"></b-button>
-                            <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kræver kampnummer" :disabled="!!!squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
-                                      :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+squad.externalTeamFightID+',,'"
-                                      type="is-link">
-                            </b-button>
-                            <b-button type="is-danger" @click="confirmDelete(squad)" title="Slet" icon-left="delete"></b-button>
-                        </div>
+                        <b-dropdown class="is-pulled-right" position="is-bottom-left" :triggers="['hover']" aria-role="list">
+                            <template v-slot:trigger>
+                                <b-button
+                                    type="is-info"
+                                    icon-right="cog" />
+                            </template>
+                            <b-dropdown-item aria-role="listitem" title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)">
+                                <b-icon icon="pencil"></b-icon>
+                                Rediger holdet
+                            </b-dropdown-item>
+                            <b-dropdown-item aria-role="listitem" :disabled="index === 0" @click="moveSquadOrderUp(squad)">
+                                <b-icon icon="arrow-up"></b-icon>
+                                Flyt hold up
+                            </b-dropdown-item>
+                            <b-dropdown-item aria-role="listitem" :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)">
+                                <b-icon icon="arrow-down"></b-icon>
+                                Flyt hold ned
+                            </b-dropdown-item>
+                            <b-dropdown-item class="is-danger" aria-role="listitem" type="is-danger" @click="confirmDelete(squad)">
+                                <b-icon icon="delete"></b-icon>
+                                Slet holdet
+                            </b-dropdown-item>
+                        </b-dropdown>
                     </th>
                 </tr>
                 </thead>
@@ -73,14 +83,6 @@
                                 <b-icon
                                     v-show="hasCorrectedPoints(player.points)"
                                     icon="information"
-                                    type="is-info"
-                                    size="is-small">
-                                </b-icon>
-                            </b-tooltip>
-                            <b-tooltip type="is-info" class="is-pulled-left" :label="'Point er fra '+timeToMonth(resolveVersionToUse(squad))+' ranglisten'">
-                                <b-icon
-                                    v-show="hasDifferentRankingList(player.points)"
-                                    icon="list-box-outline"
                                     type="is-info"
                                     size="is-small">
                                 </b-icon>
@@ -204,16 +206,6 @@ export default {
         hasPointsInCategory,
         isDouble(category) {
             return isDoubleCategory(category)
-        },
-        hasEmptySpots(index) {
-            if (this.teamsBaseValidations.length === 0) {
-                return false;
-            } else {
-                const found = this.teamsBaseValidations.find((base) => {
-                    return index === base.index && base.spotsFulfilled === false
-                })
-                return found !== undefined;
-            }
         },
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)

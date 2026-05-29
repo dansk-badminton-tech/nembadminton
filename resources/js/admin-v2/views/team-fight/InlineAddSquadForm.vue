@@ -53,15 +53,16 @@
                             {{ quickDate.label }}
                         </b-button>
                         <p class="control add-squad-form__datepicker-control">
-                            <b-datepicker
+                            <b-datetimepicker
                                 :value="selectedPlayingDate"
                                 :disabled="loading"
                                 :mobile-native="false"
                                 icon="calendar-today"
                                 locale="da-DK"
                                 editable
+                                position="is-top-left"
                                 @input="$emit('change-playing-date', $event)">
-                            </b-datepicker>
+                            </b-datetimepicker>
                         </p>
                     </div>
                     <p class="help">{{ recommendedRankingLabel }}</p>

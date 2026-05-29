@@ -303,7 +303,14 @@ export default {
                         type="number"
                         v-model.number="externalTeamFightID"
                         placeholder="446437"
+                        expanded
                     />
+                    <p class="control">
+                        <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kræver kampnummer" :disabled="!!!externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
+                                  :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+externalTeamFightID+',,'"
+                                  type="is-link">
+                        </b-button>
+                    </p>
                 </b-field>
                 <b-field label="Spillestart">
                     <b-datetimepicker

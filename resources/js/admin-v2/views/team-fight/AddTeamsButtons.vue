@@ -239,7 +239,7 @@ export default {
                 return null;
             }
 
-            dateTime.setHours(12, 0, 0, 0);
+            dateTime.setHours(0, 0, 0, 0);
             return formatDateTime(dateTime);
         },
         buildSquadMetadataInput() {

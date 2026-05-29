@@ -28,9 +28,7 @@ class TeamRound extends Model
         static::updated(static function (TeamRound $teamRound) {
             if($teamRound->isDirty('version')){
                 $squadManager = new SquadManager();
-                foreach ($teamRound->squads as $squad){
-                    $squadManager->updatePoints($squad->id, $teamRound->version);
-                }
+                $squadManager->updatePointsOnAllSquadsInTeamRound($teamRound, $teamRound->version);
             }
         });
     }

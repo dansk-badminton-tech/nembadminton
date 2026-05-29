@@ -14,7 +14,7 @@
                 </div>
             </template>
             <template v-slot:right>
-                <b-button icon-left="pencil" @click="openSettingsModal">Rediger info</b-button>
+                <b-button icon-left="pencil" @click="openSettingsModal">Rediger</b-button>
                 <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam" alt="Genindlæs holdrunden"></b-button>
             </template>
         </hero-bar>
