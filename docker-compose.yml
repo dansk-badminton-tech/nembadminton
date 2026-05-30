@@ -149,6 +149,8 @@ services:
 
   # http://localhost:7900/?autoconnect=1&resize=scale&password=secret
   selenium:
+    depends_on:
+      - artisan-serve
     image: 'selenium/standalone-chromium'
     ports:
       - "4444:4444"

@@ -455,6 +455,8 @@ class TeamsTest extends TestCase
                 updateTeamRound(input: $input) {
                     id
                     name
+                    gameDate
+                    version
                 }
             }
         ', [
@@ -468,14 +470,18 @@ class TeamsTest extends TestCase
             'data' => [
                 'updateTeamRound' => [
                     'id' => $teamRound->id,
-                    'name' => 'Updated Team Round Name'
+                    'name' => 'Updated Team Round Name',
+                    'gameDate' => '2023-02-01',
+                    'version' => '2023-02-01'
                 ]
             ]
         ]);
 
         $this->assertDatabaseHas('team_rounds', [
             'id' => $teamRound->id,
-            'name' => 'Updated Team Round Name'
+            'name' => 'Updated Team Round Name',
+            'game_date' => '2023-02-01',
+            'version' => '2023-02-01'
         ]);
     }
 
@@ -1181,48 +1187,6 @@ class TeamsTest extends TestCase
         $this->assertDatabaseHas('team_activity_logs', [
             'team_round_id' => $teamRound->id,
             'recipient_type' => RecipientType::MANUAL_EMAILS->value,
-        ]);
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_update_points_team_round()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($id: ID!, $version: String!) {
-                updatePointsTeamRound(id: $id, version: $version) {
-                    id
-                    version
-                }
-            }
-        ', [
-            'id' => $teamRound->id,
-            'version' => '2023-01-01'
-        ])->assertJson([
-            'data' => [
-                'updatePointsTeamRound' => [
-                    'id' => $teamRound->id,
-                    'version' => '2023-01-01'
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseHas('team_rounds', [
-            'id' => $teamRound->id,
-            'version' => '2023-01-01'
         ]);
     }
 }

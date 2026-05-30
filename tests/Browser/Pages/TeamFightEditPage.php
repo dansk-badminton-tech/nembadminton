@@ -363,8 +363,8 @@ class TeamFightEditPage extends Page
     {
         $this->scrollToValidation($browser);
         $browser->waitForTextIn('@validation-incomplete-team', 'Fejl', 10)
-            ->waitForTextIn('@validation-invalid-level', '-', 10)
-            ->waitForTextIn('@validation-invalid-category', '-', 10);
+            ->waitForTextIn('@validation-invalid-level', 'Afventer', 10)
+            ->waitForTextIn('@validation-invalid-category', 'Afventer', 10);
     }
 
     /**
