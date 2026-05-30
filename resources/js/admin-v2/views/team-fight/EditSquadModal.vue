@@ -195,6 +195,7 @@ export default {
                                 playingAddress
                                 playingZipCode
                                 playingCity
+
                             }
                         }
                     `,
@@ -225,7 +226,6 @@ export default {
                                            })
                 })
 
-            this.playingDatetime = parseDateTime(teamFight.gameTime)
             this.name = playerTeam.league
         },
         // You have to install and import debounce to use it,
