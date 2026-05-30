@@ -11,20 +11,8 @@ use App\Models\TeamRound;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
-class TeamManager
+class TeamRoundManager
 {
-
-    /**
-     * @param string $name
-     * @param Carbon $game_date
-     * @param string $version
-     *
-     * @return TeamRound
-     */
-    public function createTeam(string $name, Carbon $game_date, string $version)
-    {
-        return new TeamRound(compact('name', 'game_date', 'version'));
-    }
 
     public function copyTeam(TeamRound $team) : TeamRound
     {

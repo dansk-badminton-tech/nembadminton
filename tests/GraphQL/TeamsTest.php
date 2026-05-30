@@ -293,7 +293,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -456,6 +455,8 @@ class TeamsTest extends TestCase
                 updateTeamRound(input: $input) {
                     id
                     name
+                    gameDate
+                    version
                 }
             }
         ', [
@@ -469,14 +470,65 @@ class TeamsTest extends TestCase
             'data' => [
                 'updateTeamRound' => [
                     'id' => $teamRound->id,
-                    'name' => 'Updated Team Round Name'
+                    'name' => 'Updated Team Round Name',
+                    'gameDate' => '2023-02-01',
+                    'version' => '2023-02-01'
                 ]
             ]
         ]);
 
         $this->assertDatabaseHas('team_rounds', [
             'id' => $teamRound->id,
-            'name' => 'Updated Team Round Name'
+            'name' => 'Updated Team Round Name',
+            'game_date' => '2023-02-01',
+            'version' => '2023-02-01'
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_update_a_team_round_with_null_name()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Old Name'
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateTeamRoundInput!) {
+                updateTeamRound(input: $input) {
+                    id
+                    name
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'name' => null,
+                'gameDate' => '2023-02-01',
+                'version' => '2023-02-01'
+            ]
+        ])->assertJson([
+            'data' => [
+                'updateTeamRound' => [
+                    'id' => $teamRound->id,
+                    'name' => null
+                ]
+            ]
+        ]);
+
+        $this->assertDatabaseHas('team_rounds', [
+            'id' => $teamRound->id,
+            'name' => null
         ]);
     }
 
@@ -580,7 +632,6 @@ class TeamsTest extends TestCase
             mutation($input: CreateSquadInput!) {
                 createSquad(input: $input) {
                     id
-                    league
                     playerLimit
                 }
             }
@@ -588,7 +639,6 @@ class TeamsTest extends TestCase
             'input' => [
                 'teamRound' => ['connect' => $teamRound->id],
                 'playerLimit' => 10,
-                'league' => 'LIGA',
                 'categories' => [
                     'create' => [
                         ['category' => 'HS', 'name' => '1. HS']
@@ -598,7 +648,6 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'createSquad' => [
-                    'league' => 'LIGA',
                     'playerLimit' => 10
                 ]
             ]
@@ -627,7 +676,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
 
@@ -638,7 +686,6 @@ class TeamsTest extends TestCase
                 updateSquad(input: $input) {
                     id
                     playerLimit
-                    league
                     name
                     playingPlace
                 }
@@ -647,7 +694,6 @@ class TeamsTest extends TestCase
             'input' => [
                 'id' => $squad->id,
                 'playerLimit' => 12,
-                'league' => 'LIGA',
                 'name' => 'Updated Squad',
                 'playingPlace' => 'Main Hall',
             ]
@@ -656,7 +702,6 @@ class TeamsTest extends TestCase
                 'updateSquad' => [
                     'id' => (string)$squad->id,
                     'playerLimit' => 12,
-                    'league' => 'LIGA',
                     'name' => 'Updated Squad',
                     'playingPlace' => 'Main Hall',
                 ]
@@ -666,7 +711,6 @@ class TeamsTest extends TestCase
         $this->assertDatabaseHas('squads', [
             'id' => $squad->id,
             'playerLimit' => 12,
-            'league' => 'LIGA',
             'name' => 'Updated Squad',
             'playing_place' => 'Main Hall',
         ]);
@@ -689,7 +733,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
 
@@ -733,13 +776,11 @@ class TeamsTest extends TestCase
         $first = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $second = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 2,
         ]);
 
@@ -785,13 +826,11 @@ class TeamsTest extends TestCase
         $first = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $second = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 2,
         ]);
 
@@ -837,7 +876,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -921,7 +959,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -1008,7 +1045,6 @@ class TeamsTest extends TestCase
         $squad = Squad::query()->create([
             'team_round_id' => $teamRound->id,
             'playerLimit' => 10,
-            'league' => 'OTHER',
             'order' => 1,
         ]);
         $category = $squad->categories()->create([
@@ -1151,48 +1187,6 @@ class TeamsTest extends TestCase
         $this->assertDatabaseHas('team_activity_logs', [
             'team_round_id' => $teamRound->id,
             'recipient_type' => RecipientType::MANUAL_EMAILS->value,
-        ]);
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_update_points_team_round()
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
-
-        $teamRound = TeamRound::factory()->create([
-            'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
-        ]);
-
-        $this->actingAs($user, 'api');
-
-        $this->graphQL(/** @lang GraphQL */ '
-            mutation($id: ID!, $version: String!) {
-                updatePointsTeamRound(id: $id, version: $version) {
-                    id
-                    version
-                }
-            }
-        ', [
-            'id' => $teamRound->id,
-            'version' => '2023-01-01'
-        ])->assertJson([
-            'data' => [
-                'updatePointsTeamRound' => [
-                    'id' => $teamRound->id,
-                    'version' => '2023-01-01'
-                ]
-            ]
-        ]);
-
-        $this->assertDatabaseHas('team_rounds', [
-            'id' => $teamRound->id,
-            'version' => '2023-01-01'
         ]);
     }
 }

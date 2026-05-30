@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
+import {timeToMonth} from "./helper";
 
 export default {
     name: "EditSquadModal",
@@ -14,7 +15,6 @@ export default {
     watch: {
         squad: {
             handler(newValue, oldValue) {
-                this.league = newValue.league
                 this.name = newValue.name
                 this.playingDatetime = newValue.playingDatetime
                                        ? new Date(newValue.playingDatetime)
@@ -45,19 +45,14 @@ export default {
             externalTeamFightID: null,
             address: [],
             version: null,
-            league: null,
             isFetching: false,
             showTeamFightSelector: false,
             oldVersion: null,
-            leagueOptions: [
-                {label: 'Normal', value: "OTHER"},
-                {label: "1. Division", value: "FIRSTDIVISION"},
-                {label: "Liga", value: "LIGA"}
-            ],
             changeOfRankingWarning: false
         }
     },
     methods: {
+        timeToMonth,
         toggleRankingWarning(){
             this.changeOfRankingWarning = true;
         },
@@ -70,7 +65,6 @@ export default {
                                       updatePointsSquad(id: $id, version: $version){
                                         id
                                         playerLimit
-                                        league
                                         order
                                         name
                                         playingCity
@@ -115,7 +109,7 @@ export default {
                                    type: 'is-success',
                                    queue: false,
                                    message: `Points er nu ` + (newVersion !== null
-                                                               ? newVersion + ' ranglisten'
+                                                               ? timeToMonth(newVersion) + ' ranglisten'
                                                                : 'ændret')
                                })
                        })
@@ -136,7 +130,6 @@ export default {
                         mutation updateSquad($input: UpdateSquadInput!){
                             updateSquad(input: $input){
                                 id
-                                league
                                 name
                                 playingDatetime
                                 playingPlace,
@@ -151,7 +144,6 @@ export default {
                     variables: {
                         input: {
                             id: this.squad.id,
-                            league: this.league,
                             name: this.name,
                             externalTeamFightID: this.externalTeamFightID,
                             playingDatetime: this.playingDatetime
@@ -296,11 +288,6 @@ export default {
                         placeholder="Danmarksserien Pulje 1">
                     </b-input>
                 </b-field>
-                <b-field label="Holdtype">
-                    <b-select expanded v-model="league" required>
-                        <option v-for="leagueOption in leagueOptions" :value="leagueOption.value" :key="leagueOption.value">{{ leagueOption.label }}</option>
-                    </b-select>
-                </b-field>
                 <hr/>
                 <b-field label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
                     <RankingVersionSelect @change="toggleRankingWarning" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
@@ -316,7 +303,14 @@ export default {
                         type="number"
                         v-model.number="externalTeamFightID"
                         placeholder="446437"
+                        expanded
                     />
+                    <p class="control">
+                        <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kræver kampnummer" :disabled="!!!externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
+                                  :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+externalTeamFightID+',,'"
+                                  type="is-link">
+                        </b-button>
+                    </p>
                 </b-field>
                 <b-field label="Spillestart">
                     <b-datetimepicker

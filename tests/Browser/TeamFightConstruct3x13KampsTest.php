@@ -145,6 +145,7 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
                 ->type('@name-input', '3x13 Kamps Holdrunde Test');
 
             $browser->on($createPage)
+                ->setRound(1)
                 ->selectDate(7, 2025, 14)
                 ->selectRankingByText('Juli 2025');
 

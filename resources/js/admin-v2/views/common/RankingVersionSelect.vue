@@ -15,6 +15,7 @@
 
 import gql from 'graphql-tag'
 import {timeToMonth} from "../team-fight/helper";
+import {isRecommendedRankingVersionByPlayingDate} from "./ranking-version";
 
 export default {
     name: "RankingVersionSelect",
@@ -41,13 +42,7 @@ export default {
             if(this.playingDate === null || this.playingDate === undefined){
                 return ''
             }
-            let date = new Date(Date.parse(currentVersion))
-            let lowerBound = new Date(Date.parse(currentVersion))
-            lowerBound.setUTCDate(10)
-            lowerBound.setHours(0, 0, 0,0)
-            let upperBound = new Date(date.setMonth(date.getMonth()+1, 9))
-            upperBound.setHours(0, 0, 0,0)
-            if(lowerBound.getTime() <= this.playingDate.getTime() && this.playingDate.getTime() <= upperBound.getTime()){
+            if (isRecommendedRankingVersionByPlayingDate(currentVersion, this.playingDate)) {
                 return '(Anbefalet baseret på spilledagen)'
             }
         },

@@ -1,43 +1,98 @@
 <template>
-    <div class="field is-grouped is-grouped-multiline">
-        <div class="control" v-show="!hideIncompleteTeam">
-            <div class="tags has-addons">
+    <div class="validation-status-container">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="control" v-show="!hideIncompleteTeam">
                 <b-tooltip
                     type="is-info"
-                    :label="incompleteTeamTip">
-                    <span class="tag is-light is-medium">Fuldendt hold</span>
-                    <span
-                        dusk="validation-incomplete-team"
-                        v-bind:class="{'is-light': this.incompleteTeam === null, 'is-danger': this.incompleteTeam === true, 'is-success': !!this.incompleteTeam === false}"
-                        class="tag is-medium">{{ incompleteTeamText }}</span>
+                    :label="incompleteTeamTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Hold fuldendt</span>
+                        <span
+                            dusk="validation-incomplete-team"
+                            :class="incompleteStatusClass"
+                            class="tag is-medium">
+                            <b-icon :icon="incompleteStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ incompleteStatusText }}
+                        </span>
+                        <span class="tag is-medium is-white">
+                            <b-switch
+                                dusk="toggle-incomplete-team-check"
+                                size="is-small"
+                                :value="!ignoreIncompleteTeam"
+                                @input="$emit('update:ignoreIncompleteTeam', !$event)">
+                            </b-switch>
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
+            <div class="control">
+                <b-tooltip
+                    type="is-info"
+                    :label="invalidLevelTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Niveauvalidering</span>
+                        <span
+                            dusk="validation-invalid-level"
+                            :class="statusClass(invalidLevel)"
+                            class="tag is-medium">
+                            <b-icon :icon="statusIcon(invalidLevel)" size="is-small" class="mr-1"></b-icon>
+                            {{ statusText(invalidLevel) }}
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
+            <div class="control">
+                <b-tooltip
+                    type="is-info"
+                    :label="invalidCategoryTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Kategorivalidering</span>
+                        <span
+                            dusk="validation-invalid-category"
+                            :class="statusClass(invalidCategory)"
+                            class="tag is-medium">
+                            <b-icon :icon="statusIcon(invalidCategory)" size="is-small" class="mr-1"></b-icon>
+                            {{ statusText(invalidCategory) }}
+                        </span>
+                    </div>
                 </b-tooltip>
             </div>
         </div>
-        <div class="control">
-            <b-tooltip
-                type="is-info"
-                :label="invalidLevelTip">
-                <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Spiller på et forkert hold</span>
-                    <span
-                        dusk="validation-invalid-level"
-                        v-bind:class="{'is-light': this.invalidLevel === null, 'is-danger': this.invalidLevel === true, 'is-success': !!this.invalidLevel === false}"
-                        class="tag is-medium">{{ invalidLevelText }}</span>
+
+        <div v-if="hasErrors" class="mt-3">
+            <b-collapse
+                aria-id="contentIdForA11y1"
+                class="panel"
+                animation="slide"
+                v-model="isOpen">
+                <template #trigger>
+                    <div
+                        class="panel-heading is-danger"
+                        role="button"
+                        aria-controls="contentIdForA11y1"
+                        :aria-expanded="isOpen">
+                        <div class="is-flex is-justify-content-space-between">
+                            <span>
+                                <b-icon icon="alert-circle" size="is-small" class="mr-1"></b-icon>
+                                <strong>Detaljer om fejl</strong>
+                            </span>
+                            <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
+                        </div>
+                    </div>
+                </template>
+                <div class="panel-block">
+                    <div class="content is-small">
+                        <ul>
+                            <li v-for="(error, index) in allErrors" :key="index" class="has-text-danger">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </b-tooltip>
-        </div>
-        <div class="control">
-            <b-tooltip
-                type="is-info"
-                :label="invalidCategoryTip">
-                <div class="tags has-addons">
-                    <span class="tag is-light is-medium">Spiller for højt i kategorien</span>
-                    <span
-                        dusk="validation-invalid-category"
-                        v-bind:class="{'is-light': this.invalidCategory === null, 'is-danger': this.invalidCategory === true, 'is-success': !!this.invalidCategory === false}"
-                        class="tag is-medium">{{ invalidCategoryText }}</span>
-                </div>
-            </b-tooltip>
+            </b-collapse>
         </div>
     </div>
 </template>
@@ -50,29 +105,98 @@ export default {
         invalidLevel: Boolean,
         hideIncompleteTeam: {
             type: Boolean,
-            default(){
-                return false
+            default: false
+        },
+        ignoreIncompleteTeam: {
+            type: Boolean,
+            default: false
+        },
+        basicSquads: {
+            type: Array,
+            default: () => []
+        },
+        invalidCategoryList: {
+            type: Array,
+            default: () => []
+        },
+        invalidLevelList: {
+            type: Array,
+            default: () => []
+        }
+    },
+    data() {
+        return {
+            isOpen: false
+        }
+    },
+    methods: {
+        statusClass(status) {
+            return {
+                'is-light': status === null,
+                'is-danger': status === true,
+                'is-success': status === false
             }
+        },
+        statusIcon(status) {
+            if (status === null) return 'minus-circle-outline'
+            return status ? 'alert-circle' : 'check-circle'
+        },
+        statusText(status) {
+            if (status === null) return 'Afventer'
+            return status ? 'Fejl' : 'OK'
         }
     },
     computed: {
-        incompleteTeamTip() {
-            return (this.incompleteTeam === null ? 'Deaktiveret af bruger' : (this.incompleteTeam ? 'Der findes et eller flere ugyldig hold. Skal være OK før de andre tjeks kører' : 'Alle kategorier er udfyldt korrekt.'))
+        incompleteStatusClass() {
+            if (this.ignoreIncompleteTeam) return 'is-warning'
+            return this.statusClass(this.incompleteTeam)
         },
-        incompleteTeamText() {
-            return (this.incompleteTeam === null ? '-' : (this.incompleteTeam ? 'Fejl' : 'OK'))
+        incompleteStatusIcon() {
+            if (this.ignoreIncompleteTeam) return 'cancel'
+            return this.statusIcon(this.incompleteTeam)
+        },
+        incompleteStatusText() {
+            if (this.ignoreIncompleteTeam) return 'Deaktiveret'
+            return this.statusText(this.incompleteTeam)
+        },
+        hasErrors() {
+            return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true;
+        },
+        allErrors() {
+            const errors = [];
+            if (this.incompleteTeam) {
+                this.basicSquads.forEach(squad => {
+                    if (!squad.spotsFulfilled) {
+                        errors.push(`Hold ${squad.index + 1} mangler spillere.`);
+                    }
+                });
+            }
+            if (this.invalidLevel) {
+                this.invalidLevelList.forEach(player => {
+                    const belowNames = player.belowPlayer.map(p => p.name).join(', ');
+                    errors.push(`${player.name} spiller på et for højt rangeret hold i forhold til ${belowNames}.`);
+                });
+            }
+            if (this.invalidCategory) {
+                this.invalidCategoryList.forEach(player => {
+                    const belowNames = player.belowPlayer.map(p => p.name).join(', ');
+                    errors.push(`${player.name} spiller for højt i sin kategori (${player.category}) i forhold til ${belowNames}.`);
+                });
+            }
+            return errors;
+        },
+        incompleteTeamTip() {
+            if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'
+            if (this.incompleteTeam === null) return 'Afventer validering'
+            return this.incompleteTeam ? 'Der findes et eller flere hold der mangler spillere. Dette skal rettes før øvrige tjek kan gennemføres.' : 'Alle hold er fuldt besat.'
         },
         invalidCategoryTip() {
-            return this.invalidCategory === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidCategory ? 'Bryder § 38. stk. 2 og 3. i holdturneringsreglementet' : 'Overholder § 38. stk. 2 og 3. i holdturneringsreglementet')
-        },
-        invalidCategoryText() {
-            return (this.invalidCategory === null ? '-' : (this.invalidCategory ? 'Fejl' : 'OK'))
+            if (this.invalidCategory === null) return 'Deaktiveret indtil alle hold er fuldt besat'
+            return this.invalidCategory ? 'En eller flere spillere spiller for højt i deres kategori (Bryder § 38. stk. 2 og 3).' : 'Kategoriordningen overholdes (§ 38. stk. 2 og 3).'
         },
         invalidLevelTip() {
-            return (this.invalidLevel === null ? 'Deaktiveret indtil alle hold er gyldig' : (this.invalidLevel ? 'Bryder § 38. stk. 4. i holdturneringsreglementet' : 'Overholder § 38. stk. 4. i holdturneringsreglementet'))
-        },
-        invalidLevelText() {
-            return (this.invalidLevel === null ? '-' : (this.invalidLevel ? 'Fejl' : 'OK'))
+            if (this.invalidLevel === null) return 'Deaktiveret indtil alle hold er fuldt besat'
+            return this.invalidLevel ? 'En eller flere spillere spiller på et forkert hold (Bryder § 38. stk. 4).' : 'Niveauordningen overholdes (§ 38. stk. 4).'
         }
     }
 }

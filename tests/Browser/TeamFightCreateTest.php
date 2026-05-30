@@ -31,6 +31,9 @@ class TeamFightCreateTest extends DuskTestCase
                 ->type('@name-input', 'Dusk Test Holdrunde')
                 ->screenshot('team-fight-name-filled');
 
+            $browser->on(new TeamFightCreatePage($clubhouse->id))
+                ->setRound(1);
+
             // Open the datepicker, wait for dropdown, then click day 15
             $browser->click('@date-picker')
                 ->waitFor('.datepicker .dropdown-content')

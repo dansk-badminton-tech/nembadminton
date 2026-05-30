@@ -10,6 +10,18 @@ section.hero.is-hero-bar {
         margin-right: $default-padding;
       }
 
+      .title {
+        &:not(:last-child) {
+          margin-bottom: $default-padding * 0.25;
+        }
+      }
+
+      .subtitle {
+        &:not(:first-child) {
+          margin-top: 0;
+        }
+      }
+
       > div > .level {
         margin-bottom: $default-padding * .5;
       }

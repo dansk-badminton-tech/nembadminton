@@ -4,9 +4,17 @@
       <div class="level">
         <div class="level-left">
           <div class="level-item">
-            <h1 class="title">
-              <slot />
-            </h1>
+            <div>
+              <h1 class="title">
+                <slot />
+              </h1>
+              <div
+                v-if="$slots.subtitle"
+                class="subtitle is-6"
+              >
+                <slot name="subtitle" />
+              </div>
+            </div>
           </div>
         </div>
         <div

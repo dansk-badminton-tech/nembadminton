@@ -55,7 +55,6 @@ export function wrapInTeamAndSquads(squads) {
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
-            league: squad.league,
             categories: squad.categories.map((category) => ({
                 id: category.id,
                 category: category.category,
@@ -129,4 +128,66 @@ export function timeToMonth(currentVersion){
     let date = new Date(Date.parse(currentVersion))
     let dateString = date.toLocaleString("da-DK", {month: "long"});
     return dateString.charAt(0).toUpperCase() + dateString.slice(1) + " "+date.toLocaleString("da-DK", {year: "numeric"})
+}
+
+export function formatPlayingDatetime(value) {
+    if (!value) return ''
+    const date = new Date(value)
+    if (isNaN(date.getTime())) return ''
+    const datePart = date.toLocaleString('da-DK', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+    }).replace(/\.$/, '')
+    const timePart = date.toLocaleString('da-DK', {
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+    return `${datePart} kl. ${timePart}`
+}
+
+export function formatPlayingDatetimeLong(value) {
+    if (!value) return ''
+    const date = new Date(value)
+    if (isNaN(date.getTime())) return ''
+    return date.toLocaleString('da-DK', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+}
+
+export function formatGameDate(value) {
+    if (!value) return ''
+    const date = new Date(value)
+    if (isNaN(date.getTime())) return ''
+    return date.toLocaleString('da-DK', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    })
+}
+
+export function composedAddress(squad) {
+    if (!squad) return ''
+    const street = squad.playingAddress ? squad.playingAddress.trim() : ''
+    const zip = squad.playingZipCode ? squad.playingZipCode.trim() : ''
+    const city = squad.playingCity ? squad.playingCity.trim() : ''
+    const zipCity = [zip, city].filter(Boolean).join(' ')
+    return [street, zipCity].filter(Boolean).join(', ')
+}
+
+export function badmintonPlayerUrl(externalTeamFightID, season) {
+    return `https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,${season},,,,,${externalTeamFightID},,`
+}
+
+export function googleMapsUrl(squad) {
+    const address = composedAddress(squad)
+    const query = address || (squad && squad.playingPlace) || ''
+    if (!query) return ''
+    return `https://maps.google.com/?q=${encodeURIComponent(query)}`
 }

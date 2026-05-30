@@ -6,26 +6,83 @@
                 <thead>
                 <tr>
                     <th colspan="2">
-                        <h2 class="is-pulled-left"><strong>Hold {{ index + 1 }}</strong> {{ squad.name || 'intet navn' }}</h2>
-                        <b-taglist class="ml-2 is-pulled-left">
-                            <b-tag type="is-danger" v-if="hasEmptySpots(index)">
-                                Ugyldigt hold
-                            </b-tag>
-                            <b-tooltip type="is-info" label="Bruger en anden rangliste end holdrunden">
-                                <b-tag type="is-info" v-if="squad.version !== null">
-                                    {{timeToMonth(squad.version)}}
-                                </b-tag>
-                            </b-tooltip>
-                        </b-taglist>
-                        <div class="buttons is-pulled-right">
-                            <b-button title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)"></b-button>
-                            <b-button :disabled="index === 0" @click="moveSquadOrderUp(squad)" title="Flyt hold op" icon-left="arrow-up"></b-button>
-                            <b-button :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)" title="Flyt hold ned" icon-left="arrow-down"></b-button>
-                            <b-button icon-right="open-in-new" title="Link til badmintonplayer. Kræver kampnummer" :disabled="!!!squad?.externalTeamFightID" class="is-pulled-right" tag="a" target="_blank"
-                                      :href="'https://www.badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'+getCurrentSeason+',,,,,'+squad.externalTeamFightID+',,'"
-                                      type="is-link">
-                            </b-button>
-                            <b-button type="is-danger" @click="confirmDelete(squad)" title="Slet" icon-left="delete"></b-button>
+                        <div class="is-flex is-justify-content-space-between is-align-items-start">
+                            <div class="is-flex-grow-1">
+                                <h2><strong>Hold {{ index + 1 }}</strong> {{ squad.name || 'intet navn' }}</h2>
+                                <div class="tags squad-info-row mt-2" :dusk="'squad-info-' + index">
+                                    <b-tooltip type="is-info" :label="squad.playingDatetime ? formatPlayingDatetimeLong(squad.playingDatetime) : 'Spillestart er ikke angivet. Klik for at udfylde.'">
+                                        <b-tag
+                                            rounded
+                                            :class="squad.playingDatetime ? '' : 'squad-info-missing'"
+                                            dusk="squad-info-datetime"
+                                            @click.native="!squad.playingDatetime && openEditSquadModal(squad)">
+                                            <b-icon icon="calendar" size="is-small" class="mr-1"></b-icon>
+                                            <span v-if="squad.playingDatetime">{{ formatPlayingDatetime(squad.playingDatetime) }}</span>
+                                            <span v-else><em>Spillestart ikke angivet</em></span>
+                                        </b-tag>
+                                    </b-tooltip>
+                                    <b-tooltip type="is-info" :label="placeTooltip(squad)" multilined>
+                                        <b-tag
+                                            rounded
+                                            :class="squad.playingPlace ? '' : 'squad-info-missing'"
+                                            dusk="squad-info-place"
+                                            @click.native="!squad.playingPlace && openEditSquadModal(squad)">
+                                            <b-icon icon="map-marker" size="is-small" class="mr-1"></b-icon>
+                                            <span v-if="squad.playingPlace">{{ squad.playingPlace }}</span>
+                                            <span v-else><em>Spillested ikke angivet</em></span>
+                                        </b-tag>
+                                    </b-tooltip>
+                                    <b-tooltip type="is-info" :label="squad.externalTeamFightID ? 'Åbn kampen på badmintonplayer.dk' : 'BadmintonPlayer kampnummer er ikke angivet. Klik for at udfylde.'">
+                                        <a v-if="squad.externalTeamFightID"
+                                           :href="badmintonPlayerUrl(squad.externalTeamFightID)"
+                                           target="_blank"
+                                           rel="noopener"
+                                           class="tag is-rounded is-link is-light"
+                                           dusk="squad-info-bp-link">
+                                            <b-icon icon="open-in-new" size="is-small" class="mr-1"></b-icon>
+                                            BP #{{ squad.externalTeamFightID }}
+                                        </a>
+                                        <b-tag
+                                            v-else
+                                            rounded
+                                            class="squad-info-missing"
+                                            dusk="squad-info-bp-link"
+                                            @click.native="openEditSquadModal(squad)">
+                                            <b-icon icon="open-in-new" size="is-small" class="mr-1"></b-icon>
+                                            <em>BP kampnummer ikke angivet</em>
+                                        </b-tag>
+                                    </b-tooltip>
+                                    <b-tooltip v-if="squad.version" type="is-info" label="Rangliste anvendt på dette hold">
+                                        <b-tag rounded type="is-info" dusk="squad-info-version">
+                                            <b-icon icon="format-list-numbered" size="is-small" class="mr-1"></b-icon>
+                                            {{ timeToMonth(squad.version) }}
+                                        </b-tag>
+                                    </b-tooltip>
+                                </div>
+                            </div>
+                            <b-dropdown position="is-bottom-left" :triggers="['hover']" aria-role="list">
+                                <template v-slot:trigger>
+                                    <b-button
+                                        type="is-info"
+                                        icon-right="cog" />
+                                </template>
+                                <b-dropdown-item aria-role="listitem" title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)">
+                                    <b-icon icon="pencil"></b-icon>
+                                    Rediger holdet
+                                </b-dropdown-item>
+                                <b-dropdown-item aria-role="listitem" :disabled="index === 0" @click="moveSquadOrderUp(squad)">
+                                    <b-icon icon="arrow-up"></b-icon>
+                                    Flyt hold up
+                                </b-dropdown-item>
+                                <b-dropdown-item aria-role="listitem" :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)">
+                                    <b-icon icon="arrow-down"></b-icon>
+                                    Flyt hold ned
+                                </b-dropdown-item>
+                                <b-dropdown-item class="is-danger" aria-role="listitem" type="is-danger" @click="confirmDelete(squad)">
+                                    <b-icon icon="delete"></b-icon>
+                                    Slet holdet
+                                </b-dropdown-item>
+                            </b-dropdown>
                         </div>
                     </th>
                 </tr>
@@ -73,14 +130,6 @@
                                 <b-icon
                                     v-show="hasCorrectedPoints(player.points)"
                                     icon="information"
-                                    type="is-info"
-                                    size="is-small">
-                                </b-icon>
-                            </b-tooltip>
-                            <b-tooltip type="is-info" class="is-pulled-left" :label="'Point er fra '+timeToMonth(resolveVersionToUse(squad))+' ranglisten'">
-                                <b-icon
-                                    v-show="hasDifferentRankingList(player.points)"
-                                    icon="list-box-outline"
                                     type="is-info"
                                     size="is-small">
                                 </b-icon>
@@ -137,7 +186,13 @@ import {
 } from "../../helpers";
 import PlayerSearch from "../common/PlayerSearch.vue";
 import EditSquadModal from "./EditSquadModal.vue";
-import {timeToMonth} from "./helper";
+import {
+    timeToMonth,
+    formatPlayingDatetime,
+    formatPlayingDatetimeLong,
+    composedAddress,
+    badmintonPlayerUrl
+} from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 
 export default {
@@ -183,7 +238,20 @@ export default {
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },
-        timeToMonth: timeToMonth,
+        timeToMonth,
+        formatPlayingDatetime,
+        formatPlayingDatetimeLong,
+        composedAddress,
+        badmintonPlayerUrl(externalTeamFightID) {
+            return badmintonPlayerUrl(externalTeamFightID, getCurrentSeason())
+        },
+        placeTooltip(squad) {
+            if (!squad.playingPlace) {
+                return 'Spillested er ikke angivet. Klik for at udfylde.'
+            }
+            const address = composedAddress(squad)
+            return address || 'Ingen adresse angivet'
+        },
         startDrag(evt, squad, category, player) {
             evt.dataTransfer.dropEffect = 'move'
             evt.dataTransfer.effectAllowed = 'move'
@@ -204,16 +272,6 @@ export default {
         hasPointsInCategory,
         isDouble(category) {
             return isDoubleCategory(category)
-        },
-        hasEmptySpots(index) {
-            if (this.teamsBaseValidations.length === 0) {
-                return false;
-            } else {
-                const found = this.teamsBaseValidations.find((base) => {
-                    return index === base.index && base.spotsFulfilled === false
-                })
-                return found !== undefined;
-            }
         },
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
@@ -273,3 +331,33 @@ export default {
     }
 }
 </script>
+<style scoped>
+.squad-info-row {
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin-bottom: 0;
+}
+.squad-info-row:empty {
+    display: none;
+}
+.squad-info-row .tag {
+    margin-bottom: 0;
+}
+.squad-info-row a.tag {
+    text-decoration: none;
+}
+.squad-info-row .squad-info-missing {
+    background-color: transparent;
+    color: #7a7a7a;
+    border: 1px dashed #b5b5b5;
+    cursor: pointer;
+}
+.squad-info-row .squad-info-missing:hover {
+    color: #363636;
+    border-color: #7a7a7a;
+    background-color: #fafafa;
+}
+.squad-info-row .squad-info-missing em {
+    font-style: italic;
+}
+</style>

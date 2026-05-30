@@ -8,7 +8,6 @@ use FlyCompany\BadmintonPlayerAPI\BadmintonPlayerAPI;
 use FlyCompany\BadmintonPlayerAPI\Models\TeamMatchLineup;
 use FlyCompany\BadmintonPlayerAPI\RankingPeriodType;
 use FlyCompany\BadmintonPlayerAPI\Util;
-use FlyCompany\TeamFight\LeagueType;
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;

@@ -12,7 +12,6 @@ return [
                         [
                             'id' => 74,
                             'playerLimit' => 8,
-                            'league' => 'LIGA',
                             'categories' =>
                                 [
                                     0 =>
@@ -629,7 +628,6 @@ return [
                         [
                             'id' => 75,
                             'playerLimit' => 10,
-                            'league' => 'OTHER',
                             'categories' =>
                                 [
                                     0 =>

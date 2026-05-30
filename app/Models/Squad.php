@@ -44,7 +44,6 @@ class Squad extends Model implements Sortable
 
     protected    $fillable = [
         'playerLimit',
-        'league',
         'order',
         'team_round_id',
         'name',

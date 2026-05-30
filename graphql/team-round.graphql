@@ -12,6 +12,30 @@ extend type Query {
     teamRoundReceiver(
         teamRoundId: ID @eq(key: "team_round_id")
     ) : TeamReceivers @find @guard @canResolved(ability: "view")
+    "Tournament groups for a season. Used as UI metadata when adding squads."
+    tournamentGroups(
+        seasonId: Int! @eq(key: "season_id")
+        phaseType: String @eq(key: "phase_type")
+        order: _ @orderBy(columns: ["group_name", "phase_type", "tier_id"])
+    ): [TournamentGroupOption!]! @all(model: "App\\Models\\TournamentGroup")
+    "All known tournament tiers. Used as suggestions when naming a squad."
+    tournamentTiers(
+        order: _ @orderBy(columns: ["tier_name"])
+    ): [TournamentTierOption!]! @all(model: "App\\Models\\TournamentTier")
+}
+
+type TournamentGroupOption {
+    id: ID!
+    seasonId: Int! @rename(attribute: "season_id")
+    tierId: Int @rename(attribute: "tier_id")
+    groupName: String! @rename(attribute: "group_name")
+    phaseType: String! @rename(attribute: "phase_type")
+    tournamentTier: TournamentTierOption @belongsTo(relation: "tournamentTier")
+}
+
+type TournamentTierOption {
+    id: ID!
+    tierName: String @rename(attribute: "tier_name")
 }
 
 extend type Mutation {
@@ -116,7 +140,6 @@ input CreatePointInput {
 input UpdateSquadInput {
     id: ID!
     playerLimit: Int
-    league: LeagueType
     order: Int
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
@@ -139,7 +162,6 @@ input UpdateSquadInput {
 input CreateSquadInput {
     teamRound: SquadBelongsTo!
     playerLimit: Int!
-    league: LeagueType!
     categories: CreateCategoryHasManyInput!
     order: Int
     "BadmintonPlayer match ID"
@@ -176,12 +198,13 @@ input CreateCategoryInput {
 input CreateTeamRoundInput {
     name: String
     version: Date
+    round: Int
     gameDate: Date @rename(attribute: "game_date")
 }
 
 input UpdateTeamRoundInput {
     id: ID!
-    name: String!
+    name: String
     version: Date!
     round: Int
     gameDate: Date! @rename(attribute: "game_date")
@@ -225,8 +248,6 @@ type Squad {
     id: ID!
     "Number of players on the team"
     playerLimit: Int!
-    "What league the squad plays in"
-    league: LeagueType
     "Name"
     name: String
     "BadmintonPlayer match ID"

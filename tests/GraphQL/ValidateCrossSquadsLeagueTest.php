@@ -253,7 +253,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSpecial1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $womenSpecial2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -279,7 +278,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -366,7 +364,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSpecial1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -392,7 +389,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -451,7 +447,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSpecial1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -477,7 +472,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -556,7 +550,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $womenSpecial1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -582,7 +575,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -641,7 +633,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'LIGA';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);
@@ -667,7 +658,6 @@ class ValidateCrossSquadsLeagueTest extends BaseTestCase
 
         $squad = new Squad();
         $squad->playerLimit = 10;
-        $squad->league = 'FIRSTDIVISION';
         $squad->categories[] = CategoryFactory::makeCategory('MD. 1', 'MD', $women1, $men1);
         $squad->categories[] = CategoryFactory::makeCategory('MD. 2', 'MD', $women2, $men2);
         $squad->categories[] = CategoryFactory::makeCategory('DS. 1', 'DS', $women3);

@@ -6,10 +6,19 @@
         </hero-bar>
         <section class="section is-main-section">
             <form @submit.prevent="createTeamRound" v-if="!$apollo.queries.me.loading" class="column">
-                <b-field label="Navn">
-                    <b-input dusk="team-fight-name-input" v-model="name" required placeholder="fx. Runde 1"></b-input>
+                <b-field label="Runde nr.">
+                    <b-numberinput
+                        dusk="team-fight-round-input"
+                        v-model="round"
+                        :min="1"
+                        controls-position="compact"
+                        required>
+                    </b-numberinput>
                 </b-field>
-                <b-field label="Spilledato">
+                <b-field>
+                    <template v-slot:label>
+                        Runde spilledato
+                    </template>
                     <b-datepicker
                         dusk="team-fight-date-picker"
                         v-model="gameDate"
@@ -22,6 +31,9 @@
                 </b-field>
                 <b-field label="Rangliste">
                     <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" expanded/>
+                </b-field>
+                <b-field label="Navn (Valgfrit)">
+                    <b-input dusk="team-fight-name-input" v-model="name" expanded></b-input>
                 </b-field>
                 <b-button dusk="team-fight-submit-button" class="mt-2" native-type="submit" label="Opret" icon-left="plus" :loading="loading" />
             </form>
@@ -47,6 +59,7 @@ export default {
             gameDate: null,
             clubId: null,
             version: null,
+            round: null,
             loading: false
         }
     },
@@ -70,6 +83,16 @@ export default {
                 return false
             }
 
+            if(this.round === null || this.round === ''){
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    position: 'is-top',
+                    type: 'is-danger',
+                    message: `Du mangler at angive et rundenummer`
+                })
+                return false
+            }
+
             this.loading = true
             const createTeamRoundGQL = gql`
                         mutation ($input: CreateTeamRoundInput!){
@@ -88,7 +111,8 @@ export default {
                             input: {
                                 name: this.name,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
-                                version: this.version
+                                version: this.version,
+                                round: this.round
                             }
                         }
                     })

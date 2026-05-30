@@ -11,7 +11,6 @@ return [
                     'squad' =>
                         [
                             'playerLimit' => 10,
-                            'league' => 'FIRSTDIVISION',
                             'categories' =>
                                 [
                                     0 =>
@@ -669,7 +668,6 @@ return [
                     'squad' =>
                         [
                             'playerLimit' => 10,
-                            'league' => 'OTHER',
                             'categories' =>
                                 [
                                     0 =>
@@ -1605,7 +1603,6 @@ return [
                     'squad' =>
                         [
                             'playerLimit' => 10,
-                            'league' => 'OTHER',
                             'categories' =>
                                 [
                                     0 =>
