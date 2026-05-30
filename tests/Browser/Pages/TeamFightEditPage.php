@@ -43,7 +43,7 @@ class TeamFightEditPage extends Page
             '@page' => "[dusk='team-fight-edit-page']",
             '@player-search-panel' => "[dusk='player-search-panel']",
             '@player-search-input' => "[dusk='player-search-input'] input",
-            '@ranking-list-select' => "[dusk='ranking-list-select'] select",
+            '@ranking-list-select' => "[dusk='ranking-list-select']",
             '@player-search-table' => "[dusk='player-search-table']",
             '@team-table-section' => "[dusk='team-table-section']",
             '@add-teams-section' => "[dusk='add-teams-section']",
@@ -59,19 +59,16 @@ class TeamFightEditPage extends Page
     /**
      * Switch the ranking list category filter in the player search panel.
      *
-     * The Buefy b-select wrapper requires JS value assignment + event dispatch.
-     * Valid values: WOMEN_MIX, MEN_MIX, WOMEN_SINGLE, MEN_SINGLE,
-     *               WOMEN_DOUBLE, MEN_DOUBLE, WOMEN_MIX_DOUBLE, MEN_MIX_DOUBLE.
+     * Clicks the segmented radio button matching the given value.
+     * Valid values: WOMEN_SINGLE, MEN_SINGLE, WOMENS_DOUBLE, MENS_DOUBLE,
+     *               WOMEN_MIX, MEN_MIX.
      */
     public function switchRankingList(Browser $browser, string $value): void
     {
-        $browser->script("
-            var sel = document.querySelector(\"[dusk='ranking-list-select']\");
-            if (sel.tagName !== 'SELECT') sel = sel.querySelector('select') || sel;
-            sel.value = '{$value}';
-            sel.dispatchEvent(new Event('input'));
-            sel.dispatchEvent(new Event('change'));
-        ");
+        $selector = "[dusk='ranking-list-{$value}']";
+        $browser->waitFor($selector)
+            ->scrollIntoView($selector)
+            ->click($selector);
         $browser->waitFor("[dusk='player-search-panel'] table tbody tr", 15);
     }
 

@@ -2,9 +2,6 @@
     <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
             <b-input dusk="player-search-input" @input="search" placeholder="Søg på navn"></b-input>
-            <b-select dusk="ranking-list-select" v-model="rankingList">
-                <option v-for="(label, value) in rankings" :value="value">{{ label }}</option>
-            </b-select>
             <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
                 <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
                 <span v-if="showCancellation">Skjul afbud</span>
@@ -15,6 +12,19 @@
                 Tilføj spiller
             </b-button>
             <b-switch v-show="showCancellation" v-model="showPlayable">Vis permanent afbud</b-switch>
+        </b-field>
+        <b-field dusk="ranking-list-select" class="ranking-buttons">
+            <b-radio-button
+                v-for="(short, value) in rankingShortLabels"
+                :key="value"
+                v-model="rankingList"
+                :native-value="value"
+                :dusk="`ranking-list-${value}`"
+                type="is-info"
+                :title="rankings[value]"
+            >
+                {{ short }}
+            </b-radio-button>
         </b-field>
         <p class="mt-4" v-html="resolveHelperTextForCancellation"></p>
         <b-table
@@ -195,6 +205,14 @@ export default {
                 MEN_SINGLE: 'Herre Single',
                 MENS_DOUBLE: 'Herre Double',
                 MEN_MIX: 'Herre Mix'
+            },
+            rankingShortLabels: {
+                WOMEN_SINGLE: 'DS',
+                MEN_SINGLE: 'HS',
+                WOMENS_DOUBLE: 'DD',
+                MENS_DOUBLE: 'HD',
+                WOMEN_MIX: 'MxD',
+                MEN_MIX: 'MxH'
             },
             showPlayable: false
         }
