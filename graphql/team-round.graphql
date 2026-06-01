@@ -157,6 +157,8 @@ input UpdateSquadInput {
     name: String
     "Tier"
     tier: String
+    "Optional organizational team this squad is created from (pass null to disconnect)"
+    teamId: ID @rename(attribute: "team_id")
     "Ranking version"
     version: Date
 }

@@ -9,6 +9,12 @@ query teamRound($id: ID!){
             tier
             team{
                 id
+                name
+                tier {
+                    id
+                    tierName
+                }
+                groupName
             }
             playingCity
             playingZipCode

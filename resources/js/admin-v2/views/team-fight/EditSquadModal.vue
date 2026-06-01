@@ -16,6 +16,8 @@ export default {
         squad: {
             handler(newValue, oldValue) {
                 this.name = newValue.name
+                this.tier = newValue.tier
+                this.team = newValue.team
                 this.playingDatetime = newValue.playingDatetime
                                        ? new Date(newValue.playingDatetime)
                                        : null
@@ -31,12 +33,27 @@ export default {
         }
     },
     computed: {
-        getCurrentSeason
+        getCurrentSeason,
+        hasTeam() {
+            return this.team !== null && this.team !== undefined;
+        },
+        teamChipLabel() {
+            if (!this.hasTeam) {
+                return '';
+            }
+            const tierLabel = this.team?.tier?.tierName || this.team?.customTierName || '';
+            const parts = [this.team.name];
+            if (tierLabel) parts.push(tierLabel);
+            if (this.team.groupName) parts.push(this.team.groupName);
+            return parts.join(' · ');
+        }
     },
     data() {
         return {
             loading: false,
             name: null,
+            tier: null,
+            team: null,
             playingDatetime: null,
             playingPlace: null,
             playingAddress: null,
@@ -56,6 +73,9 @@ export default {
         toggleRankingWarning(){
             this.changeOfRankingWarning = true;
         },
+        disconnectTeam() {
+            this.team = null;
+        },
         updateToRankingList(newVersion) {
             return this.$apollo
                        .mutate(
@@ -67,6 +87,7 @@ export default {
                                         playerLimit
                                         order
                                         name
+                                          tier
                                         playingCity
                                         playingZipCode
                                         playingAddress
@@ -74,6 +95,15 @@ export default {
                                         playingDatetime
                                         externalTeamFightID
                                         version
+                                          team {
+                                              id
+                                              name
+                                              groupName
+                                              tier{
+                                                  id
+                                                  tierName
+                                              }
+                                          }
                                         categories{
                                             id
                                             category
@@ -131,6 +161,16 @@ export default {
                             updateSquad(input: $input){
                                 id
                                 name
+                                tier
+                                team {
+                                    id
+                                    name
+                                    groupName
+                                    tier{
+                                        id
+                                        tierName
+                                    }
+                                }
                                 playingDatetime
                                 playingPlace,
                                 playingAddress
@@ -145,6 +185,8 @@ export default {
                         input: {
                             id: this.squad.id,
                             name: this.name,
+                            tier: this.tier,
+                            teamId: this.team?.id ?? null,
                             externalTeamFightID: this.externalTeamFightID,
                             playingDatetime: this.playingDatetime
                                              ? formatDateTime(this.playingDatetime)
@@ -281,11 +323,39 @@ export default {
                 <b-button v-if="showTeamFightSelector" type="is-info" @click="showTeamFightSelector = !showTeamFightSelector">Luk</b-button>
                 <BadmintonPlayerTeamFightSelector :import-information="fillInformation" v-if="showTeamFightSelector"/>
                 <hr>
+                <b-field
+                    v-if="hasTeam"
+                    label="Tilknyttet hold"
+                    message="Holdnavn og niveau styres af det tilknyttede hold. Frakobl for at redigere frit.">
+                    <div class="edit-squad-modal__team-chip" dusk="edit-squad-team-chip">
+                        <b-icon icon="shield-account" size="is-small" class="mr-2"/>
+                        <span class="edit-squad-modal__team-chip-label">{{ teamChipLabel }}</span>
+                        <b-button
+                            class="ml-2"
+                            type="is-text"
+                            size="is-small"
+                            icon-right="close"
+                            :disabled="loading"
+                            dusk="disconnect-squad-team"
+                            @click="disconnectTeam">
+                            Frakobl
+                        </b-button>
+                    </div>
+                </b-field>
                 <b-field label="Holdnavn">
                     <b-input
+                        :disabled="hasTeam"
                         type="text"
                         v-model="name"
-                        placeholder="Danmarksserien Pulje 1">
+                        placeholder="fx Højbjerg 1">
+                    </b-input>
+                </b-field>
+                <b-field label="Niveau">
+                    <b-input
+                        :disabled="hasTeam"
+                        type="text"
+                        v-model="tier"
+                        placeholder="fx 1. division">
                     </b-input>
                 </b-field>
                 <hr/>
@@ -372,5 +442,21 @@ export default {
 </template>
 
 <style scoped>
+.edit-squad-modal__team-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
+    border: 1px solid #b5b5b5;
+    border-radius: 999px;
+    background: #fff;
+    color: #363636;
+    font-size: 0.95rem;
+    max-width: 100%;
+}
 
+.edit-squad-modal__team-chip-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 </style>

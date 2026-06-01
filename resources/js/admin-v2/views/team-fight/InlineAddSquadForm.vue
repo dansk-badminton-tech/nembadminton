@@ -137,7 +137,7 @@
                             @select="onTierSelect">
                         </b-autocomplete>
                         <p class="help has-text-grey mb-0">
-                            Navn og niveau er valgfrie. Vælg fra et eksisterende hold for at prefillede begge.
+                            Navn og niveau er valgfrie.
                         </p>
                     </template>
                 </div>
