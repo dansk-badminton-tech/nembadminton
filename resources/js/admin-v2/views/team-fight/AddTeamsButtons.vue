@@ -64,6 +64,10 @@ export default {
         existingSquadCount: {
             type: Number,
             default: 0
+        },
+        usedTeamIds: {
+            type: Array,
+            default: () => []
         }
     },
     data() {
@@ -108,17 +112,20 @@ export default {
             }));
         },
         teamOptions() {
-            return this.teams.map((team) => {
-                const tierLabel = team.tier?.tierName || team.customTierName || '';
-                const parts = [team.name];
-                if (tierLabel) parts.push(tierLabel);
-                if (team.groupName) parts.push(team.groupName);
-                return {
-                    id: team.id,
-                    label: parts.join(' · '),
-                    team
-                };
-            });
+            const usedIds = new Set((this.usedTeamIds || []).map(String));
+            return this.teams
+                .filter((team) => !usedIds.has(String(team.id)))
+                .map((team) => {
+                    const tierLabel = team.tier?.tierName || team.customTierName || '';
+                    const parts = [team.name];
+                    if (tierLabel) parts.push(tierLabel);
+                    if (team.groupName) parts.push(team.groupName);
+                    return {
+                        id: team.id,
+                        label: parts.join(' · '),
+                        team
+                    };
+                });
         },
         nextSquadNumber() {
             return this.existingSquadCount + 1;
