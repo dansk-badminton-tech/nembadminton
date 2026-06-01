@@ -1,0 +1,22 @@
+query teams($clubhouseId: ID!, $page: Int!, $first: Int!) {
+    teams(clubhouseId: $clubhouseId, page: $page, first: $first, order: [{column: NAME, order: ASC}]) {
+        data {
+            id
+            name
+            groupName
+            customTierName
+            tier {
+                id
+                tierName
+            }
+            createdAt
+            updatedAt
+        }
+        paginatorInfo {
+            count
+            total
+            currentPage
+            lastPage
+        }
+    }
+}

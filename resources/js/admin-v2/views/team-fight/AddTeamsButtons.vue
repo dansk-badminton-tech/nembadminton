@@ -2,18 +2,24 @@
     <InlineAddSquadForm
         :loading="loading"
         :tiers-loading="$apollo.queries.tiers.loading"
+        :teams-loading="$apollo.queries.teams.loading"
         :selected-match-count="selectedMatchCount"
+        :selected-name="selectedName"
         :selected-tier-name="selectedTierName"
+        :selected-team-label="selectedTeamLabel"
         :selected-playing-date="selectedPlayingDate"
         :match-count-options="matchCountOptions"
         :tier-options="tierOptions"
+        :team-options="teamOptions"
         :quick-date-options="quickDateOptions"
         :recommended-ranking-label="recommendedRankingLabel"
         :next-squad-number="nextSquadNumber"
         :custom-category-counts="customCategoryCounts"
         :custom-total-match-count="customTotalMatchCount"
         @select-match-count="onMatchCountChange"
+        @select-name="onNameChange"
         @select-tier="onTierChange"
+        @select-team="onTeamChange"
         @change-playing-date="onPlayingDateChange"
         @select-quick-date="onQuickDateSelect"
         @update-custom-category-count="onCustomCategoryCountChange"
@@ -51,6 +57,10 @@ export default {
     props: {
         teamRoundId: String,
         teamRoundDate: Date,
+        clubhouseId: {
+            type: [String, Number],
+            default: null
+        },
         existingSquadCount: {
             type: Number,
             default: 0
@@ -60,11 +70,15 @@ export default {
         return {
             loading: false,
             selectedMatchCount: 13,
+            selectedName: '',
             selectedTierName: '',
+            selectedTeamId: null,
+            selectedTeamLabel: '',
             selectedPlayingDate: null,
             playingDateChanged: false,
             rankingVersions: [],
             tiers: [],
+            teams: [],
             customCategoryCounts: {...DEFAULT_CUSTOM_COUNTS}
         }
     },
@@ -92,6 +106,19 @@ export default {
                 id: tier.id,
                 label: tier.tierName
             }));
+        },
+        teamOptions() {
+            return this.teams.map((team) => {
+                const tierLabel = team.tier?.tierName || team.customTierName || '';
+                const parts = [team.name];
+                if (tierLabel) parts.push(tierLabel);
+                if (team.groupName) parts.push(team.groupName);
+                return {
+                    id: team.id,
+                    label: parts.join(' · '),
+                    team
+                };
+            });
         },
         nextSquadNumber() {
             return this.existingSquadCount + 1;
@@ -152,6 +179,32 @@ export default {
                         message: 'Kunne ikke hente turneringstiers'
                     });
             }
+        },
+        teams: {
+            query: gql`
+                query teamsForSquadPicker($clubhouseId: ID!) {
+                    teams(clubhouseId: $clubhouseId, first: 200, order: [{column: NAME, order: ASC}]) {
+                        data {
+                            id
+                            name
+                            groupName
+                            customTierName
+                            tier { id tierName }
+                        }
+                    }
+                }
+            `,
+            variables() {
+                return {clubhouseId: this.clubhouseId};
+            },
+            skip() {
+                return this.clubhouseId === null || this.clubhouseId === undefined;
+            },
+            update: data => data.teams.data,
+            error() {
+                // Silent — team picker is optional UI, fall back to empty list
+            },
+            fetchPolicy: 'network-only'
         }
     },
     methods: {
@@ -220,8 +273,28 @@ export default {
                 [field]: safeValue
             };
         },
+        onNameChange(name) {
+            this.selectedName = typeof name === 'string' ? name : '';
+        },
         onTierChange(tierName) {
             this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+        },
+        onTeamChange(team) {
+            if (team === null || team === undefined) {
+                this.selectedTeamId = null;
+                this.selectedTeamLabel = '';
+                this.selectedName = '';
+                this.selectedTierName = '';
+                return;
+            }
+            this.selectedTeamId = team.id;
+            const tierLabel = team.tier?.tierName || team.customTierName || '';
+            const parts = [team.name];
+            if (tierLabel) parts.push(tierLabel);
+            if (team.groupName) parts.push(team.groupName);
+            this.selectedTeamLabel = parts.join(' · ');
+            this.selectedName = team.name || '';
+            this.selectedTierName = tierLabel;
         },
         onPlayingDateChange(date) {
             this.markPlayingDateAsManual(date);
@@ -253,9 +326,18 @@ export default {
                 input.version = this.recommendedVersion;
             }
 
+            const trimmedName = this.selectedName.trim();
+            if (trimmedName !== '') {
+                input.name = trimmedName;
+            }
+
             const trimmedTier = this.selectedTierName.trim();
             if (trimmedTier !== '') {
-                input.name = `${trimmedTier}`;
+                input.tier = trimmedTier;
+            }
+
+            if (this.selectedTeamId !== null) {
+                input.teamId = this.selectedTeamId;
             }
 
             return input;
@@ -327,7 +409,10 @@ export default {
             const squad = this.buildSquadPayload();
             const metadata = this.buildSquadMetadataInput();
             this.addSquad(squad, metadata).then(() => {
+                this.selectedName = '';
                 this.selectedTierName = '';
+                this.selectedTeamId = null;
+                this.selectedTeamLabel = '';
             })
         }
     }

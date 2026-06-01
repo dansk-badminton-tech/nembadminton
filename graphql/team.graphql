@@ -1,0 +1,39 @@
+extend type Query {
+    team(id: ID! @eq): Team @find @guard @canFind(ability: "view", find: "id")
+    teams(
+        clubhouseId: ID! @eq(key: "clubhouse_id"),
+        order: _ @orderBy(columns: ["created_at", "updated_at", "name"])
+    ): [Team!]! @paginate(defaultCount: 50) @guard @canResolved(ability: "view")
+}
+
+extend type Mutation {
+    createTeam(input: CreateTeamInput! @spread): Team! @create @guard @canModel(ability: "create") @inject(context: "user.clubhouse_id", name: "clubhouse_id")
+    updateTeam(input: UpdateTeamInput! @spread): Team! @update @guard @canFind(ability: "update", find: "id")
+    deleteTeam(id: ID! @eq): Team! @delete @guard @canFind(ability: "delete", find: "id")
+}
+
+type Team {
+    id: ID!
+    name: String!
+    tier: TournamentTierOption @belongsTo
+    customTierName: String @rename(attribute: "custom_tier_name")
+    groupName: String @rename(attribute: "group_name")
+    clubhouse: Clubhouse @belongsTo
+    createdAt: DateTime @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
+}
+
+input CreateTeamInput {
+    name: String!
+    tierId: ID @rename(attribute: "tier_id") @rules(apply: ["prohibits:customTierName"])
+    customTierName: String @rename(attribute: "custom_tier_name")
+    groupName: String @rename(attribute: "group_name")
+}
+
+input UpdateTeamInput {
+    id: ID!
+    name: String
+    tierId: ID @rename(attribute: "tier_id") @rules(apply: ["prohibits:customTierName"])
+    customTierName: String @rename(attribute: "custom_tier_name")
+    groupName: String @rename(attribute: "group_name")
+}

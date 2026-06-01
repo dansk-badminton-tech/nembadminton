@@ -23,4 +23,7 @@ enum Permission: string
     case DELETE_MEMBERS = 'delete members';
 
     case VIEW_TEAMS = 'view teams';
+    case CREATE_TEAMS = 'create teams';
+    case EDIT_TEAMS = 'edit teams';
+    case DELETE_TEAMS = 'delete teams';
 }

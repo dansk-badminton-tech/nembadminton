@@ -6,6 +6,7 @@ query teamRound($id: ID!){
             playerLimit
             order
             name
+            tier
             playingCity
             playingZipCode
             playingAddress

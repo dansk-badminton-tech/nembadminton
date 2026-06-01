@@ -8,7 +8,7 @@
                     <th colspan="2">
                         <div class="is-flex is-justify-content-space-between is-align-items-start">
                             <div class="is-flex-grow-1">
-                                <h2><strong>Hold {{ index + 1 }}</strong> {{ squad.name || 'intet navn' }}</h2>
+                                <h2><strong>Hold {{ index + 1 }}</strong> - {{ squad.tier }} {{ squad.name }}</h2>
                                 <div class="tags squad-info-row mt-2" :dusk="'squad-info-' + index">
                                     <b-tooltip type="is-info" :label="squad.playingDatetime ? formatPlayingDatetimeLong(squad.playingDatetime) : 'Spillestart er ikke angivet. Klik for at udfylde.'">
                                         <b-tag

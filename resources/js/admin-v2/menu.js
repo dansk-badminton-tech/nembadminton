@@ -13,6 +13,11 @@ export default function resolveMenu(clubhouseId) {
                 label: 'Holdrunder'
             },
             {
+                to: '/c-'+clubhouseId+'/teams',
+                icon: 'shield-account',
+                label: 'Hold'
+            },
+            {
                 to: '/cancellations/redirect',
                 icon: 'cancel',
                 label: 'Afbud'

@@ -19,27 +19,30 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['name' => SystemPermission::VIEW_TEAMROUNDS->value]);
-        Permission::create(['name' => SystemPermission::CREATE_TEAMROUNDS->value]);
-        Permission::create(['name' => SystemPermission::EDIT_TEAMROUNDS->value]);
-        Permission::create(['name' => SystemPermission::DELETE_TEAMROUNDS->value]);
-        Permission::create(['name' => SystemPermission::VIEW_CANCELLATIONS_COLLECTORS->value]);
-        Permission::create(['name' => SystemPermission::CREATE_CANCELLATIONS_COLLECTORS->value]);
-        Permission::create(['name' => SystemPermission::EDIT_CANCELLATIONS_COLLECTORS->value]);
-        Permission::create(['name' => SystemPermission::DELETE_CANCELLATIONS_COLLECTORS->value]);
-        Permission::create(['name' => SystemPermission::VIEW_CLUBHOUSE->value]);
-        Permission::create(['name' => SystemPermission::EDIT_CLUBHOUSE->value]); // This gives permissions to edit permissions
-        Permission::create(['name' => SystemPermission::VIEW_MEMBERS->value]);
-        Permission::create(['name' => SystemPermission::EDIT_MEMBERS->value]);
-        Permission::create(['name' => SystemPermission::CREATE_MEMBERS->value]);
-        Permission::create(['name' => SystemPermission::DELETE_MEMBERS->value]);
-        Permission::create(['name' => SystemPermission::VIEW_TEAMS->value]);
+        Permission::findOrCreate(SystemPermission::VIEW_TEAMROUNDS->value);
+        Permission::findOrCreate(SystemPermission::CREATE_TEAMROUNDS->value);
+        Permission::findOrCreate(SystemPermission::EDIT_TEAMROUNDS->value);
+        Permission::findOrCreate(SystemPermission::DELETE_TEAMROUNDS->value);
+        Permission::findOrCreate(SystemPermission::VIEW_CANCELLATIONS_COLLECTORS->value);
+        Permission::findOrCreate(SystemPermission::CREATE_CANCELLATIONS_COLLECTORS->value);
+        Permission::findOrCreate(SystemPermission::EDIT_CANCELLATIONS_COLLECTORS->value);
+        Permission::findOrCreate(SystemPermission::DELETE_CANCELLATIONS_COLLECTORS->value);
+        Permission::findOrCreate(SystemPermission::VIEW_CLUBHOUSE->value);
+        Permission::findOrCreate(SystemPermission::EDIT_CLUBHOUSE->value); // This gives permissions to edit permissions
+        Permission::findOrCreate(SystemPermission::VIEW_MEMBERS->value);
+        Permission::findOrCreate(SystemPermission::EDIT_MEMBERS->value);
+        Permission::findOrCreate(SystemPermission::CREATE_MEMBERS->value);
+        Permission::findOrCreate(SystemPermission::DELETE_MEMBERS->value);
+        Permission::findOrCreate(SystemPermission::VIEW_TEAMS->value);
+        Permission::findOrCreate(SystemPermission::CREATE_TEAMS->value);
+        Permission::findOrCreate(SystemPermission::EDIT_TEAMS->value);
+        Permission::findOrCreate(SystemPermission::DELETE_TEAMS->value);
 
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // or may be done by chaining
-        Role::create(['name' => SystemRole::COACH->value, 'clubhouse_id' => null])->givePermissionTo([
+        Role::updateOrCreate(['name' => SystemRole::COACH->value, 'clubhouse_id' => null])->givePermissionTo([
             SystemPermission::VIEW_TEAMROUNDS->value,
             SystemPermission::CREATE_TEAMROUNDS->value,
             SystemPermission::EDIT_TEAMROUNDS->value,
@@ -54,16 +57,20 @@ class RolesAndPermissionsSeeder extends Seeder
             SystemPermission::EDIT_MEMBERS->value,
             SystemPermission::CREATE_MEMBERS->value,
             SystemPermission::DELETE_MEMBERS->value,
+            SystemPermission::VIEW_TEAMS->value,
+            SystemPermission::CREATE_TEAMS->value,
+            SystemPermission::EDIT_TEAMS->value,
+            SystemPermission::DELETE_TEAMS->value,
         ]);
 
-        Role::create(['name' => SystemRole::PLAYER->value, 'clubhouse_id' => null])->givePermissionTo([
+        Role::updateOrCreate(['name' => SystemRole::PLAYER->value, 'clubhouse_id' => null])->givePermissionTo([
             SystemPermission::VIEW_TEAMS->value,
         ]);
 
-        $role = Role::create(['name' => SystemRole::SUPERADMIN->value, 'clubhouse_id' => null]);
+        $role = Role::updateOrCreate(['name' => SystemRole::SUPERADMIN->value, 'clubhouse_id' => null]);
         $role->givePermissionTo(Permission::all());
 
-        $role = Role::create(['name' => SystemRole::CLUB_ADMIN->value, 'clubhouse_id' => null]);
+        $role = Role::updateOrCreate(['name' => SystemRole::CLUB_ADMIN->value, 'clubhouse_id' => null]);
         $role->givePermissionTo(Permission::all());
     }
 }

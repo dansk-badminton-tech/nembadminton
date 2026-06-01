@@ -85,17 +85,4 @@ class TeamRoundRelationsTest extends TestCase
         $this->assertSame(TeamRound::class, $teamRoundsRelation->getRelated()::class);
         $this->assertSame('user_id', $teamRoundsRelation->getForeignKeyName());
     }
-
-    /**
-     * @test
-     */
-    public function legacy_alias_relation_methods_are_removed(): void
-    {
-        $this->assertFalse(method_exists(Squad::class, 'team'));
-        $this->assertFalse(method_exists(Cancellation::class, 'team'));
-        $this->assertFalse(method_exists(TeamReceivers::class, 'team'));
-        $this->assertFalse(method_exists(TeamReceivers::class, 'teams'));
-        $this->assertFalse(method_exists(TeamActivityLog::class, 'team'));
-        $this->assertFalse(method_exists(User::class, 'teams'));
-    }
 }

@@ -155,6 +155,8 @@ input UpdateSquadInput {
     playingCity: String @rename(attribute: "playing_city")
     "Name"
     name: String
+    "Tier"
+    tier: String
     "Ranking version"
     version: Date
 }
@@ -164,6 +166,10 @@ input CreateSquadInput {
     playerLimit: Int!
     categories: CreateCategoryHasManyInput!
     order: Int
+    "Optional organizational team this squad was created from"
+    teamId: ID @rename(attribute: "team_id")
+    "Tier"
+    tier: String
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
     "Playing team"
@@ -250,6 +256,10 @@ type Squad {
     playerLimit: Int!
     "Name"
     name: String
+    "Free-text tier label (autocompleted from tournament_tiers, but stored as plain string)"
+    tier: String
+    "Organizational team this squad was created from (optional)"
+    team: Team @belongsTo
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
     "Playing team"

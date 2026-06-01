@@ -26,9 +26,9 @@
                     dusk="team-fight-public-squad">
                     <div class="card squad-card" :dusk="'squad-card-' + index">
                         <div class="card-content">
-                            <p class="squad-eyebrow has-text-grey">HOLD {{ index + 1 }}</p>
+                            <p class="squad-eyebrow has-text-grey">HOLD {{ index + 1 }} - {{squad.name}}</p>
                             <h2 v-if="squad.name" class="is-size-4 has-text-weight-bold squad-title">
-                                {{ squad.name }}
+                                {{ squad.tier }}
                             </h2>
                             <div
                                 v-if="hasSquadChips(squad)"
@@ -194,6 +194,7 @@ export default {
                         id
                         playerLimit
                         name
+                        tier
                         playingDatetime
                         playingPlace
                         playingAddress
