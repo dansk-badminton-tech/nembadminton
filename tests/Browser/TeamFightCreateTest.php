@@ -49,7 +49,7 @@ class TeamFightCreateTest extends DuskTestCase
             // Wait until the seasons query has resolved and the watcher fired.
             $browser->waitFor('@season-select')
                 ->waitUsing(5, 100, function () use ($browser) {
-                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-season-select'] select\").value;")[0];
+                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-season-select-wrapper'] select\").value;")[0];
                 })
                 ->screenshot('team-fight-season-autoselected');
 

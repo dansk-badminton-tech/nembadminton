@@ -33,20 +33,22 @@
                     <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" expanded/>
                 </b-field>
                 <b-field label="Sæson">
-                    <b-select
-                        v-model="seasonId"
-                        dusk="team-fight-season-select"
-                        :loading="$apollo.queries.seasons.loading"
-                        placeholder="Vælg sæson"
-                        expanded
-                        required>
-                        <option
-                            v-for="season in seasons"
-                            :key="season.id"
-                            :value="season.id">
-                            {{ season.seasonName }}
-                        </option>
-                    </b-select>
+                    <div dusk="team-fight-season-select-wrapper">
+                        <b-select
+                            v-model="seasonId"
+                            dusk="team-fight-season-select"
+                            :loading="$apollo.queries.seasons.loading"
+                            placeholder="Vælg sæson"
+                            expanded
+                            required>
+                            <option
+                                v-for="season in seasons"
+                                :key="season.id"
+                                :value="season.id">
+                                {{ season.seasonName }}
+                            </option>
+                        </b-select>
+                    </div>
                 </b-field>
                 <b-field label="Navn (Valgfrit)">
                     <b-input dusk="team-fight-name-input" v-model="name" expanded></b-input>

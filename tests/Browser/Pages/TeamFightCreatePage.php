@@ -30,7 +30,7 @@ class TeamFightCreatePage extends Page
             '@name-input' => "[dusk='team-fight-name-input']",
             '@round-input' => "[dusk='team-fight-round-input']",
             '@date-picker' => "[dusk='team-fight-date-picker']",
-            '@season-select' => "[dusk='team-fight-season-select'] select",
+            '@season-select' => "[dusk='team-fight-season-select-wrapper'] select",
             '@ranking-select' => "[dusk='team-fight-ranking-select'] select",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
@@ -155,7 +155,7 @@ class TeamFightCreatePage extends Page
     {
         $browser->waitFor('@season-select')
             ->script("
-                var sel = document.querySelector(\"[dusk='team-fight-season-select'] select\");
+                var sel = document.querySelector(\"[dusk='team-fight-season-select-wrapper'] select\");
                 sel.value = '{$seasonId}';
                 sel.dispatchEvent(new Event('input', { bubbles: true }));
                 sel.dispatchEvent(new Event('change', { bubbles: true }));
