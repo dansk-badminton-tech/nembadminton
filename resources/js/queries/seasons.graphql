@@ -1,0 +1,6 @@
+query seasons {
+    seasons(order: [{column: ID, order: DESC}]) {
+        id
+        seasonName
+    }
+}

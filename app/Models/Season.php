@@ -20,4 +20,14 @@ class Season extends Model
     {
         return $this->hasMany(TournamentGroup::class, 'season_id', 'id');
     }
+
+    public function teams(): HasMany
+    {
+        return $this->hasMany(Team::class, 'season_id', 'id');
+    }
+
+    public function teamRounds(): HasMany
+    {
+        return $this->hasMany(TeamRound::class, 'season_id', 'id');
+    }
 }

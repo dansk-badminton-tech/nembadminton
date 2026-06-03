@@ -30,7 +30,25 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste">
-                    <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" expanded/>
+                    <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" auto-select-recommended expanded/>
+                </b-field>
+                <b-field label="Sæson">
+                    <div dusk="team-fight-season-select-wrapper">
+                        <b-select
+                            v-model="seasonId"
+                            dusk="team-fight-season-select"
+                            :loading="$apollo.queries.seasons.loading"
+                            placeholder="Vælg sæson"
+                            expanded
+                            required>
+                            <option
+                                v-for="season in seasons"
+                                :key="season.id"
+                                :value="season.id">
+                                {{ season.seasonName }}
+                            </option>
+                        </b-select>
+                    </div>
                 </b-field>
                 <b-field label="Navn (Valgfrit)">
                     <b-input dusk="team-fight-name-input" v-model="name" expanded></b-input>
@@ -44,10 +62,12 @@
 <script>
 import gql from 'graphql-tag'
 import ME from "../../../queries/me.gql";
+import SeasonsQuery from "../../../queries/seasons.graphql";
 import RankingListDatePicker from "../common/RankingListDatePicker.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
+import { resolveSeasonIdByDate } from "./add-squad-metadata";
 
 export default {
     name: "TeamFightCreate",
@@ -60,7 +80,10 @@ export default {
             clubId: null,
             version: null,
             round: null,
-            loading: false
+            loading: false,
+            seasons: [],
+            seasonId: null,
+            seasonManuallyChanged: false
         }
     },
     apollo: {
@@ -69,9 +92,44 @@ export default {
             result({data}) {
                 this.clubId = data.me.clubhouse.clubs[0].id
             }
+        },
+        seasons: {
+            query: SeasonsQuery
+        }
+    },
+    watch: {
+        gameDate(newDate) {
+            if (this.seasonManuallyChanged) {
+                return;
+            }
+            const resolved = resolveSeasonIdByDate(newDate);
+            if (resolved !== null && this.isSeasonAvailable(resolved)) {
+                this.seasonId = resolved;
+            }
+        },
+        seasonId(newValue, oldValue) {
+            // Only mark as manual when user changes it after an auto-set
+            if (oldValue !== null && newValue !== null && newValue !== this.autoSeasonId()) {
+                this.seasonManuallyChanged = true;
+            }
+        },
+        seasons() {
+            // Once seasons load, try to auto-select based on current gameDate
+            if (this.seasonId === null && this.gameDate !== null) {
+                const resolved = resolveSeasonIdByDate(this.gameDate);
+                if (resolved !== null && this.isSeasonAvailable(resolved)) {
+                    this.seasonId = resolved;
+                }
+            }
         }
     },
     methods: {
+        isSeasonAvailable(id) {
+            return Array.isArray(this.seasons) && this.seasons.some(s => Number(s.id) === Number(id));
+        },
+        autoSeasonId() {
+            return resolveSeasonIdByDate(this.gameDate);
+        },
         createTeamRound() {
             if(this.gameDate === null){
                 this.$buefy.snackbar.open({
@@ -89,6 +147,16 @@ export default {
                     position: 'is-top',
                     type: 'is-danger',
                     message: `Du mangler at angive et rundenummer`
+                })
+                return false
+            }
+
+            if(this.seasonId === null){
+                this.$buefy.snackbar.open({
+                    duration: 4000,
+                    position: 'is-top',
+                    type: 'is-danger',
+                    message: `Du mangler at vælge en sæson`
                 })
                 return false
             }
@@ -112,7 +180,8 @@ export default {
                                 name: this.name,
                                 gameDate: this.gameDate.getFullYear() + "-" + (this.gameDate.getMonth() + 1) + "-" + this.gameDate.getDate(),
                                 version: this.version,
-                                round: this.round
+                                round: this.round,
+                                seasonId: this.seasonId
                             }
                         }
                     })

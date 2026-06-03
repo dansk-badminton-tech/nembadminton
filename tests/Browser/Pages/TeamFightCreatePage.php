@@ -30,6 +30,7 @@ class TeamFightCreatePage extends Page
             '@name-input' => "[dusk='team-fight-name-input']",
             '@round-input' => "[dusk='team-fight-round-input']",
             '@date-picker' => "[dusk='team-fight-date-picker']",
+            '@season-select' => "[dusk='team-fight-season-select-wrapper'] select",
             '@ranking-select' => "[dusk='team-fight-ranking-select'] select",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
@@ -142,6 +143,23 @@ class TeamFightCreatePage extends Page
 
         $browser->select('@ranking-select', $rankingVersion)
             ->click('@submit-button');
+    }
+
+    /**
+     * Select a season by its id (the year the season starts, e.g. 2025).
+     *
+     * The form auto-selects a season based on the chosen game date, so this
+     * is only needed to override that default.
+     */
+    public function selectSeason(Browser $browser, int $seasonId): void
+    {
+        $browser->waitFor('@season-select')
+            ->script("
+                var sel = document.querySelector(\"[dusk='team-fight-season-select-wrapper'] select\");
+                sel.value = '{$seasonId}';
+                sel.dispatchEvent(new Event('input', { bubbles: true }));
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+            ");
     }
 
     /**

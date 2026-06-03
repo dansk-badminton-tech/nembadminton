@@ -155,6 +155,10 @@ input UpdateSquadInput {
     playingCity: String @rename(attribute: "playing_city")
     "Name"
     name: String
+    "Tier"
+    tier: String
+    "Optional organizational team this squad is created from (pass null to disconnect)"
+    teamId: ID @rename(attribute: "team_id")
     "Ranking version"
     version: Date
 }
@@ -164,6 +168,10 @@ input CreateSquadInput {
     playerLimit: Int!
     categories: CreateCategoryHasManyInput!
     order: Int
+    "Optional organizational team this squad was created from"
+    teamId: ID @rename(attribute: "team_id")
+    "Tier"
+    tier: String
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
     "Playing team"
@@ -200,6 +208,7 @@ input CreateTeamRoundInput {
     version: Date
     round: Int
     gameDate: Date @rename(attribute: "game_date")
+    seasonId: Int! @rename(attribute: "season_id")
 }
 
 input UpdateTeamRoundInput {
@@ -208,6 +217,7 @@ input UpdateTeamRoundInput {
     version: Date!
     round: Int
     gameDate: Date! @rename(attribute: "game_date")
+    seasonId: Int @rename(attribute: "season_id")
 }
 
 enum LeagueType{
@@ -250,6 +260,10 @@ type Squad {
     playerLimit: Int!
     "Name"
     name: String
+    "Free-text tier label (autocompleted from tournament_tiers, but stored as plain string)"
+    tier: String
+    "Organizational team this squad was created from (optional)"
+    team: Team @belongsTo
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
     "Playing team"
@@ -282,6 +296,8 @@ type TeamRound {
     round: Int
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
+    "Season"
+    season: Season @belongsTo
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"

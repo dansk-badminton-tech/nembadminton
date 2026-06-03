@@ -27,6 +27,8 @@ class TestingDataSeeder extends Seeder
 
         $this->call(PointSeeder::class);
 
+        $this->call(SeasonSeeder::class);
+
         $this->call(TeamFightSeeder::class);
     }
 }

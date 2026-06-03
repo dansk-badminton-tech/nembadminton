@@ -74,7 +74,7 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :existing-squad-count="teamRound.squads.length"/>
+                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length" :used-team-ids="usedTeamIds"/>
                 </div>
             </div>
         </section>
@@ -165,6 +165,11 @@ export default {
                 return null
             }
             return hasInvalidLevel(this.playingToHighList)
+        },
+        usedTeamIds() {
+            return (this.teamRound?.squads || [])
+                .map((squad) => squad?.team?.id)
+                .filter((id) => id !== null && id !== undefined);
         }
     },
     data() {

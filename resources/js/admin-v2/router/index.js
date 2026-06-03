@@ -322,6 +322,16 @@ const routes = [
                         path: 'members',
                         name: 'members',
                         component: () => import('@/views/members/MemberManagement.vue')
+                    },
+                    {
+                        meta: {
+                            title: 'Hold',
+                            requiresAuth: true
+                        },
+                        path: 'teams',
+                        name: 'teams',
+                        component: () => import('@/views/team/TeamList.vue'),
+                        props: route => ({clubhouseId: route.params.clubhouseId})
                     }
                 ]
             },

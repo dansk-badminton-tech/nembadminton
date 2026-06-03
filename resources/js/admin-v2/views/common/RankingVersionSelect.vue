@@ -15,7 +15,7 @@
 
 import gql from 'graphql-tag'
 import {timeToMonth} from "../team-fight/helper";
-import {isRecommendedRankingVersionByPlayingDate} from "./ranking-version";
+import {isRecommendedRankingVersionByPlayingDate, resolveRecommendedRankingVersion} from "./ranking-version";
 
 export default {
     name: "RankingVersionSelect",
@@ -31,6 +31,18 @@ export default {
         required: {
             type: Boolean,
             default: false
+        },
+        autoSelectRecommended: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data() {
+        return {
+            // Tracks the last version we auto-selected. We only overwrite the
+            // user's choice if it still matches what we auto-set (i.e. they
+            // haven't manually picked something else).
+            lastAutoSelectedVersion: null
         }
     },
     methods: {
@@ -43,9 +55,38 @@ export default {
                 return ''
             }
             if (isRecommendedRankingVersionByPlayingDate(currentVersion, this.playingDate)) {
-                return '(Anbefalet baseret på spilledagen)'
+                return '(Indstillet automatisk)'
             }
         },
+        maybeAutoSelect() {
+            if (!this.autoSelectRecommended) {
+                return;
+            }
+            if (!Array.isArray(this.rankingVersions) || this.rankingVersions.length === 0) {
+                return;
+            }
+            if (this.playingDate === null || this.playingDate === undefined) {
+                return;
+            }
+            // Only auto-fill when the field is empty or still matches our own
+            // previous auto-pick. If the user manually picked something else,
+            // leave it alone.
+            const isUntouchedOrAutoSet =
+                !this.value || this.value === this.lastAutoSelectedVersion;
+            if (!isUntouchedOrAutoSet) {
+                return;
+            }
+            const recommended = resolveRecommendedRankingVersion(this.rankingVersions, this.playingDate);
+            if (recommended === null) {
+                return; // No matching version — leave field as-is.
+            }
+            if (recommended === this.value) {
+                return;
+            }
+            this.lastAutoSelectedVersion = recommended;
+            this.$emit('input', recommended);
+            this.$emit('change', recommended, this.value);
+        }
     },
     computed: {
         version: {
@@ -58,13 +99,24 @@ export default {
             }
         }
     },
+    watch: {
+        playingDate() {
+            this.maybeAutoSelect();
+        },
+        rankingVersions() {
+            this.maybeAutoSelect();
+        }
+    },
     apollo: {
         rankingVersions: {
             query: gql`
                     query{
                         rankingVersions
                     }
-                `
+                `,
+            result() {
+                this.maybeAutoSelect();
+            }
         }
     }
 }

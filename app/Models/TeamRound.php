@@ -18,7 +18,7 @@ class TeamRound extends Model
 
     public    $incrementing = false;
 
-    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id'];
+    protected $fillable     = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id', 'season_id'];
 
     protected static function booted(): void
     {
@@ -53,6 +53,11 @@ class TeamRound extends Model
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
+    }
+
+    public function season() : BelongsTo
+    {
+        return $this->belongsTo(Season::class);
     }
 
     public function receiver() : HasOne

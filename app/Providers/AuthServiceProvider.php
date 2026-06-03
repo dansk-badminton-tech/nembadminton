@@ -7,6 +7,7 @@ use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\SquadPoint;
+use App\Models\Team;
 use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
@@ -17,6 +18,7 @@ use App\Policies\SquadMemberPolicy;
 use App\Policies\SquadPointPolicy;
 use App\Policies\SquadPolicy;
 use App\Policies\TeamActivityLogPolicy;
+use App\Policies\TeamPolicy;
 use App\Policies\TeamReceiversPolicy;
 use App\Policies\TeamRoundPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -38,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         Squad::class => SquadPolicy::class,
         SquadPoint::class => SquadPointPolicy::class,
         TeamRound::class => TeamRoundPolicy::class,
+        Team::class => TeamPolicy::class,
     ];
 
     /**

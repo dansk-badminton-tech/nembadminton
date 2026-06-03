@@ -8,6 +8,7 @@ use App\Models\Club;
 use App\Models\Clubhouse;
 use App\Models\Member;
 use App\Models\Point;
+use App\Models\Season;
 use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
@@ -404,23 +405,31 @@ class TeamsTest extends TestCase
 
         $this->actingAs($user, 'api');
 
+        $season = Season::query()->create([
+            'id' => 2022,
+            'season_name' => '2022/2023',
+        ]);
+
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamRoundInput!) {
                 createTeamRound(input: $input) {
                     id
                     name
+                    season { id }
                 }
             }
         ', [
             'input' => [
                 'name' => 'New Team Round',
                 'gameDate' => '2023-01-01',
-                'version' => '2023-01-01'
+                'version' => '2023-01-01',
+                'seasonId' => $season->id,
             ]
         ])->assertJson([
             'data' => [
                 'createTeamRound' => [
-                    'name' => 'New Team Round'
+                    'name' => 'New Team Round',
+                    'season' => ['id' => $season->id],
                 ]
             ]
         ]);
@@ -428,7 +437,8 @@ class TeamsTest extends TestCase
         $this->assertDatabaseHas('team_rounds', [
             'name' => 'New Team Round',
             'clubhouse_id' => $clubhouse->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'season_id' => $season->id,
         ]);
     }
 

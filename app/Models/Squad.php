@@ -46,7 +46,9 @@ class Squad extends Model implements Sortable
         'playerLimit',
         'order',
         'team_round_id',
+        'team_id',
         'name',
+        'tier',
         'external_team_fight_id',
         'playing_datetime',
         'playing_place',
@@ -69,5 +71,10 @@ class Squad extends Model implements Sortable
     public function teamRound() : BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');
+    }
+
+    public function team() : BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 }
