@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Clubhouse;
+use App\Models\Season;
 use App\Models\Team;
 use App\Models\TournamentTier;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,6 +23,10 @@ class TeamFactory extends Factory
             'tier_id' => null,
             'custom_tier_name' => null,
             'clubhouse_id' => Clubhouse::factory(),
+            'season_id' => fn () => Season::query()->firstOrCreate(
+                ['id' => 2026],
+                ['season_name' => '2026/2027']
+            )->id,
         ];
     }
 

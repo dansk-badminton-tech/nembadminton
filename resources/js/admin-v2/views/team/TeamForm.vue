@@ -15,6 +15,23 @@
                     </b-input>
                 </b-field>
 
+                <b-field label="Sæson" :type="seasonError ? 'is-danger' : ''" :message="seasonError">
+                    <b-select
+                        v-model="form.seasonId"
+                        dusk="team-season-select"
+                        :loading="$apollo.queries.seasons.loading"
+                        placeholder="Vælg sæson"
+                        expanded
+                        required>
+                        <option
+                            v-for="season in seasons"
+                            :key="season.id"
+                            :value="season.id">
+                            {{ season.seasonName }}
+                        </option>
+                    </b-select>
+                </b-field>
+
                 <b-field label="Niveau" message="Vælg et eksisterende eller skriv et nyt.">
                     <b-autocomplete
                         v-model="tierInput"
@@ -56,6 +73,8 @@
 <script>
 import gql from "graphql-tag";
 import TournamentTiersQuery from "../../../queries/tournamentTiers.graphql";
+import SeasonsQuery from "../../../queries/seasons.graphql";
+import { getCurrentSeason } from "../../helpers";
 
 export default {
     name: "TeamForm",
@@ -73,19 +92,25 @@ export default {
         return {
             submitting: false,
             tournamentTiers: [],
+            seasons: [],
             tierInput: this.team?.tier?.tierName || this.team?.customTierName || '',
             form: {
                 name: this.team?.name || '',
+                seasonId: this.team?.season?.id ?? getCurrentSeason(),
                 tierId: this.team?.tier?.id || null,
                 customTierName: this.team?.customTierName || null,
                 groupName: this.team?.groupName || null
             },
-            nameError: ''
+            nameError: '',
+            seasonError: ''
         }
     },
     apollo: {
         tournamentTiers: {
             query: TournamentTiersQuery
+        },
+        seasons: {
+            query: SeasonsQuery
         }
     },
     computed: {
@@ -124,6 +149,11 @@ export default {
                 return;
             }
             this.nameError = '';
+            if (!this.form.seasonId) {
+                this.seasonError = 'Sæson er påkrævet.';
+                return;
+            }
+            this.seasonError = '';
             this.submitting = true;
             const mutationPromise = this.isEdit
                 ? this.updateTeam()
@@ -152,6 +182,7 @@ export default {
                             name
                             groupName
                             customTierName
+                            season { id seasonName }
                             tier { id tierName }
                         }
                     }
@@ -159,6 +190,7 @@ export default {
                 variables: {
                     input: {
                         name: this.form.name.trim(),
+                        seasonId: this.form.seasonId,
                         tierId: this.form.tierId,
                         customTierName: this.form.customTierName,
                         groupName: this.form.groupName
@@ -175,6 +207,7 @@ export default {
                             name
                             groupName
                             customTierName
+                            season { id seasonName }
                             tier { id tierName }
                         }
                     }
@@ -183,6 +216,7 @@ export default {
                     input: {
                         id: this.team.id,
                         name: this.form.name.trim(),
+                        seasonId: this.form.seasonId,
                         tierId: this.form.tierId,
                         customTierName: this.form.customTierName,
                         groupName: this.form.groupName

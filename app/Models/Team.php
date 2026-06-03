@@ -18,6 +18,7 @@ class Team extends Model
         'custom_tier_name',
         'group_name',
         'clubhouse_id',
+        'season_id',
     ];
 
     public function tier(): BelongsTo
@@ -28,6 +29,11 @@ class Team extends Model
     public function clubhouse(): BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
+    }
+
+    public function season(): BelongsTo
+    {
+        return $this->belongsTo(Season::class);
     }
 
     public function squads(): HasMany

@@ -4,6 +4,9 @@ extend type Query {
         clubhouseId: ID! @eq(key: "clubhouse_id"),
         order: _ @orderBy(columns: ["created_at", "updated_at", "name"])
     ): [Team!]! @paginate(defaultCount: 50) @guard @canResolved(ability: "view")
+    seasons(
+        order: _ @orderBy(columns: ["id"])
+    ): [Season!]! @all(model: "App\\Models\\Season") @guard
 }
 
 extend type Mutation {
@@ -19,12 +22,19 @@ type Team {
     customTierName: String @rename(attribute: "custom_tier_name")
     groupName: String @rename(attribute: "group_name")
     clubhouse: Clubhouse @belongsTo
+    season: Season! @belongsTo
     createdAt: DateTime @rename(attribute: "created_at")
     updatedAt: DateTime @rename(attribute: "updated_at")
 }
 
+type Season {
+    id: Int!
+    seasonName: String! @rename(attribute: "season_name")
+}
+
 input CreateTeamInput {
     name: String!
+    seasonId: Int! @rename(attribute: "season_id")
     tierId: ID @rename(attribute: "tier_id") @rules(apply: ["prohibits:customTierName"])
     customTierName: String @rename(attribute: "custom_tier_name")
     groupName: String @rename(attribute: "group_name")
@@ -33,6 +43,7 @@ input CreateTeamInput {
 input UpdateTeamInput {
     id: ID!
     name: String
+    seasonId: Int @rename(attribute: "season_id")
     tierId: ID @rename(attribute: "tier_id") @rules(apply: ["prohibits:customTierName"])
     customTierName: String @rename(attribute: "custom_tier_name")
     groupName: String @rename(attribute: "group_name")

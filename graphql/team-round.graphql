@@ -208,6 +208,7 @@ input CreateTeamRoundInput {
     version: Date
     round: Int
     gameDate: Date @rename(attribute: "game_date")
+    seasonId: Int! @rename(attribute: "season_id")
 }
 
 input UpdateTeamRoundInput {
@@ -216,6 +217,7 @@ input UpdateTeamRoundInput {
     version: Date!
     round: Int
     gameDate: Date! @rename(attribute: "game_date")
+    seasonId: Int @rename(attribute: "season_id")
 }
 
 enum LeagueType{
@@ -294,6 +296,8 @@ type TeamRound {
     round: Int
     "Game day"
     gameDate: Date @rename(attribute: "game_date"),
+    "Season"
+    season: Season @belongsTo
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"

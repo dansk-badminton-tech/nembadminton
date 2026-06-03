@@ -4,6 +4,7 @@ namespace Tests\GraphQL;
 
 use App\Enums\Permission;
 use App\Models\Clubhouse;
+use App\Models\Season;
 use App\Models\Squad;
 use App\Models\Team;
 use App\Models\TeamRound;
@@ -31,6 +32,14 @@ class TeamsCrudTest extends TestCase
         $this->actingAs($user, 'api');
 
         return [$clubhouse, $user];
+    }
+
+    private function makeSeason(int $id = 2026): Season
+    {
+        return Season::query()->firstOrCreate(
+            ['id' => $id],
+            ['season_name' => $id . '/' . ($id + 1)]
+        );
     }
 
     /** @test */
@@ -103,13 +112,15 @@ class TeamsCrudTest extends TestCase
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
         $tier = TournamentTier::query()->create(['tier_name' => 'Serie 1']);
+        $season = $this->makeSeason();
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamInput!) {
-                createTeam(input: $input) { id name tier { id } customTierName groupName }
+                createTeam(input: $input) { id name tier { id } customTierName groupName season { id } }
             }
         ', ['input' => [
             'name' => '1. holdet',
+            'seasonId' => $season->id,
             'tierId' => (string)$tier->id,
             'groupName' => 'Pulje 1',
         ]])
@@ -120,6 +131,7 @@ class TeamsCrudTest extends TestCase
                         'tier' => ['id' => (string)$tier->id],
                         'customTierName' => null,
                         'groupName' => 'Pulje 1',
+                        'season' => ['id' => $season->id],
                     ],
                 ],
             ]);
@@ -130,6 +142,7 @@ class TeamsCrudTest extends TestCase
             'custom_tier_name' => null,
             'group_name' => 'Pulje 1',
             'clubhouse_id' => $clubhouse->id,
+            'season_id' => $season->id,
         ]);
     }
 
@@ -137,6 +150,7 @@ class TeamsCrudTest extends TestCase
     public function it_creates_team_with_custom_tier_name(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
+        $season = $this->makeSeason();
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamInput!) {
@@ -144,6 +158,7 @@ class TeamsCrudTest extends TestCase
             }
         ', ['input' => [
             'name' => '2. holdet',
+            'seasonId' => $season->id,
             'customTierName' => 'Veteran-række',
         ]])
             ->assertJson([
@@ -160,6 +175,7 @@ class TeamsCrudTest extends TestCase
             'tier_id' => null,
             'custom_tier_name' => 'Veteran-række',
             'clubhouse_id' => $clubhouse->id,
+            'season_id' => $season->id,
         ]);
     }
 
@@ -168,6 +184,7 @@ class TeamsCrudTest extends TestCase
     {
         $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
         $tier = TournamentTier::query()->create(['tier_name' => 'Serie 2']);
+        $season = $this->makeSeason();
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamInput!) {
@@ -175,6 +192,7 @@ class TeamsCrudTest extends TestCase
             }
         ', ['input' => [
             'name' => 'Konflikt',
+            'seasonId' => $season->id,
             'tierId' => (string)$tier->id,
             'customTierName' => 'Custom',
         ]])
@@ -187,30 +205,48 @@ class TeamsCrudTest extends TestCase
     public function it_requires_name_when_creating_team(): void
     {
         $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
+        $season = $this->makeSeason();
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamInput!) {
                 createTeam(input: $input) { id }
             }
-        ', ['input' => ['customTierName' => 'X']])
+        ', ['input' => ['customTierName' => 'X', 'seasonId' => $season->id]])
             ->assertJsonStructure(['errors']);
+    }
+
+    /** @test */
+    public function it_requires_season_when_creating_team(): void
+    {
+        $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: CreateTeamInput!) {
+                createTeam(input: $input) { id }
+            }
+        ', ['input' => ['name' => 'Mangler sæson']])
+            ->assertJsonStructure(['errors']);
+
+        $this->assertDatabaseMissing('teams', ['name' => 'Mangler sæson']);
     }
 
     /** @test */
     public function it_injects_clubhouse_id_from_authenticated_user_on_create(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
+        $season = $this->makeSeason();
 
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: CreateTeamInput!) {
                 createTeam(input: $input) { id }
             }
-        ', ['input' => ['name' => 'Auto-clubhouse']])
+        ', ['input' => ['name' => 'Auto-clubhouse', 'seasonId' => $season->id]])
             ->assertGraphQLErrorFree();
 
         $this->assertDatabaseHas('teams', [
             'name' => 'Auto-clubhouse',
             'clubhouse_id' => $clubhouse->id,
+            'season_id' => $season->id,
         ]);
     }
 

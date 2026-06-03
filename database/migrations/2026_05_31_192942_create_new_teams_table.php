@@ -18,10 +18,12 @@ return new class extends Migration
             $table->string('custom_tier_name')->nullable();
             $table->string('group_name')->nullable();
             $table->unsignedBigInteger('clubhouse_id');
+            $table->unsignedInteger('season_id');
             $table->timestamps();
 
             $table->foreign('tier_id')->references('id')->on('tournament_tiers')->nullOnDelete();
             $table->foreign('clubhouse_id', 'teams_clubhouse_id_fk')->references('id')->on('clubhouses')->cascadeOnDelete();
+            $table->foreign('season_id', 'teams_season_id_fk')->references('id')->on('seasons')->cascadeOnDelete();
         });
     }
 
