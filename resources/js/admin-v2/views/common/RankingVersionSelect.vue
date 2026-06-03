@@ -55,7 +55,7 @@ export default {
                 return ''
             }
             if (isRecommendedRankingVersionByPlayingDate(currentVersion, this.playingDate)) {
-                return '(Anbefalet baseret på spilledagen)'
+                return '(Indstillet automatisk)'
             }
         },
         maybeAutoSelect() {
