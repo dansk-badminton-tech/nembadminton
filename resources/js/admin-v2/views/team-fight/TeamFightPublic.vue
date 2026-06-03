@@ -27,7 +27,7 @@
                     <div class="card squad-card" :dusk="'squad-card-' + index">
                         <div class="card-content">
                             <p class="squad-eyebrow has-text-grey">HOLD {{ index + 1 }} - {{squad.name}}</p>
-                            <h2 v-if="squad.name" class="is-size-4 has-text-weight-bold squad-title">
+                            <h2 v-if="squad.tier" class="is-size-4 has-text-weight-bold squad-title">
                                 {{ squad.tier }}
                             </h2>
                             <div
