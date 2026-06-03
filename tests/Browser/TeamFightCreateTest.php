@@ -3,6 +3,7 @@
 namespace Tests\Browser;
 
 use App\Models\Clubhouse;
+use App\Models\TeamRound;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
@@ -44,6 +45,14 @@ class TeamFightCreateTest extends DuskTestCase
             $browser->pause(500)
                 ->screenshot('team-fight-date-selected');
 
+            // The season select should auto-populate based on the chosen game date.
+            // Wait until the seasons query has resolved and the watcher fired.
+            $browser->waitFor('@season-select')
+                ->waitUsing(5, 100, function () use ($browser) {
+                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-season-select'] select\").value;")[0];
+                })
+                ->screenshot('team-fight-season-autoselected');
+
             // Select the first available ranking version via script
             // Buefy b-select listens on native 'input' event
             $browser->waitFor('@ranking-select')
@@ -75,6 +84,14 @@ class TeamFightCreateTest extends DuskTestCase
                 //->waitFor('@team-fights-table')
                 //->assertSee('Dusk Test Holdrunde')
                 ->screenshot('team-fight-visible-on-dashboard');
+
+            // Verify the created team round has a season_id persisted.
+            $teamRound = TeamRound::query()
+                ->where('name', 'Dusk Test Holdrunde')
+                ->latest('created_at')
+                ->first();
+            $this->assertNotNull($teamRound, 'Expected the created team round to be persisted.');
+            $this->assertNotNull($teamRound->season_id, 'Expected season_id to be set on the created team round.');
         });
     }
 }
