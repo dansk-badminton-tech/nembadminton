@@ -18,7 +18,7 @@ class SeasonSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (range(2020, 2030) as $year) {
+        foreach (range(2025, 2028) as $year) {
             Season::query()->updateOrCreate(
                 ['id' => $year],
                 ['season_name' => $year . '/' . ($year + 1)],

@@ -2,6 +2,7 @@ extend type Query {
     team(id: ID! @eq): Team @find @guard @canFind(ability: "view", find: "id")
     teams(
         clubhouseId: ID! @eq(key: "clubhouse_id"),
+        seasonId: Int @eq(key: "season_id"),
         order: _ @orderBy(columns: ["created_at", "updated_at", "name"])
     ): [Team!]! @paginate(defaultCount: 50) @guard @canResolved(ability: "view")
     seasons(

@@ -1,5 +1,5 @@
-query teams($clubhouseId: ID!, $page: Int!, $first: Int!) {
-    teams(clubhouseId: $clubhouseId, page: $page, first: $first, order: [{column: NAME, order: ASC}]) {
+query teams($clubhouseId: ID!, $seasonId: Int, $page: Int!, $first: Int!) {
+    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, page: $page, first: $first, order: [{column: NAME, order: ASC}]) {
         data {
             id
             name
@@ -8,6 +8,10 @@ query teams($clubhouseId: ID!, $page: Int!, $first: Int!) {
             tier {
                 id
                 tierName
+            }
+            season {
+                id
+                seasonName
             }
             createdAt
             updatedAt

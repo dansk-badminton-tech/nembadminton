@@ -64,6 +64,34 @@ class TeamsCrudTest extends TestCase
     }
 
     /** @test */
+    public function it_filters_teams_by_season_id(): void
+    {
+        [$clubhouse] = $this->actingClubhouseUser([Permission::VIEW_TEAMS]);
+        $seasonA = $this->makeSeason(2025);
+        $seasonB = $this->makeSeason(2026);
+
+        Team::factory()->count(2)->create([
+            'clubhouse_id' => $clubhouse->id,
+            'season_id' => $seasonA->id,
+        ]);
+        Team::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'season_id' => $seasonB->id,
+        ]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: ID!, $seasonId: Int) {
+                teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 10) {
+                    data { id season { id } }
+                    paginatorInfo { total }
+                }
+            }
+        ', ['clubhouseId' => $clubhouse->id, 'seasonId' => $seasonA->id])
+            ->assertJsonCount(2, 'data.teams.data')
+            ->assertJson(['data' => ['teams' => ['paginatorInfo' => ['total' => 2]]]]);
+    }
+
+    /** @test */
     public function it_denies_listing_teams_without_permission(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([]);

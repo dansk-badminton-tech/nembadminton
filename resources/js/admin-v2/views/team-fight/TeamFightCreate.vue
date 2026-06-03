@@ -30,7 +30,7 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste">
-                    <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" expanded/>
+                    <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" auto-select-recommended expanded/>
                 </b-field>
                 <b-field label="Sæson">
                     <div dusk="team-fight-season-select-wrapper">

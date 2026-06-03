@@ -33,6 +33,28 @@
                     <b-table-column field="groupName" label="Gruppe" v-slot="props">
                         {{ props.row.groupName || '—' }}
                     </b-table-column>
+                    <b-table-column field="season" label="Sæson" searchable>
+                        <template #searchable>
+                            <div dusk="team-list-season-filter-wrapper">
+                                <b-select
+                                    v-model="seasonId"
+                                    dusk="team-list-season-filter"
+                                    :loading="$apollo.queries.seasons.loading"
+                                    size="is-small"
+                                    expanded>
+                                    <option
+                                        v-for="season in seasons"
+                                        :key="season.id"
+                                        :value="season.id">
+                                        {{ season.seasonName }}
+                                    </option>
+                                </b-select>
+                            </div>
+                        </template>
+                        <template v-slot="props">
+                            {{ props.row.season ? props.row.season.seasonName : '—' }}
+                        </template>
+                    </b-table-column>
                     <b-table-column label="Handlinger" v-slot="props" width="180">
                         <b-button
                             size="is-small"
@@ -72,10 +94,12 @@
 <script>
 import gql from "graphql-tag";
 import TeamsQuery from "../../../queries/teams.gql";
+import SeasonsQuery from "../../../queries/seasons.graphql";
 import TeamForm from "./TeamForm.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import CardComponent from "../../components/CardComponent.vue";
+import {getCurrentSeason} from "../../helpers";
 
 export default {
     name: "TeamList",
@@ -93,7 +117,12 @@ export default {
             page: 1,
             perPage: 25,
             modalOpen: false,
-            editingTeam: null
+            editingTeam: null,
+            seasons: [],
+            // Default to current season; if it turns out not to exist in the
+            // seasons table, the watcher below falls back to the most recent
+            // available season.
+            seasonId: getCurrentSeason()
         }
     },
     apollo: {
@@ -102,12 +131,40 @@ export default {
             variables() {
                 return {
                     clubhouseId: this.clubhouseId,
+                    seasonId: this.seasonId,
                     page: this.page,
                     first: this.perPage
                 }
             },
+            // Skip the query until we have a concrete seasonId — avoids an
+            // initial fetch that would be re-fired immediately by the
+            // fallback below.
+            skip() {
+                return this.seasonId === null || this.seasonId === undefined;
+            },
             update(data) {
                 return data.teams;
+            }
+        },
+        seasons: {
+            query: SeasonsQuery
+        }
+    },
+    watch: {
+        seasonId() {
+            // Reset to first page whenever the filter changes.
+            this.page = 1;
+        },
+        seasons(newSeasons) {
+            // If the default current-season isn't in the seasons table,
+            // fall back to the most recent available season.
+            if (!Array.isArray(newSeasons) || newSeasons.length === 0) {
+                return;
+            }
+            const exists = newSeasons.some(s => Number(s.id) === Number(this.seasonId));
+            if (!exists) {
+                // seasons are returned in DESC order; first entry is newest.
+                this.seasonId = newSeasons[0].id;
             }
         }
     },

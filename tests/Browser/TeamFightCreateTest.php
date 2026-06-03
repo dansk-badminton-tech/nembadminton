@@ -35,14 +35,10 @@ class TeamFightCreateTest extends DuskTestCase
             $browser->on(new TeamFightCreatePage($clubhouse->id))
                 ->setRound(1);
 
-            // Open the datepicker, wait for dropdown, then click day 15
-            $browser->click('@date-picker')
-                ->waitFor('.datepicker .dropdown-content')
-                ->screenshot('team-fight-datepicker-open');
-
-            $browser->script("document.querySelectorAll('.datepicker .datepicker-body a.datepicker-cell.is-selectable')[14].click()");
-
-            $browser->pause(500)
+            // Pick July 15, 2025 — falls inside the 2025-07-02 ranking window
+            // (July 10 → Aug 9) so the ranking select should auto-populate.
+            $browser->on(new TeamFightCreatePage($clubhouse->id))
+                ->selectDate(7, 2025, 15)
                 ->screenshot('team-fight-date-selected');
 
             // The season select should auto-populate based on the chosen game date.
@@ -53,18 +49,19 @@ class TeamFightCreateTest extends DuskTestCase
                 })
                 ->screenshot('team-fight-season-autoselected');
 
-            // Select the first available ranking version via script
-            // Buefy b-select listens on native 'input' event
+            // The ranking select should auto-populate based on the chosen game date.
+            // We pass auto-select-recommended to <RankingVersionSelect>, which
+            // chooses the matching version once rankingVersions resolves.
             $browser->waitFor('@ranking-select')
-                ->script("
-                    var sel = document.querySelector(\"[dusk='team-fight-ranking-select'] select\");
-                    sel.selectedIndex = 1;
-                    sel.dispatchEvent(new Event('input'));
-                    sel.dispatchEvent(new Event('change'));
-                ");
+                ->waitUsing(5, 100, function () use ($browser) {
+                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select'] select\").value;")[0];
+                })
+                ->screenshot('team-fight-ranking-autoselected');
 
-            $browser->pause(500)
-                ->screenshot('team-fight-ranking-selected');
+            // Capture the auto-selected ranking version so we can assert it
+            // was persisted on the created TeamRound.
+            $autoSelectedVersion = $browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select'] select\").value;")[0];
+            $this->assertNotEmpty($autoSelectedVersion, 'Expected ranking-select to auto-populate.');
 
             $browser->click('@submit-button')
                 ->waitForText('Dit hold er gemt')
@@ -92,6 +89,11 @@ class TeamFightCreateTest extends DuskTestCase
                 ->first();
             $this->assertNotNull($teamRound, 'Expected the created team round to be persisted.');
             $this->assertNotNull($teamRound->season_id, 'Expected season_id to be set on the created team round.');
+            $this->assertSame(
+                $autoSelectedVersion,
+                $teamRound->version,
+                'Expected the auto-selected ranking version to be persisted on the team round.'
+            );
         });
     }
 }
