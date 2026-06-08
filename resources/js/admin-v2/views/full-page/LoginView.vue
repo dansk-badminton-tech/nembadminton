@@ -50,6 +50,8 @@
                 </div>
             </b-field>
 
+            <social-login-buttons mode="login" />
+
             <hr class="my-5">
 
             <div class="has-text-centered">
@@ -87,13 +89,14 @@
 <script>
 import {defineComponent} from 'vue'
 import CardComponent from '@/components/CardComponent.vue'
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons.vue'
 import gql from "graphql-tag";
 import {setAuthToken} from "../../../auth";
 import ME from "../../../queries/me.gql";
 
 export default defineComponent({
                                    name: 'LoginView',
-                                   components: {CardComponent},
+                                   components: {CardComponent, SocialLoginButtons},
                                    data() {
                                        return {
                                            isLoading: false,
