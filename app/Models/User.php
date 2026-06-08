@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Joselfonseca\LighthouseGraphQLPassport\HasSocialLogin;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
@@ -30,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles;
+    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles, HasSocialLogin;
 
     protected $dispatchesEvents = [
         'updated' => UserUpdate::class
