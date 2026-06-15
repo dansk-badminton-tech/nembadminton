@@ -5,7 +5,8 @@
                 <b-button @click="setGameDate(currentSeason)">{{currentSeasonButtonName}}</b-button>
                 <b-button @click="setGameDate(previousSeason)">{{previousSeasonButtonName}}</b-button>
                 <b-button @click="setGameDateToRest">Tidligere sæsoner</b-button>
-                <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b></p>
+                <b-button @click="setGameDateToAll">Vis alle</b-button>
+                <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate?.from}}</b> - <b>{{this.gameDate?.to}}</b></p>
             </div>
         </div>
         <div dusk="team-fights-table">
@@ -181,6 +182,11 @@ export default {
                 from: "2020-01-01", // Magic number because nembadminton existed after this date
                 to: date.toISOString().substring(0,10)
             }
+        },
+        setGameDateToAll(){
+            let date = new Date(this.currentSeason.getTime())
+            date.setFullYear(date.getFullYear() + 2);
+            this.gameDate = null;
         },
         setGameDate(seasonStartDate){
             let date = new Date(seasonStartDate.getTime())
