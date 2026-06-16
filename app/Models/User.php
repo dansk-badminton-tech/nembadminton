@@ -97,4 +97,14 @@ class User extends Authenticatable
         return $this->belongsTo(Clubhouse::class);
     }
 
+    /**
+     * Override the trait's relation so Lighthouse @hasMany returns instances of
+     * App\Models\SocialProvider (matching the GraphQL type). Vendor byOAuthToken()
+     * still writes via the vendor class; both share the social_providers table.
+     */
+    public function socialProviders() : HasMany
+    {
+        return $this->hasMany(SocialProvider::class);
+    }
+
 }

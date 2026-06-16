@@ -4,6 +4,10 @@ query me{
         name
         email
         player_id
+        socialProviders {
+            id
+            provider
+        }
         cancellationCollector {
             id
         }
