@@ -1,6 +1,6 @@
 <template>
-    <div v-if="googleEnabled || facebookEnabled" class="social-login-buttons">
-        <b-field v-if="googleEnabled">
+    <div v-if="googleEnabled" class="social-login-buttons">
+        <b-field>
             <b-button
                 dusk="social-login-google"
                 type="is-light"
@@ -14,20 +14,6 @@
                 {{ buttonLabel('Google') }}
             </b-button>
         </b-field>
-        <b-field v-if="facebookEnabled">
-            <b-button
-                dusk="social-login-facebook"
-                type="is-info"
-                expanded
-                size="is-medium"
-                :loading="loadingProvider === 'facebook'"
-                :disabled="!facebookReady || loadingProvider !== null"
-                @click="loginWithFacebook"
-            >
-                <b-icon icon="facebook" size="is-small" class="mr-2"></b-icon>
-                {{ buttonLabel('Facebook') }}
-            </b-button>
-        </b-field>
     </div>
 </template>
 
@@ -39,13 +25,10 @@ import ME from '../../../queries/me.gql'
 import { extractErrors } from '@/helpers'
 
 const GOOGLE_SDK_URL = 'https://accounts.google.com/gsi/client'
-const FACEBOOK_SDK_URL = 'https://connect.facebook.net/en_US/sdk.js'
-const FACEBOOK_GRAPH_VERSION = 'v18.0'
 
-// Module-level promise caches so SDKs load at most once per page load,
+// Module-level promise cache so the SDK loads at most once per page load,
 // even if the component is mounted on multiple pages back-to-back.
 let googleSdkPromise = null
-let facebookSdkPromise = null
 
 function loadGoogleSdk() {
     if (googleSdkPromise) return googleSdkPromise
@@ -65,33 +48,6 @@ function loadGoogleSdk() {
     return googleSdkPromise
 }
 
-function loadFacebookSdk(appId) {
-    if (facebookSdkPromise) return facebookSdkPromise
-    facebookSdkPromise = new Promise((resolve, reject) => {
-        if (window.FB) {
-            resolve()
-            return
-        }
-        window.fbAsyncInit = function () {
-            window.FB.init({
-                appId: appId,
-                cookie: false,
-                xfbml: false,
-                version: FACEBOOK_GRAPH_VERSION,
-            })
-            resolve()
-        }
-        const s = document.createElement('script')
-        s.src = FACEBOOK_SDK_URL
-        s.async = true
-        s.defer = true
-        s.crossOrigin = 'anonymous'
-        s.onerror = () => reject(new Error('Facebook SDK failed to load'))
-        document.head.appendChild(s)
-    })
-    return facebookSdkPromise
-}
-
 export default defineComponent({
     name: 'SocialLoginButtons',
     props: {
@@ -108,17 +64,13 @@ export default defineComponent({
     data() {
         return {
             googleReady: false,
-            facebookReady: false,
-            loadingProvider: null, // null | 'google' | 'facebook'
+            loadingProvider: null, // null | 'google'
             googleClient: null,
         }
     },
     computed: {
         googleEnabled() {
             return !!import.meta.env.VITE_GOOGLE_CLIENT_ID
-        },
-        facebookEnabled() {
-            return !!import.meta.env.VITE_FACEBOOK_APP_ID
         },
     },
     mounted() {
@@ -141,13 +93,6 @@ export default defineComponent({
                         },
                     })
                     this.googleReady = true
-                })
-                .catch(() => this.showLoadError())
-        }
-        if (this.facebookEnabled) {
-            loadFacebookSdk(import.meta.env.VITE_FACEBOOK_APP_ID)
-                .then(() => {
-                    this.facebookReady = true
                 })
                 .catch(() => this.showLoadError())
         }
@@ -175,30 +120,6 @@ export default defineComponent({
                 return
             }
             this.callSocialLogin('google', response.access_token)
-        },
-        loginWithFacebook() {
-            if (!this.facebookReady || !window.FB) return
-            this.loadingProvider = 'facebook'
-            window.FB.login(
-                (response) => {
-                    if (!response || response.status !== 'connected') {
-                        this.loadingProvider = null
-                        return
-                    }
-                    const grantedScopes = (response.authResponse.grantedScopes || '').split(',')
-                    if (!grantedScopes.includes('email')) {
-                        this.loadingProvider = null
-                        this.$buefy.snackbar.open({
-                            duration: 6000,
-                            type: 'is-danger',
-                            message: 'Facebook gav ikke adgang til din email. Prøv igen og tillad email.',
-                        })
-                        return
-                    }
-                    this.callSocialLogin('facebook', response.authResponse.accessToken)
-                },
-                { scope: 'email', return_scopes: true },
-            )
         },
         callSocialLogin(provider, token) {
             this.$apollo

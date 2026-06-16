@@ -91,7 +91,7 @@ export default {
     },
     computed: {
         socialLoginEnabled() {
-            return !!import.meta.env.VITE_GOOGLE_CLIENT_ID || !!import.meta.env.VITE_FACEBOOK_APP_ID
+            return !!import.meta.env.VITE_GOOGLE_CLIENT_ID
         },
     },
     methods: {
