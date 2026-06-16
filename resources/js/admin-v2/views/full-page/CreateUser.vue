@@ -6,6 +6,7 @@
     <div class="mb-2" dusk="sign-up-form">
         <template v-if="socialLoginEnabled">
             <social-login-buttons mode="signup" :invitation-token="invitationToken" />
+            <p class="has-text-centered has-text-grey is-size-7 my-3">eller</p>
             <hr class="my-5">
         </template>
         <b-field label="Navn">

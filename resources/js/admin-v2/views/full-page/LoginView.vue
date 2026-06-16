@@ -50,6 +50,8 @@
                 </div>
             </b-field>
 
+            <p class="has-text-centered has-text-grey is-size-7 my-3">eller</p>
+
             <social-login-buttons mode="login" />
 
             <hr class="my-5">

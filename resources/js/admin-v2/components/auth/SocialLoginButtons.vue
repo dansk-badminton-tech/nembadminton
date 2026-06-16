@@ -1,6 +1,5 @@
 <template>
     <div v-if="googleEnabled || facebookEnabled" class="social-login-buttons">
-        <p class="has-text-centered has-text-grey is-size-7 my-3">eller</p>
         <b-field v-if="googleEnabled">
             <b-button
                 dusk="social-login-google"
