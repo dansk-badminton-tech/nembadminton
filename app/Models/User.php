@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Joselfonseca\LighthouseGraphQLPassport\HasSocialLogin;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
@@ -30,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles;
+    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles, HasSocialLogin;
 
     protected $dispatchesEvents = [
         'updated' => UserUpdate::class
@@ -94,6 +95,16 @@ class User extends Authenticatable
     public function clubhouse() : BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
+    }
+
+    /**
+     * Override the trait's relation so Lighthouse @hasMany returns instances of
+     * App\Models\SocialProvider (matching the GraphQL type). Vendor byOAuthToken()
+     * still writes via the vendor class; both share the social_providers table.
+     */
+    public function socialProviders() : HasMany
+    {
+        return $this->hasMany(SocialProvider::class);
     }
 
 }

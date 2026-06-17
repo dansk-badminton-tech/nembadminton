@@ -41,6 +41,8 @@ type User {
     clubhouse: Clubhouse
     "Clubhouse membership"
     clubhouses: [Clubhouse!]!
+    "Linked OAuth providers (Google, etc.)"
+    socialProviders: [SocialProvider!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
 }
@@ -53,4 +55,12 @@ type Role {
 type SubscriptionSetting {
     id: ID!
     email: Boolean!
+}
+
+type SocialProvider {
+    id: ID!
+    "OAuth provider name (e.g. 'google')"
+    provider: String!
+    "When the link was created"
+    created_at: DateTime!
 }

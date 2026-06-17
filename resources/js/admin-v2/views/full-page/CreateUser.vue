@@ -4,6 +4,11 @@
         icon="lock"
     >
     <div class="mb-2" dusk="sign-up-form">
+        <template v-if="socialLoginEnabled">
+            <social-login-buttons mode="signup" :invitation-token="invitationToken" />
+            <p class="has-text-centered has-text-grey is-size-7 my-3">eller</p>
+            <hr class="my-5">
+        </template>
         <b-field label="Navn">
             <b-input v-model="name" dusk="name-input" icon="account" placeholder="Dit navn"></b-input>
         </b-field>
@@ -58,12 +63,13 @@
 import gql from "graphql-tag"
 import CardComponent from "../../components/CardComponent.vue";
 import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerClubs.vue";
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons.vue";
 import {setAuthToken} from "../../../auth";
 import {extractErrors} from "@/helpers";
 
 export default {
     name: "CreateUser",
-    components: {CardComponent, BadmintonPlayerClubs},
+    components: {CardComponent, BadmintonPlayerClubs, SocialLoginButtons},
     props: {
         afterRegister: Function,
         invitationToken: {
@@ -82,6 +88,11 @@ export default {
             playerId: null,
             accepted: false
         }
+    },
+    computed: {
+        socialLoginEnabled() {
+            return !!import.meta.env.VITE_GOOGLE_CLIENT_ID
+        },
     },
     methods: {
         create() {

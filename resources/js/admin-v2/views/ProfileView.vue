@@ -39,6 +39,7 @@
         </card-component>
       </tiles-block>
       <password-update-form />
+      <connected-accounts-card />
     </section>
   </div>
 </template>
@@ -51,6 +52,7 @@ import TitleBar from '@/components/TitleBar.vue'
 import HeroBar from '@/components/HeroBar.vue'
 import ProfileUpdateForm from '@/components/ProfileUpdateForm.vue'
 import PasswordUpdateForm from '@/components/PasswordUpdateForm.vue'
+import ConnectedAccountsCard from '@/components/ConnectedAccountsCard.vue'
 import TilesBlock from '@/components/TilesBlock.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 
@@ -61,6 +63,7 @@ export default defineComponent({
     TilesBlock,
     PasswordUpdateForm,
     ProfileUpdateForm,
+    ConnectedAccountsCard,
     HeroBar,
     TitleBar,
     CardComponent

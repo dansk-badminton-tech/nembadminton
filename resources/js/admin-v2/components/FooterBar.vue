@@ -11,6 +11,9 @@
               <b>&copy; {{ year }}, Nembadminton</b>.
             </div>
           </div>
+          <div class="level-item">
+            <a href="/privatlivspolitik">Privatlivspolitik</a>
+          </div>
         </div>
         <div class="level-right">
           <div class="level-item">
