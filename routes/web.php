@@ -18,5 +18,11 @@ Route::post('notifications/{id}/dismiss', [NotificationController::class, 'dismi
 Route::get('forgot-password-finish', 'Spa2Controller@index')->name('password.reset');
 
 Route::redirect('/', '/app/home-redirect');
+
+// Public privacy policy (standalone page, accessible without login). Must be
+// declared before the SPA catch-all below so it is not swallowed by '/{any}'.
+Route::view('/privatlivspolitik', 'privacy')->name('privacy-policy');
+Route::view('/privacy-policy', 'privacy');
+
 Route::get('/{any}', 'Spa2Controller@index')->where('any', '.*');
 
