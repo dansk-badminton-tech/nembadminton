@@ -7,14 +7,16 @@ import clubhouse from "../../../queries/clubhouse.gql";
 import InvitationList from "@/views/club-house/InvitationList.vue";
 import gql from "graphql-tag";
 import MyClubhouseClubs from "@/views/club-house/MyClubhouseClubs.vue";
+import ActivityLog from "@/views/common/ActivityLog.vue";
 
 export default {
     name: "ClubHouseDashboard",
-    components: {MyClubhouseClubs, InvitationList, MemberList, CardComponent, HeroBar, TitleBar},
+    components: {ActivityLog, MyClubhouseClubs, InvitationList, MemberList, CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
     data() {
         return {
             titleStack: ['Admin', 'Klubhus'],
+            activeTab: 0,
             name: '',
             email: '',
             isLoading: false,
@@ -140,7 +142,7 @@ export default {
                     </b-field>
                 </form>
             </card-component>
-            <b-tabs>
+            <b-tabs v-model="activeTab">
                 <b-tab-item label="Medlemmer">
                     <member-list :loading="$apollo.loading" :users="clubhouse?.users || []"/>
                 </b-tab-item>
@@ -149,6 +151,7 @@ export default {
                 </b-tab-item>
             </b-tabs>
             <my-clubhouse-clubs />
+            <activity-log/>
         </section>
     </div>
 </template>

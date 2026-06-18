@@ -2,15 +2,17 @@
 import HeroBar from "@/components/HeroBar.vue";
 import TitleBar from "@/components/TitleBar.vue";
 import HighestPointGainChart from "@/views/dashboard/HighestPointGainChart.vue";
+import CategoryPoints from "@/views/dashboard/CategoryPoints.vue";
 import {getCurrentSeasonStart} from "@/helpers.js";
 
 export default {
     name: "Analytics" ,
-    components: {HighestPointGainChart, TitleBar, HeroBar},
+    components: {CategoryPoints, HighestPointGainChart, TitleBar, HeroBar},
     inject: ['clubhouseId'],
     data: () => {
         return {
             titleStack: ['Admin', 'Analytics'],
+            activeTab: 0,
             category: 'HS',
             limit: 10,
             orderBy: 'DESC',
@@ -70,6 +72,41 @@ export default {
                 </b-field>
             </b-field>
             <HighestPointGainChart :clubhouse-id="clubhouseId" :category="category" :limit="limit" :orderBy="orderBy" :vintages="selectedVintage" />
+        </div>
+        <div class="section">
+            <h1 class="title">Ranglister</h1>
+            <b-tabs v-model="activeTab" size="is-medium" position="is-centered" class="block">
+                <b-tab-item label="Single">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <CategoryPoints ranking-list="MEN_SINGLE"/>
+                        </div>
+                        <div class="column is-half">
+                            <CategoryPoints ranking-list="WOMEN_SINGLE"/>
+                        </div>
+                    </div>
+                </b-tab-item>
+                <b-tab-item label="Double">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <CategoryPoints v-if="activeTab === 1" ranking-list="MENS_DOUBLE"/>
+                        </div>
+                        <div class="column is-half">
+                            <CategoryPoints v-if="activeTab === 1" ranking-list="WOMENS_DOUBLE"/>
+                        </div>
+                    </div>
+                </b-tab-item>
+                <b-tab-item label="Mix">
+                    <div class="columns">
+                        <div class="column is-half">
+                            <CategoryPoints v-if="activeTab === 2" ranking-list="MEN_MIX"/>
+                        </div>
+                        <div class="column is-half">
+                            <CategoryPoints v-if="activeTab === 2" ranking-list="WOMEN_MIX"/>
+                        </div>
+                    </div>
+                </b-tab-item>
+            </b-tabs>
         </div>
     </div>
 </template>
