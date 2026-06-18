@@ -361,6 +361,37 @@ const router = new VueRouter({
                                  }
                              })
 
+// Recover from "Failed to fetch dynamically imported module" / ChunkLoadError
+// that happens when a deploy replaces hashed asset filenames while a user has
+// the SPA open. Reload once so the new bundle is picked up. The sessionStorage
+// flag prevents an infinite loop if the new build is also broken.
+const CHUNK_RELOAD_FLAG = 'chunk-reload-attempted'
+
+router.onError((error) => {
+    const message = error?.message || ''
+    const isChunkError =
+        error?.name === 'ChunkLoadError' ||
+        /Loading chunk [\w-]+ failed/i.test(message) ||
+        /Failed to fetch dynamically imported module/i.test(message) ||
+        /Importing a module script failed/i.test(message) ||
+        /error loading dynamically imported module/i.test(message)
+
+    if (!isChunkError) return
+
+    if (sessionStorage.getItem(CHUNK_RELOAD_FLAG)) {
+        // We already tried reloading — don't loop. Let Sentry capture it.
+        return
+    }
+    sessionStorage.setItem(CHUNK_RELOAD_FLAG, '1')
+    window.location.reload()
+})
+
+router.afterEach(() => {
+    // Successful navigation means the current bundle is healthy.
+    // Clear the reload guard so future chunk failures can trigger a reload again.
+    sessionStorage.removeItem(CHUNK_RELOAD_FLAG)
+})
+
 router.beforeEach((to, from, next) => {
     const loggedIn = isLoggedIn();
     const requiresAuth = to.meta.requiresAuth;
