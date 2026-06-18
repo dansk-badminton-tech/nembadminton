@@ -5,6 +5,7 @@
             {{ me?.clubhouse.name }}
         </hero-bar>
         <section class="section is-main-section">
+            <UpcomingTeamRounds class="mb-5"/>
             <RecentCancellations :collector-id="collectorId" class="mb-5"/>
             <SyncHealthBadge/>
         </section>
@@ -18,11 +19,12 @@ import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import SyncHealthBadge from "@/views/dashboard/SyncHealthBadge.vue";
 import RecentCancellations from "@/views/dashboard/RecentCancellations.vue";
+import UpcomingTeamRounds from "@/views/dashboard/UpcomingTeamRounds.vue";
 
 export default {
     name: "ClubDashboard",
     inject: ['clubhouseId'],
-    components: {SyncHealthBadge, RecentCancellations, HeroBar, TitleBar},
+    components: {UpcomingTeamRounds, SyncHealthBadge, RecentCancellations, HeroBar, TitleBar},
     apollo: {
         me: {
             query: MeQuery,
