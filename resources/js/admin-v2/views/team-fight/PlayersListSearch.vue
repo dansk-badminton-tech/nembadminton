@@ -473,8 +473,8 @@ export default {
                                             HAS: {
                                                 relation: 'cancellationCollector',
                                                 condition: {
-                                                    column: 'USER_ID',
-                                                    value: this.me?.id
+                                                    column: 'CLUBHOUSE_ID',
+                                                    value: this.clubhouseId
                                                 }
                                             }
                                         },
@@ -532,8 +532,8 @@ export default {
                                     HAS: {
                                         relation: 'cancellationCollector',
                                         condition: {
-                                            column: 'USER_ID',
-                                            value: this.me.id
+                                            column: 'CLUBHOUSE_ID',
+                                            value: this.clubhouseId
                                         }
                                     }
                                 },
@@ -585,8 +585,8 @@ export default {
                                 HAS: {
                                     relation: 'cancellationCollector',
                                     condition: {
-                                        column: 'USER_ID',
-                                        value: this.me.id
+                                        column: 'CLUBHOUSE_ID',
+                                        value: this.clubhouseId
                                     }
                                 }
                             },
@@ -628,8 +628,8 @@ export default {
                                         HAS: {
                                             relation: 'cancellationCollector',
                                             condition: {
-                                                column: 'USER_ID',
-                                                value: this.me.id
+                                                column: 'CLUBHOUSE_ID',
+                                                value: this.clubhouseId
                                             }
                                         }
                                     }

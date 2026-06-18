@@ -8,7 +8,7 @@ extend type Query{
         gender: [Gender!] @in
         inactive: Boolean @where
         orderBy: _ @orderBy(columns: ["name"])
-        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable"])
+        whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable", "clubhouse_id"])
         "Need to have at least one point"
         hasPoints: Boolean @scope
         "If specified will not show members that is part of Team ID"
