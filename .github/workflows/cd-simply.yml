@@ -38,6 +38,7 @@ jobs:
           export VITE_REVERB_HOST="ws.platform.nembadminton.dk"
           export VITE_REVERB_PORT="443"
           export VITE_REVERB_SCHEME="https"
+          export VITE_GOOGLE_CLIENT_ID="567917529155-43hi6mot3adkbks07p64mn4ft1a4tvjb.apps.googleusercontent.com"
 
           yarn install --frozen-lockfile
           yarn run build
