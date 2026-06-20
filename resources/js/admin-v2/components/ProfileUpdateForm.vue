@@ -27,6 +27,19 @@
           required
         />
       </b-field>
+        <b-field
+            horizontal
+            label="BadmintonID"
+            message="Valgfrit. Dit BadmintonID (fra badmintonplayer.dk). Format ååmmdd-xx (f.eks. 010203-01)"
+        >
+            <b-input
+                v-model="playerId"
+                name="playerId"
+                type="text"
+                pattern="[0-9]{6}-[0-9]{2}"
+                validationmessage="Formatet skal være yymmdd-xx (f.eks. 010203-01)"
+            />
+        </b-field>
       <hr>
       <b-field horizontal>
         <b-field grouped>
@@ -57,9 +70,11 @@ export default defineComponent({
     CardComponent,
     FilePicker
   },
+  inject: ['user'],
   data () {
     return {
-      isLoading: false
+      isLoading: false,
+        playerId: null
     }
   },
   computed: {
@@ -80,8 +95,29 @@ export default defineComponent({
       }
     }
   },
+  watch: {
+    user: {
+      handler (newVal) {
+        if (newVal && newVal.player_id) {
+          this.playerId = newVal.player_id
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     submit () {
+      if (this.playerId) {
+        const regex = /^[0-9]{6}-[0-9]{2}$/
+        if (!regex.test(this.playerId)) {
+          this.$buefy.snackbar.open({
+            duration: 4000,
+            type: 'is-danger',
+            message: 'BadmintonID skal være i formatet yymmdd-xx (f.eks. 010203-01)'
+          })
+          return
+        }
+      }
       this.isLoading = true
         this.$apollo.mutate(
             {
@@ -91,13 +127,15 @@ export default defineComponent({
                                 id
                                 name
                                 email
+                                player_id
                             }
                         }
                     `,
                 variables: {
                     input: {
                         name: this.$store.state.userName,
-                        email: this.$store.state.userEmail
+                        email: this.$store.state.userEmail,
+                        player_id: this.playerId
                     }
                 }
             }
@@ -108,7 +146,15 @@ export default defineComponent({
                     type: 'is-success',
                     message: `Din profil er nu opdateret`
                 })
-        }).finally(() => {
+        }).catch(({graphQLErrors}) => {
+            let errors = graphQLErrors.map(e => e.message)
+            this.$buefy.snackbar.open({
+                duration: 2000,
+                type: 'is-danger',
+                message: "Kunne ikke opdater din profil. "+errors.join(', ')
+                                      })
+        })
+            .finally(() => {
             this.isLoading = false
         })
     }
