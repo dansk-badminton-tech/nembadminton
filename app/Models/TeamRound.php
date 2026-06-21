@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Permission;
 use App\Util\Util;
 use FlyCompany\TeamFight\SquadManager;
 use Illuminate\Database\Eloquent\Builder;
@@ -43,6 +44,17 @@ class TeamRound extends Model
     public function scopeCurrentUser(Builder $query) : Builder
     {
         return $query->where('user_id', Auth::user()->id);
+    }
+
+    public function scopeVisibleToUser(Builder $query) : Builder
+    {
+        $user = Auth::user();
+        if ($user && $user->hasPermissionTo(Permission::VIEW_TEAMROUNDS) && !$user->hasPermissionTo(Permission::EDIT_TEAMROUNDS)) {
+            return $query->whereHas('squads.categories.players', function (Builder $q) use ($user) {
+                $q->where('member_ref_id', $user->player_id);
+            });
+        }
+        return $query;
     }
 
     public function user() : BelongsTo
