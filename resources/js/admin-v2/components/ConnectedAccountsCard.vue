@@ -14,7 +14,7 @@
             </span>
             <connect-google-button
                 v-else
-                :current-user-email="userEmail"
+                :current-user-email="userEmail || ''"
                 @linked="handleLinked"
             />
         </div>

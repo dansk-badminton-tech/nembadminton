@@ -18,7 +18,7 @@ input UpsertSubscriptionSettingInput {
 input UpdateMe {
     name: String
     email: String
-    player_id: String
+    player_id: String @rules(apply: ["nullable", "string", "App\\Rules\\UniquePlayerId"])
     subscriptionSettings: UpsertSubscriptionSettingBelongTo
     clubs: ConnectClubs
 }
