@@ -27,5 +27,9 @@ query me{
         clubhouses {
             id
         }
+        roles {
+            id
+            name
+        }
     }
 }

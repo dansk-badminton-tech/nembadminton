@@ -67,6 +67,7 @@ const routes = [
         path: '/c-:clubhouseId/player',
         component: () => import (/* webpackChunkName: "player" */ '@/views/PlayerApp.vue'),
         props: route => ({clubhouseId: route.params.clubhouseId}),
+        meta: { requiresAuth: true },
         children: [
             {
                 path: '',
