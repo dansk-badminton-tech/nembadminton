@@ -48,7 +48,8 @@ export default defineComponent({
     props: {
         currentUserEmail: {
             type: String,
-            required: true,
+            required: false,
+            default: '',
         },
     },
     emits: ['linked'],

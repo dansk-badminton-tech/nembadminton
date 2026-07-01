@@ -16,21 +16,14 @@
 
 <script>
 import {defineComponent} from 'vue'
-import * as chartConfig from '@/components/Charts/chart.config.js'
 import TitleBar from '@/components/TitleBar.vue'
 import HeroBar from '@/components/HeroBar.vue'
-import TilesBlock from '@/components/TilesBlock.vue'
-import CardWidget from '@/components/CardWidget.vue'
-import CardComponent from '@/components/CardComponent.vue'
-import LineChart from '@/components/Charts/LineChart.vue'
-import ClientsTableSample from '@/components/ClientsTableSample.vue'
-import NotificationBar from '@/components/NotificationBar.vue'
 
 export default defineComponent(
     {
         name: 'HomeView',
         components: {HeroBar, TitleBar},
-        inject: ['clubhouseId'],
+        inject: ['clubhouseId', 'user'],
         data() {
             return {
                 titleStack: ['Videre', 'stiller']
@@ -39,7 +32,12 @@ export default defineComponent(
         watch: {
             clubhouseId(newVal, oldVal) {
                 if (Number.isInteger(parseInt(newVal))) {
-                    this.$router.replace({name: 'home', params: {clubhouseId: newVal}});
+                    const roles = this.user?.roles ?? [];
+                    const isPlayerOnly = roles.length === 1 && roles[0].name === 'player';
+                    this.$router.replace({
+                        name: isPlayerOnly ? 'player-home' : 'home',
+                        params: {clubhouseId: newVal}
+                    });
                 } else {
                     console.warn('clubhouseId is NOT an integer:', newVal);
                 }

@@ -4,7 +4,7 @@ extend type Query {
         clubhouseId: ID! @eq(key: "clubhouse_id"),
         order: _ @orderBy(columns: ["created_at", "updated_at", "game_date"]),
         gameDate: DateRange @whereBetween(key: "game_date")
-    ) : [TeamRound!]! @paginate(defaultCount: 20) @guard @canResolved(ability: "view")
+    ) : [TeamRound!]! @paginate(defaultCount: 20, scopes: ["visibleToUser"]) @guard @canResolved(ability: "view")
     export(teamRoundId: ID!) : String! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter")
     squadMember(id: ID! @eq) : SquadMember @find @guard @canResolved(ability: "view")
     "Team notification activity"
