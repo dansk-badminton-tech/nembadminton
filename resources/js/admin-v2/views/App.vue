@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <nav-bar/>
+        <nav-bar :hide-clubhouse-nav="isPlayer"/>
         <aside-menu title="Nembadminton" :menu="computedMenu"/>
         <router-view/>
         <footer-bar/>
@@ -9,7 +9,7 @@
 
 <script>
 import {defineComponent, computed} from 'vue'
-import menu from '@/menu.js'
+import {adminMenu, playerMenu} from '@/menu.js'
 import NavBar from '@/components/NavBar.vue'
 import AsideMenu from '@/components/AsideMenu.vue'
 import FooterBar from '@/components/FooterBar.vue'
@@ -44,7 +44,18 @@ export default defineComponent(
         },
         computed: {
             computedMenu() {
-                return menu(this.me?.clubhouse?.id ?? null)
+                if (this.me === null) {
+                    return []
+                }
+
+                if(this.me?.primaryRole?.name === 'player') {
+                    return playerMenu(this.me?.clubhouse?.id ?? null);
+                }
+
+                return adminMenu(this.me?.clubhouse?.id ?? null)
+            },
+            isPlayer() {
+                return this.me?.primaryRole?.name === 'player';
             }
         },
         methods: {

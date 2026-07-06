@@ -47,7 +47,7 @@
                 <nav-bar-menu class="has-divider has-user-avatar">
                     <user-avatar/>
                     <div class="is-user-name">
-                        <span>{{ userName }}</span>
+                        <span>{{ user?.name }}</span>
                     </div>
 
                     <div
@@ -66,6 +66,7 @@
                             <span>Min Profil</span>
                         </router-link>
                         <router-link
+                            v-if="!hideClubhouseNav"
                             :to="{path: '/c-'+clubhouseId+'/club-house'}"
                             class="navbar-item"
                             exact-active-class="is-active"
@@ -105,6 +106,10 @@ export default defineComponent(
             hideRightNav: {
                 type: Boolean,
                 default: false
+            },
+            hideClubhouseNav: {
+                type: Boolean,
+                default: false
             }
         },
         components: {
@@ -112,7 +117,7 @@ export default defineComponent(
             UserAvatar,
             NavBarMenu
         },
-        inject: ['clubhouseId'],
+        inject: ['clubhouseId', 'user'],
         data() {
             return {
                 isMenuActive: false
@@ -131,8 +136,7 @@ export default defineComponent(
             },
             ...mapState([
                             'isAsideMobileExpanded',
-                            'isNavBarVisible',
-                            'userName'
+                            'isNavBarVisible'
                         ])
         },
         mounted() {

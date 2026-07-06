@@ -31,5 +31,9 @@ query me{
             id
             name
         }
+        primaryRole {
+            id
+            name
+        }
     }
 }

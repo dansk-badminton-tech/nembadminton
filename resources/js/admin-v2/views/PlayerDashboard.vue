@@ -92,7 +92,7 @@ export default {
     inject: ["clubhouseId"],
     data() {
         return {
-            titleStack: ['Spillerportal', 'Start'],
+            titleStack: ['Spillerportal', 'Dashboard'],
             loading: false,
             teamRounds: [],
             hidePlayed: true

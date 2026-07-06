@@ -45,6 +45,7 @@ type User {
     socialProviders: [SocialProvider!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
+    primaryRole: Role!
 }
 
 type Role {

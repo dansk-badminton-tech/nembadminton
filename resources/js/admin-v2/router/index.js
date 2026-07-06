@@ -64,30 +64,6 @@ const routes = [
         ]
     },
     {
-        path: '/c-:clubhouseId/player',
-        component: () => import (/* webpackChunkName: "player" */ '@/views/PlayerApp.vue'),
-        props: route => ({clubhouseId: route.params.clubhouseId}),
-        meta: { requiresAuth: true },
-        children: [
-            {
-                path: '',
-                name: 'player-home',
-                component: () => import("../views/PlayerDashboard.vue"),
-                meta: {
-                    title: 'Spillerportal'
-                }
-            },
-            {
-                path: 'calendar-generator',
-                name: 'calendar-generator-public-view',
-                component: () => import("../views/calendar/CalendarGenerator.vue"),
-                meta: {
-                    title: 'Kalendar generator'
-                }
-            }
-        ]
-    },
-    {
         path: '/full-width-page',
         component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullWidthView.vue'),
         children: [
@@ -257,7 +233,7 @@ const routes = [
                         },
                         path: 'home',
                         name: 'home',
-                        component: () => import('@/views/dashboard/ClubDashboard.vue')
+                        component: () => import('@/views/dashboard/Main.vue')
                     },
                     {
                         meta: {
@@ -333,6 +309,20 @@ const routes = [
                         name: 'teams',
                         component: () => import('@/views/team/TeamList.vue'),
                         props: route => ({clubhouseId: route.params.clubhouseId})
+                    },
+                    {
+                        path: 'player',
+                        component: () => import('@/views/tenant/Empty.vue'),
+                        children: [
+                            {
+                                path: 'calendar-generator',
+                                name: 'calendar-generator-public-view',
+                                component: () => import("../views/calendar/CalendarGenerator.vue"),
+                                meta: {
+                                    title: 'Kalendar generator'
+                                }
+                            }
+                        ]
                     }
                 ]
             },
@@ -384,7 +374,9 @@ router.onError((error) => {
         return
     }
     sessionStorage.setItem(CHUNK_RELOAD_FLAG, '1')
-    window.location.reload()
+    if(process.env.NODE_ENV !== "development" && confirm("Der skete en fejl. Vil du genindlæse siden?")){
+        window.location.reload()
+    }
 })
 
 router.afterEach(() => {

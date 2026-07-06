@@ -32,12 +32,7 @@ export default defineComponent(
         watch: {
             clubhouseId(newVal, oldVal) {
                 if (Number.isInteger(parseInt(newVal))) {
-                    const roles = this.user?.roles ?? [];
-                    const isPlayerOnly = roles.length === 1 && roles[0].name === 'player';
-                    this.$router.replace({
-                        name: isPlayerOnly ? 'player-home' : 'home',
-                        params: {clubhouseId: newVal}
-                    });
+                    this.$router.replace({name: 'home', params: {clubhouseId: newVal}});
                 } else {
                     console.warn('clubhouseId is NOT an integer:', newVal);
                 }
