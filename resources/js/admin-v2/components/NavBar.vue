@@ -54,24 +54,25 @@
                         slot="dropdown"
                         class="navbar-dropdown is-right"
                     >
-                        <div v-if="showSwitcher" class="navbar-item is-label">
-                            <span class="has-text-grey-light is-size-7">Skift rolle</span>
-                        </div>
-                        <a
-                            v-for="role in switchableRoles"
-                            v-if="showSwitcher"
-                            :key="role.id"
-                            class="navbar-item"
-                            :class="{ 'is-active': role.isCurrent }"
-                            @click="switchRole(role.id)"
-                        >
-                            <b-icon
-                                :icon="role.isCurrent ? 'check-circle' : 'circle-outline'"
-                                custom-size="default"
-                            />
-                            <span>{{ role.label }}</span>
-                        </a>
-                        <hr v-if="showSwitcher" class="navbar-divider">
+                        <template v-if="showSwitcher">
+                            <div class="navbar-item is-label">
+                                <span class="has-text-grey-light is-size-7">Skift rolle</span>
+                            </div>
+                            <a
+                                v-for="role in switchableRoles"
+                                :key="role.id"
+                                class="navbar-item"
+                                :class="{ 'is-active': role.isCurrent }"
+                                @click="switchRole(role.id)"
+                            >
+                                <b-icon
+                                    :icon="role.isCurrent ? 'check-circle' : 'circle-outline'"
+                                    custom-size="default"
+                                />
+                                <span>{{ role.label }}</span>
+                            </a>
+                            <hr class="navbar-divider">
+                        </template>
                         <router-link
                             :to="{name: 'profile'}"
                             class="navbar-item"
