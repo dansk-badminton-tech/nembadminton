@@ -16,21 +16,6 @@ class SetPrimaryRoleTest extends TestCase
 
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
-    private function userWithRoles(array $roleValues, ?int $primaryRoleId = null): User
-    {
-        $clubhouse = Clubhouse::factory()->create();
-        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
-        setPermissionsTeamId($clubhouse->id);
-        foreach ($roleValues as $roleValue) {
-            $user->assignRole($roleValue);
-        }
-        if ($primaryRoleId !== null) {
-            $user->primary_role_id = $primaryRoleId;
-            $user->save();
-        }
-        return $user->refresh();
-    }
-
     private function setPrimaryRoleMutation(string $roleId): \Illuminate\Testing\TestResponse
     {
         return $this->graphQL(/** @lang GraphQL */ '
