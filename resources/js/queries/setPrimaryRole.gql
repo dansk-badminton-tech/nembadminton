@@ -1,0 +1,6 @@
+mutation setPrimaryRole($roleId: ID!) {
+  setPrimaryRole(roleId: $roleId) {
+    id
+    primaryRole { id name }
+  }
+}
