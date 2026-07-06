@@ -1,6 +1,7 @@
 <script>
 import CardComponent from "@/components/CardComponent.vue";
 import CreateInvitationModal from "@/views/club-house/CreateInvitationModal.vue";
+import EditRolesModal from "@/views/club-house/EditRolesModal.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import gql from "graphql-tag";
 
@@ -8,11 +9,13 @@ export default {
     name: "MemberList",
     props: {'users': Array, 'loading': Boolean},
     inject: ['clubhouseId', 'user'],
-    components: {CreateInvitationModal, CardComponent},
+    components: {CreateInvitationModal, EditRolesModal, CardComponent},
     apollo: {},
     data() {
         return {
             showModal: false,
+            showEditModal: false,
+            editTarget: null,
             isDeleting: false
         }
     },
@@ -38,6 +41,10 @@ export default {
                 .finally(() => {
                     this.isDeleting = false;
                 })
+        },
+        openEditModal(user) {
+            this.editTarget = user;
+            this.showEditModal = true;
         }
     }
 }
@@ -51,6 +58,15 @@ export default {
         >
             <template v-slot:default="props">
                 <CreateInvitationModal @close="props.close"/>
+            </template>
+        </b-modal>
+        <b-modal
+            v-if="editTarget"
+            v-model="showEditModal"
+            has-modal-card
+        >
+            <template v-slot:default="props">
+                <EditRolesModal :target="editTarget" @close="props.close"/>
             </template>
         </b-modal>
         <card-component
@@ -82,6 +98,14 @@ export default {
                         {{ props.row.roles.map(r => r.name).join(', ') }}
                     </b-table-column>
                     <b-table-column label="Funktioner" numeric v-slot="props">
+                        <b-button
+                            icon-left="pencil"
+                            size="is-small"
+                            type="is-info"
+                            title="Rediger roller"
+                            @click="openEditModal(props.row)"
+                            :disabled="props.row.id === user.id"
+                        />
                         <b-button
                             icon-left="delete"
                             size="is-small"
