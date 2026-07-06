@@ -24,6 +24,9 @@ extend type Mutation {
 
     # Delete membership
     deleteMembership(clubhouseId: ID!, userId: ID!): Boolean @guard @hasPermission(name: "edit clubhouse") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@delete")
+
+    # Edit a member's roles
+    updateMembershipRoles(clubhouseId: ID!, userId: ID!, roles: [MemberRole!]!): User @guard @hasPermission(name: "edit clubhouse") @field(resolver: "\\App\\GraphQL\\Mutations\\Membership@updateRoles")
 }
 
 input UpdateClubhouseInput {
