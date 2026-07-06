@@ -66,7 +66,7 @@ export default {
             has-modal-card
         >
             <template v-slot:default="props">
-                <EditRolesModal :target="editTarget" @close="props.close"/>
+                <EditRolesModal :target="editTarget" :key="editTarget.id" @close="props.close"/>
             </template>
         </b-modal>
         <card-component
