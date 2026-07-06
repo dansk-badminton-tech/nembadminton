@@ -39,7 +39,7 @@ class Parser
         foreach ($trs as $tr) {
             if ($tr->attr('class') === 'roundheader') {
                 foreach ($tr->find('td') as $td) {
-                    preg_match('/(\d) (.*)/', $td->text(), $output_array);
+                    preg_match('/(\d+.*)\s+(\d{2}-\d{2}-\d{4})/', $td->text(), $output_array);
                     $currentRound = $output_array[1] ?? null;
                     $currentRound = is_int($currentRound) ?: (int)$currentRound;
                     $currentRoundDate = $output_array[2] ?? null;
