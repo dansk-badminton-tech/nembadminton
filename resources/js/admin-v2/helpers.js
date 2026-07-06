@@ -470,6 +470,12 @@ export const roleLabels = {
     'super-admin': 'Super admin',
 }
 
+export const roleNameToEnum = {
+    'club-admin': 'CLUB_ADMIN',
+    'coach': 'COACH',
+    'player': 'PLAYER',
+}
+
 export function slugify(text) {
     if (!text) {
         return '';

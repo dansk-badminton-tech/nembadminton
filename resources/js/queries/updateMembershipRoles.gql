@@ -1,0 +1,8 @@
+mutation updateMembershipRoles($clubhouseId: ID!, $userId: ID!, $roles: [MemberRole!]!) {
+  updateMembershipRoles(clubhouseId: $clubhouseId, userId: $userId, roles: $roles) {
+    id
+    name
+    roles { id name }
+    primaryRole { id name }
+  }
+}
