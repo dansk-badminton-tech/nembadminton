@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
     updateMe(input: UpdateMe! @spread) : User! @update @guard @inject(context: "user.id", name: "id")
+    setPrimaryRole(roleId: ID!): User! @guard @field(resolver: "\\App\\GraphQL\\Mutations\\SetPrimaryRole@resolve")
 }
 
 input UpsertSubscriptionSettingBelongTo {
