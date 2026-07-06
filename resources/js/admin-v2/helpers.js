@@ -463,6 +463,13 @@ export const roles = [
     }
 ]
 
+export const roleLabels = {
+    'club-admin': 'Klub admin',
+    'coach': 'Træner',
+    'player': 'Spiller',
+    'super-admin': 'Super admin',
+}
+
 export function slugify(text) {
     if (!text) {
         return '';
