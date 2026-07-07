@@ -23,7 +23,7 @@ export default defineComponent(
     {
         name: 'HomeView',
         components: {HeroBar, TitleBar},
-        inject: ['clubhouseId', 'user'],
+        inject: ['clubhouseId'],
         data() {
             return {
                 titleStack: ['Videre', 'stiller']
