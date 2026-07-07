@@ -98,22 +98,24 @@ export default {
                         {{ props.row.roles.map(r => r.name).join(', ') }}
                     </b-table-column>
                     <b-table-column label="Funktioner" numeric v-slot="props">
-                        <b-button
-                            icon-left="pencil"
-                            size="is-small"
-                            type="is-info"
-                            title="Rediger roller"
-                            @click="openEditModal(props.row)"
-                            :disabled="props.row.id === user.id"
-                        />
-                        <b-button
-                            icon-left="delete"
-                            size="is-small"
-                            type="is-danger"
-                            title="Fjern medlem fra klubben"
-                            @click="deleteMembership(props.row)"
-                            :disabled="props.row.id === user.id"
-                        />
+                        <div class="buttons is-right">
+                            <b-button
+                                icon-left="pencil"
+                                size="is-small"
+                                type="is-info"
+                                title="Rediger roller"
+                                @click="openEditModal(props.row)"
+                                :disabled="props.row.id === user.id"
+                            />
+                            <b-button
+                                icon-left="delete"
+                                size="is-small"
+                                type="is-danger"
+                                title="Fjern medlem fra klubben"
+                                @click="deleteMembership(props.row)"
+                                :disabled="props.row.id === user.id"
+                            />
+                        </div>
                     </b-table-column>
                     <template v-slot:empty>
                         Ingen medlemmer fundet
