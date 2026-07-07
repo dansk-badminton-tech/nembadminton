@@ -878,6 +878,7 @@ class TeamsTest extends TestCase
         $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
         setPermissionsTeamId($clubhouse->id);
         $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
 
         $teamRound = TeamRound::factory()->create([
             'clubhouse_id' => $clubhouse->id,
@@ -961,6 +962,7 @@ class TeamsTest extends TestCase
         $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
         setPermissionsTeamId($clubhouse->id);
         $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
 
         $teamRound = TeamRound::factory()->create([
             'clubhouse_id' => $clubhouse->id,
@@ -1047,6 +1049,7 @@ class TeamsTest extends TestCase
         $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
         setPermissionsTeamId($clubhouse->id);
         $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
 
         $teamRound = TeamRound::factory()->create([
             'clubhouse_id' => $clubhouse->id,
