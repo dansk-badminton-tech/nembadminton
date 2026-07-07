@@ -40,6 +40,8 @@ class Invitation
     {
         setPermissionsTeamId($user->clubhouse_id);
         $user->assignRole(Role::from($invitation->role));
+        $user->primaryRole()->associate($user->roles->first());
+        $user->save();
     }
 
     private function connectClubhouse(User $user, InvitationModel $invitation) : void

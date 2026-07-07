@@ -27,7 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string              $name
  * @property string              $email
  * @property Clubhouse           $clubhouse
- * @property Role                $selectedRole
+ * @property Role                $primaryRole
  * @property Carbon              $created_at
  */
 class User extends Authenticatable
