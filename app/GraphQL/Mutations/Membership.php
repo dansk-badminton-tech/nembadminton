@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Mutations;
 
+use App\Enums\Role;
 use App\Models\User;
 use GraphQL\Error\UserError;
 use Nuwave\Lighthouse\Execution\ResolveInfo;
@@ -38,5 +39,44 @@ final readonly class Membership
         $user->save();
 
         return true;
+    }
+
+    public function updateRoles(null $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): User
+    {
+        /** @var User $target */
+        $target = User::query()->findOrFail($args['userId']);
+
+        /** @var User $actor */
+        $actor = $context->user();
+
+        if ($target->id === $actor->getAuthIdentifier()) {
+            throw new UserError('You cannot edit your own roles');
+        }
+
+        if ($target->clubhouse->id !== (int)$args['clubhouseId'] || $actor->clubhouse->id !== (int)$args['clubhouseId']) {
+            throw new UserError('You cannot edit someone elses membership');
+        }
+
+        setPermissionsTeamId($target->clubhouse_id);
+
+        if (!$actor->hasRole(Role::CLUB_ADMIN->value)) {
+            throw new UserError('Only club admins can edit roles');
+        }
+
+        $roleEnums = array_map(fn(string $r) => Role::from($r), $args['roles']);
+        $target->syncRoles(array_map(fn(Role $r) => $r->value, $roleEnums));
+
+        $target->refresh();
+        $newRoleIds = $target->roles()->pluck('roles.id')->all();
+
+        if ($target->primary_role_id === null && !empty($newRoleIds)) {
+            $target->primary_role_id = $newRoleIds[0];
+            $target->save();
+        } elseif ($target->primary_role_id !== null && !in_array($target->primary_role_id, $newRoleIds, true)) {
+            $target->primary_role_id = !empty($newRoleIds) ? $newRoleIds[0] : null;
+            $target->save();
+        }
+
+        return $target->refresh()->load(['roles', 'primaryRole']);
     }
 }

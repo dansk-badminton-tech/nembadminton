@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
     updateMe(input: UpdateMe! @spread) : User! @update @guard @inject(context: "user.id", name: "id")
+    setPrimaryRole(roleId: ID!): User! @guard @field(resolver: "\\App\\GraphQL\\Mutations\\SetPrimaryRole@resolve")
 }
 
 input UpsertSubscriptionSettingBelongTo {
@@ -18,7 +19,7 @@ input UpsertSubscriptionSettingInput {
 input UpdateMe {
     name: String
     email: String
-    player_id: String
+    player_id: String @rules(apply: ["nullable", "string", "App\\Rules\\UniquePlayerId"])
     subscriptionSettings: UpsertSubscriptionSettingBelongTo
     clubs: ConnectClubs
 }
@@ -45,6 +46,7 @@ type User {
     socialProviders: [SocialProvider!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
+    primaryRole: Role!
 }
 
 type Role {

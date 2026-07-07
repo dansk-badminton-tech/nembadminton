@@ -1,19 +1,19 @@
-export default function resolveMenu(clubhouseId) {
+export function adminMenu(clubhouseId) {
     return [
         'General',
         [
             {
-                to: '/c-'+clubhouseId+'/home',
+                to: '/c-' + clubhouseId + '/home',
                 icon: 'monitor-dashboard',
                 label: 'Dashboard'
             },
             {
-                to: '/c-'+clubhouseId+'/team-fight/dashboard',
+                to: '/c-' + clubhouseId + '/team-fight/dashboard',
                 icon: 'account-group',
                 label: 'Holdrunder'
             },
             {
-                to: '/c-'+clubhouseId+'/teams',
+                to: '/c-' + clubhouseId + '/teams',
                 icon: 'shield-account',
                 label: 'Hold'
             },
@@ -23,12 +23,12 @@ export default function resolveMenu(clubhouseId) {
                 label: 'Afbud'
             },
             {
-                to: '/c-'+clubhouseId+'/members',
+                to: '/c-' + clubhouseId + '/members',
                 icon: 'account-multiple',
                 label: 'Spillere'
             },
             {
-                to: '/c-'+clubhouseId+'/analytics',
+                to: '/c-' + clubhouseId + '/analytics',
                 icon: 'google-analytics',
                 label: 'Analytics'
             }
@@ -50,16 +50,25 @@ export default function resolveMenu(clubhouseId) {
                 label: 'FAQ',
                 icon: 'frequently-asked-questions'
             },
-        ],
-        'Til spiller',
+        ]
+    ];
+}
+
+export function playerMenu(clubhouseId) {
+    return [
+        'Værktøjer',
         [
             {
-                to: '/c-'+clubhouseId+'/player',
-                icon: 'badminton',
-                iconRight: 'open-in-new',
-                label: 'Spillerportal',
-                target: '_blank'
+                to: '/c-'+clubhouseId+'/home',
+                icon: 'home',
+                label: 'Dashboard'
+            },
+            {
+                to: '/c-'+clubhouseId+'/player/calendar-generator',
+                icon: 'calendar-sync-outline',
+                label: 'Automatisk kalender'
             }
         ]
     ]
 }
+

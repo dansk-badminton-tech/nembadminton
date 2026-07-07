@@ -65,6 +65,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         Role::updateOrCreate(['name' => SystemRole::PLAYER->value, 'clubhouse_id' => null])->syncPermissions([
             SystemPermission::VIEW_TEAMS->value,
+            SystemPermission::VIEW_TEAMROUNDS->value
         ]);
 
         $role = Role::updateOrCreate(['name' => SystemRole::SUPERADMIN->value, 'clubhouse_id' => null]);

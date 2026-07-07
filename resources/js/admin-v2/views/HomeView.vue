@@ -16,15 +16,8 @@
 
 <script>
 import {defineComponent} from 'vue'
-import * as chartConfig from '@/components/Charts/chart.config.js'
 import TitleBar from '@/components/TitleBar.vue'
 import HeroBar from '@/components/HeroBar.vue'
-import TilesBlock from '@/components/TilesBlock.vue'
-import CardWidget from '@/components/CardWidget.vue'
-import CardComponent from '@/components/CardComponent.vue'
-import LineChart from '@/components/Charts/LineChart.vue'
-import ClientsTableSample from '@/components/ClientsTableSample.vue'
-import NotificationBar from '@/components/NotificationBar.vue'
 
 export default defineComponent(
     {

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Models;
 
+use App\Enums\Role;
 use App\Events\UserUpdate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string              $name
  * @property string              $email
  * @property Clubhouse           $clubhouse
+ * @property Role                $selectedRole
  * @property Carbon              $created_at
  */
 class User extends Authenticatable
@@ -47,6 +49,7 @@ class User extends Authenticatable
         'email',
         'password',
         'player_id',
+        'primary_role_id',
     ];
 
     /**
@@ -105,6 +108,11 @@ class User extends Authenticatable
     public function socialProviders() : HasMany
     {
         return $this->hasMany(SocialProvider::class);
+    }
+
+    public function primaryRole() : BelongsTo
+    {
+        return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'primary_role_id', 'id');
     }
 
 }

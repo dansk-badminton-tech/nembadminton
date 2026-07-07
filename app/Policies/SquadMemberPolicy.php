@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Models\SquadMember;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -53,7 +54,7 @@ class SquadMemberPolicy
      */
     public function update(User $user, SquadMember $squadMember)
     {
-        return $user->clubhouse_id === $squadMember->category->squad->teamRound->clubhouse_id;
+        return $user->clubhouse_id === $squadMember->category->squad->teamRound->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_TEAMROUNDS);
     }
 
     /**
@@ -65,7 +66,7 @@ class SquadMemberPolicy
      */
     public function delete(User $user, SquadMember $squadMember)
     {
-        return $user->clubhouse_id === $squadMember->category->squad->teamRound->clubhouse_id;
+        return $user->clubhouse_id === $squadMember->category->squad->teamRound->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_TEAMROUNDS);
     }
 
     /**
