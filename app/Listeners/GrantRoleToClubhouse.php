@@ -28,5 +28,7 @@ class GrantRoleToClubhouse
         /** @var User $user */
         $user = auth()->user();
         $user->assignRole(Role::CLUB_ADMIN->value);
+        $user->primaryRole()->associate($user->roles->first());
+        $user->save();
     }
 }
