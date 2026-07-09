@@ -321,6 +321,14 @@ const routes = [
                                 meta: {
                                     title: 'Kalendar generator'
                                 }
+                            },
+                            {
+                                meta: {
+                                    title: 'Færdiggør profil'
+                                },
+                                path: 'complete-profile',
+                                name: 'complete-profile',
+                                component: () => import(/* webpackChunkName: "full-page" */ '@/views/full-page/CompletePlayerProfile.vue')
                             }
                         ]
                     }

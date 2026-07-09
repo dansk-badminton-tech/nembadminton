@@ -77,6 +77,8 @@ export default defineComponent(
 
                         if (this.me.clubhouse === null) {
                             this.$router.push({name: 'sign-up-finish', query: {error: 'missingClubhouse'}})
+                        } else if (this.me.player_id === null && this.me?.primaryRole?.name === 'player') {
+                            this.$router.push({name: 'complete-profile', params: {clubhouseId: data.me.clubhouse.id}})
                         }
                     })
                     .catch(({message}) => {

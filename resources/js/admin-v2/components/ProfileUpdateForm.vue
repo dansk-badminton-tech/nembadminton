@@ -30,30 +30,13 @@
       <b-field
         horizontal
         label="Spiller"
-        message="Søg efter dit navn og vælg dig selv som spiller i klubben for at forbinde din profil."
       >
-        <b-autocomplete
-          v-model="searchName"
-          :data="searchResults"
-          placeholder="Søg efter dit navn..."
-          field="name"
-          :loading="$apollo.queries.membersSearch.loading"
-          :clearable="true"
-          @typing="onTyping"
-          @select="onSelectMember"
-          keep-first
-        >
-          <template v-slot:default="{ option }">
-            <div class="media">
-              <div class="media-content">
-                {{ option.name }}
-                <br>
-                <small>BadmintonID: {{ option.refId }}</small>
-              </div>
-            </div>
-          </template>
-          <template slot="empty">Ingen spillere fundet</template>
-        </b-autocomplete>
+        <member-search-autocomplete
+          :clubhouse-id="clubhouseId"
+          :initial-player-id="initialPlayerId"
+          @select="onMemberSelect"
+          @clear="onMemberClear"
+        />
       </b-field>
       <hr>
       <b-field horizontal>
@@ -78,24 +61,22 @@ import { defineComponent } from 'vue'
 import {debounce, extractErrors} from '@/helpers.js'
 import FilePicker from '@/components/FilePicker.vue'
 import CardComponent from '@/components/CardComponent.vue'
+import MemberSearchAutocomplete from '@/components/MemberSearchAutocomplete.vue'
 import gql from "graphql-tag";
 
 export default defineComponent({
   name: 'ProfileUpdateForm',
   components: {
     CardComponent,
-    FilePicker
+    FilePicker,
+    MemberSearchAutocomplete
   },
   inject: ['user', 'clubhouseId'],
   data () {
     return {
       isLoading: false,
       playerId: null,
-      initialPlayerId: null,
-      searchName: '',
-      querySearchName: '',
-      selectedMember: null,
-      searchResults: []
+      initialPlayerId: null
     }
   },
   computed: {
@@ -125,89 +106,14 @@ export default defineComponent({
         }
       },
       immediate: true
-    },
-    searchName (val) {
-      if (!val) {
-        this.selectedMember = null
-        this.playerId = null
-      }
-    }
-  },
-  apollo: {
-    membersSearch: {
-      query: gql`
-        query membersSearch($clubhouse: Int!, $name: String) {
-          membersSearch(clubhouse: $clubhouse, name: $name) {
-            data {
-              id
-              name
-              refId
-            }
-          }
-        }
-      `,
-      variables() {
-        return {
-          clubhouse: parseInt(this.clubhouseId, 10),
-          name: '%' + this.querySearchName + '%'
-        }
-      },
-      skip() {
-        return !this.clubhouseId || !this.querySearchName
-      },
-      result({ data }) {
-        if (data && data.membersSearch) {
-          this.searchResults = data.membersSearch.data
-        }
-      }
-    },
-    initialMember: {
-      query: gql`
-        query initialMemberSearch($clubhouse: Int!, $refId: String) {
-          membersSearch(clubhouse: $clubhouse, refId: $refId) {
-            data {
-              id
-              name
-              refId
-            }
-          }
-        }
-      `,
-      variables() {
-        return {
-          clubhouse: parseInt(this.clubhouseId, 10),
-          refId: this.initialPlayerId
-        }
-      },
-      skip() {
-        return !this.clubhouseId || !this.initialPlayerId
-      },
-      update: data => data.membersSearch,
-      result({ data }) {
-        if (data && data.membersSearch && data.membersSearch.data.length > 0) {
-          const member = data.membersSearch.data[0]
-          this.selectedMember = member
-          this.searchName = member.name
-        }
-      }
     }
   },
   methods: {
-    onTyping: debounce(function (name) {
-      this.querySearchName = name
+    onMemberSelect(refId) {
+      this.playerId = refId
+    },
+    onMemberClear() {
       this.playerId = null
-      this.selectedMember = null
-    }, 300),
-    onSelectMember(option) {
-      if (option) {
-        this.selectedMember = option
-        this.playerId = option.refId
-        this.searchName = option.name
-      } else {
-        this.selectedMember = null
-        this.playerId = null
-        this.searchName = ''
-      }
     },
     submit () {
       if (this.playerId) {

@@ -50,7 +50,7 @@ class TeamRound extends Model
     public function scopeVisibleToUser(Builder $query) : Builder
     {
         $user = Auth::user();
-        if ($user && $user->hasRole(Role::PLAYER)) {
+        if ($user && $user->primaryRole->name === Role::PLAYER->value) {
             return $query->whereHas('squads.categories.players', function (Builder $q) use ($user) {
                 $q->where('member_ref_id', $user->player_id);
             });
