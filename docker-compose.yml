@@ -134,7 +134,7 @@ services:
       - 8080:80
 
   redis:
-    image: bitnami/redis:6.2
+    image: soldevelo/redis:6.2
     ports:
       - "6379:6379"
     environment:
