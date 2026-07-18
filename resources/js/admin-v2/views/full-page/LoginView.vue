@@ -109,23 +109,6 @@ export default defineComponent({
                                        }
                                    },
                                    methods: {
-                                       fetchUser() {
-                                           this.$apollo.query({
-                                                                  query: ME
-                                                              })
-                                               .then(({data}) => {
-                                                   this.$store.commit('user', {
-                                                       id: data.me.id,
-                                                       name: data.me.name,
-                                                       email: data.me.email,
-                                                       avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg',
-                                                       clubhouse: data.me.clubhouse
-                                                   })
-                                               })
-                                               .catch((error) => {
-                                                   console.error('Login error:', error)
-                                               })
-                                       },
                                        submit() {
                                            this.isLoading = true
                                            this.$apollo.mutate(
@@ -134,6 +117,11 @@ export default defineComponent({
                                                         mutation ($input: LoginInput){
                                                           login(input: $input){
                                                             access_token
+                                                              user {
+                                                                  clubhouse {
+                                                                      id
+                                                                  }
+                                                              }
                                                           }
                                                         }
                                                     `,
@@ -152,8 +140,11 @@ export default defineComponent({
                                                        message: `Velkommen tilbage!`
                                                    })
                                                setAuthToken(data.login.access_token)
-                                               this.fetchUser()
-                                               this.$router.push({name: 'home-redirect'})
+                                               if(data.login.user.clubhouse === null){
+                                                   this.$router.push({name: 'sign-up-finish'})
+                                               }else{
+                                                  this.$router.push({name: 'home', params: {clubhouseId: data.login.user.clubhouse.id}})
+                                               }
                                            }).catch(({graphQLErrors}) => {
                                                this.$buefy.snackbar.open(
                                                    {

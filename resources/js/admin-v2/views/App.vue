@@ -25,7 +25,8 @@ export default defineComponent(
         },
         data() {
             return {
-                me: null
+                me: null,
+                firstLoad: false,
             }
         },
         mounted() {
@@ -80,10 +81,13 @@ export default defineComponent(
                         } else if (this.me.player_id === null && this.me?.primaryRole?.name === 'player') {
                             this.$router.push({name: 'complete-profile', params: {clubhouseId: data.me.clubhouse.id}})
                         }
+                        this.firstLoad = true;
                     })
                     .catch(({message}) => {
                         if (message.match(/Unauthenticated/i)) {
-                            //this.$router.push({name: 'login'})
+                            if(!this.firstLoad){
+                                this.$router.push({name: 'login'})
+                            }
                         } else {
                             this.$buefy.snackbar.open(
                                 {

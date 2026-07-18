@@ -147,7 +147,7 @@ export default defineComponent({
                         avatar: 'https://api.dicebear.com/6.x/fun-emoji/svg',
                         clubhouse: data.me.clubhouse,
                     })
-                    this.routeAfterLogin()
+                    this.routeAfterLogin(data.me.clubhouse.id)
                 })
                 .catch(({ graphQLErrors }) => {
                     const errors = extractErrors(graphQLErrors)
@@ -162,7 +162,7 @@ export default defineComponent({
                     this.loadingProvider = null
                 })
         },
-        routeAfterLogin() {
+        routeAfterLogin(clubhouseId) {
             if (this.invitationToken) {
                 this.$router.push({ name: 'invitation', params: { token: this.invitationToken } })
                 return
@@ -171,7 +171,7 @@ export default defineComponent({
                 this.$router.push({ name: 'sign-up-finish' })
                 return
             }
-            this.$router.push({ name: 'home-redirect' })
+            this.$router.push({ name: 'home', params: {clubhouseId: clubhouseId} })
         },
     },
 })
