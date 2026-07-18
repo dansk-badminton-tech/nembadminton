@@ -8,22 +8,22 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class UniquePlayerId implements ValidationRule
 {
-    /**
-     * Run the validation rule.
-     *
-     * @param  \Closure(string, ?string=): \Illuminate\Translation\PotentiallyTranslatedString  $fail
-     */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $userId = auth()->id();
+        $user = auth()->user();
+
+        if (!$user || !$user->clubhouse_id) {
+            return;
+        }
 
         $exists = User::query()
             ->where('player_id', $value)
-            ->where('id', '!=', $userId)
-            ->exists();
+            ->where('clubhouse_id', $user->clubhouse_id)
+            ->where('id', '!=', $user->id)
+            ->first();
 
-        if ($exists) {
-            $fail('Denne spiller er allerede tilknyttet en anden bruger.');
+        if ($exists !== null) {
+            $fail('Denne spiller er allerede tilknyttet brugeren "'.$exists->name.'" i dit klubhus.');
         }
     }
 }
