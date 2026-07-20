@@ -94,6 +94,14 @@ export default {
                     <b-table-column sortable field="email" searchable label="Email" v-slot="props">
                         {{ props.row.email }}
                     </b-table-column>
+                    <b-table-column sortable field="member" searchable label="BadmintonID" v-slot="props">
+                        <template v-if="props.row.player_id">
+                            {{props.row.player_id}} ({{ props.row.member?.name }})
+                        </template>
+                        <template v-else>
+                            Ingen spiller tilknyttet
+                        </template>
+                    </b-table-column>
                     <b-table-column field="roles" label="Roller" numeric v-slot="props">
                         {{ props.row.roles.map(r => r.name).join(', ') }}
                     </b-table-column>

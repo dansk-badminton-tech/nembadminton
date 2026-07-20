@@ -12,10 +12,15 @@ query clubhouse($id: ID!){
             id
             name
             email
+            player_id
             clubhouse {
                 id
             }
             roles {
+                id
+                name
+            }
+            member {
                 id
                 name
             }

@@ -115,4 +115,9 @@ class User extends Authenticatable
         return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'primary_role_id', 'id');
     }
 
+    public function member() : HasOne
+    {
+        return $this->hasOne(Member::class, 'refId', 'player_id');
+    }
+
 }

@@ -33,7 +33,6 @@ type User {
     id: ID!
     name: String!
     email: String!
-    player_id: String
     subscriptionSettings: SubscriptionSetting
     cancellationCollector: CancellationCollector
     "Roles"
@@ -44,6 +43,10 @@ type User {
     clubhouses: [Clubhouse!]!
     "Linked OAuth providers (Google, etc.)"
     socialProviders: [SocialProvider!]! @hasMany
+    "This is the connected member via player_id"
+    member: Member @hasOne
+    "BadmintonPlayerID"
+    player_id: String
     created_at: DateTime!
     updated_at: DateTime!
     primaryRole: Role
