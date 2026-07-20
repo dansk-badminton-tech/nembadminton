@@ -2,51 +2,15 @@
 
 namespace App\Notifications;
 
-use App\Models\TeamRound;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
-use Illuminate\Notifications\Notification;
-
-class TeamPublish extends Notification implements ShouldQueue
+class TeamPublish extends TeamRoundNotification
 {
-    use Queueable;
-
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(private TeamRound $team)
+    protected function getTitle() : string
     {
-        //
+        return 'Holdrunden er klar på ' . $this->team->name;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    protected function getBody() : string
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): Mailable
-    {
-        return new \App\Mail\TeamMail($this->team);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
+        return 'Klik her for at se holdet';
     }
 }

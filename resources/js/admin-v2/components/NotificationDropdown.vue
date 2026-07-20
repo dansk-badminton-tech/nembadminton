@@ -8,9 +8,14 @@ export default {
     computed: {
         parsedNotification() {
             return this.notifications?.map((notification) => {
+                const dataParsed = JSON.parse(notification.data);
                 return {
                     ...notification,
-                    dataParsed: JSON.parse(notification.data)
+                    dataParsed,
+                    title: dataParsed.title,
+                    // Different notifications use different keys for the body.
+                    body: dataParsed.body ?? dataParsed.message ?? '',
+                    actionUrl: dataParsed.action_url ?? null,
                 }
             })
         },
@@ -47,6 +52,21 @@ export default {
                                               })
                 })
         },
+        openAction(notification) {
+            if (!notification.actionUrl) return;
+            const url = notification.actionUrl;
+            // Keep internal links inside the SPA, open external links in a new tab.
+            if (url.startsWith('http')) {
+                const origin = window.location.origin;
+                if (url.startsWith(origin)) {
+                    this.$router.push(url.substring(origin.length));
+                } else {
+                    window.open(url, '_blank', 'noopener');
+                }
+            } else {
+                this.$router.push(url);
+            }
+        },
         timeAgo(date) {
             const currentDate = new Date(date);
             const now = new Date();
@@ -58,21 +78,21 @@ export default {
             const years = Math.floor(days / 365);
 
             if (seconds < 60) {
-                return `${seconds} seconds ago`;
+                return 'lige nu';
             }
             if (minutes < 60) {
-                return `${minutes} minutes ago`;
+                return `for ${minutes} min. siden`;
             }
             if (hours < 24) {
-                return `${hours} hours ago`;
+                return `for ${hours} ${hours === 1 ? 'time' : 'timer'} siden`;
             }
             if (days < 30) {
-                return `${days} days ago`;
+                return `for ${days} ${days === 1 ? 'dag' : 'dage'} siden`;
             }
             if (months < 12) {
-                return `${months} months ago`;
+                return `for ${months} ${months === 1 ? 'måned' : 'måneder'} siden`;
             }
-            return `${years} years ago`;
+            return `for ${years} ${years === 1 ? 'år' : 'år'} siden`;
         }
     },
     apollo: {
@@ -117,10 +137,9 @@ export default {
 <template>
     <b-dropdown
         position="is-bottom-left"
-        append-to-body
         aria-role="list"
         trap-focus
-        class="navbar-item"
+        class="navbar-item notification-dropdown"
     >
         <template #trigger>
             <a
@@ -130,44 +149,191 @@ export default {
                     icon="bell-outline"
                     class="is-marginless"
                 />
-                <b-tag type="is-danger" v-show="parsedNotification?.length !== 0">{{ parsedNotification?.length }}</b-tag>
+                <b-tag rounded type="is-danger" v-show="parsedNotification?.length !== 0">{{ parsedNotification?.length }}</b-tag>
                 <span class="is-hidden-desktop">Notifikationer</span>
             </a>
         </template>
-        <div v-show="parsedNotification?.length === 0" class="dropdown-item">
-            Ingen notifikationer
-        </div>
-        <b-dropdown-item
-            aria-role="listitem"
-            :focusable="false"
-            :scrollable="true"
-            :custom="true"
-            max-height="300px"
-            v-for="notification in parsedNotification"
-            :key="notification.id">
-            <div class="media">
-                <!--                    <figure class="media-left">-->
-                <!--                        <p class="image is-64x64">-->
-                <!--                            <img src="https://bulma.io/images/placeholders/128x128.png">-->
-                <!--                        </p>-->
-                <!--                    </figure>-->
-                <div class="media-content">
-                    <h3><strong>{{ notification.dataParsed.title }}</strong> <small>{{ timeAgo(notification.createdAt) }}</small></h3>
-                    <small style="white-space: pre-wrap;">{{ notification.dataParsed.message }}</small>
-                </div>
-                <!--                    <div class="media-right">-->
-                <!--                        <button class="delete"></button>-->
-                <!--                    </div>-->
+
+        <div class="notification-panel">
+            <div class="notification-header">
+                <span class="notification-header-title">Notifikationer</span>
+                <b-tag
+                    v-show="parsedNotification?.length !== 0"
+                    rounded
+                    type="is-danger"
+                    size="is-small">
+                    {{ parsedNotification?.length }} nye
+                </b-tag>
             </div>
-        </b-dropdown-item>
-        <hr v-show="parsedNotification?.length !== 0" class="dropdown-divider">
-        <a v-show="parsedNotification?.length !== 0" @click.prevent="readAll" href="#" class="dropdown-item">
-            <b-icon size="is-small" icon="check"></b-icon>
-            Marker alle som læst
-        </a>
+
+            <div v-show="parsedNotification?.length === 0" class="notification-empty">
+                <b-icon icon="bell-sleep-outline" size="is-large" class="notification-empty-icon"></b-icon>
+                <p>Ingen nye notifikationer</p>
+            </div>
+
+            <div class="notification-list">
+                <b-dropdown-item
+                    aria-role="listitem"
+                    :focusable="false"
+                    :custom="true"
+                    v-for="notification in parsedNotification"
+                    :key="notification.id"
+                    class="notification-item">
+                    <div class="notification-item-inner">
+                        <div class="notification-item-icon">
+                            <b-icon icon="bullhorn-outline"></b-icon>
+                        </div>
+                        <div class="notification-item-content">
+                            <div class="notification-item-top">
+                                <strong class="notification-item-title">{{ notification.title }}</strong>
+                                <small class="notification-item-time">{{ timeAgo(notification.createdAt) }}</small>
+                            </div>
+                            <p v-if="notification.body" class="notification-item-body">{{ notification.body }}</p>
+                            <b-button
+                                v-if="notification.actionUrl"
+                                type="is-info"
+                                size="is-small"
+                                icon-left="arrow-right-circle"
+                                class="notification-item-action"
+                                @click="openAction(notification)">
+                                Se detaljer
+                            </b-button>
+                        </div>
+                    </div>
+                </b-dropdown-item>
+            </div>
+
+            <div v-show="parsedNotification?.length !== 0" class="notification-footer">
+                <a @click.prevent="readAll" href="#" class="notification-footer-action">
+                    <b-icon size="is-small" icon="check-all"></b-icon>
+                    <span>Marker alle som læst</span>
+                </a>
+            </div>
+        </div>
     </b-dropdown>
 </template>
 
 <style scoped>
+.notification-panel {
+    width: 360px;
+    max-width: 90vw;
+}
 
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-header-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.notification-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    color: #9a9a9a;
+    text-align: center;
+}
+
+.notification-empty-icon {
+    margin-bottom: 0.5rem;
+    color: #dbdbdb;
+}
+
+.notification-list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 0 !important;
+}
+
+.notification-item-inner {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background-color 0.15s ease;
+    white-space: normal;
+}
+
+.notification-item-inner:hover {
+    background-color: #f7fafc;
+}
+
+.notification-item-icon {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eef6fc;
+    color: #3e8ed0;
+}
+
+.notification-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-item-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.notification-item-title {
+    font-size: 0.9rem;
+    color: #363636;
+    word-break: break-word;
+}
+
+.notification-item-time {
+    flex-shrink: 0;
+    color: #b5b5b5;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.notification-item-body {
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+    color: #6b6b6b;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.notification-item-action {
+    margin-top: 0.5rem;
+}
+
+.notification-footer {
+    border-top: 1px solid #f0f0f0;
+}
+
+.notification-footer-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1rem;
+    color: #3e8ed0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.notification-footer-action:hover {
+    background-color: #f7fafc;
+}
 </style>

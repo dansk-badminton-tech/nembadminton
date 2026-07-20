@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Auth;
  * @property string  refId
  * @property string  name
  * @property string  gender
- * @property string  email
  * @property boolean playable
  * @property boolean inactive
  * @property Point[] points

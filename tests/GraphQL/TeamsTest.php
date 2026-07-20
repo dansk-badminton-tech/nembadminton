@@ -16,8 +16,11 @@ use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
 use App\Models\User;
+use App\Notifications\TeamPublish;
+use App\Notifications\TeamUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
@@ -1122,7 +1125,11 @@ class TeamsTest extends TestCase
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: SendTeamNotificationInput!) {
                 sendTeamNotification(input: $input) {
-                    id
+                    teamRound {
+                        id
+                    }
+                    sentCount
+                    skippedPlayers
                 }
             }
         ', [
@@ -1138,7 +1145,11 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'sendTeamNotification' => [
-                    'id' => $teamRound->id
+                    'teamRound' => [
+                        'id' => $teamRound->id
+                    ],
+                    'sentCount' => 1,
+                    'skippedPlayers' => [],
                 ]
             ]
         ]);
@@ -1171,7 +1182,11 @@ class TeamsTest extends TestCase
         $this->graphQL(/** @lang GraphQL */ '
             mutation($input: SendTeamNotificationInput!) {
                 sendTeamNotification(input: $input) {
-                    id
+                    teamRound {
+                        id
+                    }
+                    sentCount
+                    skippedPlayers
                 }
             }
         ', [
@@ -1188,7 +1203,11 @@ class TeamsTest extends TestCase
         ])->assertJson([
             'data' => [
                 'sendTeamNotification' => [
-                    'id' => $teamRound->id
+                    'teamRound' => [
+                        'id' => $teamRound->id
+                    ],
+                    'sentCount' => 2,
+                    'skippedPlayers' => [],
                 ]
             ]
         ]);
@@ -1201,5 +1220,159 @@ class TeamsTest extends TestCase
             'team_round_id' => $teamRound->id,
             'recipient_type' => RecipientType::MANUAL_EMAILS->value,
         ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_notifies_all_platform_players_and_reports_skipped()
+    {
+        Notification::fake();
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+
+        // Player WITH a linked user (reachable)
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Reachable Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'Reachable Player',
+            'gender' => 'M',
+        ]);
+        $linkedUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => '9001011234',
+        ]);
+
+        // Player WITHOUT a linked user (skipped)
+        Member::query()->create([
+            'refId' => '9002022345',
+            'name' => 'Skipped Player',
+            'gender' => 'F',
+            'birthday' => '1992-02-02',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9002022345',
+            'squad_category_id' => $category->id,
+            'name' => 'Skipped Player',
+            'gender' => 'F',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: SendTeamNotificationInput!) {
+                sendTeamNotification(input: $input) {
+                    teamRound {
+                        id
+                    }
+                    sentCount
+                    skippedPlayers
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'type' => 'TEAM_PUBLISH',
+                'message' => 'Holdet er klar',
+                'receivers' => [
+                    'method' => 'PLATFORM',
+                    'saveEmails' => false,
+                ]
+            ]
+        ])->assertJson([
+            'data' => [
+                'sendTeamNotification' => [
+                    'teamRound' => [
+                        'id' => $teamRound->id,
+                    ],
+                    'sentCount' => 1,
+                    'skippedPlayers' => ['Skipped Player'],
+                ]
+            ]
+        ]);
+
+        Notification::assertSentTo($linkedUser, TeamPublish::class);
+
+        $this->assertDatabaseHas('team_activity_logs', [
+            'team_round_id' => $teamRound->id,
+            'recipient_type' => RecipientType::PLATFORM->value,
+            'recipient_count' => 1,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function team_round_notifications_share_the_same_channels()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $notifiable = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'email' => 'player@example.com',
+        ]);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $notifiable->id,
+        ]);
+
+        $expectedChannels = ['database', \NotificationChannels\WebPush\WebPushChannel::class, 'mail'];
+
+        $publish = new TeamPublish($teamRound, 'Holdet er klar');
+        $updated = new TeamUpdated($teamRound, 'Holdet er ændret');
+
+        $this->assertSame($expectedChannels, $publish->via($notifiable));
+        $this->assertSame($expectedChannels, $updated->via($notifiable));
+    }
+
+    /**
+     * @test
+     */
+    public function team_publish_notification_addresses_mail_to_the_notifiable()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $notifiable = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'email' => 'player@example.com',
+        ]);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $notifiable->id,
+        ]);
+
+        $notification = new TeamPublish($teamRound, 'Holdet er klar');
+
+        $mailable = $notification->toMail($notifiable);
+
+        $this->assertInstanceOf(\App\Mail\TeamMail::class, $mailable);
+        $mailable->assertHasTo('player@example.com');
     }
 }

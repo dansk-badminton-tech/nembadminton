@@ -65,6 +65,9 @@ export default {
             team: {
                 squads: []
             },
+            teamRound: {
+                squads: []
+            },
             activityLogs: [],
             expandedLogs: [],
             expandedEmailLogs: [],
@@ -115,7 +118,7 @@ export default {
                 }
             },
             result({data}){
-                this.manualEmails = data.receiver.emails.join(', ')
+                this.manualEmails = data.receiver?.emails?.join(', ')
             }
         },
         teamRound: {
@@ -210,7 +213,11 @@ export default {
                 mutation: gql`
                     mutation sendTeamNotification($input: SendTeamNotificationInput!){
                         sendTeamNotification(input: $input){
-                            id
+                            teamRound {
+                                id
+                            }
+                            sentCount
+                            skippedPlayers
                         }
                     }
                 `,
@@ -229,12 +236,27 @@ export default {
             }).then(({data}) => {
                 localStorage.removeItem('team_notification_message');
 
+                const result = data.sendTeamNotification;
+
                 if (this.recipientType === 'test_self') {
                     this.$buefy.snackbar.open({
                         duration: 4000,
                         type: 'is-success',
                         message: `Test email sendt til ${this.user.email}`
                     });
+                } else if (this.recipientType === 'platform') {
+                    this.$buefy.snackbar.open({
+                        duration: 4000,
+                        type: 'is-success',
+                        message: `Beskeden er sendt til ${result.sentCount} spillere`
+                    });
+                    if (result.skippedPlayers && result.skippedPlayers.length > 0) {
+                        this.$buefy.snackbar.open({
+                            duration: 8000,
+                            type: 'is-warning',
+                            message: `Følgende spillere har ingen konto og blev sprunget over: ${result.skippedPlayers.join(', ')}`
+                        });
+                    }
                 } else {
                     this.$buefy.snackbar.open({
                         duration: 4000,
@@ -491,6 +513,24 @@ export default {
                                         </p>
                                     </div>
                                 </div>
+
+                                <div
+                                    dusk="notify-recipient-platform"
+                                    class="recipient-option"
+                                    :class="{'is-selected': recipientType === 'platform'}"
+                                    @click="recipientType = 'platform'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="account-group" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Alle spillere på holdrunden</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send til alle spillere med en konto på platformen
+                                            <strong>({{ totalPlayersCount }} spillere)</strong>.
+                                            Spillere uden konto springes over.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
                         <!-- Manual email input option -->
@@ -627,6 +667,18 @@ export default {
                                                         {{ isEmailExpanded(log.id) ? 'Vis færre' : 'Vis alle (' + (log.parsedMetadata.emails.length - 10) + ' mere)' }}
                                                     </b-button>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div v-if="log.parsedMetadata && log.parsedMetadata.skipped_players !== undefined" class="mt-2">
+                                            <p class="is-size-7">
+                                                <strong>{{ log.recipientCount }}</strong> spillere notificeret,
+                                                <strong>{{ log.parsedMetadata.skipped_players.length }}</strong> sprunget over.
+                                            </p>
+                                            <div v-if="log.parsedMetadata.skipped_players.length > 0" class="tags mt-1">
+                                                <span v-for="name in log.parsedMetadata.skipped_players" :key="name" class="tag is-small is-warning">
+                                                    {{ name }}
+                                                </span>
                                             </div>
                                         </div>
 

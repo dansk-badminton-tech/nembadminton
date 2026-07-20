@@ -53,7 +53,7 @@ extend type Mutation {
     copyTeamRound(id: ID!) : TeamRound! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam@copyTeam")
     deleteTeamRound(id: ID! @eq) : TeamRound! @guard @delete @canFind(ability: "delete", find: "id")
     "Sending notifications to all players"
-    sendTeamNotification(input: SendTeamNotificationInput! @spread) : TeamRound! @guard @canFind(ability: "update", find: "id") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
+    sendTeamNotification(input: SendTeamNotificationInput! @spread) : SendTeamNotificationResult! @guard @canFind(ability: "update", find: "id", model: "TeamRound") @inject(context: "user.id", name: "user_id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification")
     "Changes all player points to the new version. Does not update if squad has a specific version"
     updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnAllSquadsInTeamRound")
     "Changes all player points to the new version."
@@ -64,6 +64,12 @@ type TeamReceivers {
     id: ID!
     teamRound: TeamRound @belongsTo(relation: "teamRound")
     emails: [String!]!
+}
+
+type SendTeamNotificationResult {
+    teamRound: TeamRound!
+    sentCount: Int!
+    skippedPlayers: [String!]!
 }
 
 input SendTeamNotificationInput {
@@ -93,6 +99,7 @@ input ReceiverInput {
 enum ReceiverMethod {
     MANUAL_EMAILS
     TEST_SELF
+    PLATFORM
 }
 
 input UpdateSquadMemberInput {

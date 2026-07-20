@@ -26,22 +26,21 @@ class SendTeamNotification
      * @param array $args
      * @param GraphQLContext $context
      * @param ResolveInfo $resolveInfo
-     * @return TeamRound
+     * @return array
      */
-    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
+    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : array
     {
-        $team = $args['id'];
         $message = $args['message'];
         $receivers = $args['receivers'];
         $type = $args['type'];
 
         /** @var TeamRound $team */
-        $team = TeamRound::query()->findOrFail($team);
+        $team = TeamRound::query()->findOrFail($args['id']);
 
         $method = RecipientType::from($receivers['method']);
         $teamNotificationType = TeamNotificationType::from($type);
 
-        if($receivers['saveEmails'] ?? false){
+        if ($receivers['saveEmails'] ?? false) {
             TeamReceivers::upsert(
                 [
                     'team_round_id' => $team->id,
@@ -51,16 +50,32 @@ class SendTeamNotification
             );
         }
 
+        $sentCount = 0;
+        $skippedPlayers = [];
+
         if ($method === RecipientType::MANUAL_EMAILS) {
-            $this->notifier->sendManualEmails($team, $receivers['emails'], $message, $teamNotificationType);
+            $emails = $receivers['emails'] ?? [];
+            $this->notifier->sendManualEmails($team, $emails, $message, $teamNotificationType);
+            $sentCount = count($emails);
         }
 
         if ($method === RecipientType::TEST_SELF) {
             /** @var User $user */
             $user = $context->user();
             $this->notifier->sendTestSelf($team, $user, $message, $teamNotificationType);
+            $sentCount = 1;
         }
 
-        return $team;
+        if ($method === RecipientType::PLATFORM) {
+            $result = $this->notifier->sendToPlatformPlayers($team, $message, $teamNotificationType);
+            $sentCount = $result['sentCount'];
+            $skippedPlayers = $result['skippedPlayers'];
+        }
+
+        return [
+            'teamRound' => $team,
+            'sentCount' => $sentCount,
+            'skippedPlayers' => $skippedPlayers,
+        ];
     }
 }

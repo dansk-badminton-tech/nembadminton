@@ -81,7 +81,7 @@ class ResetMemberPlayerIdTest extends TestCase
     }
 
     /** @test */
-    public function it_rejects_resetting_a_players_player_id(): void
+    public function it_lets_a_club_admin_reset_a_players_player_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
         $admin = $this->clubAdminInClubhouse($clubhouse);
@@ -91,25 +91,59 @@ class ResetMemberPlayerIdTest extends TestCase
 
         $response = $this->resetMutation((string) $clubhouse->id, (string) $player->id);
 
-        $response->assertJsonPath('errors.0.message', 'Cannot reset player_id for a player');
+        $response->assertJson([
+            'data' => [
+                'resetMemberPlayerId' => [
+                    'id' => (string) $player->id,
+                    'player_id' => null,
+                ],
+            ],
+        ]);
+
         $this->assertDatabaseHas('users', [
             'id' => $player->id,
-            'player_id' => '010203-01',
+            'player_id' => null,
         ]);
     }
 
     /** @test */
-    public function it_rejects_non_club_admin(): void
+    public function it_lets_a_coach_reset_a_player_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
-        $coach = $this->memberInClubhouse($clubhouse, [Role::COACH->value], '010203-01');
+        $coach = $this->memberInClubhouse($clubhouse, [Role::COACH->value]);
         $target = $this->memberInClubhouse($clubhouse, [Role::CLUB_ADMIN->value], '040506-02');
 
         $this->actingAs($coach, 'api');
 
         $response = $this->resetMutation((string) $clubhouse->id, (string) $target->id);
 
-        $response->assertJsonPath('errors.0.message', 'Only club admins can reset player_id');
+        $response->assertJson([
+            'data' => [
+                'resetMemberPlayerId' => [
+                    'id' => (string) $target->id,
+                    'player_id' => null,
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $target->id,
+            'player_id' => null,
+        ]);
+    }
+
+    /** @test */
+    public function it_rejects_a_user_without_edit_clubhouse_permission(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $player = $this->memberInClubhouse($clubhouse, [Role::PLAYER->value]);
+        $target = $this->memberInClubhouse($clubhouse, [Role::CLUB_ADMIN->value], '040506-02');
+
+        $this->actingAs($player, 'api');
+
+        $response = $this->resetMutation((string) $clubhouse->id, (string) $target->id);
+
+        $response->assertJsonPath('errors.0.message', 'This action is unauthorized.');
     }
 
     /** @test */
