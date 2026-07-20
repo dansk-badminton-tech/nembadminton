@@ -53,11 +53,9 @@ final readonly class Membership
             throw new UserError('You cannot edit your own roles');
         }
 
-        if ($target->clubhouse->id !== (int)$args['clubhouseId'] || $actor->clubhouse->id !== (int)$args['clubhouseId']) {
+        if ($target->clubhouse->id !== $actor->clubhouse->id) {
             throw new UserError('You cannot edit someone elses membership');
         }
-
-        setPermissionsTeamId($target->clubhouse_id);
 
         if (!$actor->hasRole(Role::CLUB_ADMIN->value)) {
             throw new UserError('Only club admins can edit roles');
@@ -76,6 +74,32 @@ final readonly class Membership
             $target->primary_role_id = !empty($newRoleIds) ? $newRoleIds[0] : null;
             $target->save();
         }
+
+        return $target->refresh()->load(['roles', 'primaryRole']);
+    }
+
+    public function resetPlayerId(null $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): User
+    {
+        /** @var User $target */
+        $target = User::query()->findOrFail($args['userId']);
+
+        /** @var User $actor */
+        $actor = $context->user();
+
+        if ($target->id === $actor->getAuthIdentifier()) {
+            throw new UserError('You cannot reset your own player_id');
+        }
+
+        if ($target->clubhouse->id !== $actor->clubhouse->id) {
+            throw new UserError('You cannot edit someone elses membership');
+        }
+
+        if (!$actor->hasAnyRole(Role::CLUB_ADMIN->value, Role::COACH->value)) {
+            throw new UserError('Only club admins and coaches can reset player_id');
+        }
+
+        $target->player_id = null;
+        $target->save();
 
         return $target->refresh()->load(['roles', 'primaryRole']);
     }

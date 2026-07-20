@@ -16,10 +16,48 @@ export default {
             showModal: false,
             showEditModal: false,
             editTarget: null,
-            isDeleting: false
+            isDeleting: false,
+            resettingId: null
         }
     },
     methods: {
+        canResetPlayerId(row) {
+            return row.player_id
+        },
+        confirmResetPlayerId(user) {
+            this.$buefy.dialog.confirm({
+                title: 'Nulstil BadmintonID',
+                message: `Er du sikker på at du vil nulstille BadmintonID for <strong>${user.name}</strong>?`,
+                type: 'is-warning',
+                hasIcon: true,
+                icon: 'alert',
+                confirmText: 'Nulstil',
+                cancelText: 'Annuller',
+                onConfirm: () => this.resetPlayerId(user)
+            })
+        },
+        resetPlayerId(user) {
+            this.resettingId = user.id
+            this.$apollo.mutate({
+                mutation: gql`mutation resetMemberPlayerId($clubhouseId: ID!, $userId: ID!) {
+                    resetMemberPlayerId(clubhouseId: $clubhouseId, userId: $userId) { id player_id }
+                }`,
+                variables: {
+                    clubhouseId: user.clubhouse.id,
+                    userId: user.id
+                },
+                refetchQueries: [{query: clubhouse, variables: {id: this.clubhouseId}}]
+            })
+                .then(() => {
+                    this.$buefy.snackbar.open({message: 'BadmintonID nulstillet', type: 'is-success', duration: 5000})
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open({message: 'Kunne ikke nulstille BadmintonID', type: 'is-danger', duration: 5000})
+                })
+                .finally(() => {
+                    this.resettingId = null
+                })
+        },
         deleteMembership(user) {
             this.isDeleting = true;
             this.$apollo.mutate({
@@ -114,6 +152,15 @@ export default {
                                 title="Rediger roller"
                                 @click="openEditModal(props.row)"
                                 :disabled="props.row.id === user.id"
+                            />
+                            <b-button
+                                v-if="canResetPlayerId(props.row)"
+                                icon-left="account-remove"
+                                size="is-small"
+                                type="is-warning"
+                                title="Nulstil BadmintonID"
+                                @click="confirmResetPlayerId(props.row)"
+                                :loading="resettingId === props.row.id"
                             />
                             <b-button
                                 icon-left="delete"

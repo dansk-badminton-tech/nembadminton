@@ -96,6 +96,7 @@ class UpdateMeTest extends TestCase
         $clubhouse = Clubhouse::factory()->create();
 
         $otherUser = User::factory()->create([
+            'name' => 'Other User',
             'email' => 'other@email.com',
             'player_id' => '010203-01',
             'clubhouse_id' => $clubhouse->id,
@@ -129,7 +130,7 @@ class UpdateMeTest extends TestCase
 
         $response->assertGraphQLValidationKeys(['input.player_id']);
         $this->assertEquals(
-            'Denne spiller er allerede tilknyttet en anden bruger.',
+            'Denne spiller er allerede tilknyttet brugeren "Other User" i dit klubhus.',
             $response->json('errors.0.extensions.validation')['input.player_id'][0]
         );
     }
