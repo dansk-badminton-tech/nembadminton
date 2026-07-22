@@ -42,8 +42,8 @@ export default {
             this.teamRound.squads.forEach(squad => {
                 squad.categories.forEach(category => {
                     category.players.forEach(player => {
-                        if (player.id) {
-                            playerIds.add(player.id);
+                        if (player.refId) {
+                            playerIds.add(player.refId);
                         }
                     });
                 });
