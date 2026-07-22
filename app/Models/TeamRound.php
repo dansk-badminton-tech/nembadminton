@@ -58,6 +58,13 @@ class TeamRound extends Model
         return $query;
     }
 
+    public function resolveName(){
+        if($this->name === null){
+            return 'Runde '.$this->round;
+        }
+        return $this->name;
+    }
+
     public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);

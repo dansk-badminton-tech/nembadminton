@@ -6,7 +6,7 @@ class TeamPublish extends TeamRoundNotification
 {
     protected function getTitle() : string
     {
-        return 'Holdrunden er klar på ' . $this->team->name;
+        return 'Holdrunden er klar på ' . $this->team->resolveName();
     }
 
     protected function getBody() : string

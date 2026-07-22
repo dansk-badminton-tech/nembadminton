@@ -6,7 +6,7 @@ class TeamUpdated extends TeamRoundNotification
 {
     protected function getTitle() : string
     {
-        return 'Ny opdatering på ' . $this->team->name;
+        return 'Ny opdatering på ' . $this->team->resolveName();
     }
 
     protected function getBody() : string
