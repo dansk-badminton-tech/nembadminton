@@ -49,5 +49,6 @@ query teamRound($id: ID!){
         gameDate
         version
         round
+        reachablePlayerRefIds
     }
 }
