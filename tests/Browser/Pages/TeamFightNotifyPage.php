@@ -34,7 +34,6 @@ class TeamFightNotifyPage extends Page
             '@type-publish'            => "[dusk='notify-type-publish']",
             '@type-updated'            => "[dusk='notify-type-updated']",
             '@recipient-manual'        => "[dusk='notify-recipient-manual']",
-            '@recipient-test-self'     => "[dusk='notify-recipient-test-self']",
             '@manual-emails-input'     => "textarea[dusk='notify-manual-emails-input']",
             '@save-emails-checkbox'    => "[dusk='notify-save-emails-checkbox'] input",
             '@send-button'             => "[dusk='notify-send-button']",
@@ -58,15 +57,6 @@ class TeamFightNotifyPage extends Page
     public function selectTypeUpdated(Browser $browser): void
     {
         $browser->click('@type-updated')
-            ->pause(200);
-    }
-
-    /**
-     * Select "Test til mig selv" as the recipient method.
-     */
-    public function selectRecipientTestSelf(Browser $browser): void
-    {
-        $browser->click('@recipient-test-self')
             ->pause(200);
     }
 
@@ -101,7 +91,7 @@ class TeamFightNotifyPage extends Page
     }
 
     /**
-     * Confirm the Buefy dialog that appears before sending (non-test-self).
+     * Confirm the Buefy dialog that appears before sending.
      */
     public function confirmSendDialog(Browser $browser): void
     {

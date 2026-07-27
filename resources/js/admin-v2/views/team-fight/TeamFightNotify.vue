@@ -19,8 +19,6 @@ export default {
 
             if (this.recipientType === 'manual_emails') {
                 return this.manualEmailsSanitized.length === 0;
-            } else if (this.recipientType === 'test_self') {
-                return false;
             } else if (this.recipientType === 'platform') {
                 return this.totalPlayersCount === 0;
             }
@@ -30,8 +28,6 @@ export default {
             if (!this.notificationType) return false;
             if (this.recipientType === 'manual_emails') {
                 return this.manualEmailsSanitized.length > 0;
-            } else if (this.recipientType === 'test_self') {
-                return true;
             } else if (this.recipientType === 'platform') {
                 return this.totalPlayersCount > 0;
             }
@@ -174,11 +170,6 @@ export default {
         publish() {
             if (this.cannotPublish) return;
 
-            if (this.recipientType === 'test_self') {
-                this.performPublish();
-                return;
-            }
-
             let recipientCount = 0;
             if (this.recipientType === 'manual_emails') {
                 recipientCount = this.manualEmailsSanitized.length;
@@ -200,14 +191,6 @@ export default {
             // Added: loading and guard
             if (this.cannotPublish) return;
             this.loading = true;
-
-            if (this.recipientType === 'test_self') {
-                this.$buefy.snackbar.open({
-                    duration: 3000,
-                    type: 'is-info',
-                    message: 'Sender test email til dig selv...'
-                });
-            }
 
             this.$apollo.mutate({
                 mutation: gql`
@@ -238,13 +221,7 @@ export default {
 
                 const result = data.sendTeamNotification;
 
-                if (this.recipientType === 'test_self') {
-                    this.$buefy.snackbar.open({
-                        duration: 4000,
-                        type: 'is-success',
-                        message: `Test email sendt til ${this.user.email}`
-                    });
-                } else if (this.recipientType === 'platform') {
+                if (this.recipientType === 'platform') {
                     this.$buefy.snackbar.open({
                         duration: 4000,
                         type: 'is-success',
@@ -267,11 +244,10 @@ export default {
                 this.$apollo.queries.activityLogs.refetch();
             }).catch(({graphQLErrors}) => {
                 const errorMessages = extractErrorMessages(graphQLErrors);
-                const prefix = this.recipientType === 'test_self' ? 'Kunne ikke sende test email: ' : 'Kunne ikke sende beskeden: ';
                 this.$buefy.snackbar.open({
                     duration: 5000,
                     type: 'is-danger',
-                    message: prefix + errorMessages.join(', ')
+                    message: 'Kunne ikke sende beskeden: ' + errorMessages.join(', ')
                 })
             }).finally(() => {
                 this.loading = false;
@@ -515,22 +491,6 @@ export default {
                                         </p>
                                     </div>
                                 </div>
-
-                                <div
-                                    dusk="notify-recipient-test-self"
-                                    class="recipient-option"
-                                    :class="{'is-selected': recipientType === 'test_self'}"
-                                    @click="recipientType = 'test_self'">
-                                    <div class="recipient-option-icon">
-                                        <b-icon icon="flask" size="is-large"></b-icon>
-                                    </div>
-                                    <div class="recipient-option-content">
-                                        <h5 class="title is-6 mb-2">Test til mig selv</h5>
-                                        <p class="is-size-7 has-text-grey">
-                                            Send en test email til din egen adresse <strong v-if="user?.email">({{ user?.email }})</strong> for at se hvordan den ser ud
-                                        </p>
-                                    </div>
-                                </div>
                             </div>
 
                         <!-- Manual email input option -->
@@ -577,8 +537,8 @@ export default {
                                         :disabled="cannotPublish"
                                         native-type="submit"
                                         type="is-info"
-                                        :icon-left="recipientType === 'test_self' ? 'flask' : 'send'">
-                                        {{ recipientType === 'test_self' ? 'Send test email' : 'Send til alle modtagere' }}
+                                        icon-left="send">
+                                        Send til alle modtagere
                                     </b-button>
                                 </b-tooltip>
                             </div>

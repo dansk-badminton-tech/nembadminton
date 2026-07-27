@@ -17,54 +17,6 @@ class TeamFightNotifyTest extends DuskTestCase
     protected $seeder = 'TestingDataSeeder';
 
     /**
-     * Test sending a test email to yourself via the notify page.
-     *
-     * Flow: Navigate to the notify page for the "Valid" seeded team fight,
-     * type a message, select "Holdrunden er klar", select "Test til mig selv",
-     * click send, and verify the success snackbar + activity log entry.
-     */
-    public function test_user_can_send_test_email_to_self(): void
-    {
-        $this->browse(function (Browser $browser) {
-            $clubhouse = Clubhouse::first();
-            $teamRound = TeamRound::where('name', '3x13 Kamps - Valid')->first();
-
-            $browser->visit(new LoginPage())
-                ->loginSPA('testing@gmail.com', 'Test1234')
-                ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
-                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
-                ->screenshot('notify-page-loaded');
-
-            // Step 1: Type a message
-            $browser->fillMessage('Dette er en test besked fra Dusk')
-                ->screenshot('notify-message-filled');
-
-            // Step 2: Select notification type (team_publish is default, but click to be explicit)
-            $browser->selectTypePublish()
-                ->screenshot('notify-type-selected');
-
-            // Step 3: Select "Test til mig selv" as recipient
-            $browser->selectRecipientTestSelf()
-                ->screenshot('notify-recipient-selected');
-
-            // Step 4: Verify button text changed and click send
-            // test_self sends immediately without confirmation dialog
-            $browser->assertSeeIn('@send-button', 'Send test email')
-                ->clickSend()
-                ->screenshot('notify-send-clicked');
-
-            // Step 5: Verify success snackbar
-            $browser->waitForText('Test email sendt til', 10)
-                ->screenshot('notify-test-email-sent');
-
-            // Step 6: Verify the activity log now shows an entry
-            $browser->waitFor('@activity-feed', 10)
-                ->assertSeeIn('@activity-feed', 'Test email afsendt')
-                ->screenshot('notify-activity-log-updated');
-        });
-    }
-
-    /**
      * Test sending a notification to manually entered email addresses.
      *
      * Flow: Navigate to the notify page, type a message, select "Holdrunden er opdateret",
@@ -129,14 +81,17 @@ class TeamFightNotifyTest extends DuskTestCase
                 ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
                 ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id));
 
-            // Send button should be disabled — no recipient selected yet
-            $browser->assertDisabled('@send-button')
-                ->screenshot('notify-button-disabled-no-recipient');
+            // Select manual recipient (no emails entered) → button should be disabled
+            $browser->click('@recipient-manual')
+                ->waitFor('@manual-emails-input')
+                ->assertDisabled('@send-button')
+                ->screenshot('notify-button-disabled-no-emails');
 
-            // Select test self → button should be enabled
-            $browser->selectRecipientTestSelf()
+            // Fill emails → button should be enabled
+            $browser->type('@manual-emails-input', 'player1@example.com')
+                ->pause(200)
                 ->waitUntilEnabled('@send-button')
-                ->screenshot('notify-button-enabled-after-recipient');
+                ->screenshot('notify-button-enabled-after-emails');
         });
     }
 }
