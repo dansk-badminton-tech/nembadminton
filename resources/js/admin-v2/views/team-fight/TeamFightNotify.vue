@@ -71,7 +71,7 @@ export default {
             activityLogs: [],
             expandedLogs: [],
             expandedEmailLogs: [],
-            recipientType: null, // null, 'platform' or 'manual'
+            recipientType: 'platform', // null, 'platform' or 'manual'
             notificationType: 'team_publish',
             manualEmails: '',
             saveManualEmails: true,
@@ -483,6 +483,24 @@ export default {
 
                             <div class="recipient-options">
                                 <div
+                                    dusk="notify-recipient-platform"
+                                    class="recipient-option"
+                                    :class="{'is-selected': recipientType === 'platform'}"
+                                    @click="recipientType = 'platform'">
+                                    <div class="recipient-option-icon">
+                                        <b-icon icon="account-group" size="is-large"></b-icon>
+                                    </div>
+                                    <div class="recipient-option-content">
+                                        <h5 class="title is-6 mb-2">Alle spillere på holdrunden</h5>
+                                        <p class="is-size-7 has-text-grey">
+                                            Send til alle spillere med en konto på platformen
+                                            <strong>({{ totalPlayersCount }} spillere)</strong>.
+                                            Spillere uden konto springes over.
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div
                                     dusk="notify-recipient-manual"
                                     class="recipient-option"
                                     :class="{'is-selected': recipientType === 'manual_emails'}"
@@ -510,24 +528,6 @@ export default {
                                         <h5 class="title is-6 mb-2">Test til mig selv</h5>
                                         <p class="is-size-7 has-text-grey">
                                             Send en test email til din egen adresse <strong v-if="user?.email">({{ user?.email }})</strong> for at se hvordan den ser ud
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div
-                                    dusk="notify-recipient-platform"
-                                    class="recipient-option"
-                                    :class="{'is-selected': recipientType === 'platform'}"
-                                    @click="recipientType = 'platform'">
-                                    <div class="recipient-option-icon">
-                                        <b-icon icon="account-group" size="is-large"></b-icon>
-                                    </div>
-                                    <div class="recipient-option-content">
-                                        <h5 class="title is-6 mb-2">Alle spillere på holdrunden</h5>
-                                        <p class="is-size-7 has-text-grey">
-                                            Send til alle spillere med en konto på platformen
-                                            <strong>({{ totalPlayersCount }} spillere)</strong>.
-                                            Spillere uden konto springes over.
                                         </p>
                                     </div>
                                 </div>
