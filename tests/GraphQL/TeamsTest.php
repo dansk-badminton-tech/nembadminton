@@ -1477,4 +1477,117 @@ class TeamsTest extends TestCase
             ],
         ]);
     }
+
+    /**
+     * @test
+     */
+    public function it_notifies_only_selected_platform_players()
+    {
+        Notification::fake();
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::EDIT_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+
+        // Selected + reachable
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Selected Reachable',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'Selected Reachable',
+            'gender' => 'M',
+        ]);
+        $selectedUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => '9001011234',
+        ]);
+
+        // NOT selected, but reachable — must NOT be notified
+        Member::query()->create([
+            'refId' => '9002022345',
+            'name' => 'Unselected Reachable',
+            'gender' => 'F',
+            'birthday' => '1992-02-02',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9002022345',
+            'squad_category_id' => $category->id,
+            'name' => 'Unselected Reachable',
+            'gender' => 'F',
+        ]);
+        $unselectedUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => '9002022345',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: SendTeamNotificationInput!) {
+                sendTeamNotification(input: $input) {
+                    teamRound { id }
+                    sentCount
+                    skippedPlayers
+                }
+            }
+        ', [
+            'input' => [
+                'id' => $teamRound->id,
+                'type' => 'TEAM_PUBLISH',
+                'message' => 'Kun til udvalgte',
+                'receivers' => [
+                    'method' => 'PLATFORM',
+                    'saveEmails' => false,
+                    'selectedRefIds' => ['9001011234'],
+                ],
+            ],
+        ])->assertJson([
+            'data' => [
+                'sendTeamNotification' => [
+                    'teamRound' => ['id' => $teamRound->id],
+                    'sentCount' => 1,
+                    'skippedPlayers' => [],
+                ],
+            ],
+        ]);
+
+        // Selected user was notified
+        Notification::assertSentTo($selectedUser, TeamPublish::class);
+        // Unselected user was NOT notified
+        Notification::assertNotSentTo($unselectedUser, TeamPublish::class);
+
+        // Activity log records only the selected user
+        $log = TeamActivityLog::query()
+            ->where('team_round_id', $teamRound->id)
+            ->where('recipient_type', RecipientType::PLATFORM->value)
+            ->first();
+        $this->assertNotNull($log);
+        $metadata = $log->metadata;
+        $this->assertEquals([$selectedUser->id], $metadata['user_ids']);
+        $this->assertEquals([], $metadata['skipped_players']);
+    }
 }

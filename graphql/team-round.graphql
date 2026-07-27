@@ -94,6 +94,8 @@ input ReceiverInput {
     saveEmails: Boolean
     "Only used for ReceiverMethod MANUAL_EMAILS"
     emails: [String!]
+    "Only used for ReceiverMethod PLATFORM. Subset of player refIds to send to. Omit/null = all players."
+    selectedRefIds: [String!]
 }
 
 enum ReceiverMethod {
