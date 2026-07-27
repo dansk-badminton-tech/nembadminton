@@ -1375,4 +1375,106 @@ class TeamsTest extends TestCase
         $this->assertInstanceOf(\App\Mail\TeamMail::class, $mailable);
         $mailable->assertHasTo('player@example.com');
     }
+
+    /**
+     * @test
+     */
+    public function it_can_query_reachable_player_ref_ids()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+        $category = $squad->categories()->create([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+
+        // Reachable player — has a linked user in the same clubhouse
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'Reachable Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'Reachable Player',
+            'gender' => 'M',
+        ]);
+        User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => '9001011234',
+        ]);
+
+        // Unreachable player — no linked user
+        Member::query()->create([
+            'refId' => '9002022345',
+            'name' => 'Unreachable Player',
+            'gender' => 'F',
+            'birthday' => '1992-02-02',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9002022345',
+            'squad_category_id' => $category->id,
+            'name' => 'Unreachable Player',
+            'gender' => 'F',
+        ]);
+
+        // User in a DIFFERENT clubhouse with a matching player_id — must NOT be returned
+        $otherClubhouse = Clubhouse::factory()->create();
+        User::factory()->create([
+            'clubhouse_id' => $otherClubhouse->id,
+            'player_id' => '9003033456',
+        ]);
+        Member::query()->create([
+            'refId' => '9003033456',
+            'name' => 'Other Clubhouse Player',
+            'gender' => 'M',
+            'birthday' => '1993-03-03',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9003033456',
+            'squad_category_id' => $category->id,
+            'name' => 'Other Clubhouse Player',
+            'gender' => 'M',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($id: ID!) {
+                teamRound(id: $id) {
+                    id
+                    reachablePlayerRefIds
+                }
+            }
+        ', [
+            'id' => $teamRound->id,
+        ])->assertJson([
+            'data' => [
+                'teamRound' => [
+                    'id' => $teamRound->id,
+                    'reachablePlayerRefIds' => ['9001011234'],
+                ],
+            ],
+        ]);
+    }
 }

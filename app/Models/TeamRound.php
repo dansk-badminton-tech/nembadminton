@@ -94,4 +94,50 @@ class TeamRound extends Model
     {
         return $this->hasMany(Squad::class, 'team_round_id', 'id')->orderBy('order');
     }
+
+    /**
+     * Ref IDs of players on this team round that have a linked platform user account.
+     * Single batched query — runs once per team round, not per player.
+     *
+     * Lighthouse's @field(resolver:) resolves a fresh instance from the container
+     * and passes the loaded model as the first argument, so we use $root (not $this).
+     *
+     * @param  TeamRound  $root  The loaded TeamRound model for this query node
+     * @return array<int,string>
+     */
+    public function getReachablePlayerRefIds($root, array $args, $context, $resolveInfo): array
+    {
+        $refIds = $root->collectPlayerRefIds();
+
+        if ($refIds === []) {
+            return [];
+        }
+
+        return User::query()
+            ->whereIn('player_id', $refIds)
+            ->where('clubhouse_id', $root->clubhouse_id)
+            ->pluck('player_id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+    }
+
+    /**
+     * Walk squads → categories → players and collect all member_ref_id values.
+     *
+     * @return array<int,string>
+     */
+    private function collectPlayerRefIds(): array
+    {
+        $refIds = [];
+        foreach ($this->squads as $squad) {
+            foreach ($squad->categories as $category) {
+                foreach ($category->players as $player) {
+                    if ($player->member_ref_id !== null) {
+                        $refIds[] = (string) $player->member_ref_id;
+                    }
+                }
+            }
+        }
+        return $refIds;
+    }
 }

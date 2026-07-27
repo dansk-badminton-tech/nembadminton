@@ -315,6 +315,8 @@ type TeamRound {
     receiver: TeamReceivers @hasOne
     "Clubhouse"
     clubhouse: Clubhouse @belongsTo
+    "Ref IDs of players on this team round that have a linked platform user account (single batched query)"
+    reachablePlayerRefIds: [String!]! @field(resolver: "App\\Models\\TeamRound@getReachablePlayerRefIds")
 }
 
 type TeamActivityLog {
