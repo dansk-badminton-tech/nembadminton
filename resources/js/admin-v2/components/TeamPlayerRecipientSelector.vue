@@ -14,18 +14,26 @@ export default {
             return new Set(this.value);
         },
         playersBySquad() {
-            return this.squads.map(squad => ({
-                squadId: squad.id,
-                squadName: squad.name,
-                players: (squad.categories || []).flatMap(c => (c.players || []))
-                    .filter(p => p.refId)
+            return this.squads.map(squad => {
+                const seen = new Set();
+                const players = (squad.categories || []).flatMap(c => (c.players || []))
+                    .filter(p => {
+                        if (!p.refId || seen.has(p.refId)) return false;
+                        seen.add(p.refId);
+                        return true;
+                    })
                     .map(p => ({
                         refId: p.refId,
                         name: p.name,
                         reachable: this.reachableSet.has(p.refId),
                         selected: this.selectedSet.has(p.refId),
-                    })),
-            }));
+                    }));
+                return {
+                    squadId: squad.id,
+                    squadName: squad.name,
+                    players,
+                };
+            });
         },
         allPlayerRefIds() {
             return (this.squads || []).flatMap(s => (s.categories || []).flatMap(c => (c.players || [])))

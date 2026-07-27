@@ -99,8 +99,9 @@ class TeamFightNotifyTest extends DuskTestCase
      * Test that selecting "Alle spillere" lets the user deselect individual players,
      * and that the confirm dialog reflects the reduced count.
      *
-     * Flow: Navigate, select platform recipient, wait for player list, deselect one
-     * player, click send, and assert the confirm dialog shows the reduced count.
+     * Flow: Navigate, select platform recipient, wait for player list, read the
+     * initial selected count, deselect one player, click send, and assert the
+     * confirm dialog shows count minus one.
      */
     public function test_user_can_deselect_players_from_platform_send(): void
     {
@@ -117,25 +118,26 @@ class TeamFightNotifyTest extends DuskTestCase
             $browser->selectRecipientPlatform()
                 ->screenshot('notify-platform-list-loaded');
 
-            // Read the count from the list header (e.g. "(13 valgt)")
-            $initialCountText = $browser->text('@player-list .is-size-7');
+            // Read the initial selected count from the list header "(N valgt)"
+            $headerText = $browser->text('@player-list .is-size-7');
+            preg_match('/\((\d+)\s+valgt\)/', $headerText, $matches);
+            $initialCount = (int) $matches[1];
             $browser->screenshot('notify-platform-all-selected');
 
             // Deselect the first player row in the list
             $firstPlayerRefId = $browser->attribute('@player-list .player-row:first-child', 'dusk');
-            // The dusk attr is "player-row-<refId>"; strip the prefix to get the refId
             $firstPlayerRefId = str_replace('player-row-', '', $firstPlayerRefId);
             $browser->togglePlayer($firstPlayerRefId)
                 ->pause(300)
                 ->screenshot('notify-platform-one-deselected');
 
-            // Click send and verify the confirm dialog shows a reduced count
+            // Click send and verify the confirm dialog shows (initialCount - 1)
             $browser->clickSend()
                 ->screenshot('notify-platform-confirm-shown');
 
-            // The dialog message contains "Der vil blive sendt X e-mail(s)"
+            $expectedCount = $initialCount - 1;
             $browser->waitForText('Der vil blive sendt', 5)
-                ->assertSeeIn('.modal-card-body', 'e-mail(s)')
+                ->assertSeeIn('.modal-card-body', "Der vil blive sendt {$expectedCount} e-mail(s)")
                 ->screenshot('notify-platform-confirm-count');
 
             // Cancel — we only verify the dialog text, not the actual send
