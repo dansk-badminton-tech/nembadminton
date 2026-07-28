@@ -246,6 +246,15 @@ const routes = [
                     },
                     {
                         meta: {
+                            title: 'Holdrunder',
+                            requiresAuth: true
+                        },
+                        path: 'holdrunder',
+                        name: 'team-fight-player-list',
+                        component: () => import("../views/team-fight/TeamFightPlayerList.vue")
+                    },
+                    {
+                        meta: {
                             title: 'Klubhus',
                             requiresAuth: true
                         },

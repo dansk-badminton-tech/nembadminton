@@ -347,12 +347,15 @@ export function swapObject(obj, from, to) {
     obj[from] = toItem
 }
 
-export function getCurrentSeason() {
-    const now = new Date()
-    if (now.getMonth() + 1 > 6) {
-        return now.getFullYear();
+export function getSeasonStartYear(date) {
+    if (date.getMonth() + 1 > 6) {
+        return date.getFullYear();
     }
-    return now.getFullYear() - 1;
+    return date.getFullYear() - 1;
+}
+
+export function getCurrentSeason() {
+    return getSeasonStartYear(new Date())
 }
 
 export function getCurrentSeasonStart() {
