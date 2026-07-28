@@ -11,9 +11,9 @@
                                     <b-icon icon="calendar-clock" class="mr-2"></b-icon>
                                     Dine holdrunder
                                 </p>
-                                <b-checkbox v-model="hidePlayed" size="is-small">
-                                    Skjul spillede
-                                </b-checkbox>
+                                <b-checkbox-button v-model="hidePlayed" size="is-small">
+                                    Vis spillet holdrunder
+                                </b-checkbox-button>
                             </header>
                             <div class="card-content relative-position">
                                 <b-loading :is-full-page="false" v-model="loading" :can-cancel="false"></b-loading>

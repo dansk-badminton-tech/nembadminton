@@ -44,7 +44,7 @@ class SendTeamNotification
             TeamReceivers::upsert(
                 [
                     'team_round_id' => $team->id,
-                    'emails' => json_encode($receivers['emails'], JSON_THROW_ON_ERROR)
+                    'emails' => json_encode($receivers['emails'] ?? [], JSON_THROW_ON_ERROR)
                 ],
                 ['team_round_id']
             );

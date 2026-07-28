@@ -138,7 +138,7 @@ export default {
                 }
             },
             result({data}){
-                this.manualEmails = data.receiver?.emails?.join(', ')
+                this.manualEmails = data.receiver?.emails?.join(', ') ?? ''
             }
         },
         teamRound: {
@@ -203,7 +203,7 @@ export default {
                 recipientCount = this.selectedPlayerRefIds.length;
                 confirmMessage = `Er du klar til at sende beskeden ud?<br><br>Der vil blive sendt ${recipientCount} e-mail(s)`;
                 if (this.unreachableSelectedCount > 0) {
-                    confirmMessage += `<br><br><span class="has-text-warning">${this.unreachableSelectedCount} spiller(e) har ikke en konto og vil blive sprunget over.</span>`;
+                    confirmMessage += `<br><br><span class="has-text-danger">${this.unreachableSelectedCount} spiller(e) har ikke en konto og vil blive sprunget over.</span>`;
                 }
             }
 
@@ -512,7 +512,7 @@ export default {
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 <div
                                     dusk="notify-recipient-manual"
                                     class="recipient-option"
