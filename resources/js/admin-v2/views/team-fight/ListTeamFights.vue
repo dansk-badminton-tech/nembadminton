@@ -2,10 +2,10 @@
     <fragment>
         <div class="notification">
             <div class="buttons has-addons">
-                <b-button @click="setGameDate(currentSeason)">{{currentSeasonButtonName}}</b-button>
-                <b-button @click="setGameDate(previousSeason)">{{previousSeasonButtonName}}</b-button>
-                <b-button @click="setGameDateToRest">Tidligere sæsoner</b-button>
-                <b-button @click="setGameDateToAll">Vis alle</b-button>
+                <b-button @click="selectSeason('current')">{{currentSeasonButtonName}}</b-button>
+                <b-button @click="selectSeason('previous')">{{previousSeasonButtonName}}</b-button>
+                <b-button @click="selectSeason('rest')">Tidligere sæsoner</b-button>
+                <b-button @click="selectSeason('all')">Vis alle</b-button>
                 <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate?.from}}</b> - <b>{{this.gameDate?.to}}</b></p>
             </div>
         </div>
@@ -112,7 +112,14 @@ export default {
                 column: 'GAME_DATE',
                 order: 'DESC'
             }],
-            gameDate: generateGameDate(getCurrentSeasonStart())
+            gameDate: generateGameDate(getCurrentSeasonStart()),
+            seasonFilter: 'current'
+        }
+    },
+    created() {
+        const saved = localStorage.getItem('team_fight_season_filter');
+        if (saved && saved !== 'current') {
+            this.selectSeason(saved);
         }
     },
     methods: {
@@ -184,8 +191,6 @@ export default {
             }
         },
         setGameDateToAll(){
-            let date = new Date(this.currentSeason.getTime())
-            date.setFullYear(date.getFullYear() + 2);
             this.gameDate = null;
         },
         setGameDate(seasonStartDate){
@@ -193,6 +198,16 @@ export default {
             this.gameDate = {
                 from: date.toISOString().substring(0,10),
                 to: addAYear(date, 1).toISOString().substring(0,10)
+            }
+        },
+        selectSeason(filter) {
+            this.seasonFilter = filter;
+            localStorage.setItem('team_fight_season_filter', filter);
+            switch (filter) {
+                case 'current': this.setGameDate(this.currentSeason); break;
+                case 'previous': this.setGameDate(this.previousSeason); break;
+                case 'rest': this.setGameDateToRest(); break;
+                case 'all': this.setGameDateToAll(); break;
             }
         },
         onPageChange(page){

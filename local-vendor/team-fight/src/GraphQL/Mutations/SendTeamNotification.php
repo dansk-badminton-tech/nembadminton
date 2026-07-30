@@ -44,7 +44,7 @@ class SendTeamNotification
             TeamReceivers::upsert(
                 [
                     'team_round_id' => $team->id,
-                    'emails' => json_encode($receivers['emails'], JSON_THROW_ON_ERROR)
+                    'emails' => json_encode($receivers['emails'] ?? [], JSON_THROW_ON_ERROR)
                 ],
                 ['team_round_id']
             );
@@ -67,7 +67,8 @@ class SendTeamNotification
         }
 
         if ($method === RecipientType::PLATFORM) {
-            $result = $this->notifier->sendToPlatformPlayers($team, $message, $teamNotificationType);
+            $selectedRefIds = $receivers['selectedRefIds'] ?? null;
+            $result = $this->notifier->sendToPlatformPlayers($team, $message, $teamNotificationType, $selectedRefIds);
             $sentCount = $result['sentCount'];
             $skippedPlayers = $result['skippedPlayers'];
         }

@@ -34,6 +34,10 @@ class TeamFightNotifyPage extends Page
             '@type-publish'            => "[dusk='notify-type-publish']",
             '@type-updated'            => "[dusk='notify-type-updated']",
             '@recipient-manual'        => "[dusk='notify-recipient-manual']",
+            '@recipient-platform'      => "[dusk='notify-recipient-platform']",
+            '@player-list'              => "[dusk='notify-player-list']",
+            '@select-all-players'       => "[dusk='select-all-players']",
+            '@deselect-all-players'     => "[dusk='deselect-all-players']",
             '@manual-emails-input'     => "textarea[dusk='notify-manual-emails-input']",
             '@save-emails-checkbox'    => "[dusk='notify-save-emails-checkbox'] input",
             '@send-button'             => "[dusk='notify-send-button']",
@@ -70,6 +74,52 @@ class TeamFightNotifyPage extends Page
             ->clear('@manual-emails-input')
             ->type('@manual-emails-input', $emails)
             ->pause(200);
+    }
+
+    /**
+     * Select "Alle spillere på holdrunden" as the recipient method and wait for the player list.
+     */
+    public function selectRecipientPlatform(Browser $browser): void
+    {
+        $browser->click('@recipient-platform')
+            ->waitFor('@player-list')
+            ->pause(200);
+    }
+
+    /**
+     * Toggle a single player row by refId.
+     */
+    public function togglePlayer(Browser $browser, string $refId): void
+    {
+        $browser->click("@player-row-{$refId}")
+            ->pause(100);
+    }
+
+    /**
+     * Toggle an entire squad by squad id.
+     */
+    public function toggleSquad(Browser $browser, string $squadId): void
+    {
+        $browser->click("@squad-toggle-{$squadId}")
+            ->pause(100);
+    }
+
+    /**
+     * Click the "Vælg alle" shortcut.
+     */
+    public function selectAllPlayers(Browser $browser): void
+    {
+        $browser->click('@select-all-players')
+            ->pause(100);
+    }
+
+    /**
+     * Click the "Fravælg alle" shortcut.
+     */
+    public function deselectAllPlayers(Browser $browser): void
+    {
+        $browser->click('@deselect-all-players')
+            ->pause(100);
     }
 
     /**

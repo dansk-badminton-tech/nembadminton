@@ -58,9 +58,13 @@ class Notifier
      * Notify every player on the team round who has a linked user account.
      * Players without a linked user are skipped and returned by name.
      *
+     * When $selectedRefIds is provided, only those refIds are considered as
+     * candidates; refIds in $selectedRefIds that are not on the team round are
+     * ignored (intersection with the team's players).
+     *
      * @return array{sentCount:int, skippedPlayers:array<int,string>}
      */
-    public function sendToPlatformPlayers(TeamRound $team, ?string $message, TeamNotificationType $notificationType) : array
+    public function sendToPlatformPlayers(TeamRound $team, ?string $message, TeamNotificationType $notificationType, ?array $selectedRefIds = null) : array
     {
         $team->loadMissing('squads.categories.players');
 
@@ -73,6 +77,15 @@ class Notifier
                     $refIdToName[$player->member_ref_id] = $player->name;
                 }
             }
+        }
+
+        // Filter to the explicitly selected subset when provided.
+        // Unknown refIds in $selectedRefIds are ignored (intersect with $refIdToName).
+        if ($selectedRefIds !== null) {
+            $refIdToName = array_intersect_key(
+                $refIdToName,
+                array_fill_keys(array_map('strval', $selectedRefIds), true)
+            );
         }
 
         $users = User::query()

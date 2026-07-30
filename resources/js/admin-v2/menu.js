@@ -64,6 +64,11 @@ export function playerMenu(clubhouseId) {
                 label: 'Dashboard'
             },
             {
+                to: '/c-'+clubhouseId+'/holdrunder',
+                icon: 'account-group',
+                label: 'Holdrunder'
+            },
+            {
                 to: '/c-'+clubhouseId+'/player/calendar-generator',
                 icon: 'calendar-sync-outline',
                 label: 'Automatisk kalender'

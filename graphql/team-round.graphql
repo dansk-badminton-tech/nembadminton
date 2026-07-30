@@ -94,6 +94,8 @@ input ReceiverInput {
     saveEmails: Boolean
     "Only used for ReceiverMethod MANUAL_EMAILS"
     emails: [String!]
+    "Only used for ReceiverMethod PLATFORM. Subset of player refIds to send to. Omit/null = all players."
+    selectedRefIds: [String!]
 }
 
 enum ReceiverMethod {
@@ -315,6 +317,8 @@ type TeamRound {
     receiver: TeamReceivers @hasOne
     "Clubhouse"
     clubhouse: Clubhouse @belongsTo
+    "Ref IDs of players on this team round that have a linked platform user account (single batched query)"
+    reachablePlayerRefIds: [String!]! @field(resolver: "App\\Models\\TeamRound@getReachablePlayerRefIds")
 }
 
 type TeamActivityLog {

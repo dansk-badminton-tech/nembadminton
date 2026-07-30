@@ -5,9 +5,10 @@ import TitleBar from "@/components/TitleBar.vue";
 import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import gql from "graphql-tag";
 import {extractErrorMessages} from "@/helpers.js";
+import TeamPlayerRecipientSelector from "@/components/TeamPlayerRecipientSelector.vue";
 
 export default {
-    components: {TitleBar, HeroBar},
+    components: {TitleBar, HeroBar, TeamPlayerRecipientSelector},
     inject: ['clubhouseId', 'user'],
     props: {
         teamRoundId: String
@@ -20,7 +21,7 @@ export default {
             if (this.recipientType === 'manual_emails') {
                 return this.manualEmailsSanitized.length === 0;
             } else if (this.recipientType === 'platform') {
-                return this.totalPlayersCount === 0;
+                return this.selectedPlayerRefIds.length === 0;
             }
             return true;
         },
@@ -29,7 +30,7 @@ export default {
             if (this.recipientType === 'manual_emails') {
                 return this.manualEmailsSanitized.length > 0;
             } else if (this.recipientType === 'platform') {
-                return this.totalPlayersCount > 0;
+                return this.selectedPlayerRefIds.length > 0;
             }
             return false;
         },
@@ -52,6 +53,17 @@ export default {
                 .map(email => email.trim())
                 .filter(email => email.length > 0);
         },
+        allPlayerRefIds() {
+            const ids = new Set();
+            (this.teamRound.squads || []).forEach(s => (s.categories || []).forEach(c => (c.players || []).forEach(p => {
+                if (p.refId) ids.add(p.refId);
+            })));
+            return [...ids];
+        },
+        unreachableSelectedCount() {
+            const reachable = new Set(this.teamRound.reachablePlayerRefIds || []);
+            return this.selectedPlayerRefIds.filter(id => !reachable.has(id)).length;
+        },
     },
     data() {
         return {
@@ -68,6 +80,8 @@ export default {
             expandedLogs: [],
             expandedEmailLogs: [],
             recipientType: 'platform', // null, 'platform' or 'manual'
+            selectedPlayerRefIds: [],   // Array<string>, populated from teamRound on load
+            selectionInitialized: false,
             notificationType: 'team_publish',
             manualEmails: '',
             saveManualEmails: true,
@@ -96,7 +110,17 @@ export default {
     watch: {
         message(newVal) {
             localStorage.setItem('team_notification_message', newVal);
-        }
+        },
+        'teamRound.squads': {
+            handler() {
+                if (!this.selectionInitialized && this.allPlayerRefIds.length > 0) {
+                    this.selectedPlayerRefIds = [...this.allPlayerRefIds];
+                    this.selectionInitialized = true;
+                }
+            },
+            deep: true,
+            immediate: true,
+        },
     },
     apollo: {
         receiver: {
@@ -114,7 +138,7 @@ export default {
                 }
             },
             result({data}){
-                this.manualEmails = data.receiver?.emails?.join(', ')
+                this.manualEmails = data.receiver?.emails?.join(', ') ?? ''
             }
         },
         teamRound: {
@@ -171,15 +195,21 @@ export default {
             if (this.cannotPublish) return;
 
             let recipientCount = 0;
+            let confirmMessage = '';
             if (this.recipientType === 'manual_emails') {
                 recipientCount = this.manualEmailsSanitized.length;
+                confirmMessage = `Er du klar til at sende beskeden ud?<br><br>Der vil blive sendt ${recipientCount} e-mail(s)`;
             } else if (this.recipientType === 'platform') {
-                recipientCount = this.totalPlayersCount;
+                recipientCount = this.selectedPlayerRefIds.length;
+                confirmMessage = `Er du klar til at sende beskeden ud?<br><br>Der vil blive sendt ${recipientCount} e-mail(s)`;
+                if (this.unreachableSelectedCount > 0) {
+                    confirmMessage += `<br><br><span class="has-text-danger">${this.unreachableSelectedCount} spiller(e) har ikke en konto og vil blive sprunget over.</span>`;
+                }
             }
 
             this.$buefy.dialog.confirm({
                 title: 'Bekræft afsendelse',
-                message: `Er du klar til at sende beskeden ud?<br><br>Der vil blive sendt ${recipientCount} e-mail(s)`,
+                message: confirmMessage,
                 confirmText: 'Ja, send nu',
                 cancelText: 'Annuller',
                 type: 'is-info',
@@ -209,11 +239,18 @@ export default {
                         id: this.teamRoundId,
                         type: this.notificationType.toUpperCase(),
                         message: this.message,
-                        receivers: {
-                            method: this.recipientType.toUpperCase(),
-                            saveEmails: this.saveManualEmails,
-                            emails: this.recipientType === 'manual_emails' ? this.manualEmailsSanitized : []
-                        }
+                        receivers: (() => {
+                            const r = {
+                                method: this.recipientType.toUpperCase(),
+                                saveEmails: this.saveManualEmails,
+                            };
+                            if (this.recipientType === 'manual_emails') {
+                                r.emails = this.manualEmailsSanitized;
+                            } else if (this.recipientType === 'platform') {
+                                r.selectedRefIds = [...this.selectedPlayerRefIds];
+                            }
+                            return r;
+                        })()
                     }
                 }
             }).then(({data}) => {
@@ -475,7 +512,7 @@ export default {
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 <div
                                     dusk="notify-recipient-manual"
                                     class="recipient-option"
@@ -492,6 +529,14 @@ export default {
                                     </div>
                                 </div>
                             </div>
+
+                            <TeamPlayerRecipientSelector
+                                v-if="recipientType === 'platform'"
+                                v-model="selectedPlayerRefIds"
+                                :squads="teamRound.squads"
+                                :reachable-player-ref-ids="teamRound.reachablePlayerRefIds || []"
+                                class="mt-4"
+                            />
 
                         <!-- Manual email input option -->
                         <div v-if="recipientType === 'manual_emails'" class="mt-4">

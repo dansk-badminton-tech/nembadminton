@@ -45,6 +45,6 @@ class LoginPage extends Page
         $browser->type('@email', $email)
             ->type('@password', $password)
             ->click('@login-button')
-            ->waitForLocation('/app/home-redirect');
+            ->waitForLocation('/app/c-1/home');
     }
 }
