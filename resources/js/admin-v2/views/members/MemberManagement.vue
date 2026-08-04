@@ -17,6 +17,7 @@ export default {
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
+            isTogglingPlayable: false,
             members: null
         }
     },
@@ -145,6 +146,42 @@ export default {
                 this.isTogglingInactive = false;
             });
         },
+        togglePlayableStatus(member) {
+            this.isTogglingPlayable = true;
+            const newPlayableStatus = !member.playable;
+
+            this.$apollo.mutate({
+                mutation: gql`
+                    mutation updateMember($input: CreateMemberInput!) {
+                        updateMember(input: $input) {
+                            id
+                            playable
+                        }
+                    }
+                `,
+                variables: {
+                    input: {
+                        id: member.id,
+                        playable: newPlayableStatus
+                    }
+                }
+            }).then(() => {
+                this.$buefy.snackbar.open({
+                    message: newPlayableStatus ? 'Spiller markeret som tilgængelig' : 'Spiller markeret som midlertidigt utilgængelig',
+                    type: 'is-success',
+                    duration: 3000
+                });
+                this.$apollo.queries.members.refetch();
+            }).catch(() => {
+                this.$buefy.snackbar.open({
+                    message: 'Kunne ikke opdatere spiller status',
+                    type: 'is-danger',
+                    duration: 5000
+                });
+            }).finally(() => {
+                this.isTogglingPlayable = false;
+            });
+        },
         getGenderLabel(gender) {
             return gender === 'MEN' ? 'Herre' : 'Dame';
         },
@@ -152,6 +189,11 @@ export default {
             if (member.inactive) return 'has-text-danger';
             if (!member.playable) return 'has-text-warning';
             return 'has-text-success';
+        },
+        getStatusTagType(member) {
+            if (member.inactive) return 'is-danger';
+            if (!member.playable) return 'is-warning';
+            return 'is-success';
         },
         getStatusLabel(member) {
             if (member.inactive) return 'Inaktiv';
@@ -214,7 +256,7 @@ export default {
 
                     <b-table
                         :data="membersList"
-                        :loading="$apollo.queries.members.loading || isTogglingInactive"
+                        :loading="$apollo.queries.members.loading || isTogglingInactive || isTogglingPlayable"
                         :paginated="true"
                         :backend-pagination="true"
                         :total="paginatorInfo.total"
@@ -251,12 +293,22 @@ export default {
                         </b-table-column>
 
                         <b-table-column field="inactive" label="Status" v-slot="props">
-                            <b-tag :type="props.row.inactive ? 'is-danger' : 'is-success'">
+                            <b-tag :type="getStatusTagType(props.row)">
                                 {{ getStatusLabel(props.row) }}
                             </b-tag>
                         </b-table-column>
 
                         <b-table-column label="Handlinger" v-slot="props">
+                            <b-button
+                                v-if="!props.row.inactive"
+                                size="is-small"
+                                :type="props.row.playable ? 'is-warning' : 'is-success'"
+                                :icon-left="props.row.playable ? 'account-clock' : 'account-check'"
+                                @click="togglePlayableStatus(props.row)"
+                                :dusk="`toggle-playable-${props.row.id}`"
+                            >
+                                {{ props.row.playable ? 'Midlertidigt utilgængelig' : 'Marker som tilgængelig' }}
+                            </b-button>
                             <b-button
                                 size="is-small"
                                 :type="props.row.inactive ? 'is-success' : 'is-danger'"
