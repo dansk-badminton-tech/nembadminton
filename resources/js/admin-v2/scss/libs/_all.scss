@@ -1,12 +1,13 @@
 /* Buefy & Bulma */
 
-// We need buefy-build, but it has relative paths
-//@import "node_modules/buefy/src/scss/buefy-build";
-
-// This is fixed version of buefy-build
+// Bulma bootstrap with theme overrides (variables set in theme-default.scss)
 @import "bulma/sass/utilities/functions";
 @import "bulma/sass/utilities/initial-variables";
-@import "buefy/src/scss/utils/_all";
+
+// Buefy 3 precompiled CSS (component styles).
+// Imported BEFORE our themed bulma build so the project's Bulma variable
+// overrides (set in theme-default.scss) win on shared classes.
+@import "buefy/dist/css/buefy.css";
+
+// Themed Bulma (compiled with the app's $primary/$card-shadow/... overrides)
 @import "bulma/bulma";
-@import "buefy/src/scss/utils/variables-ext";
-@import "buefy/src/scss/buefy";

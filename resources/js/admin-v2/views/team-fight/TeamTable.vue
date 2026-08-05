@@ -1,6 +1,6 @@
 <template>
     <div dusk="team-table-section">
-        <b-loading :is-full-page="false" v-model="loading" :can-cancel="true"></b-loading>
+        <b-loading :is-full-page="false" :active="loading" :can-cancel="true"></b-loading>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>

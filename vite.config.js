@@ -1,6 +1,6 @@
 import {defineConfig} from 'vite';
 import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue2';
+import vue from '@vitejs/plugin-vue';
 import path from "path";
 import vitePluginGraphqlLoader from "vite-plugin-graphql-loader";
 
@@ -25,6 +25,11 @@ export default defineConfig(
                     ]),
             vue({
                     template: {
+                        compilerOptions: {
+                            compatConfig: {
+                                MODE: 2,
+                            },
+                        },
                         transformAssetUrls: {
                             base: null,
                             includeAbsolute: false,
@@ -35,7 +40,8 @@ export default defineConfig(
         ],
         resolve: {
             alias: {
-                '@': path.join(__dirname, 'resources/js/admin-v2')
+                '@': path.join(__dirname, 'resources/js/admin-v2'),
+                'vue': '@vue/compat'
             }
         }
     });

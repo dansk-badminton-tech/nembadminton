@@ -19,7 +19,7 @@
             </template>
         </hero-bar>
         <section class="section is-main-section">
-            <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
+            <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
             <b-dropdown aria-role="list">
                 <button slot="trigger" slot-scope="{ active }" class="button is-link">
                     <span>Del</span>

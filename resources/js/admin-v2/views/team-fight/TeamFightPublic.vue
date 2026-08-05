@@ -65,11 +65,11 @@
 
                         <div class="card-content squad-body">
                             <div v-if="hasAnyPlayer(squad)" class="category-grid">
-                                <template v-for="category in nonEmptyCategories(squad)">
-                                    <div :key="category.id + '-label'" class="category-label">
+                                <template v-for="category in nonEmptyCategories(squad)" :key="category.id">
+                                    <div class="category-label">
                                         {{ category.name }}
                                     </div>
-                                    <div :key="category.id + '-players'" class="category-players">
+                                    <div class="category-players">
                                         <div
                                             v-for="player in category.players"
                                             :key="player.id"
