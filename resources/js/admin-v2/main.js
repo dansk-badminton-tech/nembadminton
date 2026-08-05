@@ -34,6 +34,11 @@ Vue.config.productionTip = false
 
 Vue.use(Buefy)
 Vue.use(apolloProvider)
+// @vue/compat's `new Vue()` mount only carries Vue.prototype globals into the
+// mounted app (it replaces app.config.globalProperties). @vue/apollo-option's
+// `launch()` reads `this.$apolloProvider`, so expose it the Vue 2 way to ensure
+// `apollo:` smart queries are registered.
+Vue.prototype.$apolloProvider = apolloProvider
 Vue.component('Fragment', Fragment)
 
 new Vue({
