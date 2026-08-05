@@ -38,7 +38,6 @@
         "vee-validate": "^3.3.11",
         "vue": "^2.6.12",
         "vue-apollo": "^3.0.4",
-        "vue-cal": "^3.11.0",
         "vue-chartjs": "^4.0",
         "vue-clipboard2": "^0.3.1",
         "vue-frag": "^1.4.0",

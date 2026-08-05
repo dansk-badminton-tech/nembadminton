@@ -3787,11 +3787,6 @@ vue-apollo@^3.0.4:
     serialize-javascript "^4.0.0"
     throttle-debounce "^2.1.0"
 
-vue-cal@^3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/vue-cal/-/vue-cal-3.11.0.tgz#009469730d28a4ae04eacb5851447c11aade13aa"
-  integrity sha512-yEKh/p4snE7t0MzSnvwz+eLqyDxZosBiFndXt3Q9fTQF4Hq4Z+KS8MN/HAsf4ttlfU7NgGsRBkQVHVc/kR5jEQ==
-
 vue-chartjs@^4.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vue-chartjs/-/vue-chartjs-4.1.2.tgz#f899ba14f3b80660f8d2c610a015341806dfc437"

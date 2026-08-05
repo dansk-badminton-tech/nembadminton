@@ -1,7 +1,6 @@
 <script>
 import HeroBar from "@/components/HeroBar.vue";
 import TitleBar from "@/components/TitleBar.vue";
-import 'vue-cal/dist/vuecal.css'
 import cancellationCollectorQuery from "../../../queries/cancellationCollector.gql";
 import CancellationCollector from "@/views/cancellation/CancellationCollector.vue";
 import gql from "graphql-tag";
