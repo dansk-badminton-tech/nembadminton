@@ -1,6 +1,6 @@
 <template>
   <b-modal
-    :active.sync="isModalActive"
+    v-model:active="isModalActive"
     has-modal-card
   >
     <div class="modal-card">

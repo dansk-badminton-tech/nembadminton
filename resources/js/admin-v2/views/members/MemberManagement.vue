@@ -261,7 +261,7 @@ export default {
                         :backend-pagination="true"
                         :total="paginatorInfo.total"
                         :per-page="perPage"
-                        :current-page.sync="currentPage"
+                        v-model:current-page="currentPage"
                         @page-change="onPageChange"
                         :pagination-rounded="true"
                         :hoverable="true"

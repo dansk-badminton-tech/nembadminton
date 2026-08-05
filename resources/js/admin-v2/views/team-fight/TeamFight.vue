@@ -21,10 +21,12 @@
         <section class="section is-main-section">
             <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
             <b-dropdown aria-role="list">
-                <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Del</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
+                <template #trigger="{ active }">
+                    <button class="button is-link">
+                        <span>Del</span>
+                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                    </button>
+                </template>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
                     <b-icon icon="file-export"></b-icon>
                     CSV

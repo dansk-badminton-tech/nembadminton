@@ -1,7 +1,7 @@
 <template>
     <b-table
         ref="table"
-        :checked-rows.sync="teams"
+        v-model:checked-rows="teams"
         :columns="columns"
         :data="badmintonPlayerTeams"
         :loading="$apollo.queries.badmintonPlayerTeams.loading"

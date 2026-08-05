@@ -7,7 +7,7 @@
       @cancel="trashCancel"
     />
     <b-table
-      :checked-rows.sync="checkedRows"
+      v-model:checked-rows="checkedRows"
       :checkable="checkable"
       :paginated="paginated"
       :per-page="perPage"
@@ -103,20 +103,21 @@
         </div>
       </b-table-column>
 
-      <section
-        slot="empty"
-        class="section"
-      >
-        <div class="content has-text-grey has-text-centered">
-          <p>
-            <b-icon
-              icon="emoticon-sad"
-              size="is-large"
-            />
-          </p>
-          <p>Nothing's here&hellip;</p>
-        </div>
-      </section>
+      <template #empty>
+        <section
+          class="section"
+        >
+          <div class="content has-text-grey has-text-centered">
+            <p>
+              <b-icon
+                icon="emoticon-sad"
+                size="is-large"
+              />
+            </p>
+            <p>Nothing's here&hellip;</p>
+          </div>
+        </section>
+      </template>
     </b-table>
   </div>
 </template>

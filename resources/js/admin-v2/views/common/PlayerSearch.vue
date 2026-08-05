@@ -17,7 +17,7 @@
                 @typing="searchMembers"
                 :dusk="'player-search-autocomplete-' + slugify(category.name)"
                 >
-                <template slot-scope="props">
+                <template #default="props">
                     <div class="media">
                         <div class="media-content">
                             {{ props.option.name }}
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </template>
-                <template slot="empty">Ingen spiller fundet.</template>
+                <template #empty>Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
     </div>
