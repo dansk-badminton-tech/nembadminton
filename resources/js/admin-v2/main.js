@@ -2,7 +2,7 @@
 import '@/scss/main.scss'
 
 /* Core */
-import Vue from 'vue'
+import {createApp} from 'vue'
 import Buefy from 'buefy'
 
 /* Router & Store */
@@ -30,21 +30,12 @@ router.afterEach(to => {
     }
 })
 
-Vue.config.productionTip = false
+const app = createApp(Skeleton)
 
-Vue.use(Buefy)
-Vue.use(apolloProvider)
-// @vue/compat's `new Vue()` mount only carries Vue.prototype globals into the
-// mounted app (it replaces app.config.globalProperties). @vue/apollo-option's
-// `launch()` reads `this.$apolloProvider`, so expose it the Vue 2 way to ensure
-// `apollo:` smart queries are registered.
-Vue.prototype.$apolloProvider = apolloProvider
-Vue.component('Fragment', Fragment)
+app.use(router)
+app.use(store)
+app.use(apolloProvider)
+app.use(Buefy)
+app.component('Fragment', Fragment)
 
-new Vue({
-            router,
-            store,
-            apolloProvider,
-            render: h => h(Skeleton)
-        })
-    .$mount('#app')
+app.mount('#app')
