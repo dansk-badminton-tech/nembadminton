@@ -30,7 +30,7 @@ export default {
     name: "BadmintonPlayerTeamsMultiSelect",
     components: {BadmintonPlayerTeamFights},
     props: {
-        'value': Array,
+        'modelValue': Array,
         'clubId': Number,
         'season': Number,
         'checkable': {
@@ -64,7 +64,7 @@ export default {
     },
     watch: {
         teams(newValue, oldValue) {
-            this.$emit('input', newValue)
+            this.$emit('update:modelValue', newValue)
         }
     },
     data() {

@@ -15,7 +15,7 @@ import gql from "graphql-tag"
 export default {
     name: 'BadmintonPlayerClubs',
     props: {
-        'value': null,
+        'modelValue': null,
         'required': {
             type: Boolean,
             default: false
@@ -23,7 +23,7 @@ export default {
     },
     methods: {
         handleInput(value) {
-            this.$emit('input', value)
+            this.$emit('update:modelValue', value)
         }
     },
     apollo: {

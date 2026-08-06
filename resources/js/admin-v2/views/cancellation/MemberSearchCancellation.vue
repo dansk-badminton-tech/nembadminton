@@ -34,7 +34,7 @@ import {debounce} from "@/helpers.js";
 
 export default {
     name: "MemberSearchCancellation",
-    props: {value: Object, clubs: Array},
+    props: {modelValue: Object, clubs: Array},
     data(){
         return {
             data: [],
@@ -44,12 +44,12 @@ export default {
         }
     },
     watch: {
-        value(val){
+        modelValue(val){
             this.player = null
             this.selected = val
         },
         selected(val){
-            this.$emit('input', val)
+            this.$emit('update:modelValue', val)
         }
     },
     methods: {

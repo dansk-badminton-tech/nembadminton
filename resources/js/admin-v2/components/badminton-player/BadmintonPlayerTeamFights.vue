@@ -18,10 +18,10 @@ import gql from "graphql-tag"
 
 export default {
     name: "BadmintonPlayerTeamFights",
-    props: ['value', 'clubId', 'season', 'playerTeam'],
+    props: ['modelValue', 'clubId', 'season', 'playerTeam'],
     methods: {
         handleInput(value) {
-            this.$emit('input', {
+            this.$emit('update:modelValue', {
                            teamMatch: value,
                            team: this.playerTeam
                        }

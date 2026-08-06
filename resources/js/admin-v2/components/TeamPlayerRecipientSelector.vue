@@ -4,14 +4,14 @@ export default {
     props: {
         squads: { type: Array, required: true },
         reachablePlayerRefIds: { type: Array, default: () => [] },
-        value: { type: Array, required: true },
+        modelValue: { type: Array, required: true },
     },
     computed: {
         reachableSet() {
             return new Set(this.reachablePlayerRefIds);
         },
         selectedSet() {
-            return new Set(this.value);
+            return new Set(this.modelValue);
         },
         playersBySquad() {
             return this.squads.map(squad => {
@@ -41,12 +41,12 @@ export default {
                 .map(p => p.refId);
         },
         selectedCount() {
-            return this.value.length;
+            return this.modelValue.length;
         },
     },
     methods: {
         emitChange(nextSet) {
-            this.$emit('input', [...nextSet]);
+            this.$emit('update:modelValue', [...nextSet]);
         },
         togglePlayer(refId) {
             const next = new Set(this.selectedSet);

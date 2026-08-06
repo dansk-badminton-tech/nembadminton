@@ -130,7 +130,8 @@ export default {
         <strong class="title is-4" v-show="$apollo.queries.calendarEvents.loading">Henter kalender fra badmintonplayer.dk... <b-icon icon="loading" customClass="mdi-spin" /></strong>
         <div class="calendar-parent">
             <calendar-view
-                v-model="currentDate"
+                :value="currentDate"
+                @input="currentDate = $event"
                 :items="eventsAndCancellations"
                 :show-date="showDate"
                 :startingDayOfWeek="1"

@@ -28,6 +28,9 @@ export default defineConfig(
                         compilerOptions: {
                             compatConfig: {
                                 MODE: 2,
+                                // Buefy 3 (and our own components) use Vue 3's
+                                // modelValue/update:modelValue v-model contract.
+                                COMPONENT_V_MODEL: false,
                             },
                         },
                         transformAssetUrls: {
