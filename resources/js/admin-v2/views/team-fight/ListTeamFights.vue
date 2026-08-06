@@ -1,5 +1,4 @@
 <template>
-    <fragment>
         <div class="notification">
             <div class="buttons has-addons">
                 <b-button @click="selectSeason('current')">{{currentSeasonButtonName}}</b-button>
@@ -66,7 +65,6 @@
         </b-table>
         </div>
         <CreateTeamFightAction v-if="teams?.data?.length === 0"></CreateTeamFightAction>
-    </fragment>
 </template>
 <script>
 import gql from "graphql-tag";
