@@ -82,7 +82,6 @@
 </template>
 
 <script>
-import Draggable from "vuedraggable"
 import gql from "graphql-tag"
 import {
     containsMen,
@@ -119,8 +118,7 @@ export default {
         RankingVersionSelect,
         TeamTable,
         TeamRoundSettingsModal,
-        ValidateTeams,
-        Draggable
+        ValidateTeams
     },
     props: {
         teamRoundId: String
