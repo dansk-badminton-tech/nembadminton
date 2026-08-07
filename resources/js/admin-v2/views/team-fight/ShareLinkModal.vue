@@ -33,7 +33,7 @@ export default {
     },
     methods: {
         copyToClipboard() {
-            this.$copyText(this.shareUrl).then((e) => {
+            navigator.clipboard.writeText(this.shareUrl).then((e) => {
                 this.$buefy.snackbar.open(`Kopiret til udklipsholder`)
             }, (e) => {
                 this.$buefy.snackbar.open(`Kunne ikke kopir til udklipsholder. :(`)

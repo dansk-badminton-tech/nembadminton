@@ -30,7 +30,6 @@
         "vue": "^2.6.12",
         "vue-apollo": "^3.0.4",
         "vue-chartjs": "^4.0",
-        "vue-clipboard2": "^0.3.1",
         "vue-frag": "^1.4.0",
         "vue-router": "^3.4.3",
         "vue-simple-calendar": "^5.0",
