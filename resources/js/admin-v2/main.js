@@ -7,7 +7,7 @@ import Buefy from 'buefy'
 
 /* Router & Store */
 import router from './router'
-import store from './store'
+import {toggleAsideMobile, toggleAsideDesktopOnly} from './store/layout'
 
 /* Vue. Main component */
 import Skeleton from './Skeleton.vue'
@@ -32,8 +32,8 @@ Sentry.init({
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
-    store.commit('asideMobileStateToggle', false)
-    store.dispatch('asideDesktopOnlyToggle', false)
+    toggleAsideMobile(false)
+    toggleAsideDesktopOnly(false)
 
     if (to.meta && to.meta.title) {
         document.title = `${to.meta.title} — ${defaultDocumentTitle}`
@@ -50,7 +50,6 @@ Vue.component('Fragment', Fragment)
 
 new Vue({
             router,
-            store,
             apolloProvider,
             render: h => h(Skeleton)
         })

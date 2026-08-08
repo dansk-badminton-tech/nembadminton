@@ -1,7 +1,7 @@
 <script>
 import gql from "graphql-tag";
 import Notification from "../../queries/notifications.graphql"
-import {mapState} from "vuex";
+import {currentUser} from '@/store/user'
 
 export default {
     name: "NotificationDropdown",
@@ -19,9 +19,9 @@ export default {
                 }
             })
         },
-        ...mapState([
-                        'userId'
-                    ])
+        userId() {
+            return currentUser.userId
+        }
     },
     data() {
         return {}

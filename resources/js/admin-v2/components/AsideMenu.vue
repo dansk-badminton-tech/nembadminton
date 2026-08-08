@@ -36,7 +36,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { layout, toggleAsideDesktopOnly } from '@/store/layout'
 import AsideMenuList from '@/components/AsideMenuList.vue'
 
 export default defineComponent({
@@ -50,13 +50,13 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState([
-      'isAsideVisible'
-    ])
+    isAsideVisible () {
+      return layout.isAsideVisible
+    }
   },
   methods: {
     asideToggleDesktopOnly () {
-      this.$store.dispatch('asideDesktopOnlyToggle')
+      toggleAsideDesktopOnly()
     },
     menuClick (item) {
       //

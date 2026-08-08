@@ -40,14 +40,15 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { setFullPage } from '@/store/layout'
 
 export default defineComponent({
   name: 'FullPageView',
   created () {
-    this.$store.dispatch('toggleFullPage', true)
+    setFullPage(true)
   },
   beforeDestroy () {
-    this.$store.dispatch('toggleFullPage', false)
+    setFullPage(false)
   }
 })
 </script>
