@@ -23,7 +23,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { currentUser } from '@/store/user'
 import CardComponent from '@/components/CardComponent.vue'
 import ConnectGoogleButton from '@/components/auth/ConnectGoogleButton.vue'
 import ME from '../../queries/me.gql'
@@ -42,7 +42,9 @@ export default defineComponent({
         },
     },
     computed: {
-        ...mapState(['userEmail']),
+        userEmail() {
+            return currentUser.userEmail
+        },
         googleEnabled() {
             return !!import.meta.env.VITE_GOOGLE_CLIENT_ID
         },

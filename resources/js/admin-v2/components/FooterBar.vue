@@ -37,7 +37,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { layout } from '@/store/layout'
 
 export default defineComponent({
   name: 'FooterBar',
@@ -47,9 +47,9 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState([
-      'isFooterBarVisible'
-    ])
+    isFooterBarVisible () {
+      return layout.isFooterBarVisible
+    }
   }
 })
 </script>

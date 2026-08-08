@@ -8,6 +8,7 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { currentUser } from '@/store/user'
 
 export default defineComponent({
   name: 'UserAvatar',
@@ -19,7 +20,7 @@ export default defineComponent({
   },
   computed: {
     newAvatar () {
-      return this.avatar ? this.avatar : this.$store.state.userAvatar
+      return this.avatar ? this.avatar : currentUser.userAvatar
     }
   }
 })

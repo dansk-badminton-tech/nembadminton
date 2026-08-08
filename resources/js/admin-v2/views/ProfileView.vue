@@ -39,7 +39,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { currentUser } from '@/store/user'
 import CardComponent from '@/components/CardComponent.vue'
 import TitleBar from '@/components/TitleBar.vue'
 import HeroBar from '@/components/HeroBar.vue'
@@ -67,10 +67,12 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState([
-      'userName',
-      'userEmail'
-    ])
+    userName () {
+      return currentUser.userName
+    },
+    userEmail () {
+      return currentUser.userEmail
+    }
   }
 })
 </script>

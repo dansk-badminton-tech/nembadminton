@@ -113,7 +113,8 @@
 
 <script>
 import {defineComponent} from 'vue'
-import {mapState} from 'vuex'
+import {layout, toggleAsideMobile, toggleAsideDesktopOnly} from '@/store/layout'
+import {logout as clearCurrentUser} from '@/store/user'
 import NavBarMenu from '@/components/NavBarMenu.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import NotificationDropdown from "./NotificationDropdown.vue";
@@ -168,10 +169,12 @@ export default defineComponent(
             showSwitcher() {
                 return (this.user?.roles?.length ?? 0) > 1;
             },
-            ...mapState([
-                            'isAsideMobileExpanded',
-                            'isNavBarVisible'
-                        ])
+            isAsideMobileExpanded() {
+                return layout.isAsideMobileExpanded
+            },
+            isNavBarVisible() {
+                return layout.isNavBarVisible
+            }
         },
         mounted() {
             this.$router.afterEach(() => {
@@ -180,10 +183,10 @@ export default defineComponent(
         },
         methods: {
             asideToggleMobile() {
-                this.$store.commit('asideMobileStateToggle')
+                toggleAsideMobile()
             },
             asideDesktopOnlyToggle() {
-                this.$store.dispatch('asideDesktopOnlyToggle')
+                toggleAsideDesktopOnly()
             },
             menuToggle() {
                 this.isMenuActive = !this.isMenuActive
@@ -218,7 +221,7 @@ export default defineComponent(
                 }
             },
             logout() {
-                this.$store.commit('logout')
+                clearCurrentUser()
                 this.$router.push('/login')
                 this.$buefy.snackbar.open({
                                               message: 'Vi ses!',

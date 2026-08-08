@@ -59,6 +59,7 @@
 <script>
 import { defineComponent } from 'vue'
 import {debounce, extractErrors} from '@/helpers.js'
+import {currentUser, setUser} from '@/store/user'
 import FilePicker from '@/components/FilePicker.vue'
 import CardComponent from '@/components/CardComponent.vue'
 import MemberSearchAutocomplete from '@/components/MemberSearchAutocomplete.vue'
@@ -82,18 +83,18 @@ export default defineComponent({
   computed: {
     userName: {
       get: function () {
-        return this.$store.state.userName
+        return currentUser.userName
       },
       set: function (name) {
-        this.$store.commit('user', { name })
+        setUser({ name })
       }
     },
     userEmail: {
       get: function () {
-        return this.$store.state.userEmail
+        return currentUser.userEmail
       },
       set: function (email) {
-        this.$store.commit('user', { email })
+        setUser({ email })
       }
     }
   },
@@ -142,8 +143,8 @@ export default defineComponent({
           `,
           variables: {
             input: {
-              name: this.$store.state.userName,
-              email: this.$store.state.userEmail,
+              name: currentUser.userName,
+              email: currentUser.userEmail,
               player_id: this.playerId
             }
           }

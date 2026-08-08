@@ -14,6 +14,7 @@ import NavBar from '@/components/NavBar.vue'
 import AsideMenu from '@/components/AsideMenu.vue'
 import FooterBar from '@/components/FooterBar.vue'
 import ME from "../../queries/me.gql";
+import {setUser} from '@/store/user'
 
 export default defineComponent(
     {
@@ -68,7 +69,7 @@ export default defineComponent(
                     })
                     .then(({data}) => {
                         this.me = data.me
-                        this.$store.commit('user', {
+                        setUser({
                             id: data.me.id,
                             name: data.me.name,
                             email: data.me.email,
