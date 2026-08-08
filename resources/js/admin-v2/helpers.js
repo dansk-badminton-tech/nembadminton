@@ -1,4 +1,5 @@
 import {difference, uniq} from "lodash/array.js";
+import {isArray} from "lodash";
 
 export function chunk(array, size) {
     const chunked_arr = [];
@@ -149,6 +150,11 @@ export function findPositions(member, show = 'all') {
 }
 
 export function extractErrors(graphqlErrors) {
+
+    if(!isArray(graphqlErrors)) {
+        return [];
+    }
+
     let errors = [];
     for (let graphqlError of graphqlErrors) {
         if (graphqlError.extensions?.hasOwnProperty('validation')) {
