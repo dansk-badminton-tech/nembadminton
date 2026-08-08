@@ -2,10 +2,6 @@ import VueApollo from 'vue-apollo'
 import {getAuthToken, isLoggedIn} from "./auth";
 
 import {ApolloClient, HttpLink, ApolloLink, InMemoryCache} from '@apollo/client/core';
-import Pusher from 'pusher-js';
-import PusherLink from "./pusher-link";
-
-window.Pusher = Pusher;
 
 const httpLink = new HttpLink({
                                   uri: '/graphql'
@@ -28,28 +24,10 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 });
 
 const httpLinkWithAuth = authMiddleware.concat(httpLink);
-const pusherLink = new PusherLink({
-                                      pusher: new Pusher(import.meta.env.VITE_REVERB_APP_KEY, {
-                                          cluster: '',
-                                          wsHost: import.meta.env.VITE_REVERB_HOST,
-                                          wsPort: import.meta.env.VITE_REVERB_PORT,
-                                          forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
-                                          disableStats: true,
-                                          enabledTransports: ['ws', 'wss'],
-                                          channelAuthorization: {
-                                              endpoint: `/graphql/subscriptions/auth`,
-                                              headersProvider: () => {
-                                                  return {
-                                                      authorization: "Bearer "+getAuthToken(),
-                                                  }
-                                              },
-                                          },
-                                      }),
-                                  });
 
 const ApolloClientInstance = new ApolloClient(
     {
-        link: ApolloLink.from([pusherLink, httpLinkWithAuth]),
+        link: httpLinkWithAuth,
         cache: new InMemoryCache()
     });
 

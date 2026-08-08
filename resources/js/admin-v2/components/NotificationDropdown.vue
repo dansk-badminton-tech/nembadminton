@@ -101,34 +101,34 @@ export default {
             skip(){
                 return this.userId === null
             },
-            subscribeToMore: {
-                document: gql`subscription notifications($userId: Int!){
-                    notifications(userId: $userId){
-                        id
-                        type
-                        data
-                        createdAt
-                        readAt
-                    }
-                  }`,
-                skip () {
-                    return this.userId === null
-                },
-                variables () {
-                    return {
-                        userId: this.userId
-                    }
-                },
-                // Mutate the previous result
-                updateQuery: (previousResult, { subscriptionData }) => {
-                    return {
-                        notifications: [
-                            subscriptionData.data.notifications,
-                            ...previousResult.notifications
-                        ]
-                    }
-                },
-            }
+            // subscribeToMore: {
+            //     document: gql`subscription notifications($userId: Int!){
+            //         notifications(userId: $userId){
+            //             id
+            //             type
+            //             data
+            //             createdAt
+            //             readAt
+            //         }
+            //       }`,
+            //     skip () {
+            //         return true
+            //     },
+            //     variables () {
+            //         return {
+            //             userId: this.userId
+            //         }
+            //     },
+            //     // Mutate the previous result
+            //     updateQuery: (previousResult, { subscriptionData }) => {
+            //         return {
+            //             notifications: [
+            //                 subscriptionData.data.notifications,
+            //                 ...previousResult.notifications
+            //             ]
+            //         }
+            //     },
+            // }
         }
     }
 }
