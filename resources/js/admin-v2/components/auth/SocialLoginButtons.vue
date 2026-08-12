@@ -23,6 +23,7 @@ import gql from 'graphql-tag'
 import { setAuthToken } from '../../../auth'
 import ME from '../../../queries/me.gql'
 import { extractErrors } from '@/helpers'
+import { setUser } from '@/store/user'
 
 const GOOGLE_SDK_URL = 'https://accounts.google.com/gsi/client'
 
@@ -140,7 +141,7 @@ export default defineComponent({
                     return this.$apollo.query({ query: ME, fetchPolicy: 'network-only' })
                 })
                 .then(({ data }) => {
-                    this.$store.commit('user', {
+                    setUser({
                         id: data.me.id,
                         name: data.me.name,
                         email: data.me.email,

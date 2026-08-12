@@ -21,7 +21,7 @@ configureCompat({COMPONENT_V_MODEL: false, RENDER_FUNCTION: false})
 
 /* Router & Store */
 import router from './router'
-import store from './store'
+import {toggleAsideMobile, toggleAsideDesktopOnly} from './store/layout'
 
 /* Vue. Main component */
 import Skeleton from './Skeleton.vue'
@@ -34,8 +34,8 @@ const defaultDocumentTitle = 'Nembadminton'
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
-    store.commit('asideMobileStateToggle', false)
-    store.dispatch('asideDesktopOnlyToggle', false)
+    toggleAsideMobile(false)
+    toggleAsideDesktopOnly(false)
 
     if (to.meta && to.meta.title) {
         document.title = `${to.meta.title} — ${defaultDocumentTitle}`
@@ -47,9 +47,14 @@ router.afterEach(to => {
 const app = createApp(Skeleton)
 
 app.use(router)
-app.use(store)
 app.use(apolloProvider)
 app.use(Buefy)
 app.component('Fragment', Fragment)
 
+new Vue({
+            router,
+            apolloProvider,
+            render: h => h(Skeleton)
+        })
+    .$mount('#app')
 app.mount('#app')

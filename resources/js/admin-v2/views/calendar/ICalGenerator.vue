@@ -55,7 +55,8 @@ export default {
   },
   methods: {
     copyToClipboard() {
-      this.$copyText(this.icalUrl).then((e) => {
+
+        navigator.clipboard.writeText(this.icalUrl).then((e) => {
         this.$buefy.snackbar.open(`Kopiret til udklipsholder`)
       }, (e) => {
         this.$buefy.snackbar.open(`Kunne ikke kopir til udklipsholder. :(`)
@@ -86,7 +87,7 @@ export default {
         <b-icon icon="calendar-plus" size="is-small"></b-icon>
         Tilføj direkte til kalender:
       </h6>
-      
+
       <div class="buttons">
         <b-button
           tag="a"
@@ -97,7 +98,7 @@ export default {
           size="is-small">
           Google Calendar
         </b-button>
-        
+
         <b-button
           tag="a"
           :href="appleCalendarUrl"
@@ -106,7 +107,7 @@ export default {
           size="is-small">
           Apple Calendar
         </b-button>
-        
+
         <b-button
           tag="a"
           :href="outlookUrl"

@@ -172,7 +172,6 @@
     </div>
 </template>
 <script>
-import Draggable from "vuedraggable"
 import {
     ageGroupLabel,
     compareDatesByYearMonthDay,
@@ -197,7 +196,7 @@ import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch, Draggable},
+    components: {EditPlayerModal, PlayerSearch},
     props: {
         version: Date,
         confirmDelete: Function,
@@ -241,7 +240,6 @@ export default {
         timeToMonth,
         formatPlayingDatetime,
         formatPlayingDatetimeLong,
-        composedAddress,
         badmintonPlayerUrl(externalTeamFightID) {
             return badmintonPlayerUrl(externalTeamFightID, getCurrentSeason())
         },
