@@ -1,11 +1,13 @@
 <script>
 import gql from "graphql-tag";
-import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
+// TODO(vue3): vue-simple-calendar@5 is a Vue 2 build (peerDependencies.vue
+// ^2.6.12) and cannot run without @vue/compat. The calendar markup below is
+// commented out until it is replaced with a Vue 3 compatible calendar.
+// import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
 import "./default-theme.css"
 
 export default {
     name: "TeamMatchCalendar",
-    components: {CalendarView, CalendarViewHeader},
     props: {
         clubs: {
             type: Array,
@@ -128,6 +130,11 @@ export default {
 <template>
     <div>
         <strong class="title is-4" v-show="$apollo.queries.calendarEvents.loading">Henter kalender fra badmintonplayer.dk... <b-icon icon="loading" customClass="mdi-spin" /></strong>
+        <b-message type="is-warning" :closable="false">
+            Kalenderen er midlertidigt utilgængelig.
+        </b-message>
+        <!-- TODO(vue3): restore once a Vue 3 compatible calendar replaces
+             vue-simple-calendar@5 (Vue 2 only). See the import above.
         <div class="calendar-parent">
             <calendar-view
                 :value="currentDate"
@@ -147,6 +154,8 @@ export default {
                 </calendar-view-header>
             </calendar-view>
         </div>
+        -->
+
         <b-modal v-model="showModal">
             <div class="card">
                 <div class="card-header">

@@ -25,14 +25,6 @@ export default defineConfig(
                     ]),
             vue({
                     template: {
-                        compilerOptions: {
-                            compatConfig: {
-                                MODE: 2,
-                                // Buefy 3 (and our own components) use Vue 3's
-                                // modelValue/update:modelValue v-model contract.
-                                COMPONENT_V_MODEL: false,
-                            },
-                        },
                         transformAssetUrls: {
                             base: null,
                             includeAbsolute: false,
@@ -43,8 +35,7 @@ export default defineConfig(
         ],
         resolve: {
             alias: {
-                '@': path.join(__dirname, 'resources/js/admin-v2'),
-                'vue': '@vue/compat'
+                '@': path.join(__dirname, 'resources/js/admin-v2')
             }
         }
     });

@@ -19,7 +19,6 @@
         "@apollo/client": "^3.8.7",
         "@vue/apollo-composable": "^4.2.2",
         "@vue/apollo-option": "^4.2.2",
-        "@vue/compat": "3.5.40",
         "buefy": "^3",
         "bulma": "^0.9.4",
         "chart.js": "^3.7.1",

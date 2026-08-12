@@ -1,8 +1,8 @@
-import Vue from 'vue'
+import {reactive} from 'vue'
 import {clearAuthToken} from '../../auth'
 import {ApolloClientInstance} from '../../graphql'
 
-export const currentUser = Vue.observable({
+export const currentUser = reactive({
     userId: null,
     userName: null,
     userEmail: null,

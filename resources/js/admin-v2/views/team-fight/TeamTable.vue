@@ -15,7 +15,7 @@
                                             rounded
                                             :class="squad.playingDatetime ? '' : 'squad-info-missing'"
                                             dusk="squad-info-datetime"
-                                            @click.native="!squad.playingDatetime && openEditSquadModal(squad)">
+                                            @click="!squad.playingDatetime && openEditSquadModal(squad)">
                                             <b-icon icon="calendar" size="is-small" class="mr-1"></b-icon>
                                             <span v-if="squad.playingDatetime">{{ formatPlayingDatetime(squad.playingDatetime) }}</span>
                                             <span v-else><em>Spillestart ikke angivet</em></span>
@@ -26,7 +26,7 @@
                                             rounded
                                             :class="squad.playingPlace ? '' : 'squad-info-missing'"
                                             dusk="squad-info-place"
-                                            @click.native="!squad.playingPlace && openEditSquadModal(squad)">
+                                            @click="!squad.playingPlace && openEditSquadModal(squad)">
                                             <b-icon icon="map-marker" size="is-small" class="mr-1"></b-icon>
                                             <span v-if="squad.playingPlace">{{ squad.playingPlace }}</span>
                                             <span v-else><em>Spillested ikke angivet</em></span>
@@ -47,7 +47,7 @@
                                             rounded
                                             class="squad-info-missing"
                                             dusk="squad-info-bp-link"
-                                            @click.native="openEditSquadModal(squad)">
+                                            @click="openEditSquadModal(squad)">
                                             <b-icon icon="open-in-new" size="is-small" class="mr-1"></b-icon>
                                             <em>BP kampnummer ikke angivet</em>
                                         </b-tag>

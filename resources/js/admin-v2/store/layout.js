@@ -1,8 +1,8 @@
-import Vue from 'vue'
+import {reactive} from 'vue'
 
-/* Visibility of the app chrome. Vue.observable makes these reactive in any
+/* Visibility of the app chrome. reactive() makes these reactive in any
    component that reads them through a computed property. */
-export const layout = Vue.observable({
+export const layout = reactive({
     isNavBarVisible: true,
     isFooterBarVisible: true,
     isAsideVisible: true,

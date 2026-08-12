@@ -6,6 +6,11 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading v-model="$apollo.queries.calendarEvents.loading" :is-full-page="false" :can-cancel="true"></b-loading>
+            <b-message type="is-warning" :closable="false">
+                Kalenderen er midlertidigt utilgængelig.
+            </b-message>
+            <!-- TODO(vue3): restore once a Vue 3 compatible calendar replaces
+                 vue-simple-calendar@5 (Vue 2 only). See the import above.
             <div class="calendar-parent">
                 <calendar-view
                     :items="eventItems"
@@ -20,6 +25,8 @@
                         @input="setShowDate" />
                 </calendar-view>
             </div>
+            -->
+
             <b-modal v-model="showModal">
                 <div class="card">
                     <div class="card-header">
@@ -45,7 +52,10 @@
 
 <script>
 
-import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
+// TODO(vue3): vue-simple-calendar@5 is a Vue 2 build (peerDependencies.vue
+// ^2.6.12) and cannot run without @vue/compat. The calendar markup below is
+// commented out until it is replaced with a Vue 3 compatible calendar.
+// import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
 import "vue-simple-calendar/static/css/default.css"
 
 import gql from "graphql-tag";
@@ -54,7 +64,7 @@ import HeroBar from "../../components/HeroBar.vue";
 
 export default {
     name: "Calendar",
-    components: {HeroBar, TitleBar, CalendarView, CalendarViewHeader},
+    components: {HeroBar, TitleBar},
     data: () => ({
         titleStack: ['Admin', 'Kalender'],
         events: [],

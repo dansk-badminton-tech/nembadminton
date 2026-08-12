@@ -10,7 +10,7 @@
         :open-on-focus="true"
         required
         :readonly="selected !== null"
-        @keyup.native="clearOnBackspace"
+        @keyup="clearOnBackspace"
         placeholder="Søg på spiller"
         keep-first
     >
