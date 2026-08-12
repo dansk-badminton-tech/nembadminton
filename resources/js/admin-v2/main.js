@@ -27,8 +27,6 @@ import {toggleAsideMobile, toggleAsideDesktopOnly} from './store/layout'
 import Skeleton from './Skeleton.vue'
 import apolloProvider from "../graphql";
 
-import {Fragment} from 'vue-frag'
-
 /* Default title tag */
 const defaultDocumentTitle = 'Nembadminton'
 
@@ -49,12 +47,5 @@ const app = createApp(Skeleton)
 app.use(router)
 app.use(apolloProvider)
 app.use(Buefy)
-app.component('Fragment', Fragment)
 
-new Vue({
-            router,
-            apolloProvider,
-            render: h => h(Skeleton)
-        })
-    .$mount('#app')
 app.mount('#app')

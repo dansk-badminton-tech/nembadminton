@@ -109,10 +109,10 @@ export default {
             </b-table-column>
             <b-table-column field="initialized" label="Klar til brug" v-slot="props">
                 <b-icon v-if="props.row.initialized" icon="check"></b-icon>
-                <fragment v-else>
+                <template v-else>
                     <b-icon icon="spinner" class="fa-spin"></b-icon>
                     (Import igang. ETA: 3-5 min)
-                </fragment>
+                </template>
             </b-table-column>
             <b-table-column field="id" width="40" numeric v-slot="props">
                 <b-button :disabled="clubhouse?.clubs?.length === 1" @click="deleteClubConnection(props.row)" type="is-danger">Fjern tilknytning</b-button>

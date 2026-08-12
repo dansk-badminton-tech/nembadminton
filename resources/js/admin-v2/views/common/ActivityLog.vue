@@ -1,5 +1,4 @@
 <template>
-    <fragment>
         <h1 class="title">Hændelseslog</h1>
         <h2 class="subtitle">Følg med i hvordan systemet synkroniserer med badmintonplayer.dk</h2>
         <b-table
@@ -21,7 +20,6 @@
                 {{ props.row.createdAt }}
             </b-table-column>
         </b-table>
-    </fragment>
 </template>
 <script>
 import gql from "graphql-tag"

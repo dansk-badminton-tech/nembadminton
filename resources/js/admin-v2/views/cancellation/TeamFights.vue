@@ -1,5 +1,5 @@
 <template>
-    <fragment>
+    <template>
         <div class="column is-one-third" v-for="(fights,key) in groupByRound">
             <div class="box">
                 Runde {{key}}
@@ -12,7 +12,7 @@
                 </b-field>
             </div>
         </div>
-    </fragment>
+    </template>
 </template>
 <script>
 import gql from "graphql-tag";

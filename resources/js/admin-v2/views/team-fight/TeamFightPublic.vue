@@ -1,5 +1,5 @@
 <template>
-    <fragment v-if="!$apollo.loading">
+    <template v-if="!$apollo.loading">
         <div v-if="teamRound" dusk="team-fight-public-page">
             <div class="public-hero box mb-5">
                 <p class="public-hero-eyebrow has-text-grey">{{ teamRound.clubhouse.name }}</p>
@@ -120,7 +120,7 @@
             <h1 class="title">Kamp ikke fundet</h1>
             <p class="subtitle">Vi kunne ikke finde den ønskede kamp. Den kan være slettet, eller linket er forkert.</p>
         </section>
-    </fragment>
+    </template>
 </template>
 
 <script>
