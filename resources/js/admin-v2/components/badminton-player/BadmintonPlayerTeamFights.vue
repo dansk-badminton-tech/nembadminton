@@ -1,7 +1,7 @@
 <template>
     <div>
         <slot :loading="$apollo.queries.badmintonPlayerTeamFights.loading" :teamFights="badmintonPlayerTeamFights" :playerTeam="playerTeam">
-            <b-select :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @input="handleInput">
+            <b-select :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @update:modelValue="handleInput">
                 <option
                     v-for="option in badmintonPlayerTeamFights"
                     :key="option.matchId"

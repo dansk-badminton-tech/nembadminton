@@ -1,5 +1,5 @@
 <template>
-    <b-select expanded placeholder="Vælge rangliste" @input="handleInput">
+    <b-select expanded placeholder="Vælge rangliste" @update:modelValue="handleInput">
         <option
             v-for="version in rankingVersions"
             :key="version"

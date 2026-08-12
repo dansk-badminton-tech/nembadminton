@@ -2,7 +2,7 @@
     <div>
         <b-field>
             <b-autocomplete
-                @input="searchMembers"
+                @update:modelValue="searchMembers"
                 :open-on-focus="true"
                 :clear-on-select="true"
                 :clearable="true"

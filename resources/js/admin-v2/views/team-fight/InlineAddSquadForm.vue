@@ -39,14 +39,14 @@
                         </b-button>
                         <p class="control add-squad-form__datepicker-control">
                             <b-datetimepicker
-                                :value="selectedPlayingDate"
+                                :model-value="selectedPlayingDate"
                                 :disabled="loading"
                                 :mobile-native="false"
                                 icon="calendar-today"
                                 locale="da-DK"
                                 editable
                                 position="is-top-left"
-                                @input="$emit('change-playing-date', $event)">
+                                @update:modelValue="$emit('change-playing-date', $event)">
                             </b-datetimepicker>
                         </p>
                     </div>
@@ -62,13 +62,13 @@
                             class="add-squad-form__custom-field">
                             <p class="label is-small mb-1">{{ field.label }}</p>
                             <b-numberinput
-                                :value="customCategoryCounts[field.key]"
+                                :model-value="customCategoryCounts[field.key]"
                                 :min="0"
                                 :max="20"
                                 :disabled="loading"
                                 controls-position="compact"
                                 size="is-small"
-                                @input="emitCustomCategoryCount(field.key, $event)">
+                                @update:modelValue="emitCustomCategoryCount(field.key, $event)">
                             </b-numberinput>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                     <template v-else>
                         <b-autocomplete
                             v-if="teamOptions.length > 0"
-                            :value="selectedTeamLabel"
+                            :model-value="selectedTeamLabel"
                             :data="filteredTeamOptions"
                             :loading="teamsLoading"
                             :disabled="loading"
@@ -111,19 +111,19 @@
                             keep-first
                             open-on-focus
                             dusk="squad-team-input"
-                            @input="onTeamInput"
+                            @update:modelValue="onTeamInput"
                             @select="onTeamSelect">
                         </b-autocomplete>
                         <b-input
-                            :value="selectedName"
+                            :model-value="selectedName"
                             :disabled="loading"
                             class="mb-2"
                             placeholder="Navn (fx Højbjerg 1)"
                             dusk="squad-name-input"
-                            @input="onNameInput">
+                            @update:modelValue="onNameInput">
                         </b-input>
                         <b-autocomplete
-                            :value="selectedTierName"
+                            :model-value="selectedTierName"
                             :data="filteredTierOptions"
                             :loading="tiersLoading"
                             :disabled="loading"
@@ -133,7 +133,7 @@
                             keep-first
                             open-on-focus
                             dusk="squad-tier-input"
-                            @input="onTierInput"
+                            @update:modelValue="onTierInput"
                             @select="onTierSelect">
                         </b-autocomplete>
                         <p class="help has-text-grey mb-0">

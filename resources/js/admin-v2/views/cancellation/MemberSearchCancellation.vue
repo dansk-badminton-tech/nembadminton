@@ -2,7 +2,7 @@
     <b-autocomplete
         :data="data"
         v-model="player"
-        @input="searchMembers"
+        @update:modelValue="searchMembers"
         @typing="searchMembers"
         @select="option => selected = option"
         field="name"

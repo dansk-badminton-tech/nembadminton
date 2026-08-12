@@ -5,7 +5,7 @@
     <b-upload
       v-model="file"
       :accept="accept"
-      @input="upload"
+      @update:modelValue="upload"
     >
       <a
         class="button"

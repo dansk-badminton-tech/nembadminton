@@ -6,7 +6,7 @@
                 <template>
                     <b-step-item label="Basis">
                         <b-field label="Klub">
-                            <BadmintonPlayerClubs v-model="clubId" @input="clearTeams"/>
+                            <BadmintonPlayerClubs v-model="clubId" @update:modelValue="clearTeams"/>
                         </b-field>
                         <b-field label="Sæson">
                             <b-select v-model.number="season" expanded placeholder="Vælge sæson">
@@ -20,7 +20,7 @@
                         <h1 class="title">Hold</h1>
                         <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
                         <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"
-                                                         @input="clearTeamFights"/>
+                                                         @update:modelValue="clearTeamFights"/>
                     </b-step-item>
                     <b-step-item label="Kampe">
                         <h1 class="title">Rangliste</h1>

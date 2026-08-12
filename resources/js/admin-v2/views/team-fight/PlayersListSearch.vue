@@ -1,8 +1,8 @@
 <template>
     <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
-            <b-input dusk="player-search-input" @input="search" placeholder="Søg på navn"></b-input>
-            <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
+            <b-input dusk="player-search-input" @update:modelValue="search" placeholder="Søg på navn"></b-input>
+            <b-checkbox-button type="is-info" @update:modelValue="refreshMembers" v-model="showCancellation">
                 <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
                 <span v-if="showCancellation">Skjul afbud</span>
                 <b-icon size="is-small" v-if="!showCancellation" icon="account-off"></b-icon>

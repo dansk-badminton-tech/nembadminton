@@ -19,8 +19,8 @@
                             <b-switch
                                 dusk="toggle-incomplete-team-check"
                                 size="is-small"
-                                :value="!ignoreIncompleteTeam"
-                                @input="$emit('update:ignoreIncompleteTeam', !$event)">
+                                :model-value="!ignoreIncompleteTeam"
+                                @update:modelValue="$emit('update:ignoreIncompleteTeam', !$event)">
                             </b-switch>
                         </span>
                     </div>

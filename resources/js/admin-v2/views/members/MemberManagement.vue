@@ -232,14 +232,14 @@ export default {
                         <b-field label="Søg på navn" expanded>
                             <b-input
                                 v-model="searchName"
-                                @input="search"
+                                @update:modelValue="search"
                                 placeholder="Indtast navn..."
                                 icon="magnify"
                                 dusk="search-name-input"
                             ></b-input>
                         </b-field>
                         <b-field label="Køn">
-                            <b-select v-model="selectedGender" @input="search" dusk="gender-select">
+                            <b-select v-model="selectedGender" @update:modelValue="search" dusk="gender-select">
                                 <option
                                     v-for="option in genderOptions"
                                     :key="option.value"
@@ -250,7 +250,7 @@ export default {
                             </b-select>
                         </b-field>
                         <b-field label="Vis inaktive">
-                            <b-switch v-model="showInactive" @input="search" dusk="show-inactive-switch"></b-switch>
+                            <b-switch v-model="showInactive" @update:modelValue="search" dusk="show-inactive-switch"></b-switch>
                         </b-field>
                     </b-field>
 

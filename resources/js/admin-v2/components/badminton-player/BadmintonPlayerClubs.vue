@@ -1,5 +1,5 @@
 <template>
-    <b-select required="required" dusk="club-select" :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælg klub" @input="handleInput">
+    <b-select required="required" dusk="club-select" :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælg klub" @update:modelValue="handleInput">
         <option
             v-for="option in clubs"
             :key="option.id"
