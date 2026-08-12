@@ -21,6 +21,7 @@ import groupBy from "lodash/groupBy.js";
 
 export default {
     name: 'TeamFights',
+    emits: ['input'],
     props: {"data": Array, 'value': Array},
     data(){
         return {

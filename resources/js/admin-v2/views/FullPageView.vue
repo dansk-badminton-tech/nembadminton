@@ -47,7 +47,7 @@ export default defineComponent({
   created () {
     setFullPage(true)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     setFullPage(false)
   }
 })

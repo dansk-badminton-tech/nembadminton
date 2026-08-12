@@ -102,6 +102,7 @@ import PlayersListSearch from "./PlayersListSearch.vue";
 import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
+import {emit as emitAppEvent} from '@/store/events'
 import TeamRoundSettingsModal from "./TeamRoundSettingsModal.vue";
 import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
@@ -378,7 +379,7 @@ export default {
                     awaitRefetchQueries: true
                 })
                        .then((data) => {
-                           this.$root.$emit('player-added-to-category', data.data.addSquadMemberByRefId)
+                           emitAppEvent('player-added-to-category', data.data.addSquadMemberByRefId)
                            return data
                        })
                        .catch(() => {
@@ -413,7 +414,7 @@ export default {
                                    awaitRefetchQueries: true
                                })
                        .then(({data}) => {
-                           this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
+                           emitAppEvent('player-deleted-from-category', data.deleteSquadMember)
                        })
                        .catch((error) => {
                            this.$buefy.snackbar.open(

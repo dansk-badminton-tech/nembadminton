@@ -15,6 +15,7 @@ import AsideMenu from '@/components/AsideMenu.vue'
 import FooterBar from '@/components/FooterBar.vue'
 import ME from "../../queries/me.gql";
 import {setUser} from '@/store/user'
+import {on as onAppEvent} from '@/store/events'
 
 export default defineComponent(
     {
@@ -31,9 +32,12 @@ export default defineComponent(
             }
         },
         mounted() {
-            this.$root.$on('loggedIn', () => {
+            this.unsubscribeLoggedIn = onAppEvent('loggedIn', () => {
                 this.fetchMe()
             })
+        },
+        beforeUnmount() {
+            this.unsubscribeLoggedIn?.()
         },
         provide() {
             return {

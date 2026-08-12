@@ -51,6 +51,7 @@ import gql from "graphql-tag"
 import CardComponent from "../../components/CardComponent.vue";
 import {roles} from "@/helpers";
 import ME from "../../../queries/me.gql";
+import {emit as emitAppEvent} from '@/store/events'
 
 export default {
     name: "UserInvitation",
@@ -134,7 +135,7 @@ export default {
                     }
                 })
                 .then(res => {
-                    this.$root.$emit('loggedIn')
+                    emitAppEvent('loggedIn')
                     this.$apollo.queries.invitation.refresh()
                 })
                 .catch(err => {

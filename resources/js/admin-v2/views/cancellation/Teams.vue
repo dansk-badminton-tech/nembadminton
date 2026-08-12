@@ -15,6 +15,7 @@ import {getCurrentSeason} from "@/helpers.js";
 
 export default {
     name: 'teams',
+    emits: ['input'],
     props: {
         value: {
             type: Array,

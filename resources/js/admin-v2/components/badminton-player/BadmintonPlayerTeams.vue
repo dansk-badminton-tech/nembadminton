@@ -14,6 +14,7 @@ import gql from "graphql-tag"
 
 export default {
     name: "BadmintonPlayerTeams",
+    emits: ['input'],
     props: ['value', 'clubId', 'season'],
     methods: {
         handleInput(value) {

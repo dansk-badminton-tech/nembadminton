@@ -9,6 +9,7 @@
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 export default {
     name: "OptionalRanking",
+    emits: ['input'],
     components: {RankingListDropdown},
     props: ['value', 'season'],
     data(){

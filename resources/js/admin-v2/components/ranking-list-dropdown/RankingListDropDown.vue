@@ -15,6 +15,7 @@ import {timeToMonth} from "../../views/team-fight/helper";
 
 export default {
     name: 'RankingListDropdown',
+    emits: ['input'],
     props: ['value', 'season', 'useSystemRankings'],
     methods: {
         timeToMonth,

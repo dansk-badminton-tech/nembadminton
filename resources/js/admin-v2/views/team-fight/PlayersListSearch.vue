@@ -128,6 +128,7 @@ import AddMemberModal from "./AddMemberModal.vue";
 import MemberSearchPoints from "./memberSearchPoints.gql"
 import MemberSearchCancellation from "./memberSearchCancellation.gql"
 import ME from "../../../queries/me.gql";
+import {on as onAppEvent} from '@/store/events'
 
 export default {
     name: 'PlayersListSearch',
@@ -171,14 +172,17 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('player-added-to-category', (player) => {
+        const refresh = () => {
             this.$apollo.queries.memberSearch.refresh()
             this.$apollo.queries.memberSearchCancellation.refresh()
-        })
-        this.$root.$on('player-deleted-from-category', (player) => {
-            this.$apollo.queries.memberSearch.refresh()
-            this.$apollo.queries.memberSearchCancellation.refresh()
-        })
+        }
+        this.eventUnsubscribers = [
+            onAppEvent('player-added-to-category', refresh),
+            onAppEvent('player-deleted-from-category', refresh)
+        ]
+    },
+    beforeUnmount() {
+        this.eventUnsubscribers?.forEach(unsubscribe => unsubscribe())
     },
     data() {
         return {

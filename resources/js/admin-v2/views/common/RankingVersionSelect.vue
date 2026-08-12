@@ -19,6 +19,7 @@ import {isRecommendedRankingVersionByPlayingDate, resolveRecommendedRankingVersi
 
 export default {
     name: "RankingVersionSelect",
+    emits: ['update:modelValue', 'change', 'focus'],
     props: {
         'modelValue': String,
         'expanded': Boolean|null,

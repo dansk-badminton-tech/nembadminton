@@ -13,6 +13,7 @@
 <script>
 export default {
     name: 'RankingListDatePicker',
+    emits: ['input'],
     props: ['value'],
     computed: {
         version: {
