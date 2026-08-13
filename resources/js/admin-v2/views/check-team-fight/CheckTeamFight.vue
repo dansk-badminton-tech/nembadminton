@@ -3,8 +3,7 @@
         <b-loading v-model="fetchingAndValidating" :is-full-page="true"></b-loading>
         <form v-if="!done">
             <b-steps v-model="activeStep">
-                <template>
-                    <b-step-item label="Basis">
+                <b-step-item label="Basis">
                         <b-field label="Klub">
                             <BadmintonPlayerClubs v-model="clubId" @update:modelValue="clearTeams"/>
                         </b-field>
@@ -106,7 +105,6 @@
                             Fejl: {{errorImportingErrors}}
                         </b-message>
                     </b-step-item>
-                </template>
             </b-steps>
         </form>
         <b-button v-if="done" class="mb-2" @click="goToStart">Tjek nyt hold</b-button>
