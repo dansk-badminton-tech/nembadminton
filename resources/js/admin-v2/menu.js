@@ -27,11 +27,11 @@ export function adminMenu(clubhouseId) {
                 icon: 'account-multiple',
                 label: 'Spillere'
             },
-            {
-                to: '/c-' + clubhouseId + '/analytics',
-                icon: 'google-analytics',
-                label: 'Analytics'
-            }
+            // {
+            //     to: '/c-' + clubhouseId + '/analytics',
+            //     icon: 'google-analytics',
+            //     label: 'Analytics'
+            // }
 //        {
 //            to: '/calendar',
 //            icon: 'calendar',
