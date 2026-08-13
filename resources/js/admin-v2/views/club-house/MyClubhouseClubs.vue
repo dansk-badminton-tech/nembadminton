@@ -23,7 +23,6 @@ export default {
     methods: {
         openModal() {
             this.$buefy.modal.open({
-                                       parent: this,
                                        component: AddClubModel,
                                        scroll: "keep",
                                        width: 640,

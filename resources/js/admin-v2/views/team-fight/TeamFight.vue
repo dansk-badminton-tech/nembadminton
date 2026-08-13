@@ -234,7 +234,6 @@ export default {
         },
         openLinkSharingModal() {
             this.$buefy.modal.open({
-                                       parent: this,
                                        component: ShareLinkModal,
                                        props: {
                                            teamRoundId: this.teamRoundId
@@ -250,7 +249,6 @@ export default {
         },
         openSettingsModal() {
             this.$buefy.modal.open({
-                                       parent: this,
                                        component: TeamRoundSettingsModal,
                                        props: {
                                            teamRound: this.teamRound

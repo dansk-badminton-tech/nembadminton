@@ -311,7 +311,6 @@ export default {
         openEditSquadModal(squad) {
             this.$buefy.modal.open(
                 {
-                    parent: this,
                     width: 1500,
                     props: {
                         squad: squad

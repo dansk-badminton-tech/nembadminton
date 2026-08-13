@@ -437,7 +437,6 @@ export default {
         },
         openAddMemberModal() {
             this.$buefy.modal.open({
-                                       parent: this,
                                        props: {
                                            version: this.version
                                        },
