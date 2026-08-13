@@ -18,8 +18,7 @@
                     <b-step-item label="Hold">
                         <h1 class="title">Hold</h1>
                         <h2 class="subtitle">Vælge hvilke hold som skal være med i spillerunden.</h2>
-                        <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"
-                                                         @update:modelValue="clearTeamFights"/>
+                        <BadmintonPlayerTeamsMultiSelect v-model="playerTeams" :clubId="clubId" :season="season"/>
                     </b-step-item>
                     <b-step-item label="Kampe">
                         <h1 class="title">Rangliste</h1>
@@ -170,7 +169,7 @@ import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/B
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 import OptionalRanking from "./OptionalRanking.vue";
 import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
-import {filterYouthFromCategory, filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
+import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {
     name: "CheckTeamFight",
