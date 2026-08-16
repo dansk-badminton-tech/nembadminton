@@ -34,6 +34,12 @@
   </aside>
 </template>
 
+<style>
+.menu-list a {
+    background-color: #2e323a
+}
+</style>
+
 <script>
 import { defineComponent } from 'vue'
 import { layout, toggleAsideDesktopOnly } from '@/store/layout'

@@ -438,7 +438,8 @@ export default {
         openAddMemberModal() {
             this.$buefy.modal.open({
                                        props: {
-                                           version: this.version
+                                           version: this.version,
+                                           clubhouseId: this.clubhouseId,
                                        },
                                        events: {
                                            close() {

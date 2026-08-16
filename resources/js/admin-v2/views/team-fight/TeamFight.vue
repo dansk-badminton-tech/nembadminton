@@ -40,7 +40,7 @@
             <hr/>
             <div class="columns">
                 <div class="column is-6">
-                    <h1 class="title is-spaced">Søg på spiller</h1>
+                    <h1 class="title">Søg på spiller</h1>
                     <h2 class="subtitle">{{
                             hasMultipleClubs
                             ? 'Klubber:'
@@ -52,7 +52,7 @@
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
-                    <h1 class="title is-spaced">Holdene i holdrunden</h1>
+                    <h1 class="title">Holdene i holdrunden</h1>
                     <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
                     <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
@@ -82,6 +82,12 @@
         </section>
     </div>
 </template>
+
+<style>
+ .subtitle{
+     margin-top: 0 !important;
+ }
+</style>
 
 <script>
 import gql from "graphql-tag"
