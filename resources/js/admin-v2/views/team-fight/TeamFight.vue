@@ -40,19 +40,19 @@
             <hr/>
             <div class="columns">
                 <div class="column is-6">
-                    <h1 class="title">Søg på spiller</h1>
-                    <h1 class="subtitle">{{
+                    <h1 class="title is-spaced">Søg på spiller</h1>
+                    <h2 class="subtitle">{{
                             hasMultipleClubs
                             ? 'Klubber:'
                             : 'Klub:'
                         }} {{ clubsNames }}
                         <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">(tilføj ekstra klub)</router-link>
-                    </h1>
+                    </h2>
                     <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
-                    <h1 class="title">Holdene i holdrunden</h1>
+                    <h1 class="title is-spaced">Holdene i holdrunden</h1>
                     <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
                     <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
