@@ -2,9 +2,8 @@
     <b-autocomplete
         :data="data"
         v-model="player"
-        @update:modelValue="searchMembers"
         @typing="searchMembers"
-        @select="option => selected = option"
+        @select="selectedPlayer"
         field="name"
         :clearable="true"
         :open-on-focus="true"
@@ -25,6 +24,7 @@
                 </div>
             </div>
         </template>
+        <template v-slot:empty>No results for {{ player }}</template>
     </b-autocomplete>
 </template>
 
@@ -43,16 +43,10 @@ export default {
             selected: null
         }
     },
-    watch: {
-        modelValue(val){
-            this.player = null
-            this.selected = val
-        },
-        selected(val){
-            this.$emit('update:modelValue', val)
-        }
-    },
     methods: {
+        selectedPlayer(player){
+            this.$emit('update:modelValue', player)
+        },
         clearOnBackspace(nativeEvent) {
             if (nativeEvent.key === 'Backspace' && this.selected !== null) {
                 this.selected = null;
