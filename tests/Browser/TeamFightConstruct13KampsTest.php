@@ -46,7 +46,7 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
             $browser->assertPathContains('/team-fight/')
                 ->assertPathContains('/edit')
                 ->waitForText('Holdene i holdrunden')
-                ->assertSee('13 Kamps Holdrunde Test');
+                ->waitForText('13 Kamps Holdrunde Test');
 
             // Register TeamFightEditPage macros so we can call page object methods
             $browser->on(new TeamFightEditPage());

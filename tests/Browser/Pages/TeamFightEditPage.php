@@ -89,7 +89,7 @@ class TeamFightEditPage extends Page
             ");
 
             $browser->waitForText('Tilføjet til Hold', 10)
-                ->pause(500);
+                ->pause(1000);
         }
     }
 
