@@ -32,38 +32,30 @@ class TeamFightNotifyTest extends DuskTestCase
             $browser->visit(new LoginPage())
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
-                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
-                ->screenshot('notify-manual-page-loaded');
+                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id));
 
             // Step 1: Type a message
-            $browser->fillMessage('Holdopstillingen er opdateret')
-                ->screenshot('notify-manual-message-filled');
+            $browser->fillMessage('Holdopstillingen er opdateret');
 
             // Step 2: Select "Holdrunden er opdateret"
-            $browser->selectTypeUpdated()
-                ->screenshot('notify-manual-type-selected');
+            $browser->selectTypeUpdated();
 
             // Step 3: Select "Manuel indtastning" and enter emails
-            $browser->selectRecipientManualAndFill('player1@example.com, player2@example.com')
-                ->screenshot('notify-manual-emails-filled');
+            $browser->selectRecipientManualAndFill('player1@example.com, player2@example.com');
 
             // Step 4: Verify send button text and click
             $browser->assertSeeIn('@send-button', 'Send til alle modtagere')
-                ->clickSend()
-                ->screenshot('notify-manual-send-clicked');
+                ->clickSend();
 
             // Step 5: Confirm the dialog
-            $browser->confirmSendDialog()
-                ->screenshot('notify-manual-dialog-confirmed');
+            $browser->confirmSendDialog();
 
             // Step 6: Verify success snackbar
-            $browser->waitForText('Beskeden er blevet sendt', 10)
-                ->screenshot('notify-manual-email-sent');
+            $browser->waitForText('Beskeden er blevet sendt', 10);
 
             // Step 7: Verify activity log updated
             $browser->waitFor('@activity-feed', 10)
-                ->assertSeeIn('@activity-feed', 'Ændringer til holdrunden')
-                ->screenshot('notify-manual-activity-log-updated');
+                ->assertSeeIn('@activity-feed', 'Ændringer til holdrunden');
         });
     }
 
@@ -84,14 +76,12 @@ class TeamFightNotifyTest extends DuskTestCase
             // Select manual recipient (no emails entered) → button should be disabled
             $browser->click('@recipient-manual')
                 ->waitFor('@manual-emails-input')
-                ->assertDisabled('@send-button')
-                ->screenshot('notify-button-disabled-no-emails');
+                ->assertDisabled('@send-button');
 
             // Fill emails → button should be enabled
             $browser->type('@manual-emails-input', 'player1@example.com')
                 ->pause(200)
-                ->waitUntilEnabled('@send-button')
-                ->screenshot('notify-button-enabled-after-emails');
+                ->waitUntilEnabled('@send-button');
         });
     }
 
@@ -115,30 +105,25 @@ class TeamFightNotifyTest extends DuskTestCase
                 ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id));
 
             // Select platform recipient — player list appears, all pre-selected
-            $browser->selectRecipientPlatform()
-                ->screenshot('notify-platform-list-loaded');
+            $browser->selectRecipientPlatform();
 
             // Read the initial selected count from the list header "(N valgt)"
             $headerText = $browser->text('@player-list .is-size-7');
             preg_match('/\((\d+)\s+valgt\)/', $headerText, $matches);
             $initialCount = (int) $matches[1];
-            $browser->screenshot('notify-platform-all-selected');
 
             // Deselect the first player row in the list
             $firstPlayerRefId = $browser->attribute('@player-list .player-row:first-child', 'dusk');
             $firstPlayerRefId = str_replace('player-row-', '', $firstPlayerRefId);
             $browser->togglePlayer($firstPlayerRefId)
-                ->pause(300)
-                ->screenshot('notify-platform-one-deselected');
+                ->pause(300);
 
             // Click send and verify the confirm dialog shows (initialCount - 1)
-            $browser->clickSend()
-                ->screenshot('notify-platform-confirm-shown');
+            $browser->clickSend();
 
             $expectedCount = $initialCount - 1;
             $browser->waitForText('Der vil blive sendt', 5)
-                ->assertSeeIn('.modal-card-body', "Der vil blive sendt {$expectedCount} e-mail(s)")
-                ->screenshot('notify-platform-confirm-count');
+                ->assertSeeIn('.modal-card-body', "Der vil blive sendt {$expectedCount} e-mail(s)");
 
             // Cancel — we only verify the dialog text, not the actual send
             $browser->click('.modal-card-foot .button:not(.is-info)');

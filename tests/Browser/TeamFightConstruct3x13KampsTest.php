@@ -169,8 +169,6 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
                 $browser->assertSee("Hold {$i}");
             }
 
-            $browser->screenshot('3x13kamps-squads-added');
-
             // =====================================================================
             // Step 4: Fill all 3 squads via inline autocomplete search.
             //
@@ -184,11 +182,8 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
 
             for ($squadIdx = 0; $squadIdx < 3; $squadIdx++) {
                 $squadNum = $squadIdx + 1;
-                $browser->screenshot("3x13kamps-squad-{$squadNum}-before");
 
                 $browser->fillSquad($squadIdx, $allSquadSlots[$squadIdx]);
-
-                $browser->screenshot("3x13kamps-squad-{$squadNum}-filled");
             }
 
             // ── Step 5: Verify all squads are fully populated ──
@@ -200,8 +195,6 @@ class TeamFightConstruct3x13KampsTest extends DuskTestCase
 
             // ── Step 6: Verify validation status indicators ──
             $browser->assertValidationPassing();
-
-            $browser->screenshot('3x13kamps-test-complete');
         });
     }
 }

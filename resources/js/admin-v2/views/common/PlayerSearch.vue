@@ -18,7 +18,7 @@
                 :dusk="'player-search-autocomplete-' + slugify(category.name)"
                 >
                 <template #default="props">
-                    <div class="media">
+                    <div class="media" :dusk="props.option.isInSquad ? 'is-in-squad' : null">
                         <div class="media-content">
                             {{ props.option.name }}
                             <b-icon

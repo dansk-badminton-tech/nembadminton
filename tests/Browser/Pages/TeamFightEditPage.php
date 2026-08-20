@@ -81,14 +81,13 @@ class TeamFightEditPage extends Page
     public function addPlayersFromRankingList(Browser $browser, int $count): void
     {
         for ($i = 0; $i < $count; $i++) {
-            $browser->waitFor("[dusk='player-search-panel'] table tbody tr", 10);
+            $browser->waitFor("[dusk='player-search-panel'] table tbody tr [dusk='add-player-button-1']", 10);
 
-            $browser->script("
-                var buttons = document.querySelectorAll(\"[dusk='player-search-panel'] table tbody tr [dusk='add-player-button']\");
-                if (buttons.length > 0) buttons[0].click();
-            ");
+            $browser->click("[dusk='player-search-panel'] table tbody tr [dusk='add-player-button-1']");
 
-            $browser->waitForText('Tilføjet til Hold', 10)
+            // addSquadMemberByRefId awaits a full team round refetch before resolving,
+            // which grows slower as more categories/players are added (e.g. 13-kamps).
+            $browser->waitForText('Tilføjet til Hold', 20)
                 ->pause(1000);
         }
     }
@@ -107,72 +106,13 @@ class TeamFightEditPage extends Page
         $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
     }
 
-    /**
-     * Fill the next empty inline autocomplete slot in the team table.
-     *
-     * Finds the first <input placeholder="Søg på spiller..."> in the team table,
-     * scrolls to it, focuses it via Dusk click + types a space via Dusk keys
-     * (real OS-level keyboard events that Buefy's @typing handler picks up),
-     * then clicks the first dropdown result.
-     *
-     * Used by the single-team test to auto-fill DD/HD categories with existing
-     * squad members without specifying exact player names.
-     */
-    public function fillNextInlineSlot(Browser $browser): void
+    public function autoFillCategory(Browser $browser, string $category, string $playerName): void
     {
-        // The CSS selector that always targets the first empty autocomplete input
-        $selector = "[dusk='team-table-section'] input[placeholder='Søg på spiller...']";
-
-        // Count empty slots before this fill so we can verify one was consumed
-        $countBefore = $browser->script("
-            return document.querySelectorAll(\"{$selector}\").length;
-        ");
-        $slotsBefore = $countBefore[0] ?? 0;
-        Assert::assertGreaterThan(0, $slotsBefore, 'No empty inline slot found');
-
-        // Close any lingering dropdown and scroll the first empty input into view
-        $browser->script("
-            document.body.click();
-            var input = document.querySelector(\"{$selector}\");
-            if (input) input.scrollIntoView({block: 'center'});
-        ");
-        $browser->pause(200);
-
-        // Use Dusk click + keys for real keyboard events that Buefy reacts to.
-        // A space character triggers the @typing handler to list all squad members.
-        $browser->click($selector);
-        $browser->keys($selector, ' ');
-
-        // Wait for dropdown result to appear. If it doesn't, retry the focus+type
-        // sequence — Vue may have re-rendered the input between click and keys.
-        $browser->waitUsing(10, 300, function () use ($browser, $selector) {
-            $hasDropdown = $browser->script("
-                return document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item').length > 0;
-            ");
-            if ($hasDropdown[0] ?? false) {
-                return true;
-            }
-            // Retry: re-focus and re-type
-            $browser->script("document.body.click();");
-            $browser->pause(200);
-            $browser->click($selector);
-            $browser->keys($selector, ' ');
-            return false;
-        }, 'Could not open autocomplete dropdown for inline slot');
-
-        // Click the first dropdown result via JS
-        $browser->script("
-            var item = document.querySelector('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-            if (item) item.click();
-        ");
-
-        // Wait until Vue processes the selection and the empty slot count decreases
-        $browser->waitUsing(5, 200, function () use ($browser, $selector, $slotsBefore) {
-            $countAfter = $browser->script("
-                return document.querySelectorAll(\"{$selector}\").length;
-            ");
-            return ($countAfter[0] ?? $slotsBefore) < $slotsBefore;
-        }, 'Slot was not consumed after clicking dropdown item');
+        $browser->waitFor("[dusk='$category']");
+        $browser->click("[dusk='$category']");
+        $browser->waitFor("[dusk='is-in-squad']");
+        $browser->waitForText($playerName);
+        $browser->clickLink($playerName);
     }
 
     /**
@@ -228,13 +168,11 @@ class TeamFightEditPage extends Page
             } catch (StaleElementReferenceException $e) {
                 // Vue re-rendered the input between find and interact — retry.
                 if ($attempt === $maxAttempts) {
-                    $browser->screenshot("debug-stale-squad{$squadIndex}-{$categorySlug}");
                     Assert::fail("StaleElementReferenceException for '{$playerName}' (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
                 }
                 continue;
             } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
                 if ($attempt === $maxAttempts) {
-                    $browser->screenshot("debug-dropdown-timeout-squad{$squadIndex}-{$categorySlug}");
                     Assert::fail("Timed out waiting for '{$playerName}' in dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
                 }
                 continue;

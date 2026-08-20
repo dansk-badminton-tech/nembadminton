@@ -31,8 +31,7 @@ class MemberManagementTest extends DuskTestCase
                     ->assertSee('Spillere i klubhuset')
                     ->assertSee('Om spillere:')
                     ->assertSee('badmintonplayer.dk API')
-                    ->assertVisible('@members-table')
-                    ->screenshot('member-management-page-loads');
+                    ->assertVisible('@members-table');
         });
     }
 
@@ -53,8 +52,7 @@ class MemberManagementTest extends DuskTestCase
                     ->waitForText($member->name)
                     ->searchMember($member->name)
                     ->waitFor('@members-table')
-                    ->assertMemberVisible($member->name)
-                    ->screenshot('member-search-by-name');
+                    ->assertMemberVisible($member->name);
         });
     }
 
@@ -74,8 +72,7 @@ class MemberManagementTest extends DuskTestCase
                     ->pause(1000)
                     ->with('@members-table', function ($table) {
                         $table->assertSee('Herre');
-                    })
-                    ->screenshot('member-filter-by-gender');
+                    });
         });
     }
 
@@ -108,8 +105,7 @@ class MemberManagementTest extends DuskTestCase
                     ->searchMember($member->name)
                     ->toggleShowInactive()
                     ->waitForText($member->name)
-                    ->assertMemberStatus($member->name, 'Inaktiv')
-                    ->screenshot('member-marked-as-inactive');
+                    ->assertMemberStatus($member->name, 'Inaktiv');
 
             // Verify the member was actually marked as inactive in database
             $this->assertTrue(
@@ -146,8 +142,7 @@ class MemberManagementTest extends DuskTestCase
                     ->pause(1000)
                     // Now inactive members should be visible
                     ->assertSee($inactiveMember->name)
-                    ->assertMemberStatus($inactiveMember->name, 'Inaktiv')
-                    ->screenshot('show-inactive-members-toggled');
+                    ->assertMemberStatus($inactiveMember->name, 'Inaktiv');
         });
     }
 
@@ -166,8 +161,7 @@ class MemberManagementTest extends DuskTestCase
                     ->assertSee('badmintonplayer.dk API')
                     ->assertSee('Forskel på "Inaktiv" og "Midlertidigt utilgængelig"')
                     ->assertSee('permanent stoppet med at spille badminton')
-                    ->assertSee('Importering fra badmintonplayer.dk vil ikke ændre en spillers inaktiv-status')
-                    ->screenshot('member-management-info-message');
+                    ->assertSee('Importering fra badmintonplayer.dk vil ikke ændre en spillers inaktiv-status');
         });
     }
 }

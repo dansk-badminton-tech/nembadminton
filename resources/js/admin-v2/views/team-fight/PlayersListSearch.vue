@@ -71,7 +71,7 @@
                     <b-button size="is-small" title="Afbud (Denne holdrunde)"
                               icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
-                              dusk="add-player-button"
+                              :dusk="'add-player-button-'+(props.index + 1)"
                               @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>
