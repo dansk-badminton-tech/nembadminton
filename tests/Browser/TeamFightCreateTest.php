@@ -50,12 +50,12 @@ class TeamFightCreateTest extends DuskTestCase
             // chooses the matching version once rankingVersions resolves.
             $browser->waitFor('@ranking-select')
                 ->waitUsing(5, 100, function () use ($browser) {
-                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select'] select\").value;")[0];
+                    return (bool)$browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select']\").value;")[0];
                 });
 
             // Capture the auto-selected ranking version so we can assert it
             // was persisted on the created TeamRound.
-            $autoSelectedVersion = $browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select'] select\").value;")[0];
+            $autoSelectedVersion = $browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select']\").value;")[0];
             $this->assertNotEmpty($autoSelectedVersion, 'Expected ranking-select to auto-populate.');
 
             $browser->click('@submit-button')
@@ -65,14 +65,13 @@ class TeamFightCreateTest extends DuskTestCase
             // Wait for the edit page content to load (Apollo query)
             $browser->assertPathContains('/team-fight/')
                 ->assertPathContains('/edit')
-                ->waitForText('Holdene i holdrunden')
+                ->waitForText('Dusk Test Holdrunde')
                 ->assertSee('Dusk Test Holdrunde');
 
             // Navigate to dashboard and verify the new team fight appears
             $browser->visit(new TeamFightDashboardPage($clubhouse->id))
-                ->on(new TeamFightDashboardPage($clubhouse->id));
-                //->waitFor('@team-fights-table')
-                //->assertSee('Dusk Test Holdrunde');
+                ->on(new TeamFightDashboardPage($clubhouse->id))
+                ->waitFor('@team-fights-table');
 
             // Verify the created team round has a season_id persisted.
             $teamRound = TeamRound::query()
