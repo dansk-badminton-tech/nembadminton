@@ -24,6 +24,9 @@ export default {
         openModal() {
             this.$buefy.modal.open({
                                        component: AddClubModel,
+                                        props: {
+                                           clubhouseId: this.clubhouseId
+                                        },
                                        scroll: "keep",
                                        width: 640,
                                        events: {
