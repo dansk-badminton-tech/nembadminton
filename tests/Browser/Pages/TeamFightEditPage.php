@@ -157,6 +157,7 @@ class TeamFightEditPage extends Page
 
                 // type() clears the field and sends real keystrokes that trigger
                 // Buefy's @typing handler and the debounced Apollo search.
+                $browser->clear($inputSelector);
                 $browser->type($inputSelector, $playerName);
 
                 // Wait for the player name to appear in the autocomplete dropdown.
@@ -178,19 +179,7 @@ class TeamFightEditPage extends Page
                 continue;
             }
 
-            // Click the dropdown item that contains the player name.
-            // Uses JS click (atomic find+click in one browser tick) to avoid
-            // StaleElementReferenceException when Vue re-renders the dropdown
-            // between WebDriver's find and click steps.
-            $browser->script("
-                var items = document.querySelectorAll('.autocomplete .dropdown-menu .dropdown-content .dropdown-item');
-                for (var i = 0; i < items.length; i++) {
-                    if (items[i].textContent.indexOf('{$playerName}') !== -1) {
-                        items[i].click();
-                        break;
-                    }
-                }
-            ");
+            $browser->clickLink($playerName);
 
             // Verify the player was placed (name appears within the squad div)
             try {
