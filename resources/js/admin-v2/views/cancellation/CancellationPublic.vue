@@ -1,6 +1,5 @@
 <script>
 import gql from "graphql-tag";
-import TeamFights from "@/views/cancellation/TeamFights.vue";
 import {getCurrentSeason} from "@/helpers.js";
 import Teams from "@/views/cancellation/Teams.vue";
 import MemberSearchCancellation from "./MemberSearchCancellation.vue";
@@ -9,7 +8,7 @@ import TeamMatchCalendar from "@/views/calendar/TeamMatchCalendar.vue";
 export default {
     name: "CancellationPublic",
     props: {"sharingId": String},
-    components: {TeamMatchCalendar, Teams, TeamFights, MemberSearchCancellation},
+    components: {TeamMatchCalendar, Teams, MemberSearchCancellation},
     data() {
         return {
             form: {
