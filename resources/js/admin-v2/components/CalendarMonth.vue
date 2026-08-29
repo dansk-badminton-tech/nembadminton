@@ -11,7 +11,7 @@
                 <div v-if="displayWeekNumbers" class="calendar-month-week-number"></div>
                 <div v-for="label in weekdayLabels" :key="label" class="calendar-month-weekday">{{ label }}</div>
             </div>
-            <div v-for="week in weeks" :key="week.days[0].getTime()" class="calendar-month-week">
+            <div v-for="week in weeks" :key="week.days[0].getTime()" class="calendar-month-week" :style="{ height: week.height + 'px' }">
                 <div v-if="displayWeekNumbers" class="calendar-month-week-number">{{ week.number }}</div>
                 <div class="calendar-month-week-body">
                     <div class="calendar-month-day-row">
@@ -29,6 +29,7 @@
                             class="calendar-month-event"
                             :class="[ev.item.classes || 'calendar-month-event--default']"
                             :style="{ left: ev.left + '%', width: ev.width + '%', top: ev.top + 'px' }"
+                            :title="ev.item.title"
                             @click="onEventClick(ev.item, $event)"
                         >
                             <span v-if="ev.startsBefore" class="calendar-month-event-arrow">‹</span>
@@ -44,6 +45,7 @@
 
 <script>
 const TRACK_HEIGHT = 22
+const EVENT_TOP = 26
 
 export default {
     name: "CalendarMonth",
@@ -132,11 +134,13 @@ export default {
                         tracks.push([{...ev, top: tracks.length * TRACK_HEIGHT}])
                     }
                 }
+                const eventsHeight = Math.max(tracks.length * TRACK_HEIGHT, 1)
                 weeks.push({
                     number: this.isoWeekNumber(days[0]),
                     days,
                     events: tracks.length ? tracks.reduce((acc, t) => acc.concat(t), []) : [],
-                    eventsHeight: Math.max(tracks.length * TRACK_HEIGHT, 1)
+                    eventsHeight,
+                    height: Math.max(EVENT_TOP + eventsHeight, 92)
                 })
             }
             return weeks
@@ -178,6 +182,10 @@ export default {
 
 <style scoped>
     .calendar-month {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
         background: #fff;
         border: 1px solid #e6e6e6;
         border-radius: 6px;
@@ -211,11 +219,14 @@ export default {
         text-transform: capitalize;
     }
     .calendar-month-grid {
+        flex: 1 1 auto;
+        overflow-y: auto;
         padding: 8px;
     }
     .calendar-month-head,
     .calendar-month-week {
         display: flex;
+        min-height: 92px;
     }
     .calendar-month-week-number {
         width: 34px;
@@ -237,15 +248,18 @@ export default {
     .calendar-month-week-body {
         flex: 1;
         position: relative;
+        display: flex;
+        flex-direction: column;
     }
     .calendar-month-day-row {
         display: flex;
+        flex: 1 1 auto;
         gap: 1px;
         background: #ededed;
     }
     .calendar-month-day-cell {
         flex: 1;
-        min-height: 92px;
+        min-width: 0;
         padding: 4px 6px;
         font-size: 12px;
         color: #363636;
@@ -277,6 +291,12 @@ export default {
         color: #363636;
         cursor: pointer;
         box-sizing: border-box;
+        transition: filter 0.1s ease, box-shadow 0.1s ease;
+    }
+    .calendar-month-event:hover {
+        filter: brightness(0.9);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        z-index: 5;
     }
     .calendar-month-event--default {
         background: #dbedfb;
