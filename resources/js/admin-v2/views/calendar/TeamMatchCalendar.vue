@@ -1,13 +1,10 @@
 <script>
 import gql from "graphql-tag";
-// TODO(vue3): vue-simple-calendar@5 is a Vue 2 build (peerDependencies.vue
-// ^2.6.12) and cannot run without @vue/compat. The calendar markup below is
-// commented out until it is replaced with a Vue 3 compatible calendar.
-// import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
-import "./default-theme.css"
+import CalendarMonth from "../../components/CalendarMonth.vue";
 
 export default {
     name: "TeamMatchCalendar",
+    components: {CalendarMonth},
     props: {
         clubs: {
             type: Array,
@@ -28,10 +25,8 @@ export default {
         return {
             showModal: false,
             selectedEvent: {},
-            showDate: new Date(),
             eventItems: [],
             cancellationEvents: [],
-            currentDate: new Date(),
         }
     },
     computed: {
@@ -116,10 +111,13 @@ export default {
         }
     },
     methods: {
-        setShowDate(d) {
-            this.showDate = d;
+        formatTime(str){
+            return new Date(str).toLocaleTimeString('da-DK', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
         },
-        onClickItem(item, e) {
+        onClickItem(item) {
             this.selectedEvent = item
             this.showModal = true
         }
@@ -130,31 +128,12 @@ export default {
 <template>
     <div>
         <strong class="title is-4" v-show="$apollo.queries.calendarEvents.loading">Henter kalender fra badmintonplayer.dk... <b-icon icon="loading" customClass="mdi-spin" /></strong>
-        <b-message type="is-warning" :closable="false">
-            Kalenderen er midlertidigt utilgængelig.
-        </b-message>
-        <!-- TODO(vue3): restore once a Vue 3 compatible calendar replaces
-             vue-simple-calendar@5 (Vue 2 only). See the import above.
         <div class="calendar-parent">
-            <calendar-view
-                :value="currentDate"
-                @input="currentDate = $event"
+            <calendar-month
                 :items="eventsAndCancellations"
-                :show-date="showDate"
-                :startingDayOfWeek="1"
-                :displayWeekNumbers="true"
-                :enable-date-selection="true"
-                @click-item="onClickItem"
-                class="theme-default">
-                <calendar-view-header
-                    slot="header"
-                    slot-scope="t"
-                    :header-props="t.headerProps"
-                    @input="setShowDate">
-                </calendar-view-header>
-            </calendar-view>
+                :display-week-numbers="true"
+                @click-item="onClickItem"/>
         </div>
-        -->
 
         <b-modal v-model="showModal">
             <div class="card">
@@ -165,11 +144,11 @@ export default {
                 </div>
                 <div class="card-content">
                     <div class="content">
-                        <div v-html="selectedEvent?.originalItem?.url"></div>
+                        <div v-html="selectedEvent?.url"></div>
                         <br>
                         <strong>Detaljer:</strong>
                         <ul>
-                            <li>Start: {{ selectedEvent?.originalItem?.startDate}}</li>
+                            <li>Start: {{ selectedEvent?.startDate && formatTime(selectedEvent.startDate)}}</li>
                         </ul>
                     </div>
                 </div>
