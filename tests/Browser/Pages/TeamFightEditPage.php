@@ -142,56 +142,23 @@ class TeamFightEditPage extends Page
         // Buefy passes the dusk attribute directly to the <input> element.
         $inputSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$categorySlug}']";
 
-        $maxAttempts = 3;
-        $placed = false;
+        $browser->waitFor($inputSelector)
+            ->waitUntilEnabled($inputSelector);
 
-        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            // Brief pause to let Vue finish any pending re-renders from the
-            // previous player placement (prevents stale element references).
-            $browser->pause(300);
+        // type() clears the field and sends real keystrokes that trigger
+        // Buefy's @typing handler and the debounced Apollo search.
+        $browser->clear($inputSelector);
+        $browser->type($inputSelector, $playerName);
 
-            try {
-                // Wait for the input to be present and enabled.
-                $browser->waitFor($inputSelector)
-                    ->waitUntilEnabled($inputSelector);
+        // Wait for the player name to appear in the autocomplete dropdown.
+        $browser->waitForTextIn(
+            '.autocomplete .dropdown-content',
+            $playerName,
+            10
+        );
 
-                // type() clears the field and sends real keystrokes that trigger
-                // Buefy's @typing handler and the debounced Apollo search.
-                $browser->clear($inputSelector);
-                $browser->type($inputSelector, $playerName);
-
-                // Wait for the player name to appear in the autocomplete dropdown.
-                $browser->waitForTextIn(
-                    '.autocomplete .dropdown-content',
-                    $playerName,
-                    10
-                );
-            } catch (StaleElementReferenceException $e) {
-                // Vue re-rendered the input between find and interact — retry.
-                if ($attempt === $maxAttempts) {
-                    Assert::fail("StaleElementReferenceException for '{$playerName}' (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
-                }
-                continue;
-            } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
-                if ($attempt === $maxAttempts) {
-                    Assert::fail("Timed out waiting for '{$playerName}' in dropdown (squad {$squadIndex}, {$categoryName}) after {$maxAttempts} attempts");
-                }
-                continue;
-            }
-
-            $browser->clickLink($playerName);
-
-            // Verify the player was placed (name appears within the squad div)
-            try {
-                $browser->waitForTextIn("[dusk='squad-{$squadIndex}']", $playerName, 3);
-                $placed = true;
-                break;
-            } catch (\Facebook\WebDriver\Exception\TimeoutException $e) {
-                // Retry
-            }
-        }
-
-        Assert::assertTrue($placed, "Failed to place '{$playerName}' into squad {$squadIndex}, category '{$categoryName}' after {$maxAttempts} attempts");
+        $browser->clickLink($playerName);
+        $browser->waitForTextIn("[dusk='squad-{$squadIndex}']", $playerName, 3);
     }
 
     /**
