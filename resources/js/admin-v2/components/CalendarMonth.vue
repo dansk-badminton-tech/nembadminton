@@ -1,10 +1,12 @@
 <template>
     <div class="calendar-month">
         <div class="calendar-month-toolbar">
-            <button type="button" aria-label="Forrige måned" @click="prevMonth">‹</button>
-            <span class="calendar-month-label">{{ monthLabel }}</span>
-            <button type="button" aria-label="Næste måned" @click="nextMonth">›</button>
-            <button type="button" class="calendar-month-today" @click="goToday">I dag</button>
+            <div class="calendar-month-nav">
+                <button type="button" class="button is-small calendar-month-nav-arrow" title="Forrige måned" aria-label="Forrige måned" @click="prevMonth">‹</button>
+                <span class="calendar-month-label" aria-live="polite">{{ monthLabel }}</span>
+                <button type="button" class="button is-small calendar-month-nav-arrow" title="Næste måned" aria-label="Næste måned" @click="nextMonth">›</button>
+            </div>
+            <button type="button" class="button is-small" :class="{'is-primary is-light': !isCurrentMonth}" :disabled="isCurrentMonth" title="Gå til i dag" @click="goToday">I dag</button>
         </div>
         <div class="calendar-month-grid">
             <div class="calendar-month-head">
@@ -86,6 +88,10 @@ export default {
         },
         monthLabel() {
             return this.showDate.toLocaleDateString('da-DK', {month: 'long', year: 'numeric'})
+        },
+        isCurrentMonth() {
+            const now = new Date()
+            return now.getFullYear() === this.showDate.getFullYear() && now.getMonth() === this.showDate.getMonth()
         },
         gridStart() {
             const first = new Date(this.showDate.getFullYear(), this.showDate.getMonth(), 1)
@@ -194,29 +200,29 @@ export default {
     .calendar-month-toolbar {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 8px;
-        padding: 12px 16px;
+        padding: 10px 12px;
         background: #f5f5f5;
         border-bottom: 1px solid #e6e6e6;
     }
-    .calendar-month-toolbar button {
-        border: 1px solid #dbdbdb;
-        background: #fff;
-        padding: 4px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #363636;
-        line-height: 1.4;
+    .calendar-month-nav {
+        display: flex;
+        align-items: center;
+        gap: 2px;
     }
-    .calendar-month-toolbar button:hover {
-        background: #f0f0f0;
+    .calendar-month-nav-arrow {
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0 10px;
     }
     .calendar-month-label {
-        flex: 1;
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1rem;
         color: #363636;
         text-transform: capitalize;
+        white-space: nowrap;
+        padding: 0 6px;
     }
     .calendar-month-grid {
         flex: 1 1 auto;
