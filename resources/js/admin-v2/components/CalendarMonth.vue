@@ -217,6 +217,10 @@ export default {
         padding: 0 10px;
     }
     .calendar-month-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 140px;
         font-weight: 600;
         font-size: 1rem;
         color: #363636;
