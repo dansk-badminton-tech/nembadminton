@@ -6,7 +6,7 @@
                 <span class="calendar-month-label" aria-live="polite">{{ monthLabel }}</span>
                 <button type="button" class="button is-small calendar-month-nav-arrow" title="Næste måned" aria-label="Næste måned" @click="nextMonth">›</button>
             </div>
-            <button type="button" class="button is-small" :class="{'is-primary is-light': !isCurrentMonth}" :disabled="isCurrentMonth" title="Gå til i dag" @click="goToday">I dag</button>
+            <button type="button" class="button is-small calendar-month-today-button" :disabled="isCurrentMonth" title="Gå til i dag" @click="goToday">I dag</button>
         </div>
         <div class="calendar-month-grid">
             <div class="calendar-month-head">
@@ -21,8 +21,10 @@
                             v-for="day in week.days"
                             :key="day.getTime()"
                             class="calendar-month-day-cell"
-                            :class="{ 'is-other-month': isOtherMonth(day), 'is-today': isToday(day) }"
-                        >{{ day.getDate() }}</div>
+                            :class="{ 'is-other-month': isOtherMonth(day), 'is-today': isToday(day), 'is-weekend': isWeekend(day) }"
+                        >
+                            <span class="calendar-month-day-number">{{ day.getDate() }}</span>
+                        </div>
                     </div>
                     <div class="calendar-month-events" :style="{ height: week.eventsHeight + 'px' }">
                         <div
@@ -47,7 +49,7 @@
 
 <script>
 const TRACK_HEIGHT = 22
-const EVENT_TOP = 26
+const EVENT_TOP = 32
 
 export default {
     name: "CalendarMonth",
@@ -166,6 +168,9 @@ export default {
         isOtherMonth(date) {
             return date.getMonth() !== this.showDate.getMonth()
         },
+        isWeekend(date) {
+            return date.getDay() === 0 || date.getDay() === 6
+        },
         isToday(date) {
             return this.dayIndexOf(date) === this.dayIndexOf(new Date())
         },
@@ -193,45 +198,83 @@ export default {
         flex: 1 1 auto;
         min-height: 0;
         background: #fff;
-        border: 1px solid #e6e6e6;
-        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
         overflow: hidden;
+        box-shadow: 0 2px 6px rgba(16, 24, 40, 0.06);
     }
     .calendar-month-toolbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 8px;
-        padding: 10px 12px;
-        background: #f5f5f5;
-        border-bottom: 1px solid #e6e6e6;
+        padding: 8px 12px;
+        background: linear-gradient(135deg, #3273dc 0%, #2156b8 100%);
+        border-bottom: 1px solid #1d4ea8;
     }
     .calendar-month-nav {
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 4px;
     }
     .calendar-month-nav-arrow {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         line-height: 1;
-        padding: 0 10px;
+        padding: 0 9px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.15);
+        border-color: transparent;
+        color: #fff;
+    }
+    .calendar-month-nav-arrow:hover {
+        background: rgba(255, 255, 255, 0.3);
+        color: #fff;
     }
     .calendar-month-label {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 140px;
-        font-weight: 600;
-        font-size: 1rem;
-        color: #363636;
+        font-weight: 700;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+        color: #fff;
         text-transform: capitalize;
         white-space: nowrap;
         padding: 0 6px;
+    }
+    .calendar-month-today-button {
+        border-radius: 6px;
+        background: #fff;
+        border-color: transparent;
+        color: #3273dc;
+        font-weight: 600;
+    }
+    .calendar-month-today-button:hover:not([disabled]) {
+        background: #e8f0fe;
+        color: #2156b8;
+    }
+    .calendar-month-today-button[disabled] {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: transparent;
+        color: rgba(255, 255, 255, 0.75);
+        opacity: 1;
+        cursor: default;
     }
     .calendar-month-grid {
         flex: 1 1 auto;
         overflow-y: auto;
         padding: 8px;
+    }
+    .calendar-month-grid::-webkit-scrollbar {
+        width: 8px;
+    }
+    .calendar-month-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    .calendar-month-grid::-webkit-scrollbar-track {
+        background: transparent;
     }
     .calendar-month-head,
     .calendar-month-week {
@@ -242,18 +285,23 @@ export default {
         width: 34px;
         min-width: 34px;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        color: #7a7a7a;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding-top: 6px;
+        padding-right: 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #3273dc;
     }
     .calendar-month-weekday {
         flex: 1;
         text-align: center;
-        font-size: 12px;
-        color: #7a7a7a;
-        padding: 4px 0;
-        text-transform: capitalize;
+        padding: 4px 0 6px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #3273dc;
     }
     .calendar-month-week-body {
         flex: 1;
@@ -264,55 +312,81 @@ export default {
     .calendar-month-day-row {
         display: flex;
         flex: 1 1 auto;
-        gap: 1px;
-        background: #ededed;
     }
     .calendar-month-day-cell {
         flex: 1;
         min-width: 0;
-        padding: 4px 6px;
-        font-size: 12px;
-        color: #363636;
+        padding: 6px;
+        text-align: right;
         background: #fff;
+        border-right: 1px solid #eef0f3;
+        border-bottom: 1px solid #eef0f3;
+    }
+    .calendar-month-day-cell:last-child {
+        border-right: none;
+    }
+    .calendar-month-day-cell.is-weekend {
+        background: #f4f8ff;
     }
     .calendar-month-day-cell.is-other-month {
-        color: #b5b5b5;
-        background: #fafafa;
+        background: #f7f8fa;
     }
-    .calendar-month-day-cell.is-today {
-        box-shadow: inset 0 0 0 2px #3273dc;
+    .calendar-month-day-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 6px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #374151;
+    }
+    .calendar-month-day-cell.is-other-month .calendar-month-day-number {
+        color: #bfc4cc;
+    }
+    .calendar-month-day-cell.is-today .calendar-month-day-number {
+        background: #3273dc;
+        color: #fff;
+        font-weight: 700;
+        box-shadow: 0 1px 3px rgba(50, 115, 220, 0.4);
     }
     .calendar-month-events {
         position: absolute;
-        top: 26px;
+        top: 32px;
         left: 0;
         right: 0;
     }
     .calendar-month-event {
         position: absolute;
-        height: 18px;
-        line-height: 18px;
-        border-radius: 3px;
-        padding: 0 4px;
+        height: 20px;
+        line-height: 20px;
+        border-radius: 5px;
+        padding: 0 6px;
         font-size: 11px;
+        font-weight: 600;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         color: #363636;
         cursor: pointer;
         box-sizing: border-box;
-        transition: filter 0.1s ease, box-shadow 0.1s ease;
+        transition: filter 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
     }
     .calendar-month-event:hover {
-        filter: brightness(0.9);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        filter: brightness(0.95);
+        box-shadow: 0 3px 8px rgba(16, 24, 40, 0.18);
+        transform: translateY(-1px);
         z-index: 5;
     }
     .calendar-month-event--default {
-        background: #dbedfb;
+        background: #dbeafe;
+        color: #1e40af;
     }
     .calendar-month-event-arrow {
         padding: 0 2px;
+        opacity: 0.7;
     }
     .calendar-month-event-title {
         vertical-align: middle;
