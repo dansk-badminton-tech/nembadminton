@@ -65,6 +65,10 @@ export default {
             type: Number,
             default: 0
         },
+        seasonId: {
+            type: [String, Number],
+            default: null
+        },
         usedTeamIds: {
             type: Array,
             default: () => []
@@ -189,8 +193,8 @@ export default {
         },
         teams: {
             query: gql`
-                query teamsForSquadPicker($clubhouseId: ID!) {
-                    teams(clubhouseId: $clubhouseId, first: 200, order: [{column: NAME, order: ASC}]) {
+                query teamsForSquadPicker($clubhouseId: ID!, $seasonId: Int) {
+                    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 200, order: [{column: NAME, order: ASC}]) {
                         data {
                             id
                             name
@@ -202,7 +206,12 @@ export default {
                 }
             `,
             variables() {
-                return {clubhouseId: this.clubhouseId};
+                return {
+                    clubhouseId: this.clubhouseId,
+                    seasonId: this.seasonId === null || this.seasonId === undefined
+                        ? null
+                        : Number.parseInt(this.seasonId, 10)
+                };
             },
             skip() {
                 return this.clubhouseId === null || this.clubhouseId === undefined;

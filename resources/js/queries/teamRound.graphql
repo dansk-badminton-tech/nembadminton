@@ -50,5 +50,8 @@ query teamRound($id: ID!){
         version
         round
         reachablePlayerRefIds
+        season {
+            id
+        }
     }
 }
