@@ -1,11 +1,18 @@
 <template>
         <div class="notification">
             <div class="buttons has-addons">
-                <b-button @click="selectSeason('current')">{{currentSeasonButtonName}}</b-button>
-                <b-button @click="selectSeason('previous')">{{previousSeasonButtonName}}</b-button>
-                <b-button @click="selectSeason('rest')">Tidligere sæsoner</b-button>
-                <b-button @click="selectSeason('all')">Vis alle</b-button>
-                <p class="ml-4">Viser holdrunder med spilledatoer fra <b>{{this.gameDate?.from}}</b> - <b>{{this.gameDate?.to}}</b></p>
+                <b-button :type="{'is-link': isSeasonActive('current')}" @click="selectSeason('current')">{{currentSeasonButtonName}}</b-button>
+                <b-button :type="{'is-link': isSeasonActive('previous')}" @click="selectSeason('previous')">{{previousSeasonButtonName}}</b-button>
+                <b-button :type="{'is-link': isSeasonActive('rest')}" @click="selectSeason('rest')">Tidligere sæsoner</b-button>
+                <b-button :type="{'is-link': isSeasonActive('all')}" @click="selectSeason('all')">Vis alle</b-button>
+                <p class="ml-4">
+                    <template v-if="gameDate && gameDate.from && gameDate.to">
+                        Viser holdrunder med spilledatoer fra <b>{{this.gameDate.from}}</b> - <b>{{this.gameDate.to}}</b>
+                    </template>
+                    <template v-else>
+                        Viser alle holdrunder
+                    </template>
+                </p>
             </div>
         </div>
         <div dusk="team-fights-table">
@@ -122,6 +129,9 @@ export default {
     },
     methods: {
         timeToMonth,
+        isSeasonActive(filter) {
+            return this.seasonFilter === filter;
+        },
         deleteTeamFight(teamFightId) {
             this.$buefy.dialog.confirm(
                 {
