@@ -1,5 +1,5 @@
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, h, Comment } from 'vue'
 import chunk from 'lodash/chunk'
 
 export default defineComponent({
@@ -10,27 +10,26 @@ export default defineComponent({
       default: 5
     }
   },
-  render (createElement) {
-    const renderAncestor = elements => createElement(
+  render () {
+    const renderAncestor = elements => h(
       'div',
-      { attrs: { class: 'tile is-ancestor' } },
+      { class: 'tile is-ancestor' },
       elements.map((element) => {
-          if(element.context === undefined){
-              return;
-          }
-        return createElement('div', { attrs: { class: 'tile is-parent' } }, [
-          element
-        ])
+        return h('div', { class: 'tile is-parent' }, [element])
       })
     )
 
-    if (this.$slots.default.length <= this.maxPerRow) {
-      return renderAncestor(this.$slots.default)
+    const defaultSlot = this.$slots.default
+      ? this.$slots.default().filter((element) => element.type !== Comment)
+      : []
+
+    if (defaultSlot.length <= this.maxPerRow) {
+      return renderAncestor(defaultSlot)
     } else {
-      return createElement(
+      return h(
         'div',
-        { attrs: { class: 'is-tiles-wrapper' } },
-        chunk(this.$slots.default, this.maxPerRow).map((group) => {
+        { class: 'is-tiles-wrapper' },
+        chunk(defaultSlot, this.maxPerRow).map((group) => {
           return renderAncestor(group)
         })
       )
