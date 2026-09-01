@@ -6,7 +6,6 @@
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.0",
-        "axios": "^1.0",
         "cross-env": "^7.0",
         "laravel-vite-plugin": "^1.1.1",
         "lodash": "^4.17.13",
@@ -16,7 +15,6 @@
     },
     "dependencies": {
         "@apollo/client": "^3.8.7",
-        "@vue/apollo-composable": "^4.2.2",
         "@vue/apollo-option": "^4.2.2",
         "buefy": "^3",
         "bulma": "^0.9.4",
