@@ -50,7 +50,6 @@
 <script>
 import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
-import TilesBlock from "@/components/TilesBlock.vue";
 import CardWidget from "@/components/CardWidget.vue";
 import CategoryPoints from "@/views/dashboard/CategoryPoints.vue";
 import TeamRoundPlayerRow from "@/views/team-fight/TeamRoundPlayerRow.vue";
@@ -59,7 +58,7 @@ import moment from "moment";
 
 export default {
     name: "PlayerDashboard",
-    components: {CategoryPoints, HeroBar, TitleBar, TilesBlock, CardWidget, TeamRoundPlayerRow},
+    components: {CategoryPoints, HeroBar, TitleBar, CardWidget, TeamRoundPlayerRow},
     inject: ["clubhouseId"],
     data() {
         return {
