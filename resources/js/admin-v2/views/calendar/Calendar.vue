@@ -7,19 +7,12 @@
         <section class="section is-main-section">
             <b-loading v-model="$apollo.queries.calendarEvents.loading" :is-full-page="false" :can-cancel="true"></b-loading>
             <div class="calendar-parent">
-                <calendar-view
+                <calendar-month
                     :items="eventItems"
-                    :show-date="showDate"
-                    :startingDayOfWeek="1"
-                    @click-item="onEventClick"
-                    class="theme-default">
-                    <calendar-view-header
-                        slot="header"
-                        slot-scope="t"
-                        :header-props="t.headerProps"
-                        @input="setShowDate" />
-                </calendar-view>
+                    :display-week-numbers="true"
+                    @click-item="onEventClick"/>
             </div>
+
             <b-modal v-model="showModal">
                 <div class="card">
                     <div class="card-header">
@@ -29,11 +22,11 @@
                     </div>
                     <div class="card-content">
                         <div class="content">
-                            <div v-html="selectedEvent?.originalItem?.url"></div>
+                            <div v-html="selectedEvent?.url"></div>
                             <br>
                             <strong>Event details:</strong>
                             <ul>
-                                <li>Start: {{ selectedEvent.startDate && selectedEvent.startDate.formatTime() }}</li>
+                                <li>Start: {{ selectedEvent.startDate && formatTime(selectedEvent.startDate) }}</li>
                             </ul>
                         </div>
                     </div>
@@ -45,23 +38,20 @@
 
 <script>
 
-import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
-import "vue-simple-calendar/static/css/default.css"
-
 import gql from "graphql-tag";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
+import CalendarMonth from "../../components/CalendarMonth.vue";
 
 export default {
     name: "Calendar",
-    components: {HeroBar, TitleBar, CalendarView, CalendarViewHeader},
+    components: {HeroBar, TitleBar, CalendarMonth},
     data: () => ({
         titleStack: ['Admin', 'Kalender'],
         events: [],
         calendarEvents: [],
         showModal: false,
         selectedEvent: {},
-        showDate: new Date(),
         eventItems: []
     }),
     apollo: {
@@ -90,26 +80,15 @@ export default {
         }
     },
     methods: {
-        setShowDate(d) {
-            this.showDate = d;
+        formatTime(str){
+            return new Date(str).toLocaleTimeString('da-DK', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
         },
-        toTimeStr(str){
-            return str.substring(10, 16);
-        },
-        toDateObject(str){
-            return new Date(str.substring(0,10))
-        },
-        onEventClick(event, e) {
+        onEventClick(event) {
             this.selectedEvent = event
             this.showModal = true
-            console.log(event, e)
-//            this.$buefy.dialog.alert({
-//                                         title: event.title,
-//                                         message: event.contentFull,
-//                                         confirmText: 'Ok'
-//                                     })
-
-            e.stopPropagation()
         }
     }
 }

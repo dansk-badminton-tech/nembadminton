@@ -118,8 +118,8 @@ export default {
                 <b-field v-for="innerPoints in squadMember.points" :key="innerPoints.id" :label="resolveCategoryName(innerPoints.category)">
                     <b-input
                         type="number"
-                        @input="updatePoint(innerPoints, $event)"
-                        :value="innerPoints.points"
+                        @update:modelValue="updatePoint(innerPoints, $event)"
+                        :model-value="innerPoints.points"
                         required>
                     </b-input>
                 </b-field>

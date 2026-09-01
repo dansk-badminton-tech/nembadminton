@@ -1,5 +1,5 @@
 <template>
-    <fragment v-if="!$apollo.loading">
+    <template v-if="!$apollo.loading">
         <div v-if="teamRound" dusk="team-fight-public-page">
             <div class="public-hero box mb-5">
                 <p class="public-hero-eyebrow has-text-grey">{{ teamRound.clubhouse.name }}</p>
@@ -65,11 +65,11 @@
 
                         <div class="card-content squad-body">
                             <div v-if="hasAnyPlayer(squad)" class="category-grid">
-                                <template v-for="category in nonEmptyCategories(squad)">
-                                    <div :key="category.id + '-label'" class="category-label">
+                                <template v-for="category in nonEmptyCategories(squad)" :key="category.id">
+                                    <div class="category-label">
                                         {{ category.name }}
                                     </div>
-                                    <div :key="category.id + '-players'" class="category-players">
+                                    <div class="category-players">
                                         <div
                                             v-for="player in category.players"
                                             :key="player.id"
@@ -120,7 +120,7 @@
             <h1 class="title">Kamp ikke fundet</h1>
             <p class="subtitle">Vi kunne ikke finde den ønskede kamp. Den kan være slettet, eller linket er forkert.</p>
         </section>
-    </fragment>
+    </template>
 </template>
 
 <script>

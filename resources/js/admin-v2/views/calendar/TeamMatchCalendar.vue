@@ -1,11 +1,10 @@
 <script>
 import gql from "graphql-tag";
-import { CalendarView, CalendarViewHeader } from "vue-simple-calendar"
-import "./default-theme.css"
+import CalendarMonth from "../../components/CalendarMonth.vue";
 
 export default {
     name: "TeamMatchCalendar",
-    components: {CalendarView, CalendarViewHeader},
+    components: {CalendarMonth},
     props: {
         clubs: {
             type: Array,
@@ -26,10 +25,8 @@ export default {
         return {
             showModal: false,
             selectedEvent: {},
-            showDate: new Date(),
             eventItems: [],
             cancellationEvents: [],
-            currentDate: new Date(),
         }
     },
     computed: {
@@ -114,10 +111,13 @@ export default {
         }
     },
     methods: {
-        setShowDate(d) {
-            this.showDate = d;
+        formatTime(str){
+            return new Date(str).toLocaleTimeString('da-DK', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
         },
-        onClickItem(item, e) {
+        onClickItem(item) {
             this.selectedEvent = item
             this.showModal = true
         }
@@ -129,23 +129,12 @@ export default {
     <div>
         <strong class="title is-4" v-show="$apollo.queries.calendarEvents.loading">Henter kalender fra badmintonplayer.dk... <b-icon icon="loading" customClass="mdi-spin" /></strong>
         <div class="calendar-parent">
-            <calendar-view
-                v-model="currentDate"
+            <calendar-month
                 :items="eventsAndCancellations"
-                :show-date="showDate"
-                :startingDayOfWeek="1"
-                :displayWeekNumbers="true"
-                :enable-date-selection="true"
-                @click-item="onClickItem"
-                class="theme-default">
-                <calendar-view-header
-                    slot="header"
-                    slot-scope="t"
-                    :header-props="t.headerProps"
-                    @input="setShowDate">
-                </calendar-view-header>
-            </calendar-view>
+                :display-week-numbers="true"
+                @click-item="onClickItem"/>
         </div>
+
         <b-modal v-model="showModal">
             <div class="card">
                 <div class="card-header">
@@ -155,11 +144,11 @@ export default {
                 </div>
                 <div class="card-content">
                     <div class="content">
-                        <div v-html="selectedEvent?.originalItem?.url"></div>
+                        <div v-html="selectedEvent?.url"></div>
                         <br>
                         <strong>Detaljer:</strong>
                         <ul>
-                            <li>Start: {{ selectedEvent?.originalItem?.startDate}}</li>
+                            <li>Start: {{ selectedEvent?.startDate && formatTime(selectedEvent.startDate)}}</li>
                         </ul>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 <template>
     <b-table
         ref="table"
-        :checked-rows.sync="teams"
+        v-model:checked-rows="selectedTeams"
         :columns="columns"
         :data="badmintonPlayerTeams"
         :loading="$apollo.queries.badmintonPlayerTeams.loading"
@@ -25,12 +25,14 @@
 <script>
 import gql from "graphql-tag"
 import BadmintonPlayerTeamFights from "./BadmintonPlayerTeamFights.vue";
+import badmintonPlayerTeams from "@/components/badminton-player/BadmintonPlayerTeams.vue";
 
 export default {
     name: "BadmintonPlayerTeamsMultiSelect",
     components: {BadmintonPlayerTeamFights},
+    emits: ['update:modelValue'],
     props: {
-        'value': Array,
+        'modelValue': Array,
         'clubId': Number,
         'season': Number,
         'checkable': {
@@ -63,8 +65,13 @@ export default {
         }
     },
     watch: {
-        teams(newValue, oldValue) {
-            this.$emit('input', newValue)
+        clubId(newValue, oldValue){
+            if(newValue !== oldValue){
+              this.selectedTeams = []
+            }
+        },
+        selectedTeams(){
+            this.$emit('update:modelValue', this.selectedTeams)
         }
     },
     data() {
@@ -79,7 +86,8 @@ export default {
                     label: 'Række',
                 }
             ],
-            teams: []
+            selectedTeams: [],
+            badmintonPlayerTeams: [],
         }
     },
     apollo: {
@@ -95,7 +103,7 @@ export default {
                 }
             `,
             result(ApolloQueryResult, key) {
-                this.teams = [];
+
             },
             variables() {
                 return {

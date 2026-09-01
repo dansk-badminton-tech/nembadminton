@@ -30,8 +30,8 @@ class TeamFightCreatePage extends Page
             '@name-input' => "[dusk='team-fight-name-input']",
             '@round-input' => "[dusk='team-fight-round-input']",
             '@date-picker' => "[dusk='team-fight-date-picker']",
-            '@season-select' => "[dusk='team-fight-season-select-wrapper'] select",
-            '@ranking-select' => "[dusk='team-fight-ranking-select'] select",
+            '@season-select' => "[dusk='team-fight-season-select-wrapper']",
+            '@ranking-select' => "[dusk='team-fight-ranking-select']",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
     }
@@ -118,7 +118,7 @@ class TeamFightCreatePage extends Page
 
         $browser->waitFor('@ranking-select')
             ->script("
-                var sel = document.querySelector(\"[dusk='team-fight-ranking-select'] select\");
+                var sel = document.querySelector(\"[dusk='team-fight-ranking-select']\");
                 var options = sel.options;
                 for (var i = 0; i < options.length; i++) {
                     if (options[i].text.indexOf('{$escapedText}') !== -1) {

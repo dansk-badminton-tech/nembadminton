@@ -1,5 +1,5 @@
 <template>
-    <b-select expanded placeholder="Vælge rangliste" @input="handleInput">
+    <b-select expanded placeholder="Vælge rangliste" @update:modelValue="handleInput">
         <option
             v-for="version in rankingVersions"
             :key="version"
@@ -15,6 +15,7 @@ import {timeToMonth} from "../../views/team-fight/helper";
 
 export default {
     name: 'RankingListDropdown',
+    emits: ['input'],
     props: ['value', 'season', 'useSystemRankings'],
     methods: {
         timeToMonth,

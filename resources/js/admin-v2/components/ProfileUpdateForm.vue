@@ -60,7 +60,6 @@
 import { defineComponent } from 'vue'
 import {debounce, extractErrors} from '@/helpers.js'
 import {currentUser, setUser} from '@/store/user'
-import FilePicker from '@/components/FilePicker.vue'
 import CardComponent from '@/components/CardComponent.vue'
 import MemberSearchAutocomplete from '@/components/MemberSearchAutocomplete.vue'
 import gql from "graphql-tag";
@@ -69,7 +68,6 @@ export default defineComponent({
   name: 'ProfileUpdateForm',
   components: {
     CardComponent,
-    FilePicker,
     MemberSearchAutocomplete
   },
   inject: ['user', 'clubhouseId'],

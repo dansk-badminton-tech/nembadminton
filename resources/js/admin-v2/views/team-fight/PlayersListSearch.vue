@@ -1,8 +1,8 @@
 <template>
     <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
-            <b-input dusk="player-search-input" @input="search" placeholder="Søg på navn"></b-input>
-            <b-checkbox-button type="is-info" @input="refreshMembers" v-model="showCancellation">
+            <b-input dusk="player-search-input" @update:modelValue="search" placeholder="Søg på navn"></b-input>
+            <b-checkbox-button type="is-info" @update:modelValue="refreshMembers" v-model="showCancellation">
                 <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
                 <span v-if="showCancellation">Skjul afbud</span>
                 <b-icon size="is-small" v-if="!showCancellation" icon="account-off"></b-icon>
@@ -71,7 +71,7 @@
                     <b-button size="is-small" title="Afbud (Denne holdrunde)"
                               icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
                     <b-button size="is-small" title="Tilføj på hold (Næste ledig plads)" icon-right="plus"
-                              dusk="add-player-button"
+                              :dusk="'add-player-button-'+(props.index + 1)"
                               @click="addPlayerCustom(props.row)"></b-button>
                 </div>
             </b-table-column>
@@ -128,6 +128,7 @@ import AddMemberModal from "./AddMemberModal.vue";
 import MemberSearchPoints from "./memberSearchPoints.gql"
 import MemberSearchCancellation from "./memberSearchCancellation.gql"
 import ME from "../../../queries/me.gql";
+import {on as onAppEvent} from '@/store/events'
 
 export default {
     name: 'PlayersListSearch',
@@ -171,14 +172,17 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('player-added-to-category', (player) => {
+        const refresh = () => {
             this.$apollo.queries.memberSearch.refresh()
             this.$apollo.queries.memberSearchCancellation.refresh()
-        })
-        this.$root.$on('player-deleted-from-category', (player) => {
-            this.$apollo.queries.memberSearch.refresh()
-            this.$apollo.queries.memberSearchCancellation.refresh()
-        })
+        }
+        this.eventUnsubscribers = [
+            onAppEvent('player-added-to-category', refresh),
+            onAppEvent('player-deleted-from-category', refresh)
+        ]
+    },
+    beforeUnmount() {
+        this.eventUnsubscribers?.forEach(unsubscribe => unsubscribe())
     },
     data() {
         return {
@@ -433,9 +437,9 @@ export default {
         },
         openAddMemberModal() {
             this.$buefy.modal.open({
-                                       parent: this,
                                        props: {
-                                           version: this.version
+                                           version: this.version,
+                                           clubhouseId: this.clubhouseId,
                                        },
                                        events: {
                                            close() {

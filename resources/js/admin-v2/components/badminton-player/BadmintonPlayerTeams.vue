@@ -1,5 +1,5 @@
 <template>
-    <b-select :loading="$apollo.queries.badmintonPlayerTeams.loading" expanded placeholder="Vælge hold" @input="handleInput">
+    <b-select :loading="$apollo.queries.badmintonPlayerTeams.loading" expanded placeholder="Vælge hold" @update:modelValue="handleInput">
         <option
             v-for="option in badmintonPlayerTeams"
             :key="option.leagueGroupID"
@@ -14,6 +14,7 @@ import gql from "graphql-tag"
 
 export default {
     name: "BadmintonPlayerTeams",
+    emits: ['input'],
     props: ['value', 'clubId', 'season'],
     methods: {
         handleInput(value) {

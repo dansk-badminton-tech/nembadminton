@@ -1,8 +1,6 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import {isLoggedIn} from "../../auth";
 
-Vue.use(VueRouter)
 
 const routes = [
     {
@@ -351,23 +349,22 @@ const routes = [
     },
 ]
 
-const router = new VueRouter({
-                                 mode: 'history',
-                                 base: '/app',
-                                 routes,
-                                 scrollBehavior(to, from, savedPosition) {
-                                     if (savedPosition) {
-                                         return savedPosition
-                                     } else if (to.hash) {
-                                         return {
-                                             selector: to.hash,
-                                             behavior: 'smooth'
-                                         }
-                                     } else {
-                                         return {x: 0, y: 0}
-                                     }
-                                 }
-                             })
+const router = createRouter({
+                                history: createWebHistory('/app'),
+                                routes,
+                                scrollBehavior(to, from, savedPosition) {
+                                    if (savedPosition) {
+                                        return savedPosition
+                                    } else if (to.hash) {
+                                        return {
+                                            selector: to.hash,
+                                            behavior: 'smooth'
+                                        }
+                                    } else {
+                                        return {x: 0, y: 0}
+                                    }
+                                }
+                            })
 
 // Recover from "Failed to fetch dynamically imported module" / ChunkLoadError
 // that happens when a deploy replaces hashed asset filenames while a user has
@@ -391,7 +388,7 @@ router.onError((error) => {
         return
     }
     sessionStorage.setItem(CHUNK_RELOAD_FLAG, '1')
-    if(process.env.NODE_ENV !== "development" && confirm("Der skete en fejl. Vil du genindlæse siden?")){
+    if (!import.meta.env.DEV && confirm("Der skete en fejl. Vil du genindlæse siden?")){
         window.location.reload()
     }
 })

@@ -5,7 +5,7 @@ import BadmintonPlayerClubs from "@/components/badminton-player/BadmintonPlayerC
 export default {
     name: "AddClubModel",
     components: {BadmintonPlayerClubs},
-    inject: ['clubhouseId'],
+    props: ['clubhouseId'],
     data() {
         return {
             loading: false,

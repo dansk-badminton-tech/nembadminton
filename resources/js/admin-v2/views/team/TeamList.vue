@@ -22,7 +22,7 @@
                     backend-pagination
                     :total="teams.paginatorInfo.total"
                     :per-page="perPage"
-                    :current-page.sync="page"
+                    v-model:current-page="page"
                     @page-change="onPageChange">
                     <b-table-column field="name" label="Navn" v-slot="props">
                         {{ props.row.name }}

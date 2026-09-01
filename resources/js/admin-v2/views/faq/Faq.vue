@@ -5,11 +5,11 @@
             FAQ
         </hero-bar>
         <section class="section is-main-section" dusk="faq-content-section">
-            <fragment v-for="faq in faqs" :key="faq.title">
+            <template v-for="faq in faqs" :key="faq.title">
                 <strong>{{faq.title}}</strong>
                 <p v-html="faq.text"></p>
                 <hr>
-            </fragment>
+            </template>
         </section>
     </div>
 </template>

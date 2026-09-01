@@ -116,7 +116,7 @@ export default {
                  paginated
                  @page-change="onPageChange"
                  checkable
-                 :checked-rows.sync="checkedMembers"
+                 v-model:checked-rows="checkedMembers"
                  checkbox-type="is-info"
                  :custom-is-checked="(objA, objB) => {return objA.id === objB.id}"
                  >

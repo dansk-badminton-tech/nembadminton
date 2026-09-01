@@ -33,8 +33,7 @@ class FaqTestDisable extends DuskTestCase
                         ->assertSee('Spørgsmål til reglementet for DH-turneringen?')
                         ->assertSee('Hvor ofte synkroniserer nembadminton.dk med badmintonplayer.dk?')
                         ->assertSee('Hvordan virker validering af holdopstillingen?')
-                        ->assertSee('Er der taget højde for U15/U17/U19 spillere?')
-                        ->screenshot('faq-page-complete');
+                        ->assertSee('Er der taget højde for U15/U17/U19 spillere?');
                 });
         });
     }

@@ -54,6 +54,7 @@ import MemberSearchAutocomplete from "@/components/MemberSearchAutocomplete.vue"
 import ME from "../../../queries/me.gql"
 import gql from "graphql-tag"
 import { extractErrors } from "@/helpers.js"
+import { emit as emitAppEvent } from '@/store/events'
 
 export default defineComponent({
     name: "CompletePlayerProfile",
@@ -103,7 +104,7 @@ export default defineComponent({
                     type: 'is-success',
                     duration: 2000
                 })
-                this.$root.$emit('loggedIn')
+                emitAppEvent('loggedIn')
                 this.$router.push({ name: 'home', params: { clubhouseId: this.me.clubhouse.id } })
             }).catch(({ graphQLErrors }) => {
                 let errors = extractErrors(graphQLErrors)

@@ -1,5 +1,5 @@
 <template>
-    <b-select required="required" dusk="club-select" :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælg klub" @input="handleInput">
+    <b-select required="required" dusk="club-select" :loading="$apollo.queries.clubs.loading" expanded placeholder="Vælg klub" @update:modelValue="handleInput">
         <option
             v-for="option in clubs"
             :key="option.id"
@@ -15,7 +15,7 @@ import gql from "graphql-tag"
 export default {
     name: 'BadmintonPlayerClubs',
     props: {
-        'value': null,
+        'modelValue': null,
         'required': {
             type: Boolean,
             default: false
@@ -23,7 +23,7 @@ export default {
     },
     methods: {
         handleInput(value) {
-            this.$emit('input', value)
+            this.$emit('update:modelValue', value)
         }
     },
     apollo: {

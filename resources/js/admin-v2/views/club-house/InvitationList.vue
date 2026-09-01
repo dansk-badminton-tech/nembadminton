@@ -52,7 +52,6 @@ export default {
 </script>
 
 <template>
-    <fragment>
         <b-modal
             v-model="showModal"
             has-modal-card
@@ -123,7 +122,6 @@ export default {
                 </b-table>
             </template>
         </card-component>
-    </fragment>
 </template>
 
 <style scoped>

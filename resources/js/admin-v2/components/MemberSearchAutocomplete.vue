@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </template>
-            <template slot="empty">Ingen spillere fundet</template>
+            <template #empty>Ingen spillere fundet</template>
         </b-autocomplete>
     </b-field>
 </template>

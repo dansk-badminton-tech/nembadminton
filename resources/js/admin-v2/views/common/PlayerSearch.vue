@@ -2,7 +2,7 @@
     <div>
         <b-field>
             <b-autocomplete
-                @input="searchMembers"
+                @update:modelValue="searchMembers"
                 :open-on-focus="true"
                 :clear-on-select="true"
                 :clearable="true"
@@ -17,8 +17,8 @@
                 @typing="searchMembers"
                 :dusk="'player-search-autocomplete-' + slugify(category.name)"
                 >
-                <template slot-scope="props">
-                    <div class="media">
+                <template #default="props">
+                    <div class="media" :dusk="props.option.isInSquad ? 'is-in-squad' : null">
                         <div class="media-content">
                             {{ props.option.name }}
                             <b-icon
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </template>
-                <template slot="empty">Ingen spiller fundet.</template>
+                <template #empty>Ingen spiller fundet.</template>
             </b-autocomplete>
         </b-field>
     </div>

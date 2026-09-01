@@ -2,15 +2,14 @@
     <b-autocomplete
         :data="data"
         v-model="player"
-        @input="searchMembers"
         @typing="searchMembers"
-        @select="option => selected = option"
+        @select="selectedPlayer"
         field="name"
         :clearable="true"
         :open-on-focus="true"
         required
         :readonly="selected !== null"
-        @keyup.native="clearOnBackspace"
+        @keyup="clearOnBackspace"
         placeholder="Søg på spiller"
         keep-first
     >
@@ -25,6 +24,7 @@
                 </div>
             </div>
         </template>
+        <template v-slot:empty>No results for {{ player }}</template>
     </b-autocomplete>
 </template>
 
@@ -34,7 +34,7 @@ import {debounce} from "@/helpers.js";
 
 export default {
     name: "MemberSearchCancellation",
-    props: {value: Object, clubs: Array},
+    props: {modelValue: Object, clubs: Array},
     data(){
         return {
             data: [],
@@ -43,16 +43,10 @@ export default {
             selected: null
         }
     },
-    watch: {
-        value(val){
-            this.player = null
-            this.selected = val
-        },
-        selected(val){
-            this.$emit('input', val)
-        }
-    },
     methods: {
+        selectedPlayer(player){
+            this.$emit('update:modelValue', player)
+        },
         clearOnBackspace(nativeEvent) {
             if (nativeEvent.key === 'Backspace' && this.selected !== null) {
                 this.selected = null;

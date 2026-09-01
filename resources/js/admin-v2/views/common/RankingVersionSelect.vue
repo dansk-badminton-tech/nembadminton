@@ -19,8 +19,9 @@ import {isRecommendedRankingVersionByPlayingDate, resolveRecommendedRankingVersi
 
 export default {
     name: "RankingVersionSelect",
+    emits: ['update:modelValue', 'change', 'focus'],
     props: {
-        'value': String,
+        'modelValue': String,
         'expanded': Boolean|null,
         'afterChange': Function|null,
         'playingDate': Date|null,
@@ -72,7 +73,7 @@ export default {
             // previous auto-pick. If the user manually picked something else,
             // leave it alone.
             const isUntouchedOrAutoSet =
-                !this.value || this.value === this.lastAutoSelectedVersion;
+                !this.modelValue || this.modelValue === this.lastAutoSelectedVersion;
             if (!isUntouchedOrAutoSet) {
                 return;
             }
@@ -80,22 +81,22 @@ export default {
             if (recommended === null) {
                 return; // No matching version — leave field as-is.
             }
-            if (recommended === this.value) {
+            if (recommended === this.modelValue) {
                 return;
             }
             this.lastAutoSelectedVersion = recommended;
-            this.$emit('input', recommended);
-            this.$emit('change', recommended, this.value);
+            this.$emit('update:modelValue', recommended);
+            this.$emit('change', recommended, this.modelValue);
         }
     },
     computed: {
         version: {
             get() {
-                return this.value
+                return this.modelValue
             },
             set(newValue) {
-                this.$emit('input', newValue);
-                this.$emit('change', newValue, this.value)
+                this.$emit('update:modelValue', newValue);
+                this.$emit('change', newValue, this.modelValue)
             }
         }
     },

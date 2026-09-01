@@ -2,7 +2,7 @@
 import '@/scss/main.scss'
 
 /* Core */
-import Vue from 'vue'
+import {createApp} from 'vue'
 import Buefy from 'buefy'
 
 /* Router & Store */
@@ -12,23 +12,11 @@ import {toggleAsideMobile, toggleAsideDesktopOnly} from './store/layout'
 /* Vue. Main component */
 import Skeleton from './Skeleton.vue'
 import apolloProvider from "../graphql";
-import VueApollo from "vue-apollo";
 
-import {Fragment} from 'vue-frag'
-
-/* Sentry */
 import * as Sentry from "@sentry/vue";
 
 /* Default title tag */
 const defaultDocumentTitle = 'Nembadminton'
-
-/* Sentry Configuration */
-Sentry.init({
-    Vue,
-    dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
-    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development',
-    sampleRate: parseFloat(import.meta.env.VITE_SENTRY_SAMPLE_RATE) || 1.0,
-});
 
 /* Collapse mobile aside menu on route change & set document title from route meta */
 router.afterEach(to => {
@@ -42,15 +30,17 @@ router.afterEach(to => {
     }
 })
 
-Vue.config.productionTip = false
+const app = createApp(Skeleton)
 
-Vue.use(Buefy)
-Vue.use(VueApollo)
-Vue.component('Fragment', Fragment)
+Sentry.init({
+    app,
+    dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development',
+    sampleRate: parseFloat(import.meta.env.VITE_SENTRY_SAMPLE_RATE) || 1.0,
+});
 
-new Vue({
-            router,
-            apolloProvider,
-            render: h => h(Skeleton)
-        })
-    .$mount('#app')
+app.use(router)
+app.use(apolloProvider)
+app.use(Buefy)
+
+app.mount('#app')

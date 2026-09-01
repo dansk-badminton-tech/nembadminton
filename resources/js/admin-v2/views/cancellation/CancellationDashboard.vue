@@ -312,8 +312,8 @@ export default {
                                 <b-field grouped>
                                     <b-datepicker
                                         placeholder="Søg på afbudsdatoer"
-                                        :value="selectedDateRange"
-                                        @input="selectedDateRangeInput"
+                                        :model-value="selectedDateRange"
+                                        @update:modelValue="selectedDateRangeInput"
                                         size="is-small"
                                         :first-day-of-week="1"
                                         locale="da-DK"

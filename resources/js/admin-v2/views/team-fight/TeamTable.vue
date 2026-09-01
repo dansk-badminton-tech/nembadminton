@@ -1,6 +1,6 @@
 <template>
     <div dusk="team-table-section">
-        <b-loading :is-full-page="false" v-model="loading" :can-cancel="true"></b-loading>
+        <b-loading :is-full-page="false" :active="loading" :can-cancel="true"></b-loading>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -15,7 +15,7 @@
                                             rounded
                                             :class="squad.playingDatetime ? '' : 'squad-info-missing'"
                                             dusk="squad-info-datetime"
-                                            @click.native="!squad.playingDatetime && openEditSquadModal(squad)">
+                                            @click="!squad.playingDatetime && openEditSquadModal(squad)">
                                             <b-icon icon="calendar" size="is-small" class="mr-1"></b-icon>
                                             <span v-if="squad.playingDatetime">{{ formatPlayingDatetime(squad.playingDatetime) }}</span>
                                             <span v-else><em>Spillestart ikke angivet</em></span>
@@ -26,7 +26,7 @@
                                             rounded
                                             :class="squad.playingPlace ? '' : 'squad-info-missing'"
                                             dusk="squad-info-place"
-                                            @click.native="!squad.playingPlace && openEditSquadModal(squad)">
+                                            @click="!squad.playingPlace && openEditSquadModal(squad)">
                                             <b-icon icon="map-marker" size="is-small" class="mr-1"></b-icon>
                                             <span v-if="squad.playingPlace">{{ squad.playingPlace }}</span>
                                             <span v-else><em>Spillested ikke angivet</em></span>
@@ -47,7 +47,7 @@
                                             rounded
                                             class="squad-info-missing"
                                             dusk="squad-info-bp-link"
-                                            @click.native="openEditSquadModal(squad)">
+                                            @click="openEditSquadModal(squad)">
                                             <b-icon icon="open-in-new" size="is-small" class="mr-1"></b-icon>
                                             <em>BP kampnummer ikke angivet</em>
                                         </b-tag>
@@ -311,7 +311,6 @@ export default {
         openEditSquadModal(squad) {
             this.$buefy.modal.open(
                 {
-                    parent: this,
                     width: 1500,
                     props: {
                         squad: squad

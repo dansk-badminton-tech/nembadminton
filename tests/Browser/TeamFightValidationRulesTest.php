@@ -324,8 +324,6 @@ class TeamFightValidationRulesTest extends DuskTestCase
             $this->fillAllSquads($browser, $this->getSquadSlotsIncomplete());
 
             $browser->assertIncompleteTeamFailing();
-
-            $browser->screenshot('validation-fuldendt-hold-fejl');
         });
     }
 
@@ -345,8 +343,6 @@ class TeamFightValidationRulesTest extends DuskTestCase
 
             $browser->assertAllSlotsFilled();
             $browser->assertCategoryValidationFailing();
-
-            $browser->screenshot('validation-kategori-fejl');
         });
     }
 
@@ -367,8 +363,6 @@ class TeamFightValidationRulesTest extends DuskTestCase
 
             $browser->assertAllSlotsFilled();
             $browser->assertLevelValidationFailing();
-
-            $browser->screenshot('validation-forkert-hold-fejl');
         });
     }
 }

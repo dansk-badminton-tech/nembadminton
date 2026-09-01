@@ -50,10 +50,8 @@
                         <span>{{ user?.name }}</span>
                     </div>
 
-                    <div
-                        slot="dropdown"
-                        class="navbar-dropdown is-right"
-                    >
+                    <template #dropdown>
+                    <div class="navbar-dropdown is-right">
                         <template v-if="showSwitcher">
                             <div class="navbar-item is-label">
                                 <span class="has-text-grey-light is-size-7">Skift rolle</span>
@@ -105,6 +103,7 @@
                             <span>Log ud</span>
                         </a>
                     </div>
+                    </template>
                 </nav-bar-menu>
             </div>
         </div>
@@ -115,6 +114,7 @@
 import {defineComponent} from 'vue'
 import {layout, toggleAsideMobile, toggleAsideDesktopOnly} from '@/store/layout'
 import {logout as clearCurrentUser} from '@/store/user'
+import {emit as emitAppEvent} from '@/store/events'
 import NavBarMenu from '@/components/NavBarMenu.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import NotificationDropdown from "./NotificationDropdown.vue";
@@ -201,7 +201,7 @@ export default defineComponent(
                         mutation: SET_PRIMARY_ROLE,
                         variables: {roleId: String(roleId)}
                     });
-                    this.$root.$emit('loggedIn');
+                    emitAppEvent('loggedIn');
                     this.$router.push({name: 'home', params: {clubhouseId: this.clubhouseId}})
                         .catch(() => {});
                     this.$buefy.snackbar.open({

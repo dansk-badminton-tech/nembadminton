@@ -5,9 +5,9 @@ import ME from "../../../queries/me.gql";
 
 export default {
     name: "AddPlayerModal",
-    inject: ['clubhouseId'],
     props: {
-        version: Date
+        version: Date,
+        clubhouseId: Number
     },
     data() {
         return {

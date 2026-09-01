@@ -46,7 +46,7 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
             $browser->assertPathContains('/team-fight/')
                 ->assertPathContains('/edit')
                 ->waitForText('Holdene i holdrunden')
-                ->assertSee('13 Kamps Holdrunde Test');
+                ->waitForText('13 Kamps Holdrunde Test');
 
             // Register TeamFightEditPage macros so we can call page object methods
             $browser->on(new TeamFightEditPage());
@@ -96,22 +96,20 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
             $browser->switchRankingList('MEN_SINGLE');
             $browser->addPlayersFromRankingList(4);
 
-            $browser->screenshot('13kamps-10-players-added');
-
-            // --- 5. DD 1 & 2: assign existing dame players via inline search (4 slots) ---
             $browser->scrollTo("[dusk='team-table-section']");
-            for ($i = 0; $i < 4; $i++) {
-                $browser->fillNextInlineSlot();
-            }
 
-            $browser->screenshot('13kamps-dd-filled');
+            $browser->autoFillCategory("player-search-autocomplete-1-dd", "Josefine Eggert Jackson");
+            $browser->autoFillCategory("player-search-autocomplete-1-dd", "Sarah Berthelsen");
+            $browser->autoFillCategory("player-search-autocomplete-2-dd", "Spela Silvester Laumand");
+            $browser->autoFillCategory("player-search-autocomplete-2-dd", "Karoline Keller Rolsted");
 
-            // --- 6. HD 1, 2, 3: assign existing herre players via inline search (6 slots) ---
-            for ($i = 0; $i < 6; $i++) {
-                $browser->fillNextInlineSlot();
-            }
 
-            $browser->screenshot('13kamps-hd-filled');
+            $browser->autoFillCategory("player-search-autocomplete-1-hd", "Patrick Buhl");
+            $browser->autoFillCategory("player-search-autocomplete-1-hd", "Frederik Weibøl");
+            $browser->autoFillCategory("player-search-autocomplete-2-hd", "Kaj Lü");
+            $browser->autoFillCategory("player-search-autocomplete-2-hd", "Magnus Schøtt Jensen");
+            $browser->autoFillCategory("player-search-autocomplete-3-hd", "Mads Sloth");
+            $browser->autoFillCategory("player-search-autocomplete-3-hd", "Nikolai Andersson");
 
             // Step 5: Verify all categories are populated
             $browser->assertSee('Hold 1')
@@ -133,8 +131,6 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
 
             // Step 6: Verify validation status indicators
             $browser->assertValidationPassing();
-
-            $browser->screenshot('13kamps-test-complete');
         });
     }
 }

@@ -15,16 +15,19 @@
             </template>
             <template v-slot:right>
                 <b-button icon-left="pencil" @click="openSettingsModal">Rediger</b-button>
-                <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam" alt="Genindlæs holdrunden"></b-button>
+                <b-button class="ml-2 is-pulled-right" icon-right="refresh" @click="refreshTeam"
+                          alt="Genindlæs holdrunden"></b-button>
             </template>
         </hero-bar>
         <section class="section is-main-section">
-            <b-loading v-model="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
+            <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
             <b-dropdown aria-role="list">
-                <button slot="trigger" slot-scope="{ active }" class="button is-link">
-                    <span>Del</span>
-                    <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                </button>
+                <template #trigger="{ active }">
+                    <button class="button is-link">
+                        <span>Del</span>
+                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                    </button>
+                </template>
                 <b-dropdown-item aria-role="listitem" @click="exportToCSV">
                     <b-icon icon="file-export"></b-icon>
                     CSV
@@ -39,20 +42,25 @@
             <div class="columns">
                 <div class="column is-6">
                     <h1 class="title">Søg på spiller</h1>
-                    <h1 class="subtitle">{{
+                    <h2 class="subtitle">{{
                             hasMultipleClubs
-                            ? 'Klubber:'
-                            : 'Klub:'
+                                ? 'Klubber:'
+                                : 'Klub:'
                         }} {{ clubsNames }}
-                        <router-link class="is-size-6" :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">(tilføj ekstra klub)</router-link>
-                    </h1>
-                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving" :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
+                        <router-link class="is-size-6"
+                                     :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">
+                            (tilføj ekstra klub)
+                        </router-link>
+                    </h2>
+                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving"
+                                       :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
                                        :version="new Date(version)" :game-date="gameDate"/>
                 </div>
                 <div class="column is-6 container">
                     <h1 class="title">Holdene i holdrunden</h1>
                     <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
-                    <ValidationStatus :incomplete-team="resolveIncompleteTeam" :invalid-category="resolveInvalidCategory"
+                    <ValidationStatus :incomplete-team="resolveIncompleteTeam"
+                                      :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
                                       :basic-squads="validateBasicSquads"
                                       :invalid-category-list="playingToHighSquadList"
@@ -74,7 +82,9 @@
                                :loading="saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length" :used-team-ids="usedTeamIds"/>
+                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate"
+                                     :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length"
+                                     :used-team-ids="usedTeamIds"/>
                 </div>
             </div>
         </section>
@@ -93,13 +103,20 @@ import {
     isWomensSingle
 } from "../../helpers";
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
-import {hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague, timeToMonth} from "./helper";
+import {
+    hasInvalidCategory,
+    hasInvalidLevel,
+    wrapInTeamAndSquads,
+    wrapSquadsInTeamWithoutLeague,
+    timeToMonth
+} from "./helper";
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
 import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
+import {emit as emitAppEvent} from '@/store/events'
 import TeamRoundSettingsModal from "./TeamRoundSettingsModal.vue";
 import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
@@ -199,7 +216,7 @@ export default {
     apollo: {
         clubhouse: {
             query: clubhouse,
-            variables(){
+            variables() {
                 return {
                     id: this.clubhouseId
                 }
@@ -223,44 +240,43 @@ export default {
     },
     methods: {
         timeToMonth,
-        notify(){
+        notify() {
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
-        refreshTeam(){
+        refreshTeam() {
             this.$apollo.queries.teamRound.refetch();
         },
         openLinkSharingModal() {
             this.$buefy.modal.open({
-                                       parent: this,
-                                       component: ShareLinkModal,
-                                       props: {
-                                           teamRoundId: this.teamRoundId
-                                       },
-                                       scroll: "keep",
-                                       width: 640,
-                                       events: {
-                                           close: () => {
-                                               this.$emit('input', false)
-                                           }
-                                       }
-                                   })
+                component: ShareLinkModal,
+                props: {
+                    teamRoundId: this.teamRoundId
+                },
+                scroll: "keep",
+                width: 640,
+                events: {
+                    close: () => {
+                        this.$emit('input', false)
+                    }
+                }
+            })
         },
         openSettingsModal() {
             this.$buefy.modal.open({
-                                       parent: this,
-                                       component: TeamRoundSettingsModal,
-                                       props: {
-                                           teamRound: this.teamRound
-                                       },
-                                       scroll: "keep",
-                                        events: {
-                                            close: () => {},
-                                            save: () => {
-                                                this.refreshTeam();
-                                            }
-                                        },
-                                       width: 640
-                                   })
+                component: TeamRoundSettingsModal,
+                props: {
+                    teamRound: this.teamRound
+                },
+                scroll: "keep",
+                events: {
+                    close: () => {
+                    },
+                    save: () => {
+                        this.refreshTeam();
+                    }
+                },
+                width: 640
+            })
         },
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
@@ -276,7 +292,7 @@ export default {
         },
         updateSquad(squad) {
             this.$apollo.mutate({
-                                    mutation: gql`
+                mutation: gql`
                     mutation updateSquad($input: UpdateSquadInput!){
                         updateSquad(input: $input){
                             id
@@ -285,27 +301,27 @@ export default {
                         }
                     }
                 `,
-                                    variables: {
-                                        input: {
-                                            id: squad.id,
-                                            playerLimit: squad.playerLimit,
-                                            order: squad.order
-                                        }
-                                    }
-                                })
+                variables: {
+                    input: {
+                        id: squad.id,
+                        playerLimit: squad.playerLimit,
+                        order: squad.order
+                    }
+                }
+            })
         },
         exportToCSV() {
             this.$apollo.query({
-                                   query: gql`
-                                        query exportToCSV($teamRoundId: ID!){
-                                            export(teamRoundId:$teamRoundId)
-                                        }
-                                    `,
-                                   variables: {
-                                       teamRoundId: this.teamRoundId
-                                   },
-                                   fetchPolicy: "network-only"
-                               }).then(({data}) => {
+                query: gql`
+                    query exportToCSV($teamRoundId: ID!){
+                        export(teamRoundId:$teamRoundId)
+                    }
+                `,
+                variables: {
+                    teamRoundId: this.teamRoundId
+                },
+                fetchPolicy: "network-only"
+            }).then(({data}) => {
                 let file_path = data.export;
                 let a = document.createElement('A');
                 a.href = file_path;
@@ -366,8 +382,8 @@ export default {
                             categoryId: parseInt(category.id),
                             refId: player.refId,
                             version: squad.version
-                                     ? squad.version
-                                     : this.version
+                                ? squad.version
+                                : this.version
                         }
                     },
                     refetchQueries: [
@@ -375,56 +391,56 @@ export default {
                     ],
                     awaitRefetchQueries: true
                 })
-                       .then((data) => {
-                           this.$root.$emit('player-added-to-category', data.data.addSquadMemberByRefId)
-                           return data
-                       })
-                       .catch(() => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-danger',
-                                   message: `Kunne ikke tilføje spiller til holdet :(`
-                               })
-                       })
-                       .finally(() => {
-                           this.saving = false
-                       })
+                .then((data) => {
+                    emitAppEvent('player-added-to-category', data.data.addSquadMemberByRefId)
+                    return data
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            message: `Kunne ikke tilføje spiller til holdet :(`
+                        })
+                })
+                .finally(() => {
+                    this.saving = false
+                })
         },
         deletePlayerFromCategory(squad, category, player) {
             this.saving = true
             return this.$apollo
-                       .mutate({
-                                   mutation: gql`
-                                    mutation deleteSquadMember($id: ID!){
-                                        deleteSquadMember(id: $id){
-                                            id
-                                        }
-                                    }
-                                `,
-                                   variables: {
-                                       id: player.id
-                                   },
-                                   refetchQueries: [
-                                       {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                                   ],
-                                   awaitRefetchQueries: true
-                               })
-                       .then(({data}) => {
-                           this.$root.$emit('player-deleted-from-category', data.deleteSquadMember)
-                       })
-                       .catch((error) => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-danger',
-                                   queue: false,
-                                   message: `Kunne ikke fjerne spilleren fra holdet :(`
-                               })
-                       })
-                       .finally(() => {
-                           this.saving = false
-                       })
+                .mutate({
+                    mutation: gql`
+                        mutation deleteSquadMember($id: ID!){
+                            deleteSquadMember(id: $id){
+                                id
+                            }
+                        }
+                    `,
+                    variables: {
+                        id: player.id
+                    },
+                    refetchQueries: [
+                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
+                    ],
+                    awaitRefetchQueries: true
+                })
+                .then(({data}) => {
+                    emitAppEvent('player-deleted-from-category', data.deleteSquadMember)
+                })
+                .catch((error) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Kunne ikke fjerne spilleren fra holdet :(`
+                        })
+                })
+                .finally(() => {
+                    this.saving = false
+                })
         },
         validateSquads() {
             this.errorValidatingCategory = false;
@@ -432,20 +448,20 @@ export default {
                 {
                     mutation: gql`
                         mutation validateSquads($input: [ValidateTeam!]!){
-                          validateSquads(input: $input){
-                            name
-                            id
-                            refId
-                            category
-                            gender
-                            isYouthPlayer
-                            hasYouthPlayerPartner
-                            belowPlayer {
+                            validateSquads(input: $input){
                                 name
                                 id
                                 refId
+                                category
+                                gender
+                                isYouthPlayer
+                                hasYouthPlayerPartner
+                                belowPlayer {
+                                    name
+                                    id
+                                    refId
+                                }
                             }
-                          }
                         }
                     `,
                     variables: {
@@ -463,7 +479,7 @@ export default {
                             duration: 5000,
                             type: 'is-danger',
                             queue: false,
-                            message: 'Noget gik galt under intern valideringen af holdet. <br/><br /> '+errorMessages.join(', ')
+                            message: 'Noget gik galt under intern valideringen af holdet. <br/><br /> ' + errorMessages.join(', ')
                         })
                 })
         },
@@ -473,19 +489,19 @@ export default {
                 {
                     mutation: gql`
                         mutation validateCrossSquads($input: [ValidateTeam!]!){
-                          validateCrossSquads(input: $input){
-                            name
-                            id
-                            refId
-                            isYouthPlayer
-                            belowPlayer {
+                            validateCrossSquads(input: $input){
                                 name
                                 id
                                 refId
-                                category
-                                balance
+                                isYouthPlayer
+                                belowPlayer {
+                                    name
+                                    id
+                                    refId
+                                    category
+                                    balance
+                                }
                             }
-                          }
                         }
                     `,
                     variables: {
@@ -511,10 +527,10 @@ export default {
                 {
                     mutation: gql`
                         mutation validateBasicSquads($input: [ValidateTeam!]!){
-                          validateBasicSquads(input: $input){
-                            index
-                            spotsFulfilled
-                          }
+                            validateBasicSquads(input: $input){
+                                index
+                                spotsFulfilled
+                            }
                         }
                     `,
                     variables: {
@@ -583,40 +599,47 @@ export default {
                 for (const [index, squad] of this.teamRound.squads.entries()) {
                     for (const category of squad.categories) {
                         if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'WOMEN') {
-                            this.addedPlayerNotification(index, category.name)
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                this.addedPlayerNotification(index, category.name)
+                            })
                             foundPlace = true;
                             break outside;
                         } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'MEN') {
-                            this.addedPlayerNotification(index, category.name)
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                this.addedPlayerNotification(index, category.name)
+                            })
                             foundPlace = true;
                             break outside;
                         } else if (isMixDouble(category) && category.players.length < 2) {
                             if (category.players.length === 0) {
-                                this.addedPlayerNotification(index, category.name)
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                    this.addedPlayerNotification(index, category.name)
+                                })
                                 foundPlace = true;
                                 break outside;
                             } else if (containsWomen(category) && player.gender === 'MEN') {
-                                this.addedPlayerNotification(index, category.name)
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                    this.addedPlayerNotification(index, category.name)
+                                })
                                 foundPlace = true;
                                 break outside;
                             } else if (containsMen(category) && player.gender === 'WOMEN') {
-                                this.addedPlayerNotification(index, category.name)
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                    this.addedPlayerNotification(index, category.name)
+                                })
                                 foundPlace = true;
                                 break outside;
                             }
                         } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'MEN') {
-                            this.addedPlayerNotification(index, category.name)
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                this.addedPlayerNotification(index, category.name)
+                            })
                             foundPlace = true;
                             break outside;
                         } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'WOMEN') {
-                            this.addedPlayerNotification(index, category.name)
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player)
+                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
+                                this.addedPlayerNotification(index, category.name)
+                            })
                             foundPlace = true;
                             break outside;
                         }
@@ -637,21 +660,21 @@ export default {
         moveSquadOrderUp(squad) {
             this.saving = true
             this.$apollo.mutate({
-                                    mutation: gql`
-                                        mutation moveSquadOrderUp($input: ID!){
-                                            moveSquadOrderUp(id: $input){
-                                                id
-                                                order
-                                            }
-                                        }
-                                    `,
-                                    variables: {
-                                        input: squad.id
-                                    },
-                                    refetchQueries: [
-                                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                                    ]
-                                })
+                mutation: gql`
+                    mutation moveSquadOrderUp($input: ID!){
+                        moveSquadOrderUp(id: $input){
+                            id
+                            order
+                        }
+                    }
+                `,
+                variables: {
+                    input: squad.id
+                },
+                refetchQueries: [
+                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
+                ]
+            })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {
@@ -668,21 +691,21 @@ export default {
         moveSquadOrderDown(squad) {
             this.saving = true
             this.$apollo.mutate({
-                                    mutation: gql`
-                                        mutation moveSquadOrderDown($input: ID!){
-                                            moveSquadOrderDown(id: $input){
-                                                id
-                                                order
-                                            }
-                                        }
-                                    `,
-                                    variables: {
-                                        input: squad.id
-                                    },
-                                    refetchQueries: [
-                                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                                    ]
-                                })
+                mutation: gql`
+                    mutation moveSquadOrderDown($input: ID!){
+                        moveSquadOrderDown(id: $input){
+                            id
+                            order
+                        }
+                    }
+                `,
+                variables: {
+                    input: squad.id
+                },
+                refetchQueries: [
+                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
+                ]
+            })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
                         {

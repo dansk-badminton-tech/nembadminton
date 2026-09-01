@@ -1,7 +1,7 @@
 <template>
     <div>
         <slot :loading="$apollo.queries.badmintonPlayerTeamFights.loading" :teamFights="badmintonPlayerTeamFights" :playerTeam="playerTeam">
-            <b-select :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @input="handleInput">
+            <b-select :loading="$apollo.queries.badmintonPlayerTeamFights.loading" expanded placeholder="Vælge kamp" @update:modelValue="handleInput">
                 <option
                     v-for="option in badmintonPlayerTeamFights"
                     :key="option.matchId"
@@ -18,10 +18,10 @@ import gql from "graphql-tag"
 
 export default {
     name: "BadmintonPlayerTeamFights",
-    props: ['value', 'clubId', 'season', 'playerTeam'],
+    props: ['modelValue', 'clubId', 'season', 'playerTeam'],
     methods: {
         handleInput(value) {
-            this.$emit('input', {
+            this.$emit('update:modelValue', {
                            teamMatch: value,
                            team: this.playerTeam
                        }
