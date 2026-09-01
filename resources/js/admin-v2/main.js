@@ -13,6 +13,8 @@ import {toggleAsideMobile, toggleAsideDesktopOnly} from './store/layout'
 import Skeleton from './Skeleton.vue'
 import apolloProvider from "../graphql";
 
+import * as Sentry from "@sentry/vue";
+
 /* Default title tag */
 const defaultDocumentTitle = 'Nembadminton'
 
@@ -29,6 +31,13 @@ router.afterEach(to => {
 })
 
 const app = createApp(Skeleton)
+
+Sentry.init({
+    app,
+    dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development',
+    sampleRate: parseFloat(import.meta.env.VITE_SENTRY_SAMPLE_RATE) || 1.0,
+});
 
 app.use(router)
 app.use(apolloProvider)

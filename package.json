@@ -15,6 +15,7 @@
     },
     "dependencies": {
         "@apollo/client": "^3.8.7",
+        "@sentry/vue": "^10.73.0",
         "@vue/apollo-option": "^4.2.2",
         "buefy": "^3",
         "bulma": "^0.9.4",
