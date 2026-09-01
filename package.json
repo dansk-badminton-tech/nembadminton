@@ -5,6 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@sentry/vite-plugin": "^5.4.0",
         "@vitejs/plugin-vue": "^6.0.0",
         "cross-env": "^7.0",
         "laravel-vite-plugin": "^1.1.1",

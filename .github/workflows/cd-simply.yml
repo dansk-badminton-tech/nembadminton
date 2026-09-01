@@ -29,6 +29,10 @@ jobs:
           VITE_SENTRY_DSN_PUBLIC: ${{ vars.VITE_SENTRY_DSN_PUBLIC }}
           VITE_SENTRY_ENVIRONMENT: ${{ vars.VITE_SENTRY_ENVIRONMENT }}
           VITE_SENTRY_SAMPLE_RATE: ${{ vars.VITE_SENTRY_SAMPLE_RATE }}
+          VITE_SENTRY_RELEASE: ${{ github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: |
           export VITE_PUSHER_APP_KEY="BFA9mqh3bek.wtz4xub"
           export VITE_PUSHER_HOST="ws.platform.nembadminton.dk"
@@ -78,13 +82,4 @@ jobs:
             php84 artisan migrate --force
             php84 artisan lighthouse:clear-cache
             php84 artisan lighthouse:cache
-
-      - name: Create Sentry release
-        uses: getsentry/action-release@v3
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          environment: production
 

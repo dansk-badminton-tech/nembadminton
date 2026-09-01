@@ -35,6 +35,7 @@ const app = createApp(Skeleton)
 Sentry.init({
     app,
     dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+    release: import.meta.env.VITE_SENTRY_RELEASE,
     environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development',
     sampleRate: parseFloat(import.meta.env.VITE_SENTRY_SAMPLE_RATE) || 1.0,
 });
