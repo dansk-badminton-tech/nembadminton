@@ -38,6 +38,17 @@ Sentry.init({
     release: import.meta.env.VITE_SENTRY_RELEASE,
     environment: import.meta.env.VITE_SENTRY_ENVIRONMENT || 'development',
     sampleRate: parseFloat(import.meta.env.VITE_SENTRY_SAMPLE_RATE) || 1.0,
+    tracesSampleRate: parseFloat(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE) || 0.0,
+    integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.vueIntegration({
+            tracingOptions: {
+                trackComponents: true,
+                timeout: 1000,
+                hooks: ["mount", "update", "unmount"],
+            },
+        }),
+    ],
 });
 
 app.use(router)

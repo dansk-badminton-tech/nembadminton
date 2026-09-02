@@ -29,6 +29,7 @@ jobs:
           VITE_SENTRY_DSN_PUBLIC: ${{ vars.VITE_SENTRY_DSN_PUBLIC }}
           VITE_SENTRY_ENVIRONMENT: ${{ vars.VITE_SENTRY_ENVIRONMENT }}
           VITE_SENTRY_SAMPLE_RATE: ${{ vars.VITE_SENTRY_SAMPLE_RATE }}
+          VITE_SENTRY_TRACES_SAMPLE_RATE: ${{ vars.VITE_SENTRY_TRACES_SAMPLE_RATE }}
           VITE_SENTRY_RELEASE: ${{ github.sha }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
