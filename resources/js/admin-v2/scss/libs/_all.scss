@@ -11,3 +11,23 @@
 
 // Themed Bulma (compiled with the app's $primary/$card-shadow/... overrides)
 @import "bulma/bulma";
+
+// Force a light-only theme regardless of OS `prefers-color-scheme`.
+// Bulma 1.0 (bundled via buefy.css) switches these variables to dark inside
+// `@media (prefers-color-scheme: dark)`; overriding them here, outside any
+// media query, pins the app to light values.
+:root {
+    --bulma-scheme-main-l: 100%;
+    --bulma-scheme-main-bis-l: 98%;
+    --bulma-scheme-main-ter-l: 96%;
+    --bulma-scheme-invert-l: 100%;
+    --bulma-scheme-invert-bis-l: 100%;
+    --bulma-scheme-invert-ter-l: 100%;
+    --bulma-text-l: 29%;
+    --bulma-text-strong-l: 21%;
+    --bulma-text-invert-l: 100%;
+    --bulma-link-l: 53%;
+    --bulma-table-background-color: #ffffff;
+    --bulma-table-color: #363636;
+    --bulma-table-cell-heading-color: #363636;
+}
