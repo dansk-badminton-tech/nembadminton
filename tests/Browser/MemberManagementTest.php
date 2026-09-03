@@ -77,20 +77,20 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
-     * Test toggling member inactive status
+     * Test toggling member playable status (midlertidigt utilgængelig)
      */
-    public function testToggleMemberInactiveStatus(): void
+    public function testToggleMemberPlayableStatus(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
 
-            // Get an active member
+            // Get an active and playable member
             $member = Member::whereHas('clubs', function ($query) use ($clubhouse) {
                 $query->where('club_id', $clubhouse->clubs->first()->id);
-            })->where('inactive', false)->first();
+            })->where('inactive', false)->where('playable', true)->first();
 
             if (!$member) {
-                $this->markTestSkipped('No active member found for testing');
+                $this->markTestSkipped('No active playable member found for testing');
             }
 
             $browser->visit(new LoginPage())
@@ -98,19 +98,26 @@ class MemberManagementTest extends DuskTestCase
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
-                    ->toggleMemberInactiveStatusById($member->id)
-                    ->waitForText('Spiller markeret som inaktiv')
+                    ->toggleMemberPlayableStatusById($member->id)
+                    ->waitForText('Spiller markeret som midlertidigt utilgængelig')
                     ->pause(1000)
-                    ->visit(new MemberManagementPage($clubhouse->id))
-                    ->searchMember($member->name)
-                    ->toggleShowInactive()
-                    ->waitForText($member->name)
-                    ->assertMemberStatus($member->name, 'Inaktiv');
+                    ->assertMemberStatus($member->name, 'Midlertidigt utilgængelig');
 
-            // Verify the member was actually marked as inactive in database
+            // Verify the member was marked as unplayable in database
+            $this->assertFalse(
+                (bool) Member::find($member->id)->playable,
+                'Member should be marked as unplayable in database'
+            );
+
+            // Toggle back to playable
+            $browser->toggleMemberPlayableStatusById($member->id)
+                    ->waitForText('Spiller markeret som tilgængelig')
+                    ->pause(1000)
+                    ->assertMemberStatus($member->name, 'Aktiv');
+
             $this->assertTrue(
-                Member::find($member->id)->inactive,
-                'Member should be marked as inactive in database'
+                (bool) Member::find($member->id)->playable,
+                'Member should be marked as playable in database'
             );
         });
     }
@@ -160,8 +167,8 @@ class MemberManagementTest extends DuskTestCase
                     ->assertSee('Om spillere:')
                     ->assertSee('badmintonplayer.dk API')
                     ->assertSee('Forskel på "Inaktiv" og "Midlertidigt utilgængelig"')
-                    ->assertSee('permanent stoppet med at spille badminton')
-                    ->assertSee('Importering fra badmintonplayer.dk vil ikke ændre en spillers inaktiv-status');
+                    ->assertSee('Denne status er styret af Badmintonplayer')
+                    ->assertSee('Midlertidigt utilgængelig');
         });
     }
 }

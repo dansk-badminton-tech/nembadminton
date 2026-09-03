@@ -76,24 +76,11 @@ class MemberManagementPage extends Page
     }
 
     /**
-     * Toggle inactive status for a member by member ID
+     * Toggle playable status for a member by member ID
      */
-    public function toggleMemberInactiveStatusById(Browser $browser, int $memberId): self
+    public function toggleMemberPlayableStatusById(Browser $browser, int $memberId): self
     {
-        $browser->click("[dusk='toggle-inactive-{$memberId}']");
-        return $this;
-    }
-
-    /**
-     * Toggle inactive status for a member by name (fallback method)
-     */
-    public function toggleMemberInactiveStatus(Browser $browser, string $memberName): self
-    {
-        $browser->waitForText($memberName)
-                ->with('@members-table tbody', function ($table) use ($memberName) {
-                    $table->assertSee($memberName)
-                          ->clickLink('Marker som inaktiv');
-                });
+        $browser->click("[dusk='toggle-playable-{$memberId}']");
         return $this;
     }
 

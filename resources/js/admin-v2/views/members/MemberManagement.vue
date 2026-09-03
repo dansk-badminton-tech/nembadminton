@@ -216,7 +216,7 @@ export default {
                 <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
                 <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
                 <ul class="ml-4">
-                    <li><strong>Inaktiv:</strong>Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer</li>
+                    <li><strong>Inaktiv:</strong> Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer</li>
                     <li><strong>Midlertidigt utilgængelig:</strong> Spilleren er skadet eller midlertidigt utilgængelig, men er stadig aktiv medlem. Dette håndteres via afbudssystemet i holdrunder.</li>
                 </ul>
             </b-message>
