@@ -67,3 +67,17 @@ gh run watch
 ```
 
 Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs are tracked locally as Markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical triage roles (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repository layout (`CONTEXT.md` and `docs/adr/` at root). See `docs/agents/domain.md`.
