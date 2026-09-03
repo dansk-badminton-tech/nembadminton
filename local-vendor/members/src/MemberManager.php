@@ -17,7 +17,7 @@ class MemberManager
      *
      * @return Member
      */
-    public function addOrUpdateMember(string $refId, string $name, ?string $gender) : Member
+    public function addOrUpdateMember(string $refId, string $name, ?string $gender, bool $active = true) : Member
     {
 
         $memberModel = \App\Models\Member::query()->where('refId', $refId)->first();
@@ -26,12 +26,14 @@ class MemberManager
             $memberModel->update([
                 'name'   => $name,
                 'gender' => $gender,
+                'inactive' => !$active,
             ]);
         } else {
             $memberModel = \App\Models\Member::create([
                 'refId'  => $refId,
                 'name'   => $name,
                 'gender' => $gender,
+                'inactive' => !$active,
             ]);
         }
 

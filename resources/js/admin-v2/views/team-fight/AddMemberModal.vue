@@ -2,17 +2,22 @@
 import gql from "graphql-tag";
 import {convertCategoryAndGenderToFinalCategory, timeToMonth, vintageOptions} from "./helper";
 import ME from "../../../queries/me.gql";
+import {emit as emitAppEvent} from "@/store/events";
 
 export default {
     name: "AddPlayerModal",
     props: {
         version: Date,
-        clubhouseId: Number
+        clubhouseId: Number,
+        initialName: {
+            type: String,
+            default: ''
+        }
     },
     data() {
         return {
             gender: 'MEN',
-            name: '',
+            name: this.initialName || '',
             refBirthday: '',
             refEndId: '',
             vintage: 'SEN',
@@ -150,6 +155,7 @@ export default {
                                                   type: 'is-success',
                                                   message: `Spiller oprettet`
                                               })
+                    emitAppEvent('member-created')
                     this.$emit('close')
                 })
                 .catch(() => {

@@ -57,6 +57,13 @@ class PlayerRanking
      */
     public ?int $clubID;
 
+    /**
+     * From badminton Danmark: True så de spille de kampe således de vil blive vist normalt på rangliste false vil man skulle trykke vis alle
+     * Translated: true means the player is "active", false means "in-active"
+     * @var bool
+     */
+    public bool $showAll;
+
     public function getVintage(): Vintage
     {
         return Util::calculateVintage($this->getBirthday());

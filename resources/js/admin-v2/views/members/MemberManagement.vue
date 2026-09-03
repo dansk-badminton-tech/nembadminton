@@ -216,10 +216,9 @@ export default {
                 <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
                 <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
                 <ul class="ml-4">
-                    <li><strong>Inaktiv:</strong> Spilleren er permanent stoppet med at spille badminton. Når en spiller markeres som inaktiv, vil de blive filtreret fra automatisk i holdrunder og andre spillerlister.</li>
+                    <li><strong>Inaktiv:</strong>Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer</li>
                     <li><strong>Midlertidigt utilgængelig:</strong> Spilleren er skadet eller midlertidigt utilgængelig, men er stadig aktiv medlem. Dette håndteres via afbudssystemet i holdrunder.</li>
                 </ul>
-                <p class="mt-2"><em>Bemærk: Importering fra badmintonplayer.dk vil ikke ændre en spillers inaktiv-status, så manuelle ændringer bevares.</em></p>
             </b-message>
 
             <card-component
@@ -308,15 +307,6 @@ export default {
                                 :dusk="`toggle-playable-${props.row.id}`"
                             >
                                 {{ props.row.playable ? 'Midlertidigt utilgængelig' : 'Marker som tilgængelig' }}
-                            </b-button>
-                            <b-button
-                                size="is-small"
-                                :type="props.row.inactive ? 'is-success' : 'is-danger'"
-                                :icon-left="props.row.inactive ? 'account-check' : 'account-off'"
-                                @click="toggleInactiveStatus(props.row)"
-                                :dusk="`toggle-inactive-${props.row.id}`"
-                            >
-                                {{ props.row.inactive ? 'Marker som aktiv' : 'Marker som inaktiv' }}
                             </b-button>
                         </b-table-column>
 

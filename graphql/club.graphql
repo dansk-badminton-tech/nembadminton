@@ -6,6 +6,7 @@ extend type Query{
         name: String @where(operator: "like")
         refId: String @where
         gender: [Gender!] @in
+        playable: Boolean @where
         inactive: Boolean @where
         orderBy: _ @orderBy(columns: ["name"])
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable", "clubhouse_id"])
@@ -22,8 +23,8 @@ extend type Query{
         teamRoundId: String
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL
-        playable: Boolean @where
-        inactive: Boolean @where
+        playable: Boolean @where(ignoreNull: true)
+        inactive: Boolean @where(ignoreNull: true)
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id"])
     ): [Member!]! @paginate(defaultCount: 20, builder: "FlyCompany\\Members\\MemberSearch@searchPoints") @guard
     "Search for players in a squad"

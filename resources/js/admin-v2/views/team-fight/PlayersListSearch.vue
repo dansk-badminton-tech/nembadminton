@@ -2,18 +2,11 @@
     <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
             <b-input dusk="player-search-input" @update:modelValue="search" placeholder="Søg på navn"></b-input>
-            <b-checkbox-button type="is-info" @update:modelValue="refreshMembers" v-model="showCancellation">
-                <b-icon size="is-small" v-if="showCancellation" icon="account"></b-icon>
-                <span v-if="showCancellation">Skjul afbud</span>
-                <b-icon size="is-small" v-if="!showCancellation" icon="account-off"></b-icon>
-                <span v-if="!showCancellation">Vis afbud</span>
-            </b-checkbox-button>
-            <b-button icon-left="plus" @click="openAddMemberModal">
-                Tilføj spiller
-            </b-button>
+            <b-switch v-model="showCancellation">Vis afbud</b-switch>
+            <b-switch v-show="!showCancellation" v-model="showInactive">Vis inaktive</b-switch>
             <b-switch v-show="showCancellation" v-model="showPlayable">Vis permanent afbud</b-switch>
         </b-field>
-        <b-field dusk="ranking-list-select" class="ranking-buttons">
+        <b-field v-show="!showCancellation" dusk="ranking-list-select" class="ranking-buttons">
             <b-radio-button
                 v-for="(short, value) in rankingShortLabels"
                 :key="value"
@@ -76,7 +69,31 @@
                 </div>
             </b-table-column>
             <template v-slot:empty="props">
-                <div class="has-text-centered" v-if="showCancellation">Søgte på afbud for {{ rankingListTranslate }} og {{ formatGameDate }} - fandt 0.</div>
+                <div class="has-text-centered py-5" v-if="showCancellation">
+                    <p class="has-text-grey">Søgte på afbud for {{ rankingListTranslate }} og {{ formatGameDate }} - fandt 0.</p>
+                </div>
+                <div class="has-text-centered py-5" v-else-if="searchName">
+                    <p class="has-text-grey mb-3">Ingen spillere fundet, som matcher "{{ searchName }}"</p>
+                    <b-button
+                        size="is-small"
+                        icon-left="plus"
+                        type="is-primary"
+                        @click="$emit('open-add-member', searchName)"
+                    >
+                        Opret "{{ searchName }}" som spiller
+                    </b-button>
+                </div>
+                <div class="has-text-centered py-5" v-else>
+                    <p class="has-text-grey mb-3">Ingen spillere fundet på denne rangliste</p>
+                    <b-button
+                        size="is-small"
+                        icon-left="plus"
+                        type="is-light"
+                        @click="$emit('open-add-member')"
+                    >
+                        Opret ny spiller
+                    </b-button>
+                </div>
             </template>
             <template v-slot:detail="props">
                 <tr>
@@ -124,14 +141,15 @@
 
 import gql from 'graphql-tag'
 import {convertRankingToCategory, debounce, findLevel} from "../../helpers";
-import AddMemberModal from "./AddMemberModal.vue";
 import MemberSearchPoints from "./memberSearchPoints.gql"
 import MemberSearchCancellation from "./memberSearchCancellation.gql"
 import ME from "../../../queries/me.gql";
 import {on as onAppEvent} from '@/store/events'
+import {BSidebar, BSwitch} from "buefy";
 
 export default {
     name: 'PlayersListSearch',
+    components: {BSwitch, BSidebar},
     props: {
         clubhouseId: Number,
         teamRoundId: String,
@@ -178,7 +196,8 @@ export default {
         }
         this.eventUnsubscribers = [
             onAppEvent('player-added-to-category', refresh),
-            onAppEvent('player-deleted-from-category', refresh)
+            onAppEvent('player-deleted-from-category', refresh),
+            onAppEvent('member-created', refresh)
         ]
     },
     beforeUnmount() {
@@ -218,7 +237,8 @@ export default {
                 WOMEN_MIX: 'MxD',
                 MEN_MIX: 'MxH'
             },
-            showPlayable: false
+            showPlayable: false,
+            showInactive: false
         }
     },
     methods: {
@@ -434,22 +454,6 @@ export default {
         findLevel,
         onPageChange(page) {
             this.currentPage = page
-        },
-        openAddMemberModal() {
-            this.$buefy.modal.open({
-                                       props: {
-                                           version: this.version,
-                                           clubhouseId: this.clubhouseId,
-                                       },
-                                       events: {
-                                           close() {
-                                           }
-                                       },
-                                       canCancel: ["x"],
-                                       component: AddMemberModal,
-                                       hasModalCard: true,
-                                       trapFocus: true
-                                   })
         }
     },
     apollo: {
@@ -567,7 +571,7 @@ export default {
                     page: this.currentPage,
                     first: this.perPage,
                     playable: true,
-                    inactive: false
+                    inactive: this.showInactive ? null : false,
                 }
                 if (this.searchName.trim() !== '') {
                     params.name = '%' + this.searchName + '%'
