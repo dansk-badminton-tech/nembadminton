@@ -41,20 +41,28 @@
             <hr/>
             <div class="columns">
                 <div class="column is-6">
-                    <h1 class="title">Søg på spiller</h1>
-                    <h2 class="subtitle">{{
-                            hasMultipleClubs
-                                ? 'Klubber:'
-                                : 'Klub:'
-                        }} {{ clubsNames }}
-                        <router-link class="is-size-6"
-                                     :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">
-                            (tilføj ekstra klub)
-                        </router-link>
-                    </h2>
+                    <div class="is-flex is-justify-content-space-between is-align-items-flex-start is-flex-wrap-wrap mb-3" style="gap: 0.75rem;">
+                        <div>
+                            <h1 class="title">Søg på spiller</h1>
+                            <h2 class="subtitle">{{
+                                    hasMultipleClubs
+                                        ? 'Klubber:'
+                                        : 'Klub:'
+                                }} {{ clubsNames }}
+                                <router-link class="is-size-6"
+                                             :to="{name: 'my-clubhouse', params: {clubhouseId: this.clubhouseId}, hash: '#add-clubs'}">
+                                    (tilføj ekstra klub)
+                                </router-link>
+                            </h2>
+                        </div>
+                        <b-button icon-left="plus" @click="openAddMemberModal()">
+                            Opret spiller
+                        </b-button>
+                    </div>
                     <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving"
                                        :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
-                                       :version="new Date(version)" :game-date="gameDate"/>
+                                       :version="new Date(version)" :game-date="gameDate"
+                                       @open-add-member="openAddMemberModal"/>
                 </div>
                 <div class="column is-6 container">
                     <h1 class="title">Holdene i holdrunden</h1>
@@ -101,7 +109,7 @@ import {
     isMixDouble,
     isWomenDouble,
     isWomensSingle
-} from "../../helpers";
+} from "@/helpers.js";
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import {
     hasInvalidCategory,
@@ -122,6 +130,7 @@ import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
+import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 
 export default {
     name: "TeamFight",
@@ -239,6 +248,23 @@ export default {
         }
     },
     methods: {
+        openAddMemberModal(name = '') {
+            this.$buefy.modal.open({
+                props: {
+                    version: new Date(this.version),
+                    clubhouseId: this.clubhouseId,
+                    initialName: typeof name === 'string' ? name : '',
+                },
+                events: {
+                    close() {
+                    }
+                },
+                canCancel: ["x"],
+                component: AddMemberModal,
+                hasModalCard: true,
+                trapFocus: true
+            })
+        },
         timeToMonth,
         notify() {
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})

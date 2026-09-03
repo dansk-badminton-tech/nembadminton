@@ -55,7 +55,7 @@ class ImportMembers implements ShouldQueue
             $players = $rankingList->getPlayerRankingCollection()->getByClubId($clubId);
             foreach ($players as $player){
                 Log::info("Upsert $player->name($player->playerNumber) from ranking {$rankingList->getVersionDateCarbon()}");
-                $member = $memberManager->addOrUpdateMember($player->playerNumber, $player->name, $player->gender);
+                $member = $memberManager->addOrUpdateMember($player->playerNumber, $player->name, $player->gender, $player->showAll);
                 $membersIds[] = $member->id;
             }
             $membersIds = array_unique($membersIds);

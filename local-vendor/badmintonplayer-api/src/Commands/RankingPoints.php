@@ -25,7 +25,7 @@ class RankingPoints extends Command
 
         $clubId = $this->option('club-id');
         if($clubId !== null){
-            $rankingList = $rankingList->getByClubId((int)$clubId);
+            $rankingList = $rankingList->getPlayerRankingCollection()->getByClubId((int)$clubId);
         }
 
         $refId = $this->option('ref-id');

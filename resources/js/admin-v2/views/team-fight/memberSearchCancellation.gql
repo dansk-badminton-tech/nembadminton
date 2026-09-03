@@ -2,6 +2,7 @@ query membersSearch(
     $clubhouse: Int!
     $page: Int
     $first: Int
+    $playable: Boolean
     $notOnSquad: String
     $whereCancellations: QueryMembersSearchWhereCancellationsWhereConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions
@@ -10,6 +11,7 @@ query membersSearch(
         clubhouse: $clubhouse
         whereCancellations: $whereCancellations
         notOnSquad: $notOnSquad
+        playable: $playable
         page: $page
         first: $first
     ){
@@ -34,6 +36,7 @@ query membersSearch(
                 }
             }
             playable
+            inactive
         }
         paginatorInfo {
             count
