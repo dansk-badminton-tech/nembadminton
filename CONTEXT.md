@@ -35,7 +35,7 @@ _Avoid_: Squad, player list, trup
 ### Events & Availability
 
 **Event**:
-A scheduled match or tournament date associated with a Team for which player availability is required.
+A scheduled match or tournament date associated with a Team and a specific round number (`round_number`) for which player availability is required.
 _Avoid_: TeamRound, game date, match
 
 **Availability**:
@@ -45,7 +45,7 @@ _Avoid_: Cancellation, afbud, RSVP
 ### Match Planning
 
 **Team Round**:
-A specific match fixture date in a season comprising one or more squads across tournament tiers.
+A specific tournament round (identified by an integer `round` number, e.g. Runde 3) in a season comprising squads across tournament tiers.
 _Avoid_: Event, match day
 
 **Squad**:

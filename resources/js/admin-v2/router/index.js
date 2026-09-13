@@ -99,6 +99,14 @@ const routes = [
                 meta: {
                     title: 'Tidligere Holdkamp'
                 }
+            },
+            {
+                path: '/prototype/coach-views',
+                name: 'prototype-coach-views',
+                component: () => import("../views/prototype/CoachFlowPrototype.vue"),
+                meta: {
+                    title: 'Prototype: Træner Flow'
+                }
             }
         ]
     },{
@@ -316,6 +324,15 @@ const routes = [
                         name: 'teams',
                         component: () => import('@/views/team/TeamList.vue'),
                         props: route => ({clubhouseId: route.params.clubhouseId})
+                    },
+                    {
+                        meta: {
+                            title: 'Prototype: Træner Flow',
+                            requiresAuth: false
+                        },
+                        path: 'prototype/coach-views',
+                        name: 'prototype-coach-views-clubhouse',
+                        component: () => import("../views/prototype/CoachFlowPrototype.vue")
                     },
                     {
                         path: 'player',
