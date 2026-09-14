@@ -18,33 +18,40 @@
                     <li :class="{'is-active': currentView === 'roster'}" @click="setView('roster')">
                         <a>
                             <b-icon icon="account-group" size="is-small" class="mr-2"></b-icon>
-                            <span>1. Holdtrup & Onboarding</span>
+                            <span>1. Holdtrupper</span>
+                        </a>
+                    </li>
+                    <li :class="{'is-active': currentView === 'onboarding'}" @click="setView('onboarding')">
+                        <a>
+                            <b-icon icon="account-plus-outline" size="is-small" class="mr-2"></b-icon>
+                            <span>2. Spillerinvitationer</span>
+                            <span v-if="uninvitedCount > 0" class="tag is-rounded is-warning is-small ml-2">{{ uninvitedCount }} afventer</span>
                         </a>
                     </li>
                     <li :class="{'is-active': currentView === 'events'}" @click="setView('events')">
                         <a>
                             <b-icon icon="calendar-sync" size="is-small" class="mr-2"></b-icon>
-                            <span>2. Kampprogram & Import</span>
+                            <span>3. Kampprogram & Runder</span>
                         </a>
                     </li>
                     <li :class="{'is-active': currentView === 'availability'}" @click="setView('availability')">
                         <a>
                             <b-icon icon="checkbox-marked-circle-outline" size="is-small" class="mr-2"></b-icon>
-                            <span>3. Tilkendegivelser & Rykker-Hub</span>
+                            <span>4. Tilkendegivelser & Rykker-Hub</span>
                             <span class="tag is-rounded is-danger is-small ml-2">{{ totalPendingCount }} mangler</span>
                         </a>
                     </li>
                     <li :class="{'is-active': currentView === 'lineup'}" @click="setView('lineup')">
                         <a>
                             <b-icon icon="badminton" size="is-small" class="mr-2"></b-icon>
-                            <span>4. Holdopstilling med Tilgængelighed</span>
+                            <span>5. Holdopstilling</span>
                         </a>
                     </li>
                 </ul>
             </div>
 
             <!-- ========================================== -->
-            <!-- VIEW 1: TRUP & ONBOARDING                  -->
+            <!-- VIEW 1: HOLDTRUPPER (PURE ROSTER MGMT)     -->
             <!-- ========================================== -->
             <div v-if="currentView === 'roster'" class="view-panel">
                 <div class="level mb-4">
@@ -70,14 +77,116 @@
                     <div class="level-right">
                         <div class="level-item buttons">
                             <b-button type="is-light" icon-left="content-copy" @click="cloneRosterFromPreviousSeason">
-                                Klon fra 2024/2025
+                                Klon fra forrige sæson
                             </b-button>
                             <b-button type="is-primary" icon-left="account-plus" @click="isAddPlayerModalActive = true">
-                                Tilføj spiller fra klub
+                                Tilføj spiller fra klubben
                             </b-button>
-                            <b-button type="is-link" icon-left="email-fast" @click="inviteAllPending">
-                                Inviter alle uregistrerede ({{ uninvitedCount }})
-                            </b-button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trup metrics banner -->
+                <div class="columns is-multiline mb-4">
+                    <div class="column is-3">
+                        <div class="notification is-light has-text-centered py-3">
+                            <p class="heading">Trupstørrelse</p>
+                            <p class="title is-4">{{ activeTeamRoster.length }} spillere</p>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <div class="notification is-light is-info has-text-centered py-3">
+                            <p class="heading">Herrer / Damer</p>
+                            <p class="title is-4">{{ activeTeamMenCount }} herrer / {{ activeTeamWomenCount }} damer</p>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <div class="notification is-light has-text-centered py-3">
+                            <p class="heading">Gennemsnitlig Single Point</p>
+                            <p class="title is-4">{{ activeTeamAvgSinglePoints }} p</p>
+                        </div>
+                    </div>
+                    <div class="column is-3">
+                        <div class="notification is-light has-text-centered py-3">
+                            <p class="heading">Gennemsnitlig Double Point</p>
+                            <p class="title is-4">{{ activeTeamAvgDoublePoints }} p</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roster Table (Pure Roster - No Onboarding links) -->
+                <card-component :title="'Spillertrup: ' + activeTeam.name + ' - ' + activeTeam.tier" class="has-table">
+                    <b-table :data="activeTeamRoster" striped hoverable default-sort="singlePoints" default-sort-direction="desc">
+                        <b-table-column field="name" label="Spiller" v-slot="props">
+                            <strong>{{ props.row.name }}</strong>
+                            <span v-if="props.row.gender === 'K'" class="tag is-small is-light is-danger ml-2">Dame</span>
+                            <span v-else class="tag is-small is-light is-info ml-2">Herre</span>
+                        </b-table-column>
+
+                        <b-table-column field="singlePoints" label="Single Point" v-slot="props" numeric sortable>
+                            {{ props.row.singlePoints }} p
+                        </b-table-column>
+
+                        <b-table-column field="doublePoints" label="Double Point" v-slot="props" numeric sortable>
+                            {{ props.row.doublePoints }} p
+                        </b-table-column>
+
+                        <b-table-column field="otherTeams" label="Øvrige holdtilhørsforhold" v-slot="props">
+                            <span v-if="props.row.otherTeamName" class="tag is-info is-light">
+                                {{ props.row.otherTeamName }}
+                            </span>
+                            <span v-else class="has-text-grey-light">Kun dette hold</span>
+                        </b-table-column>
+
+                        <b-table-column label="Handling" v-slot="props" width="80">
+                            <b-button size="is-small" type="is-danger" outlined icon-right="delete" @click="removePlayerFromTeam(props.row.id)" title="Fjern fra trup"></b-button>
+                        </b-table-column>
+                    </b-table>
+                </card-component>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- VIEW 2: SPILLERINVITATIONER & ONBOARDING   -->
+            <!-- ========================================== -->
+            <div v-if="currentView === 'onboarding'" class="view-panel">
+                <div class="level mb-4">
+                    <div class="level-left">
+                        <div class="level-item">
+                            <b-field label="Filtrer på Hold">
+                                <b-select v-model="onboardingTeamFilter">
+                                    <option value="all">Hele klubben (Alle holdtrupper)</option>
+                                    <option v-for="team in teams" :key="team.id" :value="team.id">
+                                        {{ team.name }} ({{ team.tier }})
+                                    </option>
+                                </b-select>
+                            </b-field>
+                        </div>
+                    </div>
+                    <div class="level-right buttons">
+                        <b-button type="is-link" icon-left="email-fast" @click="inviteAllPending">
+                            Send e-mail invitation til alle uregistrerede ({{ uninvitedCount }})
+                        </b-button>
+                    </div>
+                </div>
+
+                <!-- Status Cards -->
+                <div class="columns is-multiline mb-4">
+                    <div class="column is-4">
+                        <div class="notification is-success is-light has-text-centered py-3">
+                            <p class="heading">Brugere Oprettet</p>
+                            <p class="title is-4 has-text-success">🟢 {{ registeredCount }} spillere</p>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="notification is-warning is-light has-text-centered py-3">
+                            <p class="heading">Mangler Oprettelse</p>
+                            <p class="title is-4 has-text-warning-dark">⚪ {{ uninvitedCount }} spillere</p>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="notification is-info is-light has-text-centered py-3">
+                            <p class="heading">Onboarding Rate</p>
+                            <p class="title is-4 has-text-info">{{ Math.round((registeredCount / players.length) * 100) }}% bekræftet</p>
                         </div>
                     </div>
                 </div>
@@ -87,8 +196,8 @@
                     <div class="level">
                         <div class="level-left">
                             <div>
-                                <h4 class="title is-6 mb-1">📢 Del invitation i holdets Facebook Messenger gruppe</h4>
-                                <p class="is-size-7">Send ét samlet link til truppen, så spillere kan oprette deres adgang og bekræfte deres spillerprofil.</p>
+                                <h4 class="title is-6 mb-1">📢 Del invitation i truppens Messenger-gruppe</h4>
+                                <p class="is-size-7">Kopier et færdigt invitationslink til jeres Messenger-gruppe, hvor spillerne nemt kan bekræfte deres spillerprofil og sætte kodeord.</p>
                             </div>
                         </div>
                         <div class="level-right">
@@ -99,23 +208,20 @@
                     </div>
                 </div>
 
-                <!-- Roster Table -->
-                <card-component :title="'Spillertrup: ' + activeTeam.name + ' (' + activeTeamRoster.length + ' spillere)'" class="has-table">
-                    <b-table :data="activeTeamRoster" striped hoverable default-sort="ranking" default-sort-direction="desc">
+                <!-- Onboarding Table -->
+                <card-component title="Spillere & Oprettelsesstatus" class="has-table">
+                    <b-table :data="filteredOnboardingPlayers" striped hoverable>
                         <b-table-column field="name" label="Spiller" v-slot="props">
                             <strong>{{ props.row.name }}</strong>
-                            <span v-if="props.row.gender === 'K'" class="tag is-small is-light is-danger ml-2">Dame</span>
-                            <span v-else class="tag is-small is-light is-info ml-2">Herre</span>
+                            <div class="is-size-7 has-text-grey">
+                                Tilknyttet: {{ getTeamName(props.row.teamId) }}
+                            </div>
                         </b-table-column>
 
-                        <b-table-column field="ranking" label="Point (Single / Double)" v-slot="props" numeric sortable>
-                            {{ props.row.singlePoints }} / {{ props.row.doublePoints }} p
-                        </b-table-column>
-
-                        <b-table-column field="userStatus" label="Brugerstatus" v-slot="props">
+                        <b-table-column field="isRegistered" label="Status" v-slot="props">
                             <b-tag v-if="props.row.isRegistered" type="is-success" rounded>
                                 <b-icon icon="check-circle" size="is-small"></b-icon>
-                                <span>Bruger aktiv</span>
+                                <span>Aktiv bruger</span>
                             </b-tag>
                             <b-tag v-else type="is-warning" rounded>
                                 <b-icon icon="clock-outline" size="is-small"></b-icon>
@@ -125,33 +231,43 @@
 
                         <b-table-column field="email" label="E-mail" v-slot="props">
                             <span v-if="props.row.email">{{ props.row.email }}</span>
-                            <span v-else class="has-text-grey-light">Ingen e-mail fundet</span>
+                            <span v-else class="has-text-grey-light">Ikke oplyst</span>
                         </b-table-column>
 
-                        <b-table-column label="1-on-1 Messenger Nudge" v-slot="props">
-                            <b-button size="is-small" type="is-light" icon-left="link-variant" @click="copyPersonalInvite(props.row)">
-                                Kopier invitationslink
+                        <b-table-column label="1-on-1 Messenger Invitation" v-slot="props">
+                            <div v-if="!props.row.isRegistered">
+                                <b-button size="is-small" type="is-info" outlined icon-left="facebook-messenger" @click="copyPersonalInvite(props.row)">
+                                    Kopier personligt link til DM
+                                </b-button>
+                            </div>
+                            <div v-else>
+                                <span class="tag is-light is-success">Klar</span>
+                            </div>
+                        </b-table-column>
+
+                        <b-table-column label="E-mail" v-slot="props" width="140">
+                            <b-button v-if="!props.row.isRegistered && props.row.email" size="is-small" type="is-light" icon-left="email" @click="sendEmailInvite(props.row)">
+                                Send e-mail
                             </b-button>
-                        </b-table-column>
-
-                        <b-table-column label="Handling" v-slot="props" width="80">
-                            <b-button size="is-small" type="is-danger" outlined icon-right="delete" @click="removePlayerFromTeam(props.row.id)"></b-button>
+                            <span v-else-if="props.row.isRegistered" class="is-size-7 has-text-grey">Oprettet</span>
+                            <span v-else class="is-size-7 has-text-grey-light">Mangler e-mail</span>
                         </b-table-column>
                     </b-table>
                 </card-component>
             </div>
 
             <!-- ========================================== -->
-            <!-- VIEW 2: KAMPPROGRAM & IMPORT               -->
+            <!-- VIEW 2: KAMPPROGRAM & IMPORT (RUNDE-CENTRIC) -->
             <!-- ========================================== -->
             <div v-if="currentView === 'events'" class="view-panel">
                 <div class="level mb-4">
                     <div class="level-left">
                         <div class="level-item">
-                            <b-field label="Vælg Hold">
-                                <b-select v-model="selectedTeamId">
-                                    <option v-for="team in teams" :key="team.id" :value="team.id">
-                                        {{ team.name }} ({{ team.tier }})
+                            <b-field label="Vis Spillerunde">
+                                <b-select v-model="eventsRoundFilter">
+                                    <option value="all">Alle runder (Fuld sæsonoversigt)</option>
+                                    <option v-for="r in availableRounds" :key="r" :value="r">
+                                        Runde {{ r }} - {{ getRoundDateFormatted(r) }}
                                     </option>
                                 </b-select>
                             </b-field>
@@ -159,10 +275,10 @@
                     </div>
                     <div class="level-right buttons">
                         <b-button type="is-success" icon-left="download" @click="openImportModal">
-                            Importer kampprogram fra Badmintonplayer.dk
+                            Importer samlet kampprogram fra Badmintonplayer.dk
                         </b-button>
                         <b-button type="is-primary" icon-left="plus" @click="addNewMatchRow">
-                            Tilføj kamp manuelt
+                            Tilføj kamp til runde
                         </b-button>
                     </div>
                 </div>
@@ -171,45 +287,75 @@
                     <div class="is-flex is-align-items-center">
                         <b-icon icon="information" class="mr-3"></b-icon>
                         <div>
-                            <strong>Automatisk synkronisering:</strong> Kampdatoer og modstandere matcher de officielle spillerunder fra Badminton Danmark. Holdrunder oprettet i NemBadminton trækker automatisk svar fra disse kampe via rundenummeret.
+                            <strong>Rundebaseret planlægning:</strong> Badminton Danmarks holdturnering afvikles i koordinerede spillerunder (Runde 1 til 7). Når du opretter eller importerer et program, grupperes alle klubbens hold (1. hold, 2. hold osv.) under samme rundenummer. Dette gør det nemt at se alle klubbens kampe i en given weekend.
                         </div>
                     </div>
                 </b-notification>
 
-                <card-component :title="'Kampprogram for ' + activeTeam.name + ' - ' + activeTeam.tier" class="has-table">
-                    <b-table :data="activeTeamEvents" striped>
-                        <b-table-column field="roundNumber" label="Runde #" v-slot="props" width="90" numeric>
-                            <span class="tag is-primary has-text-weight-bold">Runde {{ props.row.roundNumber }}</span>
-                        </b-table-column>
-
-                        <b-table-column field="date" label="Spilledato & Tid" v-slot="props">
-                            <strong>{{ formatDate(props.row.date) }}</strong>
-                            <div class="is-size-7 has-text-grey">kl. {{ props.row.time }}</div>
-                        </b-table-column>
-
-                        <b-table-column field="opponent" label="Modstander" v-slot="props">
-                            {{ props.row.opponent }}
-                        </b-table-column>
-
-                        <b-table-column field="homeAway" label="Hjemme/Ude" v-slot="props">
-                            <span v-if="props.row.isHome" class="tag is-info is-light">Hjemmebane</span>
-                            <span v-else class="tag is-warning is-light">Udebane</span>
-                        </b-table-column>
-
-                        <b-table-column field="venue" label="Spillested" v-slot="props">
-                            {{ props.row.venue }}
-                        </b-table-column>
-
-                        <b-table-column field="deadline" label="Svarfrist for spillere" v-slot="props">
-                            <span class="has-text-weight-semibold">{{ formatDate(props.row.deadline) }} kl. 20:00</span>
-                        </b-table-column>
-
-                        <b-table-column label="Handlinger" v-slot="props" width="120">
-                            <b-button size="is-small" icon-left="pencil" @click="editEvent(props.row)"></b-button>
-                            <b-button size="is-small" type="is-danger" outlined icon-left="delete" class="ml-1" @click="deleteEvent(props.row.id)"></b-button>
-                        </b-table-column>
-                    </b-table>
-                </card-component>
+                <!-- Round Cards (Centered around round numbers) -->
+                <div v-for="roundNum in displayedRounds" :key="roundNum" class="mb-5">
+                    <div class="card">
+                        <header class="card-header has-background-white-ter is-flex is-justify-content-space-between is-align-items-center px-4 py-3">
+                            <div>
+                                <span class="tag is-primary is-medium has-text-weight-bold mr-2">Spillerunde {{ roundNum }}</span>
+                                <strong class="is-size-5">{{ getRoundDateRangeFormatted(roundNum) }}</strong>
+                                <span class="tag is-warning is-light ml-3">
+                                    Svarfrist: {{ getRoundDeadlineFormatted(roundNum) }} kl. 20:00
+                                </span>
+                            </div>
+                            <div class="buttons are-small mb-0">
+                                <b-button type="is-info" icon-left="checkbox-marked-circle-outline" @click="goToAvailabilityForRound(roundNum)">
+                                    Tilkendegivelser (Runde {{ roundNum }})
+                                </b-button>
+                                <b-button type="is-dark" icon-left="badminton" @click="goToLineupForRound(roundNum)">
+                                    Holdopstilling
+                                </b-button>
+                            </div>
+                        </header>
+                        <div class="card-content p-0">
+                            <table class="table is-fullwidth is-striped is-hoverable mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Hold & Række</th>
+                                        <th>Modstander</th>
+                                        <th>Hjemme / Ude</th>
+                                        <th>Spilledato, Tid & Sted</th>
+                                        <th>Tilkendegivelser</th>
+                                        <th width="100">Handling</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="match in getMatchesForRound(roundNum)" :key="match.id">
+                                        <td>
+                                            <strong>{{ getTeamName(match.teamId) }}</strong>
+                                            <div class="is-size-7 has-text-grey">{{ getTeamTier(match.teamId) }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="has-text-weight-semibold">{{ match.opponent }}</span>
+                                        </td>
+                                        <td>
+                                            <span v-if="match.isHome" class="tag is-info is-light">Hjemmebane</span>
+                                            <span v-else class="tag is-warning is-light">Udebane</span>
+                                        </td>
+                                        <td>
+                                            <strong>{{ formatDate(match.date) }} kl. {{ match.time }}</strong>
+                                            <div class="is-size-7 has-text-grey">{{ match.venue }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="tag is-success is-light is-small">🟢 {{ getAvailableCountForTeamRound(match.teamId, roundNum) }} Kan</span>
+                                            <span class="tag is-danger is-light is-small ml-1">🔴 {{ getUnavailableCountForTeamRound(match.teamId, roundNum) }} Afbud</span>
+                                            <span class="tag is-warning is-light is-small ml-1">⚪ {{ getPendingCountForTeamRound(match.teamId, roundNum) }} Mangler</span>
+                                        </td>
+                                        <td>
+                                            <b-button size="is-small" icon-left="pencil" @click="editEvent(match)"></b-button>
+                                            <b-button size="is-small" type="is-danger" outlined icon-left="delete" class="ml-1" @click="deleteEvent(match.id)"></b-button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ========================================== -->
@@ -222,19 +368,20 @@
                         <div class="level">
                             <div class="level-left">
                                 <div class="level-item">
-                                    <b-field label="Vælg Hold">
-                                        <b-select v-model="selectedTeamId">
-                                            <option v-for="team in teams" :key="team.id" :value="team.id">
-                                                {{ team.name }} ({{ team.tier }})
+                                    <b-field label="1. Vælg Spillerunde">
+                                        <b-select v-model="selectedRoundNumber">
+                                            <option v-for="r in availableRounds" :key="r" :value="r">
+                                                Runde {{ r }} - {{ getRoundDateFormatted(r) }}
                                             </option>
                                         </b-select>
                                     </b-field>
                                 </div>
                                 <div class="level-item">
-                                    <b-field label="Vælg Spillerunde">
-                                        <b-select v-model="selectedRoundNumber">
-                                            <option v-for="ev in activeTeamEvents" :key="ev.roundNumber" :value="ev.roundNumber">
-                                                Runde {{ ev.roundNumber }} ({{ formatDate(ev.date) }} mod {{ ev.opponent }})
+                                    <b-field label="2. Filtrer på Hold">
+                                        <b-select v-model="availabilityTeamFilter">
+                                            <option value="all">Hele klubben (Alle seniorhold)</option>
+                                            <option v-for="team in teams" :key="team.id" :value="team.id">
+                                                {{ team.name }} ({{ team.tier }})
                                             </option>
                                         </b-select>
                                     </b-field>
@@ -277,7 +424,7 @@
                             <div class="column is-3">
                                 <div class="notification is-danger is-light has-text-centered py-3">
                                     <p class="heading">Svarfrist</p>
-                                    <p class="title is-5 has-text-danger">{{ currentEventDeadlinePassed ? '⚠️ UDLØBET' : 'Aktiv (' + formatDate(activeEvent.deadline) + ')' }}</p>
+                                    <p class="title is-5 has-text-danger">{{ currentEventDeadlinePassed ? '⚠️ UDLØBET' : 'Aktiv (' + getRoundDeadlineFormatted(selectedRoundNumber) + ')' }}</p>
                                 </div>
                             </div>
                         </div>
@@ -285,7 +432,7 @@
                 </div>
 
                 <!-- Availability Matrix Table -->
-                <card-component :title="'Tilkendegivelser: ' + activeTeam.name + ' - Runde ' + selectedRoundNumber" class="has-table">
+                <card-component :title="'Tilkendegivelser: Spillerunde ' + selectedRoundNumber + ' (' + (availabilityTeamFilter === 'all' ? 'Alle hold' : getTeamName(availabilityTeamFilter)) + ')'" class="has-table">
                     <div class="p-3 is-flex is-justify-content-space-between is-align-items-center">
                         <div class="buttons has-addons mb-0">
                             <b-button size="is-small" :type="statusFilter === 'all' ? 'is-dark' : 'is-light'" @click="statusFilter = 'all'">Alle ({{ activeTeamRoster.length }})</b-button>
@@ -492,24 +639,25 @@
         <b-modal v-model="isImportModalActive" :width="640" scroll="keep">
             <div class="card">
                 <header class="card-header has-background-success-light">
-                    <p class="card-header-title">Importer Kampprogram fra Badmintonplayer.dk</p>
+                    <p class="card-header-title">Importer Klubbens Kampprogram fra Badmintonplayer.dk</p>
                 </header>
                 <div class="card-content">
-                    <p class="mb-3">Vælg dit hold på Badmintonplayer for automatisk at hente alle runder, spilledatoer og spillesteder:</p>
-                    <b-field label="Klub & Række">
+                    <p class="mb-3">Vælg din klub for at hente alle seniorhold og automatisk synkronisere deres kampe under de officielle spillerunder (Runde 1-7):</p>
+                    <b-field label="Klub">
                         <b-select expanded v-model="mockSelectedImportTeam">
-                            <option value="team1">Hvidovre BC - Danmarksserien Kreds 2 (Hold 1)</option>
-                            <option value="team2">Hvidovre BC - Sjællandsserien Kreds 1 (Hold 2)</option>
-                            <option value="team3">Hvidovre BC - Serie 1 Kreds 4 (Hold 3)</option>
+                            <option value="all">Hvidovre Badminton Club (Alle 3 seniorhold)</option>
+                            <option value="team1">Kun 1. Senior - Danmarksserien Kreds 2</option>
+                            <option value="team2">Kun 2. Senior - Sjællandsserien Kreds 1</option>
+                            <option value="team3">Kun 3. Senior - Serie 1 Kreds 4</option>
                         </b-select>
                     </b-field>
-                    <div class="notification is-light is-info is-size-7">
-                        ✅ 7 officielle spillerunder fundet for sæsonen 2025/2026.
+                    <div class="notification is-light is-success is-size-7">
+                        ✅ <strong>21 kampe fundet</strong> fordelt på 7 spillerunder for sæsonen 2025/2026. Kampene grupperes automatisk pr. rundenummer.
                     </div>
                 </div>
                 <footer class="card-footer">
                     <button class="card-footer-item button" @click="isImportModalActive = false">Annuller</button>
-                    <button class="card-footer-item button is-success" @click="confirmImport">Importer 7 kampe</button>
+                    <button class="card-footer-item button is-success" @click="confirmImport">Importer alle 7 spillerunder</button>
                 </footer>
             </div>
         </b-modal>
@@ -554,12 +702,15 @@ export default {
             selectedSeason: "2025/2026",
             selectedTeamId: 1,
             selectedRoundNumber: 3,
+            eventsRoundFilter: "all",
+            availabilityTeamFilter: "all",
+            onboardingTeamFilter: "all",
             statusFilter: "all",
             lineupPlayerFilter: "all",
             lineupSearchText: "",
             isImportModalActive: false,
             isGroupCalloutModalActive: false,
-            mockSelectedImportTeam: "team1",
+            mockSelectedImportTeam: "all",
 
             // Teams
             teams: [
@@ -568,8 +719,9 @@ export default {
                 { id: 3, name: "3. Senior", tier: "Serie 1", group: "Pulje 4" }
             ],
 
-            // Match Schedule / Events (Holdkampe)
+            // Match Schedule / Events (Holdkampe) - Centered around official tournament rounds
             events: [
+                // 1. Senior (Team 1) - Lørdag kl. 13:00
                 { id: 101, teamId: 1, roundNumber: 1, date: "2025-09-13", time: "13:00", opponent: "Solrød Strand 2", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-09-10" },
                 { id: 102, teamId: 1, roundNumber: 2, date: "2025-09-27", time: "14:00", opponent: "Greve 2", isHome: false, venue: "Greve Idrætscenter", deadline: "2025-09-24" },
                 { id: 103, teamId: 1, roundNumber: 3, date: "2025-10-25", time: "13:00", opponent: "Hvidovre BC 2", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-10-22" },
@@ -578,9 +730,23 @@ export default {
                 { id: 106, teamId: 1, roundNumber: 6, date: "2026-01-17", time: "12:00", opponent: "Værløse 2", isHome: false, venue: "Værløse Hallerne", deadline: "2026-01-14" },
                 { id: 107, teamId: 1, roundNumber: 7, date: "2026-02-07", time: "13:00", opponent: "Odense OBK 2", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2026-02-04" },
 
-                { id: 201, teamId: 2, roundNumber: 1, date: "2025-09-13", time: "15:30", opponent: "Herlev/Hjorten 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-09-10" },
-                { id: 202, teamId: 2, roundNumber: 2, date: "2025-09-27", time: "11:00", opponent: "Ringsted 1", isHome: false, venue: "Ringsted Sportscenter", deadline: "2025-09-24" },
-                { id: 203, teamId: 2, roundNumber: 3, date: "2025-10-25", time: "15:30", opponent: "Holbæk 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-10-22" }
+                // 2. Senior (Team 2) - Søndag kl. 11:30
+                { id: 201, teamId: 2, roundNumber: 1, date: "2025-09-14", time: "11:30", opponent: "Herlev/Hjorten 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-09-10" },
+                { id: 202, teamId: 2, roundNumber: 2, date: "2025-09-28", time: "11:00", opponent: "Ringsted 1", isHome: false, venue: "Ringsted Sportscenter", deadline: "2025-09-24" },
+                { id: 203, teamId: 2, roundNumber: 3, date: "2025-10-26", time: "11:30", opponent: "Holbæk 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-10-22" },
+                { id: 204, teamId: 2, roundNumber: 4, date: "2025-11-16", time: "15:00", opponent: "Roskilde 2", isHome: false, venue: "Roskilde Hallerne", deadline: "2025-11-12" },
+                { id: 205, teamId: 2, roundNumber: 5, date: "2025-12-07", time: "11:30", opponent: "Køge 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2025-12-03" },
+                { id: 206, teamId: 2, roundNumber: 6, date: "2026-01-18", time: "14:00", opponent: "Næstved 1", isHome: false, venue: "Næstved Hallen", deadline: "2026-01-14" },
+                { id: 207, teamId: 2, roundNumber: 7, date: "2026-02-08", time: "11:30", opponent: "Slagelse 1", isHome: true, venue: "Hal A, Bane 1-4", deadline: "2026-02-04" },
+
+                // 3. Senior (Team 3) - Torsdag aften (Hverdagskamp jf. § 6 stk. 4)
+                { id: 301, teamId: 3, roundNumber: 1, date: "2025-09-11", time: "19:00", opponent: "Jyllinge 1", isHome: false, venue: "Jyllingehallen", deadline: "2025-09-08" },
+                { id: 302, teamId: 3, roundNumber: 2, date: "2025-09-25", time: "19:00", opponent: "Tølløse 1", isHome: true, venue: "Hal B, Bane 1-3", deadline: "2025-09-22" },
+                { id: 303, teamId: 3, roundNumber: 3, date: "2025-10-23", time: "19:00", opponent: "Slagelse 2", isHome: false, venue: "Slagelsehallen", deadline: "2025-10-20" },
+                { id: 304, teamId: 3, roundNumber: 4, date: "2025-11-13", time: "19:00", opponent: "Kalundborg 1", isHome: true, venue: "Hal B, Bane 1-3", deadline: "2025-11-10" },
+                { id: 305, teamId: 3, roundNumber: 5, date: "2025-12-04", time: "19:00", opponent: "Sorø 1", isHome: false, venue: "Sorø Hallen", deadline: "2025-12-01" },
+                { id: 306, teamId: 3, roundNumber: 6, date: "2026-01-15", time: "19:00", opponent: "Korsør 1", isHome: true, venue: "Hal B, Bane 1-3", deadline: "2026-01-12" },
+                { id: 307, teamId: 3, roundNumber: 7, date: "2026-02-05", time: "19:00", opponent: "Dianalund 1", isHome: false, venue: "Dianalund Hallen", deadline: "2026-02-02" }
             ],
 
             // Players Roster & Availability (Trup & Svar)
@@ -620,10 +786,11 @@ export default {
             ],
 
             viewList: [
-                { key: "roster", title: "1. Holdtrup & Onboarding" },
-                { key: "events", title: "2. Kampprogram & Import" },
-                { key: "availability", title: "3. Tilkendegivelser & Rykker-Hub" },
-                { key: "lineup", title: "4. Holdopstilling med Tilgængelighed" }
+                { key: "roster", title: "1. Holdtrupper" },
+                { key: "onboarding", title: "2. Spillerinvitationer" },
+                { key: "events", title: "3. Kampprogram & Runder" },
+                { key: "availability", title: "4. Tilkendegivelser & Rykker-Hub" },
+                { key: "lineup", title: "5. Holdopstilling" }
             ]
         };
     },
@@ -634,8 +801,31 @@ export default {
         activeTeamRoster() {
             return this.players.filter(p => p.teamId === this.selectedTeamId);
         },
+        activeTeamMenCount() {
+            return this.activeTeamRoster.filter(p => p.gender === "M").length;
+        },
+        activeTeamWomenCount() {
+            return this.activeTeamRoster.filter(p => p.gender === "K").length;
+        },
+        activeTeamAvgSinglePoints() {
+            if (!this.activeTeamRoster.length) return 0;
+            const sum = this.activeTeamRoster.reduce((acc, p) => acc + p.singlePoints, 0);
+            return Math.round(sum / this.activeTeamRoster.length);
+        },
+        activeTeamAvgDoublePoints() {
+            if (!this.activeTeamRoster.length) return 0;
+            const sum = this.activeTeamRoster.reduce((acc, p) => acc + p.doublePoints, 0);
+            return Math.round(sum / this.activeTeamRoster.length);
+        },
+        registeredCount() {
+            return this.players.filter(p => p.isRegistered).length;
+        },
+        filteredOnboardingPlayers() {
+            if (this.onboardingTeamFilter === "all") return this.players;
+            return this.players.filter(p => p.teamId === Number(this.onboardingTeamFilter));
+        },
         uninvitedCount() {
-            return this.activeTeamRoster.filter(p => !p.isRegistered).length;
+            return this.players.filter(p => !p.isRegistered).length;
         },
         activeTeamEvents() {
             return this.events.filter(e => e.teamId === this.selectedTeamId);
@@ -647,9 +837,22 @@ export default {
             if (!this.activeEvent.deadline) return false;
             return new Date(this.activeEvent.deadline) < new Date();
         },
+        availableRounds() {
+            const set = new Set(this.events.map(e => e.roundNumber));
+            return Array.from(set).sort((a, b) => a - b);
+        },
+        displayedRounds() {
+            if (this.eventsRoundFilter === "all") return this.availableRounds;
+            return [Number(this.eventsRoundFilter)];
+        },
         availabilityListForCurrentEvent() {
-            return this.activeTeamRoster.map(player => ({
+            let list = this.players;
+            if (this.availabilityTeamFilter !== "all") {
+                list = list.filter(p => p.teamId === Number(this.availabilityTeamFilter));
+            }
+            return list.map(player => ({
                 id: player.id,
+                teamId: player.teamId,
                 name: player.name,
                 gender: player.gender,
                 singlePoints: player.singlePoints,
@@ -770,6 +973,51 @@ export default {
             const d = new Date(dateStr);
             return d.toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" });
         },
+        getMatchesForRound(roundNum) {
+            return this.events.filter(e => e.roundNumber === roundNum);
+        },
+        getRoundDateRangeFormatted(roundNum) {
+            const matches = this.getMatchesForRound(roundNum);
+            if (!matches.length) return "—";
+            const uniqueDates = Array.from(new Set(matches.map(m => m.date))).sort();
+            if (uniqueDates.length === 1) {
+                return this.formatDate(uniqueDates[0]);
+            }
+            return `${this.formatDate(uniqueDates[0])} – ${this.formatDate(uniqueDates[uniqueDates.length - 1])} (${uniqueDates.length} spilledatoer)`;
+        },
+        getRoundDateFormatted(roundNum) {
+            const ev = this.events.find(e => e.roundNumber === roundNum);
+            return ev ? this.formatDate(ev.date) : "—";
+        },
+        getRoundDeadlineFormatted(roundNum) {
+            const ev = this.events.find(e => e.roundNumber === roundNum);
+            return ev ? this.formatDate(ev.deadline) : "—";
+        },
+        getTeamName(teamId) {
+            const t = this.teams.find(x => x.id === Number(teamId));
+            return t ? t.name : "Ukendt Hold";
+        },
+        getTeamTier(teamId) {
+            const t = this.teams.find(x => x.id === Number(teamId));
+            return t ? t.tier + " (" + t.group + ")" : "";
+        },
+        getAvailableCountForTeamRound(teamId, roundNum) {
+            return this.players.filter(p => p.teamId === teamId && p.statusByRound && p.statusByRound[roundNum] === "AVAILABLE").length;
+        },
+        getUnavailableCountForTeamRound(teamId, roundNum) {
+            return this.players.filter(p => p.teamId === teamId && p.statusByRound && p.statusByRound[roundNum] === "UNAVAILABLE").length;
+        },
+        getPendingCountForTeamRound(teamId, roundNum) {
+            return this.players.filter(p => p.teamId === teamId && (!p.statusByRound || p.statusByRound[roundNum] === "PENDING" || !p.statusByRound[roundNum])).length;
+        },
+        goToAvailabilityForRound(roundNum) {
+            this.selectedRoundNumber = roundNum;
+            this.setView("availability");
+        },
+        goToLineupForRound(roundNum) {
+            this.selectedRoundNumber = roundNum;
+            this.setView("lineup");
+        },
 
         // View 1 actions
         copyGroupInviteToClipboard() {
@@ -789,13 +1037,20 @@ export default {
             });
         },
         inviteAllPending() {
-            this.activeTeamRoster.forEach(p => {
+            this.players.forEach(p => {
                 if (!p.isRegistered && p.email) {
                     p.isRegistered = true;
                 }
             });
             this.$buefy.toast.open({
                 message: "✉️ E-mail invitationer afsendt til alle spillere med e-mail!",
+                type: "is-success"
+            });
+        },
+        sendEmailInvite(player) {
+            player.isRegistered = true;
+            this.$buefy.toast.open({
+                message: `✉️ E-mail invitation sendt til ${player.name} (${player.email})!`,
                 type: "is-success"
             });
         },
