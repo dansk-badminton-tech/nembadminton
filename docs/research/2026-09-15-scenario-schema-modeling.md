@@ -155,6 +155,56 @@ ALTER TABLE team_rounds ADD COLUMN draft_scenarios JSON NULL;
 
 ---
 
+### Option 4: In-Round Queryable Marked Squads (`squads.scenario_id`)
+
+In this architecture, `team_rounds` remains strictly 1:1 with real calendar rounds. Scenarios do **not** create shadow `TeamRound` rows; instead, individual `squads` are tagged with a `scenario_id` (or `scenario_name`), where `scenario_id IS NULL` denotes the default/active lineup:
+```
+TeamRound (Single canonical row)
+   ├── Active Squad 1 (scenario_id = null)
+   ├── Active Squad 2 (scenario_id = null)
+   ├── Scenario Squad 1 (scenario_id = 'scenario-b-injuries')
+   └── Scenario Squad 2 (scenario_id = 'scenario-b-injuries')
+```
+
+#### Proposed Schema
+```sql
+ALTER TABLE squads 
+    ADD COLUMN scenario_id VARCHAR(24) NULL AFTER team_round_id,
+    ADD INDEX squads_team_round_scenario_idx (team_round_id, scenario_id);
+```
+
+#### GraphQL Integration
+In `graphql/team-round.graphql`, the `squads` field on `TeamRound` accepts an optional filter argument:
+```graphql
+type TeamRound {
+    id: ID!
+    name: String
+    # Query squads filtered by scenario (defaults to active / null)
+    squads(scenarioId: ID): [Squad!]! @field(resolver: "App\\GraphQL\\Resolvers\\TeamRoundSquadsResolver")
+    scenarios: [TeamRoundScenario!]! @hasMany
+}
+```
+
+#### Codebase Verification: Cross-Squad Validation is 100% Frontend-Driven
+A critical verification was performed in the codebase regarding how cross-squad ranking rules are executed:
+- **Verified Fact:** Cross-squad validation rules are **100% controlled by the frontend**.
+- **Proof in Code:**
+  - `TeamFight.vue:526-550`: `validateCrossSquads()` passes `wrapInTeamAndSquads(this.teamRound.squads)` to the backend mutation.
+  - `helper.js:52-77`: `wrapInTeamAndSquads` serializes whatever list of `squads` is currently in the Vue component's local state.
+  - `FlyCompany\TeamFight\GraphQL\Mutations\Validate.php:43-52`: The backend resolver does **not** query Eloquent or the database for squads. It directly denormalizes `$args['input']` into `FlyCompany\TeamFight\Models\Squad[]` DTOs and passes them directly to `TeamValidator::validateCrossSquadsLeagueV3($squads)`.
+- **Architectural Implication:** Because validation is completely decoupled from database round queries and simply evaluates whatever array of squads the frontend provides, the frontend can query or combine any mix of marked squads (e.g. marked Squad 1 + marked Squad 2 + base Squad 3) and validate them in real-time with zero backend validator changes!
+
+#### Trade-Offs & Comparison with Option 2
+- **Advantages over Option 2:**
+  - **Zero Shadow Rounds:** `team_rounds` never contains phantom records. No risk of draft rounds leaking into round pickers, calendar widgets, or cron jobs.
+  - **Selective Branching:** Only the squads affected by the domino effect (e.g. Squads 1 and 2) need to be duplicated/marked. Untouched squads (3 through 8) remain active and don't need duplication if the resolver falls back to active squads.
+  - **Granular Swapping:** Promoting a scenario is an atomic pointer flip (`UPDATE squads SET scenario_id = NULL ...`).
+- **Considerations:**
+  - `Squad::buildSortQuery()` (`app/Models/Squad.php:61`) orders squads by `order` scoped to `team_round_id`. With multiple scenarios under the same round, sorting must also scope by `where('scenario_id', $this->scenario_id)`.
+  - `SquadManager::updatePointsOnAllSquadsInTeamRound()` updates points on all squads under `$teamRound->squads`. It should be adapted to accept an optional `scenarioId` filter so ranking updates on a scenario don't prematurely rewrite points on active squads.
+
+---
+
 ## 3. Detailed Impact Analysis
 
 ### Impact on `FlyCompany\TeamFight\SquadManager`
