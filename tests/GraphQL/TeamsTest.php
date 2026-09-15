@@ -158,6 +158,73 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_can_export_a_team_excluding_categories()
+    {
+        Storage::fake('public');
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+        ]);
+        $category = new SquadCategory([
+            'category' => 'HS',
+            'name' => '1. HS',
+        ]);
+        $category->squad()->associate($squad);
+        $category->save();
+        Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            query($teamRoundId: ID!, $includeCategories: Boolean) {
+                export(teamRoundId: $teamRoundId, includeCategories: $includeCategories)
+            }
+        ', [
+            'teamRoundId' => $teamRound->id,
+            'includeCategories' => false,
+        ]);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'export',
+            ],
+        ]);
+
+        $files = Storage::disk('public')->allFiles('team-fight/exports');
+        $this->assertCount(1, $files);
+        $content = Storage::disk('public')->get($files[0]);
+        // Content contains UTF-8 BOM, remove it to check
+        $contentWithoutBom = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+        $this->assertStringNotContainsString('1. HS', $contentWithoutBom);
+        $this->assertStringContainsString('John Doe', $contentWithoutBom);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_query_team_notification_activity()
     {
         $clubhouse = Clubhouse::factory()->create();

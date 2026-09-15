@@ -10,7 +10,7 @@ use Illuminate\Support\Arr;
 class Exporter
 {
 
-    public function exportToCSV(TeamRound $team) : string{
+    public function exportToCSV(TeamRound $team, bool $includeCategories = true) : string{
         $csv = [];
         foreach ($team->squads as $index => $squad){
             $i = $index + 1;
@@ -18,10 +18,12 @@ class Exporter
             foreach ($squad->categories as $category){
                 foreach ($category->players as $playerIndex => $player){
                     $data = [];
-                    if($playerIndex === 0){
-                        $data[] = '"'.$category->name.'"';
-                    }else{
-                        $data[] = "";
+                    if ($includeCategories) {
+                        if ($playerIndex === 0) {
+                            $data[] = '"'.$category->name.'"';
+                        } else {
+                            $data[] = "";
+                        }
                     }
                     $data[] = '"'.$player->name.'"';
                     $csv[] = implode(',', $data);

@@ -33,8 +33,9 @@ class Exporter
     {
         /** @var TeamRound $team */
         $teamRoundId = $args['teamRoundId'];
+        $includeCategories = (bool)($args['includeCategories'] ?? true);
         $team = TeamRound::query()->where('id', $teamRoundId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
-        $csvData = $this->exporter->exportToCSV($team);
+        $csvData = $this->exporter->exportToCSV($team, $includeCategories);
 
         $randomNumber = date('d-m-Y_H-i-s');
         $filePath = "team-fight/exports/$teamRoundId-$randomNumber.csv";

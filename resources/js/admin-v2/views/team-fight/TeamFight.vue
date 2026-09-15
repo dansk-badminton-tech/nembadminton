@@ -28,7 +28,7 @@
                         <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                     </button>
                 </template>
-                <b-dropdown-item aria-role="listitem" @click="exportToCSV">
+                <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
                     <b-icon icon="file-export"></b-icon>
                     CSV
                 </b-dropdown-item>
@@ -131,6 +131,7 @@ import TitleBar from "../../components/TitleBar.vue";
 import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
+import ExportCsvModal from "./ExportCsvModal.vue";
 
 export default {
     name: "TeamFight",
@@ -287,6 +288,18 @@ export default {
                 }
             })
         },
+        openExportCsvModal() {
+            this.$buefy.modal.open({
+                component: ExportCsvModal,
+                hasModalCard: true,
+                trapFocus: true,
+                events: {
+                    export: ({ includeCategories }) => {
+                        this.exportToCSV(includeCategories);
+                    }
+                }
+            });
+        },
         openSettingsModal() {
             this.$buefy.modal.open({
                 component: TeamRoundSettingsModal,
@@ -336,15 +349,16 @@ export default {
                 }
             })
         },
-        exportToCSV() {
+        exportToCSV(includeCategories = true) {
             this.$apollo.query({
                 query: gql`
-                    query exportToCSV($teamRoundId: ID!){
-                        export(teamRoundId:$teamRoundId)
+                    query exportToCSV($teamRoundId: ID!, $includeCategories: Boolean){
+                        export(teamRoundId: $teamRoundId, includeCategories: $includeCategories)
                     }
                 `,
                 variables: {
-                    teamRoundId: this.teamRoundId
+                    teamRoundId: this.teamRoundId,
+                    includeCategories: includeCategories
                 },
                 fetchPolicy: "network-only"
             }).then(({data}) => {
