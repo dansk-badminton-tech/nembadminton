@@ -67,3 +67,18 @@ gh run watch
 ```
 
 Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
+
