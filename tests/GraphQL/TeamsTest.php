@@ -195,6 +195,19 @@ class TeamsTest extends TestCase
             'name' => 'John Doe',
             'gender' => 'M',
         ]);
+        // Add a second category with the same player to ensure duplicates are removed
+        $category2 = new SquadCategory([
+            'category' => 'HD',
+            'name' => '1. HD',
+        ]);
+        $category2->squad()->associate($squad);
+        $category2->save();
+        SquadMember::query()->create([
+            'member_ref_id' => '9001011234',
+            'squad_category_id' => $category2->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+        ]);
 
         $this->actingAs($user, 'api');
 
@@ -219,7 +232,8 @@ class TeamsTest extends TestCase
         // Content contains UTF-8 BOM, remove it to check
         $contentWithoutBom = preg_replace('/^\xEF\xBB\xBF/', '', $content);
         $this->assertStringNotContainsString('1. HS', $contentWithoutBom);
-        $this->assertStringContainsString('John Doe', $contentWithoutBom);
+        $this->assertStringNotContainsString('1. HD', $contentWithoutBom);
+        $this->assertSame(1, substr_count($contentWithoutBom, '"John Doe"'));
     }
 
     /**
