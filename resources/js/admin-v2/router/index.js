@@ -66,6 +66,14 @@ const routes = [
         component: () => import(/* webpackChunkName: "full-page" */ '@/views/FullWidthView.vue'),
         children: [
             {
+                path: '/prototype/scenarios',
+                name: 'scenario-prototype',
+                component: () => import("../views/team-fight/prototype/ScenarioPrototypePage.vue"),
+                meta: {
+                    title: 'Lineup Scenarios Prototype'
+                }
+            },
+            {
                 path: '/team-fight/:teamUUID/public-view',
                 name: 'team-fight-public-view',
                 component: () => import("../views/team-fight/TeamFightPublic.vue"),

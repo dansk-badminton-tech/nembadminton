@@ -21,23 +21,36 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-dropdown aria-role="list">
-                <template #trigger="{ active }">
-                    <button class="button is-link">
-                        <span>Del</span>
-                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                    </button>
-                </template>
-                <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
-                    <b-icon icon="file-export"></b-icon>
-                    CSV
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
-                    <b-icon icon="share"></b-icon>
-                    Link
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
+            <component v-if="prototypeVariant"
+                       :is="prototypeComponent"
+                       :scenarios="prototypeScenarios"
+                       :active-scenario-id="prototypeActiveScenarioId"
+                       :current-scenario-id="prototypeCurrentScenarioId"
+                       @select-scenario="onPrototypeSelectScenario"
+                       @promote-scenario="onPrototypePromoteScenario"
+                       @create-scenario="onPrototypeCreateScenario"
+                       @rename-scenario="onPrototypeRenameScenario"
+                       @duplicate-scenario="onPrototypeDuplicateScenario"
+                       @delete-scenario="onPrototypeDeleteScenario" />
+            <template v-else>
+                <b-dropdown aria-role="list">
+                    <template #trigger="{ active }">
+                        <button class="button is-link">
+                            <span>Del</span>
+                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                        </button>
+                    </template>
+                    <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
+                        <b-icon icon="file-export"></b-icon>
+                        CSV
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                        <b-icon icon="share"></b-icon>
+                        Link
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
+            </template>
             <hr/>
             <div class="columns">
                 <div class="column is-6">
@@ -96,6 +109,9 @@
                 </div>
             </div>
         </section>
+        <prototype-switcher v-if="prototypeVariant"
+                            :current="prototypeVariant"
+                            :variants="['A', 'B', 'C']" />
     </div>
 </template>
 
@@ -132,6 +148,10 @@ import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 import ExportCsvModal from "./ExportCsvModal.vue";
+import PrototypeSwitcher from "./prototype/PrototypeSwitcher.vue";
+import ScenarioVariantA from "./prototype/ScenarioVariantA.vue";
+import ScenarioVariantB from "./prototype/ScenarioVariantB.vue";
+import ScenarioVariantC from "./prototype/ScenarioVariantC.vue";
 
 export default {
     name: "TeamFight",
@@ -145,7 +165,11 @@ export default {
         RankingVersionSelect,
         TeamTable,
         TeamRoundSettingsModal,
-        ValidateTeams
+        ValidateTeams,
+        PrototypeSwitcher,
+        ScenarioVariantA,
+        ScenarioVariantB,
+        ScenarioVariantC
     },
     props: {
         teamRoundId: String
@@ -195,10 +219,28 @@ export default {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
                 .filter((id) => id !== null && id !== undefined);
+        },
+        prototypeVariant() {
+            const v = (this.$route?.query?.variant || '').toUpperCase()
+            return ['A', 'B', 'C'].includes(v) ? v : null
+        },
+        prototypeComponent() {
+            switch (this.prototypeVariant) {
+                case 'B': return 'ScenarioVariantB'
+                case 'C': return 'ScenarioVariantC'
+                default: return 'ScenarioVariantA'
+            }
         }
     },
     data() {
         return {
+            prototypeScenarios: [
+                { id: 'active-1', name: 'Aktiv opstilling (Officiel)' },
+                { id: 'scenario-a', name: 'Scenarie A: Plan A (Rasmus med)' },
+                { id: 'scenario-b', name: 'Scenarie B: Skader (Mads ude)' }
+            ],
+            prototypeActiveScenarioId: 'active-1',
+            prototypeCurrentScenarioId: 'active-1',
             titleStack: ['Admin', 'Holdrunde'],
             validateBasicSquads: [],
             playingToHighList: [],
@@ -759,6 +801,34 @@ export default {
                     this.saving = false
                 })
         },
+        onPrototypeSelectScenario(id) {
+            this.prototypeCurrentScenarioId = id
+        },
+        onPrototypePromoteScenario(id) {
+            this.prototypeActiveScenarioId = id
+            this.prototypeCurrentScenarioId = id
+        },
+        onPrototypeCreateScenario(name) {
+            const id = 'scenario-' + Date.now()
+            this.prototypeScenarios.push({ id, name })
+            this.prototypeCurrentScenarioId = id
+        },
+        onPrototypeRenameScenario({ id, name }) {
+            const s = this.prototypeScenarios.find(sc => sc.id === id)
+            if (s) s.name = name
+        },
+        onPrototypeDuplicateScenario(id) {
+            const target = this.prototypeScenarios.find(sc => sc.id === id)
+            if (!target) return
+            this.onPrototypeCreateScenario(`${target.name} (Kopi)`)
+        },
+        onPrototypeDeleteScenario(id) {
+            const idx = this.prototypeScenarios.findIndex(sc => sc.id === id)
+            if (idx > -1) {
+                this.prototypeScenarios.splice(idx, 1)
+                this.prototypeCurrentScenarioId = this.prototypeActiveScenarioId
+            }
+        }
     }
 }
 </script>
