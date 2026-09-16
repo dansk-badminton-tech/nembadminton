@@ -47,9 +47,9 @@
                                       type="is-success"
                                       size="is-small"
                                       class="has-text-weight-bold"
-                                      icon-left="lightning-bolt"
+                                      icon-left="checkbox-marked-circle-outline"
                                       @click="confirmPromote">
-                                Overskriv & Aktiver scenarie
+                                Gør til officiel opstilling
                             </b-button>
                             <b-button v-else
                                       size="is-small"
@@ -177,18 +177,18 @@ export default {
         },
         confirmPromote() {
             this.$buefy.dialog.confirm({
-                title: 'Overskriv og aktiver scenarie?',
-                message: `Dette vil overføre alle 3 ændringer fra <strong>"${this.currentScenario.name}"</strong> til den aktive holdrunde.<br><br>
-                          Tidligere aktiv opstilling gemmes som sikkerhedskopi i scenarielisten.`,
-                confirmText: 'Ja, overskriv og aktiver',
+                title: 'Gør til officiel holdopstilling?',
+                message: `Vil du udgive <strong>"${this.currentScenario.name}"</strong> som den officielle opstilling for denne holdrunde?<br><br>
+                          Dette er opstillingen spillere ser, og som kan sendes ud og eksporteres. Dit tidligere scenarie forbliver gemt i listen.`,
+                confirmText: 'Ja, gør officiel',
                 cancelText: 'Annuller',
                 type: 'is-success',
                 hasIcon: true,
-                icon: 'lightning-bolt',
+                icon: 'checkbox-marked-circle-outline',
                 onConfirm: () => {
                     this.$emit('promote-scenario', this.currentScenario.id)
                     this.$buefy.snackbar.open({
-                        message: `"${this.currentScenario.name}" er nu aktiveret som officiel holdrunde!`,
+                        message: `"${this.currentScenario.name}" er nu den officielle holdopstilling!`,
                         type: 'is-success',
                         duration: 3500
                     })
