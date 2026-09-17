@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace FlyCompany\TeamFight\GraphQL\Queries;
 
 use App\Models\Member;
+use App\Models\SquadMember;
 use App\Models\TeamRound;
 use GraphQL\Type\Definition\ResolveInfo;
-use Illuminate\Support\Facades\DB;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ParallelAllocationResolver
@@ -69,8 +69,8 @@ class ParallelAllocationResolver
             return [];
         }
 
-        $rows = DB::table('squad_members as sm')
-            ->join('squad_categories as sc', 'sm.squad_category_id', '=', 'sc.id')
+        $rows = SquadMember::query()
+            ->join('squad_categories as sc', 'squad_members.squad_category_id', '=', 'sc.id')
             ->join('squads as s', 'sc.squad_id', '=', 's.id')
             ->join('team_rounds as tr', 's.team_round_id', '=', 'tr.id')
             ->where('tr.clubhouse_id', '=', $activeRound->clubhouse_id)
@@ -80,7 +80,7 @@ class ParallelAllocationResolver
             ->orderBy('s.order', 'asc')
             ->orderBy('tr.id', 'asc')
             ->select([
-                'sm.member_ref_id',
+                'squad_members.member_ref_id',
                 'tr.id as team_round_id',
                 'tr.name as team_round_name',
                 'tr.round',
