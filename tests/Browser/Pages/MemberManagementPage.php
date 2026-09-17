@@ -85,6 +85,15 @@ class MemberManagementPage extends Page
     }
 
     /**
+     * Toggle inactive status for a member by member ID
+     */
+    public function toggleMemberInactiveStatusById(Browser $browser, int $memberId): self
+    {
+        $browser->click("[dusk='toggle-inactive-{$memberId}']");
+        return $this;
+    }
+
+    /**
      * Assert member is visible in table
      */
     public function assertMemberVisible(Browser $browser, string $memberName): self

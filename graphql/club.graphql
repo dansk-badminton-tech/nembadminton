@@ -55,6 +55,7 @@ extend type Mutation {
     updateMember(input: CreateMemberInput! @spread): Member @update @guard
     createMember(input: CreateMemberInput! @spread): Member @upsert @guard @inject(context: "user.id", name: "owner_id")
     deleteMember(id: ID! @whereKey) : Member @delete @guard @can(ability: "delete", find: "id")
+    setMemberInactiveOverride(id: ID!, mode: InactiveOverrideMode!): Member! @guard @field(resolver: "\\App\\GraphQL\\Mutations\\SetMemberInactiveOverride@resolve")
 }
 
 input CreateMemberInput {
@@ -145,6 +146,12 @@ enum Vintage {
     SEN @enum(value: "SEN")
 }
 
+enum InactiveOverrideMode {
+    AUTO
+    FORCE_ACTIVE
+    FORCE_INACTIVE
+}
+
 type Member {
     id: ID!
     refId: String!
@@ -158,6 +165,7 @@ type Member {
     cancellations(where: _ @whereConditions(columns: ["team_round_id", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
     playable: Boolean!
     inactive: Boolean!
+    overrideInactive: InactiveOverrideMode! @rename(attribute: "override_inactive")
     parallelAllocation(teamRoundId: String): ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
 }
 

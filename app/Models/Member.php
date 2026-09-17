@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
  * @property string  gender
  * @property boolean playable
  * @property boolean inactive
+ * @property string  override_inactive
  * @property Point[] points
  * @property User    owner
  * @package App\Models
@@ -31,7 +32,7 @@ use Illuminate\Support\Facades\Auth;
 class Member extends Model
 {
 
-    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable', 'inactive'];
+    protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable', 'inactive', 'override_inactive'];
 
     protected $casts    = [
         'inactive' => 'boolean',

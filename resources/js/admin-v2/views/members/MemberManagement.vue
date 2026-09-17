@@ -57,6 +57,7 @@ export default {
                             birthday
                             playable
                             inactive
+                            overrideInactive
                         }
                         paginatorInfo {
                             total
@@ -112,26 +113,25 @@ export default {
         },
         toggleInactiveStatus(member) {
             this.isTogglingInactive = true;
-            const newInactiveStatus = !member.inactive;
+            const targetMode = member.inactive ? 'FORCE_ACTIVE' : 'FORCE_INACTIVE';
 
             this.$apollo.mutate({
                 mutation: gql`
-                    mutation updateMember($input: CreateMemberInput!) {
-                        updateMember(input: $input) {
+                    mutation setMemberInactiveOverride($id: ID!, $mode: InactiveOverrideMode!) {
+                        setMemberInactiveOverride(id: $id, mode: $mode) {
                             id
                             inactive
+                            overrideInactive
                         }
                     }
                 `,
                 variables: {
-                    input: {
-                        id: member.id,
-                        inactive: newInactiveStatus
-                    }
+                    id: member.id,
+                    mode: targetMode
                 }
             }).then(() => {
                 this.$buefy.snackbar.open({
-                    message: newInactiveStatus ? 'Spiller markeret som inaktiv' : 'Spiller markeret som aktiv',
+                    message: targetMode === 'FORCE_INACTIVE' ? 'Spiller markeret som inaktiv' : 'Spiller markeret som aktiv',
                     type: 'is-success',
                     duration: 3000
                 });
@@ -216,7 +216,7 @@ export default {
                 <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
                 <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
                 <ul class="ml-4">
-                    <li><strong>Inaktiv:</strong> Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer</li>
+                    <li><strong>Inaktiv:</strong> Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer, men kan tilsidesættes manuelt.</li>
                     <li><strong>Midlertidigt utilgængelig:</strong> Spilleren er skadet eller midlertidigt utilgængelig, men er stadig aktiv medlem. Dette håndteres via afbudssystemet i holdrunder.</li>
                 </ul>
             </b-message>
@@ -295,6 +295,15 @@ export default {
                             <b-tag :type="getStatusTagType(props.row)">
                                 {{ getStatusLabel(props.row) }}
                             </b-tag>
+                            <b-tag
+                                v-if="props.row.overrideInactive && props.row.overrideInactive !== 'AUTO'"
+                                type="is-info"
+                                class="ml-1"
+                                :dusk="`override-badge-${props.row.id}`"
+                                title="Manuelt tilsidesat af klubben"
+                            >
+                                Tilsidesat
+                            </b-tag>
                         </b-table-column>
 
                         <b-table-column label="Handlinger" v-slot="props">
@@ -305,8 +314,18 @@ export default {
                                 :icon-left="props.row.playable ? 'account-clock' : 'account-check'"
                                 @click="togglePlayableStatus(props.row)"
                                 :dusk="`toggle-playable-${props.row.id}`"
+                                class="mr-1"
                             >
                                 {{ props.row.playable ? 'Midlertidigt utilgængelig' : 'Marker som tilgængelig' }}
+                            </b-button>
+                            <b-button
+                                size="is-small"
+                                :type="props.row.inactive ? 'is-success' : 'is-danger'"
+                                :icon-left="props.row.inactive ? 'account-check' : 'account-off'"
+                                @click="toggleInactiveStatus(props.row)"
+                                :dusk="`toggle-inactive-${props.row.id}`"
+                            >
+                                {{ props.row.inactive ? 'Marker som aktiv' : 'Marker som inaktiv' }}
                             </b-button>
                         </b-table-column>
 
