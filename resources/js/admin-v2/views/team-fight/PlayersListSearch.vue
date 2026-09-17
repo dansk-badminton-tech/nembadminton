@@ -48,6 +48,12 @@
             </b-table-column>
             <b-table-column field="name" label="Navn" v-slot="props">
                 <p>{{ props.row.name }}</p>
+                <div v-if="props.row.parallelAllocation" class="mt-1">
+                    <b-tag type="is-warning is-light" size="is-small" :title="'Spilleren er optaget på ' + props.row.parallelAllocation.teamRoundName">
+                        <b-icon icon="alert-circle" size="is-small" class="mr-1"></b-icon>
+                        Optaget på: {{ props.row.parallelAllocation.teamRoundName }}
+                    </b-tag>
+                </div>
             </b-table-column>
             <b-table-column field="name" v-slot="props">
                 <div class="buttons" v-if="showCancellation">
