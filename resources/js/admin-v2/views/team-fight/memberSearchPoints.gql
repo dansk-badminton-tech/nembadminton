@@ -4,7 +4,7 @@ query memberSearchPoints(
     $page: Int
     $first: Int
     $name: String
-    $teamRoundId: ID
+    $teamRoundId: String
     $rankingList: RankingList!
     $playable: Boolean
     $inactive: Boolean

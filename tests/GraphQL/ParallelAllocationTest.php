@@ -114,7 +114,7 @@ class ParallelAllocationTest extends TestCase
         ]);
 
         $query = /** @lang GraphQL */ '
-            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $teamRoundId: String!, $activeRoundId: ID!) {
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $teamRoundId: String!, $activeRoundId: String) {
                 memberSearchPoints(
                     clubhouse: $clubhouse,
                     version: $version,
@@ -232,7 +232,7 @@ class ParallelAllocationTest extends TestCase
         ]);
 
         $query = /** @lang GraphQL */ '
-            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: ID!) {
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: String) {
                 memberSearchPoints(
                     clubhouse: $clubhouse,
                     version: $version,
@@ -333,7 +333,7 @@ class ParallelAllocationTest extends TestCase
         ]);
 
         $query = /** @lang GraphQL */ '
-            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: ID!) {
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: String) {
                 memberSearchPoints(
                     clubhouse: $clubhouse,
                     version: $version,
@@ -418,7 +418,7 @@ class ParallelAllocationTest extends TestCase
         });
 
         $query = /** @lang GraphQL */ '
-            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: ID!) {
+            query($clubhouse: Int!, $version: Date!, $rankingList: RankingList!, $activeRoundId: String) {
                 memberSearchPoints(
                     clubhouse: $clubhouse,
                     version: $version,

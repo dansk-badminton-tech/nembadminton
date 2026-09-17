@@ -158,7 +158,7 @@ type Member {
     cancellations(where: _ @whereConditions(columns: ["team_round_id", "date", "user_id"])): [Cancellation!]! @hasMany @canResolved(ability: "view")
     playable: Boolean!
     inactive: Boolean!
-    parallelAllocation(teamRoundId: ID): ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
+    parallelAllocation(teamRoundId: String): ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
 }
 
 type Point {
