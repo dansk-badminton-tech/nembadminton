@@ -326,7 +326,7 @@ export default {
             if (allocation.categoryName) {
                 details.push(allocation.categoryName);
             }
-            return `Spilleren er også opstillet på ${details.join(' - ')}`;
+            return `Spilleren er også opstillet i anden holdrunde. ${details.join(' - ')}`;
         },
         closeEditPlayerModal(){
             this.modalPlayer = {}
