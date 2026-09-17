@@ -180,4 +180,84 @@ class SetMemberInactiveOverrideTest extends TestCase
             ],
         ]);
     }
+
+    /** @test */
+    public function it_filters_by_effective_inactive_in_member_search_points(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $club = \App\Models\Club::create([
+            'name1'             => 'Test Club',
+            'badmintonPlayerId' => 1234,
+            'initialized'       => true,
+        ]);
+        $clubhouse->clubs()->attach($club);
+
+        $member = Member::create([
+            'refId'             => '12345',
+            'name'              => 'Force Inactive Player',
+            'gender'            => 'K',
+            'inactive'          => true,
+            'override_inactive' => 'FORCE_INACTIVE',
+        ]);
+        $club->members()->attach($member);
+
+        \App\Models\Point::create([
+            'member_id' => $member->id,
+            'points'    => 100,
+            'category'  => 'DS',
+            'vintage'   => 'SEN',
+            'version'   => '2026-09-01',
+        ]);
+
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id, 'primary_role_id' => null]);
+        $this->actingAs($user, 'api');
+
+        // When inactive: false, forced inactive member should not appear
+        $responseActiveOnly = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: Int!) {
+                memberSearchPoints(clubhouse: $clubhouseId, version: "2026-09-01", rankingList: WOMEN_SINGLE, inactive: false) {
+                    data {
+                        id
+                    }
+                }
+            }
+        ', ['clubhouseId' => $clubhouse->id]);
+
+        $responseActiveOnly->assertJson([
+            'data' => [
+                'memberSearchPoints' => [
+                    'data' => [],
+                ],
+            ],
+        ]);
+
+        // When inactive: true, forced inactive member appears
+        $responseInactive = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: Int!) {
+                memberSearchPoints(clubhouse: $clubhouseId, version: "2026-09-01", rankingList: WOMEN_SINGLE, inactive: true) {
+                    data {
+                        id
+                        name
+                        inactive
+                        overrideInactive
+                    }
+                }
+            }
+        ', ['clubhouseId' => $clubhouse->id]);
+
+        $responseInactive->assertJson([
+            'data' => [
+                'memberSearchPoints' => [
+                    'data' => [
+                        [
+                            'id'               => (string) $member->id,
+                            'name'             => 'Force Inactive Player',
+                            'inactive'         => true,
+                            'overrideInactive' => 'FORCE_INACTIVE',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
 }
