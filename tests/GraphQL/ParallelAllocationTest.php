@@ -20,6 +20,8 @@ class ParallelAllocationTest extends TestCase
     use RefreshDatabase;
     use MakesGraphQLRequests;
 
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
     /**
      * @test
      */
