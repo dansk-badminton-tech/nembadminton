@@ -33,6 +33,13 @@ query teamRound($id: ID!){
                     name
                     refId
                     vintage
+                    parallelAllocation{
+                        teamRoundId
+                        teamRoundName
+                        squadName
+                        squadOrder
+                        categoryName
+                    }
                     points{
                         id
                         category

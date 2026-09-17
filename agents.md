@@ -73,6 +73,7 @@ Failed tests are automatically retried once via `dusk:fails` before the workflow
 ### Issue tracker
 
 GitHub issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+**All feature specs and research reports must live as GitHub issues** (not as local markdown files under `docs/`). Permanent architectural decision records (ADRs) are the only documentation files kept in the repository under `docs/adr/`.
 
 ### Triage labels
 

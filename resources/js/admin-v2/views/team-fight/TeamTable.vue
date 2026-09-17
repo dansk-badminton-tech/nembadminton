@@ -126,6 +126,20 @@
                                     <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
                                 </div>
                             </b-tooltip>
+                            <b-tooltip
+                                v-if="player.parallelAllocation"
+                                type="is-warning"
+                                :label="parallelAllocationTooltip(player.parallelAllocation)"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag
+                                    type="is-warning is-light"
+                                    size="is-small"
+                                    dusk="parallel-allocation-tag">
+                                    <b-icon icon="alert-circle" size="is-small" class="mr-1"></b-icon>
+                                    Optaget på: {{ player.parallelAllocation.teamRoundName }}
+                                </b-tag>
+                            </b-tooltip>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
                                     v-show="hasCorrectedPoints(player.points)"
@@ -300,6 +314,19 @@ export default {
         },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
+        },
+        parallelAllocationTooltip(allocation) {
+            if (!allocation) {
+                return '';
+            }
+            const details = [allocation.teamRoundName];
+            if (allocation.squadName) {
+                details.push(allocation.squadName);
+            }
+            if (allocation.categoryName) {
+                details.push(allocation.categoryName);
+            }
+            return `Spilleren er også opstillet i anden holdrunde. ${details.join(' - ')}`;
         },
         closeEditPlayerModal(){
             this.modalPlayer = {}
