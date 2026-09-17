@@ -449,4 +449,268 @@ class ParallelAllocationTest extends TestCase
         // Total queries for the whole GraphQL request should be well bounded and not scale with 10.
         $this->assertLessThan(15, $queryCount);
     }
+
+    /**
+     * @test
+     */
+    public function it_resolves_parallel_allocation_on_squad_member_in_team_round_query(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+        ]);
+        $this->actingAs($user);
+
+        $season = Season::query()->firstOrCreate([
+            'id' => 2026,
+        ], [
+            'season_name' => '2025/2026',
+        ]);
+
+        // Active TeamRound (Round 1)
+        $activeTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'season_id' => $season->id,
+            'round' => 1,
+            'name' => 'Senior 1 - Runde 1',
+        ]);
+        $activeSquad = Squad::query()->create([
+            'team_round_id' => $activeTeamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+            'name' => '1. Hold',
+        ]);
+        $activeCategory = $activeSquad->categories()->create([
+            'name' => '1. HS',
+            'category' => 'HS',
+        ]);
+
+        // Parallel TeamRound (also Round 1 in same season & clubhouse)
+        $parallelTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'season_id' => $season->id,
+            'round' => 1,
+            'name' => 'Senior 2 - Runde 1',
+        ]);
+        $parallelSquad = Squad::query()->create([
+            'team_round_id' => $parallelTeamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+            'name' => '2. Hold',
+        ]);
+        $parallelCategory = $parallelSquad->categories()->create([
+            'name' => '2. HS',
+            'category' => 'HS',
+        ]);
+
+        // Member A: assigned in parallel round
+        $memberA = Member::query()->create([
+            'name' => 'Spiller A',
+            'refId' => 'ref-parallel-A',
+            'gender' => 'M',
+        ]);
+        $parallelCategory->players()->create([
+            'member_ref_id' => $memberA->refId,
+            'name' => $memberA->name,
+            'gender' => 'MEN',
+        ]);
+
+        // Member B: not assigned in parallel round
+        $memberB = Member::query()->create([
+            'name' => 'Spiller B',
+            'refId' => 'ref-parallel-B',
+            'gender' => 'M',
+        ]);
+
+        // Assign both into the active round
+        $activeCategory->players()->create([
+            'member_ref_id' => $memberA->refId,
+            'name' => $memberA->name,
+            'gender' => 'MEN',
+        ]);
+        $activeCategory->players()->create([
+            'member_ref_id' => $memberB->refId,
+            'name' => $memberB->name,
+            'gender' => 'MEN',
+        ]);
+
+        \FlyCompany\TeamFight\GraphQL\Queries\ParallelAllocationResolver::clearCache();
+
+        $query = /** @lang GraphQL */ '
+            query($id: ID!) {
+                teamRound(id: $id) {
+                    id
+                    squads {
+                        id
+                        categories {
+                            id
+                            players {
+                                id
+                                refId
+                                parallelAllocation {
+                                    teamRoundId
+                                    teamRoundName
+                                    squadName
+                                    squadOrder
+                                    categoryName
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ';
+
+        $response = $this->graphQL($query, [
+            'id' => $activeTeamRound->id,
+        ]);
+
+        if (isset($response->json()['errors'])) {
+            $this->fail(json_encode($response->json()['errors']));
+        }
+
+        $players = $response->json('data.teamRound.squads.0.categories.0.players');
+        $this->assertCount(2, $players);
+
+        $playerA = collect($players)->firstWhere('refId', $memberA->refId);
+        $playerB = collect($players)->firstWhere('refId', $memberB->refId);
+
+        $this->assertNotNull($playerA);
+        $this->assertNotNull($playerA['parallelAllocation']);
+        $this->assertEquals((string)$parallelTeamRound->id, $playerA['parallelAllocation']['teamRoundId']);
+        $this->assertEquals('Senior 2 - Runde 1', $playerA['parallelAllocation']['teamRoundName']);
+        $this->assertEquals('2. Hold', $playerA['parallelAllocation']['squadName']);
+        $this->assertEquals(1, $playerA['parallelAllocation']['squadOrder']);
+        $this->assertEquals('2. HS', $playerA['parallelAllocation']['categoryName']);
+
+        $this->assertNotNull($playerB);
+        $this->assertNull($playerB['parallelAllocation']);
+    }
+
+    /**
+     * @test
+     */
+    public function it_executes_batch_lookup_without_n_plus_one_queries_on_team_round(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+        ]);
+        $this->actingAs($user);
+
+        $season = Season::query()->firstOrCreate([
+            'id' => 2026,
+        ], [
+            'season_name' => '2025/2026',
+        ]);
+
+        $activeTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'season_id' => $season->id,
+            'round' => 1,
+            'name' => 'Senior 1 - Runde 1',
+        ]);
+        $activeSquad = Squad::query()->create([
+            'team_round_id' => $activeTeamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+            'name' => '1. Hold',
+        ]);
+        $activeCategory = $activeSquad->categories()->create([
+            'name' => 'HS',
+            'category' => 'HS',
+        ]);
+
+        $parallelTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'season_id' => $season->id,
+            'round' => 1,
+            'name' => 'Senior 2 - Runde 1',
+        ]);
+        $parallelSquad = Squad::query()->create([
+            'team_round_id' => $parallelTeamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+            'name' => '2. Hold',
+        ]);
+        $parallelCategory = $parallelSquad->categories()->create([
+            'name' => 'HS',
+            'category' => 'HS',
+        ]);
+
+        // Create 10 players assigned to both active and parallel rounds
+        for ($i = 1; $i <= 10; $i++) {
+            $m = Member::query()->create([
+                'name' => "Player $i",
+                'refId' => "ref-$i",
+                'gender' => 'M',
+            ]);
+            $parallelCategory->players()->create([
+                'member_ref_id' => $m->refId,
+                'name' => $m->name,
+                'gender' => 'MEN',
+            ]);
+            $activeCategory->players()->create([
+                'member_ref_id' => $m->refId,
+                'name' => $m->name,
+                'gender' => 'MEN',
+            ]);
+        }
+
+        \FlyCompany\TeamFight\GraphQL\Queries\ParallelAllocationResolver::clearCache();
+
+        $queryCount = 0;
+        \Illuminate\Support\Facades\DB::listen(function ($query) use (&$queryCount) {
+            $queryCount++;
+        });
+
+        $query = /** @lang GraphQL */ '
+            query($id: ID!) {
+                teamRound(id: $id) {
+                    id
+                    squads {
+                        id
+                        categories {
+                            id
+                            players {
+                                id
+                                refId
+                                parallelAllocation {
+                                    teamRoundId
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ';
+
+        $response = $this->graphQL($query, [
+            'id' => $activeTeamRound->id,
+        ]);
+
+        if (isset($response->json()['errors'])) {
+            $this->fail(json_encode($response->json()['errors']));
+        }
+
+        $players = $response->json('data.teamRound.squads.0.categories.0.players');
+        $this->assertCount(10, $players);
+
+        // Fetching teamRound with 10 squad players resolving parallelAllocation
+        // must use memoization and not issue 10 separate queries.
+        // Queries should be:
+        // 1: teamRound
+        // 2: squads
+        // 3: squad_categories
+        // 4: squad_members
+        // 5: squad_categories + squads join (cached categoryToRound)
+        // 6: active round lookup
+        // 7: parallel squad members lookup
+        // Total = 7 queries << 15.
+        $this->assertLessThan(15, $queryCount);
+    }
 }

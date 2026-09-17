@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FlyCompany\TeamFight\GraphQL\Queries;
 
 use App\Models\Member;
+use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\TeamRound;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -20,9 +21,16 @@ class ParallelAllocationResolver
     private static array $requestCache = [];
 
     /**
+     * Cache mapping squad_category_id to team_round_id within the same request.
+     *
+     * @var array<int|string, string>
+     */
+    private static array $categoryToRoundCache = [];
+
+    /**
      * Resolve the parallel team round allocation for a given member in the context of an active team round.
      *
-     * @param Member $root The Member model instance.
+     * @param Member|SquadMember|array<string, mixed> $root
      * @param array<string, mixed> $args
      * @param GraphQLContext $context
      * @param ResolveInfo $resolveInfo
@@ -31,6 +39,27 @@ class ParallelAllocationResolver
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ?array
     {
         $teamRoundId = (string) ($args['teamRoundId'] ?? '');
+        if ($teamRoundId === '') {
+            if ($root instanceof SquadMember) {
+                // Check if relations are already loaded in memory first
+                if ($root->relationLoaded('category') && $root->category?->relationLoaded('squad') && $root->category->squad?->team_round_id !== null) {
+                    $teamRoundId = (string) $root->category->squad->team_round_id;
+                } else {
+                    $categoryId = $root->squad_category_id;
+                    if ($categoryId !== null) {
+                        if (!isset(self::$categoryToRoundCache[$categoryId])) {
+                            // Query squad directly via category id
+                            $roundId = SquadCategory::query()
+                                ->join('squads as s', 'squad_categories.squad_id', '=', 's.id')
+                                ->where('squad_categories.id', $categoryId)
+                                ->value('s.team_round_id');
+                            self::$categoryToRoundCache[$categoryId] = (string) ($roundId ?? '');
+                        }
+                        $teamRoundId = self::$categoryToRoundCache[$categoryId];
+                    }
+                }
+            }
+        }
         if ($teamRoundId === '') {
             return null;
         }
@@ -117,5 +146,6 @@ class ParallelAllocationResolver
     public static function clearCache(): void
     {
         self::$requestCache = [];
+        self::$categoryToRoundCache = [];
     }
 }

@@ -243,6 +243,7 @@ type SquadMember {
     vintage: Vintage! @method(name: "getVintage")
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
+    parallelAllocation: ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
 }
 
 type SquadPoint {
