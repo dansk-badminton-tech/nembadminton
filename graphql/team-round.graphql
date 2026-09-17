@@ -262,6 +262,14 @@ type SquadCategory {
     players: [SquadMember!]!
 }
 
+type ParallelTeamRoundAllocation {
+    teamRoundId: ID!
+    teamRoundName: String!
+    squadName: String
+    squadOrder: Int
+    categoryName: String
+}
+
 type Squad {
     "ID"
     id: ID!

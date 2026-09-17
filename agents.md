@@ -73,6 +73,7 @@ Failed tests are automatically retried once via `dusk:fails` before the workflow
 ### Issue tracker
 
 GitHub issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+**All feature specs must live as GitHub issues** (not purely as local markdown files under `docs/`).
 
 ### Triage labels
 
