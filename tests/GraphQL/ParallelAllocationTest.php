@@ -11,12 +11,13 @@ use App\Models\Squad;
 use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
 class ParallelAllocationTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
     use MakesGraphQLRequests;
 
     /**
