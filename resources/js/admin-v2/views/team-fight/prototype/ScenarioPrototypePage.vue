@@ -144,7 +144,7 @@
 
         <!-- Floating Prototype Switcher Pill -->
         <prototype-switcher :current="currentVariant"
-                            :variants="['A', 'B', 'C']"
+                            :variants="['A', 'C']"
                             :variant-names="variantLabels"
                             @change="onVariantChange" />
     </div>
@@ -154,7 +154,6 @@
 import HeroBar from '@/components/HeroBar.vue'
 import PrototypeSwitcher from './PrototypeSwitcher.vue'
 import ScenarioVariantA from './ScenarioVariantA.vue'
-import ScenarioVariantB from './ScenarioVariantB.vue'
 import ScenarioVariantC from './ScenarioVariantC.vue'
 
 const INITIAL_PLAYERS = [
@@ -174,7 +173,6 @@ export default {
         HeroBar,
         PrototypeSwitcher,
         ScenarioVariantA,
-        ScenarioVariantB,
         ScenarioVariantC
     },
     data() {
@@ -185,7 +183,6 @@ export default {
             currentScenarioId: 'active-1',
             variantLabels: {
                 A: 'Variant A: Faneblade & Aktiv-markør (Named Tabs)',
-                B: 'Variant B: Sandkasse-tilstand (Staging Drawer)',
                 C: 'Variant C: Dropdown & Diff-oversigt (Diff Inspector)'
             },
             scenarios: [
@@ -273,11 +270,10 @@ export default {
     computed: {
         currentVariant() {
             const v = (this.$route.query.variant || 'A').toUpperCase()
-            return ['A', 'B', 'C'].includes(v) ? v : 'A'
+            return ['A', 'C'].includes(v) ? v : 'A'
         },
         activeVariantComponent() {
             switch (this.currentVariant) {
-                case 'B': return 'ScenarioVariantB'
                 case 'C': return 'ScenarioVariantC'
                 default: return 'ScenarioVariantA'
             }

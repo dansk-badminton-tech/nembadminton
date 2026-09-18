@@ -19,7 +19,7 @@ export default {
     props: {
         variants: {
             type: Array,
-            default: () => ['A', 'B', 'C']
+            default: () => ['A', 'C']
         },
         current: {
             type: String,
@@ -29,7 +29,6 @@ export default {
             type: Object,
             default: () => ({
                 A: 'Variant A: Faneblade & Aktiv-markør (Named Tabs)',
-                B: 'Variant B: Sandkasse-tilstand (Staging Drawer)',
                 C: 'Variant C: Dropdown & Diff-oversigt (Diff Inspector)'
             })
         }

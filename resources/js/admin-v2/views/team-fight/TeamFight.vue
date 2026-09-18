@@ -111,7 +111,7 @@
         </section>
         <prototype-switcher v-if="prototypeVariant"
                             :current="prototypeVariant"
-                            :variants="['A', 'B', 'C']" />
+                            :variants="['A', 'C']" />
     </div>
 </template>
 
@@ -150,7 +150,6 @@ import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 import ExportCsvModal from "./ExportCsvModal.vue";
 import PrototypeSwitcher from "./prototype/PrototypeSwitcher.vue";
 import ScenarioVariantA from "./prototype/ScenarioVariantA.vue";
-import ScenarioVariantB from "./prototype/ScenarioVariantB.vue";
 import ScenarioVariantC from "./prototype/ScenarioVariantC.vue";
 
 export default {
@@ -168,7 +167,6 @@ export default {
         ValidateTeams,
         PrototypeSwitcher,
         ScenarioVariantA,
-        ScenarioVariantB,
         ScenarioVariantC
     },
     props: {
@@ -222,11 +220,10 @@ export default {
         },
         prototypeVariant() {
             const v = (this.$route?.query?.variant || '').toUpperCase()
-            return ['A', 'B', 'C'].includes(v) ? v : null
+            return ['A', 'C'].includes(v) ? v : null
         },
         prototypeComponent() {
             switch (this.prototypeVariant) {
-                case 'B': return 'ScenarioVariantB'
                 case 'C': return 'ScenarioVariantC'
                 default: return 'ScenarioVariantA'
             }
