@@ -207,6 +207,46 @@ class SetMemberInactiveOverrideTest extends TestCase
                 ],
             ],
         ]);
+
+        // When filtering by inactive: false, the forced inactive member should not appear
+        $responseActive = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: Int!) {
+                membersSearch(clubhouse: $clubhouseId, inactive: false, first: 10) {
+                    data {
+                        id
+                    }
+                }
+            }
+        ', ['clubhouseId' => $clubhouse->id]);
+
+        $responseActive->assertJson([
+            'data' => [
+                'membersSearch' => [
+                    'data' => [],
+                ],
+            ],
+        ]);
+
+        // When filtering by inactive: true, the forced inactive member appears
+        $responseInactive = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouseId: Int!) {
+                membersSearch(clubhouse: $clubhouseId, inactive: true, first: 10) {
+                    data {
+                        id
+                    }
+                }
+            }
+        ', ['clubhouseId' => $clubhouse->id]);
+
+        $responseInactive->assertJson([
+            'data' => [
+                'membersSearch' => [
+                    'data' => [
+                        ['id' => (string) $member->id],
+                    ],
+                ],
+            ],
+        ]);
     }
 
     /** @test */

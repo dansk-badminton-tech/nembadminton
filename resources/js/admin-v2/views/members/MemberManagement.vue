@@ -290,7 +290,7 @@ export default {
 
                     <b-table
                         :data="membersList"
-                        :loading="$apollo.queries.members.loading || isTogglingInactive || isTogglingPlayable"
+                        :loading="$apollo.queries.members.loading || isTogglingInactive || isTogglingPlayable || isResettingOverride"
                         :paginated="true"
                         :backend-pagination="true"
                         :total="paginatorInfo.total"
@@ -367,6 +367,7 @@ export default {
                                 size="is-small"
                                 type="is-light"
                                 icon-left="refresh"
+                                :loading="isResettingOverride"
                                 @click="resetInactiveOverride(props.row)"
                                 :dusk="`reset-override-${props.row.id}`"
                                 class="ml-1"
