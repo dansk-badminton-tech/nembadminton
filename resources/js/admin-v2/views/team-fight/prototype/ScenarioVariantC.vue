@@ -1,12 +1,14 @@
 <template>
     <div class="scenario-variant-c">
         <!-- Compact Scenario Control Bar -->
-        <div class="card mb-4">
+        <div class="card mb-3">
             <div class="card-content p-3">
                 <div class="level is-mobile mb-0">
                     <div class="level-left">
-                        <div class="is-flex is-align-items-center" style="gap: 10px;">
-                            <span class="is-size-7 has-text-weight-bold has-text-grey">OPSTILLING:</span>
+                        <div class="is-flex is-align-items-center" style="gap: 12px; flex-wrap: wrap;">
+                            <span class="is-size-7 has-text-weight-bold has-text-grey">SCENARIE:</span>
+
+                            <!-- Scenario Selector Dropdown -->
                             <b-dropdown v-model="selectedId" aria-role="list" @change="onSelectChange">
                                 <template #trigger="{ active }">
                                     <button class="button is-small" :class="isCurrentActive ? 'is-success is-light' : 'is-warning is-light'">
@@ -19,9 +21,9 @@
                                                  :key="scenario.id"
                                                  :value="scenario.id"
                                                  aria-role="listitem">
-                                    <div class="is-flex is-justify-content-space-between is-align-items-center" style="min-width: 240px;">
+                                    <div class="is-flex is-justify-content-space-between is-align-items-center" style="min-width: 250px;">
                                         <span>{{ scenario.name }}</span>
-                                        <b-tag v-if="scenario.id === activeScenarioId" type="is-success" size="is-small">Aktiv</b-tag>
+                                        <b-tag v-if="scenario.id === activeScenarioId" type="is-success" size="is-small">Officiel</b-tag>
                                         <b-tag v-else type="is-warning is-light" size="is-small">Udkast</b-tag>
                                     </div>
                                 </b-dropdown-item>
@@ -32,74 +34,71 @@
                                 </b-dropdown-item>
                             </b-dropdown>
 
-                            <b-switch v-if="!isCurrentActive"
-                                      v-model="showDiff"
-                                      size="is-small"
-                                      type="is-info">
-                                <span class="is-size-7">Vis roster diff</span>
-                            </b-switch>
+                            <!-- Status context label -->
+                            <span v-if="isCurrentActive" class="is-size-7 has-text-success has-text-weight-semibold">
+                                <b-icon icon="earth" size="is-small" class="mr-1" style="vertical-align: middle;"></b-icon>
+                                Dette er den officielle opstilling, som spillere ser
+                            </span>
+                            <span v-else class="is-size-7 has-text-grey">
+                                <b-icon icon="eye-off" size="is-small" class="mr-1" style="vertical-align: middle;"></b-icon>
+                                Internt udkast — spillere ser fortsat <em>"{{ activeScenario.name }}"</em>
+                            </span>
                         </div>
                     </div>
 
                     <div class="level-right">
                         <div class="buttons mb-0">
-                            <b-button v-if="!isCurrentActive"
-                                      type="is-success"
-                                      size="is-small"
-                                      class="has-text-weight-bold"
-                                      icon-left="checkbox-marked-circle-outline"
-                                      @click="confirmPromote">
-                                Gør til officiel opstilling
-                            </b-button>
-                            <b-button v-else
-                                      size="is-small"
-                                      type="is-ghost"
-                                      icon-left="plus"
-                                      @click="promptNewScenario">
-                                Gem kopi som nyt scenarie
-                            </b-button>
+                            <!-- Draft Actions -->
+                            <template v-if="!isCurrentActive">
+                                <b-button type="is-success"
+                                          size="is-small"
+                                          class="has-text-weight-bold"
+                                          icon-left="checkbox-marked-circle-outline"
+                                          @click="confirmPromote">
+                                    Gør til officiel opstilling
+                                </b-button>
+
+                                <b-dropdown position="is-bottom-left" aria-role="list">
+                                    <template #trigger>
+                                        <button class="button is-small is-light" title="Flere handlinger">
+                                            <b-icon icon="dots-vertical" size="is-small"></b-icon>
+                                        </button>
+                                    </template>
+                                    <b-dropdown-item aria-role="listitem" @click="promptRenameScenario">
+                                        <b-icon icon="pencil" size="is-small" class="mr-1"></b-icon> Omdøb scenarie
+                                    </b-dropdown-item>
+                                    <b-dropdown-item aria-role="listitem" @click="duplicateScenario">
+                                        <b-icon icon="content-copy" size="is-small" class="mr-1"></b-icon> Dupliker scenarie
+                                    </b-dropdown-item>
+                                    <hr class="dropdown-divider">
+                                    <b-dropdown-item aria-role="listitem" @click="deleteScenario" class="has-text-danger">
+                                        <b-icon icon="delete" size="is-small" class="mr-1"></b-icon> Slet udkast
+                                    </b-dropdown-item>
+                                </b-dropdown>
+                            </template>
+
+                            <!-- Official Actions -->
+                            <template v-else>
+                                <b-button size="is-small"
+                                          type="is-info is-light"
+                                          icon-left="plus"
+                                          @click="promptNewScenario">
+                                    Nyt scenarie
+                                </b-button>
+                                <b-button size="is-small"
+                                          type="is-ghost"
+                                          icon-left="pencil"
+                                          @click="promptRenameScenario"
+                                          title="Omdøb officiel opstilling">
+                                </b-button>
+                            </template>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Live Roster Diff Inspector (when viewing a draft) -->
-        <div v-if="!isCurrentActive && showDiff" class="diff-inspector-panel card mb-4">
-            <header class="card-header has-background-light p-2">
-                <p class="card-header-title is-size-7 p-0 m-0 has-text-grey-dark">
-                    <b-icon icon="compare-horizontal" size="is-small" class="mr-2"></b-icon>
-                    Forskelle mellem <strong>"{{ currentScenario.name }}"</strong> og Aktiv opstilling (3 ændringer fundet):
-                </p>
-                <button class="card-header-icon p-0 pr-2" @click="showDiff = false" title="Luk diff panel">
-                    <b-icon icon="close" size="is-small"></b-icon>
-                </button>
-            </header>
-            <div class="card-content p-3 is-size-7">
-                <div class="columns is-multiline mb-0">
-                    <div class="column is-4 py-1">
-                        <div class="diff-item diff-added p-2">
-                            <span class="tag is-success is-light is-small mr-2">+ RYK OP</span>
-                            <strong>Hold 1 HS1:</strong> Anders Jensen (flyttet op fra Hold 2)
-                        </div>
-                    </div>
-                    <div class="column is-4 py-1">
-                        <div class="diff-item diff-removed p-2">
-                            <span class="tag is-danger is-light is-small mr-2">- UDE</span>
-                            <strong>Hold 1 HD2:</strong> Mads Petersen (fjernet / meldt skadet)
-                        </div>
-                    </div>
-                    <div class="column is-4 py-1">
-                        <div class="diff-item diff-warning p-2">
-                            <span class="tag is-warning is-light is-small mr-2">⚠️ MANGLER</span>
-                            <strong>Hold 2 HS2:</strong> 1 ledig plads (skal besættes)
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Action bar -->
+        <!-- Action bar (Share / Notifications) -->
         <div class="level mb-4">
             <div class="level-left">
                 <div class="buttons">
@@ -115,7 +114,7 @@
                     </b-dropdown>
 
                     <b-tooltip v-if="!isCurrentActive"
-                               label="Kun den aktive opstilling kan sendes til spillere. Gør scenariet aktivt først."
+                               label="Kun den officielle opstilling kan sendes til spillere. Gør scenariet officielt først."
                                position="is-top">
                         <b-button icon-left="email-fast" disabled>
                             Send hold til spillere (Låst i udkast)
@@ -128,7 +127,7 @@
             </div>
             <div class="level-right">
                 <span class="tag is-light is-size-7">
-                    Model: <strong>Kompakt Dropdown & Diff-oversigt</strong>
+                    Model: <strong>Kompakt Dropdown-vælger</strong>
                 </span>
             </div>
         </div>
@@ -154,8 +153,7 @@ export default {
     },
     data() {
         return {
-            selectedId: this.currentScenarioId,
-            showDiff: true
+            selectedId: this.currentScenarioId
         }
     },
     watch: {
@@ -166,6 +164,9 @@ export default {
     computed: {
         currentScenario() {
             return this.scenarios.find(s => s.id === this.selectedId) || this.scenarios[0]
+        },
+        activeScenario() {
+            return this.scenarios.find(s => s.id === this.activeScenarioId) || this.scenarios[0]
         },
         isCurrentActive() {
             return this.selectedId === this.activeScenarioId
@@ -199,7 +200,7 @@ export default {
             this.$buefy.dialog.prompt({
                 message: 'Angiv navn på nyt scenarie:',
                 inputAttrs: {
-                    placeholder: 'f.eks. Scenarie: Plan B',
+                    placeholder: 'f.eks. Plan B (uden Mads)',
                     maxlength: 50
                 },
                 trapFocus: true,
@@ -209,32 +210,46 @@ export default {
                     }
                 }
             })
+        },
+        promptRenameScenario() {
+            this.$buefy.dialog.prompt({
+                message: 'Omdøb scenarie:',
+                inputAttrs: {
+                    value: this.currentScenario.name,
+                    maxlength: 50
+                },
+                trapFocus: true,
+                onConfirm: (value) => {
+                    if (value && value.trim()) {
+                        this.$emit('rename-scenario', { id: this.currentScenario.id, name: value.trim() })
+                    }
+                }
+            })
+        },
+        duplicateScenario() {
+            this.$emit('duplicate-scenario', this.currentScenario.id)
+        },
+        deleteScenario() {
+            this.$buefy.dialog.confirm({
+                title: 'Slet scenarie?',
+                message: `Er du sikker på, at du vil slette udkastet <strong>"${this.currentScenario.name}"</strong>?`,
+                confirmText: 'Slet udkast',
+                cancelText: 'Annuller',
+                type: 'is-danger',
+                hasIcon: true,
+                icon: 'delete',
+                onConfirm: () => {
+                    this.$emit('delete-scenario', this.currentScenario.id)
+                }
+            })
         }
     }
 }
 </script>
 
 <style scoped>
-.diff-inspector-panel {
+.scenario-variant-c .card {
     border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.diff-item {
-    border-radius: 4px;
-    background-color: #f8fafc;
-    border: 1px solid #edf2f7;
-}
-
-.diff-added {
-    border-left: 3px solid #48c78e;
-}
-
-.diff-removed {
-    border-left: 3px solid #f14668;
-}
-
-.diff-warning {
-    border-left: 3px solid #ffe08a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 </style>

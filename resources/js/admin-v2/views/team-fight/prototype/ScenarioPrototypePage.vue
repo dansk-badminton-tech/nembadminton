@@ -182,8 +182,8 @@ export default {
             activeScenarioId: 'active-1',
             currentScenarioId: 'active-1',
             variantLabels: {
-                A: 'Variant A: Faneblade & Aktiv-markør (Named Tabs)',
-                C: 'Variant C: Dropdown & Diff-oversigt (Diff Inspector)'
+                A: 'Variant A: Faneblade (Named Tabs)',
+                C: 'Variant C: Dropdown-vælger (Compact Selector)'
             },
             scenarios: [
                 {
