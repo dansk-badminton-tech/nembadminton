@@ -77,4 +77,27 @@ class MemberManagerSyncProtectionTest extends TestCase
         $this->assertTrue($member->inactive);
         $this->assertEquals('FORCE_INACTIVE', $member->override_inactive);
     }
+
+    /** @test */
+    public function it_updates_inactive_after_member_override_is_reset_to_auto(): void
+    {
+        $member = Member::create([
+            'refId'             => '12345',
+            'name'              => 'Test Player',
+            'gender'            => 'M',
+            'inactive'          => true,
+            'override_inactive' => 'FORCE_INACTIVE',
+        ]);
+
+        // Player override is reset to AUTO
+        $member->override_inactive = 'AUTO';
+        $member->save();
+
+        // Next sync arrives stating player is active (active = true)
+        $this->memberManager->addOrUpdateMember('12345', 'Test Player', 'M', active: true);
+
+        $member->refresh();
+        $this->assertFalse($member->inactive);
+        $this->assertEquals('AUTO', $member->override_inactive);
+    }
 }

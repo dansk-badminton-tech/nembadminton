@@ -17,6 +17,7 @@ export default {
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
+            isResettingOverride: false,
             isTogglingPlayable: false,
             members: null
         }
@@ -144,6 +145,40 @@ export default {
                 });
             }).finally(() => {
                 this.isTogglingInactive = false;
+            });
+        },
+        resetInactiveOverride(member) {
+            this.isResettingOverride = true;
+
+            this.$apollo.mutate({
+                mutation: gql`
+                    mutation setMemberInactiveOverride($id: ID!, $mode: InactiveOverrideMode!) {
+                        setMemberInactiveOverride(id: $id, mode: $mode) {
+                            id
+                            inactive
+                            overrideInactive
+                        }
+                    }
+                `,
+                variables: {
+                    id: member.id,
+                    mode: 'AUTO'
+                }
+            }).then(() => {
+                this.$buefy.snackbar.open({
+                    message: 'Status nulstillet til automatisk',
+                    type: 'is-success',
+                    duration: 3000
+                });
+                this.$apollo.queries.members.refetch();
+            }).catch(() => {
+                this.$buefy.snackbar.open({
+                    message: 'Kunne ikke nulstille spiller status',
+                    type: 'is-danger',
+                    duration: 5000
+                });
+            }).finally(() => {
+                this.isResettingOverride = false;
             });
         },
         togglePlayableStatus(member) {
@@ -326,6 +361,17 @@ export default {
                                 :dusk="`toggle-inactive-${props.row.id}`"
                             >
                                 {{ props.row.inactive ? 'Marker som aktiv' : 'Marker som inaktiv' }}
+                            </b-button>
+                            <b-button
+                                v-if="props.row.overrideInactive && props.row.overrideInactive !== 'AUTO'"
+                                size="is-small"
+                                type="is-light"
+                                icon-left="refresh"
+                                @click="resetInactiveOverride(props.row)"
+                                :dusk="`reset-override-${props.row.id}`"
+                                class="ml-1"
+                            >
+                                Nulstil til automatisk
                             </b-button>
                         </b-table-column>
 

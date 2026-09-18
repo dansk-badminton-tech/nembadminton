@@ -97,6 +97,38 @@ class SetMemberInactiveOverrideTest extends TestCase
     }
 
     /** @test */
+    public function it_resets_member_override_to_auto(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id, 'primary_role_id' => null]);
+        $member = Member::create([
+            'refId'             => '12345',
+            'name'              => 'Overridden Player',
+            'gender'            => 'M',
+            'inactive'          => true,
+            'override_inactive' => 'FORCE_INACTIVE',
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->setOverrideMutation((string) $member->id, 'AUTO');
+
+        $response->assertJson([
+            'data' => [
+                'setMemberInactiveOverride' => [
+                    'id'               => (string) $member->id,
+                    'inactive'         => true,
+                    'overrideInactive' => 'AUTO',
+                ],
+            ],
+        ]);
+
+        $member->refresh();
+        $this->assertTrue($member->inactive);
+        $this->assertEquals('AUTO', $member->override_inactive);
+    }
+
+    /** @test */
     public function it_requires_authentication(): void
     {
         $member = Member::create([
