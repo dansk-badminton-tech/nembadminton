@@ -123,6 +123,52 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
+     * Test toggling member inactive status override
+     */
+    public function testToggleMemberInactiveOverride(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+
+            // Get an active member
+            $member = Member::whereHas('clubs', function ($query) use ($clubhouse) {
+                $query->where('club_id', $clubhouse->clubs->first()->id);
+            })->where('inactive', false)->first();
+
+            if (!$member) {
+                $this->markTestSkipped('No active member found for testing');
+            }
+
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
+                    ->visit(new MemberManagementPage($clubhouse->id))
+                    ->waitForText($member->name)
+                    ->assertMemberStatus($member->name, 'Aktiv')
+                    ->toggleMemberInactiveStatusById($member->id)
+                    ->waitForText('Spiller markeret som inaktiv')
+                    ->pause(1000)
+                    ->assertMemberStatus($member->name, 'Inaktiv')
+                    ->assertSee('Tilsidesat');
+
+            // Verify in database: marked as inactive and FORCE_INACTIVE
+            $dbMember = Member::find($member->id);
+            $this->assertTrue((bool) $dbMember->inactive);
+            $this->assertEquals('FORCE_INACTIVE', $dbMember->override_inactive);
+
+            // Toggle back to active
+            $browser->toggleMemberInactiveStatusById($member->id)
+                    ->waitForText('Spiller markeret som aktiv')
+                    ->pause(1000)
+                    ->assertMemberStatus($member->name, 'Aktiv')
+                    ->assertSee('Tilsidesat');
+
+            $dbMember = Member::find($member->id);
+            $this->assertFalse((bool) $dbMember->inactive);
+            $this->assertEquals('FORCE_ACTIVE', $dbMember->override_inactive);
+        });
+    }
+
+    /**
      * Test toggling show inactive members filter
      */
     public function testToggleShowInactiveMembers(): void

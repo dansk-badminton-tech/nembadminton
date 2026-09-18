@@ -7,15 +7,13 @@ use Carbon\Carbon;
 use Closure;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\CategoryFactory;
 use Tests\CreatesApplication;
+use Tests\TestCase;
 
-class ValidateCrossSquadsLeagueTest extends BaseTestCase
+class ValidateCrossSquadsLeagueTest extends TestCase
 {
-
-    use CreatesApplication;
     use MakesGraphQLRequests;
 
     private function fixedInTime(Closure $callback) : void

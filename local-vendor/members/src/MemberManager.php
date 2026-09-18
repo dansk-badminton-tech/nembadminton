@@ -22,18 +22,21 @@ class MemberManager
 
         $memberModel = \App\Models\Member::query()->where('refId', $refId)->first();
         if ($memberModel !== null) {
-            // Only update name and gender, preserve inactive status set by admins
-            $memberModel->update([
+            $updateData = [
                 'name'   => $name,
                 'gender' => $gender,
-                'inactive' => !$active,
-            ]);
+            ];
+            if ($memberModel->override_inactive === 'AUTO') {
+                $updateData['inactive'] = !$active;
+            }
+            $memberModel->update($updateData);
         } else {
             $memberModel = \App\Models\Member::create([
-                'refId'  => $refId,
-                'name'   => $name,
-                'gender' => $gender,
-                'inactive' => !$active,
+                'refId'             => $refId,
+                'name'              => $name,
+                'gender'            => $gender,
+                'inactive'          => !$active,
+                'override_inactive' => 'AUTO',
             ]);
         }
 
