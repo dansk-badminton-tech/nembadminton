@@ -11,6 +11,8 @@ class MemberManagerSyncProtectionTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
     private MemberManager $memberManager;
 
     protected function setUp(): void

@@ -6,15 +6,13 @@ namespace Tests\GraphQL;
 use Carbon\Carbon;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\CategoryFactory;
 use Tests\CreatesApplication;
+use Tests\TestCase;
 
-class ValidateCrossSquadsTest extends BaseTestCase
+class ValidateCrossSquadsTest extends TestCase
 {
-
-    use CreatesApplication;
     use MakesGraphQLRequests;
 
     public static function setUpBeforeClass() : void

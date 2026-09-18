@@ -14,11 +14,7 @@ class SetMemberInactiveOverrideTest extends TestCase
     use RefreshDatabase;
     use MakesGraphQLRequests;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->seed(\RolesAndPermissionsSeeder::class);
-    }
+    protected string $seeder = 'RolesAndPermissionsSeeder';
 
     private function setOverrideMutation(string $memberId, string $mode): \Illuminate\Testing\TestResponse
     {
