@@ -25,7 +25,7 @@ _Avoid_: Team, sub-team
 ### Lineup Scenarios
 
 **Scenario**:
-An internal, named alternative lineup (e.g. "Plan A", "Plan B") cloning all squads of a TeamRound for drafting without affecting the official roster or notifying players.
+An internal, named alternative lineup (e.g. "Plan A", "Plan B") containing the category slots and player assignments across all squads of a TeamRound for drafting without affecting the official roster or notifying players.
 _Avoid_: Sandbox, draft folder, shadow round
 
 **Official Lineup**:
@@ -33,5 +33,5 @@ The currently active, authoritative lineup of squads for a TeamRound that is vis
 _Avoid_: Published round, live round
 
 **Promotion**:
-The atomic replacement of the official lineup with the squads from a scenario, preserving the outgoing official lineup as a draft scenario.
+The atomic transition of a draft scenario to become the official lineup, preserving the outgoing official lineup as an alternative draft scenario.
 _Avoid_: Publish, merge, partial sync
