@@ -38,6 +38,7 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
+            <b-button class="ml-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
             <hr/>
             <div class="columns">
                 <div class="column is-6">
@@ -316,6 +317,57 @@ export default {
                 },
                 width: 640
             })
+        },
+        promptCreateScenario() {
+            this.$buefy.dialog.prompt({
+                title: 'Nyt scenarie',
+                message: 'Indtast navn på det nye scenarie:',
+                placeholder: 'F.eks. Plan B - Hvis Nikolaj er skadet',
+                inputAttrs: {
+                    maxlength: 255
+                },
+                trapFocus: true,
+                confirmText: 'Opret',
+                cancelText: 'Annuller',
+                onConfirm: (name) => this.createScenario(name)
+            })
+        },
+        async createScenario(name) {
+            if (!name || !name.trim()) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation CreateScenario($teamRoundId: ID!, $name: String!) {
+                            createScenario(teamRoundId: $teamRoundId, name: $name) {
+                                id
+                                name
+                                isOfficial
+                            }
+                        }
+                    `,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        name: name.trim()
+                    },
+                    refetchQueries: [
+                        { query: TeamRoundQuery, variables: { id: this.teamRoundId } }
+                    ]
+                });
+                this.$buefy.toast.open({
+                    message: `Scenariet "${response.data.createScenario.name}" blev oprettet.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke oprette scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
         },
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
