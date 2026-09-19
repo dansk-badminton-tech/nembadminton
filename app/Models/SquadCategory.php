@@ -21,7 +21,7 @@ class SquadCategory extends Model
 
     use HasFactory;
 
-    protected $fillable = ['category', 'name'];
+    protected $fillable = ['category', 'name', 'squad_id', 'team_round_scenario_id'];
 
     public function players() : HasMany
     {
@@ -31,5 +31,10 @@ class SquadCategory extends Model
     public function squad() : BelongsTo
     {
         return $this->belongsTo(Squad::class);
+    }
+
+    public function scenario() : BelongsTo
+    {
+        return $this->belongsTo(TeamRoundScenario::class, 'team_round_scenario_id');
     }
 }

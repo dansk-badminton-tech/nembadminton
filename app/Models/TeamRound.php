@@ -95,6 +95,16 @@ class TeamRound extends Model
         return $this->hasMany(Squad::class, 'team_round_id', 'id')->orderBy('order');
     }
 
+    public function scenarios(): HasMany
+    {
+        return $this->hasMany(TeamRoundScenario::class, 'team_round_id');
+    }
+
+    public function officialScenario(): HasOne
+    {
+        return $this->hasOne(TeamRoundScenario::class, 'team_round_id')->where('is_official', true);
+    }
+
     /**
      * Ref IDs of players on this team round that have a linked platform user account.
      * Single batched query — runs once per team round, not per player.

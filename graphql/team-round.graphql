@@ -58,6 +58,8 @@ extend type Mutation {
     updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnAllSquadsInTeamRound")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnSquad")
+    "Create a new scenario cloning categories and player assignments"
+    createScenario(teamRoundId: ID!, name: String!) : TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
 }
 
 type TeamReceivers {
@@ -328,6 +330,19 @@ type TeamRound {
     clubhouse: Clubhouse @belongsTo
     "Ref IDs of players on this team round that have a linked platform user account (single batched query)"
     reachablePlayerRefIds: [String!]! @field(resolver: "App\\Models\\TeamRound@getReachablePlayerRefIds")
+    "Scenarios"
+    scenarios: [TeamRoundScenario!]! @hasMany(relation: "scenarios")
+    "Official scenario"
+    officialScenario: TeamRoundScenario @hasOne(relation: "officialScenario")
+}
+
+type TeamRoundScenario {
+    id: ID!
+    teamRoundId: ID! @rename(attribute: "team_round_id")
+    name: String!
+    isOfficial: Boolean! @rename(attribute: "is_official")
+    createdAt: DateTime @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
 }
 
 type TeamActivityLog {
