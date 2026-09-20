@@ -42,8 +42,7 @@ class ScenarioManager
 
     /**
      * Promotes a draft scenario to be the official lineup for the team round.
-     * Atomically swaps is_official flag, updates the team round name,
-     * and preserves the outgoing official lineup as a draft scenario without deleting records.
+     * Atomically swaps is_official flag and preserves the outgoing official lineup as a draft scenario without deleting records.
      */
     public function promoteScenario(TeamRoundScenario $targetScenario): TeamRound
     {
@@ -83,9 +82,6 @@ class ScenarioManager
 
             // 3. Promote target scenario
             $targetScenario->update(['is_official' => true]);
-
-            // 4. Update team round name to match the promoted scenario
-            $teamRound->update(['name' => $targetScenario->name]);
 
             return $teamRound->refresh();
         });

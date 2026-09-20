@@ -831,7 +831,7 @@ class ScenarioTest extends TestCase
         $promoteResponse->assertJsonMissing(['errors']);
 
         $teamRoundData = $promoteResponse->json('data.promoteScenario');
-        $this->assertEquals('Plan B', $teamRoundData['name'], 'TeamRound name matches promoted scenario');
+        $this->assertEquals('Runde 1', $teamRoundData['name'], 'TeamRound name is preserved and unchanged on promotion');
         $this->assertEquals((string) $planBId, $teamRoundData['officialScenario']['id']);
         $this->assertTrue($teamRoundData['officialScenario']['isOfficial']);
 
@@ -867,7 +867,7 @@ class ScenarioTest extends TestCase
         $promoteResponseC->assertJsonMissing(['errors']);
 
         $teamRoundDataC = $promoteResponseC->json('data.promoteScenario');
-        $this->assertEquals('Plan C', $teamRoundDataC['name']);
+        $this->assertEquals('Runde 1', $teamRoundDataC['name'], 'TeamRound name remains original round name');
         $this->assertEquals((string) $planCId, $teamRoundDataC['officialScenario']['id']);
 
         $scenariosC = collect($teamRoundDataC['scenarios']);
