@@ -33,6 +33,25 @@ class ScenarioManager
     }
 
     /**
+     * Get categories for a squad scoped by scenario ID or defaulting to official lineup.
+     *
+     * @return Collection<int, SquadCategory>
+     */
+    public function getCategories(Squad $squad, ?int $scenarioId = null): Collection
+    {
+        if ($scenarioId !== null) {
+            return $squad->categories()
+                ->where('team_round_scenario_id', $scenarioId)
+                ->with(['players.points'])
+                ->get();
+        }
+
+        $officialScenario = $squad->teamRound?->officialScenario;
+
+        return $this->getOfficialCategories($squad, $officialScenario);
+    }
+
+    /**
      * Clones the official lineup across all squads in the team round into the target scenario.
      */
     public function cloneOfficialLineupToScenario(TeamRound $teamRound, TeamRoundScenario $targetScenario): void

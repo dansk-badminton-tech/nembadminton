@@ -25,7 +25,7 @@
                 <template #trigger="{ active }">
                     <button class="button" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
                         <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
-                        <span>{{ currentScenario ? currentScenario.name : 'Vælg scenarie' }} {{ currentScenario?.isOfficial ? '(Officiel)' : '(Udkast)' }}</span>
+                        <span>{{ currentScenarioLabel }}</span>
                         <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                     </button>
                 </template>
@@ -256,6 +256,17 @@ export default {
             }
             return list.find(s => s.isOfficial) || list[0] || null;
         },
+        currentScenarioLabel() {
+            if (!this.currentScenario) {
+                return 'Indlæser...';
+            }
+            if (this.currentScenario.isOfficial) {
+                return this.currentScenario.name.includes('(Officiel)')
+                    ? this.currentScenario.name
+                    : `${this.currentScenario.name} (Officiel)`;
+            }
+            return `${this.currentScenario.name} (Udkast)`;
+        },
         isCurrentScenarioDraft() {
             return Boolean(this.currentScenario && !this.currentScenario.isOfficial);
         }
@@ -430,9 +441,7 @@ export default {
                         teamRoundId: this.teamRoundId,
                         name: name.trim()
                     },
-                    refetchQueries: [
-                        { query: TeamRoundQuery, variables: { id: this.teamRoundId, scenarioId: this.selectedScenarioId } }
-                    ]
+                    refetchQueries: this.teamRoundRefetchQueries()
                 });
                 this.selectedScenarioId = response.data.createScenario.id;
                 this.$buefy.toast.open({

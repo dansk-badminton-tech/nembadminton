@@ -18,15 +18,6 @@ class SquadCategoriesResolver
     {
         $scenarioId = isset($args['scenarioId']) ? (int) $args['scenarioId'] : null;
 
-        if ($scenarioId !== null) {
-            return $root->categories()
-                ->where('team_round_scenario_id', $scenarioId)
-                ->with(['players.points'])
-                ->get();
-        }
-
-        $officialScenario = $root->teamRound?->officialScenario;
-
-        return $this->scenarioManager->getOfficialCategories($root, $officialScenario);
+        return $this->scenarioManager->getCategories($root, $scenarioId);
     }
 }
