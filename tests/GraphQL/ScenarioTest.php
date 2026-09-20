@@ -1046,4 +1046,402 @@ class ScenarioTest extends TestCase
         Notification::assertSentTo($officialUser, \App\Notifications\TeamPublish::class);
         Notification::assertNotSentTo($draftUser, \App\Notifications\TeamPublish::class);
     }
+
+    /** @test */
+    public function it_renames_a_scenario(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $scenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Originalt Udkast',
+            'is_official' => false,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation RenameScenario($scenarioId: ID!, $name: String!) {
+                renameScenario(scenarioId: $scenarioId, name: $name) {
+                    id
+                    name
+                    isOfficial
+                }
+            }
+        ';
+
+        $response = $this->graphQL($mutation, [
+            'scenarioId' => (string) $scenario->id,
+            'name' => 'Nyt Scenarie Navn',
+        ]);
+
+        $response->assertSuccessful();
+        $response->assertJsonMissing(['errors']);
+        $response->assertJson([
+            'data' => [
+                'renameScenario' => [
+                    'id' => (string) $scenario->id,
+                    'name' => 'Nyt Scenarie Navn',
+                    'isOfficial' => false,
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseHas('team_round_scenarios', [
+            'id' => $scenario->id,
+            'name' => 'Nyt Scenarie Navn',
+        ]);
+    }
+
+    /** @test */
+    public function it_denies_renaming_scenario_without_permission_or_in_another_clubhouse(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $otherClubhouse = Clubhouse::factory()->create();
+        $otherUser = User::factory()->create(['clubhouse_id' => $otherClubhouse->id]);
+        $otherTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $otherClubhouse->id,
+            'user_id' => $otherUser->id,
+            'name' => 'Anden Klub Runde',
+        ]);
+        $otherScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $otherTeamRound->id,
+            'name' => 'Anden Klub Scenarie',
+            'is_official' => false,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation RenameScenario($scenarioId: ID!, $name: String!) {
+                renameScenario(scenarioId: $scenarioId, name: $name) {
+                    id
+                    name
+                }
+            }
+        ';
+
+        // 1. Cross-clubhouse attempt
+        $crossResponse = $this->graphQL($mutation, [
+            'scenarioId' => (string) $otherScenario->id,
+            'name' => 'Hacked Name',
+        ]);
+        $crossResponse->assertGraphQLErrorMessage('This action is unauthorized.');
+
+        // 2. User without EDIT_TEAMROUNDS
+        [$viewOnlyClubhouse, $viewOnlyUser] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $ownTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $viewOnlyClubhouse->id,
+            'user_id' => $viewOnlyUser->id,
+        ]);
+        $ownScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $ownTeamRound->id,
+            'name' => 'Mit Scenarie',
+            'is_official' => false,
+        ]);
+
+        $noPermResponse = $this->graphQL($mutation, [
+            'scenarioId' => (string) $ownScenario->id,
+            'name' => 'Nyt Navn Uden Adgang',
+        ]);
+        $noPermResponse->assertGraphQLErrorMessage('This action is unauthorized.');
+    }
+
+    /** @test */
+    public function it_deletes_a_draft_scenario_and_all_associated_records(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        $member = Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+
+        // Official scenario with category, player, point
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Officiel Opstilling',
+            'is_official' => true,
+        ]);
+        $officialCategory = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $officialScenario->id,
+        ]);
+        $officialPlayer = SquadMember::query()->create([
+            'squad_category_id' => $officialCategory->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'member_ref_id' => $member->refId,
+        ]);
+        $officialPoint = SquadPoint::query()->create([
+            'squad_member_id' => $officialPlayer->id,
+            'points' => 100,
+            'category' => 'HS',
+            'position' => 1,
+        ]);
+
+        // Draft scenario with category, player, point
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Udkast Opstilling',
+            'is_official' => false,
+        ]);
+        $draftCategory = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $draftScenario->id,
+        ]);
+        $draftPlayer = SquadMember::query()->create([
+            'squad_category_id' => $draftCategory->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'member_ref_id' => $member->refId,
+        ]);
+        $draftPoint = SquadPoint::query()->create([
+            'squad_member_id' => $draftPlayer->id,
+            'points' => 100,
+            'category' => 'HS',
+            'position' => 1,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation DeleteScenario($scenarioId: ID!) {
+                deleteScenario(scenarioId: $scenarioId)
+            }
+        ';
+
+        $response = $this->graphQL($mutation, [
+            'scenarioId' => (string) $draftScenario->id,
+        ]);
+
+        $response->assertSuccessful();
+        $response->assertJsonMissing(['errors']);
+        $this->assertTrue($response->json('data.deleteScenario'));
+
+        // Assert draft records are gone
+        $this->assertDatabaseMissing('team_round_scenarios', ['id' => $draftScenario->id]);
+        $this->assertDatabaseMissing('squad_categories', ['id' => $draftCategory->id]);
+        $this->assertDatabaseMissing('squad_members', ['id' => $draftPlayer->id]);
+        $this->assertDatabaseMissing('squad_points', ['id' => $draftPoint->id]);
+
+        // Assert official records remain intact
+        $this->assertDatabaseHas('team_round_scenarios', ['id' => $officialScenario->id]);
+        $this->assertDatabaseHas('squad_categories', ['id' => $officialCategory->id]);
+        $this->assertDatabaseHas('squad_members', ['id' => $officialPlayer->id]);
+        $this->assertDatabaseHas('squad_points', ['id' => $officialPoint->id]);
+    }
+
+    /** @test */
+    public function it_rejects_deleting_an_official_scenario(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Officiel Opstilling',
+            'is_official' => true,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation DeleteScenario($scenarioId: ID!) {
+                deleteScenario(scenarioId: $scenarioId)
+            }
+        ';
+
+        $response = $this->graphQL($mutation, [
+            'scenarioId' => (string) $officialScenario->id,
+        ]);
+
+        $this->assertNotNull($response->json('errors'), 'Deleting official scenario must be rejected');
+        $errorMessage = $response->json('errors.0.message');
+        $this->assertStringContainsStringIgnoringCase('official', $errorMessage);
+
+        $this->assertDatabaseHas('team_round_scenarios', [
+            'id' => $officialScenario->id,
+        ]);
+    }
+
+    /** @test */
+    public function it_denies_deleting_scenario_without_permission_or_in_another_clubhouse(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $otherClubhouse = Clubhouse::factory()->create();
+        $otherUser = User::factory()->create(['clubhouse_id' => $otherClubhouse->id]);
+        $otherTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $otherClubhouse->id,
+            'user_id' => $otherUser->id,
+            'name' => 'Anden Klub Runde',
+        ]);
+        $otherScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $otherTeamRound->id,
+            'name' => 'Anden Klub Udkast',
+            'is_official' => false,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation DeleteScenario($scenarioId: ID!) {
+                deleteScenario(scenarioId: $scenarioId)
+            }
+        ';
+
+        // 1. Cross-clubhouse attempt
+        $crossResponse = $this->graphQL($mutation, [
+            'scenarioId' => (string) $otherScenario->id,
+        ]);
+        $crossResponse->assertGraphQLErrorMessage('This action is unauthorized.');
+
+        // 2. User without EDIT_TEAMROUNDS
+        [$viewOnlyClubhouse, $viewOnlyUser] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $ownTeamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $viewOnlyClubhouse->id,
+            'user_id' => $viewOnlyUser->id,
+        ]);
+        $ownScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $ownTeamRound->id,
+            'name' => 'Mit Udkast',
+            'is_official' => false,
+        ]);
+
+        $noPermResponse = $this->graphQL($mutation, [
+            'scenarioId' => (string) $ownScenario->id,
+        ]);
+        $noPermResponse->assertGraphQLErrorMessage('This action is unauthorized.');
+    }
+
+    /** @test */
+    public function it_cascades_deletion_when_parent_team_round_is_deleted(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser([
+            Permission::VIEW_TEAMROUNDS,
+            Permission::EDIT_TEAMROUNDS,
+            Permission::DELETE_TEAMROUNDS,
+        ]);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        $member = Member::query()->create([
+            'refId' => '9001011234',
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+
+        // Official scenario with category, player, point
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Officiel Opstilling',
+            'is_official' => true,
+        ]);
+        $officialCategory = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $officialScenario->id,
+        ]);
+        $officialPlayer = SquadMember::query()->create([
+            'squad_category_id' => $officialCategory->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'member_ref_id' => $member->refId,
+        ]);
+        $officialPoint = SquadPoint::query()->create([
+            'squad_member_id' => $officialPlayer->id,
+            'points' => 100,
+            'category' => 'HS',
+            'position' => 1,
+        ]);
+
+        // Draft scenario with category, player, point
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Udkast Opstilling',
+            'is_official' => false,
+        ]);
+        $draftCategory = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $draftScenario->id,
+        ]);
+        $draftPlayer = SquadMember::query()->create([
+            'squad_category_id' => $draftCategory->id,
+            'name' => 'John Doe',
+            'gender' => 'M',
+            'member_ref_id' => $member->refId,
+        ]);
+        $draftPoint = SquadPoint::query()->create([
+            'squad_member_id' => $draftPlayer->id,
+            'points' => 100,
+            'category' => 'HS',
+            'position' => 1,
+        ]);
+
+        $mutation = /** @lang GraphQL */ '
+            mutation DeleteTeamRound($id: ID!) {
+                deleteTeamRound(id: $id) {
+                    id
+                }
+            }
+        ';
+
+        $response = $this->graphQL($mutation, [
+            'id' => (string) $teamRound->id,
+        ]);
+
+        $response->assertSuccessful();
+        $response->assertJsonMissing(['errors']);
+
+        $this->assertDatabaseMissing('team_rounds', ['id' => $teamRound->id]);
+        $this->assertDatabaseMissing('team_round_scenarios', ['id' => $officialScenario->id]);
+        $this->assertDatabaseMissing('team_round_scenarios', ['id' => $draftScenario->id]);
+        $this->assertDatabaseMissing('squad_categories', ['id' => $officialCategory->id]);
+        $this->assertDatabaseMissing('squad_categories', ['id' => $draftCategory->id]);
+        $this->assertDatabaseMissing('squad_members', ['id' => $officialPlayer->id]);
+        $this->assertDatabaseMissing('squad_members', ['id' => $draftPlayer->id]);
+        $this->assertDatabaseMissing('squad_points', ['id' => $officialPoint->id]);
+        $this->assertDatabaseMissing('squad_points', ['id' => $draftPoint->id]);
+    }
 }

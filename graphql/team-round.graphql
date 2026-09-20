@@ -62,6 +62,10 @@ extend type Mutation {
     createScenario(teamRoundId: ID!, name: String!, sourceScenarioId: ID): TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
     "Promote a draft scenario to official lineup, preserving outgoing official lineup as a draft"
     promoteScenario(scenarioId: ID!): TeamRound! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario")
+    "Rename a scenario"
+    renameScenario(scenarioId: ID!, name: String!): TeamRoundScenario! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario")
+    "Delete a draft scenario and all associated categories, players, and points"
+    deleteScenario(scenarioId: ID!): Boolean! @guard @canFind(ability: "delete", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\DeleteScenario")
 }
 
 type TeamReceivers {

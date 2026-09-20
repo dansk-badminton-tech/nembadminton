@@ -177,6 +177,33 @@ class ScenarioManager
     }
 
     /**
+     * Renames a scenario.
+     */
+    public function renameScenario(TeamRoundScenario $scenario, string $name): TeamRoundScenario
+    {
+        $scenario->update([
+            'name' => $name,
+        ]);
+
+        return $scenario->refresh();
+    }
+
+    /**
+     * Deletes a draft scenario and all its associated categories, players, and points.
+     * Prevents deleting the official lineup.
+     */
+    public function deleteScenario(TeamRoundScenario $scenario): bool
+    {
+        if ($scenario->is_official) {
+            throw new CannotDeleteOfficialScenarioException('Cannot delete the official lineup.');
+        }
+
+        return DB::transaction(function () use ($scenario) {
+            return (bool) $scenario->delete();
+        });
+    }
+
+    /**
      * Clones a player and all their points into a target category.
      */
     public function clonePlayer(SquadMember $sourcePlayer, SquadCategory $targetCategory): SquadMember

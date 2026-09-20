@@ -36,9 +36,33 @@
                     :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
                     @click="selectScenario(scenario)"
                 >
-                    <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
-                    <span>{{ scenario.name }}</span>
-                    <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
+                    <div class="is-flex is-justify-content-between is-align-items-center" style="min-width: 250px; width: 100%;">
+                        <div class="is-flex is-align-items-center mr-3">
+                            <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
+                            <span>{{ scenario.name }}</span>
+                            <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
+                        </div>
+                        <div v-if="!scenario.isOfficial && scenario.id" class="is-flex is-align-items-center ml-2">
+                            <b-button
+                                size="is-small"
+                                type="is-text"
+                                icon-left="pencil"
+                                dusk="rename-scenario-button"
+                                title="Omdøb scenarie"
+                                class="p-1"
+                                @click.stop="promptRenameScenario(scenario)"
+                            />
+                            <b-button
+                                size="is-small"
+                                type="is-text"
+                                icon-left="delete"
+                                class="has-text-danger p-1"
+                                dusk="delete-scenario-button"
+                                title="Slet scenarie"
+                                @click.stop="promptDeleteScenario(scenario)"
+                            />
+                        </div>
+                    </div>
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="mr-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
@@ -530,6 +554,108 @@ export default {
             } catch (e) {
                 this.$buefy.toast.open({
                     message: 'Kunne ikke gøre scenariet officielt: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptRenameScenario(scenario) {
+            if (!scenario || scenario.isOfficial) {
+                return;
+            }
+            this.$buefy.dialog.prompt({
+                title: 'Omdøb scenarie',
+                message: `Indtast nyt navn for scenariet "${scenario.name}":`,
+                placeholder: 'F.eks. Plan B',
+                inputAttrs: {
+                    maxlength: 255,
+                    value: scenario.name
+                },
+                trapFocus: true,
+                confirmText: 'Omdøb',
+                cancelText: 'Annuller',
+                onConfirm: (name) => this.renameScenario(scenario, name)
+            });
+        },
+        async renameScenario(scenario, name) {
+            if (!scenario || !scenario.id || !name || !name.trim()) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation RenameScenario($scenarioId: ID!, $name: String!) {
+                            renameScenario(scenarioId: $scenarioId, name: $name) {
+                                id
+                                name
+                                isOfficial
+                            }
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(scenario.id),
+                        name: name.trim()
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `Scenariet blev omdøbt til "${response.data.renameScenario.name}".`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke omdøbe scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptDeleteScenario(scenario) {
+            if (!scenario || scenario.isOfficial) {
+                return;
+            }
+            const name = scenario.name;
+            this.$buefy.dialog.confirm({
+                title: 'Slet scenarie',
+                message: `Er du sikker på, at du vil slette udkastet "${name}"? Alle holdopstillinger i dette udkast vil gå tabt.`,
+                confirmText: 'Slet',
+                cancelText: 'Annuller',
+                type: 'is-danger',
+                hasIcon: true,
+                icon: 'delete',
+                onConfirm: () => this.deleteScenario(scenario)
+            });
+        },
+        async deleteScenario(scenario) {
+            if (!scenario || !scenario.id) {
+                return;
+            }
+            this.updating = true;
+            try {
+                if (String(this.selectedScenarioId) === String(scenario.id)) {
+                    this.selectedScenarioId = null;
+                }
+                await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation DeleteScenario($scenarioId: ID!) {
+                            deleteScenario(scenarioId: $scenarioId)
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(scenario.id)
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `Udkastet "${scenario.name}" blev slettet.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke slette scenariet: ' + (e.message || e),
                     type: 'is-danger'
                 });
             } finally {
