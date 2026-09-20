@@ -21,6 +21,27 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
+            <b-dropdown aria-role="list" class="mr-2" dusk="scenario-selector-dropdown">
+                <template #trigger="{ active }">
+                    <button class="button" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
+                        <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
+                        <span>{{ currentScenario ? currentScenario.name : 'Vælg scenarie' }} {{ currentScenario?.isOfficial ? '(Officiel)' : '(Udkast)' }}</span>
+                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                    </button>
+                </template>
+                <b-dropdown-item
+                    v-for="scenario in availableScenarios"
+                    :key="scenario.id ?? 'official'"
+                    aria-role="listitem"
+                    :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
+                    @click="selectScenario(scenario)"
+                >
+                    <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
+                    <span>{{ scenario.name }}</span>
+                    <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
+                </b-dropdown-item>
+            </b-dropdown>
+            <b-button class="mr-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
                     <button class="button is-link">
@@ -38,8 +59,19 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
-            <b-button class="ml-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
             <hr/>
+            <b-message
+                v-if="isCurrentScenarioDraft"
+                type="is-warning"
+                :closable="false"
+                class="mb-4"
+                dusk="scenario-draft-warning-banner"
+            >
+                <div class="is-flex is-align-items-center">
+                    <b-icon icon="alert" class="mr-2"></b-icon>
+                    <span><strong>Internt udkast — spillere ser fortsat den officielle opstilling.</strong></span>
+                </div>
+            </b-message>
             <div class="columns">
                 <div class="column is-6">
                     <div class="is-flex is-justify-content-space-between is-align-items-flex-start is-flex-wrap-wrap mb-3" style="gap: 0.75rem;">
@@ -196,6 +228,36 @@ export default {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
                 .filter((id) => id !== null && id !== undefined);
+        },
+        availableScenarios() {
+            const scenarios = this.teamRound?.scenarios || [];
+            const hasOfficialScenario = scenarios.some(s => s.isOfficial);
+
+            if (hasOfficialScenario) {
+                return scenarios;
+            }
+
+            return [
+                {
+                    id: null,
+                    name: 'Officiel opstilling',
+                    isOfficial: true
+                },
+                ...scenarios
+            ];
+        },
+        currentScenario() {
+            const list = this.availableScenarios;
+            if (this.selectedScenarioId !== null && this.selectedScenarioId !== undefined) {
+                const found = list.find(s => String(s.id) === String(this.selectedScenarioId));
+                if (found) {
+                    return found;
+                }
+            }
+            return list.find(s => s.isOfficial) || list[0] || null;
+        },
+        isCurrentScenarioDraft() {
+            return Boolean(this.currentScenario && !this.currentScenario.isOfficial);
         }
     },
     data() {
@@ -208,6 +270,7 @@ export default {
             players: [],
             saving: false,
             updating: false,
+            selectedScenarioId: null,
             gameDate: new Date(),
             version: null,
             round: null,
@@ -235,9 +298,10 @@ export default {
         },
         teamRound: {
             query: TeamRoundQuery,
-            variables: function () {
+            variables() {
                 return {
-                    id: this.teamRoundId
+                    id: this.teamRoundId,
+                    scenarioId: this.selectedScenarioId
                 }
             },
             result({data}) {
@@ -332,6 +396,20 @@ export default {
                 onConfirm: (name) => this.createScenario(name)
             })
         },
+        selectScenario(scenario) {
+            this.selectedScenarioId = scenario ? scenario.id : null;
+        },
+        teamRoundRefetchQueries() {
+            return [
+                {
+                    query: TeamRoundQuery,
+                    variables: {
+                        id: this.teamRoundId,
+                        scenarioId: this.selectedScenarioId
+                    }
+                }
+            ];
+        },
         async createScenario(name) {
             if (!name || !name.trim()) {
                 return;
@@ -353,9 +431,10 @@ export default {
                         name: name.trim()
                     },
                     refetchQueries: [
-                        { query: TeamRoundQuery, variables: { id: this.teamRoundId } }
+                        { query: TeamRoundQuery, variables: { id: this.teamRoundId, scenarioId: this.selectedScenarioId } }
                     ]
                 });
+                this.selectedScenarioId = response.data.createScenario.id;
                 this.$buefy.toast.open({
                     message: `Scenariet "${response.data.createScenario.name}" blev oprettet.`,
                     type: 'is-success'
@@ -478,9 +557,7 @@ export default {
                                 : this.version
                         }
                     },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ],
+                    refetchQueries: this.teamRoundRefetchQueries(),
                     awaitRefetchQueries: true
                 })
                 .then((data) => {
@@ -513,9 +590,7 @@ export default {
                     variables: {
                         id: player.id
                     },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ],
+                    refetchQueries: this.teamRoundRefetchQueries(),
                     awaitRefetchQueries: true
                 })
                 .then(({data}) => {
@@ -668,9 +743,7 @@ export default {
                                 variables: {
                                     id: targetSquad.id
                                 },
-                                refetchQueries: [
-                                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                                ]
+                                refetchQueries: this.teamRoundRefetchQueries()
                             })
                     }
                 })
@@ -763,9 +836,7 @@ export default {
                 variables: {
                     input: squad.id
                 },
-                refetchQueries: [
-                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                ]
+                refetchQueries: this.teamRoundRefetchQueries()
             })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -794,9 +865,7 @@ export default {
                 variables: {
                     input: squad.id
                 },
-                refetchQueries: [
-                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                ]
+                refetchQueries: this.teamRoundRefetchQueries()
             })
                 .catch((error) => {
                     this.$buefy.snackbar.open(

@@ -51,8 +51,17 @@ class TeamRound extends Model
     {
         $user = Auth::user();
         if ($user && $user->primaryRole?->name === Role::PLAYER->value) {
-            return $query->whereHas('squads.categories.players', function (Builder $q) use ($user) {
-                $q->where('member_ref_id', $user->player_id);
+            return $query->whereHas('squads.categories', function (Builder $categoryQuery) use ($user) {
+                $categoryQuery->where(function (Builder $sub) {
+                    $sub->whereHas('scenario', function (Builder $scenarioQuery) {
+                        $scenarioQuery->where('is_official', true);
+                    })->orWhere(function (Builder $nullScenarioQuery) {
+                        $nullScenarioQuery->whereNull('team_round_scenario_id')
+                            ->whereDoesntHave('squad.teamRound.officialScenario');
+                    });
+                })->whereHas('players', function (Builder $playerQuery) use ($user) {
+                    $playerQuery->where('member_ref_id', $user->player_id);
+                });
             });
         }
         return $query;

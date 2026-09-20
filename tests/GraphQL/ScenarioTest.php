@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\GraphQL;
 
 use App\Enums\Permission;
+use App\Enums\Role;
 use App\Models\Clubhouse;
 use App\Models\Member;
 use App\Models\Squad;
@@ -234,5 +235,337 @@ class ScenarioTest extends TestCase
         ]);
 
         $response->assertGraphQLErrorMessage('This action is unauthorized.');
+    }
+
+    /** @test */
+    public function it_queries_squad_categories_scoped_by_scenario_id_or_defaults_to_official(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        // Official category (scenario_id = null)
+        $officialCat = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        // Scenario 1 (Draft)
+        $scenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+
+        $draftCat = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'DS',
+            'name' => '1. DS',
+            'team_round_scenario_id' => $scenario->id,
+        ]);
+
+        $query = /** @lang GraphQL */ '
+            query GetTeamRound($id: ID!, $scenarioId: ID) {
+                teamRound(id: $id) {
+                    id
+                    squads {
+                        id
+                        categories(scenarioId: $scenarioId) {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        ';
+
+        // 1. Query without scenarioId -> returns official categories
+        $officialResponse = $this->graphQL($query, ['id' => $teamRound->id]);
+        $officialResponse->assertSuccessful();
+        $officialCategories = $officialResponse->json('data.teamRound.squads.0.categories');
+        $this->assertCount(1, $officialCategories);
+        $this->assertEquals('1. HS', $officialCategories[0]['name']);
+
+        // 2. Query with scenarioId -> returns draft categories
+        $draftResponse = $this->graphQL($query, ['id' => $teamRound->id, 'scenarioId' => $scenario->id]);
+        $draftCategories = $draftResponse->json('data.teamRound.squads.0.categories');
+        $this->assertCount(1, $draftCategories);
+        $this->assertEquals('1. DS', $draftCategories[0]['name']);
+
+        // 3. Promote scenario to official -> default query now returns promoted scenario categories
+        $scenario->update(['is_official' => true]);
+        $teamRound->refresh();
+
+        $promotedResponse = $this->graphQL($query, ['id' => $teamRound->id]);
+        $promotedCategories = $promotedResponse->json('data.teamRound.squads.0.categories');
+        $this->assertCount(1, $promotedCategories);
+        $this->assertEquals('1. DS', $promotedCategories[0]['name']);
+    }
+
+    /** @test */
+    public function it_excludes_draft_scenarios_from_player_visible_to_user_scope(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $manager = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $manager->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        // Official category with no players
+        SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        // Draft scenario
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B (Draft)',
+            'is_official' => false,
+        ]);
+
+        $draftCat = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $draftScenario->id,
+        ]);
+
+        // Member & Player user
+        $member = Member::query()->create([
+            'refId' => '9001019999',
+            'name' => 'Draft Player',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+
+        SquadMember::query()->create([
+            'member_ref_id' => $member->refId,
+            'squad_category_id' => $draftCat->id,
+            'name' => 'Draft Player',
+            'gender' => 'M',
+        ]);
+
+        $playerUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => $member->refId,
+        ]);
+        $playerRole = \Spatie\Permission\Models\Role::where('name', Role::PLAYER->value)->first();
+        $playerUser->assignRole(Role::PLAYER->value);
+        $playerUser->update(['primary_role_id' => $playerRole->id]);
+
+        $this->actingAs($playerUser, 'api');
+
+        // Player is only in a draft scenario -> TeamRound must NOT be visible
+        $visibleRounds = TeamRound::query()->visibleToUser()->get();
+        $this->assertFalse($visibleRounds->contains('id', $teamRound->id), 'Draft scenario player must not see round');
+
+        // Once the scenario is promoted to official -> TeamRound becomes visible
+        $draftScenario->update(['is_official' => true]);
+        $visibleRoundsAfterPromotion = TeamRound::query()->visibleToUser()->get();
+        $this->assertTrue($visibleRoundsAfterPromotion->contains('id', $teamRound->id), 'Official scenario player must see round');
+    }
+
+    /** @test */
+    public function it_isolates_roster_mutations_to_draft_scenario_while_squad_logistics_stay_canonical(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+            'playing_place' => 'Oprindelig Hal',
+        ]);
+
+        // Official categories: HS and DS
+        $officialHs = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        $officialDs = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'DS',
+            'name' => '1. DS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        // Player 1 in Official HS
+        $member1 = Member::query()->create([
+            'refId' => '1111111111',
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        $player1 = SquadMember::query()->create([
+            'member_ref_id' => $member1->refId,
+            'squad_category_id' => $officialHs->id,
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+        ]);
+
+        // Member 2 (to be added only to draft)
+        $member2 = Member::query()->create([
+            'refId' => '2222222222',
+            'name' => 'Spiller 2',
+            'gender' => 'M',
+            'birthday' => '1992-02-02',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+
+        // 1. Create a draft scenario (Plan B)
+        $createScenarioMutation = /** @lang GraphQL */ '
+            mutation CreateScenario($teamRoundId: ID!, $name: String!) {
+                createScenario(teamRoundId: $teamRoundId, name: $name) {
+                    id
+                }
+            }
+        ';
+        $scenarioResponse = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => $teamRound->id,
+            'name' => 'Plan B',
+        ]);
+        $scenarioId = $scenarioResponse->json('data.createScenario.id');
+
+        // Retrieve draft categories
+        $draftCategories = SquadCategory::query()->where('team_round_scenario_id', $scenarioId)->get();
+        $draftHs = $draftCategories->firstWhere('category', 'HS');
+        $draftDs = $draftCategories->firstWhere('category', 'DS');
+        $draftPlayer1 = $draftHs->players()->first();
+
+        // 2. Add Member 2 to draft DS via addSquadMemberByRefId
+        $addPlayerMutation = /** @lang GraphQL */ '
+            mutation AddPlayer($refId: String!, $categoryId: Int!, $version: Date!) {
+                addSquadMemberByRefId(input: {
+                    refId: $refId
+                    categoryId: $categoryId
+                    version: $version
+                }) {
+                    id
+                    name
+                }
+            }
+        ';
+        $addResponse = $this->graphQL($addPlayerMutation, [
+            'refId' => $member2->refId,
+            'categoryId' => $draftDs->id,
+            'version' => '2026-09-01',
+        ]);
+        $addResponse->assertGraphQLErrorFree();
+
+        // 3. Delete Player 1 from draft HS via deleteSquadMember
+        $deletePlayerMutation = /** @lang GraphQL */ '
+            mutation DeletePlayer($id: ID!) {
+                deleteSquadMember(id: $id) {
+                    id
+                }
+            }
+        ';
+        $this->graphQL($deletePlayerMutation, [
+            'id' => (string) $draftPlayer1->id,
+        ])->assertSuccessful();
+
+        // 4. Update Squad match logistics (playingPlace)
+        $updateSquadMutation = /** @lang GraphQL */ '
+            mutation UpdateSquad($id: ID!, $playingPlace: String) {
+                updateSquad(input: {
+                    id: $id
+                    playingPlace: $playingPlace
+                }) {
+                    id
+                    playingPlace
+                }
+            }
+        ';
+        $this->graphQL($updateSquadMutation, [
+            'id' => (string) $squad->id,
+            'playingPlace' => 'Ny Hal 2',
+        ])->assertSuccessful();
+
+        // 5. Query both Official and Draft lineups to verify isolation and canonical logistics
+        $query = /** @lang GraphQL */ '
+            query GetTeamRound($id: ID!, $scenarioId: ID) {
+                teamRound(id: $id) {
+                    squads {
+                        id
+                        playingPlace
+                        categories(scenarioId: $scenarioId) {
+                            id
+                            category
+                            name
+                            players {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        ';
+
+        // Check Draft lineup
+        $draftLineup = $this->graphQL($query, ['id' => $teamRound->id, 'scenarioId' => $scenarioId]);
+        $draftSquad = $draftLineup->json('data.teamRound.squads.0');
+        $this->assertEquals('Ny Hal 2', $draftSquad['playingPlace']);
+
+        $draftHsPlayers = collect($draftSquad['categories'])->firstWhere('category', 'HS')['players'];
+        $this->assertEmpty($draftHsPlayers, 'Player 1 was deleted from draft HS');
+
+        $draftDsPlayers = collect($draftSquad['categories'])->firstWhere('category', 'DS')['players'];
+        $this->assertCount(1, $draftDsPlayers);
+        $this->assertEquals('Spiller 2', $draftDsPlayers[0]['name']);
+
+        // Check Official lineup (untouched roster, but shared playingPlace)
+        $officialLineup = $this->graphQL($query, ['id' => $teamRound->id]);
+        $officialSquad = $officialLineup->json('data.teamRound.squads.0');
+        $this->assertEquals('Ny Hal 2', $officialSquad['playingPlace'], 'Squad logistics reflect on official');
+
+        $officialHsPlayers = collect($officialSquad['categories'])->firstWhere('category', 'HS')['players'];
+        $this->assertCount(1, $officialHsPlayers, 'Player 1 must still exist in Official HS');
+        $this->assertEquals('Spiller 1', $officialHsPlayers[0]['name']);
+
+        $officialDsPlayers = collect($officialSquad['categories'])->firstWhere('category', 'DS')['players'];
+        $this->assertEmpty($officialDsPlayers, 'Spiller 2 must NOT exist in Official DS');
     }
 }

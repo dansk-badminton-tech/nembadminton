@@ -297,7 +297,7 @@ type Squad {
     "Playing City"
     playingCity: String @rename(attribute: "playing_city")
     "Categories"
-    categories: [SquadCategory!]!
+    categories(scenarioId: ID): [SquadCategory!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadCategoriesResolver")
     "Order"
     order: Int!
     "Ranking version"
