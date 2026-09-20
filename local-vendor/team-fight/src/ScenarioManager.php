@@ -15,18 +15,26 @@ use Illuminate\Support\Facades\DB;
 class ScenarioManager
 {
     /**
-     * Create a new scenario for a team round, cloning the current official lineup into it.
+     * Create a new scenario for a team round, cloning either a source scenario or the current official lineup into it.
      */
-    public function createScenario(TeamRound $teamRound, string $name): TeamRoundScenario
+    public function createScenario(TeamRound $teamRound, string $name, ?int $sourceScenarioId = null): TeamRoundScenario
     {
-        return DB::transaction(function () use ($teamRound, $name) {
+        return DB::transaction(function () use ($teamRound, $name, $sourceScenarioId) {
+            if ($sourceScenarioId !== null) {
+                $teamRound->scenarios()->findOrFail($sourceScenarioId);
+            }
+
             /** @var TeamRoundScenario $scenario */
             $scenario = $teamRound->scenarios()->create([
                 'name' => $name,
                 'is_official' => false,
             ]);
 
-            $this->cloneOfficialLineupToScenario($teamRound, $scenario);
+            if ($sourceScenarioId !== null) {
+                $this->cloneScenarioLineupToScenario($teamRound, $sourceScenarioId, $scenario);
+            } else {
+                $this->cloneOfficialLineupToScenario($teamRound, $scenario);
+            }
 
             return $scenario;
         });
@@ -60,6 +68,19 @@ class ScenarioManager
 
         foreach ($teamRound->squads as $squad) {
             $categories = $this->getOfficialCategories($squad, $officialScenario);
+            foreach ($categories as $category) {
+                $this->cloneCategory($category, $targetScenario->id);
+            }
+        }
+    }
+
+    /**
+     * Clones a specific scenario's lineup across all squads in the team round into the target scenario.
+     */
+    public function cloneScenarioLineupToScenario(TeamRound $teamRound, int $sourceScenarioId, TeamRoundScenario $targetScenario): void
+    {
+        foreach ($teamRound->squads as $squad) {
+            $categories = $this->getCategories($squad, $sourceScenarioId);
             foreach ($categories as $category) {
                 $this->cloneCategory($category, $targetScenario->id);
             }

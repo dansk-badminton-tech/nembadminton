@@ -59,7 +59,7 @@ extend type Mutation {
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnSquad")
     "Create a new scenario cloning categories and player assignments"
-    createScenario(teamRoundId: ID!, name: String!) : TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
+    createScenario(teamRoundId: ID!, name: String!, sourceScenarioId: ID): TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
 }
 
 type TeamReceivers {

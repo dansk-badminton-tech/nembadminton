@@ -394,9 +394,10 @@ export default {
             })
         },
         promptCreateScenario() {
+            const sourceName = this.currentScenario ? this.currentScenario.name : 'den officielle opstilling';
             this.$buefy.dialog.prompt({
                 title: 'Nyt scenarie',
-                message: 'Indtast navn på det nye scenarie:',
+                message: `Indtast navn på det nye scenarie (kopieres fra "${sourceName}"):`,
                 placeholder: 'F.eks. Plan B - Hvis Nikolaj er skadet',
                 inputAttrs: {
                     maxlength: 255
@@ -427,10 +428,11 @@ export default {
             }
             this.updating = true;
             try {
+                const sourceScenarioId = this.currentScenario?.id ? String(this.currentScenario.id) : null;
                 const response = await this.$apollo.mutate({
                     mutation: gql`
-                        mutation CreateScenario($teamRoundId: ID!, $name: String!) {
-                            createScenario(teamRoundId: $teamRoundId, name: $name) {
+                        mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {
+                            createScenario(teamRoundId: $teamRoundId, name: $name, sourceScenarioId: $sourceScenarioId) {
                                 id
                                 name
                                 isOfficial
@@ -439,7 +441,8 @@ export default {
                     `,
                     variables: {
                         teamRoundId: this.teamRoundId,
-                        name: name.trim()
+                        name: name.trim(),
+                        sourceScenarioId: sourceScenarioId
                     },
                     refetchQueries: this.teamRoundRefetchQueries()
                 });

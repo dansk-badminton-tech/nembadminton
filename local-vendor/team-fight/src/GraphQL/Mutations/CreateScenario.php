@@ -18,7 +18,8 @@ class CreateScenario
     {
         /** @var TeamRound $teamRound */
         $teamRound = TeamRound::query()->findOrFail($args['teamRoundId']);
+        $sourceScenarioId = isset($args['sourceScenarioId']) ? (int) $args['sourceScenarioId'] : null;
 
-        return $this->scenarioManager->createScenario($teamRound, (string) $args['name']);
+        return $this->scenarioManager->createScenario($teamRound, (string) $args['name'], $sourceScenarioId);
     }
 }

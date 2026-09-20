@@ -568,4 +568,180 @@ class ScenarioTest extends TestCase
         $officialDsPlayers = collect($officialSquad['categories'])->firstWhere('category', 'DS')['players'];
         $this->assertEmpty($officialDsPlayers, 'Spiller 2 must NOT exist in Official DS');
     }
+
+    /** @test */
+    public function it_creates_a_new_scenario_from_an_existing_scenario(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        $catHS = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        $catDS = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'DS',
+            'name' => '1. DS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        $member1 = Member::query()->create([
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1990-01-01',
+            'refId' => 101,
+        ]);
+        $member2 = Member::query()->create([
+            'name' => 'Spiller 2',
+            'gender' => 'K',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1992-02-02',
+            'refId' => 102,
+        ]);
+        $member3 = Member::query()->create([
+            'name' => 'Spiller 3',
+            'gender' => 'K',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1994-03-03',
+            'refId' => 103,
+        ]);
+
+        SquadMember::query()->create([
+            'squad_category_id' => $catHS->id,
+            'member_ref_id' => $member1->refId,
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+        ]);
+
+        $createScenarioMutation = /** @lang GraphQL */ '
+            mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {
+                createScenario(teamRoundId: $teamRoundId, name: $name, sourceScenarioId: $sourceScenarioId) {
+                    id
+                    name
+                    isOfficial
+                }
+            }
+        ';
+
+        // 1. Create Scenario A from official lineup
+        $responseA = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => (string) $teamRound->id,
+            'name' => 'Plan A',
+        ]);
+        $responseA->assertSuccessful();
+        $responseA->assertJsonMissing(['errors']);
+        $scenarioAId = (int) $responseA->json('data.createScenario.id');
+
+        // Add Spiller 2 into Scenario A's DS
+        $scenarioADsCat = SquadCategory::query()
+            ->where('squad_id', $squad->id)
+            ->where('team_round_scenario_id', $scenarioAId)
+            ->where('category', 'DS')
+            ->firstOrFail();
+
+        SquadMember::query()->create([
+            'squad_category_id' => $scenarioADsCat->id,
+            'member_ref_id' => $member2->refId,
+            'name' => 'Spiller 2',
+            'gender' => 'K',
+        ]);
+
+        // 2. Create Scenario B branching from Scenario A
+        $responseB = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => (string) $teamRound->id,
+            'name' => 'Plan B (afledt af Plan A)',
+            'sourceScenarioId' => (string) $scenarioAId,
+        ]);
+        $responseB->assertSuccessful();
+        $responseB->assertJsonMissing(['errors']);
+        $scenarioBId = (int) $responseB->json('data.createScenario.id');
+
+        // Verify Scenario B has Spiller 1 (from HS) and Spiller 2 (from DS)
+        $scenarioBHsCat = SquadCategory::query()
+            ->where('squad_id', $squad->id)
+            ->where('team_round_scenario_id', $scenarioBId)
+            ->where('category', 'HS')
+            ->with('players')
+            ->firstOrFail();
+        $this->assertCount(1, $scenarioBHsCat->players);
+        $this->assertEquals('Spiller 1', $scenarioBHsCat->players->first()->name);
+
+        $scenarioBDsCat = SquadCategory::query()
+            ->where('squad_id', $squad->id)
+            ->where('team_round_scenario_id', $scenarioBId)
+            ->where('category', 'DS')
+            ->with('players')
+            ->firstOrFail();
+        $this->assertCount(1, $scenarioBDsCat->players);
+        $this->assertEquals('Spiller 2', $scenarioBDsCat->players->first()->name);
+
+        // 3. Mutate Scenario B (add Spiller 3 to DS) and verify Scenario A is unchanged
+        SquadMember::query()->create([
+            'squad_category_id' => $scenarioBDsCat->id,
+            'member_ref_id' => $member3->refId,
+            'name' => 'Spiller 3',
+            'gender' => 'K',
+        ]);
+
+        $this->assertEquals(2, $scenarioBDsCat->players()->count());
+        $this->assertEquals(1, $scenarioADsCat->players()->count(), 'Scenario A must remain untouched when Scenario B is modified');
+    }
+
+    /** @test */
+    public function it_rejects_creating_scenario_from_source_scenario_belonging_to_another_team_round(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound1 = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $teamRound2 = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 2',
+        ]);
+
+        $foreignScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound2->id,
+            'name' => 'Anden runder scenarie',
+            'is_official' => false,
+        ]);
+
+        $createScenarioMutation = /** @lang GraphQL */ '
+            mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {
+                createScenario(teamRoundId: $teamRoundId, name: $name, sourceScenarioId: $sourceScenarioId) {
+                    id
+                    name
+                }
+            }
+        ';
+
+        $response = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => (string) $teamRound1->id,
+            'name' => 'Ugyldigt scenarie',
+            'sourceScenarioId' => (string) $foreignScenario->id,
+        ]);
+
+        $this->assertNotNull($response->json('errors'));
+    }
 }
