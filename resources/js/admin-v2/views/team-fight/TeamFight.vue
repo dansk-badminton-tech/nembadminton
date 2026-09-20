@@ -21,98 +21,34 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-dropdown aria-role="list" class="mr-2" dusk="scenario-selector-dropdown">
-                <template #trigger="{ active }">
-                    <button class="button" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
-                        <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
-                        <span>{{ currentScenarioLabel }}</span>
-                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                    </button>
-                </template>
-                <b-dropdown-item
-                    v-for="scenario in availableScenarios"
-                    :key="scenario.id ?? 'official'"
-                    aria-role="listitem"
-                    :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
-                    @click="selectScenario(scenario)"
+            <div class="is-flex is-align-items-center mb-4">
+                <b-dropdown aria-role="list" class="mr-2">
+                    <template #trigger="{ active }">
+                        <button class="button is-link">
+                            <span>Del</span>
+                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                        </button>
+                    </template>
+                    <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
+                        <b-icon icon="file-export"></b-icon>
+                        CSV
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                        <b-icon icon="share"></b-icon>
+                        Link
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-button
+                    v-if="!isCurrentScenarioDraft"
+                    class="ml-2"
+                    icon-left="email-fast"
+                    dusk="send-team-notification-button"
+                    @click="notify"
                 >
-                    <div class="is-flex is-justify-content-between is-align-items-center" style="min-width: 250px; width: 100%;">
-                        <div class="is-flex is-align-items-center mr-3">
-                            <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
-                            <span>{{ scenario.name }}</span>
-                            <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
-                        </div>
-                        <div v-if="!scenario.isOfficial && scenario.id" class="is-flex is-align-items-center ml-2">
-                            <b-button
-                                size="is-small"
-                                type="is-text"
-                                icon-left="pencil"
-                                dusk="rename-scenario-button"
-                                title="Omdøb scenarie"
-                                class="p-1"
-                                @click.stop="promptRenameScenario(scenario)"
-                            />
-                            <b-button
-                                size="is-small"
-                                type="is-text"
-                                icon-left="delete"
-                                class="has-text-danger p-1"
-                                dusk="delete-scenario-button"
-                                title="Slet scenarie"
-                                @click.stop="promptDeleteScenario(scenario)"
-                            />
-                        </div>
-                    </div>
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-button class="mr-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
-            <b-button
-                v-if="isCurrentScenarioDraft"
-                class="mr-2 is-success"
-                icon-left="check-circle"
-                dusk="promote-scenario-button"
-                @click="promptPromoteScenario"
-            >
-                Gør til officiel opstilling
-            </b-button>
-            <b-dropdown aria-role="list">
-                <template #trigger="{ active }">
-                    <button class="button is-link">
-                        <span>Del</span>
-                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                    </button>
-                </template>
-                <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
-                    <b-icon icon="file-export"></b-icon>
-                    CSV
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
-                    <b-icon icon="share"></b-icon>
-                    Link
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-button
-                v-if="!isCurrentScenarioDraft"
-                class="ml-2"
-                icon-left="email-fast"
-                dusk="send-team-notification-button"
-                @click="notify"
-            >
-                Send hold til spillere
-            </b-button>
+                    Send hold til spillere
+                </b-button>
+            </div>
             <hr/>
-            <b-message
-                v-if="isCurrentScenarioDraft"
-                type="is-warning"
-                :closable="false"
-                class="mb-4"
-                dusk="scenario-draft-warning-banner"
-            >
-                <div class="is-flex is-align-items-center">
-                    <b-icon icon="alert" class="mr-2"></b-icon>
-                    <span><strong>Internt udkast — spillere ser fortsat den officielle opstilling.</strong></span>
-                </div>
-            </b-message>
             <div class="columns">
                 <div class="column is-6">
                     <div class="is-flex is-justify-content-space-between is-align-items-flex-start is-flex-wrap-wrap mb-3" style="gap: 0.75rem;">
@@ -139,8 +75,113 @@
                                        @open-add-member="openAddMemberModal"/>
                 </div>
                 <div class="column is-6 container">
-                    <h1 class="title">Holdene i holdrunden</h1>
-                    <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
+                    <div class="is-flex is-justify-content-space-between is-align-items-flex-start is-flex-wrap-wrap mb-3" style="gap: 0.75rem;">
+                        <div>
+                            <div class="is-flex is-align-items-center is-flex-wrap-wrap" style="gap: 0.5rem;">
+                                <h1 class="title mb-0">Holdene i holdrunden</h1>
+                                <b-dropdown
+                                    v-if="hasMultipleScenarios"
+                                    aria-role="list"
+                                    dusk="scenario-selector-dropdown"
+                                >
+                                    <template #trigger="{ active }">
+                                        <button class="button is-small" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
+                                            <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
+                                            <span>{{ currentScenarioLabel }}</span>
+                                            <b-icon size="is-small" :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                                        </button>
+                                    </template>
+                                    <b-dropdown-item
+                                        v-for="scenario in availableScenarios"
+                                        :key="scenario.id ?? 'official'"
+                                        aria-role="listitem"
+                                        :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
+                                        @click="selectScenario(scenario)"
+                                    >
+                                        <div class="is-flex is-justify-content-between is-align-items-center" style="min-width: 250px; width: 100%;">
+                                            <div class="is-flex is-align-items-center mr-3">
+                                                <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
+                                                <span>{{ scenario.name }}</span>
+                                                <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
+                                            </div>
+                                            <div v-if="!scenario.isOfficial && scenario.id" class="is-flex is-align-items-center ml-2">
+                                                <b-button
+                                                    size="is-small"
+                                                    type="is-text"
+                                                    icon-left="pencil"
+                                                    dusk="rename-scenario-button"
+                                                    title="Omdøb scenarie"
+                                                    class="p-1"
+                                                    @click.stop="promptRenameScenario(scenario)"
+                                                />
+                                                <b-button
+                                                    size="is-small"
+                                                    type="is-text"
+                                                    icon-left="delete"
+                                                    class="has-text-danger p-1"
+                                                    dusk="delete-scenario-button"
+                                                    title="Slet scenarie"
+                                                    @click.stop="promptDeleteScenario(scenario)"
+                                                />
+                                            </div>
+                                        </div>
+                                    </b-dropdown-item>
+                                </b-dropdown>
+                            </div>
+                            <h2 class="subtitle mt-1">Træk spillerne rundt ved drag-and-drop</h2>
+                        </div>
+                        <b-button
+                            icon-left="source-branch"
+                            size="is-small"
+                            dusk="create-scenario-button"
+                            @click="promptCreateScenario"
+                        >
+                            Nyt scenarie
+                        </b-button>
+                    </div>
+
+                    <b-message
+                        v-if="isCurrentScenarioDraft"
+                        type="is-warning"
+                        :closable="false"
+                        class="mb-4"
+                        dusk="scenario-draft-warning-banner"
+                    >
+                        <div class="is-flex is-justify-content-space-between is-align-items-center is-flex-wrap-wrap" style="gap: 0.75rem;">
+                            <div class="is-flex is-align-items-center">
+                                <b-icon icon="alert" class="mr-2"></b-icon>
+                                <span>
+                                    Du redigerer udkastet <strong>"{{ currentScenario?.name }}"</strong>. Spillere ser fortsat den officielle opstilling.
+                                </span>
+                            </div>
+                            <div class="buttons are-small mb-0">
+                                <b-button
+                                    type="is-success"
+                                    icon-left="check-circle"
+                                    dusk="promote-scenario-button"
+                                    @click="promptPromoteScenario"
+                                >
+                                    Gør til officiel
+                                </b-button>
+                                <b-button
+                                    icon-left="pencil"
+                                    dusk="banner-rename-scenario-button"
+                                    @click="promptRenameScenario(currentScenario)"
+                                >
+                                    Omdøb
+                                </b-button>
+                                <b-button
+                                    type="is-danger"
+                                    icon-left="delete"
+                                    dusk="banner-delete-scenario-button"
+                                    @click="promptDeleteScenario(currentScenario)"
+                                >
+                                    Slet udkast
+                                </b-button>
+                            </div>
+                        </div>
+                    </b-message>
+
                     <ValidationStatus :incomplete-team="resolveIncompleteTeam"
                                       :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
@@ -269,6 +310,9 @@ export default {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
                 .filter((id) => id !== null && id !== undefined);
+        },
+        hasMultipleScenarios() {
+            return (this.availableScenarios || []).length > 1;
         },
         availableScenarios() {
             const scenarios = this.teamRound?.scenarios || [];
