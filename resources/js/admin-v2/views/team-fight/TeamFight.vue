@@ -85,7 +85,7 @@
                                     dusk="scenario-selector-dropdown"
                                 >
                                     <template #trigger="{ active }">
-                                        <button class="button is-small" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
+                                        <button class="button" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
                                             <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
                                             <span>{{ currentScenarioLabel }}</span>
                                             <b-icon size="is-small" :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
@@ -98,33 +98,9 @@
                                         :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
                                         @click="selectScenario(scenario)"
                                     >
-                                        <div class="is-flex is-justify-content-between is-align-items-center" style="min-width: 250px; width: 100%;">
-                                            <div class="is-flex is-align-items-center mr-3">
-                                                <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
-                                                <span>{{ scenario.name }}</span>
-                                                <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
-                                            </div>
-                                            <div v-if="!scenario.isOfficial && scenario.id" class="is-flex is-align-items-center ml-2">
-                                                <b-button
-                                                    size="is-small"
-                                                    type="is-text"
-                                                    icon-left="pencil"
-                                                    dusk="rename-scenario-button"
-                                                    title="Omdøb scenarie"
-                                                    class="p-1"
-                                                    @click.stop="promptRenameScenario(scenario)"
-                                                />
-                                                <b-button
-                                                    size="is-small"
-                                                    type="is-text"
-                                                    icon-left="delete"
-                                                    class="has-text-danger p-1"
-                                                    dusk="delete-scenario-button"
-                                                    title="Slet scenarie"
-                                                    @click.stop="promptDeleteScenario(scenario)"
-                                                />
-                                            </div>
-                                        </div>
+                                        <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
+                                        <span>{{ scenario.name }}</span>
+                                        <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
                                     </b-dropdown-item>
                                 </b-dropdown>
                             </div>
@@ -132,7 +108,6 @@
                         </div>
                         <b-button
                             icon-left="source-branch"
-                            size="is-small"
                             dusk="create-scenario-button"
                             @click="promptCreateScenario"
                         >
@@ -165,7 +140,7 @@
                                 </b-button>
                                 <b-button
                                     icon-left="pencil"
-                                    dusk="banner-rename-scenario-button"
+                                    dusk="rename-scenario-button"
                                     @click="promptRenameScenario(currentScenario)"
                                 >
                                     Omdøb
@@ -173,7 +148,7 @@
                                 <b-button
                                     type="is-danger"
                                     icon-left="delete"
-                                    dusk="banner-delete-scenario-button"
+                                    dusk="delete-scenario-button"
                                     @click="promptDeleteScenario(currentScenario)"
                                 >
                                     Slet udkast
