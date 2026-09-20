@@ -16,6 +16,7 @@ use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
@@ -743,5 +744,306 @@ class ScenarioTest extends TestCase
         ]);
 
         $this->assertNotNull($response->json('errors'));
+    }
+
+    /** @test */
+    public function it_promotes_a_draft_scenario_to_official_lineup_and_preserves_previous_official_as_draft(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        $catHS = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        $member1 = Member::query()->create([
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1990-01-01',
+            'refId' => 101,
+        ]);
+
+        $player1 = SquadMember::query()->create([
+            'squad_category_id' => $catHS->id,
+            'member_ref_id' => $member1->refId,
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+        ]);
+
+        // 1. Create draft Scenario "Plan B"
+        $createScenarioMutation = /** @lang GraphQL */ '
+            mutation CreateScenario($teamRoundId: ID!, $name: String!) {
+                createScenario(teamRoundId: $teamRoundId, name: $name) {
+                    id
+                    name
+                    isOfficial
+                }
+            }
+        ';
+
+        $createResponse = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => (string) $teamRound->id,
+            'name' => 'Plan B',
+        ]);
+        $createResponse->assertSuccessful();
+        $planBId = (int) $createResponse->json('data.createScenario.id');
+
+        // 2. Promote Plan B to official
+        $promoteScenarioMutation = /** @lang GraphQL */ '
+            mutation PromoteScenario($scenarioId: ID!) {
+                promoteScenario(scenarioId: $scenarioId) {
+                    id
+                    name
+                    officialScenario {
+                        id
+                        name
+                        isOfficial
+                    }
+                    scenarios {
+                        id
+                        name
+                        isOfficial
+                    }
+                }
+            }
+        ';
+
+        $promoteResponse = $this->graphQL($promoteScenarioMutation, [
+            'scenarioId' => (string) $planBId,
+        ]);
+        $promoteResponse->assertSuccessful();
+        $promoteResponse->assertJsonMissing(['errors']);
+
+        $teamRoundData = $promoteResponse->json('data.promoteScenario');
+        $this->assertEquals('Plan B', $teamRoundData['name'], 'TeamRound name matches promoted scenario');
+        $this->assertEquals((string) $planBId, $teamRoundData['officialScenario']['id']);
+        $this->assertTrue($teamRoundData['officialScenario']['isOfficial']);
+
+        // Check scenarios list: Plan B is official, outgoing official is preserved as draft
+        $scenarios = collect($teamRoundData['scenarios']);
+        $this->assertCount(2, $scenarios);
+
+        $promotedPlanB = $scenarios->firstWhere('id', (string) $planBId);
+        $this->assertTrue($promotedPlanB['isOfficial']);
+
+        $preservedOldOfficial = $scenarios->firstWhere('id', '!==', (string) $planBId);
+        $this->assertFalse($preservedOldOfficial['isOfficial']);
+        $this->assertEquals('Runde 1', $preservedOldOfficial['name'], 'Old official preserved with old round name');
+
+        // Check categories and players preserved non-destructively
+        $originalPlayer = SquadMember::query()->find($player1->id);
+        $this->assertNotNull($originalPlayer, 'Original player record was not deleted');
+        $this->assertEquals($catHS->id, $originalPlayer->squad_category_id);
+        $catHS->refresh();
+        $this->assertEquals((int) $preservedOldOfficial['id'], $catHS->team_round_scenario_id, 'Original category reassigned to preserved draft scenario');
+
+        // 3. Create another scenario "Plan C" and promote it (swapping between two existing scenario records)
+        $createResponseC = $this->graphQL($createScenarioMutation, [
+            'teamRoundId' => (string) $teamRound->id,
+            'name' => 'Plan C',
+        ]);
+        $planCId = (int) $createResponseC->json('data.createScenario.id');
+
+        $promoteResponseC = $this->graphQL($promoteScenarioMutation, [
+            'scenarioId' => (string) $planCId,
+        ]);
+        $promoteResponseC->assertSuccessful();
+        $promoteResponseC->assertJsonMissing(['errors']);
+
+        $teamRoundDataC = $promoteResponseC->json('data.promoteScenario');
+        $this->assertEquals('Plan C', $teamRoundDataC['name']);
+        $this->assertEquals((string) $planCId, $teamRoundDataC['officialScenario']['id']);
+
+        $scenariosC = collect($teamRoundDataC['scenarios']);
+        $this->assertCount(3, $scenariosC);
+        $this->assertTrue($scenariosC->firstWhere('id', (string) $planCId)['isOfficial']);
+        $this->assertFalse($scenariosC->firstWhere('id', (string) $planBId)['isOfficial'], 'Plan B swapped back to draft');
+        $this->assertFalse($scenariosC->firstWhere('id', (string) $preservedOldOfficial['id'])['isOfficial']);
+    }
+
+    /** @test */
+    public function it_denies_promoting_scenario_without_permission_or_in_another_clubhouse(): void
+    {
+        [$clubhouse1, $user1] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse1->id,
+            'user_id' => $user1->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $scenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+
+        $promoteScenarioMutation = /** @lang GraphQL */ '
+            mutation PromoteScenario($scenarioId: ID!) {
+                promoteScenario(scenarioId: $scenarioId) {
+                    id
+                }
+            }
+        ';
+
+        // 1. User from another clubhouse
+        [$clubhouse2, $user2] = $this->actingClubhouseUser();
+        $response = $this->graphQL($promoteScenarioMutation, ['scenarioId' => (string) $scenario->id]);
+        $this->assertNotNull($response->json('errors'));
+
+        // 2. User from same clubhouse without EDIT_TEAMROUNDS
+        [$clubhouse3, $user3] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $teamRound3 = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse3->id,
+            'user_id' => $user3->id,
+        ]);
+        $scenario3 = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound3->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+        $response3 = $this->graphQL($promoteScenarioMutation, ['scenarioId' => (string) $scenario3->id]);
+        $this->assertNotNull($response3->json('errors'));
+    }
+
+    /** @test */
+    public function it_blocks_notification_dispatch_on_draft_scenarios_and_notifies_only_official_lineup_players(): void
+    {
+        Notification::fake();
+
+        [$clubhouse, $user] = $this->actingClubhouseUser();
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Runde 1',
+        ]);
+
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+
+        $catOfficial = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => null,
+        ]);
+
+        // Official player with user account
+        $officialMember = Member::query()->create([
+            'name' => 'Officiel Spiller',
+            'gender' => 'M',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1990-01-01',
+            'refId' => 201,
+        ]);
+        SquadMember::query()->create([
+            'squad_category_id' => $catOfficial->id,
+            'member_ref_id' => $officialMember->refId,
+            'name' => 'Officiel Spiller',
+            'gender' => 'M',
+        ]);
+        $officialUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => $officialMember->refId,
+        ]);
+
+        // Draft scenario and player
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+
+        $catDraft = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'DS',
+            'name' => '1. DS',
+            'team_round_scenario_id' => $draftScenario->id,
+        ]);
+
+        $draftMember = Member::query()->create([
+            'name' => 'Udkast Spiller',
+            'gender' => 'K',
+            'clubhouse_id' => $clubhouse->id,
+            'birthday' => '1992-02-02',
+            'refId' => 202,
+        ]);
+        SquadMember::query()->create([
+            'squad_category_id' => $catDraft->id,
+            'member_ref_id' => $draftMember->refId,
+            'name' => 'Udkast Spiller',
+            'gender' => 'K',
+        ]);
+        $draftUser = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'player_id' => $draftMember->refId,
+        ]);
+
+        $notifyMutation = /** @lang GraphQL */ '
+            mutation SendNotification($input: SendTeamNotificationInput!) {
+                sendTeamNotification(input: $input) {
+                    teamRound {
+                        id
+                    }
+                    sentCount
+                    skippedPlayers
+                }
+            }
+        ';
+
+        // 1. Try sending notification explicitly targeting the draft scenario -> must fail
+        $draftNotificationResponse = $this->graphQL($notifyMutation, [
+            'input' => [
+                'id' => $teamRound->id,
+                'scenarioId' => (string) $draftScenario->id,
+                'type' => 'TEAM_PUBLISH',
+                'message' => 'Udkast besked',
+                'receivers' => [
+                    'method' => 'PLATFORM',
+                ],
+            ],
+        ]);
+        $this->assertNotNull($draftNotificationResponse->json('errors'), 'Draft notification must be blocked');
+        $errorMessage = $draftNotificationResponse->json('errors.0.message');
+        $this->assertStringContainsStringIgnoringCase('draft', $errorMessage);
+
+        // 2. Send official notification -> succeeds, only official player notified
+        $officialNotificationResponse = $this->graphQL($notifyMutation, [
+            'input' => [
+                'id' => $teamRound->id,
+                'type' => 'TEAM_PUBLISH',
+                'message' => 'Officiel besked',
+                'receivers' => [
+                    'method' => 'PLATFORM',
+                ],
+            ],
+        ]);
+        $officialNotificationResponse->assertSuccessful();
+        $officialNotificationResponse->assertJsonMissing(['errors']);
+        $this->assertEquals(1, $officialNotificationResponse->json('data.sendTeamNotification.sentCount'));
+
+        Notification::assertSentTo($officialUser, \App\Notifications\TeamPublish::class);
+        Notification::assertNotSentTo($draftUser, \App\Notifications\TeamPublish::class);
     }
 }

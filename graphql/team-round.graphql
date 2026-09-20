@@ -60,6 +60,8 @@ extend type Mutation {
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnSquad")
     "Create a new scenario cloning categories and player assignments"
     createScenario(teamRoundId: ID!, name: String!, sourceScenarioId: ID): TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
+    "Promote a draft scenario to official lineup, preserving outgoing official lineup as a draft"
+    promoteScenario(scenarioId: ID!): TeamRound! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario")
 }
 
 type TeamReceivers {
@@ -83,6 +85,8 @@ input SendTeamNotificationInput {
     message: String
     "Receivers"
     receivers: ReceiverInput!
+    "Target scenario ID. Blocked if scenario is a draft."
+    scenarioId: ID
 }
 
 enum TeamNotificationType {

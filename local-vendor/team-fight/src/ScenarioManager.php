@@ -41,6 +41,57 @@ class ScenarioManager
     }
 
     /**
+     * Promotes a draft scenario to be the official lineup for the team round.
+     * Atomically swaps is_official flag, updates the team round name,
+     * and preserves the outgoing official lineup as a draft scenario without deleting records.
+     */
+    public function promoteScenario(TeamRoundScenario $targetScenario): TeamRound
+    {
+        return DB::transaction(function () use ($targetScenario) {
+            /** @var TeamRound $teamRound */
+            $teamRound = $targetScenario->teamRound()->lockForUpdate()->firstOrFail();
+            $squadIds = $teamRound->squads()->pluck('id');
+
+            // 1. Identify or preserve the outgoing official lineup
+            $currentOfficialScenario = $teamRound->officialScenario;
+
+            if ($currentOfficialScenario === null) {
+                $hasNullCategories = SquadCategory::query()
+                    ->whereIn('squad_id', $squadIds)
+                    ->whereNull('team_round_scenario_id')
+                    ->exists();
+
+                if ($hasNullCategories) {
+                    /** @var TeamRoundScenario $preservedDraft */
+                    $preservedDraft = $teamRound->scenarios()->create([
+                        'name' => $teamRound->name ?? 'Oprindelig opstilling',
+                        'is_official' => false,
+                    ]);
+
+                    SquadCategory::query()
+                        ->whereIn('squad_id', $squadIds)
+                        ->whereNull('team_round_scenario_id')
+                        ->update(['team_round_scenario_id' => $preservedDraft->id]);
+                }
+            }
+
+            // 2. Demote any other official scenarios on this team round
+            $teamRound->scenarios()
+                ->where('id', '!=', $targetScenario->id)
+                ->where('is_official', true)
+                ->update(['is_official' => false]);
+
+            // 3. Promote target scenario
+            $targetScenario->update(['is_official' => true]);
+
+            // 4. Update team round name to match the promoted scenario
+            $teamRound->update(['name' => $targetScenario->name]);
+
+            return $teamRound->refresh();
+        });
+    }
+
+    /**
      * Get categories for a squad scoped by scenario ID or defaulting to official lineup.
      *
      * @return Collection<int, SquadCategory>

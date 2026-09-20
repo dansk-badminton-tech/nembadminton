@@ -148,8 +148,11 @@ class TeamRound extends Model
     private function collectPlayerRefIds(): array
     {
         $refIds = [];
+        $scenarioManager = app(\FlyCompany\TeamFight\ScenarioManager::class);
+        $officialScenario = $this->officialScenario;
         foreach ($this->squads as $squad) {
-            foreach ($squad->categories as $category) {
+            $categories = $scenarioManager->getOfficialCategories($squad, $officialScenario);
+            foreach ($categories as $category) {
                 foreach ($category->players as $player) {
                     if ($player->member_ref_id !== null) {
                         $refIds[] = (string) $player->member_ref_id;

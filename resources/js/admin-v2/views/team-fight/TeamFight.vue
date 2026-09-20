@@ -42,6 +42,15 @@
                 </b-dropdown-item>
             </b-dropdown>
             <b-button class="mr-2" icon-left="source-branch" @click="promptCreateScenario">Opret nyt scenarie</b-button>
+            <b-button
+                v-if="isCurrentScenarioDraft"
+                class="mr-2 is-success"
+                icon-left="check-circle"
+                dusk="promote-scenario-button"
+                @click="promptPromoteScenario"
+            >
+                Gør til officiel opstilling
+            </b-button>
             <b-dropdown aria-role="list">
                 <template #trigger="{ active }">
                     <button class="button is-link">
@@ -58,7 +67,15 @@
                     Link
                 </b-dropdown-item>
             </b-dropdown>
-            <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
+            <b-button
+                v-if="!isCurrentScenarioDraft"
+                class="ml-2"
+                icon-left="email-fast"
+                dusk="send-team-notification-button"
+                @click="notify"
+            >
+                Send hold til spillere
+            </b-button>
             <hr/>
             <b-message
                 v-if="isCurrentScenarioDraft"
@@ -454,6 +471,65 @@ export default {
             } catch (e) {
                 this.$buefy.toast.open({
                     message: 'Kunne ikke oprette scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptPromoteScenario() {
+            if (!this.currentScenario || this.currentScenario.isOfficial) {
+                return;
+            }
+            const name = this.currentScenario.name;
+            this.$buefy.dialog.confirm({
+                title: 'Gør til officiel opstilling',
+                message: `Er du sikker på, at du vil gøre "${name}" til den officielle holdopstilling? Den nuværende officielle opstilling bevares som et udkast.`,
+                confirmText: 'Gør officiel',
+                cancelText: 'Annuller',
+                type: 'is-success',
+                hasIcon: true,
+                icon: 'check-circle',
+                onConfirm: () => this.promoteCurrentScenario()
+            });
+        },
+        async promoteCurrentScenario() {
+            if (!this.currentScenario || !this.currentScenario.id) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation PromoteScenario($scenarioId: ID!) {
+                            promoteScenario(scenarioId: $scenarioId) {
+                                id
+                                name
+                                officialScenario {
+                                    id
+                                    name
+                                    isOfficial
+                                }
+                                scenarios {
+                                    id
+                                    name
+                                    isOfficial
+                                }
+                            }
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(this.currentScenario.id)
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `"${this.currentScenario.name}" er nu den officielle holdopstilling.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke gøre scenariet officielt: ' + (e.message || e),
                     type: 'is-danger'
                 });
             } finally {
