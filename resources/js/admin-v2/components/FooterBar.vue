@@ -14,6 +14,9 @@
           <div class="level-item">
             <a href="/privatlivspolitik">Privatlivspolitik</a>
           </div>
+          <div class="level-item">
+            <router-link to="/help">Hjælp</router-link>
+          </div>
         </div>
         <div class="level-right">
           <div class="level-item">

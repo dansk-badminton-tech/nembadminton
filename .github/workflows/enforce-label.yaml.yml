@@ -14,3 +14,15 @@ jobs:
         with:
           REQUIRED_LABELS_ANY: "release:minor,release:major,release:patch,norelease"
           REQUIRED_LABELS_ANY_DESCRIPTION: "Select at least one label ['release:minor','release:major','release:patch','norelease']"
+      - name: Require exactly one documentation label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const allowed = ['docs:guide', 'docs:announcement', 'docs:not-needed'];
+            const selected = context.payload.pull_request.labels
+              .map(label => label.name)
+              .filter(label => allowed.includes(label));
+
+            if (selected.length !== 1) {
+              core.setFailed(`Select exactly one documentation label: ${allowed.join(', ')}`);
+            }

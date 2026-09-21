@@ -33,6 +33,17 @@ jobs:
       DB_PASSWORD: password
     steps:
       - uses: actions/checkout@v4
+      - name: Setup NodeJS
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+          cache: 'yarn'
+      - name: Install frontend dependencies
+        run: yarn install --frozen-lockfile
+      - name: Validate Help documentation
+        run: yarn docs:validate
+      - name: Build frontend
+        run: yarn build
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:

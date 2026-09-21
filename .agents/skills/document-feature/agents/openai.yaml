@@ -1,0 +1,5 @@
+interface:
+  display_name: "Document Feature"
+  short_description: "Draft Danish user docs for a merge-ready feature"
+policy:
+  allow_implicit_invocation: false

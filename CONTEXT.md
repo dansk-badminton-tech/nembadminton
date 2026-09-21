@@ -35,3 +35,13 @@ _Avoid_: Published round, live round
 **Promotion**:
 The atomic transition of a draft scenario to become the official lineup, preserving the outgoing official lineup as an alternative draft scenario.
 _Avoid_: Publish, merge, partial sync
+
+### User Documentation
+
+**User Guide**:
+Durable, publicly accessible instructions that explain how to use a feature in NemBadminton.
+_Avoid_: Release announcement, feature specification
+
+**Release Announcement**:
+A short, publicly accessible summary of a newly released change that links to a User Guide when more guidance is available.
+_Avoid_: User Guide, changelog
