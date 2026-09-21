@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Notification;
 
 class Notifier
 {
+    public function __construct(
+        private readonly ?ScenarioManager $scenarioManager = null
+    ) {}
 
     public function sendManualEmails(TeamRound $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
     {
@@ -66,12 +69,15 @@ class Notifier
      */
     public function sendToPlatformPlayers(TeamRound $team, ?string $message, TeamNotificationType $notificationType, ?array $selectedRefIds = null) : array
     {
-        $team->loadMissing('squads.categories.players');
+        $scenarioManager = $this->scenarioManager ?? app(ScenarioManager::class);
+        $officialScenario = $team->officialScenario;
 
         /** @var array<string,string> $refIdToName ref id => player name */
         $refIdToName = [];
         foreach ($team->squads as $squad) {
-            foreach ($squad->categories as $category) {
+            $categories = $scenarioManager->getOfficialCategories($squad, $officialScenario);
+
+            foreach ($categories as $category) {
                 foreach ($category->players as $player) {
                     /** @var SquadMember $player */
                     $refIdToName[$player->member_ref_id] = $player->name;

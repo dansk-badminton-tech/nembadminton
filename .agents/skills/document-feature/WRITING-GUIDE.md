@@ -1,0 +1,42 @@
+# Help writing guide
+
+Write for people using NemBadminton, in plain Danish. Use the exact labels readers see in the interface and canonical terms from `CONTEXT.md`. Explain outcomes and actions; source code, internal architecture, issue numbers, and implementation details belong in developer artifacts.
+
+## User Guides
+
+Store User Guides in `resources/help/guides/<slug>.md`. Use a short, stable, lowercase slug with hyphens.
+
+```md
+---
+title: Opret en holdrunde
+summary: Sådan opretter og planlægger du en holdrunde.
+order: 10
+---
+
+Describe the outcome, prerequisites when they matter, and actionable steps. Use only headings that help this workflow; omit empty template sections.
+```
+
+Update a guide when documented behavior changes. Create a guide only when no current guide owns the workflow.
+
+## Release Announcements
+
+Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it.
+
+```md
+---
+title: Ny måde at oprette holdrunder på
+summary: Det er blevet nemmere at planlægge en holdrunde.
+published: 2026-09-21
+guide: opret-en-holdrunde
+---
+
+Explain what changed and the benefit to the user. Add `guide` only when the named User Guide exists; the application renders the guide link.
+```
+
+Announcements are historical records. Correct factual or language errors, but represent later behavior changes with a new announcement.
+
+## Markdown
+
+Use headings, paragraphs, lists, links, emphasis, code, tables, and blockquotes. Raw HTML is rendered as text. Start body headings at `##` because the page renders the document title as its `h1`.
+
+Write descriptive link text. Link to public sources when they are necessary to complete the task. Screenshots are outside the initial documentation workflow.

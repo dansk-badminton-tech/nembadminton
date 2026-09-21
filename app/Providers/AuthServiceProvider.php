@@ -12,6 +12,8 @@ use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
 use App\Models\User;
+use App\Models\TeamRoundScenario;
+use App\Policies\TeamRoundScenarioPolicy;
 use App\Policies\MemberPolicy;
 use App\Policies\SquadCategoryPolicy;
 use App\Policies\SquadMemberPolicy;
@@ -40,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         Squad::class => SquadPolicy::class,
         SquadPoint::class => SquadPointPolicy::class,
         TeamRound::class => TeamRoundPolicy::class,
+        TeamRoundScenario::class => TeamRoundScenarioPolicy::class,
         Team::class => TeamPolicy::class,
     ];
 

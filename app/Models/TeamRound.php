@@ -51,8 +51,17 @@ class TeamRound extends Model
     {
         $user = Auth::user();
         if ($user && $user->primaryRole?->name === Role::PLAYER->value) {
-            return $query->whereHas('squads.categories.players', function (Builder $q) use ($user) {
-                $q->where('member_ref_id', $user->player_id);
+            return $query->whereHas('squads.categories', function (Builder $categoryQuery) use ($user) {
+                $categoryQuery->where(function (Builder $sub) {
+                    $sub->whereHas('scenario', function (Builder $scenarioQuery) {
+                        $scenarioQuery->where('is_official', true);
+                    })->orWhere(function (Builder $nullScenarioQuery) {
+                        $nullScenarioQuery->whereNull('team_round_scenario_id')
+                            ->whereDoesntHave('squad.teamRound.officialScenario');
+                    });
+                })->whereHas('players', function (Builder $playerQuery) use ($user) {
+                    $playerQuery->where('member_ref_id', $user->player_id);
+                });
             });
         }
         return $query;
@@ -95,6 +104,16 @@ class TeamRound extends Model
         return $this->hasMany(Squad::class, 'team_round_id', 'id')->orderBy('order');
     }
 
+    public function scenarios(): HasMany
+    {
+        return $this->hasMany(TeamRoundScenario::class, 'team_round_id');
+    }
+
+    public function officialScenario(): HasOne
+    {
+        return $this->hasOne(TeamRoundScenario::class, 'team_round_id')->where('is_official', true);
+    }
+
     /**
      * Ref IDs of players on this team round that have a linked platform user account.
      * Single batched query — runs once per team round, not per player.
@@ -129,8 +148,11 @@ class TeamRound extends Model
     private function collectPlayerRefIds(): array
     {
         $refIds = [];
+        $scenarioManager = app(\FlyCompany\TeamFight\ScenarioManager::class);
+        $officialScenario = $this->officialScenario;
         foreach ($this->squads as $squad) {
-            foreach ($squad->categories as $category) {
+            $categories = $scenarioManager->getOfficialCategories($squad, $officialScenario);
+            foreach ($categories as $category) {
                 foreach ($category->players as $player) {
                     if ($player->member_ref_id !== null) {
                         $refIds[] = (string) $player->member_ref_id;

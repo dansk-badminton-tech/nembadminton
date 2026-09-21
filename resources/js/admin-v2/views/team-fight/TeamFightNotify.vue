@@ -85,6 +85,7 @@ export default {
             notificationType: 'team_publish',
             manualEmails: '',
             saveManualEmails: true,
+            loadedOfficialScenarioId: undefined,
             predefinedTexts: [
                 {
                     label: 'Holdrunden er klar',
@@ -106,6 +107,12 @@ export default {
         if (savedMessage) {
             this.message = savedMessage;
         }
+    },
+    mounted() {
+        window.addEventListener('focus', this.refreshOfficialLineup);
+    },
+    beforeUnmount() {
+        window.removeEventListener('focus', this.refreshOfficialLineup);
     },
     watch: {
         message(newVal) {
@@ -143,10 +150,24 @@ export default {
         },
         teamRound: {
             query: TeamRoundQuery,
+            fetchPolicy: 'network-only',
             variables: function () {
                 return {
                     id: this.teamRoundId
                 }
+            },
+            result({data}) {
+                const teamRound = data?.teamRound;
+                const officialScenarioId = teamRound?.scenarios
+                    ?.find(scenario => scenario.isOfficial)?.id ?? null;
+
+                if (this.loadedOfficialScenarioId !== undefined
+                    && this.loadedOfficialScenarioId !== officialScenarioId) {
+                    this.selectedPlayerRefIds = this.playerRefIdsFromTeamRound(teamRound);
+                    this.selectionInitialized = true;
+                }
+
+                this.loadedOfficialScenarioId = officialScenarioId;
             }
         },
         activityLogs: {
@@ -191,6 +212,20 @@ export default {
         }
     },
     methods: {
+        playerRefIdsFromTeamRound(teamRound) {
+            const ids = new Set();
+            (teamRound?.squads || []).forEach(squad => {
+                (squad.categories || []).forEach(category => {
+                    (category.players || []).forEach(player => {
+                        if (player.refId) ids.add(player.refId);
+                    });
+                });
+            });
+            return [...ids];
+        },
+        refreshOfficialLineup() {
+            this.$apollo.queries.teamRound?.refetch();
+        },
         publish() {
             if (this.cannotPublish) return;
 
@@ -396,8 +431,11 @@ export default {
         </hero-bar>
         <div class="section">
             <div class="content">
-            <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamRoundId+'/edit'" @click="publish">Tilbage</b-button>
+            <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamRoundId+'/edit'">Tilbage</b-button>
             </div>
+            <b-message type="is-info" :closable="false" dusk="official-lineup-notice">
+                Notifikationer tager altid udgangspunkt i den officielle holdopstilling, uanset hvilket scenarie du redigerer.
+            </b-message>
             <div class="columns">
                 <div class="column is-half">
                     <form @submit.prevent="publish">

@@ -101,6 +101,62 @@ const routes = [
                 }
             }
         ]
+    },
+    {
+        path: '/help',
+        component: () => import('@/views/help/HelpLayout.vue'),
+        children: [
+            {
+                path: '',
+                name: 'help-home',
+                component: () => import('@/views/help/HelpHome.vue'),
+                meta: {title: 'Hjælp'}
+            },
+            {
+                path: 'guides',
+                name: 'help-guides',
+                component: () => import('@/views/help/HelpGuides.vue'),
+                meta: {title: 'Vejledninger'}
+            },
+            {
+                path: 'guides/:slug',
+                name: 'help-guide',
+                component: () => import('@/views/help/HelpArticle.vue'),
+                props: {kind: 'guide'},
+                meta: {title: 'Vejledning'}
+            },
+            {
+                path: 'news',
+                name: 'help-news',
+                component: () => import('@/views/help/HelpNews.vue'),
+                meta: {title: 'Nyheder'}
+            },
+            {
+                path: 'news/:slug',
+                name: 'help-announcement',
+                component: () => import('@/views/help/HelpArticle.vue'),
+                props: {kind: 'news'},
+                meta: {title: 'Nyhed'}
+            },
+            {
+                path: 'faq',
+                name: 'help-faq',
+                component: () => import('@/views/help/HelpPage.vue'),
+                props: {page: 'faq'},
+                meta: {title: 'Ofte stillede spørgsmål'}
+            },
+            {
+                path: 'about',
+                name: 'help-about',
+                component: () => import('@/views/help/HelpPage.vue'),
+                props: {page: 'about'},
+                meta: {title: 'Om NemBadminton'}
+            },
+            {
+                path: ':pathMatch(.*)*',
+                redirect: '/help'
+            }
+        ]
     },{
         path: '/main-app',
         component: () => import(/* webpackChunkName: "main-app" */ '@/views/App.vue'),
@@ -196,19 +252,11 @@ const routes = [
             },
             {
                 path: '/faq',
-                meta: {
-                    title: 'FAQ'
-                },
-                name: 'faq',
-                component: () => import('@/views/faq/Faq.vue')
+                redirect: '/help/faq'
             },
             {
                 path: '/about-us',
-                meta: {
-                    title: 'Om os'
-                },
-                name: 'about-us',
-                component: () => import('@/views/about/About.vue')
+                redirect: '/help/about'
             },
             {
                 path: '/onboarding',

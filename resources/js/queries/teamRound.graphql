@@ -1,4 +1,4 @@
-query teamRound($id: ID!){
+query teamRound($id: ID!, $scenarioId: ID){
     teamRound(id: $id){
         id
         squads{
@@ -23,7 +23,7 @@ query teamRound($id: ID!){
             playingDatetime
             externalTeamFightID
             version
-            categories{
+            categories(scenarioId: $scenarioId){
                 id
                 category
                 name
@@ -57,6 +57,11 @@ query teamRound($id: ID!){
         version
         round
         reachablePlayerRefIds
+        scenarios {
+            id
+            name
+            isOfficial
+        }
         season {
             id
         }

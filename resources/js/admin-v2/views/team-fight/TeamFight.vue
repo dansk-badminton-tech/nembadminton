@@ -21,23 +21,32 @@
         </hero-bar>
         <section class="section is-main-section">
             <b-loading :active="$apollo.loading || this.updating" :can-cancel="true" :is-full-page="true"></b-loading>
-            <b-dropdown aria-role="list">
-                <template #trigger="{ active }">
-                    <button class="button is-link">
-                        <span>Del</span>
-                        <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
-                    </button>
-                </template>
-                <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
-                    <b-icon icon="file-export"></b-icon>
-                    CSV
-                </b-dropdown-item>
-                <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
-                    <b-icon icon="share"></b-icon>
-                    Link
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-button class="ml-2" icon-left="email-fast" @click="notify">Send hold til spillere</b-button>
+            <div class="is-flex is-align-items-center mb-4">
+                <b-dropdown aria-role="list" class="mr-2">
+                    <template #trigger="{ active }">
+                        <button class="button is-link">
+                            <span>Del</span>
+                            <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                        </button>
+                    </template>
+                    <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
+                        <b-icon icon="file-export"></b-icon>
+                        CSV
+                    </b-dropdown-item>
+                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                        <b-icon icon="share"></b-icon>
+                        Link
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-button
+                    class="ml-2"
+                    icon-left="email-fast"
+                    dusk="send-team-notification-button"
+                    @click="notify"
+                >
+                    Send hold til spillere
+                </b-button>
+            </div>
             <hr/>
             <div class="columns">
                 <div class="column is-6">
@@ -65,8 +74,88 @@
                                        @open-add-member="openAddMemberModal"/>
                 </div>
                 <div class="column is-6 container">
-                    <h1 class="title">Holdene i holdrunden</h1>
-                    <h1 class="subtitle">Træk spillerne rundt ved drag-and-drop</h1>
+                    <div class="is-flex is-justify-content-space-between is-align-items-flex-start is-flex-wrap-wrap mb-3" style="gap: 0.75rem;">
+                        <div>
+                            <div class="is-flex is-align-items-center is-flex-wrap-wrap" style="gap: 0.5rem;">
+                                <h1 class="title mb-0">Holdene i holdrunden</h1>
+                                <b-dropdown
+                                    v-if="hasMultipleScenarios"
+                                    aria-role="list"
+                                    dusk="scenario-selector-dropdown"
+                                >
+                                    <template #trigger="{ active }">
+                                        <button class="button" :class="isCurrentScenarioDraft ? 'is-warning is-light' : 'is-success is-light'">
+                                            <span class="mr-1">{{ isCurrentScenarioDraft ? '🟡' : '🟢' }}</span>
+                                            <span>{{ currentScenarioLabel }}</span>
+                                            <b-icon size="is-small" :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
+                                        </button>
+                                    </template>
+                                    <b-dropdown-item
+                                        v-for="scenario in availableScenarios"
+                                        :key="scenario.id ?? 'official'"
+                                        aria-role="listitem"
+                                        :class="{ 'is-active': String(currentScenario?.id) === String(scenario.id) }"
+                                        @click="selectScenario(scenario)"
+                                    >
+                                        <span class="mr-2">{{ scenario.isOfficial ? '🟢' : '🟡' }}</span>
+                                        <span>{{ scenario.name }}</span>
+                                        <span class="has-text-grey ml-1">({{ scenario.isOfficial ? 'Officiel' : 'Udkast' }})</span>
+                                    </b-dropdown-item>
+                                </b-dropdown>
+                            </div>
+                            <h2 class="subtitle mt-1">Træk spillerne rundt ved drag-and-drop</h2>
+                        </div>
+                        <b-button
+                            icon-left="source-branch"
+                            dusk="create-scenario-button"
+                            @click="promptCreateScenario"
+                        >
+                            Nyt scenarie
+                        </b-button>
+                    </div>
+
+                    <b-message
+                        v-if="isCurrentScenarioDraft"
+                        type="is-warning"
+                        :closable="false"
+                        class="mb-4"
+                        dusk="scenario-draft-warning-banner"
+                    >
+                        <div class="is-flex is-justify-content-space-between is-align-items-center is-flex-wrap-wrap" style="gap: 0.75rem;">
+                            <div class="is-flex is-align-items-center">
+                                <b-icon icon="alert" class="mr-2"></b-icon>
+                                <span>
+                                    Du redigerer udkastet <strong>"{{ currentScenario?.name }}"</strong>. Spillere ser fortsat den officielle opstilling.
+                                </span>
+                            </div>
+                            <div class="buttons are-small mb-0">
+                                <b-button
+                                    type="is-success"
+                                    icon-left="check-circle"
+                                    dusk="promote-scenario-button"
+                                    @click="promptPromoteScenario"
+                                >
+                                    Gør til officiel
+                                </b-button>
+                                <b-button
+                                    icon-left="pencil"
+                                    dusk="rename-scenario-button"
+                                    @click="promptRenameScenario(currentScenario)"
+                                >
+                                    Omdøb
+                                </b-button>
+                                <b-button
+                                    type="is-danger"
+                                    icon-left="delete"
+                                    dusk="delete-scenario-button"
+                                    @click="promptDeleteScenario(currentScenario)"
+                                >
+                                    Slet udkast
+                                </b-button>
+                            </div>
+                        </div>
+                    </b-message>
+
                     <ValidationStatus :incomplete-team="resolveIncompleteTeam"
                                       :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
@@ -195,6 +284,50 @@ export default {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
                 .filter((id) => id !== null && id !== undefined);
+        },
+        hasMultipleScenarios() {
+            return (this.availableScenarios || []).length > 1;
+        },
+        availableScenarios() {
+            const scenarios = this.teamRound?.scenarios || [];
+            const hasOfficialScenario = scenarios.some(s => s.isOfficial);
+
+            if (hasOfficialScenario) {
+                return scenarios;
+            }
+
+            return [
+                {
+                    id: null,
+                    name: 'Officiel opstilling',
+                    isOfficial: true
+                },
+                ...scenarios
+            ];
+        },
+        currentScenario() {
+            const list = this.availableScenarios;
+            if (this.selectedScenarioId !== null && this.selectedScenarioId !== undefined) {
+                const found = list.find(s => String(s.id) === String(this.selectedScenarioId));
+                if (found) {
+                    return found;
+                }
+            }
+            return list.find(s => s.isOfficial) || list[0] || null;
+        },
+        currentScenarioLabel() {
+            if (!this.currentScenario) {
+                return 'Indlæser...';
+            }
+            if (this.currentScenario.isOfficial) {
+                return this.currentScenario.name.includes('(Officiel)')
+                    ? this.currentScenario.name
+                    : `${this.currentScenario.name} (Officiel)`;
+            }
+            return `${this.currentScenario.name} (Udkast)`;
+        },
+        isCurrentScenarioDraft() {
+            return Boolean(this.currentScenario && !this.currentScenario.isOfficial);
         }
     },
     data() {
@@ -207,6 +340,7 @@ export default {
             players: [],
             saving: false,
             updating: false,
+            selectedScenarioId: null,
             gameDate: new Date(),
             version: null,
             round: null,
@@ -234,9 +368,10 @@ export default {
         },
         teamRound: {
             query: TeamRoundQuery,
-            variables: function () {
+            variables() {
                 return {
-                    id: this.teamRoundId
+                    id: this.teamRoundId,
+                    scenarioId: this.selectedScenarioId
                 }
             },
             result({data}) {
@@ -316,6 +451,234 @@ export default {
                 },
                 width: 640
             })
+        },
+        promptCreateScenario() {
+            const sourceName = this.currentScenario ? this.currentScenario.name : 'den officielle opstilling';
+            this.$buefy.dialog.prompt({
+                title: 'Nyt scenarie',
+                message: `Indtast navn på det nye scenarie (kopieres fra "${sourceName}"):`,
+                placeholder: 'F.eks. Plan B - Hvis Nikolaj er skadet',
+                inputAttrs: {
+                    maxlength: 255
+                },
+                trapFocus: true,
+                confirmText: 'Opret',
+                cancelText: 'Annuller',
+                onConfirm: (name) => this.createScenario(name)
+            })
+        },
+        selectScenario(scenario) {
+            this.selectedScenarioId = scenario ? scenario.id : null;
+        },
+        teamRoundRefetchQueries() {
+            return [
+                {
+                    query: TeamRoundQuery,
+                    variables: {
+                        id: this.teamRoundId,
+                        scenarioId: this.selectedScenarioId
+                    }
+                }
+            ];
+        },
+        async createScenario(name) {
+            if (!name || !name.trim()) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const sourceScenarioId = this.currentScenario?.id ? String(this.currentScenario.id) : null;
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {
+                            createScenario(teamRoundId: $teamRoundId, name: $name, sourceScenarioId: $sourceScenarioId) {
+                                id
+                                name
+                                isOfficial
+                            }
+                        }
+                    `,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        name: name.trim(),
+                        sourceScenarioId: sourceScenarioId
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.selectedScenarioId = response.data.createScenario.id;
+                this.$buefy.toast.open({
+                    message: `Scenariet "${response.data.createScenario.name}" blev oprettet.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke oprette scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptPromoteScenario() {
+            if (!this.currentScenario || this.currentScenario.isOfficial) {
+                return;
+            }
+            const name = this.currentScenario.name;
+            this.$buefy.dialog.confirm({
+                title: 'Gør til officiel opstilling',
+                message: `Er du sikker på, at du vil gøre "${name}" til den officielle holdopstilling? Den nuværende officielle opstilling bevares som et udkast.`,
+                confirmText: 'Gør officiel',
+                cancelText: 'Annuller',
+                type: 'is-success',
+                hasIcon: true,
+                icon: 'check-circle',
+                onConfirm: () => this.promoteCurrentScenario()
+            });
+        },
+        async promoteCurrentScenario() {
+            if (!this.currentScenario || !this.currentScenario.id) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation PromoteScenario($scenarioId: ID!) {
+                            promoteScenario(scenarioId: $scenarioId) {
+                                id
+                                name
+                                officialScenario {
+                                    id
+                                    name
+                                    isOfficial
+                                }
+                                scenarios {
+                                    id
+                                    name
+                                    isOfficial
+                                }
+                            }
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(this.currentScenario.id)
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `"${this.currentScenario.name}" er nu den officielle holdopstilling.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke gøre scenariet officielt: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptRenameScenario(scenario) {
+            if (!scenario || scenario.isOfficial) {
+                return;
+            }
+            this.$buefy.dialog.prompt({
+                title: 'Omdøb scenarie',
+                message: `Indtast nyt navn for scenariet "${scenario.name}":`,
+                placeholder: 'F.eks. Plan B',
+                inputAttrs: {
+                    maxlength: 255,
+                    value: scenario.name
+                },
+                trapFocus: true,
+                confirmText: 'Omdøb',
+                cancelText: 'Annuller',
+                onConfirm: (name) => this.renameScenario(scenario, name)
+            });
+        },
+        async renameScenario(scenario, name) {
+            if (!scenario || !scenario.id || !name || !name.trim()) {
+                return;
+            }
+            this.updating = true;
+            try {
+                const response = await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation RenameScenario($scenarioId: ID!, $name: String!) {
+                            renameScenario(scenarioId: $scenarioId, name: $name) {
+                                id
+                                name
+                                isOfficial
+                            }
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(scenario.id),
+                        name: name.trim()
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `Scenariet blev omdøbt til "${response.data.renameScenario.name}".`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke omdøbe scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
+        },
+        promptDeleteScenario(scenario) {
+            if (!scenario || scenario.isOfficial) {
+                return;
+            }
+            const name = scenario.name;
+            this.$buefy.dialog.confirm({
+                title: 'Slet scenarie',
+                message: `Er du sikker på, at du vil slette udkastet "${name}"? Alle holdopstillinger i dette udkast vil gå tabt.`,
+                confirmText: 'Slet',
+                cancelText: 'Annuller',
+                type: 'is-danger',
+                hasIcon: true,
+                icon: 'delete',
+                onConfirm: () => this.deleteScenario(scenario)
+            });
+        },
+        async deleteScenario(scenario) {
+            if (!scenario || !scenario.id) {
+                return;
+            }
+            this.updating = true;
+            try {
+                if (String(this.selectedScenarioId) === String(scenario.id)) {
+                    this.selectedScenarioId = null;
+                }
+                await this.$apollo.mutate({
+                    mutation: gql`
+                        mutation DeleteScenario($scenarioId: ID!) {
+                            deleteScenario(scenarioId: $scenarioId)
+                        }
+                    `,
+                    variables: {
+                        scenarioId: String(scenario.id)
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
+                });
+                this.$buefy.toast.open({
+                    message: `Udkastet "${scenario.name}" blev slettet.`,
+                    type: 'is-success'
+                });
+            } catch (e) {
+                this.$buefy.toast.open({
+                    message: 'Kunne ikke slette scenariet: ' + (e.message || e),
+                    type: 'is-danger'
+                });
+            } finally {
+                this.updating = false;
+            }
         },
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
@@ -426,9 +789,7 @@ export default {
                                 : this.version
                         }
                     },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ],
+                    refetchQueries: this.teamRoundRefetchQueries(),
                     awaitRefetchQueries: true
                 })
                 .then((data) => {
@@ -461,9 +822,7 @@ export default {
                     variables: {
                         id: player.id
                     },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ],
+                    refetchQueries: this.teamRoundRefetchQueries(),
                     awaitRefetchQueries: true
                 })
                 .then(({data}) => {
@@ -616,9 +975,7 @@ export default {
                                 variables: {
                                     id: targetSquad.id
                                 },
-                                refetchQueries: [
-                                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                                ]
+                                refetchQueries: this.teamRoundRefetchQueries()
                             })
                     }
                 })
@@ -711,9 +1068,7 @@ export default {
                 variables: {
                     input: squad.id
                 },
-                refetchQueries: [
-                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                ]
+                refetchQueries: this.teamRoundRefetchQueries()
             })
                 .catch((error) => {
                     this.$buefy.snackbar.open(
@@ -742,9 +1097,7 @@ export default {
                 variables: {
                     input: squad.id
                 },
-                refetchQueries: [
-                    {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                ]
+                refetchQueries: this.teamRoundRefetchQueries()
             })
                 .catch((error) => {
                     this.$buefy.snackbar.open(

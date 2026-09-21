@@ -58,6 +58,14 @@ extend type Mutation {
     updatePointsTeamRound(id: ID!, version: String!) : TeamRound @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnAllSquadsInTeamRound")
     "Changes all player points to the new version."
     updatePointsSquad(id: ID!, version: String) : Squad @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound@updatePointsOnSquad")
+    "Create a new scenario cloning categories and player assignments"
+    createScenario(teamRoundId: ID!, name: String!, sourceScenarioId: ID): TeamRoundScenario! @guard @canFind(ability: "update", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario")
+    "Promote a draft scenario to official lineup, preserving outgoing official lineup as a draft"
+    promoteScenario(scenarioId: ID!): TeamRound! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario")
+    "Rename a scenario"
+    renameScenario(scenarioId: ID!, name: String!): TeamRoundScenario! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario")
+    "Delete a draft scenario and all associated categories, players, and points"
+    deleteScenario(scenarioId: ID!): Boolean! @guard @canFind(ability: "delete", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\DeleteScenario")
 }
 
 type TeamReceivers {
@@ -295,7 +303,7 @@ type Squad {
     "Playing City"
     playingCity: String @rename(attribute: "playing_city")
     "Categories"
-    categories: [SquadCategory!]!
+    categories(scenarioId: ID): [SquadCategory!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadCategoriesResolver")
     "Order"
     order: Int!
     "Ranking version"
@@ -328,6 +336,19 @@ type TeamRound {
     clubhouse: Clubhouse @belongsTo
     "Ref IDs of players on this team round that have a linked platform user account (single batched query)"
     reachablePlayerRefIds: [String!]! @field(resolver: "App\\Models\\TeamRound@getReachablePlayerRefIds")
+    "Scenarios"
+    scenarios: [TeamRoundScenario!]! @hasMany(relation: "scenarios")
+    "Official scenario"
+    officialScenario: TeamRoundScenario @hasOne(relation: "officialScenario")
+}
+
+type TeamRoundScenario {
+    id: ID!
+    teamRoundId: ID! @rename(attribute: "team_round_id")
+    name: String!
+    isOfficial: Boolean! @rename(attribute: "is_official")
+    createdAt: DateTime @rename(attribute: "created_at")
+    updatedAt: DateTime @rename(attribute: "updated_at")
 }
 
 type TeamActivityLog {

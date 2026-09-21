@@ -41,14 +41,9 @@ export function adminMenu(clubhouseId) {
         'Hjælp',
         [
             {
-                to: '/about-us',
-                label: 'Om os',
-                icon: 'information'
-            },
-            {
-                to: '/faq',
-                label: 'FAQ',
-                icon: 'frequently-asked-questions'
+                to: '/help',
+                label: 'Hjælp',
+                icon: 'help-circle-outline'
             },
         ]
     ];
@@ -73,7 +68,14 @@ export function playerMenu(clubhouseId) {
                 icon: 'calendar-sync-outline',
                 label: 'Automatisk kalender'
             }
+        ],
+        'Hjælp',
+        [
+            {
+                to: '/help',
+                label: 'Hjælp',
+                icon: 'help-circle-outline'
+            }
         ]
     ]
 }
-
