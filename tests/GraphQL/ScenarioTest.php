@@ -923,7 +923,7 @@ class ScenarioTest extends TestCase
     }
 
     /** @test */
-    public function it_blocks_notification_dispatch_on_draft_scenarios_and_notifies_only_official_lineup_players(): void
+    public function it_notifies_only_official_lineup_players(): void
     {
         Notification::fake();
 
@@ -942,11 +942,17 @@ class ScenarioTest extends TestCase
             'order' => 1,
         ]);
 
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Officiel opstilling',
+            'is_official' => true,
+        ]);
+
         $catOfficial = SquadCategory::query()->create([
             'squad_id' => $squad->id,
             'category' => 'HS',
             'name' => '1. HS',
-            'team_round_scenario_id' => null,
+            'team_round_scenario_id' => $officialScenario->id,
         ]);
 
         // Official player with user account
@@ -1012,23 +1018,6 @@ class ScenarioTest extends TestCase
             }
         ';
 
-        // 1. Try sending notification explicitly targeting the draft scenario -> must fail
-        $draftNotificationResponse = $this->graphQL($notifyMutation, [
-            'input' => [
-                'id' => $teamRound->id,
-                'scenarioId' => (string) $draftScenario->id,
-                'type' => 'TEAM_PUBLISH',
-                'message' => 'Udkast besked',
-                'receivers' => [
-                    'method' => 'PLATFORM',
-                ],
-            ],
-        ]);
-        $this->assertNotNull($draftNotificationResponse->json('errors'), 'Draft notification must be blocked');
-        $errorMessage = $draftNotificationResponse->json('errors.0.message');
-        $this->assertStringContainsStringIgnoringCase('draft', $errorMessage);
-
-        // 2. Send official notification -> succeeds, only official player notified
         $officialNotificationResponse = $this->graphQL($notifyMutation, [
             'input' => [
                 'id' => $teamRound->id,

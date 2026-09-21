@@ -39,7 +39,6 @@
                     </b-dropdown-item>
                 </b-dropdown>
                 <b-button
-                    :disabled="isCurrentScenarioDraft"
                     class="ml-2"
                     icon-left="email-fast"
                     dusk="send-team-notification-button"

@@ -16,6 +16,22 @@ class TeamFightNotifyTest extends DuskTestCase
 
     protected $seeder = 'TestingDataSeeder';
 
+    public function test_back_button_returns_to_team_round_without_opening_send_confirmation(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+            $teamRound = TeamRound::where('name', '3x13 Kamps - Valid')->first();
+
+            $browser->visit(new LoginPage())
+                ->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
+                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
+                ->click('@back-button')
+                ->waitForLocation('/app/c-' . $clubhouse->id . '/team-fight/' . $teamRound->id . '/edit')
+                ->assertMissing('.modal-card');
+        });
+    }
+
     /**
      * Test sending a notification to manually entered email addresses.
      *
@@ -32,7 +48,8 @@ class TeamFightNotifyTest extends DuskTestCase
             $browser->visit(new LoginPage())
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
-                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id));
+                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
+                ->assertSeeIn('@official-lineup-notice', 'Notifikationer tager altid udgangspunkt i den officielle holdopstilling');
 
             // Step 1: Type a message
             $browser->fillMessage('Holdopstillingen er opdateret');

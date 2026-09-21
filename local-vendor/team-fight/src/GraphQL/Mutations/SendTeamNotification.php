@@ -7,11 +7,9 @@ use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
-use App\Models\TeamRoundScenario;
 use App\Models\User;
 use FlyCompany\TeamFight\Notifier;
 use GraphQL\Type\Definition\ResolveInfo;
-use Nuwave\Lighthouse\Exceptions\AuthorizationException;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class SendTeamNotification
@@ -38,17 +36,6 @@ class SendTeamNotification
 
         /** @var TeamRound $teamRound */
         $teamRound = TeamRound::query()->findOrFail($args['id']);
-
-        if (isset($args['scenarioId'])) {
-            /** @var TeamRoundScenario $scenario */
-            $scenario = TeamRoundScenario::query()
-                ->where('team_round_id', $teamRound->id)
-                ->findOrFail($args['scenarioId']);
-
-            if (!$scenario->is_official) {
-                throw new AuthorizationException('Cannot send notifications for a draft scenario. Promote the scenario to the official lineup first.');
-            }
-        }
 
         $method = RecipientType::from($receivers['method']);
         $teamNotificationType = TeamNotificationType::from($type);

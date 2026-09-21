@@ -89,8 +89,6 @@ input SendTeamNotificationInput {
     message: String
     "Receivers"
     receivers: ReceiverInput!
-    "Target scenario ID. Blocked if scenario is a draft."
-    scenarioId: ID
 }
 
 enum TeamNotificationType {
