@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="has-aside-left has-aside-mobile-transition has-navbar-fixed-top">
+<html lang="en" data-theme="light" class="has-aside-left has-aside-mobile-transition has-navbar-fixed-top">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
