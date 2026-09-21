@@ -109,6 +109,9 @@ class MemberManagementPage extends Page
      */
     public function assertMemberStatus(Browser $browser, string $memberName, string $status): self
     {
+        $browser->waitForTextIn('@members-table', $memberName)
+                ->waitForTextIn('@members-table', $status);
+
         $browser->with('@members-table', function ($table) use ($memberName, $status) {
             $table->assertSee($memberName)
                   ->assertSee($status);

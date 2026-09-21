@@ -142,11 +142,11 @@ class MemberManagementTest extends DuskTestCase
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
+                    ->toggleShowInactive()
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
                     ->toggleMemberInactiveStatusById($member->id)
                     ->waitForText('Spiller markeret som inaktiv')
-                    ->pause(1000)
                     ->assertMemberStatus($member->name, 'Inaktiv')
                     ->assertSee('Tilsidesat');
 
@@ -158,7 +158,6 @@ class MemberManagementTest extends DuskTestCase
             // Toggle back to active
             $browser->toggleMemberInactiveStatusById($member->id)
                     ->waitForText('Spiller markeret som aktiv')
-                    ->pause(1000)
                     ->assertMemberStatus($member->name, 'Aktiv')
                     ->assertSee('Tilsidesat');
 

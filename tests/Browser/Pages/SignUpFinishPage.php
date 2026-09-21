@@ -45,7 +45,14 @@ class SignUpFinishPage extends Page
     {
         $browser->type('@name-input', $name)
             ->type('@email-input', $email)
+            ->waitUsing(10, 100, function () use ($browser, $clubId) {
+                return $browser->script(sprintf(
+                    'return document.querySelector("[dusk=\'club-select\'] option[value=\'%d\']") !== null;',
+                    $clubId
+                ))[0];
+            }, "Club option {$clubId} did not load")
             ->select('@club-select', $clubId)
-            ->pressAndWaitFor('@submit-button');
+            ->assertSelected('@club-select', (string) $clubId)
+            ->click('@submit-button');
     }
 }

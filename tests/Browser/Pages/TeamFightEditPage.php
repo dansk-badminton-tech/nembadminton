@@ -2,9 +2,7 @@
 
 namespace Tests\Browser\Pages;
 
-use Facebook\WebDriver\Exception\StaleElementReferenceException;
 use Laravel\Dusk\Browser;
-use PHPUnit\Framework\Assert;
 
 class TeamFightEditPage extends Page
 {
@@ -124,11 +122,11 @@ class TeamFightEditPage extends Page
      *
      * Approach:
      *   1. Dismiss any stale dropdown, scroll the input into view
-     *   2. Type the first 5 chars of the player name via Dusk (real keystrokes
-     *      that trigger Buefy's @typing handler and Apollo search)
+     *   2. Clear with real keystrokes and type the player name so Buefy's
+     *      reactive state and Apollo search stay synchronized
      *   3. Wait for the player name to appear in the autocomplete dropdown
      *   4. Click the matching dropdown item
-     *   5. Verify the player was placed — retry the full sequence if not
+     *   5. Verify the player was placed before moving to the next slot
      *
      * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
      * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD"
@@ -141,24 +139,47 @@ class TeamFightEditPage extends Page
         // Dusk selector scoped to the correct squad + category.
         // Buefy passes the dusk attribute directly to the <input> element.
         $inputSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$categorySlug}']";
+        $inputSelectorJson = json_encode($inputSelector, JSON_THROW_ON_ERROR);
+        $playerNameJson = json_encode($playerName, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 
         $browser->waitFor($inputSelector)
             ->waitUntilEnabled($inputSelector);
 
-        // type() clears the field and sends real keystrokes that trigger
-        // Buefy's @typing handler and the debounced Apollo search.
-        $browser->clear($inputSelector);
-        $browser->type($inputSelector, $playerName);
+        $browser->script(<<<JS
+            const input = document.querySelector({$inputSelectorJson});
+            input.scrollIntoView({block: 'center'});
+            input.focus();
+        JS);
 
-        // Wait for the player name to appear in the autocomplete dropdown.
-        $browser->waitForTextIn(
-            '.autocomplete .dropdown-content',
-            $playerName,
-            10
-        );
+        // WebDriver's element.clear() does not emit the input events Buefy needs.
+        // That can leave the previous slot's search in component state.
+        $browser->keys($inputSelector, ['{control}', 'a'], '{backspace}')
+            ->waitUsing(3, 100, function () use ($browser, $inputSelector) {
+                return $browser->attribute($inputSelector, 'value') === '';
+            }, "Autocomplete input {$inputSelector} did not clear")
+            ->keys($inputSelector, $playerName);
 
-        $browser->clickLink($playerName);
-        $browser->waitForTextIn("[dusk='squad-{$squadIndex}']", $playerName, 3);
+        $slotCount = count($browser->elements($inputSelector));
+
+        $browser->waitUsing(20, 100, function () use ($browser, $inputSelectorJson, $playerNameJson) {
+            return ($browser->script(<<<JS
+                const input = document.querySelector({$inputSelectorJson});
+                const option = Array.from(input?.closest('.autocomplete')?.querySelectorAll('.dropdown-item') ?? [])
+                    .find(element => element.textContent.includes({$playerNameJson}));
+                return option !== undefined;
+            JS)[0] ?? false);
+        }, "Player {$playerName} did not appear in the autocomplete dropdown");
+
+        $browser->script(<<<JS
+            const input = document.querySelector({$inputSelectorJson});
+            const option = Array.from(input.closest('.autocomplete').querySelectorAll('.dropdown-item'))
+                .find(element => element.textContent.includes({$playerNameJson}));
+            option.click();
+        JS);
+
+        $browser->waitUsing(10, 100, function () use ($browser, $inputSelector, $slotCount) {
+            return count($browser->elements($inputSelector)) < $slotCount;
+        }, "Player {$playerName} was not placed in its category slot");
     }
 
     /**
