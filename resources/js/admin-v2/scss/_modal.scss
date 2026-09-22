@@ -1,9 +1,26 @@
+.modal {
+  --bulma-modal-card-head-background-color: #{$modal-card-head-background-color};
+  --bulma-modal-card-head-padding: #{$modal-card-head-padding};
+  --bulma-modal-card-head-radius: #{$modal-card-head-radius};
+  --bulma-modal-card-title-size: #{$modal-card-title-size};
+  --bulma-modal-card-body-padding: #{$modal-card-body-padding};
+  --bulma-modal-card-foot-background-color: #{$modal-card-foot-background-color};
+  --bulma-modal-card-foot-radius: #{$modal-card-foot-radius};
+}
+
 .modal-card {
   width: $modal-card-width;
 }
 
+.modal-card-head {
+  border-bottom: $modal-card-head-border-bottom;
+  box-shadow: none;
+}
+
 .modal-card-foot {
+  border-top: $modal-card-foot-border-top;
   background-color: $modal-card-foot-background-color;
+  gap: .5em;
 }
 
 @include mobile {
