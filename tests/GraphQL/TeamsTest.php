@@ -15,6 +15,7 @@ use App\Models\SquadMember;
 use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
+use App\Models\TeamRoundScenario;
 use App\Models\User;
 use App\Notifications\TeamPublish;
 use App\Notifications\TeamUpdated;
@@ -428,6 +429,126 @@ class TeamsTest extends TestCase
             'rankingList' => 'MEN_SINGLE',
         ])->assertJsonCount(1, 'data.memberSearchPoints.data')
           ->assertJsonPath('data.memberSearchPoints.data.0.refId', $member->refId);
+    }
+
+    /** @test */
+    public function member_lists_only_exclude_members_assigned_in_the_active_scenario(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $this->actingAs($user, 'api');
+
+        $club = Club::query()->create([
+            'name1' => 'Scenario Club',
+            'badmintonPlayerId' => 12346,
+        ]);
+        $clubhouse->clubs()->attach($club->id);
+
+        $members = collect([
+            ['refId' => '9001011234', 'name' => 'Plan A Player'],
+            ['refId' => '9001021234', 'name' => 'Plan B Player'],
+            ['refId' => '9001031234', 'name' => 'Available Player'],
+        ])->map(function (array $attributes) use ($club) {
+            $member = Member::query()->create($attributes + [
+                'gender' => 'M',
+                'birthday' => '1990-01-01',
+                'playable' => true,
+                'inactive' => false,
+            ]);
+            $member->clubs()->attach($club->id);
+            Point::query()->create([
+                'member_id' => $member->id,
+                'points' => 100,
+                'position' => 1,
+                'category' => 'HS',
+                'vintage' => 'SEN',
+                'version' => '2024-01-01',
+            ]);
+
+            return $member;
+        });
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+        $scenarioA = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan A',
+            'is_official' => true,
+        ]);
+        $scenarioB = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+
+        foreach ([[$scenarioA, $members[0]], [$scenarioB, $members[1]]] as [$scenario, $member]) {
+            $category = $squad->categories()->create([
+                'category' => 'HS',
+                'name' => '1. HS',
+                'team_round_scenario_id' => $scenario->id,
+            ]);
+            $category->players()->create([
+                'name' => $member->name,
+                'gender' => $member->gender,
+                'member_ref_id' => $member->refId,
+            ]);
+        }
+
+        $pointsQuery = /** @lang GraphQL */ '
+            query($clubhouse: Int!, $version: Date!, $scenarioId: ID!) {
+                memberSearchPoints(
+                    clubhouse: $clubhouse
+                    version: $version
+                    rankingList: MEN_SINGLE
+                    scenarioId: $scenarioId
+                ) {
+                    data { refId }
+                }
+            }
+        ';
+
+        $planAResponse = $this->graphQL($pointsQuery, [
+            'clubhouse' => $clubhouse->id,
+            'version' => '2024-01-01',
+            'scenarioId' => $scenarioA->id,
+        ]);
+        $planAResponse->assertJsonCount(2, 'data.memberSearchPoints.data')
+            ->assertJsonFragment(['refId' => $members[1]->refId])
+            ->assertJsonFragment(['refId' => $members[2]->refId])
+            ->assertJsonMissing(['refId' => $members[0]->refId]);
+
+        $planBResponse = $this->graphQL($pointsQuery, [
+            'clubhouse' => $clubhouse->id,
+            'version' => '2024-01-01',
+            'scenarioId' => $scenarioB->id,
+        ]);
+        $planBResponse->assertJsonCount(2, 'data.memberSearchPoints.data')
+            ->assertJsonFragment(['refId' => $members[0]->refId])
+            ->assertJsonFragment(['refId' => $members[2]->refId])
+            ->assertJsonMissing(['refId' => $members[1]->refId]);
+
+        $cancellationListResponse = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouse: Int!, $scenarioId: ID!) {
+                membersSearch(clubhouse: $clubhouse, notOnScenario: $scenarioId, first: 10) {
+                    data { refId }
+                }
+            }
+        ', [
+            'clubhouse' => $clubhouse->id,
+            'scenarioId' => $scenarioA->id,
+        ]);
+        $cancellationListResponse->assertJsonCount(2, 'data.membersSearch.data')
+            ->assertJsonFragment(['refId' => $members[1]->refId])
+            ->assertJsonFragment(['refId' => $members[2]->refId])
+            ->assertJsonMissing(['refId' => $members[0]->refId]);
     }
 
     /**

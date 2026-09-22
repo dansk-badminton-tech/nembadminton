@@ -69,8 +69,9 @@
                         </b-button>
                     </div>
                     <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving"
-                                       :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
-                                       :version="new Date(version)" :game-date="gameDate"
+                                        :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
+                                        :scenario-id="currentScenario?.id ?? null"
+                                        :version="new Date(version)" :game-date="gameDate"
                                        @open-add-member="openAddMemberModal"/>
                 </div>
                 <div class="column is-6 container">

@@ -4,6 +4,7 @@ query membersSearch(
     $first: Int
     $playable: Boolean
     $notOnSquad: String
+    $notOnScenario: ID
     $whereCancellations: QueryMembersSearchWhereCancellationsWhereConditions
     $cancellationWhere: MemberCancellationsWhereWhereConditions
 ){
@@ -11,6 +12,7 @@ query membersSearch(
         clubhouse: $clubhouse
         whereCancellations: $whereCancellations
         notOnSquad: $notOnSquad
+        notOnScenario: $notOnScenario
         playable: $playable
         page: $page
         first: $first

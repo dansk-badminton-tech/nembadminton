@@ -98,6 +98,13 @@ class Member extends Model
         });
     }
 
+    public function scopeNotOnScenario(Builder $builder, string $scenarioId) : Builder
+    {
+        return $builder->whereDoesntHave('squadMember.category', function (Builder $builder) use ($scenarioId) {
+            $builder->where('team_round_scenario_id', '=', $scenarioId);
+        });
+    }
+
     public function scopeHasPoints(Builder $query, ?bool $hasPoints)
     {
         if ($hasPoints ?? false) {

@@ -36,6 +36,10 @@ _Avoid_: Published round, live round
 The atomic transition of a draft scenario to become the official lineup, preserving the outgoing official lineup as an alternative draft scenario.
 _Avoid_: Publish, merge, partial sync
 
+**Available Member**:
+A Member who is not assigned to any Squad in the Scenario currently being edited.
+_Avoid_: Unused player, unassigned player
+
 ### User Documentation
 
 **User Guide**:

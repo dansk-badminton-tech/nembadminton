@@ -5,6 +5,7 @@ query memberSearchPoints(
     $first: Int
     $name: String
     $teamRoundId: String
+    $scenarioId: ID
     $rankingList: RankingList!
     $playable: Boolean
     $inactive: Boolean
@@ -18,6 +19,7 @@ query memberSearchPoints(
         page: $page,
         first: $first,
         teamRoundId: $teamRoundId,
+        scenarioId: $scenarioId,
         playable: $playable,
         inactive: $inactive,
         whereCancellations: $whereCancellations,

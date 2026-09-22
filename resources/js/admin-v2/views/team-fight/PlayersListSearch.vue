@@ -159,6 +159,7 @@ export default {
     props: {
         clubhouseId: Number,
         teamRoundId: String,
+        scenarioId: [String, Number],
         addPlayer: Function,
         version: Date,
         loading: Boolean,
@@ -535,7 +536,8 @@ export default {
                     clubhouse: this.clubhouseId,
                     page: this.currentPage,
                     first: this.perPage,
-                    notOnSquad: this.teamRoundId,
+                    notOnSquad: this.scenarioId == null ? this.teamRoundId : null,
+                    notOnScenario: this.scenarioId,
                     cancellationWhere: {
                         OR: [{
                             column: 'TEAM_ROUND_ID',
@@ -655,6 +657,7 @@ export default {
                 }
 
                 params.teamRoundId = this.teamRoundId;
+                params.scenarioId = this.scenarioId;
                 params.clubhouse = this.clubhouseId;
 
                 return params

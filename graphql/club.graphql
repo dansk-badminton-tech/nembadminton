@@ -12,8 +12,10 @@ extend type Query{
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable", "clubhouse_id"])
         "Need to have at least one point"
         hasPoints: Boolean @scope
-        "If specified will not show members that is part of Team ID"
+        "If specified, exclude members assigned in this legacy TeamRound lineup"
         notOnSquad: String @scope
+        "If specified, exclude members assigned in this Scenario"
+        notOnScenario: ID @scope
     ): [Member!]! @paginate(defaultCount: 10) @guard
     "Search by point for players in a clubhouse"
     memberSearchPoints(
@@ -21,6 +23,7 @@ extend type Query{
         clubhouse: Int! @scope
         version: Date!
         teamRoundId: String
+        scenarioId: ID
         name: String @where(operator: "like")
         rankingList: RankingList! = WOMEN_LEVEL
         playable: Boolean @where(ignoreNull: true)
