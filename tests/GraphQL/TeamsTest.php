@@ -829,6 +829,97 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_copies_only_the_official_lineup_when_a_team_round_uses_scenarios()
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+            'name' => 'Original Team',
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Hold 1',
+            'playerLimit' => 10,
+            'order' => 1,
+        ]);
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Officiel opstilling',
+            'is_official' => true,
+        ]);
+        $officialCategory = SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'HS',
+            'name' => '1. HS',
+            'team_round_scenario_id' => $officialScenario->id,
+        ]);
+        Member::query()->create([
+            'refId' => '1234567890',
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+            'birthday' => '1990-01-01',
+            'playable' => true,
+            'inactive' => false,
+        ]);
+        $player = SquadMember::query()->create([
+            'squad_category_id' => $officialCategory->id,
+            'member_ref_id' => '1234567890',
+            'name' => 'Spiller 1',
+            'gender' => 'M',
+        ]);
+        $player->points()->create([
+            'category' => 'HS',
+            'points' => 100,
+            'position' => 1,
+        ]);
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+        SquadCategory::query()->create([
+            'squad_id' => $squad->id,
+            'category' => 'DS',
+            'name' => '1. DS',
+            'team_round_scenario_id' => $draftScenario->id,
+        ]);
+        $this->actingAs($user, 'api');
+
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) {
+                copyTeamRound(id: $id) {
+                    id
+                }
+            }
+        ', ['id' => $teamRound->id]);
+
+        $response->assertGraphQLErrorFree();
+        $copiedRoundId = $response->json('data.copyTeamRound.id');
+        $copiedSquad = Squad::query()->where('team_round_id', $copiedRoundId)->sole();
+        $copiedCategory = SquadCategory::query()
+            ->where('squad_id', $copiedSquad->id)
+            ->whereNull('team_round_scenario_id')
+            ->with('players.points')
+            ->sole();
+
+        $this->assertDatabaseCount('team_round_scenarios', 2);
+        $this->assertSame('1. HS', $copiedCategory->name);
+        $this->assertSame('Spiller 1', $copiedCategory->players->sole()->name);
+        $this->assertSame(100, $copiedCategory->players->sole()->points->sole()->points);
+        $this->assertDatabaseMissing('squad_categories', [
+            'squad_id' => $copiedSquad->id,
+            'name' => '1. DS',
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function it_can_create_a_squad()
     {
         $clubhouse = Clubhouse::factory()->create();

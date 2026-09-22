@@ -118,14 +118,35 @@ class SquadManager
         SquadPoint::query()->insert($values);
     }
 
-    public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam) : SquadModel
+    public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam, ?int $officialScenarioId = null) : SquadModel
     {
         $newSquad = $sourceSquad->replicate();
         $targetTeam->squads()->save($newSquad);
 
-        // Copy category
-        foreach ($sourceSquad->categories as $sourceCategory){
+        // A round with an official scenario uses that scenario's categories. Older rounds
+        // have no scenario and keep their official lineup in unscoped categories instead.
+        $categories = $sourceSquad->categories()
+            ->when(
+                $officialScenarioId !== null,
+                fn ($query) => $query->where('team_round_scenario_id', $officialScenarioId),
+                fn ($query) => $query->whereNull('team_round_scenario_id'),
+            )
+            ->with('players.points')
+            ->get();
+
+        if ($categories->isEmpty() && $officialScenarioId !== null) {
+            // Preserve the legacy fallback when a scenario was promoted before its
+            // categories were populated: the unscoped categories remain the official lineup.
+            $categories = $sourceSquad->categories()
+                ->whereNull('team_round_scenario_id')
+                ->with('players.points')
+                ->get();
+        }
+
+        // A copied TeamRound starts without scenarios, so its copied lineup is unscoped.
+        foreach ($categories as $sourceCategory){
             $newCategory = $sourceCategory->replicate();
+            $newCategory->team_round_scenario_id = null;
             $newSquad->categories()->save($newCategory);
 
             foreach ($sourceCategory->players as $sourcePlayer){
