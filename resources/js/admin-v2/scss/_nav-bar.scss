@@ -1,6 +1,11 @@
 nav.navbar {
   box-shadow: $navbar-box-shadow;
 
+  .navbar-dropdown a.navbar-item.is-active {
+    background-color: $white-ter;
+    color: $link;
+  }
+
   .navbar-item {
     &.has-user-avatar {
       .is-user-avatar {

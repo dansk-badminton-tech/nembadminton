@@ -65,19 +65,19 @@
         <div v-if="hasErrors" class="mt-3">
             <b-collapse
                 aria-id="contentIdForA11y1"
-                class="panel"
+                class="panel is-danger"
                 animation="slide"
                 v-model="isOpen">
                 <template #trigger>
                     <div
-                        class="panel-heading is-danger"
+                        class="panel-heading"
                         role="button"
                         aria-controls="contentIdForA11y1"
                         :aria-expanded="isOpen">
                         <div class="is-flex is-justify-content-space-between">
                             <span>
                                 <b-icon icon="alert-circle" size="is-small" class="mr-1"></b-icon>
-                                <strong>Detaljer om fejl</strong>
+                                <span>Detaljer om fejl</span>
                             </span>
                             <b-icon :icon="isOpen ? 'menu-up' : 'menu-down'"></b-icon>
                         </div>

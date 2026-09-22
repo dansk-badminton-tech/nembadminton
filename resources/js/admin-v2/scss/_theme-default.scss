@@ -27,6 +27,7 @@ $light-border: 1px solid $base-color-light;
 $hr-height: 1px;
 
 /* NavBar: specifics */
+$navbar-height: 3.25rem;
 $navbar-input-color: $grey-darker;
 $navbar-input-placeholder-color: $grey-lighter;
 $navbar-box-shadow: 0 1px 0 rgba(24, 28, 33, .04);
@@ -67,6 +68,7 @@ $hero-bar-background: $white;
 /* Card: Bulma override */
 $card-shadow: none;
 $card-header-shadow: none;
+$card-content-padding: 1.5rem;
 
 /* Card: specifics */
 $card-border: 1px solid $base-color-light;
@@ -84,9 +86,12 @@ $checkbox-border: 1px solid $base-color;
 
 /* Modal card: Bulma override */
 $modal-card-head-background-color: $white-ter;
+$modal-card-head-padding: 20px;
+$modal-card-head-radius: 6px;
 $modal-card-title-size: $size-base;
 $modal-card-body-padding: $default-padding 20px;
 $modal-card-head-border-bottom: 1px solid $white-ter;
+$modal-card-foot-radius: 6px;
 $modal-card-foot-border-top: 0;
 
 /* Modal card: specifics */
@@ -95,8 +100,15 @@ $modal-card-width-mobile: 90vw;
 $modal-card-foot-background-color: $white-ter;
 
 /* Notification: Bulma override */
+$notification-background-color: $white-ter;
 $notification-padding: $default-padding * .75;
 $notification-padding-ltr: $notification-padding;
+
+/* Button defaults used by custom table pagination */
+$button-background-color: $white;
+$button-color: $grey-darker;
+$button-border-color: $grey-lighter;
+$button-active-border-color: $grey-dark;
 
 /* Footer: Bulma override */
 $footer-background-color: $white;
