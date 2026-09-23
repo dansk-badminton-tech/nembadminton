@@ -75,11 +75,7 @@ class PlacedPlayerCancellationResolver
         // A permanent afbud outweighs any dated afbud
         $permanentRefIds = Member::query()
             ->where('playable', false)
-            ->whereIn('refId', SquadMember::query()
-                ->join('squad_categories as sc', 'squad_members.squad_category_id', '=', 'sc.id')
-                ->join('squads as s', 'sc.squad_id', '=', 's.id')
-                ->where('s.team_round_id', $teamRound->id)
-                ->select('squad_members.member_ref_id'))
+            ->whereHas('squadMember.category.squad', fn ($query) => $query->where('team_round_id', $teamRound->id))
             ->pluck('refId');
         foreach ($permanentRefIds as $refId) {
             $cancellations[$refId] = ['permanent' => true, 'viaCancellationLink' => false];

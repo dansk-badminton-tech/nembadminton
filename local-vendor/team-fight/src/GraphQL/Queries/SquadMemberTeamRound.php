@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\GraphQL\Queries;
 
-use App\Models\SquadCategory;
+use App\Models\Squad;
 use App\Models\SquadMember;
 
 /**
@@ -37,10 +37,9 @@ class SquadMemberTeamRound
         }
 
         if (!isset(self::$categoryToRoundCache[$categoryId])) {
-            $roundId = SquadCategory::query()
-                ->join('squads as s', 'squad_categories.squad_id', '=', 's.id')
-                ->where('squad_categories.id', $categoryId)
-                ->value('s.team_round_id');
+            $roundId = Squad::query()
+                ->whereHas('categories', fn ($query) => $query->whereKey($categoryId))
+                ->value('team_round_id');
 
             self::$categoryToRoundCache[$categoryId] = (string) ($roundId ?? '');
         }
