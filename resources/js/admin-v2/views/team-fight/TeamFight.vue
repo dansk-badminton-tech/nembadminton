@@ -165,13 +165,6 @@
                                       :invalid-level-list="playingToHighList"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
-                    <p class="is-size-7 mt-2">
-                        <router-link :to="{name: 'help-guide', params: {slug: guideLinks.lineupValidation}}" target="_blank"
-                                     dusk="lineup-guide-link">
-                            <b-icon icon="help-circle-outline" size="is-small"></b-icon>
-                            Sådan laver og kontrollerer du holdopstillingen
-                        </router-link>
-                    </p>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -229,7 +222,6 @@ import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 import ExportCsvModal from "./ExportCsvModal.vue";
-import {guideLinks} from "@/help/guideLinks";
 
 export default {
     name: "TeamFight",
@@ -341,7 +333,6 @@ export default {
     },
     data() {
         return {
-            guideLinks,
             titleStack: ['Admin', 'Holdrunde'],
             validateBasicSquads: [],
             playingToHighList: [],
