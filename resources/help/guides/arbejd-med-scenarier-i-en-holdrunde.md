@@ -14,11 +14,13 @@ Et scenarie indeholder spillernes placeringer på alle hold i holdrunden. Spille
 ## Opret et scenarie
 
 1. Åbn holdrunden.
-2. Hvis holdrunden allerede har scenarier, så vælg det, du vil tage udgangspunkt i, i vælgeren ved **Holdene i holdrunden**.
+2. Hvis holdrunden har flere holdopstillinger, så vælg den, du vil tage udgangspunkt i, i vælgeren ved **Holdene i holdrunden**.
 3. Vælg **Nyt scenarie**.
 4. Giv scenariet et navn, du kan kende igen, for eksempel "Plan B", og vælg **Opret**.
 
-Scenariet er en kopi af den holdopstilling, du havde valgt, og åbnes med det samme. Den gule besked viser, hvilket scenarie du redigerer. Flyt, tilføj og fjern spillere som normalt. Ændringerne gælder kun i dette scenarie.
+Scenariet er en kopi af den holdopstilling, du havde valgt, og åbnes med det samme. Den gule besked viser, hvilket scenarie du redigerer.
+
+Flyt, tilføj og fjern spillere som normalt. Ændringerne gælder kun i dette scenarie.
 
 ## Skift mellem scenarier
 
@@ -45,4 +47,4 @@ Den officielle holdopstilling kan ikke omdøbes eller slettes. Gør først et an
 
 ## Næste trin
 
-Når den officielle holdopstilling er klar, er næste trin at dele den officielle holdopstilling med spillerne. Se hele forløbet under [Vejledninger](/app/help/guides).
+Når den officielle holdopstilling er klar, er næste trin: Del den officielle holdopstilling med spillerne. Se hele forløbet under [Vejledninger](/app/help/guides).
