@@ -11,6 +11,8 @@ Når du har lavet en første holdopstilling i holdrunden, kan du bruge scenarier
 
 Et scenarie indeholder spillernes placeringer på alle hold i holdrunden. Spillested og spilletid er fælles for hele holdrunden, så ændringer af dem gælder i alle scenarier.
 
+Holdrunden skal være oprettet med sine hold. Se [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
+
 ## Opret et scenarie
 
 1. Åbn holdrunden.

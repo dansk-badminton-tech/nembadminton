@@ -23,9 +23,7 @@ Send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk), eller brug
 
 ## Hvad gør jeg, hvis holdene skal sættes efter forskellige ranglister?
 
-Alle hold skal sættes efter den samme rangliste i en given runde. Se [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/).
-
-Du kan altid skifte rangliste for holdrunden eller vælge en bestemt rangliste.
+Du kan give det enkelte hold sin egen rangliste, fx når holdene spiller på datoer under forskellige ranglister. Se hvordan i [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
 
 ## Hvilken rangliste skal jeg bruge?
 
