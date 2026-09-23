@@ -5,7 +5,7 @@ summary: Svar på de mest almindelige spørgsmål om Nembadminton.
 
 ## Der vises en valideringsfejl, selv om holdet er korrekt
 
-Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med delingslinket, som findes via eksportfunktionen. Husk at beskrive fejlen.
+Hvis du mener, at der er en fejl i valideringen af holdopstillingen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med delingslinket, som du finder under **Del** > **Link** på holdrunden. Husk at beskrive fejlen.
 
 ## Der mangler en spiller i min klub
 
@@ -49,7 +49,7 @@ Internt på holdet kontrolleres det, om spillere står for lavt i en kategori. D
 
 ## Er der taget højde for U15-, U17- og U19-spillere?
 
-U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U17- eller U19-spillere.
+U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U15-, U17- eller U19-spillere.
 
 ## Vi har tabt en protest efter at have stillet med et hold valideret på Nembadminton. Hvem betaler boden?
 

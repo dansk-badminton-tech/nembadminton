@@ -20,7 +20,7 @@ Et scenarie indeholder spillernes placeringer på alle hold i holdrunden. Spille
 
 Scenariet er en kopi af den holdopstilling, du havde valgt, og åbnes med det samme. Den gule besked viser, hvilket scenarie du redigerer.
 
-Flyt, tilføj og fjern spillere som normalt. Ændringerne gælder kun i dette scenarie.
+Flyt, tilføj og fjern spillere som beskrevet i [Lav og kontrollér den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling). Ændringerne gælder kun i dette scenarie.
 
 ## Skift mellem scenarier
 
