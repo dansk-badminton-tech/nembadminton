@@ -3,7 +3,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "docs:validate": "node scripts/validate-help-documents.mjs"
+        "docs:validate": "node scripts/validate-help-documents.mjs",
+        "test:js": "node --test tests/js/"
     },
     "devDependencies": {
         "@sentry/vite-plugin": "^5.4.0",

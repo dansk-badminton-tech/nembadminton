@@ -2,6 +2,9 @@
 title: Arbejd med scenarier i en holdrunde
 summary: Afprøv alternative holdopstillinger, og vælg den officielle opstilling, når den er klar.
 order: 10
+journey:
+  stage: lineup
+  role: optional
 ---
 
 Med scenarier kan du afprøve forskellige holdopstillinger i en holdrunde, uden at dine ændringer påvirker den officielle opstilling. Et scenarie indeholder spillernes placeringer på tværs af alle hold i holdrunden.
