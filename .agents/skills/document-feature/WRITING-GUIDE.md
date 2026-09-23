@@ -18,6 +18,21 @@ Describe the outcome, prerequisites when they matter, and actionable steps. Use 
 
 Update a guide when documented behavior changes. Create a guide only when no current guide owns the workflow.
 
+### Place the guide in the journey
+
+The Vejledninger overview presents guides as the holdrunde journey. A guide joins it through its own `journey` front matter; no other file changes:
+
+```yaml
+journey:
+  stage: lineup
+  role: optional
+```
+
+- `stage` is the point in the journey: `setup` (Opret og klargør), `cancellations` (Håndtér afbud), `lineup` (Lav holdopstillingen), or `sharing` (Del holdopstillingen).
+- `role` is `step` for the one guide that owns the stage's normal step, `optional` for an extra branch the reader may take at that point, `alternative` for a branch that replaces the normal step, or `troubleshooting` for a way past a problem that arises there.
+
+Omit `journey` for a guide outside the holdrunde journey; it is listed under "Andre vejledninger". `order` sorts guides that share a stage and role. `yarn docs:validate` rejects unknown stages and roles, and a second `step` guide on the same stage.
+
 ## Release Announcements
 
 Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it.

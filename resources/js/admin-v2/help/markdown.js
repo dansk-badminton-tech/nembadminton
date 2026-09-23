@@ -1,5 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import {parse as parseYaml} from 'yaml'
+import {journeyRoles, journeyStages} from './journey.js'
 
 const markdown = new MarkdownIt({
     html: false,
@@ -54,11 +55,45 @@ export function parseHelpDocument(source, path, kind) {
     }
 }
 
+function validateJourneyPlacement(document, stepGuides) {
+    const {journey} = document
+
+    if (document.kind !== 'guide') {
+        return [`${document.path}: journey is only allowed on guides`]
+    }
+
+    if (!journey || typeof journey !== 'object' || Array.isArray(journey)) {
+        return [`${document.path}: journey must be an object with stage and role`]
+    }
+
+    const errors = []
+    const stageKeys = journeyStages.map(stage => stage.key)
+
+    if (!stageKeys.includes(journey.stage)) {
+        errors.push(`${document.path}: journey.stage must be one of ${stageKeys.join(', ')}`)
+    }
+
+    if (!journeyRoles.includes(journey.role)) {
+        errors.push(`${document.path}: journey.role must be one of ${journeyRoles.join(', ')}`)
+    }
+
+    if (errors.length === 0 && journey.role === 'step') {
+        if (stepGuides.has(journey.stage)) {
+            errors.push(`${document.path}: journey stage "${journey.stage}" already has step guide "${stepGuides.get(journey.stage)}"`)
+        } else {
+            stepGuides.set(journey.stage, document.slug)
+        }
+    }
+
+    return errors
+}
+
 export function validateHelpDocuments(documents) {
     const errors = []
     const routes = new Set()
     const pageSlugs = new Set(documents.filter(document => document.kind === 'page').map(document => document.slug))
     const guideSlugs = new Set(documents.filter(document => document.kind === 'guide').map(document => document.slug))
+    const stepGuides = new Map()
 
     for (const document of documents) {
         const routeKey = `${document.kind}:${document.slug}`
@@ -88,6 +123,10 @@ export function validateHelpDocuments(documents) {
 
         if (document.kind === 'guide' && (!Number.isInteger(document.order) || document.order < 0)) {
             errors.push(`${document.path}: order must be a non-negative integer`)
+        }
+
+        if (document.journey !== undefined) {
+            errors.push(...validateJourneyPlacement(document, stepGuides))
         }
 
         if (document.kind === 'news') {

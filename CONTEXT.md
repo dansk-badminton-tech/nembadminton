@@ -49,3 +49,7 @@ _Avoid_: Release announcement, feature specification
 **Release Announcement**:
 A short, publicly accessible summary of a newly released change that links to a User Guide when more guidance is available.
 _Avoid_: User Guide, changelog
+
+**Guide Journey**:
+The end-to-end holdrunde workflow that the Vejledninger overview presents in order: set up the TeamRound, handle afbud, make the Official Lineup, and share it. Each User Guide declares its **Journey Stage** and whether it is the stage's **step**, an **optional** or **alternative** branch, or a **troubleshooting** branch.
+_Avoid_: Guide category, guide section
