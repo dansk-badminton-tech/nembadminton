@@ -9,6 +9,7 @@ use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\TeamFightCreatePage;
 use Tests\Browser\Pages\TeamFightDashboardPage;
+use Tests\Browser\Pages\TeamFightEditPage;
 use Tests\DuskTestCase;
 
 class TeamFightCreateTest extends DuskTestCase
@@ -67,6 +68,11 @@ class TeamFightCreateTest extends DuskTestCase
                 ->assertPathContains('/edit')
                 ->waitForText('Dusk Test Holdrunde')
                 ->assertSee('Dusk Test Holdrunde');
+
+            // A new holdrunde without hold points to the guide for the next setup step.
+            $browser->on(new TeamFightEditPage())
+                ->assertSeeIn('@setup-guide-link', 'Sådan tilføjer du hold og klargør holdrunden')
+                ->assertAttributeContains('@setup-guide-link', 'href', '/help/guides/opret-og-klargoer-en-holdrunde');
 
             // Navigate to dashboard and verify the new team fight appears
             $browser->visit(new TeamFightDashboardPage($clubhouse->id))

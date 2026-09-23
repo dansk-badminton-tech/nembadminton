@@ -9,6 +9,8 @@ journey:
 
 Med scenarier kan du afprøve forskellige holdopstillinger i en holdrunde, uden at dine ændringer påvirker den officielle opstilling. Et scenarie indeholder spillernes placeringer på tværs af alle hold i holdrunden.
 
+Holdrunden skal være oprettet med sine hold. Se [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
+
 ## Opret et scenarie
 
 1. Åbn den holdrunde, du vil arbejde med.
