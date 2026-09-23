@@ -91,8 +91,12 @@ class Member extends Model
         });
     }
 
-    public function scopeNotOnSquad(Builder $builder, string $teamRoundId) : Builder
+    public function scopeNotOnSquad(Builder $builder, ?string $teamRoundId) : Builder
     {
+        if ($teamRoundId === null) {
+            return $builder;
+        }
+
         return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamRoundId) {
             $builder->where('team_round_id', '=', $teamRoundId);
         });

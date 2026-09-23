@@ -43,4 +43,33 @@ class MembersSearchTest extends TestCase
         $response->assertJsonMissingPath('errors')
             ->assertJsonPath('data.membersSearch.data', []);
     }
+
+    /** @test */
+    public function it_ignores_a_null_not_on_squad_filter(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'primary_role_id' => null,
+        ]);
+
+        $this->actingAs($user, 'api');
+
+        $response = $this->graphQL(/** @lang GraphQL */ '
+            query($clubhouse: Int!, $notOnSquad: String) {
+                membersSearch(
+                    clubhouse: $clubhouse
+                    notOnSquad: $notOnSquad
+                ) {
+                    data { id }
+                }
+            }
+        ', [
+            'clubhouse' => $clubhouse->id,
+            'notOnSquad' => null,
+        ]);
+
+        $response->assertJsonMissingPath('errors')
+            ->assertJsonPath('data.membersSearch.data', []);
+    }
 }
