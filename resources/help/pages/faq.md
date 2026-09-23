@@ -1,6 +1,6 @@
 ---
 title: Ofte stillede spørgsmål
-summary: Svar på de mest almindelige spørgsmål om NemBadminton.
+summary: Svar på de mest almindelige spørgsmål om Nembadminton.
 ---
 
 ## Der vises en valideringsfejl, selv om holdet er korrekt
@@ -9,9 +9,9 @@ Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail 
 
 ## Der mangler en spiller i min klub
 
-NemBadminton henter data fra badmintonplayer.dk. Hvis spilleren ikke findes på den seneste måneds rangliste, findes spilleren heller ikke på NemBadminton.
+Nembadminton henter data fra badmintonplayer.dk. Hvis spilleren ikke findes på den seneste måneds rangliste, findes spilleren heller ikke på Nembadminton.
 
-Hvis spilleren findes på ranglisten, men stadig ikke findes på NemBadminton, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
+Hvis spilleren findes på ranglisten, men stadig ikke findes på Nembadminton, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
 
 ## Jeg har et forslag til en forbedring eller en ny funktion
 
@@ -35,7 +35,7 @@ Se [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/).
 
 Kontakt [Badminton Danmark](https://badminton.dk), eller læs [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/).
 
-## Hvor ofte synkroniserer NemBadminton med badmintonplayer.dk?
+## Hvor ofte synkroniserer Nembadminton med badmintonplayer.dk?
 
 Hver nat opdateres ranglistepoint, og nye medlemmer importeres.
 
@@ -51,6 +51,6 @@ Internt på holdet kontrolleres det, om spillere står for lavt i en kategori. D
 
 U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U17- eller U19-spillere.
 
-## Vi har tabt en protest efter at have stillet med et hold valideret på NemBadminton. Hvem betaler boden?
+## Vi har tabt en protest efter at have stillet med et hold valideret på Nembadminton. Hvem betaler boden?
 
-NemBadminton er en service og et værktøj, der er lavet og stillet til rådighed af frivillige. Det er altid klubbens og trænerens ansvar at kontrollere, at opstillingerne er korrekte.
+Nembadminton er en service og et værktøj, der er lavet og stillet til rådighed af frivillige. Det er altid klubbens og trænerens ansvar at kontrollere, at opstillingerne er korrekte.

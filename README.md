@@ -1,6 +1,6 @@
 # Nembadminton
 
-[nembadminton](https://nembadminton.dk) udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig.
+[Nembadminton](https://nembadminton.dk) er udviklet som et bidrag til badmintonsporten i Danmark for at gøre det nemmere at være træner og frivillig.
 
 ## Get started
 Kør følgende kommandoer i din terminal
@@ -71,4 +71,3 @@ Failed tests are automatically retried once via `dusk:fails` before the workflow
 **Fundet en fejl?:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose
 
 **Project:** https://github.com/dansk-badminton-tech/nembadminton/projects/2
-

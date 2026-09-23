@@ -31,7 +31,7 @@ class FaqTestDisable extends DuskTestCase
                         ->assertSee('Hvad gør jeg, hvis holdene skal sættes efter forskellige ranglister?')
                         ->assertSee('Hvilken rangliste skal jeg bruge?')
                         ->assertSee('Spørgsmål til reglementet for DH-turneringen?')
-                        ->assertSee('Hvor ofte synkroniserer nembadminton.dk med badmintonplayer.dk?')
+                        ->assertSee('Hvor ofte synkroniserer Nembadminton med badmintonplayer.dk?')
                         ->assertSee('Hvordan virker validering af holdopstillingen?')
                         ->assertSee('Er der taget højde for U15/U17/U19 spillere?');
                 });

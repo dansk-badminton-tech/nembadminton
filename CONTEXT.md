@@ -1,4 +1,4 @@
-# NemBadminton
+# Nembadminton
 
 A platform for holding tournament and team match management in Danish badminton, adhering strictly to Badminton Danmark rules and ranking validations.
 
@@ -43,7 +43,7 @@ _Avoid_: Unused player, unassigned player
 ### User Documentation
 
 **User Guide**:
-Durable, publicly accessible instructions that explain how to use a feature in NemBadminton.
+Durable, publicly accessible instructions that explain how to use a feature in Nembadminton.
 _Avoid_: Release announcement, feature specification
 
 **Release Announcement**:

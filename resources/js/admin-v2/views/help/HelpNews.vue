@@ -1,5 +1,5 @@
 <template>
-    <help-collection title="Nyheder" eyebrow="Det seneste" introduction="Nye funktioner og ændringer i NemBadminton." empty-text="Der er endnu ikke udgivet nogen nyheder." base-path="/help/news" :items="news" />
+    <help-collection title="Nyheder" eyebrow="Det seneste" introduction="Nye funktioner og ændringer i Nembadminton." empty-text="Der er endnu ikke udgivet nogen nyheder." base-path="/help/news" :items="news" />
 </template>
 
 <script>

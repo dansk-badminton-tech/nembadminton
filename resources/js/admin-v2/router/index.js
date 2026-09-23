@@ -150,7 +150,7 @@ const routes = [
                 name: 'help-about',
                 component: () => import('@/views/help/HelpPage.vue'),
                 props: {page: 'about'},
-                meta: {title: 'Om NemBadminton'}
+                meta: {title: 'Om Nembadminton'}
             },
             {
                 path: ':pathMatch(.*)*',

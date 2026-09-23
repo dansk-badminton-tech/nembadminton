@@ -5,7 +5,7 @@
                 <router-link class="help-brand" to="/help">
                     <span class="help-brand__mark">NB</span>
                     <span>
-                        <strong>NemBadminton</strong>
+                        <strong>Nembadminton</strong>
                         <small>Hjælp og vejledninger</small>
                     </span>
                 </router-link>
@@ -19,7 +19,7 @@
                     <router-link to="/help/news">Nyheder</router-link>
                     <router-link to="/help/faq">FAQ</router-link>
                     <router-link to="/help/about">Om</router-link>
-                    <router-link class="help-nav__app-link" to="/home-redirect">Gå til NemBadminton</router-link>
+                    <router-link class="help-nav__app-link" to="/home-redirect">Gå til Nembadminton</router-link>
                 </nav>
             </div>
         </header>
@@ -29,7 +29,7 @@
         </main>
 
         <footer class="help-footer">
-            <span>&copy; {{ year }} NemBadminton</span>
+            <span>&copy; {{ year }} Nembadminton</span>
             <a href="/privatlivspolitik">Privatlivspolitik</a>
         </footer>
     </div>

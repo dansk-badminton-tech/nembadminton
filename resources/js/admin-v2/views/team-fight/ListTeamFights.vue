@@ -194,7 +194,7 @@ export default {
         setGameDateToRest(){
             let date = new Date(this.previousSeason.getTime())
             this.gameDate = {
-                from: "2020-01-01", // Magic number because nembadminton existed after this date
+                from: "2020-01-01", // Magic number because Nembadminton existed after this date
                 to: date.toISOString().substring(0,10)
             }
         },

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
-    <title>Privatlivspolitik – Nembadminton.dk</title>
+    <title>Privatlivspolitik – nembadminton.dk</title>
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -75,9 +75,9 @@
 <body>
 <header>
     <div class="inner">
-        <a class="home" href="/">&larr; Tilbage til Nembadminton.dk</a>
+        <a class="home" href="/">&larr; Tilbage til nembadminton.dk</a>
         <h1 style="margin-top:.75rem;">Privatlivspolitik</h1>
-        <p>Nembadminton.dk</p>
+        <p>nembadminton.dk</p>
     </div>
 </header>
 
@@ -85,21 +85,21 @@
     <p class="meta">Senest opdateret: 17. juni 2026</p>
 
     <p>
-        Denne privatlivspolitik beskriver, hvordan Nembadminton.dk indsamler, anvender,
+        Denne privatlivspolitik beskriver, hvordan nembadminton.dk indsamler, anvender,
         opbevarer og deler dine personoplysninger – herunder de oplysninger, vi modtager fra Google,
         når du logger ind med din Google-konto.
     </p>
 
     <h2>1. Dataansvarlig</h2>
     <p>
-        Nembadminton.dk drives og hostes på frivillig, ikke-kommerciel basis af en privatperson:
+        nembadminton.dk drives og hostes på frivillig, ikke-kommerciel basis af en privatperson:
     </p>
     <ul>
         <li><strong>Daniel Fly Nygaard</strong> (privatperson – ingen virksomhed)</li>
         <li>Kontakt: <a href="mailto:info@nembadminton.dk">info@nembadminton.dk</a></li>
     </ul>
     <p>
-        Der er ingen kommercielle interesser bag Nembadminton.dk. Du kan til enhver tid kontakte
+        Der er ingen kommercielle interesser bag nembadminton.dk. Du kan til enhver tid kontakte
         os på ovenstående e-mail med spørgsmål om dine oplysninger.
     </p>
 
@@ -121,7 +121,7 @@
     <h2>3. Hvordan vi bruger dine data (Data Usage)</h2>
     <p>De modtagne Google-oplysninger anvendes alene til følgende formål:</p>
     <ul>
-        <li>At oprette og identificere din brugerkonto på Nembadminton.dk.</li>
+        <li>At oprette og identificere din brugerkonto på nembadminton.dk.</li>
         <li>At logge dig sikkert ind uden brug af adgangskode (autentificering).</li>
         <li>At knytte din Google-konto til din eksisterende Nembadminton-konto, så du kan vælge login-metode.</li>
         <li>At vise dit navn og din e-mail i applikationen, så du og din klub kan genkende din profil.</li>
@@ -133,11 +133,11 @@
 
     <div class="callout">
         <strong>Google API Limited Use-erklæring.</strong>
-        Nembadminton.dk's brug og videregivelse af oplysninger modtaget fra Google API'er overholder
+        Nembadmintons brug og videregivelse af oplysninger modtaget fra Google API'er overholder
         <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>,
         herunder kravene om begrænset anvendelse (Limited Use).
         <br><br>
-        <em>Nembadminton.dk's use and transfer of information received from Google APIs to any other app
+        <em>Nembadminton's use and transfer of information received from Google APIs to any other app
         will adhere to the Google API Services User Data Policy, including the Limited Use requirements.</em>
     </div>
 
@@ -168,7 +168,7 @@
 
     <h2>6. Opbevaringsperiode og sletning (Data Retention &amp; Deletion)</h2>
     <p>
-        Vi opbevarer dine oplysninger, så længe du har en aktiv konto på Nembadminton.dk.
+        Vi opbevarer dine oplysninger, så længe du har en aktiv konto på nembadminton.dk.
     </p>
     <ul>
         <li>Du kan til enhver tid anmode om indsigt i eller sletning af dine oplysninger.</li>
@@ -199,7 +199,7 @@
 </main>
 
 <footer class="page-footer">
-    &copy; {{ date('Y') }} Nembadminton.dk · <a href="mailto:info@nembadminton.dk">info@nembadminton.dk</a>
+    &copy; {{ date('Y') }} nembadminton.dk · <a href="mailto:info@nembadminton.dk">info@nembadminton.dk</a>
 </footer>
 </body>
 </html>

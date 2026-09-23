@@ -1,6 +1,6 @@
 # Help writing guide
 
-Write for people using NemBadminton, in plain Danish. Use the exact labels readers see in the interface and canonical terms from `CONTEXT.md`. Explain outcomes and actions; source code, internal architecture, issue numbers, and implementation details belong in developer artifacts.
+Write for people using Nembadminton, in plain Danish. Use the exact labels readers see in the interface and canonical terms from `CONTEXT.md`. Explain outcomes and actions; source code, internal architecture, issue numbers, and implementation details belong in developer artifacts.
 
 ## User Guides
 

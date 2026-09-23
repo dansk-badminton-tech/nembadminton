@@ -15,7 +15,7 @@
         {{ $optionalMessage }}
     @endif
 
-    Tak fordi du brugte nembadminton!
+    Tak fordi du brugte Nembadminton!
 
     Med venlig hilsen,
     Nembadminton

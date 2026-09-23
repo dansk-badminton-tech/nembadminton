@@ -1,9 +1,9 @@
 <template>
     <div>
         <section class="help-intro">
-            <p class="help-eyebrow">NemBadminton Hjælp</p>
+            <p class="help-eyebrow">Nembadminton Hjælp</p>
             <h1>Find svaret. Kom videre.</h1>
-            <p>Vejledninger og svar til dig, der bruger NemBadminton.</p>
+            <p>Vejledninger og svar til dig, der bruger Nembadminton.</p>
         </section>
 
         <section class="help-grid" aria-label="Hjælpemner">
@@ -17,12 +17,12 @@
                 <span>03</span><h2>Ofte stillede spørgsmål</h2><p>Korte svar på almindelige spørgsmål.</p>
             </router-link>
             <router-link class="help-tile" to="/help/about">
-                <span>04</span><h2>Om NemBadminton</h2><p>Visionen og personerne bag.</p>
+                <span>04</span><h2>Om Nembadminton</h2><p>Visionen og personerne bag.</p>
             </router-link>
         </section>
 
         <section v-if="news.length" class="help-latest">
-            <div><p class="help-eyebrow">Seneste nyt</p><h2>Nye ændringer i NemBadminton</h2></div>
+            <div><p class="help-eyebrow">Seneste nyt</p><h2>Nye ændringer i Nembadminton</h2></div>
             <article v-for="announcement in news.slice(0, 3)" :key="announcement.slug">
                 <time :datetime="announcement.published">{{ formatDate(announcement.published) }}</time>
                 <router-link :to="`/help/news/${announcement.slug}`">{{ announcement.title }}</router-link>
