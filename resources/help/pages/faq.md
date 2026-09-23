@@ -49,7 +49,7 @@ Internt på holdet kontrolleres det, om spillere står for lavt i en kategori. D
 
 ## Er der taget højde for U15-, U17- og U19-spillere?
 
-U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U17- eller U19-spillere.
+U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U15-, U17- eller U19-spillere.
 
 ## Vi har tabt en protest efter at have stillet med et hold valideret på Nembadminton. Hvem betaler boden?
 
