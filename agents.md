@@ -20,6 +20,12 @@ A website for holding turnerings rules in badminton. https://badminton.dk/holdtu
 
 Testing:
 
+## JavaScript unit testing:
+    Tool: Node's built-in test runner (`node:test`)
+    Location: tests/js/
+
+Run with `yarn test:js`. Use it for framework-free modules such as the Help documentation logic in `resources/js/admin-v2/help/`.
+
 ## End-to-end browser testing:
     Tool: Laravel dusk
     Documentation: https://laravel.com/docs/11.x/dusk#pages

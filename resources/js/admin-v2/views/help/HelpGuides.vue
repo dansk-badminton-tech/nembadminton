@@ -5,7 +5,7 @@
             <p class="help-page__eyebrow">Vejledninger · Fra start til deling</p>
             <h1>Gør holdrunden klar, ét skridt ad gangen</h1>
             <p>Følg hele forløbet, eller gå direkte til den opgave, du står med.</p>
-            <router-link v-if="firstStep" class="help-journey__start" :to="guidePath(firstStep)">Start med første trin</router-link>
+            <router-link v-if="overview.firstStep" class="help-journey__start" :to="guidePath(overview.firstStep)">Start med første trin</router-link>
         </header>
 
         <ol v-if="overview.stages.length" class="help-journey" aria-label="Forløbet i en holdrunde">
@@ -18,8 +18,8 @@
                         <p>{{ stage.step.summary }}</p>
                         <strong>Åbn vejledning <span aria-hidden="true">&rarr;</span></strong>
                     </router-link>
-                    <router-link v-for="guide in stage.optional" :key="guide.slug" :to="guidePath(guide)" class="help-journey__branch">
-                        <small>Valgfrit</small>
+                    <router-link v-for="{guide, label} in stage.branches" :key="guide.slug" :to="guidePath(guide)" class="help-journey__branch">
+                        <small>{{ label }}</small>
                         <h3>{{ guide.title }}</h3>
                         <p>{{ guide.summary }}</p>
                     </router-link>
@@ -32,8 +32,8 @@
                 <p class="help-page__eyebrow">Når noget driller</p>
                 <h2>Genveje til problemer undervejs</h2>
             </div>
-            <router-link v-for="{guide, stage} in overview.troubleshooting" :key="guide.slug" :to="guidePath(guide)">
-                <small>{{ stage }}</small>
+            <router-link v-for="{guide, stageLabel} in overview.troubleshooting" :key="guide.slug" :to="guidePath(guide)">
+                <small>{{ stageLabel }}</small>
                 <strong>{{ guide.title }} <span aria-hidden="true">&rarr;</span></strong>
             </router-link>
         </aside>
@@ -58,11 +58,6 @@ import {guideOverview, guides} from '@/help/documents'
 export default {
     name: 'HelpGuides',
     data: () => ({guides, overview: guideOverview}),
-    computed: {
-        firstStep() {
-            return this.overview.stages[0]?.number === 1 ? this.overview.stages[0].step : null
-        },
-    },
     methods: {
         guidePath(guide) {
             return `/help/guides/${guide.slug}`

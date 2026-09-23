@@ -23,7 +23,7 @@ if (errors.length > 0) {
 export const pages = Object.fromEntries(documents.filter(document => document.kind === 'page').map(document => [document.slug, document]))
 export const guides = documents.filter(document => document.kind === 'guide').sort((left, right) => left.order - right.order || left.title.localeCompare(right.title, 'da'))
 export const guideOverview = buildGuideOverview(guides)
-export const news =documents.filter(document => document.kind === 'news').sort((left, right) => right.published.localeCompare(left.published))
+export const news = documents.filter(document => document.kind === 'news').sort((left, right) => right.published.localeCompare(left.published))
 
 export function findGuide(slug) {
     return guides.find(guide => guide.slug === slug)

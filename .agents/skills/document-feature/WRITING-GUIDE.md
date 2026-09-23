@@ -29,7 +29,7 @@ journey:
 ```
 
 - `stage` is the point in the journey: `setup` (Opret og klargør), `cancellations` (Håndtér afbud), `lineup` (Lav holdopstillingen), or `sharing` (Del holdopstillingen).
-- `role` is `step` for the one guide that owns the stage's normal step, `optional` for a branch the reader may take at that point, or `troubleshooting` for a way past a problem that arises there.
+- `role` is `step` for the one guide that owns the stage's normal step, `optional` for an extra branch the reader may take at that point, `alternative` for a branch that replaces the normal step, or `troubleshooting` for a way past a problem that arises there.
 
 Omit `journey` for a guide outside the holdrunde journey; it is listed under "Andre vejledninger". `order` sorts guides that share a stage and role. `yarn docs:validate` rejects unknown stages and roles, and a second `step` guide on the same stage.
 

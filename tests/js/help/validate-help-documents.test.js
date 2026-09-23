@@ -31,7 +31,7 @@ test('journey placement must name a known stage', () => {
 
 test('journey placement must name a known role', () => {
     assert.deepEqual(validate(guide('scenarier', {journey: {stage: 'lineup', role: 'branch'}})), [
-        'guides/scenarier.md: journey.role must be one of step, optional, troubleshooting',
+        'guides/scenarier.md: journey.role must be one of step, optional, alternative, troubleshooting',
     ])
 })
 

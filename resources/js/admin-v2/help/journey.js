@@ -6,22 +6,25 @@ export const journeyStages = [
     {key: 'sharing', label: 'Del holdopstillingen'},
 ]
 
-export const journeyRoles = ['step', 'optional', 'troubleshooting']
+const branchLabels = {optional: 'Valgfrit', alternative: 'Alternativ'}
+
+export const journeyRoles = ['step', ...Object.keys(branchLabels), 'troubleshooting']
 
 // Groups guides (already in display order) into the journey overview. Stages without guides are left out.
 export function buildGuideOverview(guides) {
-    const placed = (stage, role) => guides.filter(guide => guide.journey?.stage === stage.key && guide.journey.role === role)
+    const guidesAt = (stage, roles) => guides.filter(guide => guide.journey?.stage === stage.key && roles.includes(guide.journey.role))
 
     const stages = journeyStages.map((stage, index) => ({
         ...stage,
         number: index + 1,
-        step: placed(stage, 'step')[0] ?? null,
-        optional: placed(stage, 'optional'),
-    }))
+        step: guidesAt(stage, ['step'])[0] ?? null,
+        branches: guidesAt(stage, Object.keys(branchLabels)).map(guide => ({guide, label: branchLabels[guide.journey.role]})),
+    })).filter(stage => stage.step || stage.branches.length > 0)
 
     return {
-        stages: stages.filter(stage => stage.step || stage.optional.length > 0),
-        troubleshooting: journeyStages.flatMap(stage => placed(stage, 'troubleshooting').map(guide => ({guide, stage: stage.label}))),
+        firstStep: stages[0]?.number === 1 ? stages[0].step : null,
+        stages,
+        troubleshooting: journeyStages.flatMap(stage => guidesAt(stage, ['troubleshooting']).map(guide => ({guide, stageLabel: stage.label}))),
         other: guides.filter(guide => !guide.journey),
     }
 }
