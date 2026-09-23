@@ -5,6 +5,7 @@ namespace Tests\Browser;
 use App\Models\Clubhouse;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Pages\HelpGuidePage;
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\TeamFightCreatePage;
 use Tests\Browser\Pages\TeamFightEditPage;
@@ -46,9 +47,9 @@ class TeamFightMissingPlayerGuideTest extends DuskTestCase
                 ->assertSeeIn('@missing-player-guide-link', 'Vejledning: Opret en spiller, der mangler')
                 ->assertAttributeContains('@missing-player-guide-link', 'href', '/app/help/guides/opret-en-spiller-der-mangler-i-nembadminton');
 
-            $browser->visit('/app/help/guides/opret-en-spiller-der-mangler-i-nembadminton')
-                ->waitForText('Opret en spiller, der mangler i Nembadminton')
-                ->assertSee('Badmintonplayer ID');
+            $browser->visit(new HelpGuidePage('opret-en-spiller-der-mangler-i-nembadminton'))
+                ->assertSeeIn('@help-article', 'Opret en spiller, der mangler i Nembadminton')
+                ->assertSeeIn('@help-article', 'Badmintonplayer ID');
         });
     }
 }
