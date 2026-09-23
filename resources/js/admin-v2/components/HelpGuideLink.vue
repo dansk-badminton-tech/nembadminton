@@ -1,9 +1,9 @@
 <template>
-    <a v-if="newTab" :href="$router.resolve(path).href" target="_blank" rel="noopener" class="help-guide-link">
+    <a v-if="newTab" :href="$router.resolve(route).href" target="_blank" rel="noopener" class="help-guide-link">
         <b-icon icon="help-circle-outline" size="is-small"></b-icon>
         <span><slot/></span>
     </a>
-    <router-link v-else :to="path" class="help-guide-link">
+    <router-link v-else :to="route" class="help-guide-link">
         <b-icon icon="help-circle-outline" size="is-small"></b-icon>
         <span><slot/></span>
     </router-link>
@@ -19,8 +19,8 @@ export default {
         newTab: {type: Boolean, default: false}
     },
     computed: {
-        path() {
-            return `/help/guides/${this.guide}`
+        route() {
+            return {name: 'help-guide', params: {slug: this.guide}}
         }
     }
 }
