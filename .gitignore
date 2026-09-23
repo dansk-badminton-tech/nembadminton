@@ -27,3 +27,4 @@ schema-directives.graphql
 .aiassistant
 .opencode
 .mcp.json
+.claude
