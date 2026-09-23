@@ -77,7 +77,7 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
-     * Test toggling member playable status (midlertidigt utilgængelig)
+     * Test toggling member playable status (permanent afbud)
      */
     public function testToggleMemberPlayableStatus(): void
     {
@@ -99,9 +99,9 @@ class MemberManagementTest extends DuskTestCase
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
                     ->toggleMemberPlayableStatusById($member->id)
-                    ->waitForText('Spiller markeret som midlertidigt utilgængelig')
+                    ->waitForText('Permanent afbud registreret')
                     ->pause(1000)
-                    ->assertMemberStatus($member->name, 'Midlertidigt utilgængelig');
+                    ->assertMemberStatus($member->name, 'Permanent afbud');
 
             // Verify the member was marked as unplayable in database
             $this->assertFalse(
@@ -111,7 +111,7 @@ class MemberManagementTest extends DuskTestCase
 
             // Toggle back to playable
             $browser->toggleMemberPlayableStatusById($member->id)
-                    ->waitForText('Spiller markeret som tilgængelig')
+                    ->waitForText('Permanent afbud annulleret')
                     ->pause(1000)
                     ->assertMemberStatus($member->name, 'Aktiv');
 
@@ -211,9 +211,9 @@ class MemberManagementTest extends DuskTestCase
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->assertSee('Om spillere:')
                     ->assertSee('badmintonplayer.dk API')
-                    ->assertSee('Forskel på "Inaktiv" og "Midlertidigt utilgængelig"')
+                    ->assertSee('Forskel på "Inaktiv" og "Permanent afbud"')
                     ->assertSee('Denne status er styret af Badmintonplayer')
-                    ->assertSee('Midlertidigt utilgængelig');
+                    ->assertSee('Spilleren kan ikke vælges i nogen holdrunde');
         });
     }
 }

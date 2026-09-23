@@ -71,4 +71,4 @@ Du kan også udfylde felterne selv, hvis kampen ikke findes på badmintonplayer.
 
 Holdrunden er klar, når alle hold er tilføjet i den rigtige rækkefølge, har den rigtige rangliste og viser spillestart, spillested og kampnummer i overskriften.
 
-Begynd gerne at indsamle afbud allerede nu under **Afbud** i menuen, så du kender spillernes afbud, når du laver holdopstillingen. Næste skridt er at placere spillerne og kontrollere den officielle holdopstilling. Se hele forløbet under [Vejledninger](/app/help/guides).
+Begynd gerne at indsamle afbud allerede nu under **Afbud** i menuen, så du kender spillernes afbud, når du laver holdopstillingen. Se [Håndtér afbud før og under en holdrunde](/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde). Næste skridt er at placere spillerne og kontrollere den officielle holdopstilling. Se hele forløbet under [Vejledninger](/app/help/guides).

@@ -202,7 +202,7 @@ export default {
                 }
             }).then(() => {
                 this.$buefy.snackbar.open({
-                    message: newPlayableStatus ? 'Spiller markeret som tilgængelig' : 'Spiller markeret som midlertidigt utilgængelig',
+                    message: newPlayableStatus ? 'Permanent afbud annulleret' : 'Permanent afbud registreret',
                     type: 'is-success',
                     duration: 3000
                 });
@@ -232,7 +232,7 @@ export default {
         },
         getStatusLabel(member) {
             if (member.inactive) return 'Inaktiv';
-            if (!member.playable) return 'Midlertidigt utilgængelig';
+            if (!member.playable) return 'Permanent afbud';
             return 'Aktiv';
         }
     }
@@ -249,10 +249,10 @@ export default {
             <b-message type="is-info" has-icon dusk="info-message">
                 <p class="mb-2"><strong>Om spillere:</strong></p>
                 <p class="mb-2">Spillere er badmintonspillere importeret fra badmintonplayer.dk API. Systemet importerer automatisk alle spillere der har spillet i klubben, inklusiv spillere der er stoppet.</p>
-                <p class="mb-2"><strong>Forskel på "Inaktiv" og "Midlertidigt utilgængelig":</strong></p>
+                <p class="mb-2"><strong>Forskel på "Inaktiv" og "Permanent afbud":</strong></p>
                 <ul class="ml-4">
                     <li><strong>Inaktiv:</strong> Spilleren har ikke spillet 4 kampe inden for en kategori, de sidste 12 måneder. Denne status er styret af Badmintonplayer, men kan tilsidesættes manuelt.</li>
-                    <li><strong>Midlertidigt utilgængelig:</strong> Spilleren er skadet eller midlertidigt utilgængelig, men er stadig aktiv medlem. Dette håndteres via afbudssystemet i holdrunder.</li>
+                    <li><strong>Permanent afbud:</strong> Spilleren er skadet eller væk i en længere periode, men er stadig aktiv medlem. Spilleren kan ikke vælges i nogen holdrunde, før det permanente afbud annulleres.</li>
                 </ul>
             </b-message>
 
@@ -351,7 +351,7 @@ export default {
                                 :dusk="`toggle-playable-${props.row.id}`"
                                 class="mr-1"
                             >
-                                {{ props.row.playable ? 'Midlertidigt utilgængelig' : 'Marker som tilgængelig' }}
+                                {{ props.row.playable ? 'Lav afbud permanent' : 'Annuller permanent afbud' }}
                             </b-button>
                             <b-button
                                 size="is-small"
