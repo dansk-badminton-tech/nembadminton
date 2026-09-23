@@ -7,12 +7,12 @@ journey:
   role: step
 ---
 
-Når den officielle holdopstilling er klar, kan du dele den uden at sende en mail. Du kan dele et link til en side, hvor alle kan se holdene, eller downloade holdene som en CSV-fil.
+Når den officielle holdopstilling er klar, kan du dele den uden at sende en mail. Du kan dele et link til en side, hvor alle kan se holdene, eller downloade holdene som en CSV-fil. Vil du i stedet sende holdopstillingen til spillerne på e-mail, så se [Send holdrunden til spillerne](/app/help/guides/send-holdrunden-til-spillerne).
 
 ## Før du deler
 
 - Kontrollér, at det rigtige scenarie er den officielle holdopstilling. Se [Arbejd med scenarier i en holdrunde](/app/help/guides/arbejd-med-scenarier-i-en-holdrunde), hvis et andet scenarie skal gøres officielt.
-- Ret valideringsfejl, eller beslut bevidst at stille holdene alligevel.
+- Ret valideringsfejl, eller beslut bevidst at stille holdene alligevel. Se [Lav og kontrollér den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling).
 - Kontrollér dato, spilletid, spillested og adresse for hvert hold.
 - Vælg mellem et link, der altid viser den nyeste officielle holdopstilling, og en CSV-fil, der viser holdene, som de så ud, da du downloadede filen.
 

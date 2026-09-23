@@ -500,7 +500,7 @@ export default {
                                     <div class="recipient-option-content">
                                         <h5 class="title is-6 mb-2">Holdrunden er klar</h5>
                                         <p class="is-size-7 has-text-grey">
-                                            Send besked om at holdrunden er klar og kan sendes til spillerne
+                                            Send besked om, at den officielle holdopstilling er klar
                                         </p>
                                     </div>
                                 </div>
@@ -516,7 +516,7 @@ export default {
                                     <div class="recipient-option-content">
                                         <h5 class="title is-6 mb-2">Holdrunden er opdateret</h5>
                                         <p class="is-size-7 has-text-grey">
-                                            Send besked om ændringer i en allerede offentliggjort holdrunde
+                                            Send besked om ændringer i en holdopstilling, spillerne allerede har fået
                                         </p>
                                     </div>
                                 </div>

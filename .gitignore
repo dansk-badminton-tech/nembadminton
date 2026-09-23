@@ -26,3 +26,5 @@ schema-directives.graphql
 .phpunit.cache
 .aiassistant
 .opencode
+.mcp.json
+.claude

@@ -5,13 +5,15 @@ summary: Svar på de mest almindelige spørgsmål om Nembadminton.
 
 ## Der vises en valideringsfejl, selv om holdet er korrekt
 
-Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med linket til holdrunden, som du finder under **Del** og **Link**. Se [Del den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Husk at beskrive fejlen.
+Hvis du mener, at der er en fejl i valideringen af holdopstillingen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med delingslinket, som du finder under **Del** > **Link** på holdrunden. Se [Del den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Husk at beskrive fejlen.
 
 ## Der mangler en spiller i min klub
 
-Nembadminton henter data fra badmintonplayer.dk. Hvis spilleren ikke findes på den seneste måneds rangliste, findes spilleren heller ikke på Nembadminton.
+Nembadminton henter spillere og ranglistepoint fra badmintonplayer.dk. Hvis spilleren ikke står på holdrundens rangliste, kan du ikke finde spilleren i **Søg på spiller**.
 
-Hvis spilleren findes på ranglisten, men stadig ikke findes på Nembadminton, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
+Du kan selv oprette spilleren, så du kan sætte spilleren på et hold. Se [Opret en spiller, der mangler i Nembadminton](/app/help/guides/opret-en-spiller-der-mangler-i-nembadminton), som også beskriver, hvad du skal kontrollere først.
+
+Hvis spilleren står på ranglisten, men stadig ikke findes på Nembadminton, så send også en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
 
 ## Jeg har et forslag til en forbedring eller en ny funktion
 
@@ -23,9 +25,7 @@ Send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk), eller brug
 
 ## Hvad gør jeg, hvis holdene skal sættes efter forskellige ranglister?
 
-Alle hold skal sættes efter den samme rangliste i en given runde. Se [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/).
-
-Du kan altid skifte rangliste for holdrunden eller vælge en bestemt rangliste.
+Du kan give det enkelte hold sin egen rangliste, fx når holdene spiller på datoer under forskellige ranglister. Se hvordan i [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
 
 ## Hvilken rangliste skal jeg bruge?
 
@@ -49,7 +49,7 @@ Internt på holdet kontrolleres det, om spillere står for lavt i en kategori. D
 
 ## Er der taget højde for U15-, U17- og U19-spillere?
 
-U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U17- eller U19-spillere.
+U15-, U17- og U19-spillere markeres på opstillingen, og deres ranglistepoint hentes. Der markeres ikke for ulovlige hold alene på grund af U15-, U17- eller U19-spillere.
 
 ## Vi har tabt en protest efter at have stillet med et hold valideret på Nembadminton. Hvem betaler boden?
 

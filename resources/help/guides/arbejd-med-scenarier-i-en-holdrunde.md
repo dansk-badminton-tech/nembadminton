@@ -1,51 +1,52 @@
 ---
 title: Arbejd med scenarier i en holdrunde
-summary: Afprøv alternative holdopstillinger, og vælg den officielle opstilling, når den er klar.
+summary: Afprøv alternative holdopstillinger i scenarier, uden at spillerne ser dem, og gør det bedste til den officielle holdopstilling.
 order: 10
 journey:
   stage: lineup
   role: optional
 ---
 
-Med scenarier kan du afprøve forskellige holdopstillinger i en holdrunde, uden at dine ændringer påvirker den officielle opstilling. Et scenarie indeholder spillernes placeringer på tværs af alle hold i holdrunden.
+Når du har lavet en første holdopstilling i holdrunden, kan du bruge scenarier til at afprøve alternativer, for eksempel hvis en spiller måske melder afbud. Spillerne ser kun den officielle holdopstilling, indtil du gør et scenarie officielt.
+
+Et scenarie indeholder spillernes placeringer på alle hold i holdrunden. Spillested og spilletid er fælles for hele holdrunden, så ændringer af dem gælder i alle scenarier.
+
+Holdrunden skal være oprettet med sine hold. Se [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
 
 ## Opret et scenarie
 
-1. Åbn den holdrunde, du vil arbejde med.
-2. Find **Holdene i holdrunden**, og vælg **Nyt scenarie**.
-3. Giv scenariet et navn, så du kan kende det igen.
-4. Vælg **Opret**.
+1. Åbn holdrunden.
+2. Hvis holdrunden har flere holdopstillinger, så vælg den, du vil tage udgangspunkt i, i vælgeren ved **Holdene i holdrunden**.
+3. Vælg **Nyt scenarie**.
+4. Giv scenariet et navn, du kan kende igen, for eksempel "Plan B", og vælg **Opret**.
 
-Det nye scenarie kopieres fra den opstilling, du har valgt, og åbnes med det samme. Du kan derfor også vælge et eksisterende scenarie og bruge det som udgangspunkt for endnu en version.
+Scenariet er en kopi af den holdopstilling, du havde valgt, og åbnes med det samme. Den gule besked viser, hvilket scenarie du redigerer.
 
-Spillernes placeringer kopieres til scenariet. Spillested og spilletid er fælles for hele holdrunden, så ændringer af disse oplysninger gælder i alle scenarier.
+Flyt, tilføj og fjern spillere som beskrevet i [Lav og kontrollér den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling). Ændringerne gælder kun i dette scenarie.
 
-## Skift mellem opstillinger
+## Skift mellem scenarier
 
-Når holdrunden har flere scenarier, vises en vælger ved **Holdene i holdrunden**. Her kan du skifte mellem den officielle opstilling og dine udkast.
+Når holdrunden har mere end én holdopstilling, vises en vælger ved **Holdene i holdrunden**. Den officielle holdopstilling er markeret med **(Officiel)**, og de øvrige scenarier er markeret med **(Udkast)**. Vælg et scenarie for at åbne det.
 
-- Den officielle opstilling er markeret med **(Officiel)**.
-- Alternative scenarier er markeret med **(Udkast)**.
+## Gør et scenarie til den officielle holdopstilling
 
-Når du åbner et udkast, viser den gule besked, hvilket scenarie du redigerer. Flyt, tilføj eller fjern derefter spillere som normalt. Ændringerne gælder kun spillernes placeringer i det valgte scenarie.
-
-## Gør et scenarie officielt
-
-1. Vælg det udkast, du vil bruge.
+1. Vælg scenariet i vælgeren ved **Holdene i holdrunden**.
 2. Vælg **Gør til officiel** i den gule besked.
 3. Bekræft med **Gør officiel**.
 
-Det valgte scenarie bliver den officielle opstilling. Den tidligere officielle opstilling bevares som et udkast, så du kan vende tilbage til den senere.
+Scenariet er nu den officielle holdopstilling. Den tidligere officielle holdopstilling bevares som et udkast, så du kan vende tilbage til den.
 
-Spillernes oversigt og **Send hold til spillere** tager altid udgangspunkt i den officielle opstilling. Når du åbner siden til udsendelse, kan du se, hvilke spillere der modtager beskeden.
+Alt, hvad spillerne modtager og ser, tager udgangspunkt i den officielle holdopstilling. Det gælder **Send hold til spillere**, linket under **Del** og spillernes egen oversigt, uanset hvilket scenarie du har åbent. Se [Send holdrunden til spillerne](send-holdrunden-til-spillerne).
 
-Når den officielle holdopstilling er klar, kan du [dele den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling) med et link eller som en CSV-fil.
+## Omdøb eller slet et scenarie
 
-## Omdøb eller slet et udkast
+Åbn scenariet, og brug knapperne i den gule besked:
 
-Åbn udkastet, og brug handlingerne i den gule besked:
+- Vælg **Omdøb**, skriv det nye navn, og vælg **Omdøb**.
+- Vælg **Slet udkast**, og bekræft med **Slet**. Scenariet og dets holdopstillinger slettes permanent.
 
-- Vælg **Omdøb** for at ændre scenariets navn.
-- Vælg **Slet udkast** for at fjerne scenariet og dets holdopstillinger permanent.
+Den officielle holdopstilling kan ikke omdøbes eller slettes. Gør først et andet scenarie officielt, hvis du vil fjerne den.
 
-Den officielle opstilling kan ikke slettes som et udkast. Gør først et andet scenarie officielt, hvis den nuværende officielle opstilling skal kunne slettes.
+## Næste trin
+
+Når den officielle holdopstilling er klar, er næste trin: [Del den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Se hele forløbet under [Vejledninger](/app/help/guides).

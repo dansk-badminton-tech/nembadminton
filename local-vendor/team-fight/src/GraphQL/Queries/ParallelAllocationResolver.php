@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace FlyCompany\TeamFight\GraphQL\Queries;
 
 use App\Models\Member;
-use App\Models\SquadCategory;
 use App\Models\SquadMember;
 use App\Models\TeamRound;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -20,14 +19,6 @@ class ParallelAllocationResolver
      * @var array<string, array<string, array<string, mixed>>>
      */
     private static array $roundAllocationsCache = [];
-
-    /**
-     * In-memory cache mapping squadCategoryId -> teamRoundId
-     * Avoids re-querying which team round a squad category belongs to when resolving multiple players.
-     *
-     * @var array<int|string, string>
-     */
-    private static array $categoryToRoundCache = [];
 
     /**
      * Resolve the parallel team round allocation for a given member.
@@ -77,25 +68,7 @@ class ParallelAllocationResolver
 
         // 2. Invoked on a SquadMember model in a teamRound query
         if ($root instanceof SquadMember) {
-            // Use in-memory Eloquent relations if already loaded
-            if ($root->relationLoaded('category') && $root->category?->relationLoaded('squad') && $root->category->squad?->team_round_id !== null) {
-                return (string) $root->category->squad->team_round_id;
-            }
-
-            // Otherwise, look up and cache the team_round_id for this category
-            $categoryId = $root->squad_category_id;
-            if ($categoryId !== null) {
-                if (!isset(self::$categoryToRoundCache[$categoryId])) {
-                    $roundId = SquadCategory::query()
-                        ->join('squads as s', 'squad_categories.squad_id', '=', 's.id')
-                        ->where('squad_categories.id', $categoryId)
-                        ->value('s.team_round_id');
-
-                    self::$categoryToRoundCache[$categoryId] = (string) ($roundId ?? '');
-                }
-
-                return self::$categoryToRoundCache[$categoryId];
-            }
+            return SquadMemberTeamRound::of($root);
         }
 
         return '';
@@ -192,6 +165,6 @@ class ParallelAllocationResolver
     public static function clearCache(): void
     {
         self::$roundAllocationsCache = [];
-        self::$categoryToRoundCache = [];
+        SquadMemberTeamRound::clearCache();
     }
 }
