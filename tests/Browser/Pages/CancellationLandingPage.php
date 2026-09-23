@@ -32,6 +32,7 @@ class CancellationLandingPage extends Page
         return [
             '@page' => "[dusk='cancellation-landing-page']",
             '@get-started' => "[dusk='get-started-button']",
+            '@guide-link' => "[dusk='afbud-guide-link']",
         ];
     }
 }

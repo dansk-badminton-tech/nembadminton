@@ -36,6 +36,7 @@ class CancellationDashboardPage extends Page
             '@delete' => "[dusk='delete-button']",
             '@table' => "[dusk='cancellations-div'] .table",
             '@first-message-button' => "[dusk='show-message-button']",
+            '@guide-link' => "[dusk='afbud-guide-link']",
         ];
     }
 }
