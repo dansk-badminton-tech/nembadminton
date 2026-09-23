@@ -36,6 +36,10 @@ _Avoid_: Published round, live round
 The atomic transition of a draft scenario to become the official lineup, preserving the outgoing official lineup as an alternative draft scenario.
 _Avoid_: Publish, merge, partial sync
 
+**Permanent Cancellation** (permanent afbud):
+A Member marked as unable to play in any TeamRound until the mark is removed, e.g. because of injury (`playable=false`). Unlike an afbud, it is not tied to dates or a TeamRound.
+_Avoid_: Midlertidigt utilgængelig, unplayable, unavailable
+
 **Available Member**:
 A Member who is not assigned to any Squad in the Scenario currently being edited.
 _Avoid_: Unused player, unassigned player
