@@ -57,7 +57,7 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 
 ## Hvis en spiller mangler eller har forkerte point
 
-**Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med afbud til holdrunden. Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.
+**Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med [afbud til holdrunden](/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde). Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.
 
 **Spilleren har ingen point i kategorien:** Spilleren vises med rødt og fx **HS: Ingen point** på pladsen. Spilleren skal være indplaceret på ranglisten i kategorien, så vælg normalt en anden spiller.
 

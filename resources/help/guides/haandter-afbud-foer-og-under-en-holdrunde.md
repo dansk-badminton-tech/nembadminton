@@ -74,4 +74,4 @@ Du giver permanent afbud på én af to måder:
 
 Når du laver holdopstillingen, indeholder listen under **Søg på spiller** kun de spillere, der kan spille på holdrundens spilledato. Afbud, der kommer ind senere via afbudslinket, fjerner også spilleren fra listen. Står spilleren allerede på et hold, bliver spilleren markeret med **Afbud**.
 
-Næste skridt er at lave og kontrollere den officielle holdopstilling. Se hele forløbet under [Vejledninger](/app/help/guides).
+Næste skridt er at [lave og kontrollere den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling). Se hele forløbet under [Vejledninger](/app/help/guides).
