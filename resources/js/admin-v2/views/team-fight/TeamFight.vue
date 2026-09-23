@@ -106,13 +106,15 @@
                             </div>
                             <h2 class="subtitle mt-1">Træk spillerne rundt ved drag-and-drop</h2>
                         </div>
-                        <b-button
-                            icon-left="source-branch"
-                            dusk="create-scenario-button"
-                            @click="promptCreateScenario"
-                        >
-                            Nyt scenarie
-                        </b-button>
+                        <div class="is-flex is-flex-direction-column is-align-items-flex-end">
+                            <b-button
+                                icon-left="source-branch"
+                                dusk="create-scenario-button"
+                                @click="promptCreateScenario"
+                            >
+                                Nyt scenarie
+                            </b-button>
+                        </div>
                     </div>
 
                     <b-message

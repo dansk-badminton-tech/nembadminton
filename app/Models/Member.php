@@ -91,15 +91,23 @@ class Member extends Model
         });
     }
 
-    public function scopeNotOnSquad(Builder $builder, string $teamRoundId) : Builder
+    public function scopeNotOnSquad(Builder $builder, ?string $teamRoundId) : Builder
     {
+        if ($teamRoundId === null) {
+            return $builder;
+        }
+
         return $builder->whereDoesntHave('squadMember.category.squad', function (Builder $builder) use ($teamRoundId) {
             $builder->where('team_round_id', '=', $teamRoundId);
         });
     }
 
-    public function scopeNotOnScenario(Builder $builder, string $scenarioId) : Builder
+    public function scopeNotOnScenario(Builder $builder, ?string $scenarioId) : Builder
     {
+        if ($scenarioId === null) {
+            return $builder;
+        }
+
         return $builder->whereDoesntHave('squadMember.category', function (Builder $builder) use ($scenarioId) {
             $builder->where('team_round_scenario_id', '=', $scenarioId);
         });
