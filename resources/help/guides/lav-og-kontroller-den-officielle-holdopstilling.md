@@ -11,7 +11,7 @@ Her sætter du spillerne på holdene i holdrunden og kontrollerer, at den offici
 
 Holdrunden og dens hold skal være oprettet, før du går i gang.
 
-> Dine ændringer gælder den opstilling, der er valgt ved **Holdene i holdrunden**. Har du valgt et udkast, ændrer du ikke den officielle holdopstilling. Læs mere i [Arbejd med scenarier i en holdrunde](./arbejd-med-scenarier-i-en-holdrunde).
+> Dine ændringer gælder den opstilling, der er valgt ved **Holdene i holdrunden**. Har du valgt et udkast, ændrer du ikke den officielle holdopstilling. Læs mere i [Arbejd med scenarier i en holdrunde](/app/help/guides/arbejd-med-scenarier-i-en-holdrunde).
 
 ## Sæt spillerne på holdene
 
@@ -57,7 +57,7 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 
 ## Hvis en spiller mangler eller har forkerte point
 
-**Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med afbud til holdrunden. Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](../faq) i FAQ.
+**Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med afbud til holdrunden. Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.
 
 **Spilleren har ingen point i kategorien:** Spilleren vises med rødt og fx **HS: Ingen point** på pladsen. Spilleren skal være indplaceret på ranglisten i kategorien, så vælg normalt en anden spiller.
 
@@ -77,8 +77,8 @@ Kontrollen er en hjælp, men den dækker ikke alle regler. I disse situationer s
 - **Spillere i andre holdrunder:** Spillere markeret med **Optaget på:** er ikke en del af kontrollen.
 - **Et hold, der bevidst ikke er fuldt besat:** Slå kontakten ved **Hold fuldendt** fra. Kontrollen viser **Deaktiveret**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene. Valget gemmes ikke, så kontakten er slået til igen, næste gang du åbner holdrunden.
 
-Det er altid klubbens og trænerens ansvar at kontrollere, at holdopstillingen er korrekt. Mener du, at kontrollen tager fejl, så se [Der vises en valideringsfejl, selv om holdet er korrekt](../faq) i FAQ.
+Det er altid klubbens og trænerens ansvar at kontrollere, at holdopstillingen er korrekt. Mener du, at kontrollen tager fejl, så se [Der vises en valideringsfejl, selv om holdet er korrekt](/app/help/faq) i FAQ.
 
 ## Næste trin
 
-Når den officielle holdopstilling er klar, er næste trin at dele den med spillerne. Gå tilbage til [Vejledninger](../guides) for at fortsætte.
+Når den officielle holdopstilling er klar, er næste trin at dele den med spillerne. Gå tilbage til [Vejledninger](/app/help/guides) for at fortsætte.
