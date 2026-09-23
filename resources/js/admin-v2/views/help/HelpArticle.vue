@@ -1,5 +1,5 @@
 <template>
-    <article v-if="document" dusk="help-article" class="help-article">
+    <article v-if="document" class="help-article">
         <p class="help-article__back"><router-link :to="backPath">{{ backLabel }}</router-link> /</p>
         <header>
             <p v-if="document.published" class="help-article__date">{{ formatDate(document.published) }}</p>

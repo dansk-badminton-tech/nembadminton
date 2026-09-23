@@ -78,34 +78,27 @@
                 <div class="has-text-centered py-5" v-if="showCancellation">
                     <p class="has-text-grey">Søgte på afbud for {{ rankingListTranslate }} og {{ formatGameDate }} - fandt 0.</p>
                 </div>
+                <div class="has-text-centered py-5" v-else-if="searchName">
+                    <p class="has-text-grey mb-3">Ingen spillere fundet, som matcher "{{ searchName }}"</p>
+                    <b-button
+                        size="is-small"
+                        icon-left="plus"
+                        type="is-primary"
+                        @click="$emit('open-add-member', searchName)"
+                    >
+                        Opret "{{ searchName }}" som spiller
+                    </b-button>
+                </div>
                 <div class="has-text-centered py-5" v-else>
-                    <template v-if="searchName">
-                        <p class="has-text-grey mb-3">Ingen spillere fundet, som matcher "{{ searchName }}"</p>
-                        <b-button
-                            size="is-small"
-                            icon-left="plus"
-                            type="is-primary"
-                            @click="$emit('open-add-member', searchName)"
-                        >
-                            Opret "{{ searchName }}" som spiller
-                        </b-button>
-                    </template>
-                    <template v-else>
-                        <p class="has-text-grey mb-3">Ingen spillere fundet på denne rangliste</p>
-                        <b-button
-                            size="is-small"
-                            icon-left="plus"
-                            type="is-light"
-                            @click="$emit('open-add-member')"
-                        >
-                            Opret ny spiller
-                        </b-button>
-                    </template>
-                    <p class="mt-3 is-size-7">
-                        <router-link dusk="missing-player-guide-link" to="/help/guides/opret-en-spiller-der-mangler-i-nembadminton" target="_blank">
-                            Vejledning: Opret en spiller, der mangler
-                        </router-link>
-                    </p>
+                    <p class="has-text-grey mb-3">Ingen spillere fundet på denne rangliste</p>
+                    <b-button
+                        size="is-small"
+                        icon-left="plus"
+                        type="is-light"
+                        @click="$emit('open-add-member')"
+                    >
+                        Opret ny spiller
+                    </b-button>
                 </div>
             </template>
             <template v-slot:detail="props">
