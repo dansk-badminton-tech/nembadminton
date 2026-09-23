@@ -434,10 +434,7 @@ export default {
             <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamRoundId+'/edit'">Tilbage</b-button>
             </div>
             <b-message type="is-info" :closable="false" dusk="official-lineup-notice">
-                <p>Notifikationer tager altid udgangspunkt i den officielle holdopstilling, uanset hvilket scenarie du redigerer.</p>
-                <p class="mt-2">
-                    <router-link dusk="notify-guide-link" to="/help/guides/send-holdrunden-til-spillerne">Sådan sender du holdrunden til spillerne</router-link>
-                </p>
+                Notifikationer tager altid udgangspunkt i den officielle holdopstilling, uanset hvilket scenarie du redigerer.
             </b-message>
             <div class="columns">
                 <div class="column is-half">
