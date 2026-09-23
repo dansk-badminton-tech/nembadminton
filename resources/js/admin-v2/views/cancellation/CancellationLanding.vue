@@ -1,10 +1,9 @@
 <script>
 import TitleBar from "@/components/TitleBar.vue";
-import HelpGuideLink from "@/components/HelpGuideLink.vue";
 
 export default {
     name: "CancellationLanding" ,
-    components: {HelpGuideLink, TitleBar},
+    components: {TitleBar},
     data: () => {
         return {
             titleStack: ['Admin', 'Afbud']
@@ -23,7 +22,6 @@ export default {
         <title-bar :title-stack="titleStack"/>
         <section class="section is-main-section">
             <h1 class="title">Sådan fungerer det:</h1>
-            <p class="mb-5"><help-guide-link dusk="afbud-guide-link" guide="haandter-afbud-foer-og-under-en-holdrunde">Sådan håndterer du afbud før og under en holdrunde</help-guide-link></p>
             <div class="columns is-multiline">
                 <div class="column is-one-third">
                     <div class="box">

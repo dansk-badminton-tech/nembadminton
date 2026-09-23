@@ -1,7 +1,6 @@
 <script>
 import HeroBar from "@/components/HeroBar.vue";
 import TitleBar from "@/components/TitleBar.vue";
-import HelpGuideLink from "@/components/HelpGuideLink.vue";
 import cancellationCollectorQuery from "../../../queries/cancellationCollector.gql";
 import CancellationCollector from "@/views/cancellation/CancellationCollector.vue";
 import gql from "graphql-tag";
@@ -35,7 +34,7 @@ export default {
             showCalendar: false
         }
     },
-    components: {HelpGuideLink, TeamMatchCalendar, CancellationCollector, TitleBar, HeroBar},
+    components: {TeamMatchCalendar, CancellationCollector, TitleBar, HeroBar},
     apollo: {
         cancellationCollector: {
             query: cancellationCollectorQuery,
@@ -216,7 +215,6 @@ export default {
         </hero-bar>
 
         <section class="section is-main-section">
-            <p class="mb-4"><help-guide-link dusk="afbud-guide-link" guide="haandter-afbud-foer-og-under-en-holdrunde">Sådan håndterer du afbud før og under en holdrunde</help-guide-link></p>
             <!-- Cancellation Collector Info Card -->
             <div class="card" v-if="!!cancellationCollector">
                 <div class="card-content">

@@ -20,7 +20,6 @@
             </b-radio-button>
         </b-field>
         <p class="mt-4" v-html="resolveHelperTextForCancellation"></p>
-        <p v-if="showCancellation" class="mt-2"><help-guide-link new-tab guide="haandter-afbud-foer-og-under-en-holdrunde">Sådan håndterer du afbud før og under en holdrunde</help-guide-link></p>
         <b-table
             dusk="player-search-table"
             class="mt-5"
@@ -153,11 +152,10 @@ import MemberSearchCancellation from "./memberSearchCancellation.gql"
 import ME from "../../../queries/me.gql";
 import {on as onAppEvent} from '@/store/events'
 import {BSidebar, BSwitch} from "buefy";
-import HelpGuideLink from "@/components/HelpGuideLink.vue";
 
 export default {
     name: 'PlayersListSearch',
-    components: {BSwitch, BSidebar, HelpGuideLink},
+    components: {BSwitch, BSidebar},
     props: {
         clubhouseId: Number,
         teamRoundId: String,

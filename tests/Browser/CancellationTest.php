@@ -82,31 +82,4 @@ class CancellationTest extends DuskTestCase
             $browser->on(new CancellationLandingPage());
         });
     }
-
-    public function testAfbudPagesLinkToTheAfbudGuide(): void
-    {
-        $this->browse(function (Browser $browser) {
-            $browser->visit(new LoginPage())
-                ->loginSPA('testing@gmail.com', 'Test1234');
-
-            $browser->visit(new CancellationLandingPage())
-                ->click('@get-started');
-
-            $browser->on(new CreateCancellationPage())
-                ->createCollector('BC37 Amager', 'notif@example.com');
-
-            $browser->on(new CancellationDashboardPage())
-                ->assertSeeIn('@guide-link', 'Sådan håndterer du afbud før og under en holdrunde');
-
-            $browser->click('@delete')
-                ->waitForText('Er du sikker')
-                ->press('OK');
-
-            $browser->on(new CancellationLandingPage())
-                ->assertSeeIn('@guide-link', 'Sådan håndterer du afbud før og under en holdrunde')
-                ->click('@guide-link')
-                ->waitForText('Håndtér afbud før og under en holdrunde')
-                ->assertPathIs('/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde');
-        });
-    }
 }
