@@ -127,6 +127,20 @@
                                 </div>
                             </b-tooltip>
                             <b-tooltip
+                                v-if="player.cancellation"
+                                type="is-danger"
+                                :label="cancellationTooltip(player.cancellation)"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag
+                                    type="is-danger is-light"
+                                    size="is-small"
+                                    dusk="cancellation-tag">
+                                    <b-icon icon="account-off" size="is-small" class="mr-1"></b-icon>
+                                    {{ player.cancellation.permanent ? 'Permanent afbud' : 'Afbud' }}
+                                </b-tag>
+                            </b-tooltip>
+                            <b-tooltip
                                 v-if="player.parallelAllocation"
                                 type="is-warning"
                                 :label="parallelAllocationTooltip(player.parallelAllocation)"
@@ -314,6 +328,14 @@ export default {
         },
         highlight: function (player, category) {
             return simpleHighlight(this.playingToHigh, this.playingToHighInSquad, player, category);
+        },
+        cancellationTooltip(cancellation) {
+            if (cancellation.permanent) {
+                return 'Spilleren har permanent afbud og kan ikke spille i nogen holdrunde.';
+            }
+            return cancellation.viaCancellationLink
+                ? 'Spilleren har meldt afbud til holdrundens spilledato via afbudslinket.'
+                : 'Spilleren er meldt afbud til denne holdrunde.';
         },
         parallelAllocationTooltip(allocation) {
             if (!allocation) {

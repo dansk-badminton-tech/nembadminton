@@ -47,11 +47,11 @@ Afbuddet gælder kun den holdrunde, du har åben, og spilleren forsvinder fra li
 
 ## Tjek afbud, før holdopstillingen er færdig
 
-1. Slå **Vis afbud** til under **Søg på spiller**. Listen viser de spillere, der har afbud på holdrundens spilledato, både fra afbudslinket og dem, du har registreret manuelt.
+1. Slå **Vis afbud** til under **Søg på spiller**. Listen viser de spillere, der har afbud på holdrundens spilledato og ikke står på et hold, både fra afbudslinket og dem, du har registreret manuelt.
 2. Vælg en spiller for at se afbudsdatoerne, og om afbuddet er oprettet af **Dig** eller via **Afbudslink**.
-3. Tjek **Oversigt over afbud** på siden **Afbud** for spilledatoen, og fjern spillere med afbud fra holdene.
+3. Gennemgå holdene. En spiller, der står på et hold og har afbud, er markeret med **Afbud** eller **Permanent afbud**. Erstat spilleren med en anden.
 
-> Afbud fjerner kun spillere fra listen over spillere, du kan vælge imellem. En spiller, der allerede står på et hold, bliver stående, selv om spilleren melder afbud bagefter. Spilleren vises heller ikke under **Vis afbud**, så det er kun **Oversigt over afbud**, der viser det.
+> Afbud flytter ikke spillere, der allerede står på et hold. Melder en spiller afbud, efter at holdopstillingen er lavet, bliver spilleren stående på holdet med mærket **Afbud**, indtil du erstatter spilleren.
 
 ## Vælg mellem afbud, permanent afbud og inaktiv
 
@@ -72,6 +72,6 @@ Du giver permanent afbud på én af to måder:
 
 ## Resultat
 
-Når du laver holdopstillingen, indeholder listen under **Søg på spiller** kun de spillere, der kan spille på holdrundens spilledato. Afbud, der kommer ind senere via afbudslinket, fjerner også spilleren fra listen, men flytter ikke spillere, der allerede står på et hold.
+Når du laver holdopstillingen, indeholder listen under **Søg på spiller** kun de spillere, der kan spille på holdrundens spilledato. Afbud, der kommer ind senere via afbudslinket, fjerner også spilleren fra listen. Står spilleren allerede på et hold, bliver spilleren markeret med **Afbud**.
 
 Næste skridt er at lave og kontrollere den officielle holdopstilling. Se hele forløbet under [Vejledninger](/app/help/guides).

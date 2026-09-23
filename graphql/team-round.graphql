@@ -252,6 +252,8 @@ type SquadMember {
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
     parallelAllocation: ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
+    "The player's afbud for the team round they are placed in, or null when they have none."
+    cancellation: PlacedPlayerCancellation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\PlacedPlayerCancellationResolver")
 }
 
 type SquadPoint {
@@ -269,6 +271,13 @@ type SquadCategory {
     category: String!
     name: String!
     players: [SquadMember!]!
+}
+
+type PlacedPlayerCancellation {
+    "The player has a permanent afbud (playable = false) and cannot play in any team round."
+    permanent: Boolean!
+    "The afbud was sent through the afbudslink rather than registered in the team round."
+    viaCancellationLink: Boolean!
 }
 
 type ParallelTeamRoundAllocation {

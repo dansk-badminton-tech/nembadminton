@@ -33,6 +33,10 @@ query teamRound($id: ID!, $scenarioId: ID){
                     name
                     refId
                     vintage
+                    cancellation{
+                        permanent
+                        viaCancellationLink
+                    }
                     parallelAllocation{
                         teamRoundId
                         teamRoundName
