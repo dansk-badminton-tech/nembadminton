@@ -81,4 +81,4 @@ Det er altid klubbens og trænerens ansvar at kontrollere, at holdopstillingen e
 
 ## Næste trin
 
-Når den officielle holdopstilling er klar, er næste trin at dele den med spillerne. Gå tilbage til [Vejledninger](/app/help/guides) for at fortsætte.
+Når den officielle holdopstilling er klar, er næste trin at [dele den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Gå tilbage til [Vejledninger](/app/help/guides) for at fortsætte.

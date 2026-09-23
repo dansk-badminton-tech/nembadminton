@@ -49,4 +49,4 @@ Den officielle holdopstilling kan ikke omdøbes eller slettes. Gør først et an
 
 ## Næste trin
 
-Når den officielle holdopstilling er klar, er næste trin: Del den officielle holdopstilling med spillerne. Se hele forløbet under [Vejledninger](/app/help/guides).
+Når den officielle holdopstilling er klar, er næste trin: [Del den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Se hele forløbet under [Vejledninger](/app/help/guides).

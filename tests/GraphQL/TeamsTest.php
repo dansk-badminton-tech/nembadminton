@@ -240,6 +240,77 @@ class TeamsTest extends TestCase
     /**
      * @test
      */
+    public function it_exports_only_the_official_lineup_when_the_team_round_has_draft_scenarios()
+    {
+        Storage::fake('public');
+
+        $clubhouse = Clubhouse::factory()->create();
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id]);
+        setPermissionsTeamId($clubhouse->id);
+        $user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $squad = Squad::query()->create([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 10,
+        ]);
+        $officialScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan A',
+            'is_official' => true,
+        ]);
+        $draftScenario = TeamRoundScenario::query()->create([
+            'team_round_id' => $teamRound->id,
+            'name' => 'Plan B',
+            'is_official' => false,
+        ]);
+        foreach ([[$officialScenario, 'Official Player', '9001011234'], [$draftScenario, 'Draft Player', '9001015678']] as [$scenario, $playerName, $refId]) {
+            Member::query()->create([
+                'refId' => $refId,
+                'name' => $playerName,
+                'gender' => 'M',
+                'birthday' => '1990-01-01',
+                'playable' => true,
+                'inactive' => false,
+            ]);
+            $category = SquadCategory::query()->create([
+                'squad_id' => $squad->id,
+                'category' => 'HS',
+                'name' => '1. HS',
+                'team_round_scenario_id' => $scenario->id,
+            ]);
+            SquadMember::query()->create([
+                'member_ref_id' => $refId,
+                'squad_category_id' => $category->id,
+                'name' => $playerName,
+                'gender' => 'M',
+            ]);
+        }
+
+        $this->actingAs($user, 'api');
+
+        $this->graphQL(/** @lang GraphQL */ '
+            query($teamRoundId: ID!) {
+                export(teamRoundId: $teamRoundId)
+            }
+        ', [
+            'teamRoundId' => $teamRound->id,
+        ])->assertJsonMissingPath('errors');
+
+        $files = Storage::disk('public')->allFiles('team-fight/exports');
+        $this->assertCount(1, $files);
+        $content = Storage::disk('public')->get($files[0]);
+        $this->assertStringContainsString('"Official Player"', $content);
+        $this->assertStringNotContainsString('"Draft Player"', $content);
+        $this->assertSame(1, substr_count($content, '"1. HS"'));
+    }
+
+    /**
+     * @test
+     */
     public function it_can_query_team_notification_activity()
     {
         $clubhouse = Clubhouse::factory()->create();
