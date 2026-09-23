@@ -37,7 +37,7 @@ Når du åbner et udkast, viser den gule besked, hvilket scenarie du redigerer. 
 
 Det valgte scenarie bliver den officielle opstilling. Den tidligere officielle opstilling bevares som et udkast, så du kan vende tilbage til den senere.
 
-Spillernes oversigt og **Send hold til spillere** tager altid udgangspunkt i den officielle opstilling. Når du åbner siden til udsendelse, kan du se, hvilke spillere der modtager beskeden. Se [Send holdrunden til spillerne](send-holdrunden-til-spillerne).
+Spillernes oversigt og **Send hold til spillere** tager altid udgangspunkt i den officielle holdopstilling. Når du åbner siden til udsendelse, kan du se, hvilke spillere der modtager beskeden. Se [Send holdrunden til spillerne](send-holdrunden-til-spillerne).
 
 ## Omdøb eller slet et udkast
 
