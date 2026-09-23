@@ -106,13 +106,20 @@
                             </div>
                             <h2 class="subtitle mt-1">Træk spillerne rundt ved drag-and-drop</h2>
                         </div>
-                        <b-button
-                            icon-left="source-branch"
-                            dusk="create-scenario-button"
-                            @click="promptCreateScenario"
-                        >
-                            Nyt scenarie
-                        </b-button>
+                        <div class="is-flex is-flex-direction-column is-align-items-flex-end">
+                            <b-button
+                                icon-left="source-branch"
+                                dusk="create-scenario-button"
+                                @click="promptCreateScenario"
+                            >
+                                Nyt scenarie
+                            </b-button>
+                            <router-link class="is-size-7 mt-1"
+                                         dusk="scenario-guide-link"
+                                         :to="{name: 'help-guide', params: {slug: 'arbejd-med-scenarier-i-en-holdrunde'}}">
+                                Sådan arbejder du med scenarier
+                            </router-link>
+                        </div>
                     </div>
 
                     <b-message
