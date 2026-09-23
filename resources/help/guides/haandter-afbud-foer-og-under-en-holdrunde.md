@@ -14,7 +14,7 @@ Afbud er det andet trin i en holdrunde, men du kan sagtens begynde, før holdrun
 Klubben har ét afbudslink, som du kan bruge til alle holdrunder. Opret det én gang, og del det så tidligt som muligt.
 
 1. Vælg **Afbud** i menuen.
-2. Vælg **Kom igang!**.
+2. Vælg **Kom i gang!**.
 3. Under **Email** skriver du den e-mailadresse, der skal have besked, hver gang et afbud modtages. Vil du ikke have e-mails, sætter du flueben ved **Ingen notifikationer**.
 4. Under **Klubber** vælger du de klubber, hvis spillere skal kunne melde afbud. Alle klubhusets klubber er valgt på forhånd.
 5. Vælg **Opret**.

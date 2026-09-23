@@ -43,7 +43,7 @@ export default {
                 </div>
                 <div class="column is-offset-one-quarter is-half">
                     <div>
-                        <b-button dusk="get-started-button" type="is-info" @click="redirect" expanded>Kom igang!</b-button>
+                        <b-button dusk="get-started-button" type="is-info" @click="redirect" expanded>Kom i gang!</b-button>
                     </div>
                 </div>
             </div>
