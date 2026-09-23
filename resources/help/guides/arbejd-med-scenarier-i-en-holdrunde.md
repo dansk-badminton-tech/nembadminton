@@ -39,6 +39,8 @@ Det valgte scenarie bliver den officielle opstilling. Den tidligere officielle o
 
 Spillernes oversigt og **Send hold til spillere** tager altid udgangspunkt i den officielle opstilling. Når du åbner siden til udsendelse, kan du se, hvilke spillere der modtager beskeden.
 
+Når den officielle holdopstilling er klar, kan du [dele den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling) med et link eller som en CSV-fil.
+
 ## Omdøb eller slet et udkast
 
 Åbn udkastet, og brug handlingerne i den gule besked:

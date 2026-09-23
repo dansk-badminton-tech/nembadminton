@@ -5,7 +5,7 @@ summary: Svar på de mest almindelige spørgsmål om Nembadminton.
 
 ## Der vises en valideringsfejl, selv om holdet er korrekt
 
-Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med delingslinket, som findes via eksportfunktionen. Husk at beskrive fejlen.
+Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med linket til holdrunden, som du finder under **Del** og **Link**. Se [Del den officielle holdopstilling](/app/help/guides/del-den-officielle-holdopstilling). Husk at beskrive fejlen.
 
 ## Der mangler en spiller i min klub
 
