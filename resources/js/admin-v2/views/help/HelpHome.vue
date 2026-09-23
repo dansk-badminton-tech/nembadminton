@@ -60,7 +60,7 @@ export default {
 .help-tile:hover p { color: #c8d0d6; }
 .help-latest { margin-top: 5rem; display: grid; grid-template-columns: 1.2fr 2fr; gap: 3rem; }
 .help-latest h2 { font-size: 2rem; }
-.help-latest article { display: grid; grid-template-columns: 9rem 1fr; padding: 1rem 0; border-top: 1px solid var(--help-line); }
+.help-latest article { grid-column: 2; display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--help-line); }
 .help-latest article a { color: var(--help-ink); font-weight: 700; }
 .help-latest time { color: var(--help-muted); }
 @media (max-width: 768px) {
@@ -68,6 +68,6 @@ export default {
     .help-tile--wide { grid-column: auto; }
     .help-tile { min-height: 180px; }
     .help-latest { grid-template-columns: 1fr; gap: 1rem; }
-    .help-latest article { grid-template-columns: 1fr; gap: .25rem; }
+    .help-latest article { grid-column: 1; grid-template-columns: 1fr; gap: .25rem; }
 }
 </style>
