@@ -27,7 +27,7 @@ Når holdrunden har flere scenarier, vises en vælger ved **Holdene i holdrunden
 - Den officielle opstilling er markeret med **(Officiel)**.
 - Alternative scenarier er markeret med **(Udkast)**.
 
-Når du åbner et udkast, viser den gule besked, hvilket scenarie du redigerer. Flyt, tilføj eller fjern derefter spillere som normalt. Ændringerne gælder kun spillernes placeringer i det valgte scenarie.
+Når du åbner et udkast, viser den gule besked, hvilket scenarie du redigerer. Flyt, tilføj eller fjern derefter spillere som beskrevet i [Lav og kontrollér den officielle holdopstilling](./lav-og-kontroller-den-officielle-holdopstilling). Ændringerne gælder kun spillernes placeringer i det valgte scenarie.
 
 ## Gør et scenarie officielt
 
