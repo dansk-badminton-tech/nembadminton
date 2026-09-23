@@ -119,6 +119,12 @@ const routes = [
                 meta: {title: 'Vejledninger'}
             },
             {
+                path: 'guide-discoverability-prototype',
+                name: 'help-guide-discoverability-prototype',
+                component: () => import('@/views/help/GuideDiscoverabilityPrototype.vue'),
+                meta: {title: 'Prototype: Find vejledninger'}
+            },
+            {
                 path: 'guides/:slug',
                 name: 'help-guide',
                 component: () => import('@/views/help/HelpArticle.vue'),
