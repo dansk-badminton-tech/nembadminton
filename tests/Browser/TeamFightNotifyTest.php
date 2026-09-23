@@ -146,4 +146,21 @@ class TeamFightNotifyTest extends DuskTestCase
             $browser->click('.modal-card-foot .button:not(.is-info)');
         });
     }
+
+    public function test_guide_link_opens_the_send_guide(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+            $teamRound = TeamRound::where('name', '3x13 Kamps - Valid')->first();
+
+            $browser->visit(new LoginPage())
+                ->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
+                ->on(new TeamFightNotifyPage($clubhouse->id, $teamRound->id))
+                ->assertSeeIn('@guide-link', 'Sådan sender du holdrunden til spillerne')
+                ->click('@guide-link')
+                ->waitForLocation('/app/help/guides/send-holdrunden-til-spillerne')
+                ->waitForText('Send holdrunden til spillerne');
+        });
+    }
 }

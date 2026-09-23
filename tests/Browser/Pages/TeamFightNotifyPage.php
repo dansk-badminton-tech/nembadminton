@@ -30,6 +30,7 @@ class TeamFightNotifyPage extends Page
         return [
             '@page'                    => "[dusk='notify-page']",
             '@back-button'             => "[dusk='notify-back-button']",
+            '@guide-link'              => "[dusk='notify-guide-link']",
             '@message-input'           => "textarea[dusk='notify-message-input']",
             '@type-publish'            => "[dusk='notify-type-publish']",
             '@type-updated'            => "[dusk='notify-type-updated']",

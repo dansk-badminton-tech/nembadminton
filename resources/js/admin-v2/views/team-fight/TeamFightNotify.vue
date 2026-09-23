@@ -434,7 +434,10 @@ export default {
             <b-button dusk="notify-back-button" icon-left="arrow-left-circle" tag="router-link" :to="'/c-'+clubhouseId+'/team-fight/'+teamRoundId+'/edit'">Tilbage</b-button>
             </div>
             <b-message type="is-info" :closable="false" dusk="official-lineup-notice">
-                Notifikationer tager altid udgangspunkt i den officielle holdopstilling, uanset hvilket scenarie du redigerer.
+                <p>Notifikationer tager altid udgangspunkt i den officielle holdopstilling, uanset hvilket scenarie du redigerer.</p>
+                <p class="mt-2">
+                    <router-link dusk="notify-guide-link" to="/help/guides/send-holdrunden-til-spillerne">Sådan sender du holdrunden til spillerne</router-link>
+                </p>
             </b-message>
             <div class="columns">
                 <div class="column is-half">
@@ -500,7 +503,7 @@ export default {
                                     <div class="recipient-option-content">
                                         <h5 class="title is-6 mb-2">Holdrunden er klar</h5>
                                         <p class="is-size-7 has-text-grey">
-                                            Send besked om at holdrunden er klar og kan sendes til spillerne
+                                            Send besked om, at den officielle holdopstilling er klar
                                         </p>
                                     </div>
                                 </div>
@@ -516,7 +519,7 @@ export default {
                                     <div class="recipient-option-content">
                                         <h5 class="title is-6 mb-2">Holdrunden er opdateret</h5>
                                         <p class="is-size-7 has-text-grey">
-                                            Send besked om ændringer i en allerede offentliggjort holdrunde
+                                            Send besked om ændringer i en holdopstilling, spillerne allerede har fået
                                         </p>
                                     </div>
                                 </div>
