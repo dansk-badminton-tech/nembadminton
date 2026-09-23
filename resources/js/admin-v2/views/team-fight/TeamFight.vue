@@ -114,11 +114,6 @@
                             >
                                 Nyt scenarie
                             </b-button>
-                            <router-link class="is-size-7 mt-1"
-                                         dusk="scenario-guide-link"
-                                         :to="{name: 'help-guide', params: {slug: 'arbejd-med-scenarier-i-en-holdrunde'}}">
-                                Sådan arbejder du med scenarier
-                            </router-link>
                         </div>
                     </div>
 
