@@ -49,6 +49,7 @@ class TeamFightEditPage extends Page
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
+            '@scenario-guide-link' => "[dusk='scenario-guide-link']",
         ];
     }
 
