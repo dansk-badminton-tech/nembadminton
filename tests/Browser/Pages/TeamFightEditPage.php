@@ -40,7 +40,7 @@ class TeamFightEditPage extends Page
         return [
             '@page' => "[dusk='team-fight-edit-page']",
             '@player-search-panel' => "[dusk='player-search-panel']",
-            '@player-search-input' => "[dusk='player-search-input'] input",
+            '@player-search-input' => "input[dusk='player-search-input']",
             '@ranking-list-select' => "[dusk='ranking-list-select']",
             '@player-search-table' => "[dusk='player-search-table']",
             '@missing-player-guide-link' => "[dusk='missing-player-guide-link']",
