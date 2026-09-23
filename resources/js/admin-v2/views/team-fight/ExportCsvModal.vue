@@ -13,7 +13,6 @@
                     Ekskluder kategorier
                 </b-checkbox>
             </b-field>
-            <a href="/app/help/guides/del-den-officielle-holdopstilling" target="_blank">Sådan deler du den officielle holdopstilling</a>
         </section>
         <footer class="modal-card-foot">
             <b-button label="Annuller" @click="$emit('close')"/>

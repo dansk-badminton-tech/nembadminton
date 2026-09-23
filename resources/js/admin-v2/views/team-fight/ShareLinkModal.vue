@@ -5,7 +5,6 @@
                 <p>Alle med linket kan udelukkende se holdet - ikke redigere. Du behøver ikke at være logget ind for
                     at se holdet. Hvis holdet opdateres efterfølgende bliver det afspejlet med det samme.</p>
                 <pre>{{ shareUrl }}</pre>
-                <p><a href="/app/help/guides/del-den-officielle-holdopstilling" target="_blank">Sådan deler du den officielle holdopstilling</a></p>
             </div>
         </div>
         <footer class="card-footer">
