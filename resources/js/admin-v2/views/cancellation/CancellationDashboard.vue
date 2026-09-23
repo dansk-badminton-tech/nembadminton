@@ -395,9 +395,6 @@ export default {
                     <b-icon icon="link-off" size="is-large" type="is-grey-light"></b-icon>
                     <p class="title is-4 has-text-grey-light mt-3">Afbudslink ikke fundet</p>
                     <p class="subtitle is-6 has-text-grey">Dette afbudslink eksisterer ikke eller er blevet slettet.</p>
-                    <b-button type="is-primary" tag="router-link" to="/cancellations" class="mt-3">
-                        Gå til afbud oversigt
-                    </b-button>
                 </div>
             </div>
         </section>
