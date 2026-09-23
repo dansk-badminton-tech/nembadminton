@@ -23,7 +23,7 @@ Send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk), eller brug
 
 ## Hvad gør jeg, hvis holdene skal sættes efter forskellige ranglister?
 
-Holdrunden har én rangliste, men det enkelte hold kan bruge sin egen. Det er fx relevant, når holdene spiller på datoer, der hører under forskellige ranglister. Se, hvordan du vælger ranglister, i [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
+Du kan give det enkelte hold sin egen rangliste, fx når holdene spiller på datoer under forskellige ranglister. Se hvordan i [Opret og klargør en holdrunde](/app/help/guides/opret-og-klargoer-en-holdrunde).
 
 ## Hvilken rangliste skal jeg bruge?
 
