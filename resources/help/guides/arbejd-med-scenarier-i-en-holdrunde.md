@@ -36,7 +36,7 @@ Når holdrunden har mere end én holdopstilling, vises en vælger ved **Holdene 
 
 Scenariet er nu den officielle holdopstilling. Den tidligere officielle holdopstilling bevares som et udkast, så du kan vende tilbage til den.
 
-Alt, hvad spillerne modtager og ser, tager udgangspunkt i den officielle holdopstilling. Det gælder **Send hold til spillere**, linket under **Del** og spillernes egen oversigt, uanset hvilket scenarie du har åbent.
+Alt, hvad spillerne modtager og ser, tager udgangspunkt i den officielle holdopstilling. Det gælder **Send hold til spillere**, linket under **Del** og spillernes egen oversigt, uanset hvilket scenarie du har åbent. Se [Send holdrunden til spillerne](send-holdrunden-til-spillerne).
 
 ## Omdøb eller slet et scenarie
 
