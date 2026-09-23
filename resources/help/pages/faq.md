@@ -9,9 +9,11 @@ Hvis du mener, at der er en fejl i valideringen af holdkampen, så send en mail 
 
 ## Der mangler en spiller i min klub
 
-Nembadminton henter data fra badmintonplayer.dk. Hvis spilleren ikke findes på den seneste måneds rangliste, findes spilleren heller ikke på Nembadminton.
+Nembadminton henter spillere og ranglistepoint fra badmintonplayer.dk. Hvis spilleren ikke står på holdrundens rangliste, kan du ikke finde spilleren i **Søg på spiller**.
 
-Hvis spilleren findes på ranglisten, men stadig ikke findes på Nembadminton, så send en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
+Du kan selv oprette spilleren, så du kan sætte spilleren på et hold. Se [Opret en spiller, der mangler i Nembadminton](/app/help/guides/opret-en-spiller-der-mangler-i-nembadminton), som også beskriver, hvad du skal kontrollere først.
+
+Hvis spilleren står på ranglisten, men stadig ikke findes på Nembadminton, så send også en mail til [info@nembadminton.dk](mailto:info@nembadminton.dk) med oplysninger om klubben og spilleren.
 
 ## Jeg har et forslag til en forbedring eller en ny funktion
 

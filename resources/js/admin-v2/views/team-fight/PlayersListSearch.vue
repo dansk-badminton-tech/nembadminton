@@ -88,6 +88,11 @@
                     >
                         Opret "{{ searchName }}" som spiller
                     </b-button>
+                    <p class="mt-3 is-size-7">
+                        <router-link dusk="missing-player-guide-link" to="/help/guides/opret-en-spiller-der-mangler-i-nembadminton" target="_blank">
+                            Vejledning: Opret en spiller, der mangler
+                        </router-link>
+                    </p>
                 </div>
                 <div class="has-text-centered py-5" v-else>
                     <p class="has-text-grey mb-3">Ingen spillere fundet på denne rangliste</p>
@@ -99,6 +104,11 @@
                     >
                         Opret ny spiller
                     </b-button>
+                    <p class="mt-3 is-size-7">
+                        <router-link dusk="missing-player-guide-link" to="/help/guides/opret-en-spiller-der-mangler-i-nembadminton" target="_blank">
+                            Vejledning: Opret en spiller, der mangler
+                        </router-link>
+                    </p>
                 </div>
             </template>
             <template v-slot:detail="props">

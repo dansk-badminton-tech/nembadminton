@@ -43,6 +43,7 @@ class TeamFightEditPage extends Page
             '@player-search-input' => "[dusk='player-search-input'] input",
             '@ranking-list-select' => "[dusk='ranking-list-select']",
             '@player-search-table' => "[dusk='player-search-table']",
+            '@missing-player-guide-link' => "[dusk='missing-player-guide-link']",
             '@team-table-section' => "[dusk='team-table-section']",
             '@add-teams-section' => "[dusk='add-teams-section']",
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
