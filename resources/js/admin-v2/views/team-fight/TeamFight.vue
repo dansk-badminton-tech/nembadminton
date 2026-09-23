@@ -183,11 +183,6 @@
                     <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :season-id="teamRound?.season?.id"
                                      :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length"
                                      :used-team-ids="usedTeamIds"/>
-                    <p v-if="teamRound.squads.length === 0" class="help mt-3" dusk="setup-guide-link">
-                        <router-link :to="{name: 'help-guide', params: {slug: 'opret-og-klargoer-en-holdrunde'}}">
-                            Sådan tilføjer du hold og klargør holdrunden
-                        </router-link>
-                    </p>
                 </div>
             </div>
         </section>

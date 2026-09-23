@@ -46,7 +46,6 @@ class TeamFightEditPage extends Page
             '@team-table-section' => "[dusk='team-table-section']",
             '@add-teams-section' => "[dusk='add-teams-section']",
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
-            '@setup-guide-link' => "[dusk='setup-guide-link'] a",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
