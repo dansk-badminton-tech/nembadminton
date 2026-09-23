@@ -267,7 +267,15 @@ class TeamsTest extends TestCase
             'name' => 'Plan B',
             'is_official' => false,
         ]);
-        foreach ([[$officialScenario, 'Official Player'], [$draftScenario, 'Draft Player']] as [$scenario, $playerName]) {
+        foreach ([[$officialScenario, 'Official Player', '9001011234'], [$draftScenario, 'Draft Player', '9001015678']] as [$scenario, $playerName, $refId]) {
+            Member::query()->create([
+                'refId' => $refId,
+                'name' => $playerName,
+                'gender' => 'M',
+                'birthday' => '1990-01-01',
+                'playable' => true,
+                'inactive' => false,
+            ]);
             $category = SquadCategory::query()->create([
                 'squad_id' => $squad->id,
                 'category' => 'HS',
@@ -275,6 +283,7 @@ class TeamsTest extends TestCase
                 'team_round_scenario_id' => $scenario->id,
             ]);
             SquadMember::query()->create([
+                'member_ref_id' => $refId,
                 'squad_category_id' => $category->id,
                 'name' => $playerName,
                 'gender' => 'M',
