@@ -344,6 +344,7 @@ export default {
                 </b-field>
                 <b-field label="Holdnavn">
                     <b-input
+                        dusk="edit-squad-name-input"
                         :disabled="hasTeam"
                         type="text"
                         v-model="name"
@@ -352,6 +353,7 @@ export default {
                 </b-field>
                 <b-field label="Niveau">
                     <b-input
+                        dusk="edit-squad-tier-input"
                         :disabled="hasTeam"
                         type="text"
                         v-model="tier"
@@ -359,7 +361,7 @@ export default {
                     </b-input>
                 </b-field>
                 <hr/>
-                <b-field label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
+                <b-field dusk="edit-squad-ranking-field" label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
                     <RankingVersionSelect @change="toggleRankingWarning" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
                     <p class="control">
                         <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstil</b-button>
@@ -383,20 +385,23 @@ export default {
                     </p>
                 </b-field>
                 <b-field label="Spillestart">
-                    <b-datetimepicker
-                        placeholder="Vælg dato og tidspunkt"
-                        icon="calendar-today"
-                        locale="da-DK"
-                        v-model="playingDatetime"
-                        expanded
-                        editable>
-                    </b-datetimepicker>
+                    <div dusk="edit-squad-playing-datetime">
+                        <b-datetimepicker
+                            placeholder="Vælg dato og tidspunkt"
+                            icon="calendar-today"
+                            locale="da-DK"
+                            v-model="playingDatetime"
+                            expanded
+                            editable>
+                        </b-datetimepicker>
+                    </div>
                     <p class="control">
                         <b-button type="is-link" @click="playingDatetime = null">Nulstil</b-button>
                     </p>
                 </b-field>
                 <b-field label="Spillested">
                     <b-input
+                        dusk="edit-squad-playing-place-input"
                         type="text"
                         v-model="playingPlace"
                         placeholder="Valbyhallen Hal 2"
@@ -404,6 +409,7 @@ export default {
                 </b-field>
                 <b-field label="Adresse">
                     <b-input
+                        dusk="edit-squad-playing-address-input"
                         type="text"
                         v-model="playingAddress"
                         placeholder="Julius Andersens Vej 3"
@@ -412,6 +418,7 @@ export default {
                 </b-field>
                 <b-field label="Postnummer">
                     <b-input
+                        dusk="edit-squad-playing-zip-code-input"
                         type="text"
                         v-model="playingZipCode"
                         placeholder="8000"
@@ -420,6 +427,7 @@ export default {
                 </b-field>
                 <b-field label="By">
                     <b-input
+                        dusk="edit-squad-playing-city-input"
                         type="text"
                         v-model="playingCity"
                         placeholder="Århus C"
@@ -429,6 +437,7 @@ export default {
             </section>
             <footer class="modal-card-foot">
                 <b-button
+                    dusk="edit-squad-save-button"
                     :loading="this.loading"
                     native-type="submit"
                     label="Gem"/>

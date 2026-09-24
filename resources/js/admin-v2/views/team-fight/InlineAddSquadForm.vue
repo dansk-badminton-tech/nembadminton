@@ -62,6 +62,7 @@
                             class="add-squad-form__custom-field">
                             <p class="label is-small mb-1">{{ field.label }}</p>
                             <b-numberinput
+                                :dusk="'custom-category-count-' + field.key"
                                 :model-value="customCategoryCounts[field.key]"
                                 :min="0"
                                 :max="20"

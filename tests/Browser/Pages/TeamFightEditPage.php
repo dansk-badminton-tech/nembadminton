@@ -105,7 +105,33 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor('@add-13-kamps-hold-button')
             ->scrollTo('@add-13-kamps-hold-button');
+        $this->submitSquad($browser);
+    }
+
+    public function addCustomSquad(Browser $browser, string $name, string $tier, array $categoryCounts): void
+    {
+        $browser->click("[dusk='custom-match-count-toggle']")
+            ->assertDisabled('@add-13-kamps-hold-button');
+
+        foreach ($categoryCounts as $category => $count) {
+            $browser->type("[dusk='custom-category-count-{$category}']", (string) $count);
+        }
+
+        $browser->type("[dusk='squad-name-input']", $name)
+            ->type("[dusk='squad-tier-input']", $tier)
+            ->assertEnabled('@add-13-kamps-hold-button');
+        $this->submitSquad($browser);
+    }
+
+    private function submitSquad(Browser $browser): void
+    {
         $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
+    }
+
+    public function openSquadAction(Browser $browser, int $index, string $action): void
+    {
+        $browser->mouseover("[dusk='squad-actions-{$index}']")
+            ->click("[dusk='{$action}-{$index}']");
     }
 
     public function autoFillCategory(Browser $browser, string $category, string $playerName): void

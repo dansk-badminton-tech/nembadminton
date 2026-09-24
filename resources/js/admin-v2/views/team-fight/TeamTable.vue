@@ -64,21 +64,22 @@
                                 <template v-slot:trigger>
                                     <b-button
                                         type="is-info"
+                                        :dusk="'squad-actions-' + index"
                                         icon-right="cog" />
                                 </template>
-                                <b-dropdown-item aria-role="listitem" title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)">
+                                <b-dropdown-item aria-role="listitem" :dusk="'edit-squad-' + index" title="Udfyld holdnavn, kampnummer, spillestart, spillested, adresse, postnummer og by" icon-left="pencil" @click="openEditSquadModal(squad)">
                                     <b-icon icon="pencil"></b-icon>
                                     Rediger holdet
                                 </b-dropdown-item>
-                                <b-dropdown-item aria-role="listitem" :disabled="index === 0" @click="moveSquadOrderUp(squad)">
+                                <b-dropdown-item aria-role="listitem" :dusk="'move-squad-up-' + index" :disabled="index === 0" @click="moveSquadOrderUp(squad)">
                                     <b-icon icon="arrow-up"></b-icon>
                                     Flyt hold up
                                 </b-dropdown-item>
-                                <b-dropdown-item aria-role="listitem" :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)">
+                                <b-dropdown-item aria-role="listitem" :dusk="'move-squad-down-' + index" :disabled="index === squads.length-1" @click="moveSquadOrderDown(squad)">
                                     <b-icon icon="arrow-down"></b-icon>
                                     Flyt hold ned
                                 </b-dropdown-item>
-                                <b-dropdown-item class="is-danger" aria-role="listitem" type="is-danger" @click="confirmDelete(squad)">
+                                <b-dropdown-item class="is-danger" :dusk="'delete-squad-' + index" aria-role="listitem" type="is-danger" @click="confirmDelete(squad)">
                                     <b-icon icon="delete"></b-icon>
                                     Slet holdet
                                 </b-dropdown-item>
