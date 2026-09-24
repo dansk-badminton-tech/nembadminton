@@ -11,9 +11,8 @@ use App\Models\Team;
 use App\Models\TeamActivityLog;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
-use App\Models\User;
 use App\Models\TeamRoundScenario;
-use App\Policies\TeamRoundScenarioPolicy;
+use App\Models\User;
 use App\Policies\MemberPolicy;
 use App\Policies\SquadCategoryPolicy;
 use App\Policies\SquadMemberPolicy;
@@ -23,6 +22,7 @@ use App\Policies\TeamActivityLogPolicy;
 use App\Policies\TeamPolicy;
 use App\Policies\TeamReceiversPolicy;
 use App\Policies\TeamRoundPolicy;
+use App\Policies\TeamRoundScenarioPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 

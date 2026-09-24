@@ -42,8 +42,8 @@ enum CanonicalTournamentTier: string
     case SERIE_2 = 'Serie 2';
     case SERIE_3 = 'Serie 3';
     case SERIE_4 = 'Serie 4';
-//    case SERIE_31 = '31. Serie';
-//    case SERIE_32 = '32. Serie';
+    //    case SERIE_31 = '31. Serie';
+    //    case SERIE_32 = '32. Serie';
 
     // ---------- Letter-grade Serie (Nordjylland) ----------
     case SERIE_A = 'Serie A';
@@ -52,35 +52,35 @@ enum CanonicalTournamentTier: string
     case SERIE_D = 'Serie D';
 
     // ---------- DGI Senior hyggefjer ladder ----------
-//    case SENIOR_A = 'Senior A';
-//    case SENIOR_B = 'Senior B';
-//    case SENIOR_C = 'Senior C';
-//    case SENIOR_D = 'Senior D';
+    //    case SENIOR_A = 'Senior A';
+    //    case SENIOR_B = 'Senior B';
+    //    case SENIOR_C = 'Senior C';
+    //    case SENIOR_D = 'Senior D';
 
     // ---------- Fyn senior herre ----------
-    #case SEN_HR_A = 'Sen Hr - A';
-    #case SEN_HR_B = 'Sen Hr - B';
-    #case SEN_HR_C = 'Sen Hr - C';
-    #case SEN_4_2_B = 'Sen 4 + 2 B';
+    // case SEN_HR_A = 'Sen Hr - A';
+    // case SEN_HR_B = 'Sen Hr - B';
+    // case SEN_HR_C = 'Sen Hr - C';
+    // case SEN_4_2_B = 'Sen 4 + 2 B';
 
     // ---------- Format-only / qualification ----------
-    //case KVAL_RAEKKEN = 'Kval-rækken 5+3';
-    //case FORMAT_4_2 = '4+2';
-    //case FORMAT_4_SPILLERE = '4 Spillere';
-    //case SERIE_1_VEST_5_3 = 'Serie 1 Vest (5+3)';
+    // case KVAL_RAEKKEN = 'Kval-rækken 5+3';
+    // case FORMAT_4_2 = '4+2';
+    // case FORMAT_4_SPILLERE = '4 Spillere';
+    // case SERIE_1_VEST_5_3 = 'Serie 1 Vest (5+3)';
 
     // ---------- LF herrehold ----------
-    //case HERREHOLD_4_KAMPE = 'Herrehold 4 kampe';
-    //case HERREHOLD_6_KAMPE = 'Herrehold 6 kampe';
+    // case HERREHOLD_4_KAMPE = 'Herrehold 4 kampe';
+    // case HERREHOLD_6_KAMPE = 'Herrehold 6 kampe';
 
     // ---------- Recreational ----------
-    //case VOKSENFJER = 'VoksenFjer';
+    // case VOKSENFJER = 'VoksenFjer';
 
     // ---------- DM I HYGGEFJER (national hygge formats) ----------
-//    case HYGGEFJER_4_2_DOUBLE_6 = 'DM I HYGGEFJER (4+2 DOUBLE-6 kampe)';
-//    case HYGGEFJER_4_DOUBLE_4 = 'DM I HYGGEFJER (4 Sp. DOUBLE-4 kampe)/SEN+ (2+2)';
-//    case HYGGEFJER_4_SINGLE_DOUBLE_5 = 'DM I HYGGEFJER (4 spillere SINGLE/DOUBLE-5 kampe)';
-//    case HYGGEFJER_4_2_SINGLE_8 = 'DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)';
+    //    case HYGGEFJER_4_2_DOUBLE_6 = 'DM I HYGGEFJER (4+2 DOUBLE-6 kampe)';
+    //    case HYGGEFJER_4_DOUBLE_4 = 'DM I HYGGEFJER (4 Sp. DOUBLE-4 kampe)/SEN+ (2+2)';
+    //    case HYGGEFJER_4_SINGLE_DOUBLE_5 = 'DM I HYGGEFJER (4 spillere SINGLE/DOUBLE-5 kampe)';
+    //    case HYGGEFJER_4_2_SINGLE_8 = 'DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)';
 
     /**
      * Human-friendly Danish label used in autocompletes / dropdowns.
@@ -151,7 +151,7 @@ enum CanonicalTournamentTier: string
 
         // KBH postfix style "1. Serie" -> "Serie 1".
         if (preg_match('/^(\d+)\.\s*Serie$/u', $base, $m) === 1) {
-            $candidate = 'Serie ' . $m[1];
+            $candidate = 'Serie '.$m[1];
             $direct = self::tryFrom($candidate);
             if ($direct !== null) {
                 return $direct;
@@ -160,7 +160,7 @@ enum CanonicalTournamentTier: string
 
         // DGI Senior grade with format suffix -> base grade.
         if (preg_match('/^Senior\s+([A-D])\b/u', $base, $m) === 1) {
-            $direct = self::tryFrom('Senior ' . strtoupper($m[1]));
+            $direct = self::tryFrom('Senior '.strtoupper($m[1]));
             if ($direct !== null) {
                 return $direct;
             }
@@ -168,7 +168,7 @@ enum CanonicalTournamentTier: string
 
         // "Serie A - Double" / "Serie A - Single + Double" -> base grade.
         if (preg_match('/^Serie\s+([A-D])\s*-/u', $base, $m) === 1) {
-            $direct = self::tryFrom('Serie ' . strtoupper($m[1]));
+            $direct = self::tryFrom('Serie '.strtoupper($m[1]));
             if ($direct !== null) {
                 return $direct;
             }

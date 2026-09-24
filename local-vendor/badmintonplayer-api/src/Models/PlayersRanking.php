@@ -9,10 +9,8 @@ use Symfony\Component\Serializer\Annotation\Ignore;
 
 class PlayersRanking
 {
-
     /**
      * Version date of ranking list
-     * @var string|null
      */
     public ?string $versionDate;
 
@@ -21,16 +19,13 @@ class PlayersRanking
      */
     public PlayerRankingIterator $playerRankings;
 
-    public function getVersionDateCarbon() : Carbon{
-        return Carbon::parse($this->versionDate );
+    public function getVersionDateCarbon(): Carbon
+    {
+        return Carbon::parse($this->versionDate);
     }
 
-    /**
-     * @return PlayersRankingCollection
-     */
     public function getPlayerRankingCollection(): PlayersRankingCollection
     {
         return new PlayersRankingCollection($this->playerRankings);
     }
-
 }

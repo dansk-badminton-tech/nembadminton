@@ -1,11 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace FlyCompany\Import;
 
 class Vintage
 {
-
     private int $id;
 
     /**
@@ -28,26 +28,27 @@ class Vintage
      */
     private int $tp;
 
-    public static function xmlFactory(\SimpleXMLElement $attributes) : Vintage
+    public static function xmlFactory(\SimpleXMLElement $attributes): Vintage
     {
-        $vintage = new self();
-        foreach ($attributes as $key => $value){
-            if($key === 'id'){
-                $vintage->id = (int)$value;
+        $vintage = new self;
+        foreach ($attributes as $key => $value) {
+            if ($key === 'id') {
+                $vintage->id = (int) $value;
             }
-            if($key === 'nm' || $key === 'nam'){
-                $vintage->name = (string)$value;
+            if ($key === 'nm' || $key === 'nam') {
+                $vintage->name = (string) $value;
             }
-            if($key === 'fr'){
-                $vintage->ageFrom = (int)$value;
+            if ($key === 'fr') {
+                $vintage->ageFrom = (int) $value;
             }
-            if($key === 'to'){
-                $vintage->ageTo = (int)$value;
+            if ($key === 'to') {
+                $vintage->ageTo = (int) $value;
             }
-            if($key === 'tp'){
-                $vintage->tp = (int)$value;
+            if ($key === 'tp') {
+                $vintage->tp = (int) $value;
             }
         }
+
         return $vintage;
     }
 }

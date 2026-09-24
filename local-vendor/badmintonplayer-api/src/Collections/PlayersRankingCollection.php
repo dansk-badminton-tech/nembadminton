@@ -13,30 +13,31 @@ use Illuminate\Support\Str;
  */
 class PlayersRankingCollection extends Collection
 {
-
     public function getByClubId(int $clubId): self
     {
-        return $this->filter(static function(PlayerRanking $playerRanking) use ($clubId) {
+        return $this->filter(static function (PlayerRanking $playerRanking) use ($clubId) {
             return $playerRanking->clubID === $clubId;
         });
     }
 
-    public function searchByName(string $name) : self{
-        return $this->filter(static function(PlayerRanking $playerRanking) use ($name) {
+    public function searchByName(string $name): self
+    {
+        return $this->filter(static function (PlayerRanking $playerRanking) use ($name) {
             return Str::contains($playerRanking->name, $name);
         });
     }
 
-    public function getByPlayerNumber(string $playerNumber) : PlayerRanking{
-        return $this->first(static function(PlayerRanking $playerRanking) use ($playerNumber) {
+    public function getByPlayerNumber(string $playerNumber): PlayerRanking
+    {
+        return $this->first(static function (PlayerRanking $playerRanking) use ($playerNumber) {
             return $playerNumber === $playerRanking->playerNumber;
         });
     }
 
-    public function getByPlayerNumbers(string $playerNumber){
-        return $this->filter(static function(PlayerRanking $playerRanking) use ($playerNumber) {
+    public function getByPlayerNumbers(string $playerNumber)
+    {
+        return $this->filter(static function (PlayerRanking $playerRanking) use ($playerNumber) {
             return $playerRanking->playerNumber === $playerNumber;
         });
     }
-
 }

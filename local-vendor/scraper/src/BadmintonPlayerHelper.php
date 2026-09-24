@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper;
 
@@ -12,22 +12,20 @@ use Illuminate\Support\Collection;
 
 class BadmintonPlayerHelper
 {
-
     /**
      * @param  array|Carbon[]  $versions
-     * @return Collection
      */
     public static function filterToRankingMonths(array $versions): Collection
     {
         $versions = new Collection($versions);
-        return $versions->groupBy('month')->map(static function(Collection $dates){
+
+        return $versions->groupBy('month')->map(static function (Collection $dates) {
             return $dates->shift();
         });
 
     }
 
     /**
-     * @param  array  $versions
      * @return Carbon[]
      */
     public static function convertToCarbonObjects(array $versions): array
@@ -38,18 +36,20 @@ class BadmintonPlayerHelper
             } catch (InvalidFormatException) {
                 $carbon = null;
             }
+
             return $carbon;
         }, $versions), 'is_object'));
         sort($carbons);
-        return array_filter($carbons, static function(Carbon $carbon){return $carbon >= BadmintonPlayerHelper::getCurrentSeasonStart(); });
+
+        return array_filter($carbons, static function (Carbon $carbon) {
+            return $carbon >= BadmintonPlayerHelper::getCurrentSeasonStart();
+        });
     }
 
     /**
-     * @param array $rankingLists
-     *
      * @return Player[]
      */
-    public static function collapseRankingLists(array $rankingLists) : array
+    public static function collapseRankingLists(array $rankingLists): array
     {
         /** @var Player[] $selectedPlayers */
         $selectedPlayers = [];
@@ -71,38 +71,39 @@ class BadmintonPlayerHelper
     }
 
     /**
-     * @param array|Point[] $points
-     * @param string|null   $category
+     * @param  array|Point[]  $points
      */
-    private static function applyCategory(array $points, ?string $category) : void
+    private static function applyCategory(array $points, ?string $category): void
     {
         foreach ($points as $point) {
             $point->setCategory($category);
         }
     }
 
-    public static function rankingListNormalized(string $rankingList) : ?string
+    public static function rankingListNormalized(string $rankingList): ?string
     {
-        return !\in_array($rankingList, ['HL', 'DL'])
+        return ! \in_array($rankingList, ['HL', 'DL'])
             ? $rankingList
             : null;
     }
 
-    public static function getCurrentSeason() : int{
+    public static function getCurrentSeason(): int
+    {
         return self::getCurrentSeasonStart()->year;
     }
 
-    public static function getCurrentSeasonStart() : Carbon
+    public static function getCurrentSeasonStart(): Carbon
     {
         $now = Carbon::now();
-        if ($now->month < 7){
+        if ($now->month < 7) {
             $now->subYear();
         }
+
         return self::makeSeasonStart($now->year);
     }
 
-    public static function makeSeasonStart(int $seasonStartYear) : Carbon {
-        return Carbon::createFromDate($seasonStartYear, 8,1)->setTime(0, 0, 0);
+    public static function makeSeasonStart(int $seasonStartYear): Carbon
+    {
+        return Carbon::createFromDate($seasonStartYear, 8, 1)->setTime(0, 0, 0);
     }
-
 }

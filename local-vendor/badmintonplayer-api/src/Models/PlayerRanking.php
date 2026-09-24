@@ -11,56 +11,47 @@ class PlayerRanking
 {
     /**
      * Number of player in system. fx 900910-17
-     * @var string|null
      */
     public ?string $playerNumber;
 
     /**
      * Name
-     * @var string|null
      */
     public ?string $name;
 
     /**
      * Gender
-     * @var string|null
      */
     public ?string $gender;
 
     /**
      * Number of points in single discipline
-     * @var int|null
      */
     public ?int $singlePoints;
 
     /**
      * Number of points in double discipline
-     * @var int|null
      */
     public ?int $doublePoints;
 
     /**
      * Number of points in mixed gender discipline
-     * @var int|null
      */
     public ?int $mixPoints;
 
     /**
      * Level points
-     * @var int|null
      */
     public ?int $niveauPoints = 0;
 
     /**
      * Club Identifier
-     * @var int|null
      */
     public ?int $clubID;
 
     /**
      * From badminton Danmark: True så de spille de kampe således de vil blive vist normalt på rangliste false vil man skulle trykke vis alle
      * Translated: true means the player is "active", false means "in-active"
-     * @var bool
      */
     public bool $showAll;
 
@@ -79,6 +70,7 @@ class PlayerRanking
         if (strtolower($this->gender) === 'm') {
             return Category::MENS_SINGLE;
         }
+
         return Category::WOMENS_SINGLE;
     }
 
@@ -87,6 +79,7 @@ class PlayerRanking
         if (strtolower($this->gender) === 'm') {
             return Category::MENS_DOUBLE;
         }
+
         return Category::WOMENS_DOUBLE;
     }
 
@@ -95,7 +88,7 @@ class PlayerRanking
         if (strtolower($this->gender) === 'm') {
             return Category::MEN_MIX;
         }
+
         return Category::WOMEN_MIX;
     }
-
 }

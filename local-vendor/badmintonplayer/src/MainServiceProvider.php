@@ -11,22 +11,18 @@ use Illuminate\Support\ServiceProvider;
 
 class MainServiceProvider extends ServiceProvider
 {
-
-    public function boot(){
-        if($this->app->runningInConsole()){
+    public function boot()
+    {
+        if ($this->app->runningInConsole()) {
             $this->commands([
                 PointsImporter::class,
                 MembersImporter::class,
                 UpdateAllClubs::class,
                 ClubImporter::class,
-                Test::class
+                Test::class,
             ]);
         }
     }
 
-    public function register()
-    {
-
-    }
-
+    public function register() {}
 }

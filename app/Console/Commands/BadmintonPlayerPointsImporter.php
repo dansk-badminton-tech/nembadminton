@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Console\Commands;
 
 use App\Jobs\BadmintonPlayerImportPoints;
@@ -13,7 +12,6 @@ use Illuminate\Console\Command;
 
 class BadmintonPlayerPointsImporter extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -31,18 +29,16 @@ class BadmintonPlayerPointsImporter extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      * @throws \JsonException
      */
-    public function handle() : int
+    public function handle(): int
     {
         $rankingList = $this->option('rankingList');
-        if($rankingList !== null){
+        if ($rankingList !== null) {
             $rankingList = RankingList::from($rankingList);
         }
         BadmintonPlayerImportPoints::dispatchSync($this->argument('club-id'), $rankingList);
 
         return 0;
     }
-
 }

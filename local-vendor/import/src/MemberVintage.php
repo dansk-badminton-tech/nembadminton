@@ -1,11 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace FlyCompany\Import;
 
 class MemberVintage
 {
-
     /**
      * @var string Name of the league
      */
@@ -13,25 +13,22 @@ class MemberVintage
 
     private PointCollection $points;
 
-    /**
-     * @return string
-     */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public static function xmlFactory(\SimpleXMLElement $attributes, \SimpleXMLElement $points) : MemberVintage
+    public static function xmlFactory(\SimpleXMLElement $attributes, \SimpleXMLElement $points): MemberVintage
     {
-        $vintage = new self();
-        foreach ($attributes as $key => $value){
-            if($key === 'nam'){
-                $vintage->name = (string)$value;
+        $vintage = new self;
+        foreach ($attributes as $key => $value) {
+            if ($key === 'nam') {
+                $vintage->name = (string) $value;
             }
         }
 
-        $pointCollection = new PointCollection();
-        foreach ($points as $point){
+        $pointCollection = new PointCollection;
+        foreach ($points as $point) {
             $pointCollection->add(Point::xmlFactory($point->attributes()));
         }
         $vintage->points = $pointCollection;
@@ -42,7 +39,7 @@ class MemberVintage
     /**
      * @return PointCollection|Point[]
      */
-    public function getPoints() : PointCollection
+    public function getPoints(): PointCollection
     {
         return $this->points;
     }

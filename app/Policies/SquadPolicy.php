@@ -11,14 +11,9 @@ class SquadPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
+    public function viewAny(User $user): bool {}
 
-    }
-
-    public function view(User $user, Squad $squad): bool
-    {
-    }
+    public function view(User $user, Squad $squad): bool {}
 
     public function create(User $user): bool
     {
@@ -35,11 +30,7 @@ class SquadPolicy
         return $user->clubhouse_id === $squad->teamRound->clubhouse_id;
     }
 
-    public function restore(User $user, Squad $squad): bool
-    {
-    }
+    public function restore(User $user, Squad $squad): bool {}
 
-    public function forceDelete(User $user, Squad $squad): bool
-    {
-    }
+    public function forceDelete(User $user, Squad $squad): bool {}
 }

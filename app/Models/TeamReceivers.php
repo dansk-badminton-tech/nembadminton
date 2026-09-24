@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 /**
  * TeamReceivers model representing the relationship between teams and their receivers.
  *
@@ -14,12 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id The primary key of the TeamReceivers table.
  * @property string $team_round_id The ID of the associated team round.
  * @property array $emails A JSON-encoded array of email addresses.
- *
  */
 class TeamReceivers extends Model
 {
-
-    protected $fillable = ['team_round_id','emails'];
+    protected $fillable = ['team_round_id', 'emails'];
 
     public function teamRound(): BelongsTo
     {

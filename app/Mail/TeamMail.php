@@ -6,6 +6,7 @@ use App\Models\TeamRound;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -42,7 +43,7 @@ class TeamMail extends Mailable
             with: [
                 'teamName' => $this->team->name,
                 'message' => $this->message ?? 'Ingen besked',
-                'url' => url("/app/team-fight/{$this->team->id}/public-view")
+                'url' => url("/app/team-fight/{$this->team->id}/public-view"),
             ]
         );
     }
@@ -50,7 +51,7 @@ class TeamMail extends Mailable
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

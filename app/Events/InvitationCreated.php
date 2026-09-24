@@ -18,15 +18,12 @@ class InvitationCreated
     /**
      * Create a new event instance.
      */
-    public function __construct(public Invitation $invitation)
-    {
-
-    }
+    public function __construct(public Invitation $invitation) {}
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {

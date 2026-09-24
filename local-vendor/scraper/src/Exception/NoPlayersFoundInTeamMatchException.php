@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper\Exception;
 
@@ -8,8 +8,7 @@ use GraphQL\Error\ClientAware;
 
 class NoPlayersFoundInTeamMatchException extends \RuntimeException implements ClientAware
 {
-
-    public function isClientSafe() : bool
+    public function isClientSafe(): bool
     {
         return true;
     }
@@ -18,5 +17,4 @@ class NoPlayersFoundInTeamMatchException extends \RuntimeException implements Cl
     {
         return 'backend';
     }
-
 }

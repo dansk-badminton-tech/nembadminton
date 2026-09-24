@@ -11,19 +11,11 @@ class SquadCategoryPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
+    public function viewAny(User $user): bool {}
 
-    }
+    public function view(User $user, SquadCategory $squadCategory): bool {}
 
-    public function view(User $user, SquadCategory $squadCategory): bool
-    {
-    }
-
-    public function create(User $user): bool
-    {
-
-    }
+    public function create(User $user): bool {}
 
     public function update(User $user, SquadCategory $squadCategory): bool
     {
@@ -35,11 +27,7 @@ class SquadCategoryPolicy
         return $user->clubhouse_id === $squadCategory->squad->teamRound->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_TEAMROUNDS);
     }
 
-    public function restore(User $user, SquadCategory $squadCategory): bool
-    {
-    }
+    public function restore(User $user, SquadCategory $squadCategory): bool {}
 
-    public function forceDelete(User $user, SquadCategory $squadCategory): bool
-    {
-    }
+    public function forceDelete(User $user, SquadCategory $squadCategory): bool {}
 }

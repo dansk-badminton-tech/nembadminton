@@ -1,9 +1,9 @@
 <?php
 
-
 namespace App\Jobs;
 
 use Carbon\Carbon;
+use DiDom\Exceptions\InvalidSelectorException;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
@@ -16,24 +16,23 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Psr\SimpleCache\InvalidArgumentException;
 
 class BadmintonPlayerImportPoints implements ShouldQueue
 {
-
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
     private readonly int $clubId;
+
     private readonly ?RankingList $rankingList;
 
     /**
      * Create a new job instance.
-     *
-     * @param int $clubId
      */
-    public function __construct(int $clubId, RankingList $rankingList = null)
+    public function __construct(int $clubId, ?RankingList $rankingList = null)
     {
         $this->clubId = $clubId;
         $this->rankingList = $rankingList;
@@ -42,32 +41,29 @@ class BadmintonPlayerImportPoints implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param  BadmintonPlayer  $scraper
-     * @param  PointsManager  $pointsManager
      *
-     * @return int
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws InvalidSelectorException
      * @throws \JsonException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager) : int
+    public function handle(BadmintonPlayer $scraper, PointsManager $pointsManager): int
     {
-        if($this->rankingList !== null){
+        if ($this->rankingList !== null) {
             $rankingLists = [$this->rankingList->value];
-        }else{
+        } else {
             $rankingLists = BadmintonPlayer::rankingLists();
         }
 
         $seasons = [BadmintonPlayerHelper::getCurrentSeason()];
-        //$seasons = $this->generateSeasons();
+        // $seasons = $this->generateSeasons();
         foreach ($rankingLists as $rankingList) {
-            foreach ($seasons as $season){
+            foreach ($seasons as $season) {
                 \FlyCompany\Club\Log::createLog($this->clubId, "Opdater point fra rangliste: $rankingList. Fra sæson: $season", 'points-importer');
                 /** @var Collection|Carbon[] $rankingMonths */
                 $versions = $scraper->getVersions($season);
                 $rankingMonths = BadmintonPlayerHelper::filterToRankingMonths($versions);
                 $rankingMonths = $rankingMonths->pop(2);
-                foreach ($rankingMonths as $starting){
+                foreach ($rankingMonths as $starting) {
                     $playersCollection = $scraper->getRankingListPlayersByClub($rankingList, $season, $this->clubId, $starting);
                     foreach ($playersCollection as $player) {
                         $rankingListNormalized = BadmintonPlayerHelper::rankingListNormalized($rankingList);
@@ -88,12 +84,14 @@ class BadmintonPlayerImportPoints implements ShouldQueue
         return 0;
     }
 
-    private function generateSeasons() : array{
+    private function generateSeasons(): array
+    {
         $now = Carbon::now();
         $currentSeason = BadmintonPlayer::calculateSeason($now);
-        for ($season = 2020; $season <= $currentSeason; $season++){
+        for ($season = 2020; $season <= $currentSeason; $season++) {
             $seasons[] = $season;
         }
+
         return $seasons;
     }
 }

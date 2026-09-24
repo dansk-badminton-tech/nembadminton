@@ -36,7 +36,7 @@ class SquadMemberTeamRound
             return '';
         }
 
-        if (!isset(self::$categoryToRoundCache[$categoryId])) {
+        if (! isset(self::$categoryToRoundCache[$categoryId])) {
             $roundId = Squad::query()
                 ->whereHas('categories', fn ($query) => $query->whereKey($categoryId))
                 ->value('team_round_id');

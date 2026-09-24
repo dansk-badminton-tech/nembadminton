@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\TeamFight;
 
@@ -13,8 +13,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class TeamRoundManager
 {
-
-    public function copyTeam(TeamRound $team) : TeamRound
+    public function copyTeam(TeamRound $team): TeamRound
     {
         $copyTeam = $team->replicate();
         $copyTeam->name = "Kopi af $team->name";
@@ -22,5 +21,4 @@ class TeamRoundManager
 
         return $copyTeam;
     }
-
 }

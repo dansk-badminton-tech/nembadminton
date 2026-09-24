@@ -1,10 +1,11 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
-use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
+use App\Enums\TeamNotificationType;
 use App\Models\TeamReceivers;
 use App\Models\TeamRound;
 use App\Models\User;
@@ -21,14 +22,7 @@ class SendTeamNotification
         $this->notifier = $notifier;
     }
 
-    /**
-     * @param                $rootValue
-     * @param array $args
-     * @param GraphQLContext $context
-     * @param ResolveInfo $resolveInfo
-     * @return array
-     */
-    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : array
+    public function __invoke($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
     {
         $message = $args['message'];
         $receivers = $args['receivers'];
@@ -44,7 +38,7 @@ class SendTeamNotification
             TeamReceivers::upsert(
                 [
                     'team_round_id' => $teamRound->id,
-                    'emails' => json_encode($receivers['emails'] ?? [], JSON_THROW_ON_ERROR)
+                    'emails' => json_encode($receivers['emails'] ?? [], JSON_THROW_ON_ERROR),
                 ],
                 ['team_round_id']
             );

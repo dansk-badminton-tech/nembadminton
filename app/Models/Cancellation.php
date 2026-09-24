@@ -22,21 +22,23 @@ class Cancellation extends Model
 
     protected $fillable = ['refId', 'team_round_id', 'message', 'email'];
 
-    public function dates() : HasMany
+    public function dates(): HasMany
     {
         return $this->hasMany(CancellationDate::class);
     }
 
-    public function member() : BelongsTo {
+    public function member(): BelongsTo
+    {
         return $this->belongsTo(Member::class, 'refId', 'refId');
     }
 
-    public function teamRound() : BelongsTo {
+    public function teamRound(): BelongsTo
+    {
         return $this->belongsTo(TeamRound::class, 'team_round_id', 'id');
     }
 
-    public function cancellationCollector() : BelongsTo{
+    public function cancellationCollector(): BelongsTo
+    {
         return $this->belongsTo(CancellationCollector::class);
     }
-
 }

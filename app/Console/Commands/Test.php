@@ -1,8 +1,8 @@
 <?php
 
-
 namespace App\Console\Commands;
 
+use App\Mail\CancellationConfirmationParticipantEmail;
 use App\Models\Cancellation;
 use App\Models\User;
 use App\Notifications\Release;
@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Mail;
 
 class Test extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -38,10 +37,11 @@ class Test extends Command
      *
      *
      * @return int
+     *
      * @throws \JsonException
      */
-    public function handle(TeamRoundManager $teamManager , BadmintonPlayer $scraper)
+    public function handle(TeamRoundManager $teamManager, BadmintonPlayer $scraper)
     {
-        Mail::to('danielflynygaard@gmail.com')->send(new \App\Mail\CancellationConfirmationParticipantEmail(Cancellation::query()->find(127)));
+        Mail::to('danielflynygaard@gmail.com')->send(new CancellationConfirmationParticipantEmail(Cancellation::query()->find(127)));
     }
 }

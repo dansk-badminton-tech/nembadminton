@@ -6,15 +6,7 @@ namespace FlyCompany\BadmintonPlayerAPI\Models;
 
 class RankingPair
 {
-
-    /**
-     * @var PlayersRanking
-     */
     public PlayersRanking $current;
 
-    /**
-     * @var PlayersRanking
-     */
     public PlayersRanking $previous;
-
 }

@@ -11,10 +11,7 @@ class TeamRoundPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
-
-    }
+    public function viewAny(User $user): bool {}
 
     public function view(User $user, TeamRound $teamRound): bool
     {
@@ -36,11 +33,7 @@ class TeamRoundPolicy
         return $user->clubhouse_id === $teamRound->clubhouse_id && $user->hasPermissionTo(Permission::DELETE_TEAMROUNDS);
     }
 
-    public function restore(User $user, TeamRound $teamRound): bool
-    {
-    }
+    public function restore(User $user, TeamRound $teamRound): bool {}
 
-    public function forceDelete(User $user, TeamRound $teamRound): bool
-    {
-    }
+    public function forceDelete(User $user, TeamRound $teamRound): bool {}
 }

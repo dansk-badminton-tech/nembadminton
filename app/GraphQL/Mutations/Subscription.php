@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\GraphQL\Mutations;
 
 use App\Models\User;
@@ -11,16 +10,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Subscription
 {
-
     /**
-     * @param                      $rootValue
-     * @param array<string, mixed> $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
-     *
-     * @return PushSubscription
+     * @param  array<string, mixed>  $args
      */
-    public function subscribe($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : PushSubscription
+    public function subscribe($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): PushSubscription
     {
         /** @var User $user */
         $user = $context->user();
@@ -34,14 +27,9 @@ class Subscription
     }
 
     /**
-     * @param                      $rootValue
-     * @param array<string, mixed> $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
-     *
-     * @return bool
+     * @param  array<string, mixed>  $args
      */
-    public function unsubscribe($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
+    public function unsubscribe($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool
     {
         /** @var User $user */
         $user = $context->user();
@@ -52,8 +40,5 @@ class Subscription
         return true;
     }
 
-    public function subscribeEmail($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
-    {
-
-    }
+    public function subscribeEmail($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool {}
 }

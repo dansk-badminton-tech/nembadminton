@@ -11,7 +11,6 @@ use Illuminate\Support\Arr;
 
 class ClubImporter extends Command
 {
-
     protected $signature = 'badmintonplayer-api-import:club';
 
     protected $description = 'Import clubs';
@@ -25,7 +24,7 @@ class ClubImporter extends Command
             Club::query()->updateOrCreate([
                 'id' => $club['ClubId'],
             ], [
-                'name1'             => $club['Name'],
+                'name1' => $club['Name'],
                 'badmintonPlayerId' => $club['ClubId'],
             ]);
             $this->info("Update/Creates {$club['Name']}");
@@ -37,17 +36,13 @@ class ClubImporter extends Command
         return 0;
     }
 
-    /**
-     * @param string $clubs
-     * @return array
-     */
     private function getParsedClubs(string $clubs): array
     {
         $parsedClubs = [];
         $explode = explode(PHP_EOL, $clubs);
         foreach ($explode as $club) {
             $trimmed = trim($club);
-            if (!empty($trimmed)) {
+            if (! empty($trimmed)) {
                 $parsedClubs[] = str_getcsv($trimmed);
             }
         }
@@ -55,7 +50,7 @@ class ClubImporter extends Command
         foreach ($parsedClubs as $index => $club) {
             $parsedClubs[$index] = array_combine($headers, $club);
         }
+
         return $parsedClubs;
     }
-
 }

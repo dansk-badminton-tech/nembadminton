@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -20,23 +20,22 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property string              $player_id
+ * @property string $player_id
  * @property SubscriptionSetting $subscriptionSettings
- * @property Club                $club
- * @property int                 $clubhouse_id
- * @property string              $name
- * @property string              $email
- * @property Clubhouse           $clubhouse
- * @property Role                $primaryRole
- * @property Carbon              $created_at
+ * @property Club $club
+ * @property int $clubhouse_id
+ * @property string $name
+ * @property string $email
+ * @property Clubhouse $clubhouse
+ * @property Role $primaryRole
+ * @property Carbon $created_at
  */
 class User extends Authenticatable
 {
-
-    use HasApiTokens, Notifiable, HasPushSubscriptions, HasFactory, HasRoles, HasSocialLogin;
+    use HasApiTokens, HasFactory, HasPushSubscriptions, HasRoles, HasSocialLogin, Notifiable;
 
     protected $dispatchesEvents = [
-        'updated' => UserUpdate::class
+        'updated' => UserUpdate::class,
     ];
 
     /**
@@ -71,31 +70,30 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function clubhouses() : BelongsToMany
+    public function clubhouses(): BelongsToMany
     {
         return $this->belongsToMany(Clubhouse::class);
     }
 
-    public function subscriptionSettings() : HasOne
+    public function subscriptionSettings(): HasOne
     {
         return $this->hasOne(SubscriptionSetting::class);
     }
 
-    public function teamRounds() : HasMany
+    public function teamRounds(): HasMany
     {
         return $this->hasMany(TeamRound::class);
     }
 
-    public function cancellationCollector() : HasOne
+    public function cancellationCollector(): HasOne
     {
         return $this->hasOne(CancellationCollector::class);
     }
 
     /**
      * Get the clubhouse that the user belongs to. This is the primary clubhouse for the user
-     * @return BelongsTo
      */
-    public function clubhouse() : BelongsTo
+    public function clubhouse(): BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
     }
@@ -105,19 +103,18 @@ class User extends Authenticatable
      * App\Models\SocialProvider (matching the GraphQL type). Vendor byOAuthToken()
      * still writes via the vendor class; both share the social_providers table.
      */
-    public function socialProviders() : HasMany
+    public function socialProviders(): HasMany
     {
         return $this->hasMany(SocialProvider::class);
     }
 
-    public function primaryRole() : BelongsTo
+    public function primaryRole(): BelongsTo
     {
         return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'primary_role_id', 'id');
     }
 
-    public function member() : HasOne
+    public function member(): HasOne
     {
         return $this->hasOne(Member::class, 'refId', 'player_id');
     }
-
 }

@@ -3,8 +3,8 @@
 namespace FlyCompany\TeamFight;
 
 use App\Enums\ActivityAction;
-use App\Enums\TeamNotificationType;
 use App\Enums\RecipientType;
+use App\Enums\TeamNotificationType;
 use App\Mail\TeamMail;
 use App\Models\SquadMember;
 use App\Models\TeamActivityLog;
@@ -22,7 +22,7 @@ class Notifier
         private readonly ?ScenarioManager $scenarioManager = null
     ) {}
 
-    public function sendManualEmails(TeamRound $team, array $emails, ?string $message, TeamNotificationType $notificationType) : void
+    public function sendManualEmails(TeamRound $team, array $emails, ?string $message, TeamNotificationType $notificationType): void
     {
         Mail::bcc($emails)->queue($this->getMailable($team, $message, $notificationType));
 
@@ -31,7 +31,7 @@ class Notifier
             'action' => ActivityAction::from($notificationType->value),
             'recipient_type' => RecipientType::MANUAL_EMAILS,
             'recipient_count' => count($emails),
-            'recipients_summary' => count($emails) . ' players notified',
+            'recipients_summary' => count($emails).' players notified',
             'message' => $message,
             'metadata' => [
                 'user_ids' => [],
@@ -41,7 +41,7 @@ class Notifier
         ]);
     }
 
-    public function sendTestSelf(TeamRound $team, User $user, ?string $message, TeamNotificationType $notificationType) : void
+    public function sendTestSelf(TeamRound $team, User $user, ?string $message, TeamNotificationType $notificationType): void
     {
         Mail::bcc($user->email)->queue($this->getMailable($team, $message, $notificationType));
 
@@ -67,7 +67,7 @@ class Notifier
      *
      * @return array{sentCount:int, skippedPlayers:array<int,string>}
      */
-    public function sendToPlatformPlayers(TeamRound $team, ?string $message, TeamNotificationType $notificationType, ?array $selectedRefIds = null) : array
+    public function sendToPlatformPlayers(TeamRound $team, ?string $message, TeamNotificationType $notificationType, ?array $selectedRefIds = null): array
     {
         $scenarioManager = $this->scenarioManager ?? app(ScenarioManager::class);
         $officialScenario = $team->officialScenario;
@@ -102,7 +102,7 @@ class Notifier
         $reachableRefIds = array_map('strval', $users->pluck('player_id')->all());
         $skippedPlayers = [];
         foreach ($refIdToName as $refId => $name) {
-            if (!in_array((string) $refId, $reachableRefIds, true)) {
+            if (! in_array((string) $refId, $reachableRefIds, true)) {
                 $skippedPlayers[] = $name;
             }
         }
@@ -115,7 +115,7 @@ class Notifier
             'action' => ActivityAction::from($notificationType->value),
             'recipient_type' => RecipientType::PLATFORM,
             'recipient_count' => $users->count(),
-            'recipients_summary' => $users->count() . ' spillere notificeret, ' . count($skippedPlayers) . ' sprunget over',
+            'recipients_summary' => $users->count().' spillere notificeret, '.count($skippedPlayers).' sprunget over',
             'message' => $message,
             'metadata' => [
                 'user_ids' => $users->pluck('id')->all(),
@@ -130,7 +130,7 @@ class Notifier
         ];
     }
 
-    private function buildNotification(TeamRound $team, ?string $message, TeamNotificationType $notificationType) : LaravelNotification
+    private function buildNotification(TeamRound $team, ?string $message, TeamNotificationType $notificationType): LaravelNotification
     {
         return match ($notificationType) {
             TeamNotificationType::TEAM_PUBLISH => new TeamPublish($team, $message),
@@ -138,23 +138,16 @@ class Notifier
         };
     }
 
-    /**
-     * @param TeamRound $team
-     * @param string|null $message
-     * @param TeamNotificationType $type
-     * @return TeamMail
-     */
     public function getMailable(TeamRound $team, ?string $message, TeamNotificationType $type): TeamMail
     {
         return (new TeamMail($team, $message))->subject($this->resolveSubject($type));
     }
 
-    private function resolveSubject(TeamNotificationType $action) : string
+    private function resolveSubject(TeamNotificationType $action): string
     {
         return match ($action) {
             TeamNotificationType::TEAM_PUBLISH => 'Holdrunden er klar! 📢',
             TeamNotificationType::TEAM_UPDATED => 'Ændringer til holdrunden! 🔄',
         };
     }
-
 }

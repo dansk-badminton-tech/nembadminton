@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -9,16 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property boolean email
+ * @property bool email
  */
 class SubscriptionSetting extends Model
 {
-
     use HasFactory;
 
     protected $fillable = ['email', 'user_id'];
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -21,7 +22,6 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
-
     /**
      * The event listener mappings for the application.
      *
@@ -29,16 +29,16 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         Registered::class => [
-            CreateContactInLoops::class
+            CreateContactInLoops::class,
         ],
         UserUpdate::class => [
-            UpdateContactInLoops::class
+            UpdateContactInLoops::class,
         ],
         CancellationCreated::class => [
-            ConfirmationEmail::class
+            ConfirmationEmail::class,
         ],
         InvitationCreated::class => [
-            SendInvitationEmail::class
+            SendInvitationEmail::class,
         ],
         ClubhouseCreated::class => [
             GrantRoleToClubhouse::class,
@@ -46,8 +46,8 @@ class EventServiceProvider extends ServiceProvider
             InitializeClub::class,
         ],
         ClubhouseUpdated::class => [
-            AddedClubConnection::class
-        ]
+            AddedClubConnection::class,
+        ],
     ];
 
     /**
@@ -55,8 +55,5 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
-
-    }
+    public function boot() {}
 }

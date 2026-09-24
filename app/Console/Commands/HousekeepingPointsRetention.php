@@ -34,6 +34,7 @@ class HousekeepingPointsRetention extends Command
         $this->line("Deleting points older then {$limit}...");
         $deleted = Point::query()->where('version', '<', $limit)->delete();
         $this->line("Deleted $deleted points");
+
         return 0;
     }
 }

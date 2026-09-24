@@ -8,8 +8,7 @@ use Illuminate\Auth\Access\Response;
 
 class InvitationPolicy
 {
-
-    public function before(User $user, string $ability): bool|null
+    public function before(User $user, string $ability): ?bool
     {
         if ($user->hasRole('super-admin')) {
             return true;

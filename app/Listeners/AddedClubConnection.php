@@ -25,7 +25,6 @@ class AddedClubConnection
     /**
      * Handle the event.
      *
-     * @param ClubhouseUpdated $event
      *
      * @return void
      */
@@ -33,8 +32,8 @@ class AddedClubConnection
     {
         /** @var Club[] $clubs */
         $clubs = $event->clubhouse->clubs()->get();
-        foreach ($clubs as $club){
-            if($club->initialized === false){
+        foreach ($clubs as $club) {
+            if ($club->initialized === false) {
                 BridgeToHorizon::dispatch($club->id)->onConnection('database');
             }
         }

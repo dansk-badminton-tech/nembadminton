@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -10,31 +10,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property SquadMember $member
- * @property string      $category
- * @property integer     $points
- * @property integer     $position
- * @property integer     $squad_member_id
- * @property string      $vintage
- * @property boolean     $corrected_manually
- * @property Carbon      $version
+ * @property string $category
+ * @property int $points
+ * @property int $position
+ * @property int $squad_member_id
+ * @property string $vintage
+ * @property bool $corrected_manually
+ * @property Carbon $version
  */
 class SquadPoint extends Model
 {
-
     protected $fillable = ['points', 'position', 'category', 'squad_member_id', 'vintage', 'corrected_manually', 'version'];
 
-    protected $casts    = [
+    protected $casts = [
         'version' => 'datetime:Y-m-d',
     ];
 
-    public function member() : BelongsTo
+    public function member(): BelongsTo
     {
         return $this->belongsTo(SquadMember::class, 'squad_member_id');
     }
 
-    public function usesTimestamps() : bool
+    public function usesTimestamps(): bool
     {
         return false;
     }
-
 }

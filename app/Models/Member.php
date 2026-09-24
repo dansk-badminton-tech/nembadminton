@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types = 1);
-
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -22,43 +21,41 @@ use Illuminate\Support\Facades\Auth;
  * @property string  refId
  * @property string  name
  * @property string  gender
- * @property boolean playable
- * @property boolean inactive
+ * @property bool playable
+ * @property bool inactive
  * @property string  override_inactive
  * @property Point[] points
  * @property User    owner
- * @package App\Models
  */
 class Member extends Model
 {
-
     protected $fillable = ['refId', 'name', 'gender', 'birthday', 'owner_id', 'playable', 'inactive', 'override_inactive'];
 
-    protected $casts    = [
+    protected $casts = [
         'inactive' => 'boolean',
     ];
 
-    public function clubs() : BelongsToMany
+    public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class);
     }
 
-    public function points() : HasMany
+    public function points(): HasMany
     {
         return $this->hasMany(Point::class);
     }
 
-    public function cancellations() : HasMany
+    public function cancellations(): HasMany
     {
         return $this->hasMany(Cancellation::class, 'refId', 'refId');
     }
 
-    public function owner() : BelongsTo
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');
     }
 
-    public function squadMember() : HasMany
+    public function squadMember(): HasMany
     {
         return $this->hasMany(SquadMember::class, 'member_ref_id', 'refId');
     }
@@ -70,28 +67,28 @@ class Member extends Model
         });
     }
 
-    public function scopeClub(Builder $builder, int $clubId) : Builder
+    public function scopeClub(Builder $builder, int $clubId): Builder
     {
         return $builder->whereHas('clubs', function (Builder $builder) use ($clubId) {
             $builder->where('id', $clubId);
         });
     }
 
-    public function scopeClubs(Builder $builder, array $clubIds) : Builder
+    public function scopeClubs(Builder $builder, array $clubIds): Builder
     {
         return $builder->whereHas('clubs', function (Builder $builder) use ($clubIds) {
             $builder->whereIn('id', $clubIds);
         });
     }
 
-    public function scopeNotCancelled(Builder $builder, string $teamRoundId) : Builder
+    public function scopeNotCancelled(Builder $builder, string $teamRoundId): Builder
     {
         return $builder->whereDoesntHave('cancellations', static function (Builder $builder) use ($teamRoundId) {
             $builder->where('team_round_id', '=', $teamRoundId)->orWhereNull('team_round_id');
         });
     }
 
-    public function scopeNotOnSquad(Builder $builder, ?string $teamRoundId) : Builder
+    public function scopeNotOnSquad(Builder $builder, ?string $teamRoundId): Builder
     {
         if ($teamRoundId === null) {
             return $builder;
@@ -102,7 +99,7 @@ class Member extends Model
         });
     }
 
-    public function scopeNotOnScenario(Builder $builder, ?string $scenarioId) : Builder
+    public function scopeNotOnScenario(Builder $builder, ?string $scenarioId): Builder
     {
         if ($scenarioId === null) {
             return $builder;
@@ -122,24 +119,23 @@ class Member extends Model
         return $query;
     }
 
-    public function scopeActive(Builder $builder) : Builder
+    public function scopeActive(Builder $builder): Builder
     {
         return $builder->where('inactive', '=', false);
     }
 
-    public function getVintage() : string
+    public function getVintage(): string
     {
         return Util::calculateVintage($this->getBirthday())->value;
     }
 
-    public function getBirthday() : Carbon
+    public function getBirthday(): Carbon
     {
         return Carbon::createFromFormat('ymd', substr($this->refId, 0, 6));
     }
 
-    public function isWomen() : bool
+    public function isWomen(): bool
     {
         return $this->gender === 'K';
     }
-
 }

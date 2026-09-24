@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -18,22 +18,21 @@ use phpseclib\Crypt\Hash;
  */
 class SquadCategory extends Model
 {
-
     use HasFactory;
 
     protected $fillable = ['category', 'name', 'squad_id', 'team_round_scenario_id'];
 
-    public function players() : HasMany
+    public function players(): HasMany
     {
         return $this->hasMany(SquadMember::class);
     }
 
-    public function squad() : BelongsTo
+    public function squad(): BelongsTo
     {
         return $this->belongsTo(Squad::class);
     }
 
-    public function scenario() : BelongsTo
+    public function scenario(): BelongsTo
     {
         return $this->belongsTo(TeamRoundScenario::class, 'team_round_scenario_id');
     }

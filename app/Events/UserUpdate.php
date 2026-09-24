@@ -8,7 +8,6 @@ use Illuminate\Queue\SerializesModels;
 
 final class UserUpdate
 {
-
     use Dispatchable;
     use SerializesModels;
 
@@ -17,14 +16,9 @@ final class UserUpdate
      *
      * @return void
      */
-    public function __construct(private readonly User $user)
-    {
-    }
+    public function __construct(private readonly User $user) {}
 
-    /**
-     * @return User
-     */
-    public function getUser() : User
+    public function getUser(): User
     {
         return $this->user;
     }

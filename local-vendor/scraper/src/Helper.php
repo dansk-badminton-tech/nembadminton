@@ -8,20 +8,15 @@ use Illuminate\Support\Str;
 
 class Helper
 {
-
-    /**
-     * @param  string  $league
-     * @return string
-     */
-    public static function convertToLeagueType(string $league) : string
+    public static function convertToLeagueType(string $league): string
     {
-        if(Str::contains($league, 'liga')){
+        if (Str::contains($league, 'liga')) {
             return 'LIGA';
         }
-        if(Str::contains($league, '1. division')){
+        if (Str::contains($league, '1. division')) {
             return 'FIRSTDIVISION';
         }
+
         return 'OTHER';
     }
-
 }

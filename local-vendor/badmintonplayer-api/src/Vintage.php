@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
-enum Vintage : string
+enum Vintage: string
 {
-
     case U9 = 'U9';
     case U11 = 'U11';
     case U13 = 'U13';

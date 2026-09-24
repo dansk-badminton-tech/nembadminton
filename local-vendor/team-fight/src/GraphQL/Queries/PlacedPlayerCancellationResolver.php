@@ -35,7 +35,7 @@ class PlacedPlayerCancellationResolver
             return null;
         }
 
-        if (!isset(self::$roundCancellationsCache[$teamRoundId])) {
+        if (! isset(self::$roundCancellationsCache[$teamRoundId])) {
             self::$roundCancellationsCache[$teamRoundId] = $this->loadCancellationsForTeamRound($teamRoundId);
         }
 

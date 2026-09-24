@@ -1,19 +1,16 @@
 <?php
 
-
 namespace FlyCompany\Scraper\Models;
-
 
 use Carbon\Carbon;
 
 class Point
 {
+    public int $points;
 
-    public int     $points;
+    public int $position;
 
-    public int     $position;
-
-    public string  $vintage;
+    public string $vintage;
 
     public ?string $category;
 
@@ -26,44 +23,28 @@ class Point
         $this->vintage = $vintage;
     }
 
-    /**
-     * @return int
-     */
     public function getPoints(): int
     {
         return $this->points;
     }
 
-    /**
-     * @return int
-     */
     public function getPosition(): int
     {
         return $this->position;
     }
 
-    /**
-     * @return string
-     */
-    public function getVintage() : string
+    public function getVintage(): string
     {
         return $this->vintage;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCategory() : ?string
+    public function getCategory(): ?string
     {
         return $this->category;
     }
 
-    /**
-     * @param string|null $category
-     */
-    public function setCategory(?string $category) : void
+    public function setCategory(?string $category): void
     {
         $this->category = $category;
     }
-
 }

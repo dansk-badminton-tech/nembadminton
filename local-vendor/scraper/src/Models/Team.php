@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper\Models;
 
@@ -8,7 +8,6 @@ use FlyCompany\Scraper\Enums\Side;
 
 class Team
 {
-
     public ?string $name;
 
     public ?string $leagueGroupId;
@@ -19,7 +18,7 @@ class Team
 
     public ?string $side;
 
-    public ?Squad  $squad;
+    public ?Squad $squad;
 
     public ?int $clubId;
 
@@ -29,5 +28,4 @@ class Team
         $this->squad = $squad;
         $this->side = $side?->value;
     }
-
 }

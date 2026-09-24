@@ -1,8 +1,8 @@
 <?php
 
-
 namespace FlyCompany\Scraper\GraphQL\Queries;
 
+use DiDom\Exceptions\InvalidSelectorException;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Enricher;
 use FlyCompany\TeamFight\SquadManager;
@@ -11,10 +11,6 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class BadmintonPlayerTeamFights
 {
-
-    /**
-     * @var BadmintonPlayer
-     */
     private BadmintonPlayer $scraper;
 
     public function __construct(BadmintonPlayer $scraper)
@@ -26,15 +22,14 @@ class BadmintonPlayerTeamFights
      * Return a value for the field.
      *
      * @param  @param  null  $root Always null, since this field has no parent.
-     * @param array<string, mixed>                                $args        The field arguments passed by the client.
-     * @param \Nuwave\Lighthouse\Support\Contracts\GraphQLContext $context     Shared between all fields.
-     * @param \GraphQL\Type\Definition\ResolveInfo                $resolveInfo Metadata for advanced query resolution.
-     *
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  GraphQLContext  $context  Shared between all fields.
+     * @param  ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      * @return mixed
+     *
      * @throws \JsonException
      * @throws \Throwable
-     *
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws InvalidSelectorException
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {

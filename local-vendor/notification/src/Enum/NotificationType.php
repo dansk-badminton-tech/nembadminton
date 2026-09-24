@@ -1,11 +1,9 @@
 <?php
 
-
 namespace FlyCompany\Notification\Enum;
 
-enum NotificationType : string
+enum NotificationType: string
 {
-
     case Release = 'Release';
 
 }

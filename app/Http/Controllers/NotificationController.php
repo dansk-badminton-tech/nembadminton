@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,7 +7,6 @@ use NotificationChannels\WebPush\PushSubscription;
 
 class NotificationController extends Controller
 {
-
     public function dismiss(Request $request, $id)
     {
         if (empty($request->endpoint)) {
@@ -28,6 +26,6 @@ class NotificationController extends Controller
 
         $notification->markAsRead();
 
-        //event(new NotificationRead($subscription->subscribable->id, $id));
+        // event(new NotificationRead($subscription->subscribable->id, $id));
     }
 }

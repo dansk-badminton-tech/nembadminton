@@ -6,6 +6,7 @@ use App\Models\Cancellation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -42,7 +43,7 @@ class CancellationConfirmationParticipantEmail extends Mailable implements Shoul
             with: [
                 'name' => $this->cancellation->member->name,
                 'unavailableDates' => $this->cancellation->dates->pluck('date')->sort(),
-                'optionalMessage' => $this->cancellation->message
+                'optionalMessage' => $this->cancellation->message,
             ]
         );
     }
@@ -50,7 +51,7 @@ class CancellationConfirmationParticipantEmail extends Mailable implements Shoul
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

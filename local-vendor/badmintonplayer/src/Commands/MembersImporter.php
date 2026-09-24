@@ -10,7 +10,6 @@ use Illuminate\Support\Arr;
 
 class MembersImporter extends Command
 {
-
     protected $signature = 'badmintonplayer-api-import:members {club-id* : BadmintonPlayer club id} {--sync}';
 
     protected $description = 'Import members for a club';
@@ -26,5 +25,4 @@ class MembersImporter extends Command
 
         return 0;
     }
-
 }

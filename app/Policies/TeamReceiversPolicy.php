@@ -10,33 +10,20 @@ class TeamReceiversPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
-
-    }
+    public function viewAny(User $user): bool {}
 
     public function view(User $user, TeamReceivers $teamReceivers): bool
     {
         return $user->clubhouse_id === $teamReceivers->teamRound->clubhouse_id;
     }
 
-    public function create(User $user): bool
-    {
-    }
+    public function create(User $user): bool {}
 
-    public function update(User $user, TeamReceivers $teamReceivers): bool
-    {
-    }
+    public function update(User $user, TeamReceivers $teamReceivers): bool {}
 
-    public function delete(User $user, TeamReceivers $teamReceivers): bool
-    {
-    }
+    public function delete(User $user, TeamReceivers $teamReceivers): bool {}
 
-    public function restore(User $user, TeamReceivers $teamReceivers): bool
-    {
-    }
+    public function restore(User $user, TeamReceivers $teamReceivers): bool {}
 
-    public function forceDelete(User $user, TeamReceivers $teamReceivers): bool
-    {
-    }
+    public function forceDelete(User $user, TeamReceivers $teamReceivers): bool {}
 }

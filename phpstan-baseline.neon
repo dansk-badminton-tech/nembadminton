@@ -289,12 +289,6 @@ parameters:
 			path: app/GraphQL/Queries/CancellationEvents.php
 
 		-
-			message: '#^Method App\\GraphQL\\Subscriptions\\Notifications\:\:resolve\(\) has parameter \$args with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/GraphQL/Subscriptions/Notifications.php
-
-		-
 			message: '#^Method App\\GraphQL\\Subscriptions\\Notifications\:\:resolve\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -475,12 +469,6 @@ parameters:
 			path: app/Jobs/BadmintonPlayerImportMembers.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$rankingList \(FlyCompany\\Scraper\\Enums\\RankingList\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 1
-			path: app/Jobs/BadmintonPlayerImportPoints.php
-
-		-
 			message: '#^Method App\\Jobs\\BadmintonPlayerImportPoints\:\:generateSeasons\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
@@ -649,7 +637,7 @@ parameters:
 			path: app/Models/Club.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(boolean initialized\)\: Unexpected token "initialized", expected variable at offset 74 on line 4$#'
+			message: '#^PHPDoc tag @property has invalid value \(bool initialized\)\: Unexpected token "initialized", expected variable at offset 71 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Club.php
@@ -661,7 +649,7 @@ parameters:
 			path: app/Models/Club.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(int badmintonPlayerId\)\: Unexpected token "badmintonPlayerId", expected variable at offset 103 on line 5$#'
+			message: '#^PHPDoc tag @property has invalid value \(int badmintonPlayerId\)\: Unexpected token "badmintonPlayerId", expected variable at offset 100 on line 5$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Club.php
@@ -709,19 +697,19 @@ parameters:
 			path: app/Models/Clubhouse.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(integer id\)\: Unexpected token "id", expected variable at offset 25 on line 2$#'
+			message: '#^PHPDoc tag @property has invalid value \(int id\)\: Unexpected token "id", expected variable at offset 21 on line 2$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Clubhouse.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(string email\)\: Unexpected token "email", expected variable at offset 73 on line 4$#'
+			message: '#^PHPDoc tag @property has invalid value \(string email\)\: Unexpected token "email", expected variable at offset 69 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Clubhouse.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(string name\)\: Unexpected token "name", expected variable at offset 48 on line 3$#'
+			message: '#^PHPDoc tag @property has invalid value \(string name\)\: Unexpected token "name", expected variable at offset 44 on line 3$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Clubhouse.php
@@ -949,25 +937,25 @@ parameters:
 			path: app/Models/Member.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(Point\[\] points\)\: Unexpected token "points", expected variable at offset 248 on line 11$#'
+			message: '#^PHPDoc tag @property has invalid value \(Point\[\] points\)\: Unexpected token "points", expected variable at offset 242 on line 11$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Member.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(User    owner\)\: Unexpected token "owner", expected variable at offset 276 on line 12$#'
+			message: '#^PHPDoc tag @property has invalid value \(User    owner\)\: Unexpected token "owner", expected variable at offset 270 on line 12$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Member.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(boolean inactive\)\: Unexpected token "inactive", expected variable at offset 179 on line 9$#'
+			message: '#^PHPDoc tag @property has invalid value \(bool inactive\)\: Unexpected token "inactive", expected variable at offset 173 on line 9$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Member.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(boolean playable\)\: Unexpected token "playable", expected variable at offset 149 on line 8$#'
+			message: '#^PHPDoc tag @property has invalid value \(bool playable\)\: Unexpected token "playable", expected variable at offset 146 on line 8$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Member.php
@@ -991,7 +979,7 @@ parameters:
 			path: app/Models/Member.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(string  override_inactive\)\: Unexpected token "override_inactive", expected variable at offset 209 on line 10$#'
+			message: '#^PHPDoc tag @property has invalid value \(string  override_inactive\)\: Unexpected token "override_inactive", expected variable at offset 203 on line 10$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/Member.php
@@ -1111,12 +1099,6 @@ parameters:
 			path: app/Models/Squad.php
 
 		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Relations\\HasMany referenced with incorrect case\: Illuminate\\Database\\Eloquent\\Relations\\hasMany\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: app/Models/Squad.php
-
-		-
 			message: '#^Method App\\Models\\Squad\:\:buildSortQuery\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
 			identifier: missingType.generics
 			count: 1
@@ -1207,13 +1189,13 @@ parameters:
 			path: app/Models/SquadMember.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(String        member_ref_id\)\: Unexpected token "member_ref_id", expected variable at offset 55 on line 4$#'
+			message: '#^PHPDoc tag @property has invalid value \(int           id\)\: Unexpected token "id", expected variable at offset 96 on line 5$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/SquadMember.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(int           id\)\: Unexpected token "id", expected variable at offset 96 on line 5$#'
+			message: '#^PHPDoc tag @property has invalid value \(string        member_ref_id\)\: Unexpected token "member_ref_id", expected variable at offset 55 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/SquadMember.php
@@ -1237,7 +1219,7 @@ parameters:
 			path: app/Models/SubscriptionSetting.php
 
 		-
-			message: '#^PHPDoc tag @property has invalid value \(boolean email\)\: Unexpected token "email", expected variable at offset 25 on line 2$#'
+			message: '#^PHPDoc tag @property has invalid value \(bool email\)\: Unexpected token "email", expected variable at offset 22 on line 2$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: app/Models/SubscriptionSetting.php

@@ -1,17 +1,14 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper\Models;
 
 /**
  * Class TeamMatch
- *
- * @package FlyCompany\Scraper\Models
  */
 class TeamMatch
 {
-
     public Team $home;
 
     public Team $guest;
@@ -29,5 +26,4 @@ class TeamMatch
         $this->home = $home;
         $this->guest = $guest;
     }
-
 }

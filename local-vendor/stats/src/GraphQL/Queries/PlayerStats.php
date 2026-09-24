@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Stats\GraphQL\Queries;
 
@@ -13,19 +13,15 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class PlayerStats
 {
-
-    public function __construct(private Stats $stats)
-    {
-    }
+    public function __construct(private Stats $stats) {}
 
     /**
      * Return a value for the field.
      *
      * @param  @param  null  $root Always null, since this field has no parent.
-     * @param array<string, mixed>                                $args        The field arguments passed by the client.
-     * @param \Nuwave\Lighthouse\Support\Contracts\GraphQLContext $context     Shared between all fields.
-     * @param \GraphQL\Type\Definition\ResolveInfo                $resolveInfo Metadata for advanced query resolution.
-     *
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  GraphQLContext  $context  Shared between all fields.
+     * @param  ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      * @return mixed
      */
     public function stats($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
@@ -56,11 +52,9 @@ class PlayerStats
     }
 
     /**
-     * @param mixed $memberId
-     *
      * @return Member[]
      */
-    private function getData(mixed $memberId) : array
+    private function getData(mixed $memberId): array
     {
         /** @var Member $member */
         $member = Member::query()->where('id', $memberId)->firstOrFail();

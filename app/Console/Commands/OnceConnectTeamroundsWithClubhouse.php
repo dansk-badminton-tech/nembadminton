@@ -31,7 +31,7 @@ class OnceConnectTeamroundsWithClubhouse extends Command
 
         foreach (TeamRound::all() as $team) {
             $user = $team->user;
-            if($user !== null){
+            if ($user !== null) {
                 $clubhouse = $user->clubhouse;
                 $team->clubhouse()->associate($clubhouse);
                 $team->save();

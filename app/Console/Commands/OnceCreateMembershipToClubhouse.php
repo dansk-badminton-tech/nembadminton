@@ -29,12 +29,12 @@ class OnceCreateMembershipToClubhouse extends Command
     public function handle()
     {
         /** @var User $user */
-        foreach (User::all() as $user){
+        foreach (User::all() as $user) {
             /** @var Clubhouse $clubHouse */
             $clubHouse = Clubhouse::query()->firstOrCreate([
-                'email' => $user->email
+                'email' => $user->email,
             ], [
-                'name' => $user->club()->first()->name1
+                'name' => $user->club()->first()->name1,
             ]);
             Log::info("Adding clubhouse {$user->email} {$user->club()->first()->name1}");
 

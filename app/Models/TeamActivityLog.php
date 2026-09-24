@@ -12,16 +12,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int     $id
- * @property string  $team_round_id
- * @property string  $action
- * @property string  $recipient_type
- * @property int     $recipient_count
- * @property string  $recipients_summary
- * @property string  $message
- * @property array   $metadata
- * @property int     $user_id
- * @property User    $user
+ * @property int $id
+ * @property string $team_round_id
+ * @property string $action
+ * @property string $recipient_type
+ * @property int $recipient_count
+ * @property string $recipients_summary
+ * @property string $message
+ * @property array $metadata
+ * @property int $user_id
+ * @property User $user
  * @property TeamRound $teamRound
  */
 class TeamActivityLog extends Model

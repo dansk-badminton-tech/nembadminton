@@ -8,15 +8,14 @@ use Illuminate\Auth\Access\Response;
 
 class ClubhousePolicy
 {
-
     public function viewUsers(User $actor, Clubhouse $target): bool
     {
-        return $actor->hasPermissionTo("edit clubhouse");
+        return $actor->hasPermissionTo('edit clubhouse');
     }
 
     public function viewInvitations(User $actor, Clubhouse $target): bool
     {
-        return $actor->hasPermissionTo("edit clubhouse");
+        return $actor->hasPermissionTo('edit clubhouse');
     }
 
     /**

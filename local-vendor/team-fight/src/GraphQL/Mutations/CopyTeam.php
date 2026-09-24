@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
 use App\Models\TeamRound;
@@ -12,17 +11,9 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class CopyTeam
 {
+    public function __construct(private readonly TeamRoundManager $teamManager, private readonly SquadManager $squadManager) {}
 
-    public function __construct(private readonly TeamRoundManager $teamManager, private readonly SquadManager $squadManager)
-    {}
-
-    /**
-     * @param                $rootValue
-     * @param array          $args
-     * @param GraphQLContext $context
-     * @param ResolveInfo    $resolveInfo
-     */
-    public function copyTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : TeamRound
+    public function copyTeam($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): TeamRound
     {
         return DB::transaction(function () use ($args, $context) {
             /** @var TeamRound $sourceTeam */

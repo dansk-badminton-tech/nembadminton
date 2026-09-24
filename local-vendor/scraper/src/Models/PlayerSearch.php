@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper\Models;
 
@@ -10,7 +10,6 @@ use FlyCompany\BadmintonPlayerAPI\Vintage;
 
 class PlayerSearch
 {
-
     public string $name;
 
     public string $club;
@@ -21,9 +20,8 @@ class PlayerSearch
 
     public string $gender;
 
-    public function calculateVintage(?Carbon $season = null) : Vintage
+    public function calculateVintage(?Carbon $season = null): Vintage
     {
         return Util::calculateVintageByRefId($this->refId, $season);
     }
-
 }

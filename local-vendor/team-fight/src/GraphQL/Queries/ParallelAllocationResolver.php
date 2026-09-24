@@ -48,7 +48,7 @@ class ParallelAllocationResolver
         $user = $context->user();
         $clubhouseId = $user ? $user->clubhouse_id : null;
 
-        if (!isset(self::$roundAllocationsCache[$activeTeamRoundId])) {
+        if (! isset(self::$roundAllocationsCache[$activeTeamRoundId])) {
             self::$roundAllocationsCache[$activeTeamRoundId] = $this->loadAllocationsForTeamRound($activeTeamRoundId, $clubhouseId);
         }
 
@@ -62,7 +62,7 @@ class ParallelAllocationResolver
     private function resolveActiveTeamRoundId(mixed $root, array $args): string
     {
         // 1. Explicit argument provided (e.g. from memberSearchPoints query)
-        if (!empty($args['teamRoundId'])) {
+        if (! empty($args['teamRoundId'])) {
             return (string) $args['teamRoundId'];
         }
 
@@ -145,10 +145,10 @@ class ParallelAllocationResolver
             }
 
             // Keep the first (highest-priority squad) if player appears more than once
-            if (!isset($allocationsByMember[$row->member_ref_id])) {
+            if (! isset($allocationsByMember[$row->member_ref_id])) {
                 $allocationsByMember[$row->member_ref_id] = [
                     'teamRoundId' => (string) $row->team_round_id,
-                    'teamRoundName' => $row->team_round_name ?? ('Runde ' . $row->round),
+                    'teamRoundName' => $row->team_round_name ?? ('Runde '.$row->round),
                     'squadName' => $row->squad_name,
                     'squadOrder' => $row->squad_order !== null ? (int) $row->squad_order : null,
                     'categoryName' => $row->category_name,

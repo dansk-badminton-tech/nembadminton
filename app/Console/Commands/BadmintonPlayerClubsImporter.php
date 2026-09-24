@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -12,7 +12,6 @@ use Illuminate\Support\Arr;
 
 class BadmintonPlayerClubsImporter extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -30,8 +29,7 @@ class BadmintonPlayerClubsImporter extends Command
     /**
      * Execute the console command.
      *
-     * @param Import $import
-     *
+     * @param  Import  $import
      * @return int
      */
     public function handle(BadmintonPlayer $badmintonPlayer)
@@ -46,10 +44,10 @@ class BadmintonPlayerClubsImporter extends Command
         });
 
         foreach ($positiveClubs as $club) {
-            \App\Models\Club::query()->updateOrCreate([
+            Club::query()->updateOrCreate([
                 'id' => $club['id'],
             ], [
-                'name1'             => $club['name'],
+                'name1' => $club['name'],
                 'badmintonPlayerId' => $club['id'],
             ]);
             $this->info("Update/Creates {$club['name']}");
@@ -57,11 +55,11 @@ class BadmintonPlayerClubsImporter extends Command
 
         foreach ($negativeClubs as $club) {
             $clubId = $club['id'] * -1;
-            $clubId = (int)str_pad((string)$clubId, 6, '0');
-            \App\Models\Club::query()->updateOrCreate([
+            $clubId = (int) str_pad((string) $clubId, 6, '0');
+            Club::query()->updateOrCreate([
                 'id' => $clubId,
             ], [
-                'name1'             => $club['name'],
+                'name1' => $club['name'],
                 'badmintonPlayerId' => $club['id'],
             ]);
             $this->info("Update/Creates {$club['name']}");

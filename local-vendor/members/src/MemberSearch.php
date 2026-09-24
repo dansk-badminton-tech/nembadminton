@@ -12,14 +12,6 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MemberSearch
 {
-
-    /**
-     * @param $root
-     * @param  array  $args
-     * @param  GraphQLContext  $context
-     * @param  ResolveInfo  $resolveInfo
-     * @return Builder
-     */
     public function searchPoints($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Builder
     {
         $version = $args['version'] ?? null;
@@ -28,7 +20,7 @@ class MemberSearch
         if ($version !== null) {
             $builder
                 ->select(['members.*'])
-                ->join('points', function(JoinClause $builder) use ($rankingList, $version) {
+                ->join('points', function (JoinClause $builder) use ($rankingList, $version) {
                     $builder->on('members.id', '=', 'points.member_id');
                     $builder->where('points.version', '=', $version);
                     $this->applyRanking($builder, $rankingList);
@@ -52,10 +44,11 @@ class MemberSearch
         return $builder;
     }
 
-    private function applyRanking(\Illuminate\Contracts\Database\Query\Builder $builder, string $rankingList): void{
-        if($rankingList === 'ALL'){
+    private function applyRanking(\Illuminate\Contracts\Database\Query\Builder $builder, string $rankingList): void
+    {
+        if ($rankingList === 'ALL') {
             $builder->whereIn('category', ['DS', 'DD', 'MxD', 'HS', 'HD', 'MxH']);
-        }else{
+        } else {
             $builder->where('category', '=', $rankingList);
         }
     }

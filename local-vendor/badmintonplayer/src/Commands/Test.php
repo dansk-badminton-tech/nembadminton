@@ -16,7 +16,6 @@ use Illuminate\Console\Command;
 
 class Test extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -34,25 +33,23 @@ class Test extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      * @throws \JsonException
      */
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI): int
     {
         $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
         $this->line($rankingList->getVersionDateCarbon());
         /** @var PlayerRanking[] $playersByRefId */
         $playersByRefId = [];
         foreach ($rankingList->playerRankings as $index => $playerRanking) {
-            if($index % 5000 === 0){
+            if ($index % 5000 === 0) {
                 $this->line('Processed '.$index);
             }
-            if($playerRanking->playerNumber == $this->argument('player-number')){
+            if ($playerRanking->playerNumber == $this->argument('player-number')) {
                 dump($playerRanking);
             }
         }
 
         return 0;
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\Models;
 
@@ -10,12 +10,11 @@ use FlyCompany\BadmintonPlayerAPI\Vintage;
 
 class Player
 {
+    public ?int $id;
 
-    public ?int    $id;
+    public string $gender;
 
-    public string  $gender;
-
-    public string  $name;
+    public string $name;
 
     public ?string $refId;
 
@@ -27,25 +26,18 @@ class Player
      */
     public array $points = [];
 
-    /**
-     * @return array
-     */
-    public function getPlayingIn() : array
+    public function getPlayingIn(): array
     {
         return $this->playingIn;
     }
 
-    /**
-     * @param array $playingIn
-     */
-    public function setPlayingIn(array $playingIn) : void
+    public function setPlayingIn(array $playingIn): void
     {
         $this->playingIn = $playingIn;
     }
 
-    public function calculateVintage(?Carbon $season = null) : Vintage
+    public function calculateVintage(?Carbon $season = null): Vintage
     {
         return Util::calculateVintageByRefId($this->refId, $season);
     }
-
 }

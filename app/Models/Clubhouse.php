@@ -10,38 +10,37 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property integer id
+ * @property int id
  * @property string name
  * @property string email
  */
 class Clubhouse extends Model
 {
-
     use HasFactory;
 
     protected $fillable = ['name', 'email'];
 
-    public function clubs() : BelongsToMany
+    public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'clubhouse_club');
     }
 
-    public function users() : BelongsToMany
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    public function user() : HasMany
+    public function user(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
-    public function invitations() : HasMany
+    public function invitations(): HasMany
     {
         return $this->hasMany(Invitation::class);
     }
 
-    public function cancellationCollector() : HasOne
+    public function cancellationCollector(): HasOne
     {
         return $this->hasOne(CancellationCollector::class);
     }

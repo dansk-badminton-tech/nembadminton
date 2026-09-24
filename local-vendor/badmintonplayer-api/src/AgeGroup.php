@@ -2,7 +2,7 @@
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
-enum AgeGroup : int
+enum AgeGroup: int
 {
     case U09 = 2;
     case U11 = 3;

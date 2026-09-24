@@ -10,7 +10,7 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 class SetMemberInactiveOverride
 {
     /**
-     * @throws \GraphQL\Error\Error
+     * @throws Error
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Member
     {

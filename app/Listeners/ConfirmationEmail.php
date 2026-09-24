@@ -24,8 +24,8 @@ class ConfirmationEmail
      */
     public function handle(CancellationCreated $event): void
     {
-        if($event->cancellation->cancellationCollector !== null){
-            if($event->cancellation->cancellationCollector->email !== null){
+        if ($event->cancellation->cancellationCollector !== null) {
+            if ($event->cancellation->cancellationCollector->email !== null) {
                 Mail::to($event->cancellation->cancellationCollector->email)
                     ->send(new CancellationConfirmationClubMail($event->cancellation));
             }
