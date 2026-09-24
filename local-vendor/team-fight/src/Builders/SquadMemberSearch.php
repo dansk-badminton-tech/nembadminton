@@ -24,8 +24,10 @@ class SquadMemberSearch
         $builder = SquadMember::query();
 
         $squadId = $args['squadId'];
-        $builder->whereHas('category.squad', static function(Builder $builder) use ($squadId) {
-            $builder->where('id', '=', $squadId);
+        $scenarioId = $args['scenarioId'] ?? null;
+        $builder->whereHas('category', static function(Builder $builder) use ($squadId, $scenarioId) {
+            $builder->where('squad_id', $squadId)
+                ->where('team_round_scenario_id', $scenarioId);
         });
 
         $builder->where('name', 'like', $args['name']);

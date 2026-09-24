@@ -1,5 +1,5 @@
-query memberSearchTeamFight($name: String!, $squadId: Int!, $gender : [Gender!]){
-    memberSearchTeamFight(name: $name, squadId: $squadId, gender: $gender){
+query memberSearchTeamFight($name: String!, $squadId: Int!, $scenarioId: ID, $gender : [Gender!]){
+    memberSearchTeamFight(name: $name, squadId: $squadId, scenarioId: $scenarioId, gender: $gender){
         data{
             id
             name

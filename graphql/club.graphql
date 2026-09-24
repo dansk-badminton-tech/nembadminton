@@ -34,6 +34,7 @@ extend type Query{
     memberSearchTeamFight(
         name: String!
         squadId: Int!
+        scenarioId: ID
         gender: [Gender!]
     ) : [SquadMember!]! @paginate(defaultCount: 20, builder: "FlyCompany\\TeamFight\\Builders\\SquadMemberSearch@searchBuilder") @guard @can(ability: "view", resolved: true)
     "Search for badmintonplayer clubs"

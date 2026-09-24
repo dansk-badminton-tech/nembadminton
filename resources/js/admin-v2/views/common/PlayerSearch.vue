@@ -65,7 +65,8 @@ export default {
     props: {
         category: Object,
         version: Date,
-        squad: Object
+        squad: Object,
+        scenarioId: [String, Number]
     },
     computed: {
         searchResult() {
@@ -90,6 +91,7 @@ export default {
                 return {
                     name: '%' + this.querySearchName + '%',
                     squadId: parseInt(this.squad.id),
+                    scenarioId: this.scenarioId,
                     gender: resolveGenderFromCategory(this.category.category)
                 }
             },

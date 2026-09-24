@@ -177,6 +177,7 @@
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
                                :squads="teamRound.squads"
+                               :scenario-id="currentScenario?.id ?? null"
                                :teams-base-validations="validateBasicSquads"
                                :version="new Date(version)"
                                :loading="saving"

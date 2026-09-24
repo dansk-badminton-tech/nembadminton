@@ -606,6 +606,36 @@ class TeamsTest extends TestCase
             ->assertJsonFragment(['refId' => $members[2]->refId])
             ->assertJsonMissing(['refId' => $members[1]->refId]);
 
+        $inlineQuery = /** @lang GraphQL */ '
+            query($squadId: Int!, $scenarioId: ID!) {
+                memberSearchTeamFight(
+                    name: "%Player%"
+                    squadId: $squadId
+                    scenarioId: $scenarioId
+                ) {
+                    data { refId }
+                }
+            }
+        ';
+
+        $inlinePlanAResponse = $this->graphQL($inlineQuery, [
+            'squadId' => $squad->id,
+            'scenarioId' => $scenarioA->id,
+        ]);
+        $inlinePlanAResponse->assertJsonMissingPath('errors')
+            ->assertJsonCount(1, 'data.memberSearchTeamFight.data')
+            ->assertJsonFragment(['refId' => $members[0]->refId])
+            ->assertJsonMissing(['refId' => $members[1]->refId]);
+
+        $inlinePlanBResponse = $this->graphQL($inlineQuery, [
+            'squadId' => $squad->id,
+            'scenarioId' => $scenarioB->id,
+        ]);
+        $inlinePlanBResponse->assertJsonMissingPath('errors')
+            ->assertJsonCount(1, 'data.memberSearchTeamFight.data')
+            ->assertJsonFragment(['refId' => $members[1]->refId])
+            ->assertJsonMissing(['refId' => $members[0]->refId]);
+
         $cancellationListResponse = $this->graphQL(/** @lang GraphQL */ '
             query($clubhouse: Int!, $scenarioId: ID!) {
                 membersSearch(clubhouse: $clubhouse, notOnScenario: $scenarioId, first: 10) {

@@ -173,6 +173,7 @@
                             v-if="category.players.length === 0"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
+                            :scenario-id="scenarioId"
                             :version="resolveVersionToUse(squad)"
                             :category="category"/>
                         <PlayerSearch
@@ -180,6 +181,7 @@
                             v-if="isDouble(category) && category.players.length <= 1"
                             @select-player="addPlayer(squad, category, $event)"
                             :squad="squad"
+                            :scenario-id="scenarioId"
                             :version="resolveVersionToUse(squad)" :category="category"/>
                     </td>
                 </tr>
@@ -246,6 +248,7 @@ export default {
             type: Array,
             default: []
         },
+        scenarioId: [String, Number],
         teamsBaseValidations: {
             type: Array,
             default: []
