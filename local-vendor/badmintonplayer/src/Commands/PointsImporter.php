@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
 
 class PointsImporter extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -28,12 +27,11 @@ class PointsImporter extends Command
     /**
      * Execute the console command.
      *
-     * @return int
      * @throws \JsonException
      */
-    public function handle() : int
+    public function handle(): int
     {
-        $clubId = (int)$this->argument('club-id');
+        $clubId = (int) $this->argument('club-id');
         if ($this->option('sync')) {
             ImportPoints::dispatchSync($clubId, RankingPeriodType::CURRENT);
             ImportPoints::dispatchSync($clubId, RankingPeriodType::PREVIOUS);
@@ -44,5 +42,4 @@ class PointsImporter extends Command
 
         return 0;
     }
-
 }

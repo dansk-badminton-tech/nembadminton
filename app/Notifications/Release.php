@@ -15,10 +15,7 @@ class Release extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(private readonly string $title, private readonly string $message)
-    {
-
-    }
+    public function __construct(private readonly string $title, private readonly string $message) {}
 
     /**
      * Get the notification's delivery channels.
@@ -30,10 +27,10 @@ class Release extends Notification
         return ['database'];
     }
 
-    public function broadcastOn() : array
+    public function broadcastOn(): array
     {
         return [
-            'notifications'
+            'notifications',
         ];
     }
 
@@ -43,9 +40,9 @@ class Release extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -55,7 +52,7 @@ class Release extends Notification
     {
         return new BroadcastMessage([
             'title' => $this->title,
-            'message' => $this->message
+            'message' => $this->message,
         ]);
     }
 
@@ -68,7 +65,7 @@ class Release extends Notification
     {
         return [
             'title' => $this->title,
-            'message' => $this->message
+            'message' => $this->message,
         ];
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TournamentTier extends Model
 {
-
     protected $fillable = [
         'tier_name',
     ];

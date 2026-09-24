@@ -18,7 +18,7 @@ class CancellationDate extends Model
         'date',
     ];
 
-    public function cancellation() : BelongsTo
+    public function cancellation(): BelongsTo
     {
         return $this->belongsTo(Cancellation::class);
     }

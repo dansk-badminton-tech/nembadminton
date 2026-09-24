@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Log;
 
 class ImportPoints implements ShouldQueue
 {
-
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
@@ -32,20 +31,14 @@ class ImportPoints implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @param int $clubId
      */
     public function __construct(
         private int $clubId,
         private RankingPeriodType $rankingPeriodType
-    )
-    {
-    }
+    ) {}
 
     /**
      * Execute the job.
-     *
-     * @return int
      */
     public function handle(BadmintonPlayerAPI $badmintonPlayerAPI, PointsManager $pointsManager): int
     {
@@ -55,11 +48,6 @@ class ImportPoints implements ShouldQueue
         return 0;
     }
 
-    /**
-     * @param PlayersRanking $rankingList
-     * @param PointsManager $pointsManager
-     * @return void
-     */
     protected function updateMemberPoints(PlayersRanking $rankingList, PointsManager $pointsManager): void
     {
         /** @var PlayerRanking[] $playersByRefId */
@@ -73,17 +61,17 @@ class ImportPoints implements ShouldQueue
             foreach ($members as $member) {
                 $player = $playersByRefId[$member->refId] ?? null;
                 if ($player !== null && $player->clubID === $this->clubId) {
-                    if($player->singlePoints !== 0 && $player->singlePoints !== null){
+                    if ($player->singlePoints !== 0 && $player->singlePoints !== null) {
                         Log::info("Updating $player->name($player->gender) single points to {$player->singlePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
                         $pointsManager->addPointsByMember($member, $player->singlePoints, 0, $rankingList->getVersionDateCarbon(), $player->getSingleCategory()->value, $player->getVintage()->value);
                     }
 
-                    if($player->doublePoints !== 0 && $player->doublePoints !== null){
+                    if ($player->doublePoints !== 0 && $player->doublePoints !== null) {
                         Log::info("Updating $player->name($player->gender) double points to {$player->doublePoints} on ranking list {$rankingList->getVersionDateCarbon()}");
                         $pointsManager->addPointsByMember($member, $player->doublePoints, 0, $rankingList->getVersionDateCarbon(), $player->getDoubleCategory()->value, $player->getVintage()->value);
                     }
 
-                    if($player->mixPoints !== 0 && $player->mixPoints !== null) {
+                    if ($player->mixPoints !== 0 && $player->mixPoints !== null) {
                         Log::info("Updating $player->name($player->gender) mix points to {$player->mixPoints} on ranking list {$rankingList->getVersionDateCarbon()}");
                         $pointsManager->addPointsByMember($member, $player->mixPoints, 0, $rankingList->getVersionDateCarbon(), $player->getMixCategory()->value, $player->getVintage()->value);
                     }

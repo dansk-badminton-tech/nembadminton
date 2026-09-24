@@ -18,7 +18,6 @@ parameters:
             - app/Policies/TeamActivityLogPolicy.php
             - app/Policies/TeamReceiversPolicy.php
             - app/Policies/TeamRoundPolicy.php
-            - local-vendor/scraper/src/Models/Match.php
             - local-vendor/team-fight/src/TeamValidator.php
     paths:
         - app

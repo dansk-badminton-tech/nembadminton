@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-
 namespace FlyCompany\TeamFight\Models;
 
 class Category
 {
-
     public ?string $category;
 
     public string $name;
@@ -47,20 +45,24 @@ class Category
         return $this->category === 'MD' || $this->category === 'DD' || $this->category === 'HD';
     }
 
-    public function amountOfMenPlayers() : int{
-        return array_reduce($this->players, static function(int $carry, Player $player){
-            if($player->gender === 'M'){
+    public function amountOfMenPlayers(): int
+    {
+        return array_reduce($this->players, static function (int $carry, Player $player) {
+            if ($player->gender === 'M') {
                 return ++$carry;
             }
+
             return $carry;
         }, 0);
     }
 
-    public function amountOfWomenPlayers() : int{
-        return array_reduce($this->players, static function(int $carry, Player $player){
-            if($player->gender === 'K'){
+    public function amountOfWomenPlayers(): int
+    {
+        return array_reduce($this->players, static function (int $carry, Player $player) {
+            if ($player->gender === 'K') {
                 return ++$carry;
             }
+
             return $carry;
         }, 0);
     }
@@ -69,5 +71,4 @@ class Category
     {
         return count($this->players);
     }
-
 }

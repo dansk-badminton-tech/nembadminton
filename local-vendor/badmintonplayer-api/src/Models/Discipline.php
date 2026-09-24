@@ -6,7 +6,6 @@ namespace FlyCompany\BadmintonPlayerAPI\Models;
 
 enum Discipline: string
 {
-
     case MixedDoubles = 'MixedDoubles';
     case WomensSingles = 'WomensSingles';
     case MensSingles = 'MensSingles';
@@ -23,5 +22,4 @@ enum Discipline: string
             Discipline::MensDoubles => 'HD'
         };
     }
-
 }

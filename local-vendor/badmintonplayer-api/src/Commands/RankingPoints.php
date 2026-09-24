@@ -10,31 +10,32 @@ use Illuminate\Console\Command;
 
 class RankingPoints extends Command
 {
-
     protected $signature = 'badmintonplayer-api:points {ranking-period : Ranking period} {--limit= : limit number of fetched players} {--name= : search for a name} {--club-id= : club id} {--ref-id= : badminton player id}';
 
     protected $description = 'Fetch all ranking points';
 
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int{
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI): int
+    {
         $rankingList = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::from(ucfirst(strtolower($this->argument('ranking-period')))));
 
         $name = $this->option('name');
-        if($name !== null){
+        if ($name !== null) {
             $rankingList = $rankingList->getPlayerRankingCollection()->searchByName($name);
         }
 
         $clubId = $this->option('club-id');
-        if($clubId !== null){
-            $rankingList = $rankingList->getPlayerRankingCollection()->getByClubId((int)$clubId);
+        if ($clubId !== null) {
+            $rankingList = $rankingList->getPlayerRankingCollection()->getByClubId((int) $clubId);
         }
 
         $refId = $this->option('ref-id');
-        if($refId !== null){
+        if ($refId !== null) {
             $rankingList = $rankingList->getPlayerRankingCollection()->getByPlayerNumbers($refId);
         }
 
-        if($refId === null && $name === null && $clubId === null){
+        if ($refId === null && $name === null && $clubId === null) {
             $this->error('No search options provided. Please provide one of the following: --name, --club-id, --ref-id');
+
             return 1;
         }
 

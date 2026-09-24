@@ -15,7 +15,6 @@ use Illuminate\Console\Command;
 
 class UpdateAllClubs extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -32,24 +31,22 @@ class UpdateAllClubs extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
         $clubs = Club::query()->where('initialized', '=', 1)->get();
-        foreach ($clubs as $club){
+        foreach ($clubs as $club) {
             $clubId = $club->id;
             $chain = ImportMembers::withChain([
                 new ImportPoints($clubId, RankingPeriodType::CURRENT),
-                new ImportPoints($clubId, RankingPeriodType::PREVIOUS)
+                new ImportPoints($clubId, RankingPeriodType::PREVIOUS),
             ]);
             if ($this->option('sync')) {
                 $chain->onConnection('sync');
             }
             $chain->dispatch([$clubId]);
         }
+
         return 0;
     }
-
 }

@@ -1,5 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
 
+declare(strict_types=1);
 
 namespace App\GraphQL\Subscriptions;
 
@@ -13,13 +14,12 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 final class Notifications extends GraphQLSubscription
 {
-
     /** Check if subscriber is allowed to listen to the subscription. */
-    public function authorize(Subscriber $subscriber, Request $request) : bool
+    public function authorize(Subscriber $subscriber, Request $request): bool
     {
         $user = $subscriber->context->user();
 
-        if($user === null) {
+        if ($user === null) {
             return false;
         }
 
@@ -27,12 +27,9 @@ final class Notifications extends GraphQLSubscription
     }
 
     /**
-     * @param Subscriber           $subscriber
-     * @param DatabaseNotification $root
-     *
-     * @return bool
+     * @param  DatabaseNotification  $root
      */
-    public function filter(Subscriber $subscriber, mixed $root) : bool
+    public function filter(Subscriber $subscriber, mixed $root): bool
     {
         $args = $subscriber->args;
 
@@ -40,14 +37,9 @@ final class Notifications extends GraphQLSubscription
     }
 
     /**
-     * @param DatabaseNotification $root
-     * @param array                $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
-     *
-     * @return array
+     * @param  DatabaseNotification  $root
      */
-    public function resolve(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : array
+    public function resolve(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
     {
         return $root->getAttributes();
     }

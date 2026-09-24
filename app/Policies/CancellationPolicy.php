@@ -25,7 +25,7 @@ class CancellationPolicy
             return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
-        if($cancellation->cancellationCollector !== null) {
+        if ($cancellation->cancellationCollector !== null) {
             return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 
@@ -49,7 +49,7 @@ class CancellationPolicy
             return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
-        if($cancellation->cancellationCollector !== null) {
+        if ($cancellation->cancellationCollector !== null) {
             return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 
@@ -65,7 +65,7 @@ class CancellationPolicy
             return $cancellation->teamRound->clubhouse_id === $user->clubhouse_id;
         }
 
-        if($cancellation->cancellationCollector !== null) {
+        if ($cancellation->cancellationCollector !== null) {
             return $cancellation->cancellationCollector->clubhouse_id === $user->clubhouse_id;
         }
 

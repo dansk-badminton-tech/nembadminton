@@ -23,6 +23,7 @@ class OnceSetPrimaryRole extends Command
 
             if ($roles->isEmpty()) {
                 $skipped++;
+
                 continue;
             }
 

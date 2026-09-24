@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\GraphQL\Directives;
 
@@ -29,8 +31,6 @@ GRAPHQL;
 
     /**
      * Wrap around the final field resolver.
-     *
-     * @param  \Nuwave\Lighthouse\Schema\Values\FieldValue  $fieldValue
      */
     public function handleField(FieldValue $fieldValue): void
     {
@@ -47,8 +47,8 @@ GRAPHQL;
             /** @var User $user */
             $user = $context->user();
 
-            if(!$user->hasPermissionTo($name)){
-                throw new AuthorizationException();
+            if (! $user->hasPermissionTo($name)) {
+                throw new AuthorizationException;
             }
 
             return $resolver($root, $args, $context, $resolveInfo);

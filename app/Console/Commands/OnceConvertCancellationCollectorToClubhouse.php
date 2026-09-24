@@ -27,7 +27,7 @@ class OnceConvertCancellationCollectorToClubhouse extends Command
      */
     public function handle()
     {
-        //User::query()->where('email', 'danielflynygaard@gmail.com')->first()->assignRole('super-admin');
+        // User::query()->where('email', 'danielflynygaard@gmail.com')->first()->assignRole('super-admin');
 
         foreach (CancellationCollector::all() as $cancellationCollector) {
             $cancellationCollector->clubhouse()->associate($cancellationCollector->user->clubhouse);

@@ -11,7 +11,7 @@ class TournamentStructureMapper
 {
     public static function seasonNameFromSeasonId(int $seasonId): string
     {
-        return $seasonId . '/' . ($seasonId + 1);
+        return $seasonId.'/'.($seasonId + 1);
     }
 
     public static function normalizeDivisionName(?string $divisionName): ?string

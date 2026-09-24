@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Console\Commands;
 
 use App\Jobs\BadmintonPlayerImportMembers;
@@ -10,7 +9,6 @@ use Illuminate\Console\Command;
 
 class BadmintonPlayerMembersImporter extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -28,17 +26,15 @@ class BadmintonPlayerMembersImporter extends Command
     /**
      * Execute the console command.
      *
-     * @param BadmintonPlayer $scraper
-     * @param PointsManager   $pointsManager
+     * @param  BadmintonPlayer  $scraper
+     * @param  PointsManager  $pointsManager
      *
-     * @return int
      * @throws \JsonException
      */
-    public function handle() : int
+    public function handle(): int
     {
         BadmintonPlayerImportMembers::dispatchNow([$this->argument('club-id')]);
 
         return 0;
     }
-
 }

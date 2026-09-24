@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
 
 class LeagueMatch extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -27,22 +26,20 @@ class LeagueMatch extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI): int
     {
         $matches = $badmintonPlayerAPI->getCurrentLeagueMatches();
         $limit = $this->option('limit');
-        if($limit !== null){
-            $matches = array_slice($matches, 0, (int)$limit);
+        if ($limit !== null) {
+            $matches = array_slice($matches, 0, (int) $limit);
         }
         $clubId = $this->option('club-id');
-        if($clubId !== null){
-            $matches = array_filter($matches, static fn(TeamMatch $match) => $match->clubId1 == $clubId || $match->clubId2 == $clubId);
+        if ($clubId !== null) {
+            $matches = array_filter($matches, static fn (TeamMatch $match) => $match->clubId1 == $clubId || $match->clubId2 == $clubId);
         }
         echo json_encode($matches, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+
         return 0;
     }
-
 }

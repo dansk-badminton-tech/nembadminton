@@ -1,10 +1,11 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,35 +15,34 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
 /**
- * @property int                        $id
+ * @property int $id
  * @property Collection|SquadCategory[] $categories
- * @property TeamRound                  $teamRound
- * @property string                     $team_round_id
- * @property int                        $order
- * @property int|null                   $external_team_fight_id
- * @property Carbon|null                $playing_datetime
- * @property string|null                $playing_place
- * @property string|null                $playing_address
- * @property string|null                $playing_zip_code
- * @property string|null                $playing_city
- * @property Carbon|null                $version
+ * @property TeamRound $teamRound
+ * @property string $team_round_id
+ * @property int $order
+ * @property int|null $external_team_fight_id
+ * @property Carbon|null $playing_datetime
+ * @property string|null $playing_place
+ * @property string|null $playing_address
+ * @property string|null $playing_zip_code
+ * @property string|null $playing_city
+ * @property Carbon|null $version
  */
 class Squad extends Model implements Sortable
 {
-
     use HasFactory;
     use SortableTrait;
 
     public array $sortable = [
-        'order_column_name'  => 'order',
+        'order_column_name' => 'order',
         'sort_when_creating' => true,
     ];
 
-    protected    $casts    = [
-        "playing_datetime" => 'datetime',
+    protected $casts = [
+        'playing_datetime' => 'datetime',
     ];
 
-    protected    $fillable = [
+    protected $fillable = [
         'playerLimit',
         'order',
         'team_round_id',
@@ -58,22 +58,22 @@ class Squad extends Model implements Sortable
         'version',
     ];
 
-    public function buildSortQuery() : \Illuminate\Database\Eloquent\Builder
+    public function buildSortQuery(): Builder
     {
         return static::query()->where('team_round_id', $this->team_round_id);
     }
 
-    public function categories() : hasMany
+    public function categories(): HasMany
     {
         return $this->hasMany(SquadCategory::class);
     }
 
-    public function teamRound() : BelongsTo
+    public function teamRound(): BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');
     }
 
-    public function team() : BelongsTo
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }

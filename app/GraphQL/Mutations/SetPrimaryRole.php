@@ -3,15 +3,15 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\User;
-use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Error\Error;
+use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Spatie\Permission\Models\Role;
 
 class SetPrimaryRole
 {
     /**
-     * @throws \GraphQL\Error\Error
+     * @throws Error
      */
     public function resolve($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): User
     {
@@ -27,7 +27,7 @@ class SetPrimaryRole
         setPermissionsTeamId($user->clubhouse_id);
 
         $assignedRoleIds = $user->roles()->pluck('id')->all();
-        if (!in_array($roleId, $assignedRoleIds, true)) {
+        if (! in_array($roleId, $assignedRoleIds, true)) {
             throw new Error('You do not have this role.');
         }
 

@@ -6,15 +6,10 @@ namespace FlyCompany\BadmintonPlayerAPI\Models;
 
 class TeamMatchLineup
 {
-
-    /**
-     * @var TeamMatch
-     */
     public TeamMatch $match;
 
     /**
      * @var CombinedTeamMatch[]|null
      */
     public ?array $combinedTeamMatches;
-
 }

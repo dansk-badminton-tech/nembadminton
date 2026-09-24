@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types = 1);
-
+declare(strict_types=1);
 
 namespace FlyCompany\BadmintonPlayerAPI;
 
@@ -31,15 +30,12 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  * api: https://badmintonplayer.dk/publicapi/swagger/index.html
  *
  * Class BadmintonPlayerAPI
- *
- * @package FlyCompany\BadmintonPlayerAPI
  */
 class BadmintonPlayerAPI
 {
+    private const CACHE_TTL = 129600;
 
-    private const CACHE_TTL                                         = 129600;
-
-    private const CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH        = 'badmintonplayer-api:leagueMatch';
+    private const CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH = 'badmintonplayer-api:leagueMatch';
 
     private const CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP = 'badmintonplayer-api:leagueMatch-lineup';
 
@@ -49,48 +45,40 @@ class BadmintonPlayerAPI
 
     private string $accessToken;
 
-    private static string $base_url      = 'https://badmintonplayer.dk/publicapi/v1/';
+    private static string $base_url = 'https://badmintonplayer.dk/publicapi/v1/';
 
-    private bool          $overrideCache = false;
+    private bool $overrideCache = false;
 
     public function __construct(
         private Client $client,
         private Repository $cache
-    ) {
-    }
+    ) {}
 
-    /**
-     * @param string     $email
-     * @param string     $password
-     * @param Repository $cache
-     *
-     * @return BadmintonPlayerAPI
-     */
-    public static function make(string $email, #[\SensitiveParameter] string $password, Repository $cache) : BadmintonPlayerAPI
+    public static function make(string $email, #[\SensitiveParameter] string $password, Repository $cache): BadmintonPlayerAPI
     {
         static::$username = $email;
         static::$password = $password;
 
         $client = new Client([
-            'base_uri'        => self::$base_url,
-            'timeout'         => 900,
+            'base_uri' => self::$base_url,
+            'timeout' => 900,
             'connect_timeout' => 60,
-            'read_timeout'    => 600,
+            'read_timeout' => 600,
         ]);
 
         $accessToken = static::getRequestAccessToken($client, static::$username, static::$password);
 
-        $handler = new CurlHandler();
+        $handler = new CurlHandler;
         $stack = HandlerStack::create($handler);
         $stack->push(Middleware::mapRequest(static function (RequestInterface $request) use ($accessToken) {
-            return $request->withHeader('Authorization', 'Bearer ' . $accessToken);
+            return $request->withHeader('Authorization', 'Bearer '.$accessToken);
         }));
         $client = new Client([
-            'base_uri'        => self::$base_url,
-            'timeout'         => 900,
+            'base_uri' => self::$base_url,
+            'timeout' => 900,
             'connect_timeout' => 60,
-            'read_timeout'    => 600,
-            'handler'         => $stack,
+            'read_timeout' => 600,
+            'handler' => $stack,
         ]);
 
         $badmintonPlayerAPI = new self($client, $cache);
@@ -100,15 +88,10 @@ class BadmintonPlayerAPI
     }
 
     /**
-     * @param Client $client
-     * @param string $email
-     * @param string $password
-     *
-     * @return string
      * @throws GuzzleException
      * @throws JsonException
      */
-    private static function getRequestAccessToken(Client $client, string $email, #[\SensitiveParameter] string $password) : string
+    private static function getRequestAccessToken(Client $client, string $email, #[\SensitiveParameter] string $password): string
     {
         $response = $client->post('Authenticate', ['json' => ['email' => $email, 'password' => $password]]);
         $response = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
@@ -121,7 +104,7 @@ class BadmintonPlayerAPI
         return $this->accessToken;
     }
 
-    public function overrideCache() : void
+    public function overrideCache(): void
     {
         $this->overrideCache = true;
     }
@@ -130,13 +113,14 @@ class BadmintonPlayerAPI
      * Get all team matches for current season
      *
      * @return TeamMatch[]
+     *
      * @throws InvalidArgumentException
      */
-    public function getCurrentLeagueMatches() : array
+    public function getCurrentLeagueMatches(): array
     {
         $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH);
         if ($contents === null || $this->overrideCache) {
-            Log::info("No cache found with key '" . self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH . "'. Fetching from badmintonplayer.dk....");
+            Log::info("No cache found with key '".self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH."'. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('LeagueMatch');
             $contents = $response->getBody()->getContents();
             $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH, $contents, self::CACHE_TTL);
@@ -144,7 +128,7 @@ class BadmintonPlayerAPI
 
         $serializer = SerializerHelper::getSerializer();
         /** @var TeamMatch[] $teamMatches */
-        $teamMatches = $serializer->deserialize($contents, TeamMatch::class . '[]', 'json');
+        $teamMatches = $serializer->deserialize($contents, TeamMatch::class.'[]', 'json');
 
         return $teamMatches;
     }
@@ -153,15 +137,16 @@ class BadmintonPlayerAPI
      * Team matches information with lineups of allowed League divisions for current season. Lineup will be available when match was happen.
      *
      * @return TeamMatchLineupCollection|TeamMatchLineup[]
+     *
      * @throws ExceptionInterface
      * @throws JsonException
      * @throws InvalidArgumentException
      */
-    public function getPlayedLeagueMatches() : TeamMatchLineupCollection
+    public function getPlayedLeagueMatches(): TeamMatchLineupCollection
     {
         $contents = $this->cache->get(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP);
         if ($contents === null || $this->overrideCache) {
-            Log::info("No cache found with key '" . self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP . "'. Fetching from badmintonplayer.dk....");
+            Log::info("No cache found with key '".self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP."'. Fetching from badmintonplayer.dk....");
             $response = $this->client->get('LeagueMatch/lineup');
             $contents = $response->getBody()->getContents();
             $this->cache->put(self::CACHE_KEY_BADMINTONPLAYER_API_LEAGUE_MATCH_LINEUP, $contents, self::CACHE_TTL);
@@ -170,50 +155,48 @@ class BadmintonPlayerAPI
         $serializer = SerializerHelper::getSerializer();
         $data = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
         $data = $this->fixTeamPlayersToBeArray($data);
-        $playedTeamMatches = $serializer->denormalize($data, TeamMatchLineup::class . '[]');
+        $playedTeamMatches = $serializer->denormalize($data, TeamMatchLineup::class.'[]');
 
         return new TeamMatchLineupCollection($playedTeamMatches);
     }
 
     /**
-     * @param RankingPeriodType $periodType
-     * @param int|null          $numberOfRows
+     * @param  int|null  $numberOfRows
      *
-     * @return PlayersRanking
      * @throws InvalidArgumentException|GuzzleException
      */
-    public function getPlayerRanking(RankingPeriodType $periodType) : PlayersRanking
+    public function getPlayerRanking(RankingPeriodType $periodType): PlayersRanking
     {
         Log::info("Fetching ranking list '{$periodType->value}'");
-        $cacheKey = "badmintonplayer-api:player-ranking-" . md5($periodType->value . '-' . Carbon::now()->format('Y-m-d'));
+        $cacheKey = 'badmintonplayer-api:player-ranking-'.md5($periodType->value.'-'.Carbon::now()->format('Y-m-d'));
         $contents = $this->cache->get($cacheKey);
         if ($contents === null || $this->overrideCache) {
             Log::info("No cache found with key '$cacheKey'. Fetching from badmintonplayer.dk....");
             $response = $this->client->post('Player/ranking', [
                 'query' => array_filter([
                     'rankingType' => $periodType->value,
-                    'start'       => 0,
-                    'stop'         => 100,
+                    'start' => 0,
+                    'stop' => 100,
                 ]),
-                'json'  => [
+                'json' => [
                     AgeGroup::SEN->value,
                     AgeGroup::U17->value,
                     AgeGroup::U19->value,
-                    AgeGroup::U15->value
+                    AgeGroup::U15->value,
                 ],
             ]);
             $contents = $response->getBody()->getContents();
             $this->cache->put($cacheKey, $contents, self::CACHE_TTL);
-            Log::info("Putting ranking list into cache");
+            Log::info('Putting ranking list into cache');
         } else {
-            Log::info("Ranking list found in cache");
+            Log::info('Ranking list found in cache');
         }
 
         $serializer = SerializerHelper::getSerializer();
         /** @var RankingPair $rankingPair */
         $rankingPair = $serializer->deserialize($contents, RankingPair::class, 'json');
 
-        $ranking = new PlayersRanking();
+        $ranking = new PlayersRanking;
         if ($periodType === RankingPeriodType::CURRENT) {
             $ranking = $rankingPair->current;
         } else {
@@ -224,12 +207,7 @@ class BadmintonPlayerAPI
         return $ranking;
     }
 
-    /**
-     * @param $data
-     *
-     * @return array
-     */
-    private function fixTeamPlayersToBeArray(&$data) : array
+    private function fixTeamPlayersToBeArray(&$data): array
     {
         foreach ($data as &$teamMatchLineup) {
             if (isset($teamMatchLineup['combinedTeamMatches'])) {
@@ -246,5 +224,4 @@ class BadmintonPlayerAPI
 
         return $data;
     }
-
 }

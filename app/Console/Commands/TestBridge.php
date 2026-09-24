@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
 
 class TestBridge extends Command
 {
-
     /**
      * The name and signature of the console command.
      *

@@ -1,11 +1,12 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper;
 
 use DiDom\Document;
 use DiDom\Element;
+use DiDom\Exceptions\InvalidSelectorException;
 use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\Scraper\Enums\Side;
 use FlyCompany\Scraper\Exception\NoPlayersException;
@@ -24,8 +25,7 @@ use Psr\Log\LoggerInterface;
 
 class Parser
 {
-
-    public function teamFights(string $html) : array
+    public function teamFights(string $html): array
     {
         $document = new Document($html);
         $trs = $document->find('table.matchlist tr');
@@ -41,9 +41,9 @@ class Parser
                 foreach ($tr->find('td') as $td) {
                     preg_match('/(\d+.*)\s+(\d{2}-\d{2}-\d{4})/', $td->text(), $output_array);
                     $currentRound = $output_array[1] ?? null;
-                    $currentRound = is_int($currentRound) ?: (int)$currentRound;
+                    $currentRound = is_int($currentRound) ?: (int) $currentRound;
                     $currentRoundDate = $output_array[2] ?? null;
-                    if($currentRoundDate !== null){
+                    if ($currentRoundDate !== null) {
                         $currentRoundDate = Carbon::parse($currentRoundDate);
                     }
                 }
@@ -55,7 +55,7 @@ class Parser
                 foreach ($tr->find('td.matchno') as $td) {
                     $data['matchId'] = $td->text();
                 }
-                $gameTime = $this->findTime((string)$tr->find('td.time')[0]);
+                $gameTime = $this->findTime((string) $tr->find('td.time')[0]);
                 $gameTime = Carbon::parse($gameTime);
                 $data['gameTime'] = $gameTime;
                 $data['round'] = $currentRound;
@@ -67,7 +67,7 @@ class Parser
         return $teams;
     }
 
-    public function clubTeams(string $html, int $clubId) : array
+    public function clubTeams(string $html, int $clubId): array
     {
         $document = new Document($html);
         $trs = $document->find('table.clubgrouplist tr.grouprow');
@@ -92,12 +92,11 @@ class Parser
     }
 
     /**
-     * @param string $html
-     *
      * @return array|PlayerSearch[]
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     *
+     * @throws InvalidSelectorException
      */
-    public function searchPlayer(string $html) : array
+    public function searchPlayer(string $html): array
     {
         $document = new Document($html);
         $trs = $document->find('table tr');
@@ -111,7 +110,7 @@ class Parser
             $gender = str_replace('\'', '', $arguments[5]);
 
             $tds = $playerTr->find('td');
-            $player = new PlayerSearch();
+            $player = new PlayerSearch;
             $player->refId = $tds[1]->text();
             $player->badmintonPlayerInternalId = $badmintonPlayerInternalId;
             $player->name = $tds[2]->text();
@@ -124,7 +123,7 @@ class Parser
         return $players;
     }
 
-    public static function parseFunction(string $function) : array
+    public static function parseFunction(string $function): array
     {
         /** @var string[] $parts */
         $parts = preg_match_all("/'(.+)'/", $function, $out);
@@ -136,36 +135,35 @@ class Parser
         }, $arguments);
     }
 
-    private function findTime(string $text) : string
+    private function findTime(string $text): string
     {
         $normalizedStr = \str_replace('‑', '-', $text);
 
         $datePattern = '/\((\d{2}-\d{2}-\d{4})\)/';
         if (preg_match($datePattern, $normalizedStr, $dateMatches)) {
             $date = $dateMatches[1];
-        }elseif(preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches)){
+        } elseif (preg_match('/(\d\d-\d\d-\d\d\d\d)/', $normalizedStr, $dateMatches)) {
             $date = $dateMatches[0];
-        }else{
+        } else {
             $date = '';
         }
 
         preg_match('/(\d\d:\d\d)/', $normalizedStr, $timeMatches);
-        if (!empty($timeMatches)) {
-            $date .= ' ' . $timeMatches[0];
+        if (! empty($timeMatches)) {
+            $date .= ' '.$timeMatches[0];
         }
 
-        //dump($text, $date);
+        // dump($text, $date);
 
         return $date;
     }
 
     /**
-     * @param string $html
-     *
      * @return Player[]
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     *
+     * @throws InvalidSelectorException
      */
-    public function rankingListPlayers(string $html, string $rankingList, int $season) : array
+    public function rankingListPlayers(string $html, string $rankingList, int $season): array
     {
         $document = new Document($html);
         $trs = $document->find('table.RankingListGrid tr');
@@ -178,7 +176,7 @@ class Parser
         }
         $testRow = $trs[0];
         $seePlayer = $testRow->has('td.name') && $testRow->has('td.playerid');
-        if (!$seePlayer) {
+        if (! $seePlayer) {
             throw new NoPlayersException('No players');
         }
 
@@ -195,18 +193,18 @@ class Parser
 
             $points = $tr->find('td.points')[0]->text();
             $refId = \str_replace('‑', '-', $tr->find('td.playerid')[0]->text());
-            $position = preg_replace("/[^0-9]/", "", $tr->find('td')[1]->text());
+            $position = preg_replace('/[^0-9]/', '', $tr->find('td')[1]->text());
             $vintageText = $tr->find('td.clas')[0]->text();
 
-            preg_match_all("/(SEN|U09|U11|U13|U15|U17|U19|U23)/", $vintageText, $matches);
+            preg_match_all('/(SEN|U09|U11|U13|U15|U17|U19|U23)/', $vintageText, $matches);
             $vintage = $matches[1][0] ?? Util::calculateVintageByRefId($refId, BadmintonPlayerHelper::makeSeasonStart($season))->value ?? 'unknown';
 
-            $player = new Player();
+            $player = new Player;
             $player->name = $name;
             $player->refId = $refId;
             $player->gender = BadmintonPlayer::findGenderByRanking($rankingList);
             $player->vintage = $player->calculateVintage()->value;
-            $point = new Point((int)$points, (int)$position, $vintage);
+            $point = new Point((int) $points, (int) $position, $vintage);
             $point->setCategory(BadmintonPlayerHelper::rankingListNormalized($rankingList));
             $player->points = [$point];
             $playersCollection[] = $player;
@@ -215,7 +213,7 @@ class Parser
         return $playersCollection;
     }
 
-    private function parseMatchInformation(Document $document) : array
+    private function parseMatchInformation(Document $document): array
     {
         $trs = $document->find('table.matchinfo tr');
 
@@ -224,15 +222,15 @@ class Parser
         $playingCity = null;
         $playingZipCode = null;
 
-        foreach ($trs as $tr){
+        foreach ($trs as $tr) {
             $title = $tr->find('td.lbl')[0]->text();
-            if(Str::contains($title, 'Spillested', true)){
+            if (Str::contains($title, 'Spillested', true)) {
                 $descriptionNode = $tr->find('td.val')[0] ?? null;
-                if($descriptionNode === null){
+                if ($descriptionNode === null) {
                     continue;
                 }
                 $description = $descriptionNode->innerHtml();
-                [$playingPlace, $playingAddress, $playingCityAndZipCode] = array_pad(explode('<br>',$description, 3), 3, null);
+                [$playingPlace, $playingAddress, $playingCityAndZipCode] = array_pad(explode('<br>', $description, 3), 3, null);
                 $pattern = "/(\d+)\s+(.+)/";
                 preg_match($pattern, $playingCityAndZipCode, $matches);
                 $playingCity = $matches[2] ?? null;
@@ -244,17 +242,14 @@ class Parser
             'playingPlace' => $playingPlace,
             'playingAddress' => $playingAddress,
             'playingCity' => $playingCity,
-            'playingZipCode' => $playingZipCode
+            'playingZipCode' => $playingZipCode,
         ];
     }
 
     /**
-     * @param string $html
-     *
-     * @return TeamMatch
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws InvalidSelectorException
      */
-    public function teamMatch(string $html) : TeamMatch
+    public function teamMatch(string $html): TeamMatch
     {
         $document = new Document($html);
 
@@ -270,9 +265,9 @@ class Parser
         $club1 = $topRow[1]->text();
         $club2 = $topRow[2]->text();
 
-        $squad1 = new Squad();
+        $squad1 = new Squad;
         $squad1->playerLimit = 10;
-        $squad2 = new Squad();
+        $squad2 = new Squad;
         $squad2->playerLimit = 10;
         foreach ($trs as $match) {
             $categoryName = $match->find('td')[0]->text();
@@ -282,7 +277,7 @@ class Parser
             $playerTd = $match->find('td')[1];
             $aElement = $playerTd->find('a')[0] ?? null;
             [$club1Player1Name, $club1Player1BadmintonPlayerId] = $this->extractNameAndId($aElement);
-            if (!$isSinglePlayer) {
+            if (! $isSinglePlayer) {
                 $aElement1 = $playerTd->find('a')[1] ?? null;
                 [$club1Player2Name, $club1Player2BadmintonPlayerId] = $this->extractNameAndId($aElement1);
             } else {
@@ -292,7 +287,7 @@ class Parser
             $playerTd2 = $match->find('td')[2];
             $aElement2 = $playerTd2->find('a')[0] ?? null;
             [$club2Player1Name, $club2Player1BadmintonPlayerId] = $this->extractNameAndId($aElement2);
-            if (!$isSinglePlayer) {
+            if (! $isSinglePlayer) {
                 $aElement3 = $playerTd2->find('a')[1] ?? null;
                 [$club2Player2Name, $club2Player2BadmintonPlayerId] = $this->extractNameAndId($aElement3);
             } else {
@@ -303,17 +298,17 @@ class Parser
             $results = $this->extractedResults($results);
 
             // Squad 1
-            $categoryObj = new Category();
+            $categoryObj = new Category;
             $categoryObj->category = $category;
             $categoryObj->name = $categoryName;
             $categoryObj->results = $results;
             $squad1->categories[] = $categoryObj;
 
-            $player1 = new Player();
+            $player1 = new Player;
             $player1->name = $club1Player1Name;
             $player1->badmintonPlayerId = $club1Player1BadmintonPlayerId;
             if ($club1Player2Name !== null) {
-                $player2 = new Player();
+                $player2 = new Player;
                 $player2->name = $club1Player2Name;
                 $player2->badmintonPlayerId = $club1Player2BadmintonPlayerId;
                 $categoryObj->players[] = $player2;
@@ -322,17 +317,17 @@ class Parser
             $categoryObj->players[] = $player1;
 
             // Squad 2
-            $categoryObj = new Category();
+            $categoryObj = new Category;
             $categoryObj->category = $category;
             $categoryObj->name = $categoryName;
             $categoryObj->results = $results;
             $squad2->categories[] = $categoryObj;
 
-            $player1 = new Player();
+            $player1 = new Player;
             $player1->name = $club2Player1Name;
             $player1->badmintonPlayerId = $club2Player1BadmintonPlayerId;
             if ($club2Player2Name !== null) {
-                $player2 = new Player();
+                $player2 = new Player;
                 $player2->name = $club2Player2Name;
                 $player2->badmintonPlayerId = $club2Player2BadmintonPlayerId;
                 $categoryObj->players[] = $player2;
@@ -353,12 +348,7 @@ class Parser
         return $teamMatch;
     }
 
-    /**
-     * @param Element $aElement
-     *
-     * @return array
-     */
-    private function extractNameAndId(?Element $aElement) : array
+    private function extractNameAndId(?Element $aElement): array
     {
         if ($aElement === null) {
             return ['Ikke fremmødt', 0];
@@ -366,10 +356,10 @@ class Parser
         $href = $aElement->getAttribute('href');
         $badmintonPlayerId = Str::after($href, '#');
 
-        return [$aElement->text(), (int)$badmintonPlayerId];
+        return [$aElement->text(), (int) $badmintonPlayerId];
     }
 
-    private function findCategoryByName(string $categoryName) : string
+    private function findCategoryByName(string $categoryName): string
     {
         $category = null;
         $MD = 'MD';
@@ -398,18 +388,16 @@ class Parser
         }
 
         if ($category === null) {
-            throw new \RuntimeException('Unknown category ' . $category);
+            throw new \RuntimeException('Unknown category '.$category);
         }
 
         return $category;
     }
 
     /**
-     * @param array $resultsHtml
-     *
      * @return Result[]
      */
-    public function extractedResults(array $resultsHtml) : array
+    public function extractedResults(array $resultsHtml): array
     {
         $results = [];
         foreach ($resultsHtml as $result) {
@@ -421,19 +409,18 @@ class Parser
             // Use preg_match_all to find all matches
             preg_match_all($pattern, $text, $matches);
             [, $squad1Points, $squad2Points] = $matches;
-            $result = new Result();
+            $result = new Result;
             $squad1Points = $squad1Points[0] ?? null;
             $squad2Points = $squad2Points[0] ?? null;
             $result->homePoints = $squad1Points === null
                 ? $squad1Points
-                : (int)$squad1Points;
+                : (int) $squad1Points;
             $result->guestPoints = $squad2Points === null
                 ? $squad2Points
-                : (int)$squad2Points;
+                : (int) $squad2Points;
             $results[] = $result;
         }
 
         return $results;
     }
-
 }

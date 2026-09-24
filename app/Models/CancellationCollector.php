@@ -31,27 +31,27 @@ class CancellationCollector extends Model
         });
     }
 
-    public function scopeCurrentUser(Builder $query) : Builder
+    public function scopeCurrentUser(Builder $query): Builder
     {
         return $query->where('user_id', Auth::user()->id);
     }
 
-    public function clubs() : BelongsToMany
+    public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'cancellation_collector_clubs', 'cancellation_collector_id', 'club_id');
     }
 
-    public function cancellations() : HasMany
+    public function cancellations(): HasMany
     {
         return $this->hasMany(Cancellation::class);
     }
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function clubhouse() : BelongsTo
+    public function clubhouse(): BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
     }

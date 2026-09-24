@@ -30,37 +30,37 @@ class LoopsUpdateContact implements ShouldQueue
 
         $clubhouse = $this->user->clubhouse;
         $clubName = '';
-        if($clubhouse !== null){
+        if ($clubhouse !== null) {
             $clubName = $clubhouse->name;
         }
         try {
             $properties = [
-                'name'       => $this->user->name,
-                'firstName'  => $this->user->name,
-                'lastName'   => '',
-                'createdAt'  => $this->user->created_at,
-                'source'     => 'api',
+                'name' => $this->user->name,
+                'firstName' => $this->user->name,
+                'lastName' => '',
+                'createdAt' => $this->user->created_at,
+                'source' => 'api',
                 'subscribed' => true,
-                'userGroup'  => 'coache',
-                'userId'     => $this->user->id,
-                'clubName'  => $clubName
+                'userGroup' => 'coache',
+                'userId' => $this->user->id,
+                'clubName' => $clubName,
             ];
             $email = $this->user->email;
-            if(app()->environment('production')) {
+            if (app()->environment('production')) {
                 $result = $client->contacts->update(email: $email, properties: $properties);
-            }else{
+            } else {
                 Log::debug('Update contact in loops.so');
                 Log::debug($email, $properties);
             }
         } catch (RateLimitExceededError $e) {
             // Handle rate limiting
-            echo "Rate limit hit. Limit: " . $e->getLimit() . ", requests remaining: " . $e->getRemaining();
+            echo 'Rate limit hit. Limit: '.$e->getLimit().', requests remaining: '.$e->getRemaining();
         } catch (APIError $e) {
             // Handle API errors (400, 401, 403, etc)
             echo $e->getMessage();
         } catch (\Exception $e) {
             // Handle any other unexpected errors
-            echo "Unexpected error: " . $e->getMessage();
+            echo 'Unexpected error: '.$e->getMessage();
         }
     }
 }

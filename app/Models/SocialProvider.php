@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models;
@@ -13,6 +14,4 @@ use Joselfonseca\LighthouseGraphQLPassport\Models\SocialProvider as BaseSocialPr
  * the `User::socialProviders()` relation reads via this class. Both share
  * the same `social_providers` table, so interop is transparent.
  */
-class SocialProvider extends BaseSocialProvider
-{
-}
+class SocialProvider extends BaseSocialProvider {}

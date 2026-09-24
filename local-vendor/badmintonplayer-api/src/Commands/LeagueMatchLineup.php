@@ -11,7 +11,6 @@ use Illuminate\Support\Arr;
 
 class LeagueMatchLineup extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -28,25 +27,23 @@ class LeagueMatchLineup extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI): int
     {
         $matches = $badmintonPlayerAPI->getPlayedLeagueMatches();
 
         $clubId = $this->option('clubId');
-        if($clubId !== null){
-            $clubId = (int)$clubId;
+        if ($clubId !== null) {
+            $clubId = (int) $clubId;
             $matches = $matches->getByClubId($clubId);
         }
 
         $limit = $this->option('limit');
-        if($limit !== null){
-            $matches = $matches->slice(0, (int)$limit);
+        if ($limit !== null) {
+            $matches = $matches->slice(0, (int) $limit);
         }
         echo json_encode($matches, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+
         return 0;
     }
-
 }

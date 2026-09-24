@@ -10,7 +10,6 @@ use Illuminate\Console\Command;
 
 class CacheWarmUp extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -27,10 +26,8 @@ class CacheWarmUp extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI) : int
+    public function handle(BadmintonPlayerAPI $badmintonPlayerAPI): int
     {
         $this->getOutput()->writeln('Warming up cache');
         $badmintonPlayerAPI->overrideCache();
@@ -38,12 +35,14 @@ class CacheWarmUp extends Command
         $this->getOutput()->writeln('Fetching current month ranking');
         $ranking = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::CURRENT);
         $ranking->playerRankings->setOverrideCache(true);
-        foreach ($ranking->playerRankings as $player){}
+        foreach ($ranking->playerRankings as $player) {
+        }
 
         $this->getOutput()->writeln('Fetching previous month ranking');
         $ranking = $badmintonPlayerAPI->getPlayerRanking(RankingPeriodType::PREVIOUS);
         $ranking->playerRankings->setOverrideCache(true);
-        foreach ($ranking->playerRankings as $player){}
+        foreach ($ranking->playerRankings as $player) {
+        }
 
         $this->getOutput()->writeln('Fetching coming league matches');
         $badmintonPlayerAPI->getCurrentLeagueMatches();
@@ -51,8 +50,6 @@ class CacheWarmUp extends Command
         $this->getOutput()->writeln('Fetching played league matches');
         $badmintonPlayerAPI->getPlayedLeagueMatches();
 
-
         return 0;
     }
-
 }

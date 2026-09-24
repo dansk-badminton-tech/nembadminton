@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper;
 
@@ -14,7 +14,6 @@ use Illuminate\Support\Arr;
 
 class Enricher
 {
-
     private BadmintonPlayer $scraper;
 
     public function __construct(BadmintonPlayer $scraper)
@@ -22,11 +21,12 @@ class Enricher
         $this->scraper = $scraper;
     }
 
-    public function teamMatch(Team $team, int $clubId, int $season, Carbon $version) : Team{
+    public function teamMatch(Team $team, int $clubId, int $season, Carbon $version): Team
+    {
 
         $playersWithPoints = [];
         foreach ($this->resolveClubs($clubId) as $currentClubId) {
-            $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string)$currentClubId, $version);
+            $rankingLists = $this->scraper->getAllRankingListPlayers($season, (string) $currentClubId, $version);
             $playersWithPoints += BadmintonPlayerHelper::collapseRankingLists($rankingLists);
         }
 
@@ -36,7 +36,7 @@ class Enricher
                     $player = $playersWithPoints[$player->name];
                 } else {
                     try {
-                        if (!$player->isNoBody()) {
+                        if (! $player->isNoBody()) {
                             $player = $this->scraper->getPlayerByBadmintonPlayerId(
                                 $player->badmintonPlayerId,
                                 $version,
@@ -54,14 +54,15 @@ class Enricher
             $category->players = array_filter($category->players, static function ($player) {
                 return $player !== null;
             });
-            $category->players = array_map(static function(Player $player) use ($season) {
+            $category->players = array_map(static function (Player $player) use ($season) {
                 $vintage = $player->calculateVintage(BadmintonPlayerHelper::makeSeasonStart($season));
-                $hasLevelPoint = Arr::first($player->points, static fn(Point $point) => $point->category === null) !== null;
-                if(!$hasLevelPoint && Util::isYoungPlayer($vintage)){
+                $hasLevelPoint = Arr::first($player->points, static fn (Point $point) => $point->category === null) !== null;
+                if (! $hasLevelPoint && Util::isYoungPlayer($vintage)) {
                     $point = new Point(0, 0, $vintage->value);
                     $point->setCategory(null);
                     $player->points[] = $point;
                 }
+
                 return $player;
             }, $category->players);
         }
@@ -69,7 +70,7 @@ class Enricher
         return $team;
     }
 
-    private function resolveClubs(int $clubId) : array
+    private function resolveClubs(int $clubId): array
     {
         $clubIds = [$clubId];
         if ($clubId < 0) {
@@ -91,6 +92,4 @@ class Enricher
 
         return $clubIds;
     }
-
-
 }

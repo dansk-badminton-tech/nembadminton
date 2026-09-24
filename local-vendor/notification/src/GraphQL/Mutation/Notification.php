@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlyCompany\Notification\GraphQL\Mutation;
 
 use App\Models\User;
@@ -14,36 +13,27 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Notification
 {
-
     /**
-     * @param                      $rootValue
-     * @param array<string, mixed> $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
-     *
-     * @return bool
+     * @param  array<string, mixed>  $args
      */
-    public function read($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : bool
+    public function read($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool
     {
         /** @var User $user */
         $user = $context->user();
         $user->unreadNotifications()->update(['read_at' => now()]);
+
         return true;
     }
 
     /**
-     * @param                      $rootValue
-     * @param array<string, mixed> $args
-     * @param GraphQLContext       $context
-     * @param ResolveInfo          $resolveInfo
+     * @param  array<string, mixed>  $args
      *
-     * @return true
      * @throws AuthorizationException
      */
-    public function send($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : true
+    public function send($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): true
     {
-        if(!Gate::allows("admin")){
-            throw new AuthorizationException();
+        if (! Gate::allows('admin')) {
+            throw new AuthorizationException;
         }
 
         $input = $args['input'];
@@ -55,19 +45,19 @@ class Notification
         $message = $input['message']['body'];
 
         /** @var User[] $receivers */
-        if($all){
+        if ($all) {
             $receivers = User::query()->get();
-        }else{
+        } else {
             $receivers = User::query()->whereIn('id', $users)->get();
         }
 
-        $notification = match ($type){
+        $notification = match ($type) {
             NotificationType::Release => new Release($title, $message)
         };
 
         \Illuminate\Support\Facades\Notification::send($receivers, $notification);
 
-        foreach ($receivers as $receiver){
+        foreach ($receivers as $receiver) {
             $notification = $receiver->notifications()->first();
             Subscription::broadcast('notifications', $notification);
         }

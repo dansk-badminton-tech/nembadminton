@@ -31,10 +31,10 @@ class TeamMatchesValidationFormat
      * Return a value for the field.
      *
      * @param  @param  null  $root Always null, since this field has no parent.
-     * @param array<string, mixed> $args The field arguments passed by the client.
-     * @param GraphQLContext $context Shared between all fields.
-     * @param ResolveInfo $resolveInfo Metadata for advanced query resolution.
-     * @return array
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  GraphQLContext  $context  Shared between all fields.
+     * @param  ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
+     *
      * @throws JsonException
      * @throws InvalidArgumentException
      * @throws ExceptionInterface
@@ -50,18 +50,18 @@ class TeamMatchesValidationFormat
 
         $matchesData = [];
         foreach ($matchIds as $matchId) {
-            $match = $matches->firstOrFail(static function(TeamMatchLineup $matchLineup) use ($matchId) {
+            $match = $matches->firstOrFail(static function (TeamMatchLineup $matchLineup) use ($matchId) {
                 return $matchLineup->match->leagueMatchId === $matchId;
             });
             $matchData = [
                 'name' => $match->match->divisionName,
-                'leagueMatchId' => (string)$match->match->leagueMatchId
+                'leagueMatchId' => (string) $match->match->leagueMatchId,
             ];
-            $squad = new Squad();
+            $squad = new Squad;
             $squad->playerLimit = 10; // Calculate based on team size
             $squad->league = LeagueType::OTHER->value; // Make this calculation based on divisionName
             foreach ($match->combinedTeamMatches as $category) {
-                $categoryModel = new Category();
+                $categoryModel = new Category;
                 $categoryModel->name = $category->teamPlayers[0]->getShortDiscipline();
                 $categoryModel->category = $category->teamPlayers[0]->getDiscipline()->shortName();
                 /** @var \FlyCompany\BadmintonPlayerAPI\Models\Player[] $players */
@@ -70,7 +70,7 @@ class TeamMatchesValidationFormat
                 foreach ($players as $player) {
                     $player = $playersInClub->getByPlayerNumber($player->playerNumber);
 
-                    $playerModel = new Player();
+                    $playerModel = new Player;
                     $playerModel->name = $player->name;
                     $playerModel->gender = $player->gender;
                     $playerModel->refId = $player->playerNumber;
@@ -82,7 +82,7 @@ class TeamMatchesValidationFormat
             $matchData['squad'] = $squad;
             $matchesData[] = $matchData;
         }
+
         return $matchesData;
     }
-
 }

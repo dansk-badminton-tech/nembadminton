@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlyCompany\BadmintonPlayerAPI\Models;
 
 use Carbon\Carbon;
@@ -16,14 +15,13 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class PlayerRankingIterator implements \Iterator
 {
+    private int $offset = 0;
 
-    private int   $offset    = 0;
+    private int $chunkSize = 5000;
 
-    private int   $chunkSize = 5000;
+    private array $items = [];
 
-    private array $items     = [];
-
-    private int   $position  = 0;
+    private int $position = 0;
 
     private bool $overrideCache = false;
 
@@ -33,10 +31,9 @@ class PlayerRankingIterator implements \Iterator
         private readonly ?Client $client,
         private readonly ?RankingPeriodType $periodType,
         private readonly ?Repository $cache
-    ) {
-    }
+    ) {}
 
-    public function current() : mixed
+    public function current(): mixed
     {
         return $this->items[$this->position];
     }
@@ -46,21 +43,21 @@ class PlayerRankingIterator implements \Iterator
      * @throws GuzzleException
      * @throws \JsonException
      */
-    public function next() : void
+    public function next(): void
     {
         if ($this->position === ($this->offset + $this->chunkSize) - 1) {
             $this->offset += $this->chunkSize;
             $this->updateItems($this->offset);
         }
-        ++$this->position;
+        $this->position++;
     }
 
-    public function key() : mixed
+    public function key(): mixed
     {
         return $this->position;
     }
 
-    public function valid() : bool
+    public function valid(): bool
     {
         return isset($this->items[$this->position]);
     }
@@ -70,7 +67,7 @@ class PlayerRankingIterator implements \Iterator
      * @throws GuzzleException
      * @throws \JsonException
      */
-    public function rewind() : void
+    public function rewind(): void
     {
         $this->updateItems($this->offset);
 
@@ -78,12 +75,9 @@ class PlayerRankingIterator implements \Iterator
     }
 
     /**
-     * @param int $start
-     *
-     * @return void
      * @throws ExceptionInterface
      */
-    public function updateItems(int $start) : void
+    public function updateItems(int $start): void
     {
         $end = $this->offset + $this->chunkSize;
         Log::info("Requesting player-ranking {$this->periodType->name} from $start to $end");
@@ -96,10 +90,10 @@ class PlayerRankingIterator implements \Iterator
                 $response = $this->client->post('Player/ranking', [
                     'query' => [
                         'rankingType' => $this->periodType->value,
-                        'start'       => $start,
-                        'stop'        => $this->chunkSize,
+                        'start' => $start,
+                        'stop' => $this->chunkSize,
                     ],
-                    'json'  => [
+                    'json' => [
                         AgeGroup::SEN->value,
                         AgeGroup::U17->value,
                         AgeGroup::U19->value,
@@ -109,25 +103,23 @@ class PlayerRankingIterator implements \Iterator
                 $content = $response->getBody()->getContents();
                 $this->cache->put($cacheKey, $content, static::CACHE_TTL);
             }
+
             return json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         });
 
         if ($this->periodType === RankingPeriodType::CURRENT) {
-            $players = $contents["current"]["playerRankings"];
+            $players = $contents['current']['playerRankings'];
         } else {
-            $players = $contents["previous"]["playerRankings"];
+            $players = $contents['previous']['playerRankings'];
         }
         $serializer = SerializerHelper::getSerializer();
-        $items = $serializer->denormalize($players, PlayerRanking::class . '[]');
+        $items = $serializer->denormalize($players, PlayerRanking::class.'[]');
         $fillerArr = array_fill(0, $start, null);
         $arr = array_merge($fillerArr, $items);
         $this->items = $arr;
     }
 
-    /**
-     * @param bool $overrideCache
-     */
-    public function setOverrideCache(bool $overrideCache) : void
+    public function setOverrideCache(bool $overrideCache): void
     {
         $this->overrideCache = $overrideCache;
     }

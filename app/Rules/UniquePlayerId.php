@@ -12,7 +12,7 @@ class UniquePlayerId implements ValidationRule
     {
         $user = auth()->user();
 
-        if (!$user || !$user->clubhouse_id) {
+        if (! $user || ! $user->clubhouse_id) {
             return;
         }
 

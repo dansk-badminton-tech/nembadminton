@@ -1,15 +1,14 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\Scraper\Models;
 
 class Category
 {
-
     public ?string $category;
 
-    public string  $name;
+    public string $name;
 
     /**
      * @var Result[]
@@ -20,5 +19,4 @@ class Category
      * @var Player[]
      */
     public array $players = [];
-
 }

@@ -9,36 +9,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @property int    id
  * @property string name1
- * @property boolean initialized
+ * @property bool initialized
  * @property int badmintonPlayerId
  */
 class Club extends Model
 {
-
     protected $fillable = ['id', 'name1', 'name2', 'address', 'zipCode', 'city', 'email', 'memberOf', 'union', 'badmintonPlayerId'];
 
     protected $casts = [
-        'initialized' => 'bool'
+        'initialized' => 'bool',
     ];
 
-    public function members() : BelongsToMany
+    public function members(): BelongsToMany
     {
         return $this->belongsToMany(Member::class);
     }
 
-    public function users() : BelongsToMany
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
 
-    public function clubhouses() : BelongsToMany
+    public function clubhouses(): BelongsToMany
     {
         return $this->belongsToMany(Clubhouse::class, 'clubhouse_club');
     }
 
-    public function scopeOrderByName(Builder $builder) : Builder
+    public function scopeOrderByName(Builder $builder): Builder
     {
         return $builder->orderBy('name1');
     }
-
 }

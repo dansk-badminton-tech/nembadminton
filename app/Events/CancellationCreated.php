@@ -18,8 +18,5 @@ class CancellationCreated
     /**
      * Create a new event instance.
      */
-    public function __construct(public readonly Cancellation $cancellation)
-    {
-
-    }
+    public function __construct(public readonly Cancellation $cancellation) {}
 }

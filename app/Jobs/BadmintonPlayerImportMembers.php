@@ -1,10 +1,12 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Models\Club;
 use Carbon\Carbon;
+use DiDom\Exceptions\InvalidSelectorException;
 use FlyCompany\Members\MemberManager;
 use FlyCompany\Members\PointsManager;
 use FlyCompany\Scraper\BadmintonPlayer;
@@ -17,7 +19,6 @@ use Illuminate\Support\Facades\Log;
 
 class BadmintonPlayerImportMembers implements ShouldQueue
 {
-
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private array $clubIds;
@@ -25,7 +26,7 @@ class BadmintonPlayerImportMembers implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param array|String[] $clubIds
+     * @param  array|string[]  $clubIds
      */
     public function __construct(array $clubIds)
     {
@@ -35,12 +36,10 @@ class BadmintonPlayerImportMembers implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param BadmintonPlayer $scraper
-     * @param MemberManager   $memberManager
-     * @param PointsManager   $pointsManager
      *
      * @return void
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     *
+     * @throws InvalidSelectorException
      * @throws \JsonException
      */
     public function handle(BadmintonPlayer $scraper, MemberManager $memberManager, PointsManager $pointsManager)
@@ -54,9 +53,9 @@ class BadmintonPlayerImportMembers implements ShouldQueue
         $now->setDay(1);
         $season = $this->calculateSeason($now);
         foreach ($this->clubIds as $clubId) {
-            /** @var \App\Models\Club $clubModel */
-            $clubModel = \App\Models\Club::query()->where(['id' => $clubId])->firstOrFail();
-            \FlyCompany\Club\Log::createLog((int)$clubId, "Begynder importering af medlemmer fra niveau ranglisten fra sæson $season.", 'member-importer');
+            /** @var Club $clubModel */
+            $clubModel = Club::query()->where(['id' => $clubId])->firstOrFail();
+            \FlyCompany\Club\Log::createLog((int) $clubId, "Begynder importering af medlemmer fra niveau ranglisten fra sæson $season.", 'member-importer');
             $syncIds = [];
             foreach ($rankingLists as $rankingList) {
                 $starting = Carbon::create($season, 7)->setTime(0, 0);
@@ -82,13 +81,13 @@ class BadmintonPlayerImportMembers implements ShouldQueue
                 }
             }
             $membersIds = array_unique($syncIds);
-            \FlyCompany\Club\Log::createLog((int)$clubId, "Importering af medlemmer fra sæson $season fuldført", 'member-importer');
-            Log::info("Added ".count($membersIds)." ids: " . implode(',', $membersIds));
+            \FlyCompany\Club\Log::createLog((int) $clubId, "Importering af medlemmer fra sæson $season fuldført", 'member-importer');
+            Log::info('Added '.count($membersIds).' ids: '.implode(',', $membersIds));
             $clubModel->members()->sync($membersIds);
         }
     }
 
-    private function calculateSeason(Carbon $currentTime) : int
+    private function calculateSeason(Carbon $currentTime): int
     {
         if ($currentTime->month > 6) {
             return $currentTime->year;

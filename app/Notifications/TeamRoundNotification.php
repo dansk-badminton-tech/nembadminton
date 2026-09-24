@@ -23,16 +23,14 @@ abstract class TeamRoundNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(protected TeamRound $team, protected ?string $message = null)
-    {
-    }
+    public function __construct(protected TeamRound $team, protected ?string $message = null) {}
 
     /**
      * The notification's delivery channels.
      *
      * @return array<int, string>
      */
-    public function via(User $notifiable) : array
+    public function via(User $notifiable): array
     {
         return ['database', WebPushChannel::class, 'mail'];
     }
@@ -40,17 +38,17 @@ abstract class TeamRoundNotification extends Notification implements ShouldQueue
     /**
      * @return array<string, mixed>
      */
-    public function toArray($notifiable) : array
+    public function toArray($notifiable): array
     {
         return [
-            'title'      => $this->getTitle(),
-            'body'       => $this->message ?: $this->getBody(),
+            'title' => $this->getTitle(),
+            'body' => $this->message ?: $this->getBody(),
             'action_url' => $this->getActionUrl(),
-            'created'    => Carbon::now()->toIso8601String(),
+            'created' => Carbon::now()->toIso8601String(),
         ];
     }
 
-    public function toWebPush($notifiable, $notification) : WebPushMessage
+    public function toWebPush($notifiable, $notification): WebPushMessage
     {
         return (new WebPushMessage)
             ->title($this->getTitle())
@@ -66,19 +64,19 @@ abstract class TeamRoundNotification extends Notification implements ShouldQueue
      * manual and test-self emails all look identical. A raw Mailable is not
      * auto-addressed by the mail channel, so we address it to the notifiable.
      */
-    public function toMail($notifiable) : TeamMail
+    public function toMail($notifiable): TeamMail
     {
         return (new TeamMail($this->team, $this->message))
             ->subject($this->getTitle())
             ->to($notifiable->routeNotificationFor('mail', $this));
     }
 
-    protected function getActionUrl() : string
+    protected function getActionUrl(): string
     {
         return url($this->getPath());
     }
 
-    protected function getPath() : string
+    protected function getPath(): string
     {
         return "/team-fight/{$this->team->id}/public-view";
     }
@@ -87,10 +85,10 @@ abstract class TeamRoundNotification extends Notification implements ShouldQueue
      * The notification title, shown as the mail subject, push title and
      * database title.
      */
-    abstract protected function getTitle() : string;
+    abstract protected function getTitle(): string;
 
     /**
      * The fallback body used when no custom message was provided.
      */
-    abstract protected function getBody() : string;
+    abstract protected function getBody(): string;
 }

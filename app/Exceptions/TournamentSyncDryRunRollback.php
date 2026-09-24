@@ -6,6 +6,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class TournamentSyncDryRunRollback extends RuntimeException
-{
-}
+class TournamentSyncDryRunRollback extends RuntimeException {}

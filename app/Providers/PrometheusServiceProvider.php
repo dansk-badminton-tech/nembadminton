@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers;
 
 use App\Models\Club;
@@ -34,12 +35,14 @@ class PrometheusServiceProvider extends ServiceProvider
             ->labels(['club_id', 'name'])
             ->value(static function () {
                 $teamsByClubs = TeamRound::query()->groupBy('club_id')->selectRaw('club_id, count(*) as total')->get();
-                return $teamsByClubs->map(function($teamsByClub){
+
+                return $teamsByClubs->map(function ($teamsByClub) {
                     /** @var Club $club */
-                    $club = Club::query()->where('id', '=',$teamsByClub->club_id)->firstOrFail();
+                    $club = Club::query()->where('id', '=', $teamsByClub->club_id)->firstOrFail();
+
                     return [$teamsByClub->total, ['club_id' => $teamsByClub->club_id, 'name' => $club->name1]];
                 })->toArray();
-        })->helpText('The total number of team fights by club.');
+            })->helpText('The total number of team fights by club.');
 
         Prometheus::addGauge('users_total')->value(static function () {
             return User::query()->count();
@@ -49,7 +52,7 @@ class PrometheusServiceProvider extends ServiceProvider
          * Uncomment this line if you want to export
          * all Horizon metrics to prometheus
          */
-        //$this->registerHorizonCollectors();
+        // $this->registerHorizonCollectors();
     }
 
     public function registerHorizonCollectors(): self

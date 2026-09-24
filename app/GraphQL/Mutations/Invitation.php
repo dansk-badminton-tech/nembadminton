@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\GraphQL\Mutations;
 
 use App\Enums\Role;
@@ -11,13 +10,13 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Invitation
 {
-
     /**
      * @throws \Throwable
      */
-    public function acceptInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo){
+    public function acceptInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
         /** @var InvitationModel $invitation */
-        $invitation = InvitationModel::query()->where('token','=',$args['token'])->where('status', '=', 'pending')->firstOrFail();
+        $invitation = InvitationModel::query()->where('token', '=', $args['token'])->where('status', '=', 'pending')->firstOrFail();
         $invitation->accept();
         $invitation->saveOrFail();
 
@@ -27,16 +26,17 @@ class Invitation
         return $invitation;
     }
 
-    public function declineInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo){
+    public function declineInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    {
         /** @var InvitationModel $invitation */
-        $invitation = InvitationModel::query()->where('token','=',$args['token'])->where('status', '=', 'pending')->firstOrFail();
+        $invitation = InvitationModel::query()->where('token', '=', $args['token'])->where('status', '=', 'pending')->firstOrFail();
         $invitation->decline();
         $invitation->saveOrFail();
 
         return $invitation;
     }
 
-    private function assignRole(User $user, InvitationModel $invitation) : void
+    private function assignRole(User $user, InvitationModel $invitation): void
     {
         setPermissionsTeamId($user->clubhouse_id);
         $user->assignRole(Role::from($invitation->role));
@@ -44,11 +44,10 @@ class Invitation
         $user->save();
     }
 
-    private function connectClubhouse(User $user, InvitationModel $invitation) : void
+    private function connectClubhouse(User $user, InvitationModel $invitation): void
     {
         $user->clubhouse()->associate($invitation->clubhouse);
         $user->clubhouses()->attach($invitation->clubhouse);
         $user->save();
     }
-
 }

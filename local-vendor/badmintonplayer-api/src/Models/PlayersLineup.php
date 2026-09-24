@@ -1,8 +1,6 @@
 <?php
 
-
 namespace FlyCompany\BadmintonPlayerAPI\Models;
-
 
 class PlayersLineup
 {

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlyCompany\CalendarFeed\Http\Controllers;
 
 use App\Models\Club;
@@ -10,7 +9,10 @@ use FlyCompany\BadmintonPlayerAPI\Models\TeamMatch;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Models\Team;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -20,11 +22,10 @@ use Spatie\IcalendarGenerator\Components\Event;
 
 class ICalController extends Controller
 {
-
     /**
      * @throws \JsonException
      */
-    public function icalClassic(int $clubId, BadmintonPlayer $badmintonPlayerAPI, Request $request) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    public function icalClassic(int $clubId, BadmintonPlayer $badmintonPlayerAPI, Request $request): Response|Application|ResponseFactory
     {
         /** @var Club $club */
         $club = Club::query()->where('id', '=', $clubId)->firstOrFail();
@@ -35,8 +36,8 @@ class ICalController extends Controller
         $teams = $badmintonPlayerAPI->getClubTeams($season, $clubId);
 
         if ($request->has('only')) {
-            $onlys = explode(",", $request->input('only'));
-            $onlys = array_map(static fn($value) => Str::replace('_', ' ', $value), $onlys);
+            $onlys = explode(',', $request->input('only'));
+            $onlys = array_map(static fn ($value) => Str::replace('_', ' ', $value), $onlys);
             $onlys = array_map('strtolower', $onlys);
             $teams = array_filter($teams, static function (Team $team) use ($onlys) {
                 return in_array(strtolower($team->name), $onlys, true);
@@ -44,20 +45,20 @@ class ICalController extends Controller
         }
 
         foreach ($teams as $team) {
-            if (in_array((int)$team->ageGroupId, [1, 6, 7])) {
+            if (in_array((int) $team->ageGroupId, [1, 6, 7])) {
                 $teamFights = $badmintonPlayerAPI->getTeamFights($season, $clubId, $team->ageGroupId, $team->leagueGroupId, $team->name);
                 foreach ($teamFights as $teamFight) {
-                    $badmintonPlayerUrl = 'https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $season . ',,,,,' . $teamFight["matchId"] . ',,';
-                    $url = $request->schemeAndHttpHost() . '/redirect?to=' . urlencode($badmintonPlayerUrl);
+                    $badmintonPlayerUrl = 'https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$season.',,,,,'.$teamFight['matchId'].',,';
+                    $url = $request->schemeAndHttpHost().'/redirect?to='.urlencode($badmintonPlayerUrl);
                     $event = Event::create()
-                                  ->name($this->generateTitle($teamFight["teams"]))
-                                  ->url($url)
-                                  ->description('Link til badmintonplayer (igennem Nembadminton): ' . $url);
-                    $playingTime = Carbon::parse($teamFight["gameTime"]);
-                    if($playingTime->isMidnight()){
+                        ->name($this->generateTitle($teamFight['teams']))
+                        ->url($url)
+                        ->description('Link til badmintonplayer (igennem Nembadminton): '.$url);
+                    $playingTime = Carbon::parse($teamFight['gameTime']);
+                    if ($playingTime->isMidnight()) {
                         $event->startsAt($playingTime, false)
-                              ->fullDay();
-                    }else{
+                            ->fullDay();
+                    } else {
                         $event->startsAt($playingTime);
                     }
                     $calendar->event($event);
@@ -72,7 +73,7 @@ class ICalController extends Controller
     /**
      * @throws InvalidArgumentException
      */
-    public function ical(int $clubId, BadmintonPlayerAPI $badmintonPlayerAPI) : \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    public function ical(int $clubId, BadmintonPlayerAPI $badmintonPlayerAPI): Response|Application|ResponseFactory
     {
         $matches = $badmintonPlayerAPI->getCurrentLeagueMatches();
 
@@ -90,10 +91,10 @@ class ICalController extends Controller
         $calendar = Calendar::create()->name($club->name1);
         foreach ($matches as $match) {
             $event = Event::create()
-                          ->name($match->divisionName . ' - ' . $match->groupName . ': ' . $match->teamName1 . ' vs ' . $match->teamName2)
-                          ->addressName($match->venueName)
-                          ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,' . $match->seasonId . ',,,,,' . $match->leagueMatchId . ',,')
-                          ->startsAt(Carbon::createFromTimeString($match->matchTime));
+                ->name($match->divisionName.' - '.$match->groupName.': '.$match->teamName1.' vs '.$match->teamName2)
+                ->addressName($match->venueName)
+                ->description('https://badmintonplayer.dk/DBF/HoldTurnering/Stilling/#5,'.$match->seasonId.',,,,,'.$match->leagueMatchId.',,')
+                ->startsAt(Carbon::createFromTimeString($match->matchTime));
             $calendar->event($event);
         }
 
@@ -101,12 +102,11 @@ class ICalController extends Controller
             ->header('Content-Type', 'text/calendar; charset=utf-8');
     }
 
-    public function generateTitle(array $teams1) : string
+    public function generateTitle(array $teams1): string
     {
         $team1Name = $teams1[0] ?? '';
         $team2Name = $teams1[1] ?? '';
 
-        return sprintf("%s VS %s", $team1Name, $team2Name);
+        return sprintf('%s VS %s', $team1Name, $team2Name);
     }
-
 }

@@ -1,11 +1,9 @@
 <?php
 
-
 namespace App\Enums;
 
-enum Role : string
+enum Role: string
 {
-
     case CLUB_ADMIN = 'club-admin';
     case COACH = 'coach';
     case SUPERADMIN = 'super-admin';

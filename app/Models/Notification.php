@@ -17,7 +17,7 @@ class Notification extends DatabaseNotification
         'read_at' => 'datetime',
     ];
 
-    public function scopeMyNotifications(Builder $builder) : Builder
+    public function scopeMyNotifications(Builder $builder): Builder
     {
         return $builder->where('notifiable_id', Auth::user()->getAuthIdentifier());
     }

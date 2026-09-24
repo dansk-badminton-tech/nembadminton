@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\TeamFight;
 
@@ -11,10 +11,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Enricher
 {
-
     /**
-     * @param Player[] $players
-     * @param string   $version
+     * @param  Player[]  $players
      */
     public function players(array $players, string $version)
     {
@@ -29,7 +27,7 @@ class Enricher
             /** @var \App\Models\Point[]|Collection $points */
             $points = $member->points()->where('version', $version)->get();
             foreach ($points as $pointModel) {
-                $point = new Point();
+                $point = new Point;
                 $point->points = $pointModel->points;
                 $point->position = $pointModel->position;
                 $point->category = $pointModel->category;
@@ -38,5 +36,4 @@ class Enricher
             }
         }
     }
-
 }

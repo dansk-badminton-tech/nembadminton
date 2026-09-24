@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace App\Console\Commands;
 
@@ -11,7 +12,6 @@ use Illuminate\Console\Command;
 
 class UpdateAllPoints extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -35,9 +35,10 @@ class UpdateAllPoints extends Command
     {
         /** @var Club[] $clubs */
         $clubs = Club::query()->where('initialized', '=', 1)->get();
-        foreach ($clubs as $club){
+        foreach ($clubs as $club) {
             BadmintonPlayerImportPoints::dispatch($club->badmintonPlayerId);
         }
+
         return 0;
     }
 }

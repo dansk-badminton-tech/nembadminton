@@ -4,12 +4,12 @@ namespace App\Notifications;
 
 class TeamPublish extends TeamRoundNotification
 {
-    protected function getTitle() : string
+    protected function getTitle(): string
     {
-        return 'Holdrunden er klar på ' . $this->team->resolveName();
+        return 'Holdrunden er klar på '.$this->team->resolveName();
     }
 
-    protected function getBody() : string
+    protected function getBody(): string
     {
         return 'Klik her for at se holdet';
     }

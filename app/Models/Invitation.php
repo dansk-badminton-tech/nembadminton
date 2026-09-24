@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use App\Util\Util;
@@ -15,22 +14,20 @@ use Illuminate\Support\Facades\URL;
  * @property int $id The unique identifier for the invitation.
  * @property int $clubhouse_id The ID of the clubhouse this invitation is associated with.
  * @property int $invited_by The ID of the user who sent the invitation.
- * @property int|null    $invitee_user_id The ID of the invited user, if already registered in the system.
+ * @property int|null $invitee_user_id The ID of the invited user, if already registered in the system.
  * @property string|null $invitee_email The email address of the invitee (if not yet registered).
- * @property string      $role The role assigned to the invitee within the clubhouse.
- * @property string      $token The unique token for this invitation.
- * @property string      $status The status of the invitation (e.g., 'pending', 'accepted', 'declined').
+ * @property string $role The role assigned to the invitee within the clubhouse.
+ * @property string $token The unique token for this invitation.
+ * @property string $status The status of the invitation (e.g., 'pending', 'accepted', 'declined').
  * @property Carbon|null $expires_at The datetime when the invitation expires.
  * @property Carbon|null $accepted_at The datetime when the invitation was accepted.
  * @property Carbon|null $created_at The datetime when the invitation was created.
  * @property Carbon|null $updated_at The datetime when the invitation was last updated.
  * @property string $url The Url for the invitation
- *
- * @property Clubhouse   $clubhouse The clubhouse (tenant) associated with this invitation.
- * @property User        $inviter The user who sent the invitation.
- * @property User|null   $invitee The user who was invited, if registered in the system.
+ * @property Clubhouse $clubhouse The clubhouse (tenant) associated with this invitation.
+ * @property User $inviter The user who sent the invitation.
+ * @property User|null $invitee The user who was invited, if registered in the system.
  */
-
 class Invitation extends Model
 {
     /**
@@ -63,8 +60,8 @@ class Invitation extends Model
      * @var array
      */
     protected $casts = [
-        'expires_at'  => 'datetime',
-        'accepted_at' => 'datetime'
+        'expires_at' => 'datetime',
+        'accepted_at' => 'datetime',
     ];
 
     protected static function booted()
@@ -79,7 +76,7 @@ class Invitation extends Model
     /**
      * Get the clubhouse (tenant) associated with this invitation.
      */
-    public function clubhouse() : BelongsTo
+    public function clubhouse(): BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);
     }
@@ -87,7 +84,7 @@ class Invitation extends Model
     /**
      * Get the user who sent the invitation.
      */
-    public function inviter() : BelongsTo
+    public function inviter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invited_by');
     }
@@ -95,21 +92,24 @@ class Invitation extends Model
     /**
      * Get the invitee if already registered in the system.
      */
-    public function invitee() : BelongsTo
+    public function invitee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invitee_user_id');
     }
 
-    public function getUrlAttribute() : string {
+    public function getUrlAttribute(): string
+    {
         return URL::query('/app/invitation/'.$this->token);
     }
 
-    public function accept() {
+    public function accept()
+    {
         $this->accepted_at = Carbon::now();
         $this->status = 'accepted';
     }
 
-    public function decline() {
+    public function decline()
+    {
         $this->status = 'declined';
     }
 }

@@ -1,17 +1,16 @@
 <?php
 
-
 namespace App\Http\Middleware;
 
 use App\Models\User;
 
 class SetClubhouseId
 {
-
-    public function handle($request, \Closure $next){
+    public function handle($request, \Closure $next)
+    {
         /** @var User $user */
         $user = auth()->user();
-        if($user !== null){
+        if ($user !== null) {
             // session value set on login
             setPermissionsTeamId($user->clubhouse_id);
         }
@@ -23,5 +22,4 @@ class SetClubhouseId
 
         return $next($request);
     }
-
 }

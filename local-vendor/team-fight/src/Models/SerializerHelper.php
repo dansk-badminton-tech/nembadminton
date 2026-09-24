@@ -1,6 +1,6 @@
 <?php
-declare(strict_types = 1);
 
+declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\Models;
 
@@ -13,20 +13,15 @@ use Symfony\Component\Serializer\Serializer;
 
 class SerializerHelper
 {
-
-    /**
-     * @return Serializer
-     */
-    public static function getSerializer() : Serializer
+    public static function getSerializer(): Serializer
     {
-        $phpDocExtractor = new PhpDocExtractor();
+        $phpDocExtractor = new PhpDocExtractor;
         $typeExtractors = [$phpDocExtractor];
         $propertyInfo = new PropertyInfoExtractor([], $typeExtractors);
 
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ArrayDenormalizer(), new ObjectNormalizer(null, null, null, $propertyInfo)];
+        $encoders = [new JsonEncoder];
+        $normalizers = [new ArrayDenormalizer, new ObjectNormalizer(null, null, null, $propertyInfo)];
 
         return new Serializer($normalizers, $encoders);
     }
-
 }

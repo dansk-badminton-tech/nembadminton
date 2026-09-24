@@ -1,8 +1,8 @@
 <?php
 
-
 namespace FlyCompany\Scraper\GraphQL\Queries;
 
+use DiDom\Exceptions\InvalidSelectorException;
 use FlyCompany\Scraper\BadmintonPlayer;
 use FlyCompany\TeamFight\Enricher;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -11,15 +11,8 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 class BadmintonPlayerTeamMatch
 {
-
-    /**
-     * @var BadmintonPlayer
-     */
     private BadmintonPlayer $scraper;
 
-    /**
-     * @var Enricher
-     */
     private Enricher $enricher;
 
     public function __construct(BadmintonPlayer $scraper, Enricher $enricher)
@@ -31,15 +24,14 @@ class BadmintonPlayerTeamMatch
     /**
      * Return a value for the field.
      *
-     * @param null                                                $root        Always null, since this field has no parent.
-     * @param array<string, mixed>                                $args        The field arguments passed by the client.
-     * @param \Nuwave\Lighthouse\Support\Contracts\GraphQLContext $context     Shared between all fields.
-     * @param \GraphQL\Type\Definition\ResolveInfo                $resolveInfo Metadata for advanced query resolution.
-     *
+     * @param  null  $root  Always null, since this field has no parent.
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  GraphQLContext  $context  Shared between all fields.
+     * @param  ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      * @return mixed
-     * @throws \JsonException
      *
-     * @throws \DiDom\Exceptions\InvalidSelectorException
+     * @throws \JsonException
+     * @throws InvalidSelectorException
      * @throws InvalidArgumentException
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
@@ -50,7 +42,7 @@ class BadmintonPlayerTeamMatch
 
         $teamMatch = $this->scraper->getTeamMatch($leagueMatchId, $season);
 
-        if($version !== null){
+        if ($version !== null) {
             foreach ($teamMatch->guest->squad->categories as $category) {
                 $this->enricher->players($category->players, $version);
             }

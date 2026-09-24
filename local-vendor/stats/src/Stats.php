@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FlyCompany\Stats;
 
 use App\Models\Club;
@@ -17,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 
 class Stats
 {
-
     public function getMetric(Metric $metric)
     {
         return match ($metric) {
@@ -27,85 +25,72 @@ class Stats
         };
     }
 
-    private function getTeamRoundsCount() : array{
-        return Squad::query()
-                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
-                    ->groupBy('date')
-                    ->orderBy('date', 'desc')
-                    ->get()
-                    ->map(function (Squad $data) {
-                        return [
-                            'points'  => $data['count'],
-                            'version' => Carbon::createFromFormat('Y-m',$data['date']),
-                        ];
-                    })->toArray();
-    }
-
-    private function getImportedClubsCount(){
-        return Club::query()
-                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
-                    ->where('initialized', '=', 1)
-                    ->groupBy('date')
-                    ->orderBy('date', 'desc')
-                    ->get()
-                    ->map(function (Club $data) {
-                        return [
-                            'points'  => $data['count'],
-                            'version' => Carbon::createFromFormat('Y-m',$data['date']),
-                        ];
-                    })->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    private function teamRoundsCount() : array
+    private function getTeamRoundsCount(): array
     {
-        return TeamRound::query()
-                    ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
-                    ->groupBy('date')
-                    ->orderBy('date', 'desc')
-                    ->get()
-                    ->map(function (TeamRound $data) {
+        return Squad::query()
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function (Squad $data) {
                 return [
-                    'points'  => $data['count'],
-                    'version' => Carbon::createFromFormat('Y-m',$data['date']),
+                    'points' => $data['count'],
+                    'version' => Carbon::createFromFormat('Y-m', $data['date']),
                 ];
             })->toArray();
     }
 
-    /**
-     * @param string   $memberId
-     * @param Category $category
-     *
-     * @return Collection
-     */
-    public function getCategoryPoint(string $memberId, Category $category) : Collection
+    private function getImportedClubsCount()
+    {
+        return Club::query()
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+            ->where('initialized', '=', 1)
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function (Club $data) {
+                return [
+                    'points' => $data['count'],
+                    'version' => Carbon::createFromFormat('Y-m', $data['date']),
+                ];
+            })->toArray();
+    }
+
+    private function teamRoundsCount(): array
+    {
+        return TeamRound::query()
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as date, count(*) as count')
+            ->groupBy('date')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->map(function (TeamRound $data) {
+                return [
+                    'points' => $data['count'],
+                    'version' => Carbon::createFromFormat('Y-m', $data['date']),
+                ];
+            })->toArray();
+    }
+
+    public function getCategoryPoint(string $memberId, Category $category): Collection
     {
         return Point::query()
-                    ->where('category', $category)
-                    ->whereHas('member', function (Builder $query) use ($memberId) {
-                        $query->where('id', $memberId);
-                    })
-                    ->where('version', '>=', BadmintonPlayerHelper::getCurrentSeasonStart()->subYear())
-                    ->orderBy('version')->get();
+            ->where('category', $category)
+            ->whereHas('member', function (Builder $query) use ($memberId) {
+                $query->where('id', $memberId);
+            })
+            ->where('version', '>=', BadmintonPlayerHelper::getCurrentSeasonStart()->subYear())
+            ->orderBy('version')->get();
     }
 
     /**
-     * @param array    $clubIDs
-     * @param Category $category
-     * @param int      $limit
-     * @param string   $orderBy
-     * @param string[] $vintages
-     *
-     * @return array
+     * @param  string[]  $vintages
      */
-    public function getLowToHighestPoints(array $clubIDs, Category $category, int $limit, string $orderBy, array $vintages) : array
+    public function getLowToHighestPoints(array $clubIDs, Category $category, int $limit, string $orderBy, array $vintages): array
     {
 
-        $clubIds = implode(',', array_filter($clubIDs, static fn($clubId) => is_int($clubId)));
+        $clubIds = implode(',', array_filter($clubIDs, static fn ($clubId) => is_int($clubId)));
 
-        $vintageResolved = implode(", ", array_map(static fn($vintage) => DB::escape($vintage), $vintages));
+        $vintageResolved = implode(', ', array_map(static fn ($vintage) => DB::escape($vintage), $vintages));
 
         $results = DB::select("
             WITH member_points AS (
@@ -144,22 +129,21 @@ class Stats
             LIMIT :limit
         ", [
             'category' => $category->value,
-            'version'  => BadmintonPlayerHelper::getCurrentSeasonStart(),
-            'limit'    => $limit,
+            'version' => BadmintonPlayerHelper::getCurrentSeasonStart(),
+            'limit' => $limit,
         ]);
 
         $data = [];
 
         foreach ($results as $result) {
             $data[] = [
-                'member'         => Member::query()->find($result->member_id),
+                'member' => Member::query()->find($result->member_id),
                 'earliestPoints' => $result->earliest_points,
-                'latestPoints'   => $result->latest_points,
-                'totalIncrease'  => $result->total_increase,
+                'latestPoints' => $result->latest_points,
+                'totalIncrease' => $result->total_increase,
             ];
         }
 
         return $data;
     }
-
 }

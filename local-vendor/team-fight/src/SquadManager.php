@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace FlyCompany\TeamFight;
 
 use App\Models\Member;
@@ -22,24 +21,22 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class SquadManager
 {
-
     /**
      * @param  Squad[]  $squads
-     * @param  TeamRound  $team
      *
      * @throws \Throwable
      */
     public function addOrUpdateSquads(array $squads, TeamRound $team): void
     {
         foreach ($squads as $index => $squadInput) {
-            $squad = SquadModel::query()->whereHas('teamRound', function(Builder $builder) use ($team){
+            $squad = SquadModel::query()->whereHas('teamRound', function (Builder $builder) use ($team) {
                 $builder->where('id', $team->id);
             })->find($squadInput->id);
-            if($squad === null){
+            if ($squad === null) {
                 $squad = new SquadModel(['playerLimit' => $squadInput->playerLimit, 'order' => $index]);
                 $squad->forceFill(['team_round_id' => $team->id]);
                 $squad->saveOrFail();
-            }else{
+            } else {
                 $squad->updateOrFail(['playerLimit' => $squadInput->playerLimit, 'order' => $index]);
             }
             $squad->categories()->delete();
@@ -49,15 +46,14 @@ class SquadManager
 
     /**
      * @param  Squad[]  $squads
-     * @param  TeamRound  $team
      *
      * @throws \Throwable
      */
     public function removeDeletedSquads(array $squads, TeamRound $team): void
     {
         $shouldExistsIds = array_map('intval', Arr::pluck($squads, 'id'));
-        foreach ($team->squads as $squad){
-            if(!in_array($squad->id, $shouldExistsIds, true)){
+        foreach ($team->squads as $squad) {
+            if (! in_array($squad->id, $shouldExistsIds, true)) {
                 $squad->deleteOrFail();
             }
         }
@@ -65,7 +61,6 @@ class SquadManager
 
     /**
      * @param  Category[]  $categories
-     * @param  SquadModel  $squad
      *
      * @throws \Throwable
      */
@@ -81,7 +76,6 @@ class SquadManager
 
     /**
      * @param  Player[]  $players
-     * @param  SquadCategory  $category
      */
     private function createPlayers(array $players, SquadCategory $category): void
     {
@@ -92,7 +86,7 @@ class SquadManager
                     'gender' => $player->gender,
                     'name' => $player->name,
                     'member_ref_id' => $player->refId,
-                    'squad_category_id' => $category->id
+                    'squad_category_id' => $category->id,
                 ]
             );
             $this->createPoints($player->points, $member);
@@ -101,7 +95,6 @@ class SquadManager
 
     /**
      * @param  Point[]  $points
-     * @param  SquadMember  $member
      */
     private function createPoints(array $points, SquadMember $member): void
     {
@@ -112,13 +105,13 @@ class SquadManager
                 'category' => $point->category,
                 'position' => $point->position,
                 'vintage' => $point->vintage,
-                'squad_member_id' => $member->id
+                'squad_member_id' => $member->id,
             ];
         }
         SquadPoint::query()->insert($values);
     }
 
-    public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam, ?int $officialScenarioId = null) : SquadModel
+    public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam, ?int $officialScenarioId = null): SquadModel
     {
         $newSquad = $sourceSquad->replicate();
         $targetTeam->squads()->save($newSquad);
@@ -144,16 +137,16 @@ class SquadManager
         }
 
         // A copied TeamRound starts without scenarios, so its copied lineup is unscoped.
-        foreach ($categories as $sourceCategory){
+        foreach ($categories as $sourceCategory) {
             $newCategory = $sourceCategory->replicate();
             $newCategory->team_round_scenario_id = null;
             $newSquad->categories()->save($newCategory);
 
-            foreach ($sourceCategory->players as $sourcePlayer){
+            foreach ($sourceCategory->players as $sourcePlayer) {
                 $newPlayer = $sourcePlayer->replicate();
                 $newCategory->players()->save($newPlayer);
 
-                foreach ($sourcePlayer->points as $point){
+                foreach ($sourcePlayer->points as $point) {
                     $newPoint = $point->replicate();
                     $newPlayer->points()->save($newPoint);
                 }
@@ -168,24 +161,24 @@ class SquadManager
 
         /** @var Member $member */
         $member = Member::query()
-                        ->where('refId', '=', $refId)
-                        ->firstOrFail();
+            ->where('refId', '=', $refId)
+            ->firstOrFail();
         $squadMember = new SquadMember([
-            'name'          => $member->name,
-            'gender'        => $member->gender,
+            'name' => $member->name,
+            'gender' => $member->gender,
             'member_ref_id' => $member->refId,
-            'squad_category_id' => $categoryId
+            'squad_category_id' => $categoryId,
         ]);
         $squadMember->save();
 
-        foreach ($member->points()->where('version', '=', $version)->get() as $point){
+        foreach ($member->points()->where('version', '=', $version)->get() as $point) {
             $squadMember->points()->create([
                 'points' => $point->points,
                 'position' => $point->position,
                 'category' => $point->category,
                 'squad_member_id' => $squadMember->id,
                 'vintage' => $point->vintage,
-                'version' => $point->version
+                'version' => $point->version,
             ]);
         }
 
@@ -193,19 +186,18 @@ class SquadManager
     }
 
     /**
-     * @param int    $userId
-     * @param string $squadId
-     *
-     * @return SquadModel
+     * @param  int  $userId
+     * @param  string  $squadId
      */
-    private function getSquadOrFail(int $squadId): \App\Models\Squad
+    private function getSquadOrFail(int $squadId): SquadModel
     {
-        return \App\Models\Squad::query()->where('id', '=', $squadId)->firstOrFail();
+        return SquadModel::query()->where('id', '=', $squadId)->firstOrFail();
     }
 
-    public function updatePoints(int $squadId, ?string $version) : SquadModel{
+    public function updatePoints(int $squadId, ?string $version): SquadModel
+    {
 
-        return DB::transaction(function() use ($squadId, $version) {
+        return DB::transaction(function () use ($squadId, $version) {
             $squad = $this->getSquadOrFail($squadId);
             $squad->fill(['version' => $version]);
             $squad->saveOrFail();
@@ -213,17 +205,17 @@ class SquadManager
             $pointVersion = $version ?? $squad->teamRound->version;
 
             /** @var SquadCategory $category */
-            foreach ($squad->categories()->with('players')->get() as $category){
-                foreach ($category->players as $member){
+            foreach ($squad->categories()->with('players')->get() as $category) {
+                foreach ($category->players as $member) {
                     $member->points()->delete();
                     /** @var \App\Models\Point[] $points */
                     $points = \App\Models\Point::query()
-                                   ->where('version', $pointVersion)
-                                   ->whereHas('member', function (Builder $query) use ($member) {
-                                       $query->where('refId', $member->member_ref_id);
-                                   })->get();
+                        ->where('version', $pointVersion)
+                        ->whereHas('member', function (Builder $query) use ($member) {
+                            $query->where('refId', $member->member_ref_id);
+                        })->get();
                     foreach ($points as $point) {
-                        $squadPoint = new SquadPoint();
+                        $squadPoint = new SquadPoint;
                         $squadPoint->position = $point->position;
                         $squadPoint->category = $point->category;
                         $squadPoint->points = $point->points;
@@ -234,17 +226,19 @@ class SquadManager
                     }
                 }
             }
+
             return $squad;
         });
     }
-    public function updatePointsOnAllSquadsInTeamRound(TeamRound $teamRound, string $version) : TeamRound
+
+    public function updatePointsOnAllSquadsInTeamRound(TeamRound $teamRound, string $version): TeamRound
     {
-        foreach ($teamRound->squads as $squad){
+        foreach ($teamRound->squads as $squad) {
             /** @var SquadMember $player */
             $versionCurrent = $squad->version ?? $version;
             /** @var SquadCategory $category */
-            foreach ($squad->categories()->with('players')->get() as $category){
-                foreach ($category->players as $member){
+            foreach ($squad->categories()->with('players')->get() as $category) {
+                foreach ($category->players as $member) {
                     $member->points()->delete();
                     /** @var Point[] $points */
                     $points = \App\Models\Point::query()
@@ -253,7 +247,7 @@ class SquadManager
                             $query->where('refId', $member->member_ref_id);
                         })->get();
                     foreach ($points as $point) {
-                        $squadPoint = new SquadPoint();
+                        $squadPoint = new SquadPoint;
                         $squadPoint->position = $point->position;
                         $squadPoint->category = $point->category;
                         $squadPoint->points = $point->points;
@@ -265,18 +259,17 @@ class SquadManager
                 }
             }
         }
+
         return $teamRound;
     }
 
     /**
      * @param  GraphQLContext  $context
      * @param  mixed  $teamId
-     * @return TeamRound
      */
     private function getTeamOrFail(string $teamId): TeamRound
     {
         return TeamRound::query()
             ->where('id', $teamId)->lockForUpdate()->firstOrFail();
     }
-
 }

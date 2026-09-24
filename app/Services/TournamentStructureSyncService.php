@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class TournamentStructureSyncService
 {
-    public function __construct(private readonly BadmintonPlayerAPI $badmintonPlayerAPI)
-    {
-    }
+    public function __construct(private readonly BadmintonPlayerAPI $badmintonPlayerAPI) {}
 
     public function sync(bool $dryRun = false): array
     {
@@ -33,7 +31,7 @@ class TournamentStructureSyncService
                         $this->processMatch($match, $stats);
                     }
 
-                    throw new TournamentSyncDryRunRollback();
+                    throw new TournamentSyncDryRunRollback;
                 });
             } catch (TournamentSyncDryRunRollback) {
                 // Dry-run intentionally rolls back all writes.

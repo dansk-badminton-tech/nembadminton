@@ -11,21 +11,13 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class SquadMemberSearch
 {
-
-    /**
-     * @param $root
-     * @param  array  $args
-     * @param  GraphQLContext  $context
-     * @param  ResolveInfo  $resolveInfo
-     * @return Builder
-     */
     public function searchBuilder($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Builder
     {
         $builder = SquadMember::query();
 
         $squadId = $args['squadId'];
         $scenarioId = $args['scenarioId'] ?? null;
-        $builder->whereHas('category', static function(Builder $builder) use ($squadId, $scenarioId) {
+        $builder->whereHas('category', static function (Builder $builder) use ($squadId, $scenarioId) {
             $builder->where('squad_id', $squadId)
                 ->where('team_round_scenario_id', $scenarioId);
         });
@@ -33,11 +25,10 @@ class SquadMemberSearch
         $builder->where('name', 'like', $args['name']);
 
         $gender = $args['gender'] ?? null;
-        if ($gender !== null){
+        if ($gender !== null) {
             $builder->whereIn('gender', $gender);
         }
 
         return $builder;
     }
-
 }

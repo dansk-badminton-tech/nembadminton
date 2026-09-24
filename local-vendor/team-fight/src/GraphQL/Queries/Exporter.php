@@ -23,28 +23,26 @@ class Exporter
      * Return a value for the field.
      *
      * @param  @param  null  $root Always null, since this field has no parent.
-     * @param array<string, mixed> $args The field arguments passed by the client.
-     * @param GraphQLContext $context Shared between all fields.
-     * @param ResolveInfo $resolveInfo Metadata for advanced query resolution.
-     *
+     * @param  array<string, mixed>  $args  The field arguments passed by the client.
+     * @param  GraphQLContext  $context  Shared between all fields.
+     * @param  ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      * @return mixed
      */
-    public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) : string
+    public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): string
     {
         /** @var TeamRound $team */
         $teamRoundId = $args['teamRoundId'];
-        $includeCategories = (bool)($args['includeCategories'] ?? true);
+        $includeCategories = (bool) ($args['includeCategories'] ?? true);
         $team = TeamRound::query()->where('id', $teamRoundId)->where('clubhouse_id', $context->user()->clubhouse_id)->firstOrFail();
         $csvData = $this->exporter->exportToCSV($team, $includeCategories);
 
         $randomNumber = date('d-m-Y_H-i-s');
         $filePath = "team-fight/exports/$teamRoundId-$randomNumber.csv";
         $success = Storage::disk('public')->put($filePath, (chr(0xEF).chr(0xBB).chr(0xBF)).$csvData);
-        if($success === false){
+        if ($success === false) {
             throw new \RuntimeException('Failed to save '.$filePath);
         }
 
         return Storage::disk('public')->url($filePath);
     }
-
 }
