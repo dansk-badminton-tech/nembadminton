@@ -45,7 +45,7 @@ Valideringen tager udgangspunkt i [reglementet for DH-turneringen](https://badmi
 
 Mellem holdene kontrolleres det, om der er spillere på et lavere rangerende hold, der er bedre placeret på NIVEAU-ranglisten, inklusive den tilladte buffer.
 
-Internt på holdet kontrolleres det, om spillere står for lavt i en kategori. Det gøres både i single med en buffer på 50 point og i double med en buffer på 100 point.
+Internt på holdet kontrolleres det, om spillere står for højt i en kategori. Det gøres både i single med en buffer på 50 point og i double med en buffer på 100 point.
 
 ## Er der taget højde for U15-, U17- og U19-spillere?
 

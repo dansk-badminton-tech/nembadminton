@@ -97,6 +97,8 @@
     </div>
 </template>
 <script>
+import {buildValidationErrors, invalidLevelTip} from './validation-status.js'
+
 export default {
     name: 'ValidationStatus',
     props: {
@@ -163,27 +165,7 @@ export default {
             return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true;
         },
         allErrors() {
-            const errors = [];
-            if (this.incompleteTeam) {
-                this.basicSquads.forEach(squad => {
-                    if (!squad.spotsFulfilled) {
-                        errors.push(`Hold ${squad.index + 1} mangler spillere.`);
-                    }
-                });
-            }
-            if (this.invalidLevel) {
-                this.invalidLevelList.forEach(player => {
-                    const belowNames = player.belowPlayer.map(p => p.name).join(', ');
-                    errors.push(`${player.name} spiller på et for højt rangeret hold i forhold til ${belowNames}.`);
-                });
-            }
-            if (this.invalidCategory) {
-                this.invalidCategoryList.forEach(player => {
-                    const belowNames = player.belowPlayer.map(p => p.name).join(', ');
-                    errors.push(`${player.name} spiller for højt i sin kategori (${player.category}) i forhold til ${belowNames}.`);
-                });
-            }
-            return errors;
+            return buildValidationErrors(this)
         },
         incompleteTeamTip() {
             if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'
@@ -195,8 +177,7 @@ export default {
             return this.invalidCategory ? 'En eller flere spillere spiller for højt i deres kategori (Bryder § 38. stk. 2 og 3).' : 'Kategoriordningen overholdes (§ 38. stk. 2 og 3).'
         },
         invalidLevelTip() {
-            if (this.invalidLevel === null) return 'Deaktiveret indtil alle hold er fuldt besat'
-            return this.invalidLevel ? 'En eller flere spillere spiller på et forkert hold (Bryder § 38. stk. 4).' : 'Niveauordningen overholdes (§ 38. stk. 4).'
+            return invalidLevelTip(this.invalidLevel)
         }
     }
 }

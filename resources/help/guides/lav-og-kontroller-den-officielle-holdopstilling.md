@@ -52,7 +52,7 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 | Fejl | Sådan retter du den |
 | --- | --- |
 | **Hold 2 mangler spillere.** | Udfyld de tomme pladser på holdet. |
-| **… spiller på et for højt rangeret hold i forhold til …** | Byt om på spillerne, så den bedst placerede spiller står på det højeste hold. |
+| **… spiller på et for lavt rangeret hold i forhold til …** | Byt om på spillerne, så den bedst placerede spiller står på det højeste hold. |
 | **… spiller for højt i sin kategori (HS) i forhold til …** | Byt om på spillernes pladser i kategorien på holdet. |
 
 ## Hvis en spiller mangler eller har forkerte point
@@ -73,7 +73,7 @@ Rettelsen gælder kun spilleren på denne plads i denne holdrunde. Står spiller
 
 Kontrollen er en hjælp, men den dækker ikke alle regler. I disse situationer skal du selv tage stilling:
 
-- **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Står en ungdomsspiller for højt, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategorivalidering** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
+- **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Hvis en ungdomsspiller ellers ville udløse en niveau- eller kategorifejl, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategorivalidering** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
 - **Spillere i andre holdrunder:** Spillere markeret med **Optaget på:** er ikke en del af kontrollen.
 - **Et hold, der bevidst ikke er fuldt besat:** Slå kontakten ved **Hold fuldendt** fra. Kontrollen viser **Deaktiveret**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene. Valget gemmes ikke, så kontakten er slået til igen, næste gang du åbner holdrunden.
 

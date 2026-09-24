@@ -1,5 +1,6 @@
 import {difference, uniq} from "lodash/array.js";
 import {isArray} from "lodash";
+import {formatBelowPlayers} from './views/team-fight/validation-status.js'
 
 export function chunk(array, size) {
     const chunked_arr = [];
@@ -259,12 +260,12 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
 export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
     let msg = []
     let resolveNames = (playerWithBelowPlayers) => {
-        let names = playerWithBelowPlayers.belowPlayer.map(x => (x.category
-                                                                 ? x.category + ': '
-                                                                 : '') + '' + x.name + (x.balance
-                                                                                        ? ' (Forskel: ' + x.balance
-                                                                + ')'
-                                                                                        : ''))
+        let names = formatBelowPlayers(playerWithBelowPlayers.belowPlayer, x => (x.category
+                                                                                 ? x.category + ': '
+                                                                                 : '') + '' + x.name + (x.balance
+                                                                                                        ? ' (Forskel: ' + x.balance
+                                                                                + ')'
+                                                                                                        : ''))
         return names.join('<br />')
     }
     let playerWithBelowPlayersCrossSquads = getPlayingToHighByBadmintonPlayerId(playingToHighCrossSquads, player)
