@@ -50,6 +50,12 @@ class TeamFightEditPage extends Page
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
             '@scenario-guide-link' => "[dusk='scenario-guide-link']",
+            '@scenario-selector-dropdown' => "[dusk='scenario-selector-dropdown']",
+            '@create-scenario-button' => "[dusk='create-scenario-button']",
+            '@scenario-draft-warning-banner' => "[dusk='scenario-draft-warning-banner']",
+            '@promote-scenario-button' => "[dusk='promote-scenario-button']",
+            '@rename-scenario-button' => "[dusk='rename-scenario-button']",
+            '@delete-scenario-button' => "[dusk='delete-scenario-button']",
             '@open-add-member-button' => "[dusk='open-add-member-button']",
             '@add-member-ref-birthday-input' => "[dusk='add-member-ref-birthday-input']",
             '@add-member-ref-end-input' => "[dusk='add-member-ref-end-input']",
@@ -313,6 +319,96 @@ class TeamFightEditPage extends Page
                 $this->fillCategorySlot($browser, $squadIndex, $categoryName, $playerName);
             }
         }
+    }
+
+    // ─── Scenario lifecycle ─────────────────────────────────────────────
+
+    public function createScenarioFromOfficial(Browser $browser, string $name): void
+    {
+        $browser->click('@create-scenario-button')
+            ->waitFor('.dialog input')
+            ->assertSeeIn('.dialog', 'Officiel opstilling');
+        $this->replaceInputValue($browser, '.dialog input', $name);
+        $browser->click('.dialog .modal-card-foot .button:last-child')
+            ->waitForTextIn('@scenario-draft-warning-banner', $name, 15);
+    }
+
+    public function selectScenario(Browser $browser, string $name): void
+    {
+        $this->scrollToCenter($browser, '@scenario-selector-dropdown');
+        $browser->click('@scenario-selector-dropdown .dropdown-trigger')
+            ->waitFor('@scenario-selector-dropdown .dropdown-menu');
+        $label = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $browser->script(<<<JS
+            Array.from(document.querySelectorAll("[dusk='scenario-selector-dropdown'] .dropdown-item"))
+                .find(item => item.textContent.includes({$label})).click();
+        JS);
+        $browser->waitForTextIn('@scenario-selector-dropdown .dropdown-trigger', $name, 15);
+    }
+
+    public function assertScenarioSelected(Browser $browser, string $name, bool $official): void
+    {
+        $browser->waitForTextIn('@scenario-selector-dropdown .dropdown-trigger', $name, 15)
+            ->assertSeeIn('@scenario-selector-dropdown .dropdown-trigger', $official ? '(Officiel)' : '(Udkast)');
+        if ($official) {
+            $browser->assertMissing('@scenario-draft-warning-banner');
+        } else {
+            $browser->assertSeeIn('@scenario-draft-warning-banner', $name);
+        }
+    }
+
+    public function removeSquadMember(Browser $browser, int $squadIndex, string $name): void
+    {
+        $scope = json_encode("[dusk='squad-{$squadIndex}']", JSON_THROW_ON_ERROR);
+        $label = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $browser->script(<<<JS
+            const player = Array.from(document.querySelectorAll({$scope} + ' [data-player-id-input]'))
+                .find(input => input.parentElement.textContent.includes({$label}));
+            player.parentElement.querySelector('button[title="Slet"]').click();
+        JS);
+        $browser->waitUsing(15, 100, function () use ($browser, $name) {
+            return ! str_contains($browser->text('@team-table-section'), $name);
+        }, "Member {$name} was not removed from the Scenario");
+    }
+
+    public function renameScenario(Browser $browser, string $name): void
+    {
+        $browser->click('@rename-scenario-button')->waitFor('.dialog input');
+        $this->replaceInputValue($browser, '.dialog input', $name);
+        $browser->click('.dialog .modal-card-foot .button:last-child')
+            ->waitForTextIn('@scenario-draft-warning-banner', $name, 15);
+    }
+
+    public function cancelScenarioPromotion(Browser $browser): void
+    {
+        $browser->click('@promote-scenario-button')
+            ->waitFor('.dialog')
+            ->click('.dialog .modal-card-foot .button:first-child')
+            ->waitUntilMissing('.dialog');
+    }
+
+    public function confirmScenarioPromotion(Browser $browser): void
+    {
+        $browser->click('@promote-scenario-button')
+            ->waitFor('.dialog')
+            ->click('.dialog .modal-card-foot .button:last-child')
+            ->waitUntilMissing('@scenario-draft-warning-banner', 15);
+    }
+
+    public function cancelScenarioDeletion(Browser $browser): void
+    {
+        $browser->click('@delete-scenario-button')
+            ->waitFor('.dialog')
+            ->click('.dialog .modal-card-foot .button:first-child')
+            ->waitUntilMissing('.dialog');
+    }
+
+    public function confirmScenarioDeletion(Browser $browser): void
+    {
+        $browser->click('@delete-scenario-button')
+            ->waitFor('.dialog')
+            ->click('.dialog .modal-card-foot .button:last-child')
+            ->waitUntilMissing('@scenario-draft-warning-banner', 15);
     }
 
     // ─── Assertion methods ──────────────────────────────────────────────
