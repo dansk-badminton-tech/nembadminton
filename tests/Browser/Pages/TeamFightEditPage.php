@@ -325,6 +325,10 @@ class TeamFightEditPage extends Page
 
     public function createScenarioFromOfficial(Browser $browser, string $name): void
     {
+        $browser->assertMissing('@scenario-draft-warning-banner');
+        if ($browser->elements($browser->resolver->format('@scenario-selector-dropdown'))) {
+            $browser->assertSeeIn('@scenario-selector-dropdown .dropdown-trigger', '(Officiel)');
+        }
         $browser->click('@create-scenario-button')
             ->waitFor('.dialog input')
             ->assertSeeIn('.dialog', 'Officiel opstilling');
@@ -341,7 +345,7 @@ class TeamFightEditPage extends Page
         $label = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         $browser->script(<<<JS
             Array.from(document.querySelectorAll("[dusk='scenario-selector-dropdown'] .dropdown-item"))
-                .find(item => item.textContent.includes({$label})).click();
+                .find(item => item.querySelector('span:nth-child(2)')?.textContent.trim() === {$label}).click();
         JS);
         $browser->waitForTextIn('@scenario-selector-dropdown .dropdown-trigger', $name, 15);
     }
