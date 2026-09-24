@@ -117,6 +117,7 @@ export default {
                 <hr/>
                 <b-field v-for="innerPoints in squadMember.points" :key="innerPoints.id" :label="resolveCategoryName(innerPoints.category)">
                     <b-input
+                        :dusk="'edit-player-points-' + innerPoints.category"
                         type="number"
                         @update:modelValue="updatePoint(innerPoints, $event)"
                         :model-value="innerPoints.points"
@@ -127,6 +128,7 @@ export default {
             </section>
             <footer class="modal-card-foot">
                 <b-button
+                    dusk="edit-player-close-button"
                     label="Luk"
                     :loading="loading"
                     :disabled="loading"

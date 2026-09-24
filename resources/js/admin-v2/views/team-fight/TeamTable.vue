@@ -157,6 +157,7 @@
                             </b-tooltip>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
+                                    dusk="manual-correction-indicator"
                                     v-show="hasCorrectedPoints(player.points)"
                                     icon="information"
                                     type="is-info"
@@ -164,7 +165,7 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
-                                <b-button :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
+                                <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>

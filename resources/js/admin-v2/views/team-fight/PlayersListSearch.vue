@@ -2,8 +2,8 @@
     <div dusk="player-search-panel" class="sticky">
         <b-field grouped group-multiline>
             <b-input dusk="player-search-input" @update:modelValue="search" placeholder="Søg på navn"></b-input>
-            <b-switch v-model="showCancellation">Vis afbud</b-switch>
-            <b-switch v-show="!showCancellation" v-model="showInactive">Vis inaktive</b-switch>
+            <b-switch dusk="show-cancellation-switch" v-model="showCancellation">Vis afbud</b-switch>
+            <b-switch dusk="show-inactive-switch" v-show="!showCancellation" v-model="showInactive">Vis inaktive</b-switch>
             <b-switch v-show="showCancellation" v-model="showPlayable">Vis permanent afbud</b-switch>
         </b-field>
         <b-field v-show="!showCancellation" dusk="ranking-list-select" class="ranking-buttons">

@@ -64,7 +64,7 @@
                                 </router-link>
                             </h2>
                         </div>
-                        <b-button icon-left="plus" @click="openAddMemberModal()">
+                        <b-button dusk="open-add-member-button" icon-left="plus" @click="openAddMemberModal()">
                             Opret spiller
                         </b-button>
                     </div>

@@ -50,6 +50,16 @@ class TeamFightEditPage extends Page
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
             '@scenario-guide-link' => "[dusk='scenario-guide-link']",
+            '@open-add-member-button' => "[dusk='open-add-member-button']",
+            '@add-member-ref-birthday-input' => "[dusk='add-member-ref-birthday-input']",
+            '@add-member-ref-end-input' => "[dusk='add-member-ref-end-input']",
+            '@add-member-name-input' => "[dusk='add-member-name-input']",
+            '@add-member-gender-select' => "[dusk='add-member-gender-select']",
+            '@add-member-club-select' => "[dusk='add-member-club-select']",
+            '@add-member-save-button' => "[dusk='add-member-save-button']",
+            '@edit-squad-member-button' => "[dusk='edit-squad-member-button']",
+            '@manual-correction-indicator' => "[dusk='manual-correction-indicator']",
+            '@edit-player-close-button' => "[dusk='edit-player-close-button']",
         ];
     }
 
@@ -65,10 +75,88 @@ class TeamFightEditPage extends Page
     public function switchRankingList(Browser $browser, string $value): void
     {
         $selector = "[dusk='ranking-list-{$value}']";
-        $browser->waitFor($selector)
-            ->scrollIntoView($selector)
-            ->click($selector);
+        $browser->waitFor($selector);
+        $this->scrollToCenter($browser, $selector);
+        $browser->click($selector);
         $browser->waitFor("[dusk='player-search-panel'] table tbody tr", 15);
+    }
+
+    public function searchMembers(Browser $browser, string $name): void
+    {
+        $browser->waitFor('@player-search-input');
+        $this->replaceInputValue($browser, '@player-search-input', $name);
+    }
+
+    public function toggleMemberFilter(Browser $browser, string $filter): void
+    {
+        $selector = "[dusk='show-{$filter}-switch']";
+        $this->scrollToCenter($browser, $selector);
+        $browser->click($selector);
+    }
+
+    public function goToMemberSearchPage(Browser $browser, string $direction): void
+    {
+        $selector = "@player-search-panel .pagination-{$direction}";
+        $this->scrollToCenter($browser, $selector);
+        $browser->click($selector);
+    }
+
+    public function createLocalMember(Browser $browser, string $refId, string $name, string $gender, int $clubId, array $points): void
+    {
+        [$birthday, $endId] = explode('-', $refId);
+
+        $browser->click('@open-add-member-button')
+            ->waitFor('@add-member-name-input')
+            ->type('@add-member-ref-birthday-input', $birthday)
+            ->type('@add-member-ref-end-input', $endId)
+            ->type('@add-member-name-input', $name)
+            ->select('@add-member-gender-select', $gender)
+            ->waitFor("@add-member-club-select option[value='{$clubId}']")
+            ->select('@add-member-club-select', (string) $clubId);
+
+        foreach ($points as $category => $value) {
+            $browser->type("[dusk='add-member-points-{$category}']", (string) $value);
+        }
+
+        $browser->click('@add-member-save-button')
+            ->waitForText('Spiller oprettet')
+            ->waitUntilMissing('@add-member-name-input');
+    }
+
+    public function correctSquadMemberPoints(Browser $browser, int $squadIndex, string $category, int $points): void
+    {
+        $input = "[dusk='edit-player-points-{$category}']";
+
+        $browser->click("[dusk='squad-{$squadIndex}'] @edit-squad-member-button")
+            ->waitFor($input);
+        $this->replaceInputValue($browser, $input, (string) $points);
+
+        // Points are saved on EditPlayerModal's 500 ms debounce; let it fire, then wait for the mutation.
+        $browser->pause(700)
+            ->waitUsing(10, 100, function () use ($browser) {
+                return ! str_contains($browser->attribute('@edit-player-close-button', 'class'), 'is-loading');
+            }, 'Manual point correction did not finish saving')
+            ->click('@edit-player-close-button')
+            ->waitUntilMissing($input);
+    }
+
+    /**
+     * Replace an input's value with real keystrokes. WebDriver's clear() does not
+     * emit the input events Buefy listens to, so the old value would linger in Vue.
+     */
+    private function replaceInputValue(Browser $browser, string $selector, string $value): void
+    {
+        $browser->keys($selector, ['{control}', 'a'], $value === '' ? '{backspace}' : $value);
+    }
+
+    /**
+     * Scroll an element to the middle of the viewport; Dusk's scrollIntoView
+     * aligns it to the top, where the fixed navbar intercepts clicks.
+     */
+    private function scrollToCenter(Browser $browser, string $selector): void
+    {
+        $selectorJson = json_encode($browser->resolver->format($selector), JSON_THROW_ON_ERROR);
+        $browser->script("document.querySelector({$selectorJson}).scrollIntoView({block: 'center'})");
     }
 
     /**

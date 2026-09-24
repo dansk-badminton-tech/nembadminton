@@ -189,14 +189,15 @@ export default {
                 <b-field grouped label="Badmintonplayer ID">
                     <b-field expanded>
                         <b-field>
-                            <b-input v-model="refBirthday" type="text" minlength="6" maxlength="6" placeholder="XXXXXX" expanded required></b-input>
-                            <b-input v-model="refEndId" type="text" minlength="2" maxlength="2" placeholder="XX" required></b-input>
+                            <b-input dusk="add-member-ref-birthday-input" v-model="refBirthday" type="text" minlength="6" maxlength="6" placeholder="XXXXXX" expanded required></b-input>
+                            <b-input dusk="add-member-ref-end-input" v-model="refEndId" type="text" minlength="2" maxlength="2" placeholder="XX" required></b-input>
                         </b-field>
                     </b-field>
                 </b-field>
                 <b-message v-if="memberExists" type="is-info">Brugeren med {{this.refId}} findes allerede i systemet. Der vil ikke blive oprettet en ny bruger, men i stedet vil brugerens point blive opdateret på {{versionMonth}} til de nye data.</b-message>
                 <b-field label="Navn">
                     <b-input
+                        dusk="add-member-name-input"
                         type="text"
                         v-model="name"
                         placeholder="Navn"
@@ -204,7 +205,7 @@ export default {
                     </b-input>
                 </b-field>
                 <b-field label="Køn">
-                    <b-select v-model="gender" required expanded>
+                    <b-select dusk="add-member-gender-select" v-model="gender" required expanded>
                         <option value="MEN">Herre</option>
                         <option value="WOMEN">Dame</option>
                     </b-select>
@@ -215,18 +216,19 @@ export default {
                     </b-select>
                 </b-field>
                 <b-field label="Klub">
-                    <b-select v-model="club" expanded required>
+                    <b-select dusk="add-member-club-select" v-model="club" expanded required>
                         <option v-for="club in me?.clubhouse.clubs" :key="club.id" :value="club.id">{{ club.name1 }}</option>
                     </b-select>
                 </b-field>
                 <hr/>
                 <label class="label">Point</label>
                 <b-field horizontal :label="point.label" v-for="point in this.points" :key="point.category">
-                    <b-input type="number" v-model.number="point.points" required></b-input>
+                    <b-input :dusk="'add-member-points-' + point.category" type="number" v-model.number="point.points" required></b-input>
                 </b-field>
             </section>
             <footer class="modal-card-foot">
                 <b-button
+                    dusk="add-member-save-button"
                     :loading="this.loading"
                     native-type="submit"
                     label="Gem"/>
