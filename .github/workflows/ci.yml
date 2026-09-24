@@ -59,5 +59,7 @@ jobs:
         run: php artisan key:generate
       - name: Generate passport keys
         run: php artisan passport:keys
+      - name: Analyse PHP with PHPStan
+        run: composer analyse -- --no-progress
       - name: Execute tests (GraphQL tests) via PHPUnit
         run: php vendor/bin/phpunit --exclude-group remote

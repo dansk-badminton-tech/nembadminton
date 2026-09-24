@@ -1,0 +1,34 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 6
+    phpVersion: 80400
+    excludePaths:
+        analyse:
+            # PHPStan cannot baseline parse errors or missing native return statements.
+            # These existing files need correction before they can be analysed.
+            - app/GraphQL/Mutations/Subscription.php
+            - app/Policies/CancellationCollectorPolicy.php
+            - app/Policies/CancellationPolicy.php
+            - app/Policies/SquadCategoryPolicy.php
+            - app/Policies/SquadPointPolicy.php
+            - app/Policies/SquadPolicy.php
+            - app/Policies/TeamActivityLogPolicy.php
+            - app/Policies/TeamReceiversPolicy.php
+            - app/Policies/TeamRoundPolicy.php
+            - local-vendor/scraper/src/Models/Match.php
+            - local-vendor/team-fight/src/TeamValidator.php
+    paths:
+        - app
+        - local-vendor/badmintonplayer/src
+        - local-vendor/badmintonplayer-api/src
+        - local-vendor/calendar-feed/src
+        - local-vendor/club/src
+        - local-vendor/import/src
+        - local-vendor/members/src
+        - local-vendor/notification/src
+        - local-vendor/scraper/src
+        - local-vendor/stats/src
+        - local-vendor/team-fight/src

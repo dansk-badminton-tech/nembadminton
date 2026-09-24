@@ -1,0 +1,3385 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$import$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Console/Commands/BadmintonPlayerClubsImporter.php
+
+		-
+			message: '#^Call to an undefined static method App\\Jobs\\BadmintonPlayerImportMembers\:\:dispatchNow\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Console/Commands/BadmintonPlayerMembersImporter.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$pointsManager$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Console/Commands/BadmintonPlayerMembersImporter.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$scraper$#'
+			identifier: parameter.notFound
+			count: 1
+			path: app/Console/Commands/BadmintonPlayerMembersImporter.php
+
+		-
+			message: '#^Parameter \#1 \$clubId of job class App\\Jobs\\BadmintonPlayerImportPoints constructor expects int in App\\Jobs\\BadmintonPlayerImportPoints\:\:dispatchSync\(\), string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/BadmintonPlayerPointsImporter.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Carbon\\Carbon\:\:subMonths\(\) expects float\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/HousekeepingPointsRetention.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\LoopsSync\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/LoopsSync.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:limit\(\) expects int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/LoopsSync.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\OnceAssignUsersRoles\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/OnceAssignUsersRoles.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$clubhouse\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/OnceConnectTeamroundsWithClubhouse.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\OnceConnectTeamroundsWithClubhouse\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/OnceConnectTeamroundsWithClubhouse.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$clubhouse\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/OnceConvertCancellationCollectorToClubhouse.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\OnceConvertCancellationCollectorToClubhouse\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/OnceConvertCancellationCollectorToClubhouse.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$clubs\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/OnceCreateMembershipToClubhouse.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\:\:club\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Console/Commands/OnceCreateMembershipToClubhouse.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\OnceCreateMembershipToClubhouse\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/OnceCreateMembershipToClubhouse.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/OnceSetPrimaryRole.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\OnceSetPrimaryRole\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Console/Commands/OnceSetPrimaryRole.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\Test\:\:handle\(\) should return int but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Console/Commands/Test.php
+
+		-
+			message: '#^Method App\\Console\\Commands\\TestBridge\:\:handle\(\) should return int but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Console/Commands/TestBridge.php
+
+		-
+			message: '#^Parameter \#1 \$clubId of job class App\\Jobs\\BridgeToHorizon constructor expects int in App\\Jobs\\BridgeToHorizon\:\:dispatch\(\), string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/TestBridge.php
+
+		-
+			message: '#^Property App\\Console\\Kernel\:\:\$commands type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Console/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Exceptions\\Handler\:\:\$dontFlash is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Exceptions\\Handler\:\:\$dontFlash\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Exceptions\\Handler\:\:\$dontReport is not covariant with PHPDoc type array\<int, class\-string\<Throwable\>\> of overridden property Illuminate\\Foundation\\Exceptions\\Handler\:\:\$dontReport\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^Property App\\Exceptions\\Handler\:\:\$dontFlash type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^Property App\\Exceptions\\Handler\:\:\$dontReport type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Exceptions/Handler.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:acceptInvitation\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:acceptInvitation\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:acceptInvitation\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:declineInvitation\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:declineInvitation\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Invitation\:\:declineInvitation\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\GraphQL\\Mutations\\Invitation\:\:assignRole\(\) expects App\\Models\\User, Illuminate\\Contracts\\Auth\\Authenticatable\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\GraphQL\\Mutations\\Invitation\:\:connectClubhouse\(\) expects App\\Models\\User, Illuminate\\Contracts\\Auth\\Authenticatable\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/GraphQL/Mutations/Invitation.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Membership\:\:resetPlayerId\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\Membership\:\:updateRoles\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^Offset ''clubhouseId'' does not exist on array\{\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^Offset ''userId'' does not exist on array\{\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$resolveInfo with type GraphQL\\Type\\Definition\\ResolveInfo is not subtype of native type Nuwave\\Lighthouse\\Execution\\ResolveInfo\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^Property App\\Models\\User\:\:\$player_id \(string\) does not accept null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/GraphQL/Mutations/Membership.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\SetMemberInactiveOverride\:\:resolve\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/SetMemberInactiveOverride.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\SetMemberInactiveOverride\:\:resolve\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Mutations/SetMemberInactiveOverride.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\SetPrimaryRole\:\:resolve\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Mutations/SetPrimaryRole.php
+
+		-
+			message: '#^Method App\\GraphQL\\Mutations\\SetPrimaryRole\:\:resolve\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Mutations/SetPrimaryRole.php
+
+		-
+			message: '#^Method App\\GraphQL\\Queries\\CalendarGenerator\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/GraphQL/Queries/CalendarGenerator.php
+
+		-
+			message: '#^Method App\\GraphQL\\Queries\\CalendarGenerator\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Queries/CalendarGenerator.php
+
+		-
+			message: '#^Method App\\GraphQL\\Queries\\CancellationEvents\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/GraphQL/Queries/CancellationEvents.php
+
+		-
+			message: '#^Method App\\GraphQL\\Queries\\CancellationEvents\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/GraphQL/Queries/CancellationEvents.php
+
+		-
+			message: '#^Method App\\GraphQL\\Subscriptions\\Notifications\:\:resolve\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Subscriptions/Notifications.php
+
+		-
+			message: '#^Method App\\GraphQL\\Subscriptions\\Notifications\:\:resolve\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/GraphQL/Subscriptions/Notifications.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\MarketingSpaController\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/MarketingSpaController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/MarketingSpaController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notifications\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Call to function is_null\(\) with NotificationChannels\\WebPush\\PushSubscription will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\NotificationController\:\:dismiss\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\NotificationController\:\:dismiss\(\) has parameter \$id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Controllers/NotificationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Spa2Controller\:\:index\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/Spa2Controller.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middleware is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middleware\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$middlewareGroups is not covariant with PHPDoc type array\<string, array\<int, string\>\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$middlewareGroups\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Kernel\:\:\$routeMiddleware is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Foundation\\Http\\Kernel\:\:\$routeMiddleware\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^Property App\\Http\\Kernel\:\:\$middleware type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^Property App\\Http\\Kernel\:\:\$middlewareGroups type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^Property App\\Http\\Kernel\:\:\$routeMiddleware type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Kernel.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\Authenticate\:\:redirectTo\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Middleware/Authenticate.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\CheckForMaintenanceMode\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/CheckForMaintenanceMode.php
+
+		-
+			message: '#^Property App\\Http\\Middleware\\CheckForMaintenanceMode\:\:\$except type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/CheckForMaintenanceMode.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\EncryptCookies\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Cookie\\Middleware\\EncryptCookies\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/EncryptCookies.php
+
+		-
+			message: '#^Property App\\Http\\Middleware\\EncryptCookies\:\:\$except type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/EncryptCookies.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\SetClubhouseId\:\:handle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Middleware/SetClubhouseId.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\SetClubhouseId\:\:handle\(\) has parameter \$request with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Http/Middleware/SetClubhouseId.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between App\\Models\\User and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Middleware/SetClubhouseId.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\TrimStrings\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\TrimStrings\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/TrimStrings.php
+
+		-
+			message: '#^Property App\\Http\\Middleware\\TrimStrings\:\:\$except type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/TrimStrings.php
+
+		-
+			message: '#^Method App\\Http\\Middleware\\TrustHosts\:\:hosts\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/TrustHosts.php
+
+		-
+			message: '#^PHPDoc type array\|string\|null of property App\\Http\\Middleware\\TrustProxies\:\:\$proxies is not covariant with PHPDoc type array\<int, string\>\|string\|null of overridden property Illuminate\\Http\\Middleware\\TrustProxies\:\:\$proxies\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/TrustProxies.php
+
+		-
+			message: '#^Property App\\Http\\Middleware\\TrustProxies\:\:\$proxies type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/TrustProxies.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Http\\Middleware\\VerifyCsrfToken\:\:\$except is not covariant with PHPDoc type array\<int, string\> of overridden property Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken\:\:\$except\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Http/Middleware/VerifyCsrfToken.php
+
+		-
+			message: '#^Property App\\Http\\Middleware\\VerifyCsrfToken\:\:\$except type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Middleware/VerifyCsrfToken.php
+
+		-
+			message: '#^Property App\\Jobs\\BadmintonPlayerImportMembers\:\:\$clubIds type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportMembers.php
+
+		-
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#2 \$rankingList \(FlyCompany\\Scraper\\Enums\\RankingList\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^Method App\\Jobs\\BadmintonPlayerImportPoints\:\:generateSeasons\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^Method App\\Jobs\\BadmintonPlayerImportPoints\:\:generateSeasons\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^PHPDoc tag @var for variable \$rankingMonths contains generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^Parameter \#3 \$clubId of method FlyCompany\\Scraper\\BadmintonPlayer\:\:getRankingListPlayersByClub\(\) expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^Variable \$seasons might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Jobs/BadmintonPlayerImportPoints.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between App\\Models\\Clubhouse and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Jobs/LoopsUpdateContact.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Listeners/ConfirmationEmail.php
+
+		-
+			message: '#^Parameter \#1 \$user of job class App\\Jobs\\LoopsUpdateContact constructor expects App\\Models\\User in App\\Jobs\\LoopsUpdateContact\:\:dispatch\(\), Illuminate\\Contracts\\Auth\\Authenticatable given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Listeners/CreateContactInLoops.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:each\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: mixed, Closure\(App\\Models\\Club\)\: void given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Listeners/InitializeClub.php
+
+		-
+			message: '#^Class App\\Models\\Cancellation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cancellation.php
+
+		-
+			message: '#^Method App\\Models\\Cancellation\:\:cancellationCollector\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cancellation.php
+
+		-
+			message: '#^Method App\\Models\\Cancellation\:\:dates\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cancellation.php
+
+		-
+			message: '#^Method App\\Models\\Cancellation\:\:member\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cancellation.php
+
+		-
+			message: '#^Method App\\Models\\Cancellation\:\:teamRound\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Cancellation.php
+
+		-
+			message: '#^Class App\\Models\\CancellationCollector uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:cancellations\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:clubhouse\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:clubs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:scopeCurrentUser\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:scopeCurrentUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Method App\\Models\\CancellationCollector\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationCollector.php
+
+		-
+			message: '#^Class App\\Models\\CancellationDate uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationDate.php
+
+		-
+			message: '#^Method App\\Models\\CancellationDate\:\:cancellation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/CancellationDate.php
+
+		-
+			message: '#^Method App\\Models\\Club\:\:clubhouses\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^Method App\\Models\\Club\:\:members\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^Method App\\Models\\Club\:\:scopeOrderByName\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^Method App\\Models\\Club\:\:scopeOrderByName\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^Method App\\Models\\Club\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(boolean initialized\)\: Unexpected token "initialized", expected variable at offset 74 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int    id\)\: Unexpected token "id", expected variable at offset 24 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int badmintonPlayerId\)\: Unexpected token "badmintonPlayerId", expected variable at offset 103 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string name1\)\: Unexpected token "name1", expected variable at offset 47 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Club.php
+
+		-
+			message: '#^Class App\\Models\\Clubhouse uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Clubhouse\:\:cancellationCollector\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Clubhouse\:\:clubs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Clubhouse\:\:invitations\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Clubhouse\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Clubhouse\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(integer id\)\: Unexpected token "id", expected variable at offset 25 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string email\)\: Unexpected token "email", expected variable at offset 73 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string name\)\: Unexpected token "name", expected variable at offset 48 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Clubhouse.php
+
+		-
+			message: '#^Method App\\Models\\Invitation\:\:accept\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Method App\\Models\\Invitation\:\:clubhouse\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Method App\\Models\\Invitation\:\:decline\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Method App\\Models\\Invitation\:\:invitee\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Method App\\Models\\Invitation\:\:inviter\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\Invitation\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\Invitation\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Property App\\Models\\Invitation\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Property App\\Models\\Invitation\:\:\$fillable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Invitation.php
+
+		-
+			message: '#^Class App\\Models\\Log uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Log\:\:club\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Log\:\:scopeClubhouse\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Log\:\:scopeClubhouse\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Log\:\:scopeOrderByCreated\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Log\:\:scopeOrderByCreated\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Log.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:cancellations\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:clubs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:owner\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:points\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeActive\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeActive\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClub\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClub\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClubhouse\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClubhouse\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClubs\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClubs\(\) has parameter \$clubIds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeClubs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeHasPoints\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeHasPoints\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotCancelled\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotCancelled\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotOnScenario\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotOnScenario\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotOnSquad\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:scopeNotOnSquad\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Method App\\Models\\Member\:\:squadMember\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(Point\[\] points\)\: Unexpected token "points", expected variable at offset 248 on line 11$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(User    owner\)\: Unexpected token "owner", expected variable at offset 276 on line 12$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(boolean inactive\)\: Unexpected token "inactive", expected variable at offset 179 on line 9$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(boolean playable\)\: Unexpected token "playable", expected variable at offset 149 on line 8$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int     id\)\: Unexpected token "id", expected variable at offset 44 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string  gender\)\: Unexpected token "gender", expected variable at offset 121 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string  name\)\: Unexpected token "name", expected variable at offset 95 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string  override_inactive\)\: Unexpected token "override_inactive", expected variable at offset 209 on line 10$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string  refId\)\: Unexpected token "refId", expected variable at offset 68 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Member.php
+
+		-
+			message: '#^Class App\\Models\\Notification uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Notification.php
+
+		-
+			message: '#^Method App\\Models\\Notification\:\:scopeMyNotifications\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Notification.php
+
+		-
+			message: '#^Method App\\Models\\Notification\:\:scopeMyNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Notification.php
+
+		-
+			message: '#^Property App\\Models\\Notification\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Notification.php
+
+		-
+			message: '#^Method App\\Models\\Point\:\:member\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(Member   member\)\: Unexpected token "member", expected variable at offset 279 on line 12$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int      member_id\)\: Unexpected token "member_id", expected variable at offset 217 on line 10$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int\|null points\)\: Unexpected token "points", expected variable at offset 44 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int\|null position\)\: Unexpected token "position", expected variable at offset 73 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string   category\)\: Unexpected token "category", expected variable at offset 104 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string   clh\)\: Unexpected token "clh", expected variable at offset 161 on line 8$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string   cll\)\: Unexpected token "cll", expected variable at offset 135 on line 7$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string   version\)\: Unexpected token "version", expected variable at offset 249 on line 11$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(string   vintage\)\: Unexpected token "vintage", expected variable at offset 187 on line 9$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/Point.php
+
+		-
+			message: '#^Method App\\Models\\Season\:\:teamRounds\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Season.php
+
+		-
+			message: '#^Method App\\Models\\Season\:\:teams\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Season.php
+
+		-
+			message: '#^Method App\\Models\\Season\:\:tournamentGroups\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Season.php
+
+		-
+			message: '#^Class App\\Models\\Squad uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Relations\\HasMany referenced with incorrect case\: Illuminate\\Database\\Eloquent\\Relations\\hasMany\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Method App\\Models\\Squad\:\:buildSortQuery\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Method App\\Models\\Squad\:\:categories\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Method App\\Models\\Squad\:\:team\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Method App\\Models\\Squad\:\:teamRound\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Property App\\Models\\Squad\:\:\$sortable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/Squad.php
+
+		-
+			message: '#^Class App\\Models\\SquadCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadCategory.php
+
+		-
+			message: '#^Method App\\Models\\SquadCategory\:\:players\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadCategory.php
+
+		-
+			message: '#^Method App\\Models\\SquadCategory\:\:scenario\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadCategory.php
+
+		-
+			message: '#^Method App\\Models\\SquadCategory\:\:squad\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadCategory.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int   id\)\: Unexpected token "id", expected variable at offset 23 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/SquadCategory.php
+
+		-
+			message: '#^Class App\\Models\\SquadMember uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^Method App\\Models\\SquadMember\:\:category\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^Method App\\Models\\SquadMember\:\:points\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^Method App\\Models\\SquadMember\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(SquadPoint\[\]  points\)\: Unexpected token "points", expected variable at offset 126 on line 6$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(String        member_ref_id\)\: Unexpected token "member_ref_id", expected variable at offset 55 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(int           id\)\: Unexpected token "id", expected variable at offset 96 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/SquadMember.php
+
+		-
+			message: '#^Method App\\Models\\SquadPoint\:\:member\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SquadPoint.php
+
+		-
+			message: '#^Class App\\Models\\SubscriptionSetting uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SubscriptionSetting.php
+
+		-
+			message: '#^Method App\\Models\\SubscriptionSetting\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/SubscriptionSetting.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(boolean email\)\: Unexpected token "email", expected variable at offset 25 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: app/Models/SubscriptionSetting.php
+
+		-
+			message: '#^Class App\\Models\\Team uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:clubhouse\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:season\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:squads\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Method App\\Models\\Team\:\:tier\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Team.php
+
+		-
+			message: '#^Class App\\Models\\TeamActivityLog has PHPDoc tag @property for property \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Class App\\Models\\TeamActivityLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:logNotificationSent\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:logTestEmailSent\(\) has parameter \$metadata with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:scopeByAction\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:scopeByAction\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:scopeLatest\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:scopeLatest\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:teamRound\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\TeamActivityLog\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamActivityLog.php
+
+		-
+			message: '#^Class App\\Models\\TeamReceivers has PHPDoc tag @property for property \$emails with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TeamReceivers.php
+
+		-
+			message: '#^Method App\\Models\\TeamReceivers\:\:teamRound\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamReceivers.php
+
+		-
+			message: '#^Class App\\Models\\TeamRound uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:activityLogs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:clubhouse\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:getReachablePlayerRefIds\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:getReachablePlayerRefIds\(\) has parameter \$context with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:getReachablePlayerRefIds\(\) has parameter \$resolveInfo with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:officialScenario\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:receiver\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:resolveName\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:scenarios\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:scopeCurrentUser\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:scopeCurrentUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:scopeVisibleToUser\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:scopeVisibleToUser\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:season\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:squads\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Method App\\Models\\TeamRound\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''CLUB_ADMIN''\|''COACH''\|''PLAYER''\|''SUPERADMIN'' and ''player'' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Enums\\Role\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/TeamRound.php
+
+		-
+			message: '#^Class App\\Models\\TeamRoundScenario uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRoundScenario.php
+
+		-
+			message: '#^Method App\\Models\\TeamRoundScenario\:\:categories\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRoundScenario.php
+
+		-
+			message: '#^Method App\\Models\\TeamRoundScenario\:\:teamRound\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TeamRoundScenario.php
+
+		-
+			message: '#^Method App\\Models\\TournamentGroup\:\:season\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TournamentGroup.php
+
+		-
+			message: '#^Method App\\Models\\TournamentGroup\:\:tournamentTier\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TournamentGroup.php
+
+		-
+			message: '#^Method App\\Models\\TournamentTier\:\:tournamentGroups\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/TournamentTier.php
+
+		-
+			message: '#^Class App\\Models\\User uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:cancellationCollector\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:clubhouse\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:clubhouses\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:member\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:primaryRole\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:socialProviders\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:subscriptionSettings\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasOne does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:teamRounds\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\User\:\:\$casts is not covariant with PHPDoc type array\<string, string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$casts\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\User\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Property App\\Models\\User\:\:\$casts type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Property App\\Models\\User\:\:\$fillable type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Property App\\Models\\User\:\:\$hidden type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Notifications\\Release\:\:broadcastOn\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Notifications/Release.php
+
+		-
+			message: '#^Method App\\Notifications\\TeamRoundNotification\:\:toArray\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/TeamRoundNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\TeamRoundNotification\:\:toMail\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/TeamRoundNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\TeamRoundNotification\:\:toWebPush\(\) has parameter \$notifiable with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/TeamRoundNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\TeamRoundNotification\:\:toWebPush\(\) has parameter \$notification with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Notifications/TeamRoundNotification.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getAuthIdentifier\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Policies/MemberPolicy.php
+
+		-
+			message: '#^Method App\\Policies\\SquadMemberPolicy\:\:create\(\) should return bool\|Illuminate\\Auth\\Access\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Policies/SquadMemberPolicy.php
+
+		-
+			message: '#^Method App\\Policies\\SquadMemberPolicy\:\:forceDelete\(\) should return bool\|Illuminate\\Auth\\Access\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Policies/SquadMemberPolicy.php
+
+		-
+			message: '#^Method App\\Policies\\SquadMemberPolicy\:\:restore\(\) should return bool\|Illuminate\\Auth\\Access\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Policies/SquadMemberPolicy.php
+
+		-
+			message: '#^Method App\\Policies\\SquadMemberPolicy\:\:viewAny\(\) should return bool\|Illuminate\\Auth\\Access\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Policies/SquadMemberPolicy.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Providers\\AuthServiceProvider\:\:\$policies is not covariant with PHPDoc type array\<class\-string, class\-string\> of overridden property Illuminate\\Foundation\\Support\\Providers\\AuthServiceProvider\:\:\$policies\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Providers/AuthServiceProvider.php
+
+		-
+			message: '#^Property App\\Providers\\AuthServiceProvider\:\:\$policies type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Providers/AuthServiceProvider.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Providers\\EventServiceProvider\:\:\$listen is not covariant with PHPDoc type array\<string, array\<int, string\>\> of overridden property Illuminate\\Foundation\\Support\\Providers\\EventServiceProvider\:\:\$listen\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Providers/EventServiceProvider.php
+
+		-
+			message: '#^Property App\\Providers\\EventServiceProvider\:\:\$listen type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Providers/EventServiceProvider.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\TeamRound\:\:\$total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Providers/PrometheusServiceProvider.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\TeamRound\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Providers/PrometheusServiceProvider.php
+
+		-
+			message: '#^Return type of call to method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\TeamRound\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: method.unresolvableReturnType
+			count: 1
+			path: app/Providers/PrometheusServiceProvider.php
+
+		-
+			message: '#^Method App\\QueryBuilders\\MemberSearch\:\:club\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/QueryBuilders/MemberSearch.php
+
+		-
+			message: '#^Method App\\QueryBuilders\\MemberSearch\:\:club\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/QueryBuilders/MemberSearch.php
+
+		-
+			message: '#^Method App\\QueryBuilders\\PointsBuilder\:\:version\(\) has parameter \$builder with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/QueryBuilders/PointsBuilder.php
+
+		-
+			message: '#^Method App\\QueryBuilders\\PointsBuilder\:\:version\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/QueryBuilders/PointsBuilder.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:emptyStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:processMatch\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:sync\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:syncGroup\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:syncSeason\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Services\\TournamentStructureSyncService\:\:syncTier\(\) has parameter \$stats with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type App\\Models\\TournamentTier\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/TournamentStructureSyncService.php
+
+		-
+			message: '#^Method App\\Util\\TournamentStructureMapper\:\:containsAny\(\) has parameter \$needles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Util/TournamentStructureMapper.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\BadmintonPlayerAPI\:\:fixTeamPlayersToBeArray\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\BadmintonPlayerAPI\:\:fixTeamPlayersToBeArray\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$numberOfRows$#'
+			identifier: parameter.notFound
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^Unsafe access to private property FlyCompany\\BadmintonPlayerAPI\\BadmintonPlayerAPI\:\:\$password through static\:\:\.$#'
+			identifier: staticClassAccess.privateProperty
+			count: 2
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^Unsafe access to private property FlyCompany\\BadmintonPlayerAPI\\BadmintonPlayerAPI\:\:\$username through static\:\:\.$#'
+			identifier: staticClassAccess.privateProperty
+			count: 2
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^Unsafe call to private method FlyCompany\\BadmintonPlayerAPI\\BadmintonPlayerAPI\:\:getRequestAccessToken\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/BadmintonPlayerAPI.php
+
+		-
+			message: '#^Class FlyCompany\\BadmintonPlayerAPI\\Collections\\PlayersRankingCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/PlayersRankingCollection.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\Collections\\PlayersRankingCollection\:\:getByPlayerNumbers\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/PlayersRankingCollection.php
+
+		-
+			message: '#^PHPDoc tag @property has invalid value \(\$items PlayerRanking\[\]\)\: Unexpected token "\$items", expected type at offset 17 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/PlayersRankingCollection.php
+
+		-
+			message: '#^Class FlyCompany\\BadmintonPlayerAPI\\Collections\\TeamMatchLineupCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/TeamMatchLineupCollection.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\Collections\\TeamMatchLineupCollection\:\:getByMatchIds\(\) should return \$this\(FlyCompany\\BadmintonPlayerAPI\\Collections\\TeamMatchLineupCollection\) but returns static\(FlyCompany\\BadmintonPlayerAPI\\Collections\\TeamMatchLineupCollection\)\.$#'
+			identifier: return.type
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/TeamMatchLineupCollection.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\Collections\\TeamMatchLineupCollection\:\:onlyAfter\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Collections/TeamMatchLineupCollection.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 2
+			path: local-vendor/badmintonplayer-api/src/MainServiceProvider.php
+
+		-
+			message: '#^Class FlyCompany\\BadmintonPlayerAPI\\Models\\PlayerRankingIterator implements generic interface Iterator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Models/PlayerRankingIterator.php
+
+		-
+			message: '#^Property FlyCompany\\BadmintonPlayerAPI\\Models\\PlayerRankingIterator\:\:\$items type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Models/PlayerRankingIterator.php
+
+		-
+			message: '#^Unsafe access to private constant FlyCompany\\BadmintonPlayerAPI\\Models\\PlayerRankingIterator\:\:CACHE_TTL through static\:\:\.$#'
+			identifier: staticClassAccess.privateConstant
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Models/PlayerRankingIterator.php
+
+		-
+			message: '#^Property FlyCompany\\BadmintonPlayerAPI\\Models\\PlayersLineup\:\:\$players type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Models/PlayersLineup.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayerAPI\\Util\:\:convertToPointsList\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer-api/src/Util.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\Commands\\ClubImporter\:\:getParsedClubs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer/src/Commands/ClubImporter.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\RankingVersions\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/RankingVersions.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/RankingVersions.php
+
+		-
+			message: '#^Method Carbon\\Carbon\:\:subMonth\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatches.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatches\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatches.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatches.php
+
+		-
+			message: '#^Access to an undefined property FlyCompany\\TeamFight\\Models\\Squad\:\:\$league\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatchesValidationFormat.php
+
+		-
+			message: '#^Access to constant OTHER on an unknown class FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\LeagueType\.$#'
+			identifier: class.notFound
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatchesValidationFormat.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatchesValidationFormat\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatchesValidationFormat.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\GraphQL\\Query\\TeamMatchesValidationFormat\:\:__invoke\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatchesValidationFormat.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/badmintonplayer/src/GraphQL/Query/TeamMatchesValidationFormat.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\Jobs\\ImportMembers\:\:__construct\(\) has parameter \$clubIds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer/src/Jobs/ImportMembers.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<FlyCompany\\BadmintonPlayerAPI\\Models\\PlayerRanking\> is not subtype of native type FlyCompany\\BadmintonPlayerAPI\\Collections\\PlayersRankingCollection\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: local-vendor/badmintonplayer/src/Jobs/ImportMembers.php
+
+		-
+			message: '#^Property FlyCompany\\BadmintonPlayer\\Jobs\\ImportMembers\:\:\$clubIds type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/badmintonplayer/src/Jobs/ImportMembers.php
+
+		-
+			message: '#^Method FlyCompany\\BadmintonPlayer\\MainServiceProvider\:\:boot\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/badmintonplayer/src/MainServiceProvider.php
+
+		-
+			message: '#^Method FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Method FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Method FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Method FlyCompany\\CalendarFeed\\GraphQL\\Queries\\Calendar\:\:generateTitle\(\) has parameter \$teams1 with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Parameter \#3 \$ageGroupID of method FlyCompany\\Scraper\\BadmintonPlayer\:\:getTeamFights\(\) expects int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Parameter \#4 \$leagueGroupId of method FlyCompany\\Scraper\\BadmintonPlayer\:\:getTeamFights\(\) expects int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/calendar-feed/src/GraphQL/Queries/Calendar.php
+
+		-
+			message: '#^Method FlyCompany\\CalendarFeed\\Http\\Controllers\\ICalController\:\:generateTitle\(\) has parameter \$teams1 with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/calendar-feed/src/Http/Controllers/ICalController.php
+
+		-
+			message: '#^Parameter \#3 \$ageGroupID of method FlyCompany\\Scraper\\BadmintonPlayer\:\:getTeamFights\(\) expects int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/calendar-feed/src/Http/Controllers/ICalController.php
+
+		-
+			message: '#^Parameter \#4 \$leagueGroupId of method FlyCompany\\Scraper\\BadmintonPlayer\:\:getTeamFights\(\) expects int, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/calendar-feed/src/Http/Controllers/ICalController.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\GraphQL\\Queries\\LatestRankingVersions\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/LatestRankingVersions.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/LatestRankingVersions.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/RankingVersions.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/RankingVersions.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/RankingVersions.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\GraphQL\\Queries\\RankingVersionsBP\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/RankingVersionsBP.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/club/src/GraphQL/Queries/RankingVersionsBP.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\Log\:\:createLog\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/club/src/Log.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\RankingVersionUtil\:\:fetchVersions\(\) never returns array so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\RankingVersionUtil\:\:fetchVersions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\RankingVersionUtil\:\:fetchVersions\(\) return type has no value type specified in iterable type array\|Illuminate\\Database\\Eloquent\\Collection\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\RankingVersionUtil\:\:fetchVersions\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Method FlyCompany\\Club\\RankingVersionUtil\:\:getRankingVersionByClub\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Parameter \#1 \$array of static method Illuminate\\Support\\Arr\:\:sort\(\) expects array, Illuminate\\Support\\Collection\<\(int\|string\), mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^Unsafe call to private method FlyCompany\\Club\\RankingVersionUtil\:\:fetchVersions\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: local-vendor/club/src/RankingVersionUtil.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$members with type array\<SimpleXMLElement\> is incompatible with native type SimpleXMLElement\|null\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: local-vendor/import/src/Club.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\ClubCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/ClubCollection.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\League\:\:\$id is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/League.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\League\:\:\$name is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/League.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\LeagueCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/LeagueCollection.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\MemberCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/MemberCollection.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\MemberVintageCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/MemberVintageCollection.php
+
+		-
+			message: '#^Method FlyCompany\\Import\\Point\:\:xmlFactory\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/import/src/Point.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\PointCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/PointCollection.php
+
+		-
+			message: '#^Method FlyCompany\\Import\\Ranking\:\:factory\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/import/src/Ranking.php
+
+		-
+			message: '#^Method FlyCompany\\Import\\Ranking\:\:factoryClub\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/import/src/Ranking.php
+
+		-
+			message: '#^Method FlyCompany\\Import\\Ranking\:\:factoryClubWithoutMembers\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/import/src/Ranking.php
+
+		-
+			message: '#^Method FlyCompany\\Import\\Ranking\:\:searchClubByName\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/import/src/Ranking.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: local-vendor/import/src/Util/Path.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: local-vendor/import/src/Util/Path.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between false and 1 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: local-vendor/import/src/Util/Path.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$ageFrom is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$ageTo \(int\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$ageTo is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$id is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$name is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Property FlyCompany\\Import\\Vintage\:\:\$tp is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/import/src/Vintage.php
+
+		-
+			message: '#^Class FlyCompany\\Import\\VintageCollection extends generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/import/src/VintageCollection.php
+
+		-
+			message: '#^Method FlyCompany\\Members\\MemberSearch\:\:searchPoints\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/members/src/MemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\Members\\MemberSearch\:\:searchPoints\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/members/src/MemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\Members\\MemberSearch\:\:searchPoints\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/members/src/MemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\Notification\\GraphQL\\Mutation\\Notification\:\:read\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/notification/src/GraphQL/Mutation/Notification.php
+
+		-
+			message: '#^Method FlyCompany\\Notification\\GraphQL\\Mutation\\Notification\:\:send\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/notification/src/GraphQL/Mutation/Notification.php
+
+		-
+			message: '#^Variable \$receivers in PHPDoc tag @var does not exist\.$#'
+			identifier: varTag.variableNotFound
+			count: 1
+			path: local-vendor/notification/src/GraphQL/Mutation/Notification.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:getAllRankingListPlayers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:getClubs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:getRankingListIdAndParams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:getRankingListPlayersHtml\(\) has parameter \$pageIndex with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:getTeamFights\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:rankingLevelLists\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:resolveCacheKey\(\) has parameter \$postParams with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:searchPlayers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayer\:\:sendRequestAndGetBody\(\) has parameter \$json with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$clubId$#'
+			identifier: parameter.notFound
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Property FlyCompany\\Scraper\\BadmintonPlayer\:\:\$clientConfig has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Property FlyCompany\\Scraper\\BadmintonPlayer\:\:\$token has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Unable to resolve the template type TKey in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Unable to resolve the template type TValue in call to function collect$#'
+			identifier: argument.templateType
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Variable \$key might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayer.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayerHelper\:\:collapseRankingLists\(\) has parameter \$rankingLists with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayerHelper.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayerHelper\:\:convertToCarbonObjects\(\) has parameter \$versions with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayerHelper.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\BadmintonPlayerHelper\:\:filterToRankingMonths\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayerHelper.php
+
+		-
+			message: '#^Unsafe call to private method FlyCompany\\Scraper\\BadmintonPlayerHelper\:\:applyCategory\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: local-vendor/scraper/src/BadmintonPlayerHelper.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Enricher\:\:resolveClubs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Enricher.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Exception\\NoPlayersFoundInTeamMatchException\:\:getCategory\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/scraper/src/Exception/NoPlayersFoundInTeamMatchException.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFights\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamFights.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamFights.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamFightsBulk\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamFightsBulk.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamFightsBulk.php
+
+		-
+			message: '#^Parameter \#1 \$players of method FlyCompany\\TeamFight\\Enricher\:\:players\(\) expects array\<FlyCompany\\TeamFight\\Models\\Player\>, array\<FlyCompany\\Scraper\\Models\\Player\> given\.$#'
+			identifier: argument.type
+			count: 2
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamMatch.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatches\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamMatches.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamMatches.php
+
+		-
+			message: '#^Property FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamMatches\:\:\$squadManager is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamMatches.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeams\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeams.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeams.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamsBulk\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamsBulk.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamsBulk.php
+
+		-
+			message: '#^Property FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamsBulk\:\:\$enricher is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamsBulk.php
+
+		-
+			message: '#^Property FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerTeamsBulk\:\:\$squadManager is unused\.$#'
+			identifier: property.unused
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerTeamsBulk.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\BadmintonPlayerValidate\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerValidate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\TeamValidator\:\:validateSquads\(\) invoked with 0 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerValidate.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/BadmintonPlayerValidate.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\GraphQL\\Queries\\ImportClubOptions\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/ImportClubOptions.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/scraper/src/GraphQL/Queries/ImportClubOptions.php
+
+		-
+			message: '#^Access to an undefined property FlyCompany\\Scraper\\Models\\Team\:\:\$league\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Call to function is_int\(\) with non\-empty\-string\|null will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:clubTeams\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:extractNameAndId\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:extractedResults\(\) has parameter \$resultsHtml with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:parseFunction\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:parseMatchInformation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Method FlyCompany\\Scraper\\Parser\:\:teamFights\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<string\> is not subtype of native type int\<0, max\>\|false\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Variable \$club1Player2BadmintonPlayerId might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Variable \$club2Player2BadmintonPlayerId might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: local-vendor/scraper/src/Parser.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:members\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: local-vendor/stats/src/GraphQL/Queries/ClubhouseStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\ClubhouseStats\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/ClubhouseStats.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/ClubhouseStats.php
+
+		-
+			message: '#^Property FlyCompany\\Stats\\GraphQL\\Queries\\ClubhouseStats\:\:\$stats is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/ClubhouseStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:bulkStats\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:bulkStats\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:bulkStats\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:getData\(\) should return array\<App\\Models\\Member\> but returns array\<string, App\\Models\\Member\|Illuminate\\Database\\Eloquent\\Collection\>\.$#'
+			identifier: return.type
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:highestPointGain\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:highestPointGain\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:highestPointGain\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\PlayerStats\:\:stats\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/PlayerStats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\GraphQL\\Queries\\Stats\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/Stats.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/stats/src/GraphQL/Queries/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getCategoryPoint\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getImportedClubsCount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getLowToHighestPoints\(\) has parameter \$clubIDs with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getLowToHighestPoints\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getMetric\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:getTeamRoundsCount\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\Stats\\Stats\:\:teamRoundsCount\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/stats/src/Stats.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Builders\\SquadMemberSearch\:\:searchBuilder\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Builders/SquadMemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Builders\\SquadMemberSearch\:\:searchBuilder\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/Builders/SquadMemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Builders\\SquadMemberSearch\:\:searchBuilder\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/Builders/SquadMemberSearch.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Enricher\:\:players\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/team-fight/src/Enricher.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between App\\Models\\Member and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: local-vendor/team-fight/src/Enricher.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$categories\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/Export/Exporter.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/Export/Exporter.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Export\\Exporter\:\:officialCategories\(\) has parameter \$categories with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/Export/Exporter.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Export\\Exporter\:\:officialCategories\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/Export/Exporter.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/AddSquadMemberByRefId.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadMemberByRefId\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/AddSquadMemberByRefId.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$clubhouse_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam\:\:copyTeam\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam\:\:copyTeam\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
+
+		-
+			message: '#^Parameter \#1 \$sourceSquad of method FlyCompany\\TeamFight\\SquadManager\:\:copySquad\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CreateScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\CreateScenario\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/CreateScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\DeleteScenario\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/DeleteScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\DeleteScenario\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/DeleteScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/PromoteScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/PromoteScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/RenameScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/RenameScenario.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SendTeamNotification.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification\:\:__invoke\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SendTeamNotification.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SendTeamNotification\:\:__invoke\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SendTeamNotification.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering\:\:moveSquadOrderDown\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SquadOrdering.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering\:\:moveSquadOrderDown\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SquadOrdering.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering\:\:moveSquadOrderUp\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SquadOrdering.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\SquadOrdering\:\:moveSquadOrderUp\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/SquadOrdering.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound\:\:updatePointsOnAllSquadsInTeamRound\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/UpdateTeamRound.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound\:\:updatePointsOnAllSquadsInTeamRound\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/UpdateTeamRound.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound\:\:updatePointsOnSquad\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/UpdateTeamRound.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound\:\:updatePointsOnSquad\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/UpdateTeamRound.php
+
+		-
+			message: '#^Property FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateTeamRound\:\:\$serializer is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/UpdateTeamRound.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateBasicSquads\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateBasicSquads\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateBasicSquads\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateCrossSquads\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateCrossSquads\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateCrossSquads\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) has parameter \$rootValue with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^PHPDoc tag @return with type array is incompatible with native type Illuminate\\Support\\Collection\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\ValidateHelper\:\:getPair\(\) has parameter \$teams with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/ValidateHelper.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\ValidateHelper\:\:getPair\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/ValidateHelper.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\ValidateHelper\:\:splitTeams\(\) has parameter \$teams with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/ValidateHelper.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\ValidateHelper\:\:splitTeams\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Mutations/ValidateHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$clubhouse_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/Exporter.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\Exporter\:\:__invoke\(\) has parameter \$root with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/Exporter.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(@param  null  \$root Always null, since this field has no parent\.\)\: Unexpected token "@param", expected type at offset 63 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/Exporter.php
+
+		-
+			message: '#^PHPDoc tag @return with type mixed is not subtype of native type string\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/Exporter.php
+
+		-
+			message: '#^Variable \$team in PHPDoc tag @var does not match assigned variable \$teamRoundId\.$#'
+			identifier: varTag.differentVariable
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/Exporter.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SquadMember\:\:\$category_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SquadMember\:\:\$round\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SquadMember\:\:\$squad_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SquadMember\:\:\$squad_order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\SquadMember\:\:\$team_round_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Contracts\\Auth\\Authenticatable\:\:\$clubhouse_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver\:\:__invoke\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver\:\:resolveActiveTeamRoundId\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/ParallelAllocationResolver.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/PlacedPlayerCancellationResolver.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadCategoriesResolver\:\:__invoke\(\) has parameter \$args with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadCategoriesResolver.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadCategoriesResolver\:\:__invoke\(\) return type with generic class Illuminate\\Database\\Eloquent\\Collection does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadCategoriesResolver.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadMemberTeamRound.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between int\<0, max\> and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadMemberTeamRound.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type App\\Models\\SquadCategory\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadMemberTeamRound.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Squad\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: local-vendor/team-fight/src/GraphQL/Queries/SquadMemberTeamRound.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Models\\Category\:\:isMenSingle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/team-fight/src/Models/Category.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Models\\Category\:\:isWomenSingle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/team-fight/src/Models/Category.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Models\\Player\:\:getPlayingIn\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Models/Player.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Models\\Player\:\:setPlayingIn\(\) has parameter \$playingIn with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Models/Player.php
+
+		-
+			message: '#^Property FlyCompany\\TeamFight\\Models\\Player\:\:\$playingIn type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Models/Player.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Notifier\:\:sendManualEmails\(\) has parameter \$emails with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Notifier.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\Notifier\:\:sendToPlatformPlayers\(\) has parameter \$selectedRefIds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: local-vendor/team-fight/src/Notifier.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 2
+			path: local-vendor/team-fight/src/Notifier.php
+
+		-
+			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/team-fight/src/Notifier.php
+
+		-
+			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/team-fight/src/Notifier.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\ScenarioManager\:\:getCategories\(\) should return Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SquadCategory\> but returns Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\.$#'
+			identifier: return.type
+			count: 1
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) should return Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\SquadCategory\> but returns Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\.$#'
+			identifier: return.type
+			count: 2
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\TeamRound\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: local-vendor/team-fight/src/ScenarioManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$players\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$points\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$position\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$team_round_scenario_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$version\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$vintage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:categories\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:players\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\SquadManager\:\:addPlayerToSquadByRefId\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Method FlyCompany\\TeamFight\\SquadManager\:\:getTeamOrFail\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$squadId with type string is incompatible with native type int\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$teamId with type mixed is not subtype of native type string\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$context$#'
+			identifier: parameter.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$userId$#'
+			identifier: parameter.notFound
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Property App\\Models\\SquadPoint\:\:\$version \(Carbon\\Carbon\) does not accept string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Property App\\Models\\SquadPoint\:\:\$version \(Carbon\\Carbon\) does not accept string\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
+
+		-
+			message: '#^Variable \$player in PHPDoc tag @var does not match assigned variable \$versionCurrent\.$#'
+			identifier: varTag.differentVariable
+			count: 1
+			path: local-vendor/team-fight/src/SquadManager.php
