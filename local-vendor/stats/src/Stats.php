@@ -65,8 +65,8 @@ class Stats
             ->get()
             ->map(function (TeamRound $data) {
                 return [
-            'points' => $data['count'],
-            'version' => Carbon::createFromFormat('Y-m', $data['date']),
+                    'points' => $data['count'],
+                    'version' => Carbon::createFromFormat('Y-m', $data['date']),
                 ];
             })->toArray();
     }
