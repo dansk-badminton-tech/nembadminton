@@ -33,15 +33,38 @@ Browser tests use [Laravel Dusk](https://laravel.com/docs/11.x/dusk) and are loc
 
 **Run locally:**
 
+Start the application services. `app` remains available on port 80, while the Dusk application uses `artisan-serve` on port 8000:
+
 ```bash
-docker compose run artisan dusk
+docker compose up -d app artisan-serve selenium
+```
+
+Keep the Vite development server running in a separate terminal. Dusk pages use the URL in `public/hot` when that file exists, so the browser page will be blank if Vite is unavailable.
+
+```bash
+yarn run dev
+```
+
+Run the browser tests:
+
+```bash
+docker compose run --rm artisan dusk
+```
+
+Run one test class or method:
+
+```bash
+docker compose run --rm artisan dusk --filter=TeamFightConstruct13KampsTest
+docker compose run --rm artisan dusk --filter=test_user_can_construct_holdrunde_with_13_kamps_hold
 ```
 
 **Re-run only failed tests:**
 
 ```bash
-docker compose run artisan dusk:fails
+docker compose run --rm artisan dusk:fails
 ```
+
+The host can open the Dusk application at `http://localhost:8000`. Selenium shares the Compose network and uses `APP_URL=http://artisan-serve`, which reaches the service directly on its internal port 80.
 
 **Run in CI:**
 

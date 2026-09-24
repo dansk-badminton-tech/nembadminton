@@ -70,7 +70,7 @@
                     </div>
                     <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving"
                                         :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
-                                        :scenario-id="currentScenario?.id ?? null"
+                                        :scenario-id="selectedScenarioId"
                                         :version="new Date(version)" :game-date="gameDate"
                                        @open-add-member="openAddMemberModal"/>
                 </div>
@@ -177,7 +177,7 @@
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
                                :squads="teamRound.squads"
-                               :scenario-id="currentScenario?.id ?? null"
+                               :scenario-id="selectedScenarioId"
                                :teams-base-validations="validateBasicSquads"
                                :version="new Date(version)"
                                :loading="saving"

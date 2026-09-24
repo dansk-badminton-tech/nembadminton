@@ -47,7 +47,7 @@
                 <p>{{ props.row.vintage }}</p>
             </b-table-column>
             <b-table-column field="name" label="Navn" v-slot="props">
-                <p>{{ props.row.name }}</p>
+                <p :dusk="'available-player-' + props.row.refId">{{ props.row.name }}</p>
                 <div v-if="props.row.parallelAllocation" class="mt-1">
                     <b-tag type="is-warning is-light" size="is-small" :title="'Spilleren er optaget på ' + props.row.parallelAllocation.teamRoundName">
                         <b-icon icon="alert-circle" size="is-small" class="mr-1"></b-icon>

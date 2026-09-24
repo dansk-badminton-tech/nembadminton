@@ -82,12 +82,15 @@ class TeamFightEditPage extends Page
         for ($i = 0; $i < $count; $i++) {
             $browser->waitFor("[dusk='player-search-panel'] table tbody tr [dusk='add-player-button-1']", 10);
 
+            $availablePlayerSelector = "[dusk='player-search-panel'] table tbody tr:first-child [dusk^='available-player-']";
+            $availablePlayerDusk = $browser->attribute($availablePlayerSelector, 'dusk');
+
             $browser->click("[dusk='player-search-panel'] table tbody tr [dusk='add-player-button-1']");
 
             // addSquadMemberByRefId awaits a full team round refetch before resolving,
             // which grows slower as more categories/players are added (e.g. 13-kamps).
             $browser->waitForText('Tilføjet til Hold', 20)
-                ->pause(1000);
+                ->waitUntilMissing("[dusk='{$availablePlayerDusk}']", 10);
         }
     }
 

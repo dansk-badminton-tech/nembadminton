@@ -37,19 +37,7 @@ Run with `yarn test:js`. Use it for framework-free modules such as the Help docu
 
 ### Running the browser tests locally:
 
-To run the browser tests, execute the following command in your terminal:
-
-```bash
-docker compose run artisan dusk
-```
-
-This command will launch the browser tests defined in the `tests/Browser` directory.
-
-To re-run only the tests that failed in the last run:
-
-```bash
-docker compose run artisan dusk:fails
-```
+Follow `README.md` under **Testing > Browser tests (End-to-end)**. It is the source of truth for required Docker services, the Vite process, ports, full and filtered test commands, and rerunning failures.
 
 ### Running browser tests in CI:
 
