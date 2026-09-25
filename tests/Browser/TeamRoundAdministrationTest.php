@@ -24,7 +24,7 @@ class TeamRoundAdministrationTest extends DuskTestCase
             $createPage = new TeamFightCreatePage($clubhouseId);
             $dashboardPage = new TeamFightDashboardPage($clubhouseId);
 
-            $browser->visit(new LoginPage())
+            $browser->visit(new LoginPage)
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit($createPage)
                 ->on($createPage)
@@ -35,7 +35,7 @@ class TeamRoundAdministrationTest extends DuskTestCase
                 ->selectRankingByText('Juli 2025')
                 ->click('@submit-button')
                 ->waitForText('Dit hold er gemt')
-                ->on(new TeamFightEditPage())
+                ->on(new TeamFightEditPage)
                 ->waitForText('Administration journey');
 
             $browser->click('@settings-button')
@@ -71,7 +71,7 @@ class TeamRoundAdministrationTest extends DuskTestCase
                 ->assertSeeIn('@team-fights-table', 'Edited administration journey');
 
             $browser->clickLink('Kopi af Edited administration journey')
-                ->on(new TeamFightEditPage())
+                ->on(new TeamFightEditPage)
                 ->waitForTextIn("[dusk='squad-0']", 'Official Squad')
                 ->assertSeeIn("[dusk='squad-0']", 'Kredsserie')
                 ->assertSeeIn("[dusk='squad-0']", '1. DS')
