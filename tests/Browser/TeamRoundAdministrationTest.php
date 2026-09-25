@@ -73,6 +73,7 @@ class TeamRoundAdministrationTest extends DuskTestCase
             $browser->clickLink('Kopi af Edited administration journey')
                 ->on(new TeamFightEditPage())
                 ->waitForTextIn("[dusk='squad-0']", 'Official Squad')
+                ->assertSeeIn("[dusk='squad-0']", 'Kredsserie')
                 ->assertSeeIn("[dusk='squad-0']", '1. DS')
                 ->waitForTextIn('@team-table-section', 'Spela Silvester Laumand')
                 ->assertDontSeeIn('@team-table-section', 'Michella Skov')
