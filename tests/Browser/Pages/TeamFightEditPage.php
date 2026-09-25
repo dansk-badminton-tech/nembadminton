@@ -39,6 +39,15 @@ class TeamFightEditPage extends Page
     {
         return [
             '@page' => "[dusk='team-fight-edit-page']",
+            '@settings-button' => "[dusk='team-round-settings-button']",
+            '@settings-modal' => "[dusk='team-round-settings-modal']",
+            '@settings-name' => "[dusk='team-round-settings-name']",
+            '@settings-round' => "[dusk='team-fight-round-input']",
+            '@date-picker' => "[dusk='team-fight-date-picker']",
+            '@settings-ranking' => "[dusk='team-round-settings-ranking']",
+            '@ranking-select' => "[dusk='team-round-settings-ranking']",
+            '@settings-save' => "[dusk='team-round-settings-save']",
+            '@settings-close' => "[dusk='team-round-settings-close']",
             '@player-search-panel' => "[dusk='player-search-panel']",
             '@player-search-input' => "input[dusk='player-search-input']",
             '@ranking-list-select' => "[dusk='ranking-list-select']",
@@ -67,6 +76,42 @@ class TeamFightEditPage extends Page
             '@manual-correction-indicator' => "[dusk='manual-correction-indicator']",
             '@edit-player-close-button' => "[dusk='edit-player-close-button']",
         ];
+    }
+
+    public function setRound(Browser $browser, int $round): void
+    {
+        (new TeamFightCreatePage(0))->setRound($browser, $round);
+    }
+
+    public function selectDate(Browser $browser, int $month, int $year, int $day): void
+    {
+        $browser->click('@date-picker');
+        $browser->pause(300);
+        $browser->script(<<<JS
+            const selects = document.querySelectorAll('body > .datepicker .datepicker-header select');
+            const month = selects[0];
+            const year = selects[1];
+            month.value = '{$month}' - 1;
+            month.dispatchEvent(new Event('change'));
+            year.value = '{$year}';
+            year.dispatchEvent(new Event('change'));
+        JS);
+        $browser->pause(300);
+        $browser->script(<<<JS
+            const cells = document.querySelectorAll('body > .datepicker .datepicker-body a.datepicker-cell');
+            Array.from(cells).find(cell => cell.textContent.trim() === '{$day}' && !cell.classList.contains('is-nearby')).click();
+        JS);
+    }
+
+    public function selectRankingByText(Browser $browser, string $text): void
+    {
+        $browser->waitFor('@ranking-select');
+        $label = json_encode($text, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $browser->script(<<<JS
+            const select = document.querySelector("[dusk='team-round-settings-ranking']");
+            select.value = Array.from(select.options).find(option => option.textContent.includes({$label})).value;
+            select.dispatchEvent(new Event('change', {bubbles: true}));
+        JS);
     }
 
     // ─── Ranking list panel methods ──────────────────────────────────────

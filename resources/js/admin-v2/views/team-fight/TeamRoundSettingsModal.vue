@@ -1,11 +1,12 @@
 <template>
     <form @submit.prevent="save">
-        <div class="modal-card" style="width: auto">
+        <div class="modal-card" dusk="team-round-settings-modal" style="width: auto">
             <header class="modal-card-head">
                 <p class="modal-card-title">Indstillinger for holdrunde</p>
                 <button
                     type="button"
                     class="delete"
+                    dusk="team-round-settings-close"
                     @click="$emit('close')"/>
             </header>
             <section class="modal-card-body">
@@ -29,6 +30,7 @@
                             </template>
                             <b-datepicker
                                 append-to-body
+                                dusk="team-fight-date-picker"
                                 v-model="gameDate"
                                 icon="calendar"
                                 locale="da-DK"
@@ -42,19 +44,20 @@
                 <div class="columns">
                     <div class="column">
                         <b-field label="Rangliste">
-                            <RankingVersionSelect @focus="oldVersion = version"
+                            <RankingVersionSelect dusk="team-round-settings-ranking" @focus="oldVersion = version"
                                                   v-model="version" expanded></RankingVersionSelect>
                         </b-field>
                     </div>
                     <div class="column">
                         <b-field label="Navn (Valgfrit)">
-                            <b-input v-model="name"></b-input>
+                            <b-input dusk="team-round-settings-name" v-model="name"></b-input>
                         </b-field>
                     </div>
                 </div>
             </section>
             <footer class="modal-card-foot">
                 <b-button
+                    dusk="team-round-settings-save"
                     :loading="saving"
                     native-type="submit"
                     type="is-primary"
