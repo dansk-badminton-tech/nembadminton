@@ -1,0 +1,38 @@
+FROM composer:2 AS build
+ADD . .
+RUN composer install --no-dev
+
+FROM dunglas/frankenphp:1.12-php8.4 as base
+
+ENV SERVER_NAME=:80
+
+RUN apt-get update && apt-get install -y libzip-dev zip libgmp-dev
+RUN pecl install redis && docker-php-ext-enable redis
+RUN pecl install ev && docker-php-ext-enable ev
+RUN docker-php-ext-install pdo_mysql gettext zip pcntl gmp
+RUN printf 'opcache.save_comments=1\n' > "$PHP_INI_DIR/conf.d/zz-opcache-comments.ini"
+
+ARG USER=appuser
+
+RUN <<-EOF
+	# Use "adduser -D ${USER}" for alpine based distros
+	useradd ${USER}
+	# Add additional capability to bind to port 80 and 443
+	setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp
+	# Give write access to /config/caddy and /data/caddy
+	chown -R ${USER}:${USER} /config/caddy /data/caddy
+EOF
+
+COPY --chown=${USER}:${USER} --from=build /app .
+
+FROM base AS dev
+RUN pecl install excimer
+RUN docker-php-ext-enable excimer
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+USER ${USER}
+
+FROM base AS prod
+RUN mv php-production.ini "$PHP_INI_DIR/php.ini"
+USER ${USER}

@@ -143,7 +143,7 @@
                             <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
                         </b-tooltip>
                     </b-table-column>
-                    <b-table-column width="30%" :td-attrs="(row, column) => resolveAttrs(row, column, team)" v-slot="props" field="results" label="Result">
+                    <b-table-column width="30%" :td-attrs="team.resultAttrs" v-slot="props" field="results" label="Result">
                         {{ resolveResultDisplay(props.row.results, team)?.join(" ") }}
                     </b-table-column>
                 </b-table>
@@ -168,6 +168,7 @@ import {
 import BadmintonPlayerTeamsMultiSelect from "../../components/badminton-player/BadmintonPlayerTeamsMultiSelect.vue";
 import RankingListDropdown from "../../components/ranking-list-dropdown/RankingListDropDown.vue";
 import OptionalRanking from "./OptionalRanking.vue";
+import {determineBadmintonMatchWinner} from "./score.js";
 import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
 import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
@@ -260,6 +261,7 @@ export default {
     methods: {
         ageGroupLabel,
         isYoungPlayer,
+        determineBadmintonMatchWinner,
         resolveAttrs(row, column, team){
             let winnerSide = this.determineBadmintonMatchWinner(row.results);
             if(winnerSide === team.side){
@@ -287,41 +289,6 @@ export default {
                     return result.guestPoints+'/'+result.homePoints
                 }
             })
-        },
-        determineBadmintonMatchWinner(games) {
-            let homeWins = 0;
-            let guestWins = 0;
-
-            for (let game of games) {
-                const { homePoints, guestPoints } = game;
-
-                // Skip if the game was not played
-                if (homePoints === null || guestPoints === null) {
-                    continue;
-                }
-
-                // Check for valid score
-                if (homePoints < 0 || guestPoints < 0 || homePoints > 30 || guestPoints > 30) {
-                    throw 'Invalid score found';
-                }
-
-                // Determine the winner of the game
-                if ((homePoints >= 21 && homePoints - guestPoints >= 2) || homePoints === 30) {
-                    homeWins++;
-                } else if ((guestPoints >= 21 && guestPoints - homePoints >= 2) || guestPoints === 30) {
-                    guestWins++;
-                }
-            }
-
-            // Check if match winner is already determined
-            if (homeWins === 2) {
-                return 'HOME';
-            } else if (guestWins === 2) {
-                return 'GUEST';
-            }
-
-            // In case all three games are played without a winner
-            return 'UNKNOWN';
         },
         maybeMoveDown(index) {
             return this.castToArray(this.selectedTeamMatches).length - 1 === index
@@ -428,7 +395,10 @@ export default {
                     }
                 }
             ).then(({data}) => {
-                this.teams = data.badmintonPlayerTeamMatches
+                this.teams = data.badmintonPlayerTeamMatches.map(team => ({
+                    ...team,
+                    resultAttrs: (row, column) => this.resolveAttrs(row, column, team)
+                }))
                 this.done = true
                 this.validate()
             }).catch((error) => {
@@ -549,4 +519,3 @@ export default {
     }
 }
 </script>
-

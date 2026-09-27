@@ -77,17 +77,17 @@ services:
       - websocket
 
   artisan-serve:
-    image: flycompany/holdkamp
-    entrypoint: "php artisan serve --host=0.0.0.0 --port=80 --no-reload --env dusk.local"
+    image: flycompany/nembadminton-app:selenium
+    entrypoint: "php artisan octane:frankenphp --env dusk.local --port 80"
     user: "1000:33"
     ports:
-      - 8000:80
+      - 8000:8000
     build:
       context: .
-      dockerfile: Dockerfile
-      target: prod
+      dockerfile: Dockerfile.frankenphp
+      target: dev
     volumes:
-      - .:/var/www/html
+      - .:/app
 
   artisan:
     image: flycompany/holdkamp
