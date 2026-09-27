@@ -60,8 +60,6 @@ gh workflow run "Browser testing" --ref my-branch
 gh run watch
 ```
 
-Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.
-
 ## Agent skills
 
 ### Issue tracker
@@ -76,4 +74,3 @@ Canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-hu
 ### Domain docs
 
 Single-context (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
-

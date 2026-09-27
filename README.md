@@ -58,10 +58,11 @@ docker compose run --rm artisan dusk --filter=TeamFightConstruct13KampsTest
 docker compose run --rm artisan dusk --filter=test_user_can_construct_holdrunde_with_13_kamps_hold
 ```
 
-**Re-run only failed tests:**
+**Re-run only failed tests** (keep the JUnit report on the shared project volume):
 
 ```bash
-docker compose run --rm artisan dusk:fails
+docker compose run --rm artisan dusk --log-junit=storage/logs/dusk-results.xml
+docker compose run --rm artisan dusk:retry-failed storage/logs/dusk-results.xml
 ```
 
 The host can open the Dusk application at `http://localhost:8000`. Selenium shares the Compose network and uses `APP_URL=http://artisan-serve`, which reaches the service directly on its internal port 80.
