@@ -125,12 +125,15 @@ class TeamRoundEntryTest extends DuskTestCase
     public function test_creation_requires_valid_round_date_ranking_and_season(): void
     {
         $this->browse(function (Browser $browser) {
-            $create = new TeamFightCreatePage(Clubhouse::firstOrFail()->id);
+            $clubhouseId = Clubhouse::firstOrFail()->id;
+            $create = new TeamFightCreatePage($clubhouseId);
+            $dashboard = new TeamFightDashboardPage($clubhouseId);
             $browser->visit(new LoginPage)
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit($create)
                 ->on($create)
                 ->waitUntilEnabled('@round-input')
+                ->type('@name-input', 'Blocked entry journey')
                 ->click('@submit-button')
                 ->assertCreationBlocked()
                 ->assertInvalidRound()
@@ -152,7 +155,12 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->clearRanking()
                 ->click('@submit-button')
                 ->assertCreationBlocked()
-                ->assertInvalidRanking();
+                ->assertInvalidRanking()
+                ->visit($dashboard)
+                ->on($dashboard)
+                ->selectSeasonFilter('all')
+                ->waitForRound('3x13 Kamps - Valid')
+                ->assertRoundNamesExclude('Blocked entry journey');
         });
     }
 

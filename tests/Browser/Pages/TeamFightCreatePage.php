@@ -156,8 +156,10 @@ class TeamFightCreatePage extends Page
     public function selectRankingByText(Browser $browser, string $text): void
     {
         $escapedText = addslashes($text);
+        $textJson = json_encode($text, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 
         $browser->waitFor('@ranking-select')
+            ->waitUsing(10, 100, fn () => (bool) $browser->script("return Array.from(document.querySelector(\"[dusk='team-fight-ranking-select']\").options).some(option => option.text.includes({$textJson}));")[0])
             ->script("
                 var sel = document.querySelector(\"[dusk='team-fight-ranking-select']\");
                 var options = sel.options;
