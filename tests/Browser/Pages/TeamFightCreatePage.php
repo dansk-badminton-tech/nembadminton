@@ -3,6 +3,7 @@
 namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Assert;
 
 class TeamFightCreatePage extends Page
 {
@@ -15,7 +16,7 @@ class TeamFightCreatePage extends Page
 
     public function url(): string
     {
-        return '/app/c-' . $this->clubhouseId . '/team-fight/create';
+        return '/app/c-'.$this->clubhouseId.'/team-fight/create';
     }
 
     public function assert(Browser $browser): void
@@ -23,6 +24,7 @@ class TeamFightCreatePage extends Page
         $browser->waitFor('@page');
     }
 
+    /** @return array<string, string> */
     public function elements(): array
     {
         return [
@@ -34,6 +36,45 @@ class TeamFightCreatePage extends Page
             '@ranking-select' => "[dusk='team-fight-ranking-select']",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
+    }
+
+    public function assertCreationBlocked(Browser $browser): void
+    {
+        $browser->assertPathIs($this->url())->assertPresent('@page');
+    }
+
+    public function assertInvalidRound(Browser $browser): void
+    {
+        Assert::assertFalse($browser->script("return document.querySelector(\"[dusk='team-fight-round-input']\").checkValidity();")[0]);
+    }
+
+    public function assertInvalidSeason(Browser $browser): void
+    {
+        Assert::assertFalse($browser->script("return document.querySelector(\"[dusk='team-fight-season-select-wrapper'] select\").checkValidity();")[0]);
+    }
+
+    public function clearSeason(Browser $browser): void
+    {
+        $browser->waitUsing(5, 100, fn () => (bool) $browser->script("return document.querySelector(\"[dusk='team-fight-season-select-wrapper'] select\").value;")[0]);
+        $browser->script(<<<'JS'
+            const select = document.querySelector("[dusk='team-fight-season-select-wrapper'] select");
+            select.value = '';
+            select.dispatchEvent(new Event('change', {bubbles: true}));
+        JS);
+    }
+
+    public function clearRanking(Browser $browser): void
+    {
+        $browser->script(<<<'JS'
+            const select = document.querySelector("[dusk='team-fight-ranking-select']");
+            select.value = '';
+            select.dispatchEvent(new Event('change', {bubbles: true}));
+        JS);
+    }
+
+    public function assertInvalidRanking(Browser $browser): void
+    {
+        Assert::assertFalse($browser->script("return document.querySelector(\"[dusk='team-fight-ranking-select']\").checkValidity();")[0]);
     }
 
     /**
@@ -61,9 +102,9 @@ class TeamFightCreatePage extends Page
      * select() — we must set the value via JS and dispatch input/change events.
      * Months are 0-indexed (0 = January, 6 = July, 11 = December).
      *
-     * @param int $month 1-indexed month (1 = January, 7 = July, 12 = December)
-     * @param int $year  Full year (e.g. 2025)
-     * @param int $day   Day of the month (1-31)
+     * @param  int  $month  1-indexed month (1 = January, 7 = July, 12 = December)
+     * @param  int  $year  Full year (e.g. 2025)
+     * @param  int  $day  Day of the month (1-31)
      */
     public function selectDate(Browser $browser, int $month, int $year, int $day): void
     {
@@ -110,7 +151,7 @@ class TeamFightCreatePage extends Page
      * finds the <option> whose text contains the given string and selects it
      * via JS with proper event dispatching.
      *
-     * @param string $text Partial text to match in option labels (e.g. "Juli 2025")
+     * @param  string  $text  Partial text to match in option labels (e.g. "Juli 2025")
      */
     public function selectRankingByText(Browser $browser, string $text): void
     {
@@ -169,6 +210,6 @@ class TeamFightCreatePage extends Page
     {
         $browser->click('@date-picker')
             ->waitFor('.datepicker .dropdown-content')
-            ->script("document.querySelectorAll('.datepicker .datepicker-body a.datepicker-cell.is-selectable')[" . ($day - 1) . "].click()");
+            ->script("document.querySelectorAll('.datepicker .datepicker-body a.datepicker-cell.is-selectable')[".($day - 1).'].click()');
     }
 }
