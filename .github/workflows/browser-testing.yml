@@ -98,15 +98,29 @@ jobs:
           test -s /tmp/dusk-results.xml
           filter=$(php -r '
             $results = simplexml_load_file("/tmp/dusk-results.xml");
+            if ($results === false) {
+                exit(1);
+            }
+
+            $cases = $results->xpath("//testcase");
+            if (count($cases) === 0 || count($cases) !== (int) $results->testsuite[0]["tests"]) {
+                exit(1);
+            }
+
             $tests = [];
             foreach ($results->xpath("//testcase[failure or error]") as $test) {
                 $tests[] = preg_quote((string) $test["class"], "/") . "::" . preg_quote((string) $test["name"], "/");
             }
             if ($tests) {
                 echo "/^(?:" . implode("|", array_unique($tests)) . ")(?: with data set.*)?$/";
+            } else {
+                echo "all-passed";
             }
           ')
-          test -n "$filter"
+          if [ "$filter" = all-passed ]; then
+            echo 'Dusk exited nonzero, but every test in the JUnit report passed.'
+            exit 0
+          fi
           php artisan dusk --filter="$filter" -vvv
 
       - name: Upload Dusk screenshots
