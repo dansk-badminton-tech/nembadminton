@@ -6,6 +6,7 @@ namespace FlyCompany\TeamFight\GraphQL\Queries;
 
 use App\Models\Squad;
 use App\Models\SquadMember;
+use Illuminate\Http\Request;
 
 /**
  * Finds the team round a placed player (SquadMember) belongs to, for resolvers on SquadMember fields.
@@ -20,11 +21,18 @@ class SquadMemberTeamRound
      */
     private static array $categoryToRoundCache = [];
 
+    private static ?Request $cachedRequest = null;
+
     /**
      * @return string The team round id, or '' when it cannot be determined.
      */
     public static function of(SquadMember $squadMember): string
     {
+        if (self::$cachedRequest !== request()) {
+            self::$categoryToRoundCache = [];
+            self::$cachedRequest = request();
+        }
+
         // Use in-memory Eloquent relations if already loaded
         if ($squadMember->relationLoaded('category') && $squadMember->category?->relationLoaded('squad') && $squadMember->category->squad?->team_round_id !== null) {
             return (string) $squadMember->category->squad->team_round_id;
@@ -53,5 +61,6 @@ class SquadMemberTeamRound
     public static function clearCache(): void
     {
         self::$categoryToRoundCache = [];
+        self::$cachedRequest = null;
     }
 }

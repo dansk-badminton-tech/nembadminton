@@ -8,6 +8,7 @@ use App\Models\Cancellation;
 use App\Models\Member;
 use App\Models\SquadMember;
 use App\Models\TeamRound;
+use Illuminate\Http\Request;
 
 /**
  * Resolves whether a placed player (SquadMember) has an afbud that applies to their team round.
@@ -25,11 +26,18 @@ class PlacedPlayerCancellationResolver
      */
     private static array $roundCancellationsCache = [];
 
+    private static ?Request $cachedRequest = null;
+
     /**
      * @return array{permanent: bool, viaCancellationLink: bool}|null
      */
     public function __invoke(SquadMember $root): ?array
     {
+        if (self::$cachedRequest !== request()) {
+            self::$roundCancellationsCache = [];
+            self::$cachedRequest = request();
+        }
+
         $teamRoundId = SquadMemberTeamRound::of($root);
         if ($teamRoundId === '' || $root->member_ref_id === null) {
             return null;
@@ -90,6 +98,7 @@ class PlacedPlayerCancellationResolver
     public static function clearCache(): void
     {
         self::$roundCancellationsCache = [];
+        self::$cachedRequest = null;
         SquadMemberTeamRound::clearCache();
     }
 }

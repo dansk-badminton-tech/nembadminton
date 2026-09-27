@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\SquadMember;
 use App\Models\TeamRound;
 use GraphQL\Type\Definition\ResolveInfo;
+use Illuminate\Http\Request;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ParallelAllocationResolver
@@ -19,6 +20,8 @@ class ParallelAllocationResolver
      * @var array<string, array<string, array<string, mixed>>>
      */
     private static array $roundAllocationsCache = [];
+
+    private static ?Request $cachedRequest = null;
 
     /**
      * Resolve the parallel team round allocation for a given member.
@@ -32,6 +35,11 @@ class ParallelAllocationResolver
      */
     public function __invoke(mixed $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ?array
     {
+        if (self::$cachedRequest !== request()) {
+            self::$roundAllocationsCache = [];
+            self::$cachedRequest = request();
+        }
+
         // Step 1: Determine which team round is currently active
         $activeTeamRoundId = $this->resolveActiveTeamRoundId($root, $args);
         if ($activeTeamRoundId === '') {
@@ -165,6 +173,7 @@ class ParallelAllocationResolver
     public static function clearCache(): void
     {
         self::$roundAllocationsCache = [];
+        self::$cachedRequest = null;
         SquadMemberTeamRound::clearCache();
     }
 }

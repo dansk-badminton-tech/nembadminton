@@ -7,6 +7,7 @@ use Laravel\Dusk\Browser;
 class TeamFightEditPage extends Page
 {
     private ?int $clubhouseId;
+
     private ?string $teamUUID;
 
     /**
@@ -23,7 +24,7 @@ class TeamFightEditPage extends Page
     public function url(): string
     {
         if ($this->clubhouseId && $this->teamUUID) {
-            return '/app/c-' . $this->clubhouseId . '/team-fight/' . $this->teamUUID . '/edit';
+            return '/app/c-'.$this->clubhouseId.'/team-fight/'.$this->teamUUID.'/edit';
         }
 
         // When no args provided, return empty string — page is used for macro registration only
@@ -143,6 +144,61 @@ class TeamFightEditPage extends Page
         $selector = "[dusk='show-{$filter}-switch']";
         $this->scrollToCenter($browser, $selector);
         $browser->click($selector);
+    }
+
+    public function togglePermanentCancellationFilter(Browser $browser): void
+    {
+        $this->scrollToCenter($browser, "[dusk='show-permanent-cancellation-switch']");
+        $browser->click("[dusk='show-permanent-cancellation-switch']");
+    }
+
+    public function registerTeamRoundAfbud(Browser $browser, string $refId): void
+    {
+        $browser->click($this->memberRow($refId)." button[title='Afbud (Denne holdrunde)']")
+            ->waitForText('Afbud registret');
+    }
+
+    public function openCancellationDetails(Browser $browser, string $refId): void
+    {
+        if (! $browser->elements("[dusk='player-search-panel'] button[title='Annuller afbud (Denne holdrunde)']")) {
+            $browser->click("[dusk='available-player-{$refId}']");
+        }
+    }
+
+    public function assignCancelledMember(Browser $browser, string $refId): void
+    {
+        $browser->click($this->memberRow($refId)." button[dusk='add-player-button']")
+            ->waitForText('Tilføjet til Hold', 20);
+    }
+
+    public function removeTeamRoundAfbud(Browser $browser): void
+    {
+        $browser->waitUntilEnabled("[dusk='player-search-panel'] button[title='Annuller afbud (Denne holdrunde)']")
+            ->script("document.querySelector(\"[dusk='player-search-panel'] button[title='Annuller afbud (Denne holdrunde)']\").click()");
+        $browser
+            ->waitForText('Afbud slettet');
+    }
+
+    public function assertCancellationRemovalDisabled(Browser $browser): void
+    {
+        $browser->assertDisabled("[dusk='player-search-panel'] button[title='Annuller afbud (Denne holdrunde)']");
+    }
+
+    public function setPermanentCancellation(Browser $browser, string $refId): void
+    {
+        $browser->click($this->memberRow($refId)." button[title='Lav afbud permanent (Alle holdrunder)']")
+            ->waitForText('Permanent afbud registret');
+    }
+
+    public function removePermanentCancellation(Browser $browser, string $refId): void
+    {
+        $browser->click($this->memberRow($refId)." button[title='Annuller permanent afbud']")
+            ->waitForText('Permanent afbud slettet');
+    }
+
+    private function memberRow(string $refId): string
+    {
+        return "[dusk='player-search-panel'] tbody tr:has([dusk='available-player-{$refId}'])";
     }
 
     public function goToMemberSearchPage(Browser $browser, string $direction): void
@@ -298,9 +354,9 @@ class TeamFightEditPage extends Page
      *   4. Click the matching dropdown item
      *   5. Verify the player was placed before moving to the next slot
      *
-     * @param int    $squadIndex   0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
-     * @param string $categoryName Category label as shown in the <th>, e.g. "1. DD"
-     * @param string $playerName   Full player name to search for
+     * @param  int  $squadIndex  0-based squad index (0 = Hold 1, 1 = Hold 2, etc.)
+     * @param  string  $categoryName  Category label as shown in the <th>, e.g. "1. DD"
+     * @param  string  $playerName  Full player name to search for
      */
     public function fillCategorySlot(Browser $browser, int $squadIndex, string $categoryName, string $playerName): void
     {
@@ -332,12 +388,12 @@ class TeamFightEditPage extends Page
         $slotCount = count($browser->elements($inputSelector));
 
         $browser->waitUsing(20, 100, function () use ($browser, $inputSelectorJson, $playerNameJson) {
-            return ($browser->script(<<<JS
+            return $browser->script(<<<JS
                 const input = document.querySelector({$inputSelectorJson});
                 const option = Array.from(input?.closest('.autocomplete')?.querySelectorAll('.dropdown-item') ?? [])
                     .find(element => element.textContent.includes({$playerNameJson}));
                 return option !== undefined;
-            JS)[0] ?? false);
+            JS)[0] ?? false;
         }, "Player {$playerName} did not appear in the autocomplete dropdown");
 
         $browser->script(<<<JS
@@ -355,8 +411,8 @@ class TeamFightEditPage extends Page
     /**
      * Fill all category slots for one squad using the category → players mapping.
      *
-     * @param int   $squadIndex    0-based squad index
-     * @param array $categorySlots Map of category name → [player1, player2, ...]
+     * @param  int  $squadIndex  0-based squad index
+     * @param  array  $categorySlots  Map of category name → [player1, player2, ...]
      */
     public function fillSquad(Browser $browser, int $squadIndex, array $categorySlots): void
     {
@@ -476,6 +532,7 @@ class TeamFightEditPage extends Page
         $text = preg_replace('/[^\w-]+/', '', $text);     // remove non-word chars (except dash)
         $text = preg_replace('/--+/', '-', $text);        // collapse multiple dashes
         $text = trim($text, '-');                          // trim leading/trailing dashes
+
         return $text;
     }
 
@@ -491,6 +548,7 @@ class TeamFightEditPage extends Page
             $emptyInputs = $browser->script("
                 return document.querySelectorAll(\"[dusk='team-table-section'] input[placeholder='Søg på spiller...']\").length;
             ");
+
             return ($emptyInputs[0] ?? 0) === 0;
         }, 'All player slots should be filled (still found empty autocomplete inputs after 5s)');
     }
