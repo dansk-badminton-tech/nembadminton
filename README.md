@@ -85,7 +85,7 @@ gh workflow run "Browser testing" --ref my-branch
 gh run watch
 ```
 
-Failed tests are automatically retried once via `dusk:fails` before the workflow is marked as failed.
+Failed browser tests are automatically retried once before the workflow is marked as failed.
 
 ## Projekt management
 

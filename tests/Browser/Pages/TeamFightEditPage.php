@@ -156,6 +156,7 @@ class TeamFightEditPage extends Page
     {
         [$birthday, $endId] = explode('-', $refId);
 
+        $this->scrollToCenter($browser, '@open-add-member-button');
         $browser->click('@open-add-member-button')
             ->waitFor('@add-member-name-input')
             ->type('@add-member-ref-birthday-input', $birthday)

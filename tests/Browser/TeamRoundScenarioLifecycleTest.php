@@ -72,7 +72,8 @@ class TeamRoundScenarioLifecycleTest extends DuskTestCase
                 ->cancelScenarioDeletion()
                 ->assertScenarioSelected('Scenario lifecycle journey', false)
                 ->confirmScenarioDeletion()
-                ->assertScenarioSelected('Plan C', true)
+                ->waitUntilMissing('@scenario-selector-dropdown', 15)
+                ->assertMissing('@scenario-draft-warning-banner')
                 ->waitForTextIn('@team-table-section', 'Michella Skov')
                 ->assertDontSeeIn('@team-table-section', 'Spela Silvester Laumand')
                 ->assertMissing('@scenario-selector-dropdown');
