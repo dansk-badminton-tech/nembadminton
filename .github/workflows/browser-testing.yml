@@ -70,8 +70,11 @@ jobs:
       - name: Migrate database
         run: php artisan migrate --force
 
+      - name: Install FrankenPHP
+        run: php artisan octane:install --server=frankenphp --no-interaction
+
       - name: Start app server
-        run: php artisan serve --host=0.0.0.0 --port=8000 --no-reload >/tmp/laravel.log 2>&1 &
+        run: php artisan octane:frankenphp --env=dusk.ci --host=0.0.0.0 --port=8000 --no-interaction > /tmp/frankenphp.log 2>&1 &
 
       - name: Wait for app
         run: |
@@ -99,16 +102,16 @@ jobs:
           path: tests/Browser/screenshots
           if-no-files-found: ignore
 
-      - name: Echo Server Access Logs
+      - name: Echo FrankenPHP logs
         if: always()
-        run: cat /tmp/laravel.log
+        run: cat /tmp/frankenphp.log
 
-      - name: Upload Server Access Logs
+      - name: Upload FrankenPHP logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: laravel-server-access-logs
-          path: /tmp/laravel.log
+          name: frankenphp-logs
+          path: /tmp/frankenphp.log
           if-no-files-found: ignore
 
       - name: Echo laravel logs
