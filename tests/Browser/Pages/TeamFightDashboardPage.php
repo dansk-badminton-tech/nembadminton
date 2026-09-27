@@ -52,7 +52,7 @@ class TeamFightDashboardPage extends Page
     }
 
     /** @param list<string> $values */
-    public function assertRoundRow(Browser $browser, string $name, array $values): void
+    public function assertRoundRowContainsText(Browser $browser, string $name, array $values): void
     {
         $nameJson = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         $row = $browser->script(<<<JS

@@ -30,7 +30,7 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->on($dashboard)
                 ->selectSeasonFilter('all')
                 ->waitForRound('3x13 Kamps - Valid')
-                ->assertRoundRow('3x13 Kamps - Valid', ['2025-07-14', 'Juli 2025'])
+                ->assertRoundRowContainsText('3x13 Kamps - Valid', ['2025-07-14', 'Juli 2025'])
                 ->openRound('3x13 Kamps - Valid')
                 ->on(new TeamFightEditPage)
                 ->waitForText('3x13 Kamps - Valid');
@@ -40,7 +40,7 @@ class TeamRoundEntryTest extends DuskTestCase
     public function test_each_season_filter_shows_only_its_rounds(): void
     {
         $clubhouseId = Clubhouse::firstOrFail()->id;
-        $year = now()->month >= 7 ? now()->year : now()->year - 1;
+        $year = $this->currentSeasonStartYear();
         $this->addRound($clubhouseId, 'Current season journey', $year.'-07-14');
         $this->addRound($clubhouseId, 'Previous season journey', ($year - 1).'-07-14');
         $this->addRound($clubhouseId, 'Earlier season journey', ($year - 2).'-07-14');
@@ -77,7 +77,7 @@ class TeamRoundEntryTest extends DuskTestCase
     public function test_sorting_and_pagination_change_the_visible_rounds(): void
     {
         $clubhouseId = Clubhouse::firstOrFail()->id;
-        $year = now()->month >= 7 ? now()->year : now()->year - 1;
+        $year = $this->currentSeasonStartYear();
         foreach (range(1, 12) as $day) {
             $this->addRound($clubhouseId, sprintf('Pagination round %02d', $day), sprintf('%d-07-%02d', $year, $day));
         }
@@ -103,6 +103,8 @@ class TeamRoundEntryTest extends DuskTestCase
 
     public function test_empty_list_offers_creation(): void
     {
+        TeamRound::query()->delete();
+
         $this->browse(function (Browser $browser) {
             $clubhouseId = Clubhouse::firstOrFail()->id;
             $dashboard = new TeamFightDashboardPage($clubhouseId);
@@ -181,7 +183,7 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->on($dashboard)
                 ->selectSeasonFilter('all')
                 ->waitForRound('New entry journey')
-                ->assertRoundRow('New entry journey', ['2', '2025-07-15', 'Juli 2025']);
+                ->assertRoundRowContainsText('New entry journey', ['2', '2025-07-15', 'Juli 2025']);
         });
     }
 
@@ -195,5 +197,10 @@ class TeamRoundEntryTest extends DuskTestCase
             'user_id' => 1,
             'clubhouse_id' => $clubhouseId,
         ]);
+    }
+
+    private function currentSeasonStartYear(): int
+    {
+        return now()->month >= 7 ? now()->year : now()->year - 1;
     }
 }
