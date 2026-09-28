@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FlyCompany\TeamFight\Models;
 
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -16,7 +17,7 @@ class SerializerHelper
     public static function getSerializer(): Serializer
     {
         $phpDocExtractor = new PhpDocExtractor;
-        $typeExtractors = [$phpDocExtractor];
+        $typeExtractors = [$phpDocExtractor, new ReflectionExtractor];
         $propertyInfo = new PropertyInfoExtractor([], $typeExtractors);
 
         $encoders = [new JsonEncoder];

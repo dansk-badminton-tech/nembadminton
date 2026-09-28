@@ -20,7 +20,7 @@ services:
 
   db-worker:
     image: flycompany/holdkamp
-    entrypoint: "php artisan queue:work database"
+    entrypoint: "php artisan queue:work database --memory 2048 --timeout 600"
     user: "33:33"
     environment:
       TELESCOPE_ENABLED: "false"

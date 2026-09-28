@@ -1,0 +1,1009 @@
+{
+    "current": null,
+    "previous": {
+        "versionDate": "2026-08-02T00:00:00.2350288+02:00",
+        "playerRankings": [
+            {
+                "playerNumber": "900101-1",
+                "name": "Fixture Player 1",
+                "gender": "M",
+                "clubID": 10000,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-2",
+                "name": "Fixture Player 2",
+                "gender": "K",
+                "clubID": 10001,
+                "singlePoints": 0,
+                "doublePoints": 1997,
+                "mixPoints": 2107,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-3",
+                "name": "Fixture Player 3",
+                "gender": "M",
+                "clubID": 10002,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-4",
+                "name": "Fixture Player 4",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-5",
+                "name": "Fixture Player 5",
+                "gender": "M",
+                "clubID": 10003,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-6",
+                "name": "Fixture Player 6",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-7",
+                "name": "Fixture Player 7",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-8",
+                "name": "Fixture Player 8",
+                "gender": "K",
+                "clubID": 10004,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-9",
+                "name": "Fixture Player 9",
+                "gender": "K",
+                "clubID": 10004,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-10",
+                "name": "Fixture Player 10",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-11",
+                "name": "Fixture Player 11",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-12",
+                "name": "Fixture Player 12",
+                "gender": "M",
+                "clubID": 10005,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-13",
+                "name": "Fixture Player 13",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-14",
+                "name": "Fixture Player 14",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-15",
+                "name": "Fixture Player 15",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-16",
+                "name": "Fixture Player 16",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-17",
+                "name": "Fixture Player 17",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-18",
+                "name": "Fixture Player 18",
+                "gender": "M",
+                "clubID": 10006,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-19",
+                "name": "Fixture Player 19",
+                "gender": "M",
+                "clubID": 10007,
+                "singlePoints": 2926,
+                "doublePoints": 3218,
+                "mixPoints": 3036,
+                "showAll": true
+            },
+            {
+                "playerNumber": "900101-20",
+                "name": "Fixture Player 20",
+                "gender": "M",
+                "clubID": 10008,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-21",
+                "name": "Fixture Player 21",
+                "gender": "M",
+                "clubID": 10009,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-22",
+                "name": "Fixture Player 22",
+                "gender": "K",
+                "clubID": 10010,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-23",
+                "name": "Fixture Player 23",
+                "gender": "M",
+                "clubID": 10011,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-24",
+                "name": "Fixture Player 24",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-25",
+                "name": "Fixture Player 25",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-26",
+                "name": "Fixture Player 26",
+                "gender": "M",
+                "clubID": 10012,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-27",
+                "name": "Fixture Player 27",
+                "gender": "M",
+                "clubID": 10013,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-28",
+                "name": "Fixture Player 28",
+                "gender": "M",
+                "clubID": 10014,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-29",
+                "name": "Fixture Player 29",
+                "gender": "M",
+                "clubID": 10015,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-30",
+                "name": "Fixture Player 30",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-31",
+                "name": "Fixture Player 31",
+                "gender": "M",
+                "clubID": 10007,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-32",
+                "name": "Fixture Player 32",
+                "gender": "K",
+                "clubID": 10016,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-33",
+                "name": "Fixture Player 33",
+                "gender": "K",
+                "clubID": 10016,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-34",
+                "name": "Fixture Player 34",
+                "gender": "K",
+                "clubID": 10017,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-35",
+                "name": "Fixture Player 35",
+                "gender": "K",
+                "clubID": 10018,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-36",
+                "name": "Fixture Player 36",
+                "gender": "M",
+                "clubID": 10019,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-37",
+                "name": "Fixture Player 37",
+                "gender": "M",
+                "clubID": 10020,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-38",
+                "name": "Fixture Player 38",
+                "gender": "M",
+                "clubID": 10021,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-39",
+                "name": "Fixture Player 39",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-40",
+                "name": "Fixture Player 40",
+                "gender": "M",
+                "clubID": 10020,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-41",
+                "name": "Fixture Player 41",
+                "gender": "K",
+                "clubID": 10016,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-42",
+                "name": "Fixture Player 42",
+                "gender": "M",
+                "clubID": 10021,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-43",
+                "name": "Fixture Player 43",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-44",
+                "name": "Fixture Player 44",
+                "gender": "M",
+                "clubID": 10022,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-45",
+                "name": "Fixture Player 45",
+                "gender": "K",
+                "clubID": 10023,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-46",
+                "name": "Fixture Player 46",
+                "gender": "K",
+                "clubID": 10024,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-47",
+                "name": "Fixture Player 47",
+                "gender": "M",
+                "clubID": 10025,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-48",
+                "name": "Fixture Player 48",
+                "gender": "M",
+                "clubID": 10026,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-49",
+                "name": "Fixture Player 49",
+                "gender": "K",
+                "clubID": 10026,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-50",
+                "name": "Fixture Player 50",
+                "gender": "K",
+                "clubID": 10027,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-51",
+                "name": "Fixture Player 51",
+                "gender": "M",
+                "clubID": 10028,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-52",
+                "name": "Fixture Player 52",
+                "gender": "K",
+                "clubID": 10029,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-53",
+                "name": "Fixture Player 53",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-54",
+                "name": "Fixture Player 54",
+                "gender": "M",
+                "clubID": 10030,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-55",
+                "name": "Fixture Player 55",
+                "gender": "M",
+                "clubID": 10031,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-56",
+                "name": "Fixture Player 56",
+                "gender": "M",
+                "clubID": 10025,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-57",
+                "name": "Fixture Player 57",
+                "gender": "K",
+                "clubID": 10032,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-58",
+                "name": "Fixture Player 58",
+                "gender": "M",
+                "clubID": 10033,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-59",
+                "name": "Fixture Player 59",
+                "gender": "M",
+                "clubID": 10011,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-60",
+                "name": "Fixture Player 60",
+                "gender": "M",
+                "clubID": 10034,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-61",
+                "name": "Fixture Player 61",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-62",
+                "name": "Fixture Player 62",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-63",
+                "name": "Fixture Player 63",
+                "gender": "M",
+                "clubID": 10035,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-64",
+                "name": "Fixture Player 64",
+                "gender": "M",
+                "clubID": 10036,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-65",
+                "name": "Fixture Player 65",
+                "gender": "M",
+                "clubID": 10026,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-66",
+                "name": "Fixture Player 66",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-67",
+                "name": "Fixture Player 67",
+                "gender": "M",
+                "clubID": 10037,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-68",
+                "name": "Fixture Player 68",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-69",
+                "name": "Fixture Player 69",
+                "gender": "K",
+                "clubID": 10038,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-70",
+                "name": "Fixture Player 70",
+                "gender": "M",
+                "clubID": 10009,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-71",
+                "name": "Fixture Player 71",
+                "gender": "M",
+                "clubID": 10014,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-72",
+                "name": "Fixture Player 72",
+                "gender": "M",
+                "clubID": 10039,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-73",
+                "name": "Fixture Player 73",
+                "gender": "K",
+                "clubID": 10040,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-74",
+                "name": "Fixture Player 74",
+                "gender": "M",
+                "clubID": 10041,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-75",
+                "name": "Fixture Player 75",
+                "gender": "M",
+                "clubID": 10042,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-76",
+                "name": "Fixture Player 76",
+                "gender": "M",
+                "clubID": 10043,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-77",
+                "name": "Fixture Player 77",
+                "gender": "K",
+                "clubID": 10009,
+                "singlePoints": 0,
+                "doublePoints": 2207,
+                "mixPoints": 2313,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-78",
+                "name": "Fixture Player 78",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-79",
+                "name": "Fixture Player 79",
+                "gender": "M",
+                "clubID": 10016,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-80",
+                "name": "Fixture Player 80",
+                "gender": "M",
+                "clubID": 10044,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-81",
+                "name": "Fixture Player 81",
+                "gender": "M",
+                "clubID": 10045,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-82",
+                "name": "Fixture Player 82",
+                "gender": "K",
+                "clubID": 10046,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-83",
+                "name": "Fixture Player 83",
+                "gender": "K",
+                "clubID": 10023,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-84",
+                "name": "Fixture Player 84",
+                "gender": "M",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-85",
+                "name": "Fixture Player 85",
+                "gender": "M",
+                "clubID": 10047,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-86",
+                "name": "Fixture Player 86",
+                "gender": "M",
+                "clubID": 10016,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-87",
+                "name": "Fixture Player 87",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-88",
+                "name": "Fixture Player 88",
+                "gender": "K",
+                "clubID": 10048,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-89",
+                "name": "Fixture Player 89",
+                "gender": "K",
+                "clubID": null,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-90",
+                "name": "Fixture Player 90",
+                "gender": "M",
+                "clubID": 10040,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-91",
+                "name": "Fixture Player 91",
+                "gender": "K",
+                "clubID": 10049,
+                "singlePoints": 3708,
+                "doublePoints": 3290,
+                "mixPoints": 3178,
+                "showAll": true
+            },
+            {
+                "playerNumber": "900101-92",
+                "name": "Fixture Player 92",
+                "gender": "K",
+                "clubID": 10050,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-93",
+                "name": "Fixture Player 93",
+                "gender": "K",
+                "clubID": 10051,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-94",
+                "name": "Fixture Player 94",
+                "gender": "M",
+                "clubID": 10045,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-95",
+                "name": "Fixture Player 95",
+                "gender": "M",
+                "clubID": 10052,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-96",
+                "name": "Fixture Player 96",
+                "gender": "M",
+                "clubID": 10052,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-97",
+                "name": "Fixture Player 97",
+                "gender": "K",
+                "clubID": 10053,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            },
+            {
+                "playerNumber": "900101-98",
+                "name": "Fixture Player 98",
+                "gender": "K",
+                "clubID": 10054,
+                "singlePoints": 3048,
+                "doublePoints": 3203,
+                "mixPoints": 2961,
+                "showAll": true
+            },
+            {
+                "playerNumber": "900101-99",
+                "name": "Fixture Player 99",
+                "gender": "K",
+                "clubID": 10055,
+                "singlePoints": 1978,
+                "doublePoints": 2024,
+                "mixPoints": 1874,
+                "showAll": true
+            },
+            {
+                "playerNumber": "900101-100",
+                "name": "Fixture Player 100",
+                "gender": "M",
+                "clubID": 10056,
+                "singlePoints": 0,
+                "doublePoints": 0,
+                "mixPoints": 0,
+                "showAll": false
+            }
+        ],
+        "totalAmountOfPlayers": 92991
+    }
+}
