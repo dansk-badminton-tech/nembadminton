@@ -22,7 +22,7 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
             $clubhouse = Clubhouse::first();
 
             // Step 1: Login
-            $browser->visit(new LoginPage())
+            $browser->visit(new LoginPage)
                 ->loginSPA('testing@gmail.com', 'Test1234');
 
             // Step 2: Create holdrunde
@@ -49,7 +49,7 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
                 ->waitForText('13 Kamps Holdrunde Test');
 
             // Register TeamFightEditPage macros so we can call page object methods
-            $browser->on(new TeamFightEditPage());
+            $browser->on(new TeamFightEditPage);
 
             // Step 3: Add 13-kamps hold
             $browser->add13KampsHold();
@@ -78,7 +78,7 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
             //   5. DD 1 & 2 → inline search with existing dame players
             //   6. HD 1, 2, 3 → inline search with existing herre players
 
-            $browser->script("window.scrollTo(0, 0)");
+            $browser->script('window.scrollTo(0, 0)');
 
             // --- 1. Dame Mix: add 2 women ---
             $browser->switchRankingList('WOMEN_MIX');
@@ -98,18 +98,17 @@ class TeamFightConstruct13KampsTest extends DuskTestCase
 
             $browser->scrollTo("[dusk='team-table-section']");
 
-            $browser->autoFillCategory("player-search-autocomplete-1-dd", "Josefine Eggert Jackson");
-            $browser->autoFillCategory("player-search-autocomplete-1-dd", "Sarah Berthelsen");
-            $browser->autoFillCategory("player-search-autocomplete-2-dd", "Spela Silvester Laumand");
-            $browser->autoFillCategory("player-search-autocomplete-2-dd", "Karoline Keller Rolsted");
+            $browser->fillCategorySlot(0, '1. DD', 'Josefine Eggert Jackson');
+            $browser->fillCategorySlot(0, '1. DD', 'Sarah Berthelsen');
+            $browser->fillCategorySlot(0, '2. DD', 'Spela Silvester Laumand');
+            $browser->fillCategorySlot(0, '2. DD', 'Karoline Keller Rolsted');
 
-
-            $browser->autoFillCategory("player-search-autocomplete-1-hd", "Patrick Buhl");
-            $browser->autoFillCategory("player-search-autocomplete-1-hd", "Frederik Weibøl");
-            $browser->autoFillCategory("player-search-autocomplete-2-hd", "Kaj Lü");
-            $browser->autoFillCategory("player-search-autocomplete-2-hd", "Magnus Schøtt Jensen");
-            $browser->autoFillCategory("player-search-autocomplete-3-hd", "Mads Sloth");
-            $browser->autoFillCategory("player-search-autocomplete-3-hd", "Nikolai Andersson");
+            $browser->fillCategorySlot(0, '1. HD', 'Patrick Buhl');
+            $browser->fillCategorySlot(0, '1. HD', 'Frederik Weibøl');
+            $browser->fillCategorySlot(0, '2. HD', 'Kaj Lü');
+            $browser->fillCategorySlot(0, '2. HD', 'Magnus Schøtt Jensen');
+            $browser->fillCategorySlot(0, '3. HD', 'Mads Sloth');
+            $browser->fillCategorySlot(0, '3. HD', 'Nikolai Andersson');
 
             // Step 5: Verify all categories are populated
             $browser->assertSee('Hold 1')

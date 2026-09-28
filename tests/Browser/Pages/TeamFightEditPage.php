@@ -201,6 +201,27 @@ class TeamFightEditPage extends Page
         return "[dusk='player-search-panel'] tbody tr:has([dusk='available-player-{$refId}'])";
     }
 
+    public function waitForAvailableMember(Browser $browser, string $refId): void
+    {
+        $browser->waitFor("[dusk='available-player-{$refId}']", 15);
+    }
+
+    public function waitUntilAvailableMemberMissing(Browser $browser, string $refId): void
+    {
+        $browser->waitUntilMissing("[dusk='available-player-{$refId}']", 15);
+    }
+
+    public function assertAvailableMemberMissing(Browser $browser, string $refId): void
+    {
+        $browser->assertMissing("[dusk='available-player-{$refId}']");
+    }
+
+    public function addAvailableMember(Browser $browser, string $refId): void
+    {
+        $browser->click($this->memberRow($refId)." button[title='Tilføj på hold (Næste ledig plads)']")
+            ->waitForText('Tilføjet til Hold', 20);
+    }
+
     public function goToMemberSearchPage(Browser $browser, string $direction): void
     {
         $selector = "@player-search-panel .pagination-{$direction}";
@@ -330,15 +351,6 @@ class TeamFightEditPage extends Page
             ->click("[dusk='{$action}-{$index}']");
     }
 
-    public function autoFillCategory(Browser $browser, string $category, string $playerName): void
-    {
-        $browser->waitFor("[dusk='$category']");
-        $browser->click("[dusk='$category']");
-        $browser->waitFor("[dusk='is-in-squad']");
-        $browser->waitForText($playerName);
-        $browser->clickLink($playerName);
-    }
-
     /**
      * Fill an inline autocomplete slot within a specific squad and category.
      *
@@ -408,6 +420,27 @@ class TeamFightEditPage extends Page
         }, "Player {$playerName} was not placed in its category slot");
     }
 
+    public function assertInlineMemberSuggestion(Browser $browser, int $squadIndex, string $categoryName, string $name, bool $inSquad): void
+    {
+        $slug = self::slugifyCategory($categoryName);
+        $inputSelector = "[dusk='squad-{$squadIndex}'] [dusk='player-search-autocomplete-{$slug}']";
+        $input = json_encode($inputSelector, JSON_THROW_ON_ERROR);
+        $member = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $expected = $inSquad ? 'true' : 'false';
+
+        $browser->waitFor($inputSelector);
+        $this->scrollToCenter($browser, $inputSelector);
+        $this->replaceInputValue($browser, $inputSelector, $name);
+        $browser->waitUsing(20, 100, function () use ($browser, $input, $member, $expected) {
+            return $browser->script(<<<JS
+                const input = document.querySelector({$input});
+                const option = Array.from(input?.closest('.autocomplete')?.querySelectorAll('.dropdown-item') ?? [])
+                    .find(item => item.textContent.includes({$member}));
+                return option !== undefined && String(!!option.querySelector('[dusk="is-in-squad"]')) === '{$expected}';
+            JS)[0] ?? false;
+        }, "Expected inline suggestion for {$name} in {$categoryName} to have in-Squad marker: {$expected}");
+    }
+
     /**
      * Fill all category slots for one squad using the category → players mapping.
      *
@@ -431,6 +464,7 @@ class TeamFightEditPage extends Page
         if ($browser->elements($browser->resolver->format('@scenario-selector-dropdown'))) {
             $browser->assertSeeIn('@scenario-selector-dropdown .dropdown-trigger', '(Officiel)');
         }
+        $this->scrollToCenter($browser, '@create-scenario-button');
         $browser->click('@create-scenario-button')
             ->waitFor('.dialog input')
             ->assertSeeIn('.dialog', 'Officiel opstilling');
@@ -475,6 +509,28 @@ class TeamFightEditPage extends Page
         $browser->waitUsing(15, 100, function () use ($browser, $name) {
             return ! str_contains($browser->text('@team-table-section'), $name);
         }, "Member {$name} was not removed from the Scenario");
+    }
+
+    public function removeMemberFromCategory(Browser $browser, int $squadIndex, string $categoryName, string $name): void
+    {
+        $scope = json_encode("[dusk='squad-{$squadIndex}']", JSON_THROW_ON_ERROR);
+        $category = json_encode($categoryName, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $member = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $playerId = $browser->script(<<<JS
+            const row = Array.from(document.querySelectorAll({$scope} + ' tbody tr'))
+                .find(row => row.querySelector('th')?.textContent.trim() === {$category});
+            const player = Array.from(row?.querySelectorAll('[data-player-id-input]') ?? [])
+                .find(input => input.parentElement.textContent.includes({$member}));
+            return player?.getAttribute('data-player-id-input');
+        JS)[0];
+        if ($playerId === null) {
+            throw new \RuntimeException("Member {$name} was not in {$categoryName}");
+        }
+        $player = "[dusk='squad-{$squadIndex}'] [data-player-id-input='{$playerId}']";
+        $button = $player." ~ .buttons button[title='Slet']";
+        $browser->waitUntilEnabled($button, 15);
+        $this->scrollToCenter($browser, $button);
+        $browser->click($button)->waitUntilMissing($player, 15);
     }
 
     public function renameScenario(Browser $browser, string $name): void
