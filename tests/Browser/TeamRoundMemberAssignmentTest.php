@@ -64,6 +64,7 @@ class TeamRoundMemberAssignmentTest extends DuskTestCase
                 ->waitForAvailableMember(self::SPELA['refId'])
                 ->fillCategorySlot(0, '1. DS', self::MICHELLA['name'])
                 ->searchMembers(self::MICHELLA['name'])
+                ->waitForTextIn('@player-search-panel', 'Ingen spillere fundet, som matcher "Michella Skov"')
                 ->waitUntilAvailableMemberMissing(self::MICHELLA['refId'])
                 ->assertInlineMemberSuggestion(0, '1. DD', self::MICHELLA['name'], true);
 
@@ -73,6 +74,7 @@ class TeamRoundMemberAssignmentTest extends DuskTestCase
                 ->assertDontSeeIn('@team-table-section', self::MICHELLA['name'])
                 ->waitForAvailableMember(self::MICHELLA['refId'])
                 ->searchMembers(self::SPELA['name'])
+                ->waitForTextIn('@player-search-panel', 'Ingen spillere fundet, som matcher "Spela Silvester Laumand"')
                 ->waitUntilAvailableMemberMissing(self::SPELA['refId'])
                 ->assertInlineMemberSuggestion(1, '1. DD', self::SPELA['name'], true)
                 ->assertInlineMemberSuggestion(0, '1. DS', self::MICHELLA['name'], false);
@@ -89,11 +91,13 @@ class TeamRoundMemberAssignmentTest extends DuskTestCase
             $browser->confirmScenarioPromotion()
                 ->assertScenarioSelected('Plan B', true)
                 ->searchMembers(self::MICHELLA['name'])
+                ->waitForTextIn('@player-search-panel', 'Ingen spillere fundet, som matcher "Michella Skov"')
                 ->waitUntilAvailableMemberMissing(self::MICHELLA['refId'])
                 ->selectScenario('Member assignment journey')
                 ->assertScenarioSelected('Member assignment journey', false)
                 ->waitForAvailableMember(self::MICHELLA['refId'])
                 ->searchMembers(self::SPELA['name'])
+                ->waitForTextIn('@player-search-panel', 'Ingen spillere fundet, som matcher "Spela Silvester Laumand"')
                 ->waitUntilAvailableMemberMissing(self::SPELA['refId'])
                 ->selectScenario('Plan B')
                 ->assertScenarioSelected('Plan B', true)
