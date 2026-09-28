@@ -98,10 +98,14 @@ class Member extends Model
             $builder->whereHas('squad', function (Builder $builder) use ($teamRoundId) {
                 $builder->where('team_round_id', '=', $teamRoundId);
             })->where(function (Builder $builder) {
-                $builder->whereNull('team_round_scenario_id')
-                    ->orWhereHas('scenario', function (Builder $builder) {
-                        $builder->where('is_official', true);
-                    });
+                $builder->whereHas('scenario', function (Builder $builder) {
+                    $builder->where('is_official', true);
+                })->orWhere(function (Builder $builder) {
+                    $builder->whereNull('team_round_scenario_id')
+                        ->whereDoesntHave('squad.categories.scenario', function (Builder $builder) {
+                            $builder->where('is_official', true);
+                        });
+                });
             });
         });
     }

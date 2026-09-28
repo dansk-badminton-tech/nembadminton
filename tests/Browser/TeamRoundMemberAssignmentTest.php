@@ -84,6 +84,21 @@ class TeamRoundMemberAssignmentTest extends DuskTestCase
                 ->waitForAvailableMember(self::SPELA['refId'])
                 ->assertInlineMemberSuggestion(1, '1. DD', self::SPELA['name'], false)
                 ->assertInlineMemberSuggestion(0, '1. DD', self::MICHELLA['name'], true);
+
+            // After Promotion the Official Lineup has a Scenario ID, rather than legacy unscoped slots.
+            $browser->confirmScenarioPromotion()
+                ->assertScenarioSelected('Plan B', true)
+                ->searchMembers(self::MICHELLA['name'])
+                ->waitUntilAvailableMemberMissing(self::MICHELLA['refId'])
+                ->selectScenario('Member assignment journey')
+                ->assertScenarioSelected('Member assignment journey', false)
+                ->waitForAvailableMember(self::MICHELLA['refId'])
+                ->searchMembers(self::SPELA['name'])
+                ->waitUntilAvailableMemberMissing(self::SPELA['refId'])
+                ->selectScenario('Plan B')
+                ->assertScenarioSelected('Plan B', true)
+                ->waitForAvailableMember(self::SPELA['refId'])
+                ->assertInlineMemberSuggestion(0, '1. DD', self::MICHELLA['name'], true);
         });
     }
 }
