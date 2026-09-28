@@ -45,6 +45,12 @@ Keep the Vite development server running in a separate terminal. Dusk pages use 
 yarn run dev
 ```
 
+`artisan-serve` mounts the project at a different path than `app`, so the public storage link must be relative for downloads such as CSV exports to resolve:
+
+```bash
+ln -sfn ../storage/app/public public/storage
+```
+
 Run the browser tests:
 
 ```bash

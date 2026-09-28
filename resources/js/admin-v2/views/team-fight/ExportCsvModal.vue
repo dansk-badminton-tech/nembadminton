@@ -9,14 +9,14 @@
         </header>
         <section class="modal-card-body">
             <b-field>
-                <b-checkbox v-model="excludeCategories">
+                <b-checkbox v-model="excludeCategories" dusk="team-round-csv-exclude-categories-checkbox">
                     Ekskluder kategorier
                 </b-checkbox>
             </b-field>
         </section>
         <footer class="modal-card-foot">
             <b-button label="Annuller" @click="$emit('close')"/>
-            <b-button label="Download CSV" type="is-primary" icon-left="download" @click="exportCSV"/>
+            <b-button label="Download CSV" type="is-primary" dusk="team-round-csv-download-button" icon-left="download" @click="exportCSV"/>
         </footer>
     </div>
 </template>

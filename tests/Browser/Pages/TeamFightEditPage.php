@@ -2,6 +2,7 @@
 
 namespace Tests\Browser\Pages;
 
+use Illuminate\Testing\Assert as PHPUnit;
 use Laravel\Dusk\Browser;
 
 class TeamFightEditPage extends Page
@@ -43,6 +44,9 @@ class TeamFightEditPage extends Page
             '@settings-button' => "[dusk='team-round-settings-button']",
             '@share-button' => "[dusk='team-round-share-button']",
             '@share-link-option' => "[dusk='team-round-share-link-option']",
+            '@csv-export-option' => "[dusk='team-round-csv-export-option']",
+            '@csv-exclude-categories-checkbox' => "[dusk='team-round-csv-exclude-categories-checkbox']",
+            '@csv-download-button' => "[dusk='team-round-csv-download-button']",
             '@share-modal' => "[dusk='team-round-share-modal']",
             '@public-link' => "[dusk='team-round-public-link']",
             '@settings-modal' => "[dusk='team-round-settings-modal']",
@@ -575,6 +579,60 @@ class TeamFightEditPage extends Page
             ->waitFor('.dialog')
             ->click('.dialog .modal-card-foot .button:last-child')
             ->waitUntilMissing('@scenario-draft-warning-banner', 15);
+    }
+
+    // ─── CSV export ─────────────────────────────────────────────────────
+
+    /**
+     * Request a CSV export and assert the downloaded file's lines.
+     *
+     * Selenium saves downloads inside its own container, so the download link the
+     * app hands the browser is captured instead, and the file is fetched in the browser.
+     *
+     * @param  list<string>  $expectedLines
+     */
+    public function assertCsvExport(Browser $browser, bool $includeCategories, array $expectedLines): void
+    {
+        $browser->script(<<<'JS'
+            window.__csvDownload = null;
+            if (!window.__csvDownloadCaptured) {
+                window.__csvDownloadCaptured = true;
+                const click = HTMLAnchorElement.prototype.click;
+                HTMLAnchorElement.prototype.click = function () {
+                    if (!this.hasAttribute('download')) {
+                        return click.call(this);
+                    }
+                    window.__csvDownload = {href: this.href, filename: this.download};
+                };
+            }
+        JS);
+
+        $this->scrollToCenter($browser, '@share-button');
+        $browser->click('@share-button')
+            ->waitFor('@csv-export-option')
+            ->click('@csv-export-option')
+            ->waitFor('@csv-download-button');
+        if (! $includeCategories) {
+            $browser->click('@csv-exclude-categories-checkbox');
+        }
+        $browser->click('@csv-download-button')
+            ->waitUntilMissing('@csv-download-button')
+            ->waitUsing(15, 100, function () use ($browser) {
+                return $browser->script('return window.__csvDownload !== null;')[0];
+            }, 'CSV export was not downloaded');
+
+        $download = $browser->script('return window.__csvDownload;')[0];
+        PHPUnit::assertStringEndsWith('.csv', $download['filename']);
+
+        $response = $browser->driver->executeAsyncScript(<<<'JS'
+            const done = arguments[arguments.length - 1];
+            fetch(window.__csvDownload.href)
+                .then(async response => done({status: response.status, type: response.headers.get('content-type'), body: await response.text()}))
+                .catch(error => done({status: 0, type: null, body: String(error)}));
+        JS);
+        PHPUnit::assertSame(200, $response['status'], "CSV download failed: {$download['href']}");
+        PHPUnit::assertStringStartsWith('text/csv', (string) $response['type'], "CSV download was not a CSV file: {$download['href']}");
+        PHPUnit::assertSame($expectedLines, explode("\n", rtrim(str_replace("\r\n", "\n", $response['body']))));
     }
 
     // ─── Assertion methods ──────────────────────────────────────────────

@@ -29,7 +29,7 @@
                             <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                         </button>
                     </template>
-                    <b-dropdown-item aria-role="listitem" @click="openExportCsvModal">
+                    <b-dropdown-item aria-role="listitem" dusk="team-round-csv-export-option" @click="openExportCsvModal">
                         <b-icon icon="file-export"></b-icon>
                         CSV
                     </b-dropdown-item>

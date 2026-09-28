@@ -70,6 +70,9 @@ jobs:
       - name: Migrate database
         run: php artisan migrate --force
 
+      - name: Link public storage
+        run: php artisan storage:link
+
       - name: Install FrankenPHP
         run: php artisan octane:install --server=frankenphp --no-interaction
 
