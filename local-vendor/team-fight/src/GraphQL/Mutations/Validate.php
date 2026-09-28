@@ -11,6 +11,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Collection;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class Validate
@@ -35,7 +36,7 @@ class Validate
         $teams = new Collection($args['input']);
 
         $squads = $teams->pluck('squad');
-        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class.'[]');
+        $squads = $this->deserializeSquads($squads);
         $playingToHigh = $this->teamValidator->validateCrossSquadsLeagueV3($squads);
 
         return $playingToHigh;
@@ -48,7 +49,7 @@ class Validate
     {
         $squads = new Collection($args['input']);
         $squads = $squads->pluck('squad');
-        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class.'[]');
+        $squads = $this->deserializeSquads($squads);
         //        $this->teamValidator->validateSquads($squads);
 
         $playingToHigh = [];
@@ -63,9 +64,21 @@ class Validate
     {
         $squads = new Collection($args['input']);
         $squads = $squads->pluck('squad');
-        $squads = $this->serializer->denormalize($squads->toArray(), Squad::class.'[]');
+        $squads = $this->deserializeSquads($squads);
 
         /** @var Squad[] $squads */
         return $this->teamValidator->validateBasicSquads($squads);
+    }
+
+    /**
+     * @param  Collection<int|string, mixed>  $squads
+     * @return Squad[]
+     */
+    private function deserializeSquads(Collection $squads): array
+    {
+        // GraphQL IDs arrive as strings, including numeric IDs backed by integer properties.
+        return $this->serializer->denormalize($squads->toArray(), Squad::class.'[]', null, [
+            AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,
+        ]);
     }
 }
