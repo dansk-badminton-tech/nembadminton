@@ -61,7 +61,11 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 
 **Spilleren har ingen point i kategorien:** Spilleren vises med rødt og fx **HS: Ingen point** på pladsen. Spilleren skal være indplaceret på ranglisten i kategorien, så vælg normalt en anden spiller.
 
-**Spillerens point er forkerte:** Ved du, at pointene er forkerte i Nembadminton, kan du rette dem for denne holdrunde:
+**Spillerens point er forkerte:** Kontrollér først, hvilken **Rangliste** holdet bruger. Et hold kan have sin egen rangliste, som ikke ændres, når du skifter holdrundens rangliste. Se [Kontrollér holdenes ranglister](/app/help/guides/opret-og-klargoer-en-holdrunde). Sammenlign derefter spillerens point med den samme rangliste på badmintonplayer.dk.
+
+Hvis pointene også er forkerte på badmintonplayer.dk, så kontakt Badminton Danmark om ranglistepointene. Er pointene korrekte dér, men stadig forkerte i Nembadminton, så skriv til [info@nembadminton.dk](mailto:info@nembadminton.dk) med spiller, kategori, rangliste og de point, du ser begge steder. Det kan også ske, selv om Nembadminton har opdateret spillerens point i løbet af natten. At fjerne spilleren fra holdet og tilføje spilleren igen løser ikke nødvendigvis forskellen.
+
+Skal du sætte holdet nu og kender de korrekte point, kan du rette dem for denne holdrunde:
 
 1. Vælg blyanten **Rediger** ud for spilleren.
 2. Ret pointene i feltet for kategorien. Ændringen gemmes automatisk. Mangler kategorien, vælger du den under **Tilføj point**, skriver pointene og vælger **Opret**.

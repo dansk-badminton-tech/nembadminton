@@ -39,6 +39,10 @@ Kontakt [Badminton Danmark](https://badminton.dk), eller læs [reglementet for D
 
 Hver nat opdateres ranglistepoint, og nye medlemmer importeres.
 
+## Hvorfor viser en spiller stadig gamle ranglistepoint?
+
+Kontrollér, at holdet bruger den rigtige rangliste, og sammenlign spillerens point med den samme rangliste på badmintonplayer.dk. Pointene kan være korrekte på badmintonplayer.dk, selv om Nembadminton stadig viser de gamle. At fjerne spilleren fra holdet og tilføje spilleren igen løser ikke nødvendigvis forskellen. Se [Lav og kontrollér den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling) for, hvem du kan kontakte, og hvordan du retter pointene på holdopstillingen.
+
 ## Hvordan virker validering af holdopstillingen?
 
 Valideringen tager udgangspunkt i [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/).
