@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" dusk="team-round-share-modal">
         <div class="card-content">
             <div class="content">
                 <p>Alle med linket kan udelukkende se holdet - ikke redigere. Du behøver ikke at være logget ind for
@@ -8,7 +8,7 @@
             </div>
         </div>
         <footer class="card-footer">
-            <a :href="shareUrl" class="card-footer-item" target="_blank">Vis (nyt vindue)</a>
+            <a :href="shareUrl" class="card-footer-item" target="_blank" dusk="team-round-public-link">Vis (nyt vindue)</a>
             <a class="card-footer-item" @click.prevent="copyToClipboard">Kopier</a>
             <a class="card-footer-item" @click.prevent="$emit('close')">Luk</a>
         </footer>

@@ -41,6 +41,10 @@ class TeamFightEditPage extends Page
         return [
             '@page' => "[dusk='team-fight-edit-page']",
             '@settings-button' => "[dusk='team-round-settings-button']",
+            '@share-button' => "[dusk='team-round-share-button']",
+            '@share-link-option' => "[dusk='team-round-share-link-option']",
+            '@share-modal' => "[dusk='team-round-share-modal']",
+            '@public-link' => "[dusk='team-round-public-link']",
             '@settings-modal' => "[dusk='team-round-settings-modal']",
             '@settings-name' => "[dusk='team-round-settings-name']",
             '@settings-round' => "[dusk='team-fight-round-input']",

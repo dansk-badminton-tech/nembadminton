@@ -24,7 +24,7 @@
             <div class="is-flex is-align-items-center mb-4">
                 <b-dropdown aria-role="list" class="mr-2">
                     <template #trigger="{ active }">
-                        <button class="button is-link">
+                        <button class="button is-link" dusk="team-round-share-button">
                             <span>Del</span>
                             <b-icon :icon="active ? 'arrow-up' : 'arrow-down'"></b-icon>
                         </button>
@@ -33,7 +33,7 @@
                         <b-icon icon="file-export"></b-icon>
                         CSV
                     </b-dropdown-item>
-                    <b-dropdown-item aria-role="listitem" @click="openLinkSharingModal">
+                    <b-dropdown-item aria-role="listitem" dusk="team-round-share-link-option" @click="openLinkSharingModal">
                         <b-icon icon="share"></b-icon>
                         Link
                     </b-dropdown-item>
