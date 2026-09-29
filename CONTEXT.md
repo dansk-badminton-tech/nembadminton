@@ -24,7 +24,7 @@ _Avoid_: Squad
 
 **Squad** (holdopstilling):
 One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
-_Avoid_: Team, sub-team, "hold" in Danish UI text
+_Avoid_: Team, sub-team
 
 ### Lineup Scenarios
 
