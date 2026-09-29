@@ -18,9 +18,13 @@ _Avoid_: Member, player
 A specific match round (holdrunde) across a club's teams on a given date.
 _Avoid_: Match, fight, team fight
 
-**Squad**:
-A specific club team (e.g. Hold 1, Hold 2) competing within a TeamRound.
-_Avoid_: Team, sub-team
+**Team** (hold):
+A club's team entered in one season's tournament (e.g. "Højbjerg 1, 2. division, pulje 3"). It lasts the whole season and has a tier (række) and a group (pulje).
+_Avoid_: Squad
+
+**Squad** (holdopstilling):
+One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
+_Avoid_: Team, sub-team, "hold" in Danish UI text
 
 ### Lineup Scenarios
 
