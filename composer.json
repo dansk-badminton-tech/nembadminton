@@ -113,6 +113,12 @@
         "format": "pint",
         "format:check": "pint --test",
         "lint:syntax": "find app local-vendor/*/src -name '*.php' -exec php -l {} +",
+        "setup": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "grep -q '^APP_KEY=.' .env || php artisan key:generate --ansi",
+            "test -f storage/oauth-private.key || php artisan passport:keys",
+            "test -e public/storage || ln -s ../storage/app/public public/storage"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

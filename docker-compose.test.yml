@@ -1,0 +1,97 @@
+# Isolated test stack. Each checkout (incl. git worktrees) gets its own Compose
+# project, network and in-memory MySQL, and publishes no host ports.
+# The "-test" project name keeps it apart from the dev stack in the same folder.
+#
+# Unit/GraphQL:
+#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml run --rm test --exclude-group remote
+#
+# Browser (Dusk), after `yarn build` (no public/hot):
+#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml run --rm dusk
+#
+# Stop everything:
+#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml down
+#
+# A new checkout needs `composer install && composer run setup` first.
+services:
+  # One in-memory MySQL, one database per suite (as in the dev stack), so
+  # RefreshDatabase and DatabaseTruncation never touch each other's tables.
+  # The aliases match the hostnames in .env.dusk.local, which Dusk uses as is.
+  test-db:
+    image: mysql:8.0
+    tmpfs: /var/lib/mysql
+    networks:
+      default:
+        aliases: [database]
+    environment:
+      MYSQL_DATABASE: holdkamp_graphqltesting
+      MYSQL_ROOT_PASSWORD: password
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -ppassword --silent
+      interval: 2s
+      retries: 30
+
+  test:
+    image: flycompany/holdkamp
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
+    environment:
+      XDEBUG_MODE: "off"
+      DB_HOST: test-db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      TELESCOPE_ENABLED: "false"
+    depends_on:
+      test-db:
+        condition: service_healthy
+    entrypoint: ["php", "artisan", "test"]
+
+  dusk-serve:
+    image: flycompany/nembadminton-app:selenium
+    entrypoint: "php artisan octane:frankenphp --env dusk.local --port 80"
+    user: "1000:33"
+    networks:
+      default:
+        aliases: [artisan-serve]
+    volumes:
+      - .:/app
+    environment:
+      MAIL_MAILER: log
+      XDEBUG_MODE: "off"
+    depends_on:
+      test-db:
+        condition: service_healthy
+
+  selenium:
+    image: selenium/standalone-chromium
+    shm_size: 2gb
+    healthcheck:
+      test: curl -sf http://localhost:4444/status
+      interval: 2s
+      retries: 30
+
+  dusk:
+    image: flycompany/holdkamp
+    user: "1000:33"
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./setup/horizon.ini:/usr/local/etc/php/conf.d/docker-php-horizon.ini
+    environment:
+      XDEBUG_MODE: "off"
+    depends_on:
+      test-db:
+        condition: service_healthy
+      dusk-serve:
+        condition: service_started
+      selenium:
+        condition: service_healthy
+    # migrate --force creates holdkamp_browsertesting if it is missing.
+    entrypoint:
+      - sh
+      - -c
+      - php artisan migrate --force --env=dusk.local && exec php artisan dusk "$$@"
+      - --
+
