@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Run the test suites on an isolated Docker stack (docker-compose.test.yml).
+# Works in any checkout or git worktree: sets the checkout up on first run,
+# and always removes the stack afterwards.
+#
+# Usage:
+#   bin/test [unit] [args...]   Unit/GraphQL tests (excludes the "remote" group)
+#   bin/test dusk [args...]     Browser tests, e.g. bin/test dusk --filter LoginTest
+set -eo pipefail
+cd "$(dirname "$0")/.."
+
+suite=unit
+case $1 in unit|dusk) suite=$1; shift ;; esac
+
+compose() { docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml "$@"; }
+trap 'compose down -v >/dev/null 2>&1' EXIT
+
+[ -d vendor ] || compose run --rm composer install --ignore-platform-reqs --no-interaction
+compose run --rm composer run setup
+
+case $suite in
+  unit)
+    compose run --rm test --exclude-group remote "$@"
+    ;;
+  dusk)
+    if [ -e public/hot ]; then
+      echo "public/hot exists: stop \`yarn dev\` so Dusk uses the built assets." >&2
+      exit 1
+    fi
+    [ -d node_modules ] || yarn install --frozen-lockfile
+    yarn build
+    compose run --rm dusk "$@"
+    ;;
+esac

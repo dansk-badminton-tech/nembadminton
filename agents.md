@@ -20,6 +20,19 @@ A website for holding turnerings rules in badminton. https://badminton.dk/holdtu
 
 Testing:
 
+## Running PHP and browser tests (any checkout or git worktree)
+
+Use `bin/test`. On first run it sets the checkout up (`composer install`, `composer run setup`), runs the suite on its own isolated Docker stack (`docker-compose.test.yml`), and removes that stack afterwards, also when tests fail.
+
+```bash
+bin/test                         # Unit/GraphQL (excludes the "remote" group)
+bin/test --filter SomeTest       # extra arguments go to the test runner
+bin/test dusk                    # browser tests; runs `yarn build` first
+bin/test dusk --filter LoginTest
+```
+
+Do not run tests against the dev stack (`docker compose exec app ...`). Stop `yarn dev` before `bin/test dusk` (it refuses to run while `public/hot` exists).
+
 ## JavaScript unit testing:
     Tool: Node's built-in test runner (`node:test`)
     Location: tests/js/
@@ -37,7 +50,7 @@ Run with `yarn test:js`. Use it for framework-free modules such as the Help docu
 
 ### Running the browser tests locally:
 
-Follow `README.md` under **Testing > Browser tests (End-to-end)**. It is the source of truth for required Docker services, the Vite process, ports, full and filtered test commands, and rerunning failures.
+Run them with `bin/test dusk` (see above). For running them against the dev stack by hand, follow `README.md` under **Testing > Browser tests (End-to-end)**. It is the source of truth for required Docker services, the Vite process, ports, full and filtered test commands, and rerunning failures.
 
 ### Running browser tests in CI:
 

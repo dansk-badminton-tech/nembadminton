@@ -2,16 +2,7 @@
 # project, network and in-memory MySQL, and publishes no host ports.
 # The "-test" project name keeps it apart from the dev stack in the same folder.
 #
-# Unit/GraphQL:
-#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml run --rm test --exclude-group remote
-#
-# Browser (Dusk), after `yarn build` (no public/hot):
-#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml run --rm dusk
-#
-# Stop everything:
-#   docker compose -p "${PWD##*/}-test" -f docker-compose.test.yml down
-#
-# A new checkout needs `composer install && composer run setup` first.
+# Use bin/test, which sets the checkout up, runs a suite and removes the stack.
 services:
   # One in-memory MySQL, one database per suite (as in the dev stack), so
   # RefreshDatabase and DatabaseTruncation never touch each other's tables.
@@ -29,6 +20,13 @@ services:
       test: mysqladmin ping -h 127.0.0.1 -ppassword --silent
       interval: 2s
       retries: 30
+
+  composer:
+    image: composer:2
+    user: "1000:1000"
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
 
   test:
     image: flycompany/holdkamp
