@@ -25,6 +25,8 @@ class RankingImportIntegrationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
     public function test_member_and_point_jobs_import_saved_ranking_responses(): void
     {
         $current = file_get_contents(__DIR__.'/../Integration/rankingCurrentFull.json');

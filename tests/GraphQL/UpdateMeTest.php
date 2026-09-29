@@ -13,6 +13,8 @@ class UpdateMeTest extends TestCase
     use RefreshDatabase;
     use MakesGraphQLRequests;
 
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
     /** @test */
     public function it_allows_the_user_to_update_their_profile_including_unclaimed_player_id(): void
     {

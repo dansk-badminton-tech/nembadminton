@@ -20,6 +20,8 @@ class PlacedPlayerCancellationTest extends TestCase
     use RefreshDatabase;
     use MakesGraphQLRequests;
 
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
     private Clubhouse $clubhouse;
     private User $user;
     private TeamRound $teamRound;
