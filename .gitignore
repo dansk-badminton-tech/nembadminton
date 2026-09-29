@@ -28,7 +28,6 @@ schema-directives.graphql
 .opencode
 .mcp.json
 .claude
-phpunit.dusk.xml
 
 **/caddy
 frankenphp
