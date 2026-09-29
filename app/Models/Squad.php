@@ -27,6 +27,8 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property string|null $playing_zip_code
  * @property string|null $playing_city
  * @property Carbon|null $version
+ * @property string|null $tier
+ * @property Team|null $team
  */
 class Squad extends Model implements Sortable
 {
@@ -76,5 +78,17 @@ class Squad extends Model implements Sortable
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * The tier shown for this squad: the attached team's current tier, or the squad's own free-text tier when no team is attached.
+     */
+    public function effectiveTier(): ?string
+    {
+        if ($this->team === null) {
+            return $this->tier;
+        }
+
+        return $this->team->tier?->tier_name ?? $this->team->custom_tier_name;
     }
 }

@@ -35,6 +35,7 @@ import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
+import {teamLabel, teamTierLabel} from "./team-label";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -120,13 +121,9 @@ export default {
             return this.teams
                 .filter((team) => !usedIds.has(String(team.id)))
                 .map((team) => {
-                    const tierLabel = team.tier?.tierName || team.customTierName || '';
-                    const parts = [team.name];
-                    if (tierLabel) parts.push(tierLabel);
-                    if (team.groupName) parts.push(team.groupName);
                     return {
                         id: team.id,
-                        label: parts.join(' · '),
+                        label: teamLabel(team),
                         team
                     };
                 });
@@ -304,13 +301,9 @@ export default {
                 return;
             }
             this.selectedTeamId = team.id;
-            const tierLabel = team.tier?.tierName || team.customTierName || '';
-            const parts = [team.name];
-            if (tierLabel) parts.push(tierLabel);
-            if (team.groupName) parts.push(team.groupName);
-            this.selectedTeamLabel = parts.join(' · ');
+            this.selectedTeamLabel = teamLabel(team);
             this.selectedName = team.name || '';
-            this.selectedTierName = tierLabel;
+            this.selectedTierName = teamTierLabel(team);
         },
         onPlayingDateChange(date) {
             this.markPlayingDateAsManual(date);
@@ -347,13 +340,14 @@ export default {
                 input.name = trimmedName;
             }
 
-            const trimmedTier = this.selectedTierName.trim();
-            if (trimmedTier !== '') {
-                input.tier = trimmedTier;
-            }
-
             if (this.selectedTeamId !== null) {
+                // The squad shows the team's tier, so its own tier is left unset.
                 input.teamId = this.selectedTeamId;
+            } else {
+                const trimmedTier = this.selectedTierName.trim();
+                if (trimmedTier !== '') {
+                    input.tier = trimmedTier;
+                }
             }
 
             return input;

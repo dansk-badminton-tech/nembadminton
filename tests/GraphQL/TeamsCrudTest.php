@@ -549,4 +549,131 @@ class TeamsCrudTest extends TestCase
                 ],
             ]);
     }
+
+    private function makeSquad(TeamRound $teamRound, array $attributes = []): Squad
+    {
+        return Squad::query()->create(array_merge([
+            'team_round_id' => $teamRound->id,
+            'playerLimit' => 8,
+            'order' => 1,
+        ], $attributes));
+    }
+
+    private function queryEffectiveTiers(TeamRound $teamRound): \Illuminate\Testing\TestResponse
+    {
+        return $this->graphQL(/** @lang GraphQL */ '
+            query($id: ID!) {
+                teamRound(id: $id) {
+                    squads { id tier effectiveTier }
+                }
+            }
+        ', ['id' => $teamRound->id]);
+    }
+
+    /** @test */
+    public function squad_with_team_uses_the_teams_current_tier_as_effective_tier(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $firstDivision = TournamentTier::query()->create(['tier_name' => '1. division']);
+        $team = Team::factory()->withTier($firstDivision)->create(['clubhouse_id' => $clubhouse->id]);
+        $this->makeSquad($teamRound, ['team_id' => $team->id, 'tier' => 'Gammelt niveau']);
+
+        $this->queryEffectiveTiers($teamRound)->assertJson([
+            'data' => ['teamRound' => ['squads' => [
+                ['tier' => 'Gammelt niveau', 'effectiveTier' => '1. division'],
+            ]]],
+        ]);
+
+        $danmarksserien = TournamentTier::query()->create(['tier_name' => 'Danmarksserien']);
+        $team->update(['tier_id' => $danmarksserien->id]);
+
+        $this->queryEffectiveTiers($teamRound)->assertJson([
+            'data' => ['teamRound' => ['squads' => [
+                ['effectiveTier' => 'Danmarksserien'],
+            ]]],
+        ]);
+    }
+
+    /** @test */
+    public function squad_with_team_uses_the_teams_custom_tier_name_when_team_has_no_tier(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $team = Team::factory()->withCustomTier('Veteranrække')->create(['clubhouse_id' => $clubhouse->id]);
+        $this->makeSquad($teamRound, ['team_id' => $team->id]);
+
+        $this->queryEffectiveTiers($teamRound)->assertJson([
+            'data' => ['teamRound' => ['squads' => [
+                ['tier' => null, 'effectiveTier' => 'Veteranrække'],
+            ]]],
+        ]);
+    }
+
+    /** @test */
+    public function squad_without_team_uses_its_own_tier_as_effective_tier(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $this->makeSquad($teamRound, ['tier' => '2. division']);
+
+        $this->queryEffectiveTiers($teamRound)->assertJson([
+            'data' => ['teamRound' => ['squads' => [
+                ['tier' => '2. division', 'effectiveTier' => '2. division'],
+            ]]],
+        ]);
+    }
+
+    /** @test */
+    public function update_squad_attaches_a_team_and_resolves_its_tier(): void
+    {
+        [$clubhouse, $user] = $this->actingClubhouseUser([
+            Permission::EDIT_TEAMROUNDS,
+            Permission::VIEW_TEAMROUNDS,
+        ]);
+        $teamRound = TeamRound::factory()->create([
+            'clubhouse_id' => $clubhouse->id,
+            'user_id' => $user->id,
+        ]);
+        $tier = TournamentTier::query()->create(['tier_name' => 'Serie 1']);
+        $team = Team::factory()->withTier($tier)->create(['clubhouse_id' => $clubhouse->id]);
+        $squad = $this->makeSquad($teamRound, ['tier' => 'Serie 3']);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($input: UpdateSquadInput!) {
+                updateSquad(input: $input) {
+                    id
+                    tier
+                    effectiveTier
+                    team { id }
+                }
+            }
+        ', ['input' => [
+            'id' => (string)$squad->id,
+            'teamId' => (string)$team->id,
+        ]])->assertJson([
+            'data' => [
+                'updateSquad' => [
+                    'tier' => 'Serie 3',
+                    'effectiveTier' => 'Serie 1',
+                    'team' => ['id' => (string)$team->id],
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseHas('squads', [
+            'id' => $squad->id,
+            'team_id' => $team->id,
+            'tier' => 'Serie 3',
+        ]);
+    }
 }

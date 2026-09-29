@@ -8,7 +8,7 @@
                     <th colspan="2">
                         <div class="is-flex is-justify-content-space-between is-align-items-start">
                             <div class="is-flex-grow-1">
-                                <h2><strong>Hold {{ index + 1 }}</strong> - {{ squad.tier }} {{ squad.name }}</h2>
+                                <h2><strong>Hold {{ index + 1 }}</strong> - {{ squad.effectiveTier }} {{ squad.name }}</h2>
                                 <div class="tags squad-info-row mt-2" :dusk="'squad-info-' + index">
                                     <b-tooltip type="is-info" :label="squad.playingDatetime ? formatPlayingDatetimeLong(squad.playingDatetime) : 'Spillestart er ikke angivet. Klik for at udfylde.'">
                                         <b-tag
@@ -251,6 +251,18 @@ export default {
             default: []
         },
         scenarioId: [String, Number],
+        clubhouseId: {
+            type: [String, Number],
+            default: null
+        },
+        seasonId: {
+            type: [String, Number],
+            default: null
+        },
+        usedTeamIds: {
+            type: Array,
+            default: () => []
+        },
         teamsBaseValidations: {
             type: Array,
             default: []
@@ -367,7 +379,10 @@ export default {
                 {
                     width: 1500,
                     props: {
-                        squad: squad
+                        squad: squad,
+                        clubhouseId: this.clubhouseId,
+                        seasonId: this.seasonId,
+                        usedTeamIds: this.usedTeamIds
                     },
                     events: {
                         close() {
