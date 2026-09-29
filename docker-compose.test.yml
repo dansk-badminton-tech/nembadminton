@@ -50,6 +50,8 @@ services:
     image: flycompany/nembadminton-app:selenium
     entrypoint: "php artisan octane:frankenphp --env dusk.local --port 80"
     user: "1000:33"
+    ports:
+      - "80"
     networks:
       default:
         aliases: [artisan-serve]
