@@ -64,6 +64,11 @@ class TeamFightEditPage extends Page
             '@team-table-section' => "[dusk='team-table-section']",
             '@add-teams-section' => "[dusk='add-teams-section']",
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
+            '@squad-team-section' => "[dusk='squad-team-section']",
+            '@squad-team-chip' => "[dusk='squad-team-chip']",
+            '@squad-team-empty' => "[dusk='squad-team-empty']",
+            '@squad-team-go-to-teams' => "[dusk='squad-team-go-to-teams']",
+            '@squad-manual-entry-link' => "[dusk='squad-manual-entry-link']",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
@@ -342,15 +347,63 @@ class TeamFightEditPage extends Page
             $browser->type("[dusk='custom-category-count-{$category}']", (string) $count);
         }
 
+        $this->startManualSquadEntry($browser);
         $browser->type("[dusk='squad-name-input']", $name)
             ->type("[dusk='squad-tier-input']", $tier)
             ->assertEnabled('@add-13-kamps-hold-button');
         $this->submitSquad($browser);
     }
 
+    /**
+     * Reveal the Navn/Niveau fields via "Opret uden hold".
+     */
+    public function startManualSquadEntry(Browser $browser): void
+    {
+        $browser->waitFor('@squad-manual-entry-link')
+            ->assertSeeIn('@squad-manual-entry-link', 'Opret uden hold')
+            ->click('@squad-manual-entry-link')
+            ->waitFor("[dusk='squad-name-input']");
+    }
+
+    public function selectSquadTeam(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}']")
+            ->click("[dusk='squad-team-option-{$teamId}']")
+            ->waitFor('@squad-team-chip');
+    }
+
+    public function assertSquadTeamAdded(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}'] [dusk='squad-team-added']")
+            ->assertSeeIn("[dusk='squad-team-option-{$teamId}']", '✓ tilføjet');
+    }
+
+    public function assertSquadTeamNotAdded(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}']")
+            ->assertMissing("[dusk='squad-team-option-{$teamId}'] [dusk='squad-team-added']");
+    }
+
+    /**
+     * Uses JS click to avoid the sticky navbar or a snackbar intercepting the button.
+     */
+    public function goToTeamsFromSquadForm(Browser $browser): void
+    {
+        $browser->waitFor('@squad-team-go-to-teams')
+            ->assertSeeIn('@squad-team-go-to-teams', 'Gå til Hold')
+            ->script("document.querySelector(\"[dusk='squad-team-go-to-teams']\").click()");
+    }
+
+    public function submitSquadForm(Browser $browser): void
+    {
+        $browser->waitFor('@add-13-kamps-hold-button')
+            ->scrollTo('@add-13-kamps-hold-button');
+        $this->submitSquad($browser);
+    }
+
     private function submitSquad(Browser $browser): void
     {
-        $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj til holdopstilling');
+        $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj holdopstilling');
         $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
     }
 

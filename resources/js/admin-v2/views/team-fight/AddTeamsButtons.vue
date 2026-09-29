@@ -6,7 +6,10 @@
         :selected-match-count="selectedMatchCount"
         :selected-name="selectedName"
         :selected-tier-name="selectedTierName"
+        :selected-team-id="selectedTeamId"
         :selected-team-label="selectedTeamLabel"
+        :manual-entry="manualEntry"
+        :clubhouse-id="clubhouseId"
         :selected-playing-date="selectedPlayingDate"
         :match-count-options="matchCountOptions"
         :tier-options="tierOptions"
@@ -20,6 +23,7 @@
         @select-name="onNameChange"
         @select-tier="onTierChange"
         @select-team="onTeamChange"
+        @start-manual-entry="onStartManualEntry"
         @change-playing-date="onPlayingDateChange"
         @select-quick-date="onQuickDateSelect"
         @update-custom-category-count="onCustomCategoryCountChange"
@@ -35,6 +39,7 @@ import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
+import {buildTeamPickerOptions, describeTeam, teamTierLabel} from "./team-picker";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -82,6 +87,7 @@ export default {
             selectedTierName: '',
             selectedTeamId: null,
             selectedTeamLabel: '',
+            manualEntry: false,
             selectedPlayingDate: null,
             playingDateChanged: false,
             rankingVersions: [],
@@ -116,20 +122,7 @@ export default {
             }));
         },
         teamOptions() {
-            const usedIds = new Set((this.usedTeamIds || []).map(String));
-            return this.teams
-                .filter((team) => !usedIds.has(String(team.id)))
-                .map((team) => {
-                    const tierLabel = team.tier?.tierName || team.customTierName || '';
-                    const parts = [team.name];
-                    if (tierLabel) parts.push(tierLabel);
-                    if (team.groupName) parts.push(team.groupName);
-                    return {
-                        id: team.id,
-                        label: parts.join(' · '),
-                        team
-                    };
-                });
+            return buildTeamPickerOptions(this.teams, this.usedTeamIds);
         },
         nextSquadNumber() {
             return this.existingSquadCount + 1;
@@ -304,13 +297,14 @@ export default {
                 return;
             }
             this.selectedTeamId = team.id;
-            const tierLabel = team.tier?.tierName || team.customTierName || '';
-            const parts = [team.name];
-            if (tierLabel) parts.push(tierLabel);
-            if (team.groupName) parts.push(team.groupName);
-            this.selectedTeamLabel = parts.join(' · ');
+            this.selectedTeamLabel = describeTeam(team);
             this.selectedName = team.name || '';
-            this.selectedTierName = tierLabel;
+            this.selectedTierName = teamTierLabel(team);
+            this.manualEntry = false;
+        },
+        onStartManualEntry() {
+            this.onTeamChange(null);
+            this.manualEntry = true;
         },
         onPlayingDateChange(date) {
             this.markPlayingDateAsManual(date);

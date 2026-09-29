@@ -1,6 +1,97 @@
 <template>
     <div dusk="add-teams-section" class="add-squad-form">
         <div class="add-squad-form__panel">
+            <div class="add-squad-form__team-section" dusk="squad-team-section">
+                <p class="label is-small mb-2">Hold</p>
+
+                <div v-if="teamOptions.length > 0" class="buttons mb-2">
+                    <b-button
+                        v-for="option in teamOptions"
+                        :key="option.id"
+                        size="is-small"
+                        :dusk="'squad-team-option-' + option.id"
+                        :disabled="loading"
+                        :type="isSelectedTeam(option) ? 'is-link' : 'is-light'"
+                        @click="onTeamClick(option)">
+                        {{ option.label }}
+                        <span
+                            v-if="option.added"
+                            class="add-squad-form__team-added"
+                            dusk="squad-team-added">✓ tilføjet</span>
+                    </b-button>
+                </div>
+
+                <div
+                    v-else-if="!teamsLoading"
+                    class="add-squad-form__team-empty"
+                    dusk="squad-team-empty">
+                    <p class="mb-2">Opret jeres hold først, så udfyldes navn og niveau automatisk.</p>
+                    <b-button
+                        tag="router-link"
+                        :to="{name: 'teams', params: {clubhouseId}}"
+                        size="is-small"
+                        type="is-link"
+                        icon-left="shield-account"
+                        dusk="squad-team-go-to-teams">
+                        Gå til Hold
+                    </b-button>
+                </div>
+
+                <div
+                    v-if="teamSelected"
+                    class="add-squad-form__team-chip mb-2"
+                    dusk="squad-team-chip">
+                    <b-icon icon="shield-account" size="is-small" class="mr-2"/>
+                    <span class="add-squad-form__team-chip-label">{{ selectedTeamLabel }}</span>
+                    <b-button
+                        class="add-squad-form__team-chip-clear"
+                        type="is-text"
+                        size="is-small"
+                        icon-right="close"
+                        :disabled="loading"
+                        dusk="clear-squad-team"
+                        @click="$emit('select-team', null)">
+                    </b-button>
+                </div>
+
+                <div v-else-if="manualEntry" class="add-squad-form__manual-fields">
+                    <b-input
+                        :model-value="selectedName"
+                        :disabled="loading"
+                        class="mb-2"
+                        placeholder="Navn (fx Højbjerg 1)"
+                        dusk="squad-name-input"
+                        @update:modelValue="onNameInput">
+                    </b-input>
+                    <b-autocomplete
+                        :model-value="selectedTierName"
+                        :data="filteredTierOptions"
+                        :loading="tiersLoading"
+                        :disabled="loading"
+                        placeholder="Niveau (fx 1. division)"
+                        field="label"
+                        clearable
+                        keep-first
+                        open-on-focus
+                        dusk="squad-tier-input"
+                        @update:modelValue="onTierInput"
+                        @select="onTierSelect">
+                    </b-autocomplete>
+                    <p class="help has-text-grey mb-0">
+                        Navn og niveau er valgfrie.
+                    </p>
+                </div>
+
+                <a
+                    v-if="!manualEntry"
+                    href="#"
+                    class="add-squad-form__manual-link is-size-7"
+                    dusk="squad-manual-entry-link"
+                    @click.prevent="onManualEntryClick">
+                    Opret uden hold
+                </a>
+            </div>
+
             <div class="add-squad-form__panel-row">
                 <div class="add-squad-form__section add-squad-form__section--match-count">
                     <p class="label is-small mb-2">Antal kampe</p>
@@ -78,70 +169,6 @@
                     </p>
                 </div>
 
-                <div class="add-squad-form__section add-squad-form__section--tier">
-                    <p class="label is-small mb-2">Hold / Navn / Niveau (valgfri)</p>
-
-                    <div
-                        v-if="teamSelected"
-                        class="add-squad-form__team-chip"
-                        dusk="squad-team-chip">
-                        <b-icon icon="shield-account" size="is-small" class="mr-2"/>
-                        <span class="add-squad-form__team-chip-label">{{ selectedTeamLabel }}</span>
-                        <b-button
-                            class="add-squad-form__team-chip-clear"
-                            type="is-text"
-                            size="is-small"
-                            icon-right="close"
-                            :disabled="loading"
-                            dusk="clear-squad-team"
-                            @click="$emit('select-team', null)">
-                        </b-button>
-                    </div>
-
-                    <template v-else>
-                        <b-autocomplete
-                            v-if="teamOptions.length > 0"
-                            :model-value="selectedTeamLabel"
-                            :data="filteredTeamOptions"
-                            :loading="teamsLoading"
-                            :disabled="loading"
-                            class="mb-2"
-                            placeholder="Vælg fra hold"
-                            field="label"
-                            clearable
-                            keep-first
-                            open-on-focus
-                            dusk="squad-team-input"
-                            @update:modelValue="onTeamInput"
-                            @select="onTeamSelect">
-                        </b-autocomplete>
-                        <b-input
-                            :model-value="selectedName"
-                            :disabled="loading"
-                            class="mb-2"
-                            placeholder="Navn (fx Højbjerg 1)"
-                            dusk="squad-name-input"
-                            @update:modelValue="onNameInput">
-                        </b-input>
-                        <b-autocomplete
-                            :model-value="selectedTierName"
-                            :data="filteredTierOptions"
-                            :loading="tiersLoading"
-                            :disabled="loading"
-                            placeholder="Niveau (fx 1. division)"
-                            field="label"
-                            clearable
-                            keep-first
-                            open-on-focus
-                            dusk="squad-tier-input"
-                            @update:modelValue="onTierInput"
-                            @select="onTierSelect">
-                        </b-autocomplete>
-                        <p class="help has-text-grey mb-0">
-                            Navn og niveau er valgfrie.
-                        </p>
-                    </template>
-                </div>
             </div>
 
             <div class="add-squad-form__submit-row">
@@ -153,7 +180,7 @@
                     type="is-link"
                     icon-left="plus"
                     @click="$emit('submit-inline')">
-                    Tilføj til holdopstilling
+                    Tilføj holdopstilling
                 </b-button>
             </div>
         </div>
@@ -188,9 +215,21 @@ export default {
             type: Array,
             default: () => []
         },
+        selectedTeamId: {
+            type: [String, Number],
+            default: null
+        },
         selectedTeamLabel: {
             type: String,
             default: ''
+        },
+        manualEntry: {
+            type: Boolean,
+            default: false
+        },
+        clubhouseId: {
+            type: [String, Number],
+            default: null
         },
         selectedMatchCount: {
             type: [Number, String],
@@ -266,15 +305,6 @@ export default {
             return this.tierOptions.filter((option) =>
                 option.label.toLowerCase().includes(query)
             );
-        },
-        filteredTeamOptions() {
-            const query = (this.selectedTeamLabel || '').trim().toLowerCase();
-            if (query === '') {
-                return this.teamOptions;
-            }
-            return this.teamOptions.filter((option) =>
-                option.label.toLowerCase().includes(query)
-            );
         }
     },
     methods: {
@@ -289,14 +319,15 @@ export default {
                 this.$emit('select-tier', option.label);
             }
         },
-        onTeamInput(value) {
-            if (typeof value === 'string' && value.trim() === '') {
-                this.$emit('select-team', null);
-            }
+        isSelectedTeam(option) {
+            return this.selectedTeamId !== null && String(option.id) === String(this.selectedTeamId);
         },
-        onTeamSelect(option) {
-            if (option && option.team) {
-                this.$emit('select-team', option.team);
+        onTeamClick(option) {
+            this.$emit('select-team', this.isSelectedTeam(option) ? null : option.team);
+        },
+        onManualEntryClick() {
+            if (!this.loading) {
+                this.$emit('start-manual-entry');
             }
         },
         emitCustomCategoryCount(field, value) {
@@ -334,8 +365,30 @@ export default {
     min-width: 280px;
 }
 
-.add-squad-form__section--tier {
-    min-width: 260px;
+.add-squad-form__team-section {
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px dashed #dbdbdb;
+}
+
+.add-squad-form__team-added {
+    margin-left: 0.4rem;
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.add-squad-form__team-empty {
+    margin-bottom: 0.5rem;
+    color: #4a4a4a;
+}
+
+.add-squad-form__manual-fields {
+    max-width: 420px;
+    margin-bottom: 0.5rem;
+}
+
+.add-squad-form__manual-link {
+    display: inline-block;
 }
 
 .add-squad-form__datepicker-control {
