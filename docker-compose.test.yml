@@ -3,6 +3,7 @@
 # The "-test" project name keeps it apart from the dev stack in the same folder.
 #
 # Use bin/test, which sets the checkout up, runs a suite and removes the stack.
+# bin/preview runs dusk-serve under a separate "-preview" project to view the UI.
 services:
   # One in-memory MySQL, one database per suite (as in the dev stack), so
   # RefreshDatabase and DatabaseTruncation never touch each other's tables.
@@ -50,6 +51,8 @@ services:
     image: flycompany/nembadminton-app:selenium
     entrypoint: "php artisan octane:frankenphp --env dusk.local --port 80"
     user: "1000:33"
+    ports:
+      - "80"
     networks:
       default:
         aliases: [artisan-serve]

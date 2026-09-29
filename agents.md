@@ -33,6 +33,8 @@ bin/test dusk --filter LoginTest
 
 Do not run tests against the dev stack (`docker compose exec app ...`). Stop `yarn dev` before `bin/test dusk` (it refuses to run while `public/hot` exists).
 
+To look at a checkout's UI, run `bin/preview`. It builds the frontend, starts the app on a random localhost port with a fresh database seeded by `TestingDataSeeder`, and prints the URL and login (`testing@gmail.com` / `Test1234`). Run it again after frontend changes; stop it with `bin/preview down`. It is separate from `bin/test`, so running tests doesn't affect it.
+
 ## JavaScript unit testing:
     Tool: Node's built-in test runner (`node:test`)
     Location: tests/js/
