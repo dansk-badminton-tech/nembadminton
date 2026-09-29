@@ -15,27 +15,35 @@
                 </div>
 
                 <template v-if="teamOptions.length > 0">
-                    <div class="buttons add-squad-form__team-options">
-                        <b-button
+                    <div class="add-squad-form__team-options">
+                        <button
                             v-for="option in teamOptions"
                             :key="option.id"
-                            size="is-small"
+                            type="button"
+                            class="button is-link add-squad-form__team-card"
+                            :class="{'is-outlined': !isSelectedTeam(option)}"
                             :dusk="'squad-team-option-' + option.id"
                             :disabled="loading"
                             :aria-pressed="isSelectedTeam(option) ? 'true' : 'false'"
-                            type="is-link"
-                            :outlined="!isSelectedTeam(option)"
-                            :icon-left="isSelectedTeam(option) ? 'check' : null"
+                            :title="isSelectedTeam(option) ? 'Klik igen for at fravælge' : null"
                             @click="onTeamClick(option)">
-                            {{ option.label }}
-                            <span
-                                v-if="option.added"
-                                class="add-squad-form__team-added"
-                                dusk="squad-team-added">✓ tilføjet</span>
-                        </b-button>
+                            <span class="add-squad-form__team-card-name">
+                                <b-icon v-if="isSelectedTeam(option)" icon="check" size="is-small"/>
+                                {{ option.label }}
+                                <span
+                                    v-if="option.added"
+                                    class="add-squad-form__team-added"
+                                    dusk="squad-team-added">✓ tilføjet</span>
+                            </span>
+                            <span v-if="option.details" class="add-squad-form__team-card-details">
+                                {{ option.details }}
+                            </span>
+                        </button>
                     </div>
-                    <p v-if="!teamSelected && !manualEntry" class="help has-text-grey mt-0 mb-0">
-                        Vælg holdet, så udfyldes navn og niveau automatisk.
+                    <p v-if="!manualEntry" class="help has-text-grey mt-0 mb-0">
+                        {{ teamSelected
+                            ? 'Navn og niveau hentes fra holdet. Klik igen for at fravælge.'
+                            : 'Vælg holdet, så udfyldes navn og niveau automatisk.' }}
                     </p>
                 </template>
 
@@ -56,25 +64,7 @@
                     </b-button>
                 </div>
 
-                <div
-                    v-if="teamSelected"
-                    class="add-squad-form__team-chip"
-                    dusk="squad-team-chip">
-                    <b-icon icon="shield-account" size="is-small" class="mr-1"/>
-                    <span class="add-squad-form__team-chip-label">{{ selectedTeamLabel }}</span>
-                    <b-button
-                        class="add-squad-form__team-chip-clear"
-                        type="is-text"
-                        size="is-small"
-                        icon-right="close"
-                        aria-label="Fravælg hold"
-                        :disabled="loading"
-                        dusk="clear-squad-team"
-                        @click="$emit('select-team', null)">
-                    </b-button>
-                </div>
-
-                <div v-else-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
+                <div v-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
                     <div class="add-squad-form__manual-header">
                         <span class="is-size-7 has-text-weight-semibold">Uden hold</span>
                         <a
@@ -245,10 +235,6 @@ export default {
             type: [String, Number],
             default: null
         },
-        selectedTeamLabel: {
-            type: String,
-            default: ''
-        },
         manualEntry: {
             type: Boolean,
             default: false
@@ -318,7 +304,7 @@ export default {
             return this.selectedMatchCount !== null;
         },
         teamSelected() {
-            return Boolean(this.selectedTeamLabel && this.selectedTeamLabel.trim() !== '');
+            return this.selectedTeamId !== null && this.selectedTeamId !== undefined;
         },
         trimmedTierName() {
             return (this.selectedTierName || '').trim();
@@ -410,9 +396,36 @@ export default {
     margin-bottom: 0.5rem;
 }
 
-/* Bulma gives a non-last .buttons row 1rem extra bottom margin; the buttons' own 0.5rem is enough here. */
-.buttons.add-squad-form__team-options {
-    margin-bottom: 0;
+.add-squad-form__team-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+/* Two-line card: Bulma's fixed button height only fits one line. */
+.button.add-squad-form__team-card {
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    padding: 0.4rem 0.75rem;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+}
+
+.add-squad-form__team-card-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.add-squad-form__team-card-details {
+    font-size: 0.75rem;
+    opacity: 0.8;
 }
 
 .add-squad-form__team-added {
@@ -471,32 +484,6 @@ export default {
 .add-squad-form__custom-field .label {
     text-align: center;
     color: #4a4a4a;
-}
-
-.add-squad-form__team-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-    padding: 0.2rem 0.4rem 0.2rem 0.65rem;
-    border: 1px solid #dbdbdb;
-    border-radius: 999px;
-    background: #fff;
-    color: #4a4a4a;
-    font-size: 0.8rem;
-    max-width: 100%;
-}
-
-.add-squad-form__team-chip-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.add-squad-form__team-chip-clear {
-    margin-left: 0.25rem;
-    padding: 0;
-    color: #7a7a7a;
 }
 
 .add-squad-form__submit-row {

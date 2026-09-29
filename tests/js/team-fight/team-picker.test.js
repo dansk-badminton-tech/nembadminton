@@ -1,9 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {
-    buildTeamPickerOptions,
-    describeTeam,
-} from '../../../resources/js/admin-v2/views/team-fight/team-picker.js'
+import {buildTeamPickerOptions} from '../../../resources/js/admin-v2/views/team-fight/team-picker.js'
 
 const team = (id, name, extra = {}) => ({
     id,
@@ -14,7 +11,7 @@ const team = (id, name, extra = {}) => ({
     ...extra,
 })
 
-test('each team becomes one option labelled with its name only', () => {
+test('each team becomes one option labelled with its name', () => {
     const options = buildTeamPickerOptions([
         team('1', 'Højbjerg 1', {tier: {id: '9', tierName: '1. division'}, groupName: 'Pulje 2'}),
         team('2', 'Højbjerg 2'),
@@ -24,6 +21,28 @@ test('each team becomes one option labelled with its name only', () => {
         ['1', 'Højbjerg 1'],
         ['2', 'Højbjerg 2'],
     ])
+})
+
+test('each option carries the level and group as a details line', () => {
+    const options = buildTeamPickerOptions([
+        team('1', 'Højbjerg 1', {tier: {tierName: '1. division'}, groupName: 'Pulje 2'}),
+        team('2', 'Højbjerg 2', {customTierName: 'Kredsserie'}),
+        team('3', 'Højbjerg 3'),
+    ], [])
+
+    assert.deepEqual(options.map((option) => option.details), [
+        '1. division · Pulje 2',
+        'Kredsserie',
+        '',
+    ])
+})
+
+test('the tier wins over a custom level', () => {
+    const [option] = buildTeamPickerOptions([
+        team('1', 'A', {tier: {tierName: 'Liga'}, customTierName: 'Kredsserie'}),
+    ], [])
+
+    assert.equal(option.details, 'Liga')
 })
 
 test('teams that already have a squad in the team round stay selectable but are marked added', () => {
@@ -39,20 +58,4 @@ test('the option carries the team so it can be selected', () => {
     const hold = team('1', 'A')
 
     assert.equal(buildTeamPickerOptions([hold], [])[0].team, hold)
-})
-
-test('a team is described by name, level and group', () => {
-    assert.equal(
-        describeTeam(team('1', 'Højbjerg 1', {tier: {tierName: '1. division'}, groupName: 'Pulje 2'})),
-        'Højbjerg 1 · 1. division · Pulje 2'
-    )
-})
-
-test('the tier wins over a custom level', () => {
-    assert.equal(describeTeam(team('1', 'A', {tier: {tierName: 'Liga'}, customTierName: 'Kredsserie'})), 'A · Liga')
-})
-
-test('a custom level is used when the team has no tier, and missing parts are left out', () => {
-    assert.equal(describeTeam(team('1', 'Højbjerg 3', {customTierName: 'Kredsserie'})), 'Højbjerg 3 · Kredsserie')
-    assert.equal(describeTeam(team('1', 'Højbjerg 4')), 'Højbjerg 4')
 })

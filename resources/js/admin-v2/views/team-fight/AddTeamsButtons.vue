@@ -8,7 +8,6 @@
         :selected-name="selectedName"
         :selected-tier-name="selectedTierName"
         :selected-team-id="selectedTeamId"
-        :selected-team-label="selectedTeamLabel"
         :manual-entry="manualEntry"
         :clubhouse-id="clubhouseId"
         :selected-playing-date="selectedPlayingDate"
@@ -41,7 +40,7 @@ import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
-import {buildTeamPickerOptions, describeTeam, teamTierLabel} from "./team-picker";
+import {buildTeamPickerOptions, teamTierLabel} from "./team-picker";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -88,7 +87,6 @@ export default {
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
-            selectedTeamLabel: '',
             manualEntry: false,
             selectedPlayingDate: null,
             playingDateChanged: false,
@@ -298,13 +296,11 @@ export default {
         onTeamChange(team) {
             if (team === null || team === undefined) {
                 this.selectedTeamId = null;
-                this.selectedTeamLabel = '';
                 this.selectedName = '';
                 this.selectedTierName = '';
                 return;
             }
             this.selectedTeamId = team.id;
-            this.selectedTeamLabel = describeTeam(team);
             this.selectedName = team.name || '';
             this.selectedTierName = teamTierLabel(team);
             this.manualEntry = false;
@@ -433,7 +429,6 @@ export default {
                 this.selectedName = '';
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
-                this.selectedTeamLabel = '';
             })
         }
     }

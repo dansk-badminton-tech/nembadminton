@@ -65,7 +65,6 @@ class TeamFightEditPage extends Page
             '@add-teams-section' => "[dusk='add-teams-section']",
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
             '@squad-team-section' => "[dusk='squad-team-section']",
-            '@squad-team-chip' => "[dusk='squad-team-chip']",
             '@squad-team-empty' => "[dusk='squad-team-empty']",
             '@squad-team-go-to-teams' => "[dusk='squad-team-go-to-teams']",
             '@squad-manual-entry-link' => "[dusk='squad-manual-entry-link']",
@@ -381,7 +380,21 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor("[dusk='squad-team-option-{$teamId}']")
             ->click("[dusk='squad-team-option-{$teamId}']")
-            ->waitFor('@squad-team-chip');
+            ->waitFor("[dusk='squad-team-option-{$teamId}'][aria-pressed='true']");
+    }
+
+    /**
+     * Clicking the selected Team button again deselects it.
+     */
+    public function deselectSquadTeam(Browser $browser, int $teamId): void
+    {
+        $browser->click("[dusk='squad-team-option-{$teamId}'][aria-pressed='true']")
+            ->waitFor("[dusk='squad-team-option-{$teamId}'][aria-pressed='false']");
+    }
+
+    public function assertNoSquadTeamSelected(Browser $browser): void
+    {
+        $browser->assertMissing("[dusk^='squad-team-option-'][aria-pressed='true']");
     }
 
     public function assertSquadTeamAdded(Browser $browser, int $teamId): void

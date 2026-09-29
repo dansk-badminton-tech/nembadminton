@@ -44,7 +44,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
 
             $browser->waitFor("[dusk='squad-team-option-{$firstTeam->id}']")
                 ->assertSeeIn("[dusk='squad-team-option-{$firstTeam->id}']", 'Højbjerg 1')
-                ->assertDontSeeIn("[dusk='squad-team-option-{$firstTeam->id}']", 'Kredsserie')
+                ->assertSeeIn("[dusk='squad-team-option-{$firstTeam->id}']", 'Kredsserie · Pulje 2')
                 ->assertVisible("[dusk='squad-team-option-{$secondTeam->id}']")
                 ->assertMissing("[dusk='squad-team-option-{$otherSeasonTeam->id}']")
                 ->assertMissing("[dusk='squad-name-input']")
@@ -56,23 +56,24 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
             JS)[0], 'Team buttons should come before Antal kampe');
 
             $browser->selectSquadTeam($firstTeam->id)
-                ->assertSeeIn('@squad-team-chip', 'Højbjerg 1 · Kredsserie · Pulje 2')
+                ->deselectSquadTeam($firstTeam->id)
+                ->assertNoSquadTeamSelected()
+                ->selectSquadTeam($firstTeam->id)
                 ->assertMissing("[dusk='squad-name-input']")
                 ->assertMissing("[dusk='squad-0']");
             $this->assertSame(0, $teamRound->squads()->count());
 
             $browser->submitSquadForm()
                 ->waitForTextIn("[dusk='squad-0']", 'Højbjerg 1')
-                ->waitUntilMissing('@squad-team-chip');
+                ->waitFor("[dusk='squad-team-option-{$firstTeam->id}'][aria-pressed='false']");
             $this->assertSame($firstTeam->id, $teamRound->squads()->sole()->team_id);
 
             $browser->assertSquadTeamAdded($firstTeam->id)
                 ->assertSquadTeamNotAdded($secondTeam->id)
-                ->selectSquadTeam($firstTeam->id)
-                ->assertSeeIn('@squad-team-chip', 'Højbjerg 1');
+                ->selectSquadTeam($firstTeam->id);
 
             $browser->startManualSquadEntry()
-                ->assertMissing('@squad-team-chip')
+                ->assertNoSquadTeamSelected()
                 ->cancelManualSquadEntry()
                 ->startManualSquadEntry()
                 ->type("[dusk='squad-name-input']", 'Uden hold')
