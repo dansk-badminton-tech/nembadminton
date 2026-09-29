@@ -31,6 +31,7 @@ import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
 import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import TournamentTiersQuery from "../../../queries/tournamentTiers.graphql";
+import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
@@ -189,19 +190,7 @@ export default {
             }
         },
         teams: {
-            query: gql`
-                query teamsForSquadPicker($clubhouseId: ID!, $seasonId: Int) {
-                    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 200, order: [{column: NAME, order: ASC}]) {
-                        data {
-                            id
-                            name
-                            groupName
-                            customTierName
-                            tier { id tierName }
-                        }
-                    }
-                }
-            `,
+            query: TeamsForSquadPickerQuery,
             variables() {
                 return {
                     clubhouseId: this.clubhouseId,

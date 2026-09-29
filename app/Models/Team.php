@@ -27,6 +27,14 @@ class Team extends Model
         return $this->belongsTo(TournamentTier::class, 'tier_id');
     }
 
+    /**
+     * The team's tier label: its tournament tier, or the custom tier name when it has none.
+     */
+    public function tierName(): ?string
+    {
+        return $this->tier?->tier_name ?? $this->custom_tier_name;
+    }
+
     public function clubhouse(): BelongsTo
     {
         return $this->belongsTo(Clubhouse::class);

@@ -6,6 +6,7 @@ import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import {timeToMonth} from "./helper";
 import {teamLabel, teamTierLabel} from "./team-label";
+import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 
 export default {
     name: "EditSquadModal",
@@ -27,19 +28,7 @@ export default {
     },
     apollo: {
         teams: {
-            query: gql`
-                query teamsForEditSquad($clubhouseId: ID!, $seasonId: Int) {
-                    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 200, order: [{column: NAME, order: ASC}]) {
-                        data {
-                            id
-                            name
-                            groupName
-                            customTierName
-                            tier { id tierName }
-                        }
-                    }
-                }
-            `,
+            query: TeamsForSquadPickerQuery,
             variables() {
                 return {
                     clubhouseId: this.clubhouseId,

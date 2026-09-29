@@ -85,10 +85,6 @@ class Squad extends Model implements Sortable
      */
     public function effectiveTier(): ?string
     {
-        if ($this->team === null) {
-            return $this->tier;
-        }
-
-        return $this->team->tier?->tier_name ?? $this->team->custom_tier_name;
+        return $this->team === null ? $this->tier : $this->team->tierName();
     }
 }
