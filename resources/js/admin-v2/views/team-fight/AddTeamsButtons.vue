@@ -412,7 +412,7 @@ export default {
                     {
                         duration: 4000,
                         type: 'is-danger',
-                        message: `Kunne ikke oprette holdet :(`
+                        message: `Kunne ikke oprette holdopstillingen :(`
                     })
             }).finally(() => {
                 this.loading = false

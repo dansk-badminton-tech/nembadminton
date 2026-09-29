@@ -350,6 +350,7 @@ class TeamFightEditPage extends Page
 
     private function submitSquad(Browser $browser): void
     {
+        $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj til holdopstilling');
         $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
     }
 

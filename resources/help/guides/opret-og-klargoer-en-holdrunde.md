@@ -41,7 +41,7 @@ Tilføj holdene under **Holdene i holdrunden** i rækkefølge med det bedste hol
 1. Vælg holdets størrelse under **Antal kampe**. Vælg **Tilpas**, hvis holdet ikke følger et af standardformaterne, og angiv antallet af kampe i hver kategori: **MD**, **DS**, **DD**, **HS** og **HD**.
 2. Vælg holdets **Spilledato**. Den er som udgangspunkt holdrundens dato, og du kan vælge dagen før, dagen efter eller en anden dato.
 3. Udfyld eventuelt **Hold / Navn / Niveau (valgfri)** med holdets navn og niveau, fx "Højbjerg 1" og "1. division". Har klubben oprettet sine hold under **Hold** i menuen, kan du i stedet vælge holdet i feltet "Vælg fra hold".
-4. Vælg **Tilføj hold**.
+4. Vælg **Tilføj til holdopstilling**.
 
 Gentag trinene for hvert hold i holdrunden.
 

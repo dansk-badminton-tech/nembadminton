@@ -153,7 +153,7 @@
                     type="is-link"
                     icon-left="plus"
                     @click="$emit('submit-inline')">
-                    Tilføj hold
+                    Tilføj til holdopstilling
                 </b-button>
             </div>
         </div>
