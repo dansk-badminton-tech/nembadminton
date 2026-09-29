@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Boot this checkout's UI on a random localhost port, with a fresh in-memory
+# database seeded like the browser tests (TestingDataSeeder).
+# Works in any checkout or git worktree, next to the dev stack and bin/test.
+#
+# Usage:
+#   bin/preview        (Re)build the frontend, start fresh and print the URL
+#   bin/preview down   Stop the preview
+set -eo pipefail
+cd "$(dirname "$0")/.."
+
+compose() { docker compose -p "${PWD##*/}-preview" -f docker-compose.test.yml "$@"; }
+
+if [ "$1" = down ]; then
+  compose down -v
+  exit
+fi
+
+if [ -e public/hot ]; then
+  echo "public/hot exists: stop \`yarn dev\` so the preview uses the built assets." >&2
+  exit 1
+fi
+
+[ -d vendor ] || compose run --rm composer install --ignore-platform-reqs --no-interaction
+compose run --rm composer run setup
+[ -d node_modules ] || yarn install --frozen-lockfile
+yarn build
+
+compose down -v >/dev/null 2>&1
+compose up -d dusk-serve
+compose run --rm --no-deps --entrypoint php dusk \
+  artisan migrate --force --seed --seeder=TestingDataSeeder --env=dusk.local
+
+port=$(compose port dusk-serve 80)
+cat <<EOF
+
+Preview: http://localhost:${port##*:}
+Login:   testing@gmail.com / Test1234
+Stop:    bin/preview down
+EOF
