@@ -14,7 +14,6 @@ export function buildTeamPickerOptions(teams, usedTeamIds) {
     return (teams || []).map((team) => ({
         id: team.id,
         label: team.name,
-        tierLabel: teamTierLabel(team),
         added: usedIds.has(String(team.id)),
         team
     }));

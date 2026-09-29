@@ -10,6 +10,7 @@ use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\TeamFightCreatePage;
 use Tests\Browser\Pages\TeamFightEditPage;
+use Tests\Browser\Pages\TeamListPage;
 use Tests\DuskTestCase;
 
 class TeamRoundSquadTeamPickerTest extends DuskTestCase
@@ -93,8 +94,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
             $this->assertNull($teamRound->squads()->sole()->team_id);
 
             $browser->goToTeamsFromSquadForm()
-                ->waitFor("[dusk='team-list-page']")
-                ->assertPathIs('/app/c-'.$clubhouse->id.'/teams');
+                ->on(new TeamListPage($clubhouse->id));
         });
     }
 

@@ -22,7 +22,7 @@
                 </div>
 
                 <div
-                    v-else-if="!teamsLoading"
+                    v-else-if="!teamsLoading && !teamsFailed"
                     class="add-squad-form__team-empty"
                     dusk="squad-team-empty">
                     <p class="mb-2">Opret jeres hold først, så udfyldes navn og niveau automatisk.</p>
@@ -208,6 +208,10 @@ export default {
             default: false
         },
         teamsLoading: {
+            type: Boolean,
+            default: false
+        },
+        teamsFailed: {
             type: Boolean,
             default: false
         },

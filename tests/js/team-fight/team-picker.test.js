@@ -48,15 +48,11 @@ test('a team is described by name, level and group', () => {
     )
 })
 
+test('the tier wins over a custom level', () => {
+    assert.equal(describeTeam(team('1', 'A', {tier: {tierName: 'Liga'}, customTierName: 'Kredsserie'})), 'A · Liga')
+})
+
 test('a custom level is used when the team has no tier, and missing parts are left out', () => {
     assert.equal(describeTeam(team('1', 'Højbjerg 3', {customTierName: 'Kredsserie'})), 'Højbjerg 3 · Kredsserie')
     assert.equal(describeTeam(team('1', 'Højbjerg 4')), 'Højbjerg 4')
-})
-
-test('tierLabel prefers the tier over the custom level', () => {
-    const [option] = buildTeamPickerOptions([
-        team('1', 'A', {tier: {tierName: 'Liga'}, customTierName: 'Kredsserie'}),
-    ], [])
-
-    assert.equal(option.tierLabel, 'Liga')
 })

@@ -3,6 +3,7 @@
         :loading="loading"
         :tiers-loading="$apollo.queries.tiers.loading"
         :teams-loading="$apollo.queries.teams.loading"
+        :teams-failed="teamsFailed"
         :selected-match-count="selectedMatchCount"
         :selected-name="selectedName"
         :selected-tier-name="selectedTierName"
@@ -93,6 +94,7 @@ export default {
             rankingVersions: [],
             tiers: [],
             teams: [],
+            teamsFailed: false,
             customCategoryCounts: {...DEFAULT_CUSTOM_COUNTS}
         }
     },
@@ -210,8 +212,12 @@ export default {
                 return this.clubhouseId === null || this.clubhouseId === undefined;
             },
             update: data => data.teams.data,
+            result() {
+                this.teamsFailed = false;
+            },
             error() {
-                // Silent — team picker is optional UI, fall back to empty list
+                // Silent — team picker is optional UI; hide the "no teams" hint and keep "Opret uden hold"
+                this.teamsFailed = true;
             },
             fetchPolicy: 'network-only'
         }
