@@ -2,35 +2,54 @@
     <div dusk="add-teams-section" class="add-squad-form">
         <div class="add-squad-form__panel">
             <div class="add-squad-form__team-section" dusk="squad-team-section">
-                <p class="label is-small mb-2">Hold</p>
-
-                <div v-if="teamOptions.length > 0" class="buttons mb-2">
-                    <b-button
-                        v-for="option in teamOptions"
-                        :key="option.id"
-                        size="is-small"
-                        :dusk="'squad-team-option-' + option.id"
-                        :disabled="loading"
-                        :type="isSelectedTeam(option) ? 'is-link' : 'is-light'"
-                        @click="onTeamClick(option)">
-                        {{ option.label }}
-                        <span
-                            v-if="option.added"
-                            class="add-squad-form__team-added"
-                            dusk="squad-team-added">✓ tilføjet</span>
-                    </b-button>
+                <div class="add-squad-form__team-header">
+                    <p class="label is-small mb-0">Hold</p>
+                    <a
+                        v-if="!manualEntry"
+                        href="#"
+                        class="add-squad-form__manual-link is-size-7"
+                        dusk="squad-manual-entry-link"
+                        @click.prevent="onManualEntryClick">
+                        Opret uden hold
+                    </a>
                 </div>
+
+                <template v-if="teamOptions.length > 0">
+                    <div class="buttons add-squad-form__team-options">
+                        <b-button
+                            v-for="option in teamOptions"
+                            :key="option.id"
+                            size="is-small"
+                            :dusk="'squad-team-option-' + option.id"
+                            :disabled="loading"
+                            :aria-pressed="isSelectedTeam(option) ? 'true' : 'false'"
+                            type="is-link"
+                            :outlined="!isSelectedTeam(option)"
+                            :icon-left="isSelectedTeam(option) ? 'check' : null"
+                            @click="onTeamClick(option)">
+                            {{ option.label }}
+                            <span
+                                v-if="option.added"
+                                class="add-squad-form__team-added"
+                                dusk="squad-team-added">✓ tilføjet</span>
+                        </b-button>
+                    </div>
+                    <p v-if="!teamSelected && !manualEntry" class="help has-text-grey mt-0 mb-0">
+                        Vælg holdet, så udfyldes navn og niveau automatisk.
+                    </p>
+                </template>
 
                 <div
                     v-else-if="!teamsLoading && !teamsFailed"
                     class="add-squad-form__team-empty"
                     dusk="squad-team-empty">
-                    <p class="mb-2">Opret jeres hold først, så udfyldes navn og niveau automatisk.</p>
+                    <p class="is-size-7 mb-2">Opret jeres hold først, så udfyldes navn og niveau automatisk.</p>
                     <b-button
                         tag="router-link"
                         :to="{name: 'teams', params: {clubhouseId}}"
                         size="is-small"
                         type="is-link"
+                        outlined
                         icon-left="shield-account"
                         dusk="squad-team-go-to-teams">
                         Gå til Hold
@@ -39,22 +58,34 @@
 
                 <div
                     v-if="teamSelected"
-                    class="add-squad-form__team-chip mb-2"
+                    class="add-squad-form__team-chip"
                     dusk="squad-team-chip">
-                    <b-icon icon="shield-account" size="is-small" class="mr-2"/>
+                    <b-icon icon="shield-account" size="is-small" class="mr-1"/>
                     <span class="add-squad-form__team-chip-label">{{ selectedTeamLabel }}</span>
                     <b-button
                         class="add-squad-form__team-chip-clear"
                         type="is-text"
                         size="is-small"
                         icon-right="close"
+                        aria-label="Fravælg hold"
                         :disabled="loading"
                         dusk="clear-squad-team"
                         @click="$emit('select-team', null)">
                     </b-button>
                 </div>
 
-                <div v-else-if="manualEntry" class="add-squad-form__manual-fields">
+                <div v-else-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
+                    <div class="add-squad-form__manual-header">
+                        <span class="is-size-7 has-text-weight-semibold">Uden hold</span>
+                        <a
+                            v-if="teamOptions.length > 0"
+                            href="#"
+                            class="is-size-7"
+                            dusk="squad-cancel-manual-entry-link"
+                            @click.prevent="onCancelManualEntryClick">
+                            Vælg hold i stedet
+                        </a>
+                    </div>
                     <b-input
                         :model-value="selectedName"
                         :disabled="loading"
@@ -81,15 +112,6 @@
                         Navn og niveau er valgfrie.
                     </p>
                 </div>
-
-                <a
-                    v-if="!manualEntry"
-                    href="#"
-                    class="add-squad-form__manual-link is-size-7"
-                    dusk="squad-manual-entry-link"
-                    @click.prevent="onManualEntryClick">
-                    Opret uden hold
-                </a>
             </div>
 
             <div class="add-squad-form__panel-row">
@@ -334,6 +356,11 @@ export default {
                 this.$emit('start-manual-entry');
             }
         },
+        onCancelManualEntryClick() {
+            if (!this.loading) {
+                this.$emit('cancel-manual-entry');
+            }
+        },
         emitCustomCategoryCount(field, value) {
             this.$emit('update-custom-category-count', {field, value});
         }
@@ -375,24 +402,53 @@ export default {
     border-bottom: 1px dashed #dbdbdb;
 }
 
+.add-squad-form__team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Bulma gives a non-last .buttons row 1rem extra bottom margin; the buttons' own 0.5rem is enough here. */
+.buttons.add-squad-form__team-options {
+    margin-bottom: 0;
+}
+
 .add-squad-form__team-added {
     margin-left: 0.4rem;
-    font-size: 0.75rem;
-    opacity: 0.8;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: rgba(72, 199, 142, 0.18);
+    color: #257953;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.button.is-link:not(.is-outlined) .add-squad-form__team-added {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
 }
 
 .add-squad-form__team-empty {
-    margin-bottom: 0.5rem;
     color: #4a4a4a;
 }
 
 .add-squad-form__manual-fields {
     max-width: 420px;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.75rem 0.75rem;
+    border: 1px solid #dbdbdb;
+    border-radius: 6px;
+    background: #fff;
 }
 
-.add-squad-form__manual-link {
-    display: inline-block;
+.add-squad-form__manual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
 }
 
 .add-squad-form__datepicker-control {
@@ -421,12 +477,13 @@ export default {
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
-    border: 1px solid #b5b5b5;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.4rem 0.2rem 0.65rem;
+    border: 1px solid #dbdbdb;
     border-radius: 999px;
     background: #fff;
-    color: #363636;
-    font-size: 0.95rem;
+    color: #4a4a4a;
+    font-size: 0.8rem;
     max-width: 100%;
 }
 

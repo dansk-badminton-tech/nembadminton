@@ -25,6 +25,7 @@
         @select-tier="onTierChange"
         @select-team="onTeamChange"
         @start-manual-entry="onStartManualEntry"
+        @cancel-manual-entry="onCancelManualEntry"
         @change-playing-date="onPlayingDateChange"
         @select-quick-date="onQuickDateSelect"
         @update-custom-category-count="onCustomCategoryCountChange"
@@ -311,6 +312,10 @@ export default {
         onStartManualEntry() {
             this.onTeamChange(null);
             this.manualEntry = true;
+        },
+        onCancelManualEntry() {
+            this.onTeamChange(null);
+            this.manualEntry = false;
         },
         onPlayingDateChange(date) {
             this.markPlayingDateAsManual(date);

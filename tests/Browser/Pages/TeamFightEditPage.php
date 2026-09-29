@@ -69,6 +69,7 @@ class TeamFightEditPage extends Page
             '@squad-team-empty' => "[dusk='squad-team-empty']",
             '@squad-team-go-to-teams' => "[dusk='squad-team-go-to-teams']",
             '@squad-manual-entry-link' => "[dusk='squad-manual-entry-link']",
+            '@squad-cancel-manual-entry-link' => "[dusk='squad-cancel-manual-entry-link']",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
@@ -363,6 +364,17 @@ class TeamFightEditPage extends Page
             ->assertSeeIn('@squad-manual-entry-link', 'Opret uden hold')
             ->click('@squad-manual-entry-link')
             ->waitFor("[dusk='squad-name-input']");
+    }
+
+    /**
+     * Leave "uden hold" via "Vælg hold i stedet"; the Navn/Niveau fields close again.
+     */
+    public function cancelManualSquadEntry(Browser $browser): void
+    {
+        $browser->assertSeeIn('@squad-cancel-manual-entry-link', 'Vælg hold i stedet')
+            ->click('@squad-cancel-manual-entry-link')
+            ->waitUntilMissing("[dusk='squad-name-input']")
+            ->assertVisible('@squad-manual-entry-link');
     }
 
     public function selectSquadTeam(Browser $browser, int $teamId): void

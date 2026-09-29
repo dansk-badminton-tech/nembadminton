@@ -73,6 +73,8 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
 
             $browser->startManualSquadEntry()
                 ->assertMissing('@squad-team-chip')
+                ->cancelManualSquadEntry()
+                ->startManualSquadEntry()
                 ->type("[dusk='squad-name-input']", 'Uden hold')
                 ->submitSquadForm()
                 ->waitForTextIn("[dusk='squad-1']", 'Uden hold');
