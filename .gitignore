@@ -33,3 +33,4 @@ phpunit.dusk.xml
 **/caddy
 frankenphp
 frankenphp-worker.php
+.out-of-scope
