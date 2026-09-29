@@ -50,6 +50,7 @@
         "symfony/serializer": "^6.0"
     },
     "require-dev": {
+        "brianium/paratest": "^7.4",
         "fakerphp/faker": "^1.9",
         "haydenpierce/class-finder": "^0.4.2",
         "ion-bazan/composer-diff": "^1.9",
