@@ -35,6 +35,7 @@
                     <button
                         type="button"
                         class="button is-link is-light add-squad-form__team-card"
+                        :class="{'add-squad-form__team-card--compact': teamOptions.length > 0}"
                         dusk="squad-create-team-option"
                         :disabled="loading"
                         @click="$emit('create-team')">
@@ -42,7 +43,9 @@
                             <b-icon icon="plus" size="is-small"/>
                             Nyt hold
                         </span>
-                        <span class="add-squad-form__team-card-details">Gemmes under Hold til næste gang</span>
+                        <span v-if="teamOptions.length === 0" class="add-squad-form__team-card-details">
+                            Gemmes under Hold til næste gang
+                        </span>
                     </button>
                     <button
                         type="button"
@@ -429,6 +432,12 @@ export default {
 
 .button.is-light.add-squad-form__team-card {
     border-color: transparent;
+}
+
+/* Once the club has Teams, creating another is a side action. */
+.button.add-squad-form__team-card--compact {
+    align-self: center;
+    padding: 0.25rem 0.6rem;
 }
 
 .add-squad-form__manual-fields {
