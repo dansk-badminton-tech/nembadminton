@@ -46,12 +46,14 @@ import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
 import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import TournamentTiersQuery from "../../../queries/tournamentTiers.graphql";
+import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
-import {buildTeamPickerOptions, teamTierLabel} from "./team-picker";
+import {buildTeamPickerOptions} from "./team-picker";
+import {teamTierLabel} from "./team-label";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -203,19 +205,7 @@ export default {
             }
         },
         teams: {
-            query: gql`
-                query teamsForSquadPicker($clubhouseId: ID!, $seasonId: Int) {
-                    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 200, order: [{column: NAME, order: ASC}]) {
-                        data {
-                            id
-                            name
-                            groupName
-                            customTierName
-                            tier { id tierName }
-                        }
-                    }
-                }
-            `,
+            query: TeamsForSquadPickerQuery,
             variables() {
                 return {
                     clubhouseId: this.clubhouseId,
@@ -230,7 +220,7 @@ export default {
                 this.teamsFailed = false;
             },
             error() {
-                // Silent — team picker is optional UI; hide the "no teams" hint and keep "Opret uden hold"
+                // Silent — team picker is optional UI; hide the "no teams" hint and keep "Uden hold"
                 this.teamsFailed = true;
             },
             fetchPolicy: 'network-only'
@@ -371,13 +361,14 @@ export default {
                 input.name = trimmedName;
             }
 
-            const trimmedTier = this.selectedTierName.trim();
-            if (trimmedTier !== '') {
-                input.tier = trimmedTier;
-            }
-
             if (this.selectedTeamId !== null) {
+                // The squad shows the team's tier, so its own tier is left unset.
                 input.teamId = this.selectedTeamId;
+            } else {
+                const trimmedTier = this.selectedTierName.trim();
+                if (trimmedTier !== '') {
+                    input.tier = trimmedTier;
+                }
             }
 
             return input;

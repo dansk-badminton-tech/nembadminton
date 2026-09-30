@@ -1,6 +1,4 @@
-export function teamTierLabel(team) {
-    return team?.tier?.tierName || team?.customTierName || '';
-}
+import {teamTierLabel} from './team-label.js';
 
 export function buildTeamPickerOptions(teams, usedTeamIds) {
     const usedIds = new Set((usedTeamIds || []).map(String));
