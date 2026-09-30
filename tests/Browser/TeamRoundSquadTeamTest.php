@@ -25,7 +25,7 @@ class TeamRoundSquadTeamTest extends DuskTestCase
             $clubhouse = Clubhouse::firstOrFail();
             $createPage = new TeamFightCreatePage($clubhouse->id);
 
-            $browser->visit(new LoginPage())
+            $browser->visit(new LoginPage)
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit($createPage)
                 ->on($createPage)
@@ -36,7 +36,7 @@ class TeamRoundSquadTeamTest extends DuskTestCase
                 ->selectRankingByText('Juli 2025')
                 ->click('@submit-button')
                 ->waitForText('Dit hold er gemt')
-                ->on(new TeamFightEditPage());
+                ->on(new TeamFightEditPage);
 
             $browser->addCustomSquad('Løst hold', 'Kredsserie', ['mix' => 1]);
             $browser->waitForTextIn("[dusk='squad-0']", 'Løst hold')
