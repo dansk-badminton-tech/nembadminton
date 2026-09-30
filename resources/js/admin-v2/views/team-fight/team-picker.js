@@ -13,3 +13,11 @@ export function buildTeamPickerOptions(teams, usedTeamIds) {
         team
     }));
 }
+
+// Unnamed squads are listed as "Hold N" in the round, so the button says the same.
+export function squadSubmitLabel(name, squadNumber) {
+    const trimmedName = (name || '').trim();
+    return trimmedName === ''
+        ? `Tilføj Hold ${squadNumber} uden navn`
+        : `Tilføj ${trimmedName}`;
+}

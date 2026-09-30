@@ -1,6 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {buildTeamPickerOptions} from '../../../resources/js/admin-v2/views/team-fight/team-picker.js'
+import {buildTeamPickerOptions, squadSubmitLabel} from '../../../resources/js/admin-v2/views/team-fight/team-picker.js'
 
 const team = (id, name, extra = {}) => ({
     id,
@@ -58,4 +58,14 @@ test('the option carries the team so it can be selected', () => {
     const hold = team('1', 'A')
 
     assert.equal(buildTeamPickerOptions([hold], [])[0].team, hold)
+})
+
+test('the submit label names the squad being added', () => {
+    assert.equal(squadSubmitLabel('Højbjerg 1', 3), 'Tilføj Højbjerg 1')
+    assert.equal(squadSubmitLabel('  Reservehold ', 3), 'Tilføj Reservehold')
+})
+
+test('without a name the submit label falls back to the squad number', () => {
+    assert.equal(squadSubmitLabel('', 3), 'Tilføj Hold 3 uden navn')
+    assert.equal(squadSubmitLabel('   ', 1), 'Tilføj Hold 1 uden navn')
 })

@@ -186,7 +186,7 @@
                     type="is-link"
                     icon-left="plus"
                     @click="$emit('submit-inline')">
-                    Tilføj holdopstilling
+                    {{ submitLabel }}
                 </b-button>
             </div>
         </div>
@@ -194,6 +194,8 @@
 </template>
 
 <script>
+import {squadSubmitLabel} from "./team-picker";
+
 const CUSTOM_CATEGORY_FIELDS = Object.freeze([
     {key: 'mix', label: 'MD'},
     {key: 'womenSingles', label: 'DS'},
@@ -295,6 +297,9 @@ export default {
         },
         teamSelected() {
             return this.selectedTeamId !== null && this.selectedTeamId !== undefined;
+        },
+        submitLabel() {
+            return squadSubmitLabel(this.selectedName, this.nextSquadNumber);
         },
         noTeams() {
             return !this.teamsLoading && !this.teamsFailed && this.teamOptions.length === 0;
