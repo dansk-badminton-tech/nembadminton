@@ -61,11 +61,11 @@ test('the option carries the team so it can be selected', () => {
 })
 
 test('the submit label names the squad being added', () => {
-    assert.equal(squadSubmitLabel('Højbjerg 1', 3), 'Tilføj Højbjerg 1')
-    assert.equal(squadSubmitLabel('  Reservehold ', 3), 'Tilføj Reservehold')
+    assert.equal(squadSubmitLabel('Højbjerg 1', 3), 'Tilføj Højbjerg 1 til holdopstillingen')
+    assert.equal(squadSubmitLabel('  Reservehold ', 3), 'Tilføj Reservehold til holdopstillingen')
 })
 
 test('without a name the submit label falls back to the squad number', () => {
-    assert.equal(squadSubmitLabel('', 3), 'Tilføj Hold 3 uden navn')
-    assert.equal(squadSubmitLabel('   ', 1), 'Tilføj Hold 1 uden navn')
+    assert.equal(squadSubmitLabel('', 3), 'Tilføj Hold 3 uden navn til holdopstillingen')
+    assert.equal(squadSubmitLabel('   ', 1), 'Tilføj Hold 1 uden navn til holdopstillingen')
 })

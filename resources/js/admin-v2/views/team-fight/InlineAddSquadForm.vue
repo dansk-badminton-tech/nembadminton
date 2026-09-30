@@ -491,8 +491,11 @@ export default {
         justify-content: stretch;
     }
 
+    /* The label names the squad, so let it wrap on narrow screens. */
     .add-squad-form__submit {
         width: 100%;
+        height: auto;
+        white-space: normal;
     }
 }
 </style>

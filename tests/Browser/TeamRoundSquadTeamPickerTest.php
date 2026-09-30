@@ -55,12 +55,12 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
                 return Boolean(teams.compareDocumentPosition(matchCount) & Node.DOCUMENT_POSITION_FOLLOWING);
             JS)[0], 'Team buttons should come before Antal kampe');
 
-            $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 1 uden navn')
+            $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 1 uden navn til holdopstillingen')
                 ->selectSquadTeam($firstTeam->id)
-                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Højbjerg 1')
+                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Højbjerg 1 til holdopstillingen')
                 ->deselectSquadTeam($firstTeam->id)
                 ->assertNoSquadTeamSelected()
-                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 1 uden navn')
+                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 1 uden navn til holdopstillingen')
                 ->selectSquadTeam($firstTeam->id)
                 ->assertMissing("[dusk='squad-name-input']")
                 ->assertMissing("[dusk='squad-0']");
@@ -85,9 +85,9 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
                 ->assertMissing("[dusk='squad-name-input']")
                 ->startManualSquadEntry()
                 ->assertNoSquadTeamSelected()
-                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 2 uden navn')
+                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Hold 2 uden navn til holdopstillingen')
                 ->type("[dusk='squad-name-input']", 'Reservehold')
-                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Reservehold')
+                ->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj Reservehold til holdopstillingen')
                 ->submitSquadForm()
                 ->waitForTextIn("[dusk='squad-1']", 'Reservehold');
             $this->assertNull($teamRound->squads()->where('name', 'Reservehold')->sole()->team_id);

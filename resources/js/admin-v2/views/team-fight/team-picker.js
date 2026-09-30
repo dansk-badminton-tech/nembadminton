@@ -17,7 +17,6 @@ export function buildTeamPickerOptions(teams, usedTeamIds) {
 // Unnamed squads are listed as "Hold N" in the round, so the button says the same.
 export function squadSubmitLabel(name, squadNumber) {
     const trimmedName = (name || '').trim();
-    return trimmedName === ''
-        ? `Tilføj Hold ${squadNumber} uden navn`
-        : `Tilføj ${trimmedName}`;
+    const squad = trimmedName === '' ? `Hold ${squadNumber} uden navn` : trimmedName;
+    return `Tilføj ${squad} til holdopstillingen`;
 }
