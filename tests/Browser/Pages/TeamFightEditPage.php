@@ -67,8 +67,7 @@ class TeamFightEditPage extends Page
             '@squad-team-section' => "[dusk='squad-team-section']",
             '@squad-team-empty' => "[dusk='squad-team-empty']",
             '@squad-team-go-to-teams' => "[dusk='squad-team-go-to-teams']",
-            '@squad-manual-entry-link' => "[dusk='squad-manual-entry-link']",
-            '@squad-cancel-manual-entry-link' => "[dusk='squad-cancel-manual-entry-link']",
+            '@squad-manual-entry-option' => "[dusk='squad-manual-entry-option']",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
@@ -355,25 +354,30 @@ class TeamFightEditPage extends Page
     }
 
     /**
-     * Reveal the Navn/Niveau fields via "Opret uden hold".
+     * Pick the "Uden hold" card to reveal Navn/Niveau. Without Teams in the
+     * season there is no card and the fields are already shown.
      */
     public function startManualSquadEntry(Browser $browser): void
     {
-        $browser->waitFor('@squad-manual-entry-link')
-            ->assertSeeIn('@squad-manual-entry-link', 'Opret uden hold')
-            ->click('@squad-manual-entry-link')
-            ->waitFor("[dusk='squad-name-input']");
+        $browser->waitFor("@squad-manual-entry-option, [dusk='squad-name-input']");
+
+        if ($browser->element('@squad-manual-entry-option') !== null) {
+            $browser->assertSeeIn('@squad-manual-entry-option', 'Uden hold')
+                ->click("@squad-manual-entry-option[aria-pressed='false']")
+                ->waitFor("@squad-manual-entry-option[aria-pressed='true']");
+        }
+
+        $browser->waitFor("[dusk='squad-name-input']");
     }
 
     /**
-     * Leave "uden hold" via "Vælg hold i stedet"; the Navn/Niveau fields close again.
+     * Clicking the selected "Uden hold" card again closes the Navn/Niveau fields.
      */
     public function cancelManualSquadEntry(Browser $browser): void
     {
-        $browser->assertSeeIn('@squad-cancel-manual-entry-link', 'Vælg hold i stedet')
-            ->click('@squad-cancel-manual-entry-link')
-            ->waitUntilMissing("[dusk='squad-name-input']")
-            ->assertVisible('@squad-manual-entry-link');
+        $browser->click("@squad-manual-entry-option[aria-pressed='true']")
+            ->waitFor("@squad-manual-entry-option[aria-pressed='false']")
+            ->waitUntilMissing("[dusk='squad-name-input']");
     }
 
     public function selectSquadTeam(Browser $browser, int $teamId): void

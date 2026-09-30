@@ -2,17 +2,7 @@
     <div dusk="add-teams-section" class="add-squad-form">
         <div class="add-squad-form__panel">
             <div class="add-squad-form__team-section" dusk="squad-team-section">
-                <div class="add-squad-form__team-header">
-                    <p class="label is-small mb-0">Hold</p>
-                    <a
-                        v-if="!manualEntry"
-                        href="#"
-                        class="add-squad-form__manual-link is-size-7"
-                        dusk="squad-manual-entry-link"
-                        @click.prevent="onManualEntryClick">
-                        Opret uden hold
-                    </a>
-                </div>
+                <p class="label is-small mb-2">Hold</p>
 
                 <template v-if="teamOptions.length > 0">
                     <div class="add-squad-form__team-options">
@@ -39,11 +29,26 @@
                                 {{ option.details }}
                             </span>
                         </button>
+                        <button
+                            type="button"
+                            class="button is-link add-squad-form__team-card add-squad-form__team-card--manual"
+                            :class="{'is-outlined': !manualEntry}"
+                            dusk="squad-manual-entry-option"
+                            :disabled="loading"
+                            :aria-pressed="manualEntry ? 'true' : 'false'"
+                            :title="manualEntry ? 'Klik igen for at fravælge' : null"
+                            @click="onManualEntryClick">
+                            <span class="add-squad-form__team-card-name">
+                                <b-icon v-if="manualEntry" icon="check" size="is-small"/>
+                                Uden hold
+                            </span>
+                            <span class="add-squad-form__team-card-details">Skriv navn og niveau selv</span>
+                        </button>
                     </div>
                     <p v-if="!manualEntry" class="help has-text-grey mt-0 mb-0">
                         {{ teamSelected
                             ? 'Navn og niveau hentes fra holdet. Klik igen for at fravælge.'
-                            : 'Vælg holdet, så udfyldes navn og niveau automatisk.' }}
+                            : 'Vælg et hold, så udfyldes navn og niveau automatisk.' }}
                     </p>
                 </template>
 
@@ -64,18 +69,7 @@
                     </b-button>
                 </div>
 
-                <div v-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
-                    <div class="add-squad-form__manual-header">
-                        <span class="is-size-7 has-text-weight-semibold">Uden hold</span>
-                        <a
-                            v-if="teamOptions.length > 0"
-                            href="#"
-                            class="is-size-7"
-                            dusk="squad-cancel-manual-entry-link"
-                            @click.prevent="onCancelManualEntryClick">
-                            Vælg hold i stedet
-                        </a>
-                    </div>
+                <div v-if="showManualFields" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
                     <b-input
                         :model-value="selectedName"
                         :disabled="loading"
@@ -306,6 +300,10 @@ export default {
         teamSelected() {
             return this.selectedTeamId !== null && this.selectedTeamId !== undefined;
         },
+        // Without Teams to pick from, Navn/Niveau are the only way to name the squad.
+        showManualFields() {
+            return this.manualEntry || (!this.teamsLoading && this.teamOptions.length === 0);
+        },
         trimmedTierName() {
             return (this.selectedTierName || '').trim();
         },
@@ -338,14 +336,7 @@ export default {
             this.$emit('select-team', this.isSelectedTeam(option) ? null : option.team);
         },
         onManualEntryClick() {
-            if (!this.loading) {
-                this.$emit('start-manual-entry');
-            }
-        },
-        onCancelManualEntryClick() {
-            if (!this.loading) {
-                this.$emit('cancel-manual-entry');
-            }
+            this.$emit(this.manualEntry ? 'cancel-manual-entry' : 'start-manual-entry');
         },
         emitCustomCategoryCount(field, value) {
             this.$emit('update-custom-category-count', {field, value});
@@ -388,14 +379,6 @@ export default {
     border-bottom: 1px dashed #dbdbdb;
 }
 
-.add-squad-form__team-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
 .add-squad-form__team-options {
     display: flex;
     flex-wrap: wrap;
@@ -421,6 +404,10 @@ export default {
     gap: 0.25rem;
     font-size: 0.85rem;
     font-weight: 600;
+}
+
+.button.is-outlined.add-squad-form__team-card--manual {
+    border-style: dashed;
 }
 
 .add-squad-form__team-card-details {
@@ -455,13 +442,6 @@ export default {
     border: 1px solid #dbdbdb;
     border-radius: 6px;
     background: #fff;
-}
-
-.add-squad-form__manual-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 0.5rem;
 }
 
 .add-squad-form__datepicker-control {

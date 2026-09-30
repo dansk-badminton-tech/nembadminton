@@ -72,10 +72,16 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
                 ->assertSquadTeamNotAdded($secondTeam->id)
                 ->selectSquadTeam($firstTeam->id);
 
-            $browser->startManualSquadEntry()
+            $browser->assertSeeIn('@squad-manual-entry-option', 'Uden hold')
+                ->startManualSquadEntry()
                 ->assertNoSquadTeamSelected()
                 ->cancelManualSquadEntry()
                 ->startManualSquadEntry()
+                ->selectSquadTeam($secondTeam->id)
+                ->waitFor("@squad-manual-entry-option[aria-pressed='false']")
+                ->assertMissing("[dusk='squad-name-input']")
+                ->startManualSquadEntry()
+                ->assertNoSquadTeamSelected()
                 ->type("[dusk='squad-name-input']", 'Uden hold')
                 ->submitSquadForm()
                 ->waitForTextIn("[dusk='squad-1']", 'Uden hold');
@@ -92,6 +98,8 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
 
             $browser->waitFor('@squad-team-empty')
                 ->assertSeeIn('@squad-team-empty', 'Opret jeres hold først, så udfyldes navn og niveau automatisk')
+                ->assertVisible("[dusk='squad-name-input']")
+                ->assertMissing('@squad-manual-entry-option')
                 ->addCustomSquad('Manuelt hold', 'Kredsserie', ['womenSingles' => 1])
                 ->waitForTextIn("[dusk='squad-0']", 'Manuelt hold');
             $this->assertNull($teamRound->squads()->sole()->team_id);
