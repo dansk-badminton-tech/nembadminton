@@ -4,72 +4,69 @@
             <div class="add-squad-form__team-section" dusk="squad-team-section">
                 <p class="label is-small mb-2">Hold</p>
 
-                <template v-if="teamOptions.length > 0">
-                    <div class="add-squad-form__team-options">
-                        <button
-                            v-for="option in teamOptions"
-                            :key="option.id"
-                            type="button"
-                            class="button is-link add-squad-form__team-card"
-                            :class="{'is-outlined': !isSelectedTeam(option)}"
-                            :dusk="'squad-team-option-' + option.id"
-                            :disabled="loading"
-                            :aria-pressed="isSelectedTeam(option) ? 'true' : 'false'"
-                            :title="isSelectedTeam(option) ? 'Klik igen for at fravælge' : null"
-                            @click="onTeamClick(option)">
-                            <span class="add-squad-form__team-card-name">
-                                <b-icon v-if="isSelectedTeam(option)" icon="check" size="is-small"/>
-                                {{ option.label }}
-                                <span
-                                    v-if="option.added"
-                                    class="add-squad-form__team-added"
-                                    dusk="squad-team-added">✓ tilføjet</span>
-                            </span>
-                            <span v-if="option.details" class="add-squad-form__team-card-details">
-                                {{ option.details }}
-                            </span>
-                        </button>
-                        <button
-                            type="button"
-                            class="button is-link add-squad-form__team-card add-squad-form__team-card--manual"
-                            :class="{'is-outlined': !manualEntry}"
-                            dusk="squad-manual-entry-option"
-                            :disabled="loading"
-                            :aria-pressed="manualEntry ? 'true' : 'false'"
-                            :title="manualEntry ? 'Klik igen for at fravælge' : null"
-                            @click="onManualEntryClick">
-                            <span class="add-squad-form__team-card-name">
-                                <b-icon v-if="manualEntry" icon="check" size="is-small"/>
-                                Uden hold
-                            </span>
-                            <span class="add-squad-form__team-card-details">Skriv navn og niveau selv</span>
-                        </button>
-                    </div>
-                    <p v-if="!manualEntry" class="help has-text-grey mt-0 mb-0">
-                        {{ teamSelected
-                            ? 'Navn og niveau hentes fra holdet. Klik igen for at fravælge.'
-                            : 'Vælg et hold, så udfyldes navn og niveau automatisk.' }}
-                    </p>
-                </template>
+                <p v-if="noTeams" class="add-squad-form__team-empty is-size-7 mb-2" dusk="squad-team-empty">
+                    Opret jeres hold først, så udfyldes navn og niveau automatisk.
+                </p>
 
-                <div
-                    v-else-if="!teamsLoading && !teamsFailed"
-                    class="add-squad-form__team-empty"
-                    dusk="squad-team-empty">
-                    <p class="is-size-7 mb-2">Opret jeres hold først, så udfyldes navn og niveau automatisk.</p>
-                    <b-button
-                        tag="router-link"
-                        :to="{name: 'teams', params: {clubhouseId}}"
-                        size="is-small"
-                        type="is-link"
-                        outlined
-                        icon-left="shield-account"
-                        dusk="squad-team-go-to-teams">
-                        Gå til Hold
-                    </b-button>
+                <div v-if="!teamsLoading" class="add-squad-form__team-options">
+                    <button
+                        v-for="option in teamOptions"
+                        :key="option.id"
+                        type="button"
+                        class="button is-link add-squad-form__team-card"
+                        :class="{'is-outlined': !isSelectedTeam(option)}"
+                        :dusk="'squad-team-option-' + option.id"
+                        :disabled="loading"
+                        :aria-pressed="isSelectedTeam(option) ? 'true' : 'false'"
+                        :title="isSelectedTeam(option) ? 'Klik igen for at fravælge' : null"
+                        @click="onTeamClick(option)">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon v-if="isSelectedTeam(option)" icon="check" size="is-small"/>
+                            {{ option.label }}
+                            <span
+                                v-if="option.added"
+                                class="add-squad-form__team-added"
+                                dusk="squad-team-added">✓ tilføjet</span>
+                        </span>
+                        <span v-if="option.details" class="add-squad-form__team-card-details">
+                            {{ option.details }}
+                        </span>
+                    </button>
+                    <button
+                        type="button"
+                        class="button is-link is-light add-squad-form__team-card"
+                        dusk="squad-create-team-option"
+                        :disabled="loading"
+                        @click="$emit('create-team')">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon icon="plus" size="is-small"/>
+                            Nyt hold
+                        </span>
+                        <span class="add-squad-form__team-card-details">Gemmes under Hold til næste gang</span>
+                    </button>
+                    <button
+                        type="button"
+                        class="button is-link add-squad-form__team-card add-squad-form__team-card--manual"
+                        :class="{'is-outlined': !manualEntry}"
+                        dusk="squad-manual-entry-option"
+                        :disabled="loading"
+                        :aria-pressed="manualEntry ? 'true' : 'false'"
+                        :title="manualEntry ? 'Klik igen for at fravælge' : null"
+                        @click="onManualEntryClick">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon v-if="manualEntry" icon="check" size="is-small"/>
+                            Uden hold
+                        </span>
+                        <span class="add-squad-form__team-card-details">Kun i denne holdrunde</span>
+                    </button>
                 </div>
+                <p v-if="teamOptions.length > 0 && !manualEntry" class="help has-text-grey mt-0 mb-0">
+                    {{ teamSelected
+                        ? 'Navn og niveau hentes fra holdet. Klik igen for at fravælge.'
+                        : 'Vælg et hold, så udfyldes navn og niveau automatisk.' }}
+                </p>
 
-                <div v-if="showManualFields" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
+                <div v-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
                     <b-input
                         :model-value="selectedName"
                         :disabled="loading"
@@ -233,10 +230,6 @@ export default {
             type: Boolean,
             default: false
         },
-        clubhouseId: {
-            type: [String, Number],
-            default: null
-        },
         selectedMatchCount: {
             type: [Number, String],
             default: null
@@ -300,9 +293,8 @@ export default {
         teamSelected() {
             return this.selectedTeamId !== null && this.selectedTeamId !== undefined;
         },
-        // Without Teams to pick from, Navn/Niveau are the only way to name the squad.
-        showManualFields() {
-            return this.manualEntry || (!this.teamsLoading && this.teamOptions.length === 0);
+        noTeams() {
+            return !this.teamsLoading && !this.teamsFailed && this.teamOptions.length === 0;
         },
         trimmedTierName() {
             return (this.selectedTierName || '').trim();
@@ -433,6 +425,10 @@ export default {
 
 .add-squad-form__team-empty {
     color: #4a4a4a;
+}
+
+.button.is-light.add-squad-form__team-card {
+    border-color: transparent;
 }
 
 .add-squad-form__manual-fields {

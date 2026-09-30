@@ -86,6 +86,11 @@ export default {
         clubhouseId: {
             type: [String, Number],
             required: true
+        },
+        // Preselected season for a new Team; defaults to the current season.
+        seasonId: {
+            type: Number,
+            default: null
         }
     },
     data() {
@@ -96,7 +101,7 @@ export default {
             tierInput: this.team?.tier?.tierName || this.team?.customTierName || '',
             form: {
                 name: this.team?.name || '',
-                seasonId: this.team?.season?.id ?? getCurrentSeason(),
+                seasonId: this.team?.season?.id ?? this.seasonId ?? getCurrentSeason(),
                 tierId: this.team?.tier?.id || null,
                 customTierName: this.team?.customTierName || null,
                 groupName: this.team?.groupName || null
@@ -160,7 +165,7 @@ export default {
                 : this.createTeam();
 
             mutationPromise
-                .then(() => this.$emit('saved'))
+                .then(({data}) => this.$emit('saved', this.isEdit ? data.updateTeam : data.createTeam))
                 .catch((err) => {
                     this.$buefy.toast.open({
                         message: this.isEdit ? 'Kunne ikke gemme holdet' : 'Kunne ikke oprette holdet',

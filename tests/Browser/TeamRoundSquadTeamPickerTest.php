@@ -10,7 +10,6 @@ use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
 use Tests\Browser\Pages\TeamFightCreatePage;
 use Tests\Browser\Pages\TeamFightEditPage;
-use Tests\Browser\Pages\TeamListPage;
 use Tests\DuskTestCase;
 
 class TeamRoundSquadTeamPickerTest extends DuskTestCase
@@ -46,6 +45,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
                 ->assertSeeIn("[dusk='squad-team-option-{$firstTeam->id}']", 'Højbjerg 1')
                 ->assertSeeIn("[dusk='squad-team-option-{$firstTeam->id}']", 'Kredsserie · Pulje 2')
                 ->assertVisible("[dusk='squad-team-option-{$secondTeam->id}']")
+                ->assertVisible('@squad-create-team-option')
                 ->assertMissing("[dusk='squad-team-option-{$otherSeasonTeam->id}']")
                 ->assertMissing("[dusk='squad-name-input']")
                 ->assertMissing("[dusk='squad-tier-input']");
@@ -89,7 +89,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
         });
     }
 
-    public function test_without_teams_in_the_season_the_form_points_to_the_teams_page(): void
+    public function test_without_teams_the_administrator_creates_one_from_the_squad_form(): void
     {
         $clubhouse = Clubhouse::firstOrFail();
 
@@ -98,14 +98,24 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
 
             $browser->waitFor('@squad-team-empty')
                 ->assertSeeIn('@squad-team-empty', 'Opret jeres hold først, så udfyldes navn og niveau automatisk')
-                ->assertVisible("[dusk='squad-name-input']")
-                ->assertMissing('@squad-manual-entry-option')
-                ->addCustomSquad('Manuelt hold', 'Kredsserie', ['womenSingles' => 1])
-                ->waitForTextIn("[dusk='squad-0']", 'Manuelt hold');
-            $this->assertNull($teamRound->squads()->sole()->team_id);
+                ->assertMissing("[dusk='squad-name-input']")
+                ->assertVisible('@squad-manual-entry-option')
+                ->createTeamFromSquadForm('Højbjerg 1', 'Pulje 3');
 
-            $browser->goToTeamsFromSquadForm()
-                ->on(new TeamListPage($clubhouse->id));
+            $team = Team::where('name', 'Højbjerg 1')->sole();
+            $this->assertSame($clubhouse->id, $team->clubhouse_id);
+            $this->assertSame(2025, $team->season_id);
+
+            $browser->waitFor("[dusk='squad-team-option-{$team->id}'][aria-pressed='true']")
+                ->assertSeeIn("[dusk='squad-team-option-{$team->id}']", 'Pulje 3')
+                ->assertMissing('@squad-team-empty')
+                ->submitSquadForm()
+                ->waitForTextIn("[dusk='squad-0']", 'Højbjerg 1');
+            $this->assertSame($team->id, $teamRound->squads()->sole()->team_id);
+
+            $browser->addCustomSquad('Manuelt hold', 'Kredsserie', ['womenSingles' => 1])
+                ->waitForTextIn("[dusk='squad-1']", 'Manuelt hold');
+            $this->assertNull($teamRound->squads()->where('name', 'Manuelt hold')->sole()->team_id);
         });
     }
 

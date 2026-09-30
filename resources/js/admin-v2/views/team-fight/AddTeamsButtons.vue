@@ -1,34 +1,44 @@
 <template>
-    <InlineAddSquadForm
-        :loading="loading"
-        :tiers-loading="$apollo.queries.tiers.loading"
-        :teams-loading="$apollo.queries.teams.loading"
-        :teams-failed="teamsFailed"
-        :selected-match-count="selectedMatchCount"
-        :selected-name="selectedName"
-        :selected-tier-name="selectedTierName"
-        :selected-team-id="selectedTeamId"
-        :manual-entry="manualEntry"
-        :clubhouse-id="clubhouseId"
-        :selected-playing-date="selectedPlayingDate"
-        :match-count-options="matchCountOptions"
-        :tier-options="tierOptions"
-        :team-options="teamOptions"
-        :quick-date-options="quickDateOptions"
-        :recommended-ranking-label="recommendedRankingLabel"
-        :next-squad-number="nextSquadNumber"
-        :custom-category-counts="customCategoryCounts"
-        :custom-total-match-count="customTotalMatchCount"
-        @select-match-count="onMatchCountChange"
-        @select-name="onNameChange"
-        @select-tier="onTierChange"
-        @select-team="onTeamChange"
-        @start-manual-entry="onStartManualEntry"
-        @cancel-manual-entry="onCancelManualEntry"
-        @change-playing-date="onPlayingDateChange"
-        @select-quick-date="onQuickDateSelect"
-        @update-custom-category-count="onCustomCategoryCountChange"
-        @submit-inline="addInlineSquad"/>
+    <div>
+        <InlineAddSquadForm
+            :loading="loading"
+            :tiers-loading="$apollo.queries.tiers.loading"
+            :teams-loading="$apollo.queries.teams.loading"
+            :teams-failed="teamsFailed"
+            :selected-match-count="selectedMatchCount"
+            :selected-name="selectedName"
+            :selected-tier-name="selectedTierName"
+            :selected-team-id="selectedTeamId"
+            :manual-entry="manualEntry"
+            :selected-playing-date="selectedPlayingDate"
+            :match-count-options="matchCountOptions"
+            :tier-options="tierOptions"
+            :team-options="teamOptions"
+            :quick-date-options="quickDateOptions"
+            :recommended-ranking-label="recommendedRankingLabel"
+            :next-squad-number="nextSquadNumber"
+            :custom-category-counts="customCategoryCounts"
+            :custom-total-match-count="customTotalMatchCount"
+            @select-match-count="onMatchCountChange"
+            @select-name="onNameChange"
+            @select-tier="onTierChange"
+            @select-team="onTeamChange"
+            @start-manual-entry="onStartManualEntry"
+            @cancel-manual-entry="onCancelManualEntry"
+            @create-team="teamFormOpen = true"
+            @change-playing-date="onPlayingDateChange"
+            @select-quick-date="onQuickDateSelect"
+            @update-custom-category-count="onCustomCategoryCountChange"
+            @submit-inline="addInlineSquad"/>
+
+        <b-modal v-model="teamFormOpen" :width="560" has-modal-card :can-cancel="['x', 'escape']">
+            <TeamForm
+                :clubhouse-id="clubhouseId"
+                :season-id="seasonNumber"
+                @cancel="teamFormOpen = false"
+                @saved="onTeamCreated"/>
+        </b-modal>
+    </div>
 </template>
 
 <script>
@@ -40,6 +50,7 @@ import {formatDateTime} from "../../helpers";
 import {resolveRecommendedRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
+import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions, teamTierLabel} from "./team-picker";
 import {
     isSameDay,
@@ -59,7 +70,7 @@ const DEFAULT_CUSTOM_COUNTS = Object.freeze({
 
 export default {
     name: "AddTeamsButtons",
-    components: {InlineAddSquadForm},
+    components: {InlineAddSquadForm, TeamForm},
     props: {
         teamRoundId: String,
         teamRoundDate: Date,
@@ -88,6 +99,7 @@ export default {
             selectedTierName: '',
             selectedTeamId: null,
             manualEntry: false,
+            teamFormOpen: false,
             selectedPlayingDate: null,
             playingDateChanged: false,
             rankingVersions: [],
@@ -115,6 +127,11 @@ export default {
             }
 
             return `Rangliste: ${timeToMonth(this.recommendedVersion)}`;
+        },
+        seasonNumber() {
+            return this.seasonId === null || this.seasonId === undefined
+                ? null
+                : Number.parseInt(this.seasonId, 10);
         },
         tierOptions() {
             return this.tiers.map((tier) => ({
@@ -202,9 +219,7 @@ export default {
             variables() {
                 return {
                     clubhouseId: this.clubhouseId,
-                    seasonId: this.seasonId === null || this.seasonId === undefined
-                        ? null
-                        : Number.parseInt(this.seasonId, 10)
+                    seasonId: this.seasonNumber
                 };
             },
             skip() {
@@ -304,6 +319,14 @@ export default {
             this.selectedName = team.name || '';
             this.selectedTierName = teamTierLabel(team);
             this.manualEntry = false;
+        },
+        onTeamCreated(team) {
+            this.teamFormOpen = false;
+            this.$apollo.queries.teams.refetch();
+            // A Team created for another season doesn't belong in this round's picker.
+            if (this.seasonNumber === null || team.season?.id === this.seasonNumber) {
+                this.onTeamChange(team);
+            }
         },
         onStartManualEntry() {
             this.onTeamChange(null);

@@ -66,7 +66,7 @@ class TeamFightEditPage extends Page
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
             '@squad-team-section' => "[dusk='squad-team-section']",
             '@squad-team-empty' => "[dusk='squad-team-empty']",
-            '@squad-team-go-to-teams' => "[dusk='squad-team-go-to-teams']",
+            '@squad-create-team-option' => "[dusk='squad-create-team-option']",
             '@squad-manual-entry-option' => "[dusk='squad-manual-entry-option']",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
@@ -354,20 +354,15 @@ class TeamFightEditPage extends Page
     }
 
     /**
-     * Pick the "Uden hold" card to reveal Navn/Niveau. Without Teams in the
-     * season there is no card and the fields are already shown.
+     * Pick the "Uden hold" card to reveal Navn/Niveau.
      */
     public function startManualSquadEntry(Browser $browser): void
     {
-        $browser->waitFor("@squad-manual-entry-option, [dusk='squad-name-input']");
-
-        if ($browser->element('@squad-manual-entry-option') !== null) {
-            $browser->assertSeeIn('@squad-manual-entry-option', 'Uden hold')
-                ->click("@squad-manual-entry-option[aria-pressed='false']")
-                ->waitFor("@squad-manual-entry-option[aria-pressed='true']");
-        }
-
-        $browser->waitFor("[dusk='squad-name-input']");
+        $browser->waitFor("@squad-manual-entry-option[aria-pressed='false']")
+            ->assertSeeIn('@squad-manual-entry-option', 'Uden hold')
+            ->click('@squad-manual-entry-option')
+            ->waitFor("@squad-manual-entry-option[aria-pressed='true']")
+            ->waitFor("[dusk='squad-name-input']");
     }
 
     /**
@@ -414,13 +409,18 @@ class TeamFightEditPage extends Page
     }
 
     /**
-     * Uses JS click to avoid the sticky navbar or a snackbar intercepting the button.
+     * Create a Team through the "Nyt hold" card; the form selects it once saved.
      */
-    public function goToTeamsFromSquadForm(Browser $browser): void
+    public function createTeamFromSquadForm(Browser $browser, string $name, string $groupName): void
     {
-        $browser->waitFor('@squad-team-go-to-teams')
-            ->assertSeeIn('@squad-team-go-to-teams', 'Gå til Hold')
-            ->script("document.querySelector(\"[dusk='squad-team-go-to-teams']\").click()");
+        $browser->waitFor('@squad-create-team-option')
+            ->assertSeeIn('@squad-create-team-option', 'Nyt hold')
+            ->click('@squad-create-team-option')
+            ->waitFor("[dusk='team-name-input']")
+            ->type("[dusk='team-name-input']", $name)
+            ->type("[dusk='team-group-input']", $groupName)
+            ->click("[dusk='team-submit']")
+            ->waitUntilMissing("[dusk='team-name-input']");
     }
 
     public function submitSquadForm(Browser $browser): void
