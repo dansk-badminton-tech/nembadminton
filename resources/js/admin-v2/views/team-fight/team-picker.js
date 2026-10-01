@@ -16,5 +16,5 @@ export function buildTeamPickerOptions(teams, usedTeamIds) {
 export function squadSubmitLabel(name, squadNumber) {
     const trimmedName = (name || '').trim();
     const squad = trimmedName === '' ? `Hold ${squadNumber} uden navn` : trimmedName;
-    return `Tilføj ${squad} til holdopstillingen`;
+    return `Tilføj "${squad}" til holdopstillingen`;
 }
