@@ -88,6 +88,29 @@ function validateJourneyPlacement(document, stepGuides) {
     return errors
 }
 
+const agentMarker = /<!--\s*TODO\(agent\):([\s\S]*?)-->/g
+
+function validateAgentMarkers(document) {
+    const errors = []
+
+    for (const [, question] of document.body.matchAll(agentMarker)) {
+        const normalizedQuestion = question.trim().replace(/\s+/g, ' ')
+
+        errors.push(normalizedQuestion === ''
+            ? `${document.path}: TODO(agent) marker has no question`
+            : `${document.path}: unresolved TODO(agent) marker "${normalizedQuestion}"`)
+    }
+
+    // Raw HTML is rendered as text, so a near-miss marker would be published on the Help page.
+    const malformedMarkers = document.body.replace(agentMarker, '').match(/TODO\s*\(\s*agent\s*\)/gi) ?? []
+
+    for (let index = 0; index < malformedMarkers.length; index++) {
+        errors.push(`${document.path}: malformed TODO(agent) marker; use <!-- TODO(agent): <question> -->`)
+    }
+
+    return errors
+}
+
 export function validateHelpDocuments(documents) {
     const errors = []
     const routes = new Set()
@@ -120,6 +143,8 @@ export function validateHelpDocuments(documents) {
         if (/^#\s/m.test(document.body)) {
             errors.push(`${document.path}: body headings must start at level 2`)
         }
+
+        errors.push(...validateAgentMarkers(document))
 
         if (document.kind === 'guide' && (!Number.isInteger(document.order) || document.order < 0)) {
             errors.push(`${document.path}: order must be a non-negative integer`)
