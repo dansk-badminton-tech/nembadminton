@@ -93,14 +93,23 @@ jobs:
       - name: Install frontend dependencies
         run: yarn install --frozen-lockfile
 
+      # The action revokes its Claude GitHub App token when the step ends, so the agent publishes
+      # from inside its run with scripts/docs-agent/publish-drafts.mjs, which reads this env.
+      # The script, not the agent, commits and pushes, after checking the drafts against the label.
       - name: Draft documentation
         uses: anthropics/claude-code-action@v1
+        env:
+          DOCS_LABEL: ${{ steps.pr.outputs.label }}
+          DOCS_TRIGGER: ${{ github.event_name == 'issue_comment' && 'comment' || 'label' }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          BASE_REF: master
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: >-
             --model ${{ env.DOCS_MODEL }}
             --max-turns 30
-            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git merge-base:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh issue view:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*),Bash(node scripts/docs-agent/publish-drafts.mjs)"
           prompt: |
             Read `.agents/skills/document-feature/SKILL.md` and `.agents/skills/document-feature/CI.md`, then follow the skill in CI mode.
 
@@ -113,3 +122,14 @@ jobs:
             ${{ github.event_name == 'issue_comment' && 'The /docs comment:' || '' }}
 
             ${{ github.event.comment.body }}
+
+      - name: Report a run that published nothing
+        if: always() && steps.pr.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          if [ ! -f "$RUNNER_TEMP/docs-agent-outcome" ]; then
+            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The docs agent stopped before publishing its drafts. Nothing was pushed. See the [workflow run]($RUN_URL)."
+          fi
