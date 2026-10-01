@@ -295,8 +295,10 @@ type Squad {
     playerLimit: Int!
     "Name"
     name: String
-    "Free-text tier label (autocompleted from tournament_tiers, but stored as plain string)"
+    "Free-text tier label (autocompleted from tournament_tiers, but stored as plain string). Only used when no team is attached."
     tier: String
+    "The tier to display: the attached team's current tier, or `tier` when no team is attached"
+    effectiveTier: String @with(relation: "team.tier") @method(name: "effectiveTier")
     "Organizational team this squad was created from (optional)"
     team: Team @belongsTo
     "BadmintonPlayer match ID"

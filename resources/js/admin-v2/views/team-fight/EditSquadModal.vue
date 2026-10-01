@@ -5,12 +5,47 @@ import {formatDateTime, getCurrentSeason, parseDateTime} from "../../helpers";
 import BadmintonPlayerTeamFightSelector from "./BadmintonPlayerTeamFightSelector.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import {timeToMonth} from "./helper";
+import {teamLabel, teamTierLabel} from "./team-label";
+import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 
 export default {
     name: "EditSquadModal",
     components: {RankingVersionSelect, BadmintonPlayerTeamFightSelector},
     props: {
-        squad: Object
+        squad: Object,
+        clubhouseId: {
+            type: [String, Number],
+            default: null
+        },
+        seasonId: {
+            type: [String, Number],
+            default: null
+        },
+        usedTeamIds: {
+            type: Array,
+            default: () => []
+        }
+    },
+    apollo: {
+        teams: {
+            query: TeamsForSquadPickerQuery,
+            variables() {
+                return {
+                    clubhouseId: this.clubhouseId,
+                    seasonId: this.seasonId === null || this.seasonId === undefined
+                        ? null
+                        : Number.parseInt(this.seasonId, 10)
+                };
+            },
+            skip() {
+                return this.clubhouseId === null || this.clubhouseId === undefined;
+            },
+            update: data => data.teams.data,
+            error() {
+                // Silent — attaching a team is optional, fall back to an empty list
+            },
+            fetchPolicy: 'network-only'
+        }
     },
     watch: {
         squad: {
@@ -38,19 +73,25 @@ export default {
             return this.team !== null && this.team !== undefined;
         },
         teamChipLabel() {
-            if (!this.hasTeam) {
-                return '';
-            }
-            const tierLabel = this.team?.tier?.tierName || this.team?.customTierName || '';
-            const parts = [this.team.name];
-            if (tierLabel) parts.push(tierLabel);
-            if (this.team.groupName) parts.push(this.team.groupName);
-            return parts.join(' · ');
+            return teamLabel(this.team);
+        },
+        teamOptions() {
+            // Teams used by other squads in the round are not offered; this squad's own team stays available after disconnecting.
+            const ownTeamId = this.squad?.team?.id;
+            const usedIds = new Set(
+                (this.usedTeamIds || [])
+                    .filter((id) => String(id) !== String(ownTeamId))
+                    .map(String)
+            );
+            return this.teams
+                .filter((team) => !usedIds.has(String(team.id)))
+                .map((team) => ({id: team.id, label: teamLabel(team), team}));
         }
     },
     data() {
         return {
             loading: false,
+            teams: [],
             name: null,
             tier: null,
             team: null,
@@ -73,7 +114,15 @@ export default {
         toggleRankingWarning(){
             this.changeOfRankingWarning = true;
         },
+        attachTeam(team) {
+            this.team = team;
+            this.name = team.name;
+        },
         disconnectTeam() {
+            // Keep showing the team's tier after disconnecting, unless the squad already has its own.
+            if (!this.tier) {
+                this.tier = teamTierLabel(this.team) || null;
+            }
             this.team = null;
         },
         updateToRankingList(newVersion) {
@@ -88,6 +137,7 @@ export default {
                                         order
                                         name
                                           tier
+                                          effectiveTier
                                         playingCity
                                         playingZipCode
                                         playingAddress
@@ -99,6 +149,7 @@ export default {
                                               id
                                               name
                                               groupName
+                                              customTierName
                                               tier{
                                                   id
                                                   tierName
@@ -162,10 +213,12 @@ export default {
                                 id
                                 name
                                 tier
+                                effectiveTier
                                 team {
                                     id
                                     name
                                     groupName
+                                    customTierName
                                     tier{
                                         id
                                         tierName
@@ -342,6 +395,24 @@ export default {
                         </b-button>
                     </div>
                 </b-field>
+                <b-field
+                    v-else-if="teamOptions.length > 0"
+                    label="Tilknyt hold"
+                    message="Et tilknyttet hold styrer holdopstillingens niveau.">
+                    <div class="buttons mb-0" dusk="edit-squad-team-options">
+                        <b-button
+                            v-for="option in teamOptions"
+                            :key="option.id"
+                            size="is-small"
+                            type="is-light"
+                            icon-left="shield-account"
+                            :disabled="loading"
+                            :dusk="'attach-squad-team-' + option.id"
+                            @click="attachTeam(option.team)">
+                            {{ option.label }}
+                        </b-button>
+                    </div>
+                </b-field>
                 <b-field label="Holdnavn">
                     <b-input
                         dusk="edit-squad-name-input"
@@ -351,10 +422,9 @@ export default {
                         placeholder="fx Højbjerg 1">
                     </b-input>
                 </b-field>
-                <b-field label="Niveau">
+                <b-field v-if="!hasTeam" label="Niveau">
                     <b-input
                         dusk="edit-squad-tier-input"
-                        :disabled="hasTeam"
                         type="text"
                         v-model="tier"
                         placeholder="fx 1. division">

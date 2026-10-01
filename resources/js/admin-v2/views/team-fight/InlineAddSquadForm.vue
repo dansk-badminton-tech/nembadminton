@@ -1,6 +1,103 @@
 <template>
     <div dusk="add-teams-section" class="add-squad-form">
         <div class="add-squad-form__panel">
+            <div class="add-squad-form__team-section" dusk="squad-team-section">
+                <p class="label is-small mb-2">Hold</p>
+
+                <p v-if="noTeams" class="add-squad-form__team-empty is-size-7 mb-2" dusk="squad-team-empty">
+                    Opret jeres hold først, så udfyldes navn og niveau automatisk.
+                </p>
+
+                <div v-if="!teamsLoading" class="add-squad-form__team-options">
+                    <button
+                        v-for="option in teamOptions"
+                        :key="option.id"
+                        type="button"
+                        class="button is-link add-squad-form__team-card"
+                        :class="{'is-outlined': !isSelectedTeam(option)}"
+                        :dusk="'squad-team-option-' + option.id"
+                        :disabled="loading"
+                        :aria-pressed="isSelectedTeam(option) ? 'true' : 'false'"
+                        :title="isSelectedTeam(option) ? 'Klik igen for at fravælge' : null"
+                        @click="onTeamClick(option)">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon v-if="isSelectedTeam(option)" icon="check" size="is-small"/>
+                            {{ option.label }}
+                            <span
+                                v-if="option.added"
+                                class="add-squad-form__team-added"
+                                dusk="squad-team-added">✓ tilføjet</span>
+                        </span>
+                        <span v-if="option.details" class="add-squad-form__team-card-details">
+                            {{ option.details }}
+                        </span>
+                    </button>
+                    <button
+                        type="button"
+                        class="button is-link is-light add-squad-form__team-card"
+                        :class="{'add-squad-form__team-card--compact': teamOptions.length > 0}"
+                        dusk="squad-create-team-option"
+                        :disabled="loading"
+                        @click="$emit('create-team')">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon icon="plus" size="is-small"/>
+                            Nyt hold
+                        </span>
+                        <span v-if="teamOptions.length === 0" class="add-squad-form__team-card-details">
+                            Gemmes under Hold til næste gang
+                        </span>
+                    </button>
+                    <button
+                        type="button"
+                        class="button is-link add-squad-form__team-card add-squad-form__team-card--manual"
+                        :class="{'is-outlined': !manualEntry}"
+                        dusk="squad-manual-entry-option"
+                        :disabled="loading"
+                        :aria-pressed="manualEntry ? 'true' : 'false'"
+                        :title="manualEntry ? 'Klik igen for at fravælge' : null"
+                        @click="onManualEntryClick">
+                        <span class="add-squad-form__team-card-name">
+                            <b-icon v-if="manualEntry" icon="check" size="is-small"/>
+                            Uden hold
+                        </span>
+                        <span class="add-squad-form__team-card-details">Kun i denne holdrunde</span>
+                    </button>
+                </div>
+                <p v-if="teamOptions.length > 0 && !manualEntry" class="help has-text-grey mt-0 mb-0">
+                    {{ teamSelected
+                        ? 'Navn og niveau hentes fra holdet. Klik igen for at fravælge.'
+                        : 'Vælg et hold, så udfyldes navn og niveau automatisk.' }}
+                </p>
+
+                <div v-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
+                    <b-input
+                        :model-value="selectedName"
+                        :disabled="loading"
+                        class="mb-2"
+                        placeholder="Navn (fx Højbjerg 1)"
+                        dusk="squad-name-input"
+                        @update:modelValue="onNameInput">
+                    </b-input>
+                    <b-autocomplete
+                        :model-value="selectedTierName"
+                        :data="filteredTierOptions"
+                        :loading="tiersLoading"
+                        :disabled="loading"
+                        placeholder="Niveau (fx 1. division)"
+                        field="label"
+                        clearable
+                        keep-first
+                        open-on-focus
+                        dusk="squad-tier-input"
+                        @update:modelValue="onTierInput"
+                        @select="onTierSelect">
+                    </b-autocomplete>
+                    <p class="help has-text-grey mb-0">
+                        Navn og niveau er valgfrie.
+                    </p>
+                </div>
+            </div>
+
             <div class="add-squad-form__panel-row">
                 <div class="add-squad-form__section add-squad-form__section--match-count">
                     <p class="label is-small mb-2">Antal kampe</p>
@@ -78,70 +175,6 @@
                     </p>
                 </div>
 
-                <div class="add-squad-form__section add-squad-form__section--tier">
-                    <p class="label is-small mb-2">Hold / Navn / Niveau (valgfri)</p>
-
-                    <div
-                        v-if="teamSelected"
-                        class="add-squad-form__team-chip"
-                        dusk="squad-team-chip">
-                        <b-icon icon="shield-account" size="is-small" class="mr-2"/>
-                        <span class="add-squad-form__team-chip-label">{{ selectedTeamLabel }}</span>
-                        <b-button
-                            class="add-squad-form__team-chip-clear"
-                            type="is-text"
-                            size="is-small"
-                            icon-right="close"
-                            :disabled="loading"
-                            dusk="clear-squad-team"
-                            @click="$emit('select-team', null)">
-                        </b-button>
-                    </div>
-
-                    <template v-else>
-                        <b-autocomplete
-                            v-if="teamOptions.length > 0"
-                            :model-value="selectedTeamLabel"
-                            :data="filteredTeamOptions"
-                            :loading="teamsLoading"
-                            :disabled="loading"
-                            class="mb-2"
-                            placeholder="Vælg fra hold"
-                            field="label"
-                            clearable
-                            keep-first
-                            open-on-focus
-                            dusk="squad-team-input"
-                            @update:modelValue="onTeamInput"
-                            @select="onTeamSelect">
-                        </b-autocomplete>
-                        <b-input
-                            :model-value="selectedName"
-                            :disabled="loading"
-                            class="mb-2"
-                            placeholder="Navn (fx Højbjerg 1)"
-                            dusk="squad-name-input"
-                            @update:modelValue="onNameInput">
-                        </b-input>
-                        <b-autocomplete
-                            :model-value="selectedTierName"
-                            :data="filteredTierOptions"
-                            :loading="tiersLoading"
-                            :disabled="loading"
-                            placeholder="Niveau (fx 1. division)"
-                            field="label"
-                            clearable
-                            keep-first
-                            open-on-focus
-                            dusk="squad-tier-input"
-                            @update:modelValue="onTierInput"
-                            @select="onTierSelect">
-                        </b-autocomplete>
-                        <p class="help has-text-grey mb-0">
-                            Navn og niveau er valgfrie.
-                        </p>
-                    </template>
-                </div>
             </div>
 
             <div class="add-squad-form__submit-row">
@@ -153,7 +186,7 @@
                     type="is-link"
                     icon-left="plus"
                     @click="$emit('submit-inline')">
-                    Tilføj til holdopstilling
+                    {{ submitLabel }}
                 </b-button>
             </div>
         </div>
@@ -161,6 +194,8 @@
 </template>
 
 <script>
+import {squadSubmitLabel} from "./team-picker";
+
 const CUSTOM_CATEGORY_FIELDS = Object.freeze([
     {key: 'mix', label: 'MD'},
     {key: 'womenSingles', label: 'DS'},
@@ -184,13 +219,21 @@ export default {
             type: Boolean,
             default: false
         },
+        teamsFailed: {
+            type: Boolean,
+            default: false
+        },
         teamOptions: {
             type: Array,
             default: () => []
         },
-        selectedTeamLabel: {
-            type: String,
-            default: ''
+        selectedTeamId: {
+            type: [String, Number],
+            default: null
+        },
+        manualEntry: {
+            type: Boolean,
+            default: false
         },
         selectedMatchCount: {
             type: [Number, String],
@@ -253,7 +296,13 @@ export default {
             return this.selectedMatchCount !== null;
         },
         teamSelected() {
-            return Boolean(this.selectedTeamLabel && this.selectedTeamLabel.trim() !== '');
+            return this.selectedTeamId !== null && this.selectedTeamId !== undefined;
+        },
+        submitLabel() {
+            return squadSubmitLabel(this.selectedName, this.nextSquadNumber);
+        },
+        noTeams() {
+            return !this.teamsLoading && !this.teamsFailed && this.teamOptions.length === 0;
         },
         trimmedTierName() {
             return (this.selectedTierName || '').trim();
@@ -264,15 +313,6 @@ export default {
                 return this.tierOptions;
             }
             return this.tierOptions.filter((option) =>
-                option.label.toLowerCase().includes(query)
-            );
-        },
-        filteredTeamOptions() {
-            const query = (this.selectedTeamLabel || '').trim().toLowerCase();
-            if (query === '') {
-                return this.teamOptions;
-            }
-            return this.teamOptions.filter((option) =>
                 option.label.toLowerCase().includes(query)
             );
         }
@@ -289,15 +329,14 @@ export default {
                 this.$emit('select-tier', option.label);
             }
         },
-        onTeamInput(value) {
-            if (typeof value === 'string' && value.trim() === '') {
-                this.$emit('select-team', null);
-            }
+        isSelectedTeam(option) {
+            return this.selectedTeamId !== null && String(option.id) === String(this.selectedTeamId);
         },
-        onTeamSelect(option) {
-            if (option && option.team) {
-                this.$emit('select-team', option.team);
-            }
+        onTeamClick(option) {
+            this.$emit('select-team', this.isSelectedTeam(option) ? null : option.team);
+        },
+        onManualEntryClick() {
+            this.$emit(this.manualEntry ? 'cancel-manual-entry' : 'start-manual-entry');
         },
         emitCustomCategoryCount(field, value) {
             this.$emit('update-custom-category-count', {field, value});
@@ -334,8 +373,85 @@ export default {
     min-width: 280px;
 }
 
-.add-squad-form__section--tier {
-    min-width: 260px;
+.add-squad-form__team-section {
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px dashed #dbdbdb;
+}
+
+.add-squad-form__team-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+/* Two-line card: Bulma's fixed button height only fits one line. */
+.button.add-squad-form__team-card {
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    padding: 0.4rem 0.75rem;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.25;
+}
+
+.add-squad-form__team-card-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.button.is-outlined.add-squad-form__team-card--manual {
+    border-style: dashed;
+}
+
+.add-squad-form__team-card-details {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.add-squad-form__team-added {
+    margin-left: 0.4rem;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: rgba(72, 199, 142, 0.18);
+    color: #257953;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.button.is-link:not(.is-outlined) .add-squad-form__team-added {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.add-squad-form__team-empty {
+    color: #4a4a4a;
+}
+
+.button.is-light.add-squad-form__team-card {
+    border-color: transparent;
+}
+
+/* Once the club has Teams, creating another is a side action. */
+.button.add-squad-form__team-card--compact {
+    align-self: center;
+    padding: 0.25rem 0.6rem;
+}
+
+.add-squad-form__manual-fields {
+    max-width: 420px;
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.75rem 0.75rem;
+    border: 1px solid #dbdbdb;
+    border-radius: 6px;
+    background: #fff;
 }
 
 .add-squad-form__datepicker-control {
@@ -360,31 +476,6 @@ export default {
     color: #4a4a4a;
 }
 
-.add-squad-form__team-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.35rem 0.5rem 0.35rem 0.75rem;
-    border: 1px solid #b5b5b5;
-    border-radius: 999px;
-    background: #fff;
-    color: #363636;
-    font-size: 0.95rem;
-    max-width: 100%;
-}
-
-.add-squad-form__team-chip-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.add-squad-form__team-chip-clear {
-    margin-left: 0.25rem;
-    padding: 0;
-    color: #7a7a7a;
-}
-
 .add-squad-form__submit-row {
     display: flex;
     justify-content: flex-end;
@@ -400,8 +491,11 @@ export default {
         justify-content: stretch;
     }
 
+    /* The label names the squad, so let it wrap on narrow screens. */
     .add-squad-form__submit {
         width: 100%;
+        height: auto;
+        white-space: normal;
     }
 }
 </style>

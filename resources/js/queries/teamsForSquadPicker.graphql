@@ -1,0 +1,11 @@
+query teamsForSquadPicker($clubhouseId: ID!, $seasonId: Int) {
+    teams(clubhouseId: $clubhouseId, seasonId: $seasonId, first: 200, order: [{column: NAME, order: ASC}]) {
+        data {
+            id
+            name
+            groupName
+            customTierName
+            tier { id tierName }
+        }
+    }
+}

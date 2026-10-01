@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $name
+ * @property TournamentTier|null $tier
+ * @property string|null $custom_tier_name
+ * @property string|null $group_name
+ */
 class Team extends Model
 {
     use HasFactory;
@@ -25,6 +31,14 @@ class Team extends Model
     public function tier(): BelongsTo
     {
         return $this->belongsTo(TournamentTier::class, 'tier_id');
+    }
+
+    /**
+     * The team's tier label: its tournament tier, or the custom tier name when it has none.
+     */
+    public function tierName(): ?string
+    {
+        return $this->tier->tier_name ?? $this->custom_tier_name;
     }
 
     public function clubhouse(): BelongsTo
