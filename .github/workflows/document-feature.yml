@@ -1,73 +1,115 @@
 name: Document feature
 
-# Drafts Help documentation with the document-feature skill in CI mode when a docs label is added
-# to a PR. See the "CI mode" section of .agents/skills/document-feature/SKILL.md.
+# Drafts the Danish Help documentation for a PR with the document-feature skill
+# in CI mode (.agents/skills/document-feature/CI.md).
+# Start: add docs:guide or docs:announcement to a PR targeting master.
+# Follow up: a comment from the repository owner (an organisation member, since the
+# organisation owns the repo) starting with "/docs" on such a PR, e.g. "/docs refresh".
+# Pushes come from the Claude GitHub App, so ci.yml and enforce-label run on them.
 
 on:
   pull_request:
     types: [labeled]
     branches:
       - master
+  issue_comment:
+    types: [created]
 
 env:
-  # Claude model for the docs agent; use `opus` to switch.
-  DOCS_AGENT_MODEL: sonnet
+  # Switch to opus here when Sonnet's drafts are not good enough.
+  DOCS_MODEL: sonnet
 
 jobs:
-  draft-announcement:
+  document-feature:
     if: >-
-      github.event.label.name == 'docs:announcement'
-      && github.event.pull_request.head.repo.full_name == github.repository
+      (github.event_name == 'pull_request'
+        && (github.event.label.name == 'docs:guide' || github.event.label.name == 'docs:announcement')
+        && github.event.pull_request.head.repo.full_name == github.repository)
+      || (github.event_name == 'issue_comment'
+        && github.event.issue.pull_request
+        && github.event.issue.state == 'open'
+        && (startsWith(github.event.comment.body, '/docs ')
+          || startsWith(github.event.comment.body, fromJSON('"/docs\n"'))
+          || startsWith(github.event.comment.body, fromJSON('"/docs\r\n"')))
+        && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER')
+        && (contains(github.event.issue.labels.*.name, 'docs:guide') || contains(github.event.issue.labels.*.name, 'docs:announcement')))
+    # Job-level, so events that skip the job never queue in the group and cancel a pending docs run.
+    concurrency:
+      group: document-feature-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # On the job rather than the workflow, so a skipped run for another label cannot replace a
-    # queued docs run.
-    concurrency:
-      group: document-feature-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
       issues: write
+      # Exchanged for the Claude GitHub App token that pushes and comments.
       id-token: write
     steps:
+      - name: Resolve pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+          ADDED_LABEL: ${{ github.event.label.name }}
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isCrossRepository,headRefName,baseRefName,labels)
+
+          if [ "$(jq -r .isCrossRepository <<<"$pr")" = "true" ]; then
+            echo "::error::Pull requests from forks are not documented automatically."
+            exit 1
+          fi
+
+          if [ "$(jq -r .baseRefName <<<"$pr")" != "master" ]; then
+            echo "::error::Only pull requests targeting master are documented automatically."
+            exit 1
+          fi
+
+          # The label just added wins, so a label switch works before the old label is removed.
+          labels=${ADDED_LABEL:-$(jq -r '[.labels[].name | select(. == "docs:guide" or . == "docs:announcement")] | join(",")' <<<"$pr")}
+
+          if [ "$labels" != "docs:guide" ] && [ "$labels" != "docs:announcement" ]; then
+            echo "::error::Expected exactly one of docs:guide and docs:announcement, found: ${labels:-none}"
+            exit 1
+          fi
+
+          {
+            echo "number=$PR_NUMBER"
+            echo "label=$labels"
+            echo "head_ref=$(jq -r .headRefName <<<"$pr")"
+          } >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ steps.pr.outputs.head_ref }}
           fetch-depth: 0
-          persist-credentials: false
+
       - name: Setup NodeJS
         uses: actions/setup-node@v7
         with:
           node-version: '24.x'
           cache: 'yarn'
+
       - name: Install frontend dependencies
         run: yarn install --frozen-lockfile
-      # The action pushes and comments as the Claude GitHub App, so CI and label enforcement run on
-      # the docs commit. It revokes that token when it finishes, which is why the agent publishes
-      # from inside its run with scripts/docs-agent/publish-announcement.mjs.
-      - name: Draft Release Announcement
-        id: claude
+
+      - name: Draft documentation
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          prompt: |
-            Read .agents/skills/document-feature/SKILL.md and follow it in CI mode.
-
-            Label: docs:announcement
-            PR: #${{ github.event.pull_request.number }} in ${{ github.repository }}
-            PR base branch: origin/${{ github.event.pull_request.base.ref }}
           claude_args: >-
-            --model ${{ env.DOCS_AGENT_MODEL }}
+            --model ${{ env.DOCS_MODEL }}
             --max-turns 30
-            --allowedTools "Read,Glob,Grep,Write,Edit,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git merge-base:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh issue view:*),Bash(date:*),Bash(yarn docs:validate),Bash(yarn build),Bash(node scripts/docs-agent/publish-announcement.mjs)"
-      - name: Report a run that published nothing
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          if [ ! -f "$RUNNER_TEMP/docs-agent-outcome" ]; then
-            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The docs agent stopped before publishing its Release Announcement draft. Nothing was pushed. See the [workflow run]($RUN_URL)."
-          fi
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*)"
+          prompt: |
+            Read `.agents/skills/document-feature/SKILL.md` and `.agents/skills/document-feature/CI.md`, then follow the skill in CI mode.
+
+            - Repository: ${{ github.repository }}
+            - Pull request: #${{ steps.pr.outputs.number }}
+            - PR head branch (checked out; push here): ${{ steps.pr.outputs.head_ref }}
+            - Documentation label: ${{ steps.pr.outputs.label }}
+            - Trigger: ${{ github.event_name == 'issue_comment' && 'a /docs comment from the repository owner' || 'the documentation label was added' }}
+
+            ${{ github.event_name == 'issue_comment' && 'The /docs comment:' || '' }}
+
+            ${{ github.event.comment.body }}
