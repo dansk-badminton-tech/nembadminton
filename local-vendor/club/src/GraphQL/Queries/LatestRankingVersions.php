@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\Club\GraphQL\Queries;
 
-use App\Models\Point;
+use FlyCompany\Club\RankingVersionUtil;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -21,8 +21,6 @@ class LatestRankingVersions
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $date = Point::query()->orderByDesc('version')->limit(1)->value('version');
-
-        return $date;
+        return RankingVersionUtil::getLatestRankingVersion();
     }
 }
