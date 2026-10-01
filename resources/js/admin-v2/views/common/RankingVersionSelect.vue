@@ -6,6 +6,7 @@
             :value="version"
         >
             {{ timeToMonth(version) }}
+            {{ suffix(version) }}
             {{ hintText(version) }}
         </option>
     </b-select>
@@ -15,7 +16,11 @@
 
 import gql from 'graphql-tag'
 import {timeToMonth} from "../team-fight/helper";
-import {isRecommendedRankingVersionByPlayingDate, resolveRecommendedRankingVersion} from "./ranking-version";
+import {
+    isRecommendedRankingVersionByPlayingDate,
+    rankingVersionSuffix,
+    resolveRecommendedNewestRankingVersion
+} from "./ranking-version";
 
 export default {
     name: "RankingVersionSelect",
@@ -43,7 +48,8 @@ export default {
             // Tracks the last version we auto-selected. We only overwrite the
             // user's choice if it still matches what we auto-set (i.e. they
             // haven't manually picked something else).
-            lastAutoSelectedVersion: null
+            lastAutoSelectedVersion: null,
+            newestRankingVersions: null
         }
     },
     methods: {
@@ -51,13 +57,19 @@ export default {
             this.$emit('focus')
         },
         timeToMonth: timeToMonth,
+        suffix(currentVersion){
+            return rankingVersionSuffix(currentVersion, this.rankingVersions, this.newestRankingVersions)
+        },
         hintText(currentVersion){
             if(this.playingDate === null || this.playingDate === undefined){
                 return ''
             }
-            if (isRecommendedRankingVersionByPlayingDate(currentVersion, this.playingDate)) {
+            if (!this.isOutdated(currentVersion) && isRecommendedRankingVersionByPlayingDate(currentVersion, this.playingDate)) {
                 return '(Indstillet automatisk)'
             }
+        },
+        isOutdated(currentVersion){
+            return Array.isArray(this.newestRankingVersions) && !this.newestRankingVersions.includes(currentVersion)
         },
         maybeAutoSelect() {
             if (!this.autoSelectRecommended) {
@@ -77,7 +89,7 @@ export default {
             if (!isUntouchedOrAutoSet) {
                 return;
             }
-            const recommended = resolveRecommendedRankingVersion(this.rankingVersions, this.playingDate);
+            const recommended = resolveRecommendedNewestRankingVersion(this.rankingVersions, this.newestRankingVersions, this.playingDate);
             if (recommended === null) {
                 return; // No matching version — leave field as-is.
             }
@@ -113,9 +125,12 @@ export default {
             query: gql`
                     query{
                         rankingVersions
+                        newestRankingVersions
                     }
                 `,
-            result() {
+            update: data => data.rankingVersions,
+            result({data}) {
+                this.newestRankingVersions = data?.newestRankingVersions;
                 this.maybeAutoSelect();
             }
         }

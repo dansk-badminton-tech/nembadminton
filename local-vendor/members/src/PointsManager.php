@@ -46,7 +46,7 @@ class PointsManager
         /** @var Member $member */
         $member = Member::query()->where('refId', $refId)->firstOrFail();
 
-        Point::query()->updateOrCreate([
+        $point = Point::query()->updateOrCreate([
             'category' => $category,
             'version' => $version,
             'member_id' => $member->id,
@@ -57,5 +57,11 @@ class PointsManager
             'vintage' => $vintage,
             'clh' => null,
         ]);
+
+        // updated_at marks when Badminton Danmark last published this version, which decides
+        // the newest version when a month has been re-published under another date.
+        if (! $point->wasRecentlyCreated && ! $point->wasChanged()) {
+            $point->touch();
+        }
     }
 }

@@ -44,6 +44,8 @@ extend type Query{
     ): [Club!]! @paginate(defaultCount: 10)
     "Ranking versions based on the data from this system."
     rankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\RankingVersions")
+    "The newest ranking version of each month. A month can have several versions when Badminton Danmark re-publishes it."
+    newestRankingVersions: [Date!]! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\NewestRankingVersions") @guard
     "Latest Ranking version"
     latestRankingVersion: Date! @field(resolver: "FlyCompany\\Club\\GraphQL\\Queries\\LatestRankingVersions")
     "Clubs"
