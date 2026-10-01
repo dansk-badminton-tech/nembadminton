@@ -10,10 +10,16 @@ const commitMessages = {
     'docs:announcement': 'docs: draft release announcement (agent)',
 }
 
-// What started the run: the label being added, a `/docs <answers>` comment, or `/docs refresh`.
-const followUpCommitMessages = {
-    comment: 'docs: apply /docs comment (agent)',
-    refresh: 'docs: refresh drafts (agent)',
+// Runs started by a `/docs <answers>` comment or `/docs refresh`, rather than by the label.
+const followUps = {
+    comment: {
+        commitMessage: 'docs: apply /docs comment (agent)',
+        unchanged: 'The `/docs` comment changed nothing in the drafts. Nothing was pushed.',
+    },
+    refresh: {
+        commitMessage: 'docs: refresh drafts (agent)',
+        unchanged: '`/docs refresh` found the drafts up to date. Nothing was pushed.',
+    },
 }
 
 function change(status, path, from) {
@@ -68,9 +74,9 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     const branch = [...committed, ...working]
     const branchGuides = branch.filter(isGuideEdit)
     const committedAnnouncements = committed.filter(isNewAnnouncement).map(c => c.path)
-    const isFollowUp = trigger in followUpCommitMessages
+    const followUp = Object.hasOwn(followUps, trigger) ? followUps[trigger] : null
     // A /docs follow-up may move the announcement drafted on this branch to another date.
-    const isMovedDraft = c => isFollowUp
+    const isMovedDraft = c => followUp !== null
         && c.change === 'deleted'
         && committedAnnouncements.includes(c.path)
     const movedDrafts = working.filter(isMovedDraft).map(c => c.path)
@@ -142,8 +148,8 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     return {
         publishable: problems.length === 0,
         label,
-        isFollowUp,
-        commitMessage: followUpCommitMessages[trigger] ?? commitMessages[label],
+        commitMessage: followUp?.commitMessage ?? commitMessages[label],
+        unchangedMessage: followUp?.unchanged ?? `The branch already has what \`${label}\` needs. Nothing was pushed.`,
         changed: working,
         openQuestions,
         // Earlier guide changes are kept; the owner decides whether to remove them.
@@ -161,11 +167,8 @@ export function outcomeComment(review) {
         ].join('\n')
     }
 
-    const unchanged = review.isFollowUp
-        ? 'The `/docs` comment changed nothing in the drafts. Nothing was pushed.'
-        : `The branch already has what \`${review.label}\` needs. Nothing was pushed.`
     const lines = review.changed.length === 0
-        ? [unchanged, '']
+        ? [review.unchangedMessage, '']
         : [
             `The docs agent pushed \`${review.commitMessage}\`:`,
             '',

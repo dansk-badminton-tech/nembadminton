@@ -362,7 +362,7 @@ test('/docs refresh commits under its own message', () => {
     assert.equal(result.commitMessage, 'docs: refresh drafts (agent)')
 })
 
-test('/docs refresh may move the drafted announcement when the comment asks for a new date', () => {
+test('/docs refresh may move the drafted announcement to another date', () => {
     const merged = 'resources/help/news/2026-10-07-nye-holdrunder.md'
     const result = review({
         trigger: 'refresh',
@@ -385,6 +385,16 @@ test('the summary of a /docs follow-up that changes nothing says so and keeps li
     assert.match(comment, /The `\/docs` comment changed nothing in the drafts\. Nothing was pushed\./)
     assert.doesNotMatch(comment, /already has what/)
     assert.match(comment, /- \[ \] `resources\/help\/news\/2026-10-01-nye-holdrunder\.md`: Hvornår udrulles ændringen\?/)
+})
+
+test('the summary of a /docs refresh that changes nothing says the drafts already match', () => {
+    const comment = outcomeComment(review({
+        trigger: 'refresh',
+        committed: [{change: 'added', path: announcement}],
+        working: [],
+    }))
+
+    assert.match(comment, /`\/docs refresh` found the drafts up to date\. Nothing was pushed\./)
 })
 
 test('the summary of a /docs follow-up lists the markers it left open', () => {

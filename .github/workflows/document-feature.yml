@@ -58,14 +58,18 @@ jobs:
         run: |
           pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isCrossRepository,headRefName,baseRefName,labels)
 
+          # The job's if can't see the head repo or base branch of a commented PR, so /docs on
+          # a fork PR or a PR not targeting master gets here and skips the remaining steps.
           if [ "$(jq -r .isCrossRepository <<<"$pr")" = "true" ]; then
-            echo "::error::Pull requests from forks are not documented automatically."
-            exit 1
+            echo "::notice::Pull requests from forks are not documented automatically."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           if [ "$(jq -r .baseRefName <<<"$pr")" != "master" ]; then
-            echo "::error::Only pull requests targeting master are documented automatically."
-            exit 1
+            echo "::notice::Only pull requests targeting master are documented automatically."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           # The label just added wins, so a label switch works before the old label is removed.
@@ -78,7 +82,7 @@ jobs:
 
           if [ "$GITHUB_EVENT_NAME" != "issue_comment" ]; then
             trigger=label
-          elif head -n 1 <<<"$COMMENT_BODY" | grep -Eq '^/docs[[:space:]]+refresh([[:space:]]|$)'; then
+          elif head -n 1 <<<"$COMMENT_BODY" | grep -Eiq '^/docs[[:space:]]+refresh([[:space:]]|$)'; then
             trigger=refresh
           else
             trigger=comment
@@ -93,6 +97,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
+        if: steps.pr.outputs.skip != 'true'
         with:
           ref: ${{ steps.pr.outputs.head_ref }}
           fetch-depth: 0
@@ -100,18 +105,21 @@ jobs:
           persist-credentials: false
 
       - name: Setup NodeJS
+        if: steps.pr.outputs.skip != 'true'
         uses: actions/setup-node@v7
         with:
           node-version: '24.x'
           cache: 'yarn'
 
       - name: Install frontend dependencies
+        if: steps.pr.outputs.skip != 'true'
         run: yarn install --frozen-lockfile
 
       # The action revokes its Claude GitHub App token when the step ends, so the agent publishes
       # from inside its run with scripts/docs-agent/publish-drafts.mjs, which reads this env.
       # The script, not the agent, commits and pushes, after checking the drafts against the label.
       - name: Draft documentation
+        if: steps.pr.outputs.skip != 'true'
         uses: anthropics/claude-code-action@v1
         env:
           DOCS_LABEL: ${{ steps.pr.outputs.label }}
@@ -134,12 +142,12 @@ jobs:
             - Documentation label: ${{ steps.pr.outputs.label }}
             - Trigger: ${{ steps.pr.outputs.trigger == 'refresh' && '/docs refresh from the repository owner' || steps.pr.outputs.trigger == 'comment' && 'a /docs comment from the repository owner' || 'the documentation label was added' }}
 
-            ${{ github.event_name == 'issue_comment' && 'The /docs comment:' || '' }}
+            ${{ steps.pr.outputs.trigger != 'label' && 'The /docs comment:' || '' }}
 
             ${{ github.event.comment.body }}
 
       - name: Report a run that published nothing
-        if: always() && steps.pr.outcome == 'success'
+        if: always() && steps.pr.outcome == 'success' && steps.pr.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
