@@ -199,6 +199,37 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
+     * Test showing only members with permanent afbud
+     */
+    public function testFilterOnlyPermanentCancellations(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+
+            $members = Member::whereHas('clubs', function ($query) use ($clubhouse) {
+                $query->where('club_id', $clubhouse->clubs->first()->id);
+            })->where('inactive', false)->where('playable', true)->take(2)->get();
+
+            if ($members->count() < 2) {
+                $this->markTestSkipped('Need two active playable members for testing');
+            }
+
+            [$cancelledMember, $playableMember] = $members->all();
+            $cancelledMember->update(['playable' => false]);
+
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
+                    ->visit(new MemberManagementPage($clubhouse->id))
+                    ->searchMember($playableMember->name)
+                    ->waitForTextIn('@members-table', $playableMember->name)
+                    ->toggleOnlyPermanentCancellations()
+                    ->waitForTextIn('@members-table', 'Ingen spillere fundet')
+                    ->searchMember($cancelledMember->name)
+                    ->assertMemberStatus($cancelledMember->name, 'Permanent afbud');
+        });
+    }
+
+    /**
      * Test that information message explains the feature correctly
      */
     public function testInformationMessageIsDisplayed(): void

@@ -14,6 +14,7 @@ export default {
             searchName: '',
             selectedGender: null,
             showInactive: false,
+            onlyPermanentCancellations: false,
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
@@ -40,11 +41,12 @@ export default {
     apollo: {
         members: {
             query: gql`
-                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $inactive: Boolean, $page: Int!, $first: Int!) {
+                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $playable: Boolean, $inactive: Boolean, $page: Int!, $first: Int!) {
                     membersSearch(
                         clubhouse: $clubhouse
                         name: $name
                         gender: $gender
+                        playable: $playable
                         inactive: $inactive
                         page: $page
                         first: $first
@@ -83,6 +85,10 @@ export default {
 
                 if (this.selectedGender) {
                     vars.gender = [this.selectedGender];
+                }
+
+                if (this.onlyPermanentCancellations) {
+                    vars.playable = false;
                 }
 
                 if (!this.showInactive) {
@@ -285,6 +291,9 @@ export default {
                         </b-field>
                         <b-field label="Vis inaktive">
                             <b-switch v-model="showInactive" @update:modelValue="search" dusk="show-inactive-switch"></b-switch>
+                        </b-field>
+                        <b-field label="Kun permanent afbud">
+                            <b-switch v-model="onlyPermanentCancellations" @update:modelValue="search" dusk="only-permanent-cancellations-switch"></b-switch>
                         </b-field>
                     </b-field>
 
