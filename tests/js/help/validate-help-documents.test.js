@@ -57,3 +57,20 @@ test('journey placement is only allowed on guides', () => {
         'news/2026-09-21-nyt.md: journey is only allowed on guides',
     ])
 })
+
+test('a document with an open agent question is rejected', () => {
+    const draft = guide('scenarier', {body: 'Tekst.\n\n<!-- TODO(agent): Hvad hedder knappen? -->'})
+
+    assert.deepEqual(validate(draft), [
+        'guides/scenarier.md: resolve open agent question "Hvad hedder knappen?"',
+    ])
+})
+
+test('every open agent question in a document is reported', () => {
+    const announcement = {kind: 'news', slug: '2026-09-21-nyt', path: 'news/2026-09-21-nyt.md', title: 'Nyt', summary: 'Nyt.', published: '2026-09-21', body: '<!-- TODO(agent): Første? -->\n\nTekst.\n\n<!--TODO(agent):Anden?-->'}
+
+    assert.deepEqual(validateHelpDocuments([...requiredPages, announcement]), [
+        'news/2026-09-21-nyt.md: resolve open agent question "Første?"',
+        'news/2026-09-21-nyt.md: resolve open agent question "Anden?"',
+    ])
+})

@@ -121,6 +121,10 @@ export function validateHelpDocuments(documents) {
             errors.push(`${document.path}: body headings must start at level 2`)
         }
 
+        for (const [, question] of document.body.matchAll(/<!--\s*TODO\(agent\):\s*([\s\S]*?)\s*-->/g)) {
+            errors.push(`${document.path}: resolve open agent question "${question}"`)
+        }
+
         if (document.kind === 'guide' && (!Number.isInteger(document.order) || document.order < 0)) {
             errors.push(`${document.path}: order must be a non-negative integer`)
         }

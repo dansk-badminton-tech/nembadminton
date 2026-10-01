@@ -1,0 +1,110 @@
+name: Document feature
+
+# Drafts the Danish Help documentation for a PR with the document-feature skill
+# (.agents/skills/document-feature/SKILL.md, "CI mode").
+# Start: add docs:guide or docs:announcement to a PR targeting master.
+# Follow up: an owner comment starting with "/docs " on such a PR, e.g. "/docs refresh".
+# Pushes come from the Claude GitHub App, so ci.yml and enforce-label run on them.
+
+on:
+  pull_request:
+    types: [labeled]
+    branches:
+      - master
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: document-feature-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: false
+
+env:
+  # Switch to opus here when Sonnet's drafts are not good enough.
+  DOCS_MODEL: sonnet
+
+jobs:
+  document-feature:
+    if: >-
+      (github.event_name == 'pull_request'
+        && (github.event.label.name == 'docs:guide' || github.event.label.name == 'docs:announcement')
+        && github.event.pull_request.head.repo.full_name == github.repository)
+      || (github.event_name == 'issue_comment'
+        && github.event.issue.pull_request
+        && github.event.issue.state == 'open'
+        && startsWith(github.event.comment.body, '/docs ')
+        && github.event.comment.author_association == 'OWNER'
+        && (contains(github.event.issue.labels.*.name, 'docs:guide') || contains(github.event.issue.labels.*.name, 'docs:announcement')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      # Exchanged for the Claude GitHub App token that pushes and comments.
+      id-token: write
+    steps:
+      - name: Resolve pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isCrossRepository,headRefName,baseRefName,labels)
+
+          if [ "$(jq -r .isCrossRepository <<<"$pr")" = "true" ]; then
+            echo "::error::Pull requests from forks are not documented automatically."
+            exit 1
+          fi
+
+          if [ "$(jq -r .baseRefName <<<"$pr")" != "master" ]; then
+            echo "::error::Only pull requests targeting master are documented automatically."
+            exit 1
+          fi
+
+          labels=$(jq -r '[.labels[].name | select(. == "docs:guide" or . == "docs:announcement")] | join(",")' <<<"$pr")
+
+          if [ "$labels" != "docs:guide" ] && [ "$labels" != "docs:announcement" ]; then
+            echo "::error::Expected exactly one of docs:guide and docs:announcement, found: ${labels:-none}"
+            exit 1
+          fi
+
+          {
+            echo "number=$PR_NUMBER"
+            echo "label=$labels"
+            echo "head_ref=$(jq -r .headRefName <<<"$pr")"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pr.outputs.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+          cache: 'yarn'
+
+      - name: Install frontend dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Draft documentation
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --model ${{ env.DOCS_MODEL }}
+            --max-turns 30
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*)"
+          prompt: |
+            Read `.agents/skills/document-feature/SKILL.md` and its linked files, then follow the skill in its "CI mode".
+
+            - Repository: ${{ github.repository }}
+            - Pull request: #${{ steps.pr.outputs.number }}
+            - PR head branch (checked out; push here): ${{ steps.pr.outputs.head_ref }}
+            - Documentation label: ${{ steps.pr.outputs.label }}
+            - Trigger: ${{ github.event_name == 'issue_comment' && 'a /docs comment from the repository owner' || 'the documentation label was added' }}
+
+            ${{ github.event_name == 'issue_comment' && 'The /docs comment:' || '' }}
+
+            ${{ github.event.comment.body }}
