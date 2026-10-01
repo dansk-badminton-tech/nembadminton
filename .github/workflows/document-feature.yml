@@ -1,0 +1,71 @@
+name: Document feature
+
+# Drafts Help documentation with the document-feature skill in CI mode when a docs label is added
+# to a PR. See the "CI mode" section of .agents/skills/document-feature/SKILL.md.
+
+on:
+  pull_request:
+    types: [labeled]
+    branches:
+      - master
+
+env:
+  # Claude model for the docs agent; use `opus` to switch.
+  DOCS_AGENT_MODEL: sonnet
+
+concurrency:
+  group: document-feature-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  draft-announcement:
+    if: >-
+      github.event.label.name == 'docs:announcement'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Setup NodeJS
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+          cache: 'yarn'
+      - name: Install frontend dependencies
+        run: yarn install --frozen-lockfile
+      # The action pushes and comments as the Claude GitHub App, so CI and label enforcement run on
+      # the docs commit. It revokes that token when it finishes, which is why the agent publishes
+      # from inside its run with scripts/docs-agent/publish-announcement.mjs.
+      - name: Draft Release Announcement
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Read .agents/skills/document-feature/SKILL.md and follow it in CI mode.
+
+            Label: docs:announcement
+            PR: #${{ github.event.pull_request.number }} in ${{ github.repository }}
+            PR base branch: origin/${{ github.event.pull_request.base.ref }}
+          claude_args: >-
+            --model ${{ env.DOCS_AGENT_MODEL }}
+            --max-turns 30
+            --allowedTools "Read,Glob,Grep,Write,Edit,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git merge-base:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh issue view:*),Bash(date:*),Bash(yarn docs:validate),Bash(yarn build),Bash(node scripts/docs-agent/publish-announcement.mjs)"
+      - name: Report a run that published nothing
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ ! -f "$RUNNER_TEMP/docs-agent-outcome" ]; then
+            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The docs agent stopped before publishing its Release Announcement draft. Nothing was pushed. See the [workflow run]($RUN_URL)."
+          fi
