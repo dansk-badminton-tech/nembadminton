@@ -4,12 +4,9 @@
 import {spawnSync} from 'node:child_process'
 import {readFileSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
-import {
-    draftComment,
-    parseGitStatus,
-    parseValidationErrors,
-    reviewAnnouncementDraft,
-} from './announcement-draft.js'
+import {validateHelpDocuments} from '../../resources/js/admin-v2/help/markdown.js'
+import {loadHelpDocuments} from '../load-help-documents.mjs'
+import {outcomeComment, parseGitStatus, reviewAnnouncementDraft} from './announcement-draft.js'
 
 const commitMessage = 'docs: draft release announcement (agent)'
 const buildOutputLines = 40
@@ -23,6 +20,14 @@ function lastLines(text, count) {
     return text.split('\n').slice(-count).join('\n')
 }
 
+async function validationErrors() {
+    try {
+        return validateHelpDocuments(await loadHelpDocuments())
+    } catch (error) {
+        return [error.message]
+    }
+}
+
 if (process.env.GITHUB_ACTIONS !== 'true' || !process.env.GITHUB_EVENT_PATH || !process.env.GITHUB_HEAD_REF) {
     console.error('publish-announcement only runs in the document-feature workflow on a pull_request event.')
     process.exit(2)
@@ -32,7 +37,7 @@ const pullRequest = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8
 const build = run('yarn', ['build'])
 const review = reviewAnnouncementDraft({
     changes: parseGitStatus(run('git', ['status', '--porcelain', '--untracked-files=all']).output),
-    validationErrors: parseValidationErrors(run('node', ['scripts/validate-help-documents.mjs']).output),
+    validationErrors: await validationErrors(),
     build: {ok: build.ok, output: lastLines(build.output, buildOutputLines)},
     today: new Date().toISOString().slice(0, 10),
 })
@@ -53,7 +58,7 @@ if (review.publishable) {
     }
 }
 
-const comment = draftComment(review)
+const comment = outcomeComment(review)
 const commented = run('gh', ['pr', 'comment', String(pullRequest.number), '--body-file', '-'], {input: comment})
 console.log(comment)
 

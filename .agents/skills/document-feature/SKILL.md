@@ -4,7 +4,7 @@ description: Draft the Danish user documentation for a feature that is ready to 
 disable-model-invocation: true
 ---
 
-Document the feature on the current branch. The output is a reviewed draft in the working tree, never a commit.
+Document the feature on the current branch. The output is a reviewed draft in the working tree, never a commit. [CI mode](#ci-mode) is the one exception.
 
 ## Process
 
@@ -28,7 +28,7 @@ Document the feature on the current branch. The output is a reviewed draft in th
 
 ## CI mode
 
-The `document-feature` workflow (`.github/workflows/document-feature.yml`) runs this skill when a documentation label is added to a PR. It passes the label and the PR number. CI mode follows the process above with these overrides; everything not listed here is unchanged.
+The `document-feature` workflow (`.github/workflows/document-feature.yml`) runs this skill when `docs:announcement` is added to a PR. It passes the label and the PR number. CI mode follows the process above with these overrides; everything not listed here is unchanged.
 
 - **The label is final.** Skip the classification in step 2 and change no labels. `docs:announcement` means one new Release Announcement and nothing else: change no other file, not even an existing guide or announcement.
 - **Nobody answers questions.** Where step 3 would ask, write an `<!-- TODO(agent): <question> -->` marker as described in [WRITING-GUIDE.md](./WRITING-GUIDE.md#open-questions). Never guess a behavior to avoid a marker.

@@ -1,9 +1,8 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {
-    draftComment,
+    outcomeComment,
     parseGitStatus,
-    parseValidationErrors,
     reviewAnnouncementDraft,
 } from '../../../scripts/docs-agent/announcement-draft.js'
 
@@ -32,15 +31,6 @@ test('a clean working tree has no changes', () => {
     assert.deepEqual(parseGitStatus(''), [])
 })
 
-test('validator output becomes one error per line, without the heading', () => {
-    const output = 'Help documentation validation failed:\nnews/a.md: summary is required\nnews/b.md: title is required\n'
-    assert.deepEqual(parseValidationErrors(output), ['news/a.md: summary is required', 'news/b.md: title is required'])
-})
-
-test('passing validator output has no errors', () => {
-    assert.deepEqual(parseValidationErrors(''), [])
-})
-
 test('one new announcement dated today that validates and builds is publishable', () => {
     assert.deepEqual(review(), {publishable: true, file: announcement, openQuestions: [], problems: []})
 })
@@ -55,6 +45,15 @@ test('unresolved TODO(agent) markers are open questions, not problems', () => {
 
     assert.equal(result.publishable, true)
     assert.deepEqual(result.openQuestions, ['Hvornår udrulles ændringen?', 'Gælder det også for ungdomshold?'])
+})
+
+test('markers in other Help documents are not open questions of the draft', () => {
+    const result = review({
+        validationErrors: ['resources/help/guides/opret.md: unresolved TODO(agent) marker "Hvilken knap?"'],
+    })
+
+    assert.equal(result.publishable, true)
+    assert.deepEqual(result.openQuestions, [])
 })
 
 test('any other validation error blocks publishing', () => {
@@ -123,7 +122,7 @@ test('an announcement not dated with the day of the run blocks publishing', () =
 })
 
 test('the summary comment names the file and lists open questions', () => {
-    const comment = draftComment(review({
+    const comment = outcomeComment(review({
         validationErrors: [`${announcement}: unresolved TODO(agent) marker "Hvornår udrulles ændringen?"`],
     }))
 
@@ -134,14 +133,14 @@ test('the summary comment names the file and lists open questions', () => {
 })
 
 test('the summary comment says when there are no open questions', () => {
-    const comment = draftComment(review())
+    const comment = outcomeComment(review())
 
     assert.match(comment, /No open questions/)
     assert.doesNotMatch(comment, /CI fails until/)
 })
 
 test('the blocked comment says nothing was pushed and includes the errors', () => {
-    const comment = draftComment(review({build: {ok: false, output: 'error during build: boom'}}))
+    const comment = outcomeComment(review({build: {ok: false, output: 'error during build: boom'}}))
 
     assert.match(comment, /Nothing was pushed/)
     assert.match(comment, /```\nyarn build failed:\nerror during build: boom\n```/)

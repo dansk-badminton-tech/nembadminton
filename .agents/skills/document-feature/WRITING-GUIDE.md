@@ -35,7 +35,7 @@ Omit `journey` for a guide outside the holdrunde journey; it is listed under "An
 
 ## Release Announcements
 
-Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it.
+Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it; in CI mode, use the day of the run instead.
 
 ```md
 ---

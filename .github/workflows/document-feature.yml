@@ -13,10 +13,6 @@ env:
   # Claude model for the docs agent; use `opus` to switch.
   DOCS_AGENT_MODEL: sonnet
 
-concurrency:
-  group: document-feature-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
-
 jobs:
   draft-announcement:
     if: >-
@@ -24,6 +20,11 @@ jobs:
       && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # On the job rather than the workflow, so a skipped run for another label cannot replace a
+    # queued docs run.
+    concurrency:
+      group: document-feature-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
@@ -34,6 +35,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
+          persist-credentials: false
       - name: Setup NodeJS
         uses: actions/setup-node@v7
         with:
