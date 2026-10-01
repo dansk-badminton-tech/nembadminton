@@ -23,6 +23,12 @@ Holdrunden åbnes med det samme, så du kan tilføje holdene.
 
 Den anbefalede rangliste følger [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/). Den først offentliggjorte rangliste i en måned gælder fra den 10. i måneden til og med den 9. i den efterfølgende måned.
 
+### Når en måned står to gange
+
+Badminton Danmark retter af og til en rangliste og offentliggør den igen med en ny dato. Den rettede rangliste erstatter den tidligere, men begge står under **Rangliste** med datoen i parentes, fx **Februar 2026 (01.02 – nyeste)** og **Februar 2026 (02.02)**. Udgaven markeret med **nyeste** er den, Nembadminton senest har hentet fra badmintonplayer.dk. Det er den, der anbefales og vælges automatisk.
+
+Holdrunder og hold, der allerede bruger den tidligere udgave, ændres ikke. Vil du bruge den rettede rangliste, så vælg den under **Rediger** for holdrunden eller for holdet som beskrevet i **Kontrollér holdenes ranglister** nedenfor.
+
 ## Kopiér en tidligere holdrunde
 
 Hvis holdrunden ligner en tidligere holdrunde i samme sæson, kan du kopiere den i stedet for at oprette en ny. Kopien beholder den oprindelige sæson, og sæsonen kan ikke ændres bagefter. Opret derfor en ny holdrunde i en ny sæson.
