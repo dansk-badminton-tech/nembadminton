@@ -14,7 +14,7 @@ const {GITHUB_ACTIONS, DOCS_LABEL, DOCS_TRIGGER, PR_NUMBER, HEAD_REF, BASE_REF, 
 
 function run(command, args, options = {}) {
     const result = spawnSync(command, args, {encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, ...options})
-    return {ok: result.status === 0, output: `${result.stdout ?? ''}${result.stderr ?? ''}`.trim()}
+    return {ok: result.status === 0, output: `${result.stdout ?? ''}${result.stderr ?? ''}`.trimEnd()}
 }
 
 function lastLines(text, count) {
