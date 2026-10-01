@@ -75,22 +75,9 @@ The host can open the Dusk application at `http://localhost:8000`. Selenium shar
 
 **Run in CI:**
 
-Browser tests are **not** run automatically on push or PR — they must be triggered manually since they are time-consuming. Typically only needed before merging.
+Browser tests are slow, so they don't run on every PR push. Add the `ci:browser-tests` label to a PR when its code and UI changes are done. The tests run when the label is added and again on every later push while it stays on. They also run on every push to `master`. A passing run is not required to merge.
 
-From the GitHub UI: Go to Actions > "Browser testing" > "Run workflow".
-
-From the CLI (requires [GitHub CLI](https://cli.github.com/)):
-
-```bash
-# Run on the current branch
-gh workflow run "Browser testing"
-
-# Run on a specific branch
-gh workflow run "Browser testing" --ref my-branch
-
-# Watch the run progress
-gh run watch
-```
+To rerun without pushing, remove the label and add it again, or run the workflow manually: Actions > "Browser testing" > "Run workflow" (or `gh workflow run "Browser testing" --ref my-branch`).
 
 Failed browser tests are automatically retried once before the workflow is marked as failed.
 
