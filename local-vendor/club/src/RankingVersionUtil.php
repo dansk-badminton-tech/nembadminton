@@ -3,9 +3,11 @@
 namespace FlyCompany\Club;
 
 use App\Models\Point;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 class RankingVersionUtil
 {
@@ -26,36 +28,37 @@ class RankingVersionUtil
      */
     public static function getNewestRankingVersionsByClubs(array $clubIds): array
     {
-        $versions = static::lastUpdatedVersionsQuery()
+        $versions = self::lastUpdatedVersionsQuery()
             ->join('club_member', 'points.member_id', '=', 'club_member.member_id')
             ->whereIn('club_member.club_id', $clubIds)
             ->get();
 
-        return static::newestPerMonth($versions);
+        return self::newestPerMonth($versions);
     }
 
     public static function getLatestRankingVersion(): ?string
     {
-        return static::newestPerMonth(static::lastUpdatedVersionsQuery()->get())[0] ?? null;
+        return self::newestPerMonth(self::lastUpdatedVersionsQuery()->get())[0] ?? null;
     }
 
     private static function lastUpdatedVersionsQuery(): Builder
     {
-        return Point::query()
+        return DB::table('points')
             ->select('points.version')
             ->selectRaw('MAX(points.updated_at) as last_updated')
             ->groupBy('points.version');
     }
 
     /**
+     * @param  SupportCollection<int, \stdClass>  $versions  rows of version and last_updated
      * @return string[]
      */
-    private static function newestPerMonth(Collection $versions): array
+    private static function newestPerMonth(SupportCollection $versions): array
     {
         return $versions
-            ->groupBy(static fn (Point $point) => substr((string) $point->version, 0, 7))
-            ->map(static fn ($sameMonth) => (string) $sameMonth
-                ->sort(static fn (Point $a, Point $b) => [$b->last_updated, (string) $b->version] <=> [$a->last_updated, (string) $a->version])
+            ->groupBy(static fn (\stdClass $row): string => substr((string) $row->version, 0, 7))
+            ->map(static fn (SupportCollection $sameMonth): string => (string) $sameMonth
+                ->sort(static fn (\stdClass $a, \stdClass $b): int => [$b->last_updated, $b->version] <=> [$a->last_updated, $a->version])
                 ->first()
                 ->version)
             ->sortKeysDesc()
