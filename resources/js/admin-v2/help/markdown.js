@@ -121,10 +121,6 @@ export function validateHelpDocuments(documents) {
             errors.push(`${document.path}: body headings must start at level 2`)
         }
 
-        for (const [, question] of document.body.matchAll(/<!--\s*TODO\(agent\):\s*([\s\S]*?)\s*-->/g)) {
-            errors.push(`${document.path}: resolve open agent question "${question}"`)
-        }
-
         if (document.kind === 'guide' && (!Number.isInteger(document.order) || document.order < 0)) {
             errors.push(`${document.path}: order must be a non-negative integer`)
         }
@@ -158,4 +154,11 @@ export function validateHelpDocuments(documents) {
     }
 
     return errors
+}
+
+// Drafts written by the document-feature skill in CI mark each unverified point with
+// <!-- TODO(agent): question -->. They render in the Help area but must not be merged.
+export function findOpenAgentQuestions(documents) {
+    return documents.flatMap(document => [...document.body.matchAll(/<!--\s*TODO\(agent\):\s*([\s\S]*?)\s*-->/g)]
+        .map(([, question]) => `${document.path}: resolve open agent question "${question}"`))
 }

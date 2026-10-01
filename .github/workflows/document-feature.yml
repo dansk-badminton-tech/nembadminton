@@ -1,9 +1,10 @@
 name: Document feature
 
 # Drafts the Danish Help documentation for a PR with the document-feature skill
-# (.agents/skills/document-feature/SKILL.md, "CI mode").
+# in CI mode (.agents/skills/document-feature/CI.md).
 # Start: add docs:guide or docs:announcement to a PR targeting master.
-# Follow up: an owner comment starting with "/docs " on such a PR, e.g. "/docs refresh".
+# Follow up: a comment from the repository owner (an organisation member, since the
+# organisation owns the repo) starting with "/docs" on such a PR, e.g. "/docs refresh".
 # Pushes come from the Claude GitHub App, so ci.yml and enforce-label run on them.
 
 on:
@@ -13,10 +14,6 @@ on:
       - master
   issue_comment:
     types: [created]
-
-concurrency:
-  group: document-feature-${{ github.event.pull_request.number || github.event.issue.number }}
-  cancel-in-progress: false
 
 env:
   # Switch to opus here when Sonnet's drafts are not good enough.
@@ -31,9 +28,15 @@ jobs:
       || (github.event_name == 'issue_comment'
         && github.event.issue.pull_request
         && github.event.issue.state == 'open'
-        && startsWith(github.event.comment.body, '/docs ')
-        && github.event.comment.author_association == 'OWNER'
+        && (startsWith(github.event.comment.body, '/docs ')
+          || startsWith(github.event.comment.body, fromJSON('"/docs\n"'))
+          || startsWith(github.event.comment.body, fromJSON('"/docs\r\n"')))
+        && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER')
         && (contains(github.event.issue.labels.*.name, 'docs:guide') || contains(github.event.issue.labels.*.name, 'docs:announcement')))
+    # Job-level, so events that skip the job never queue in the group and cancel a pending docs run.
+    concurrency:
+      group: document-feature-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -48,6 +51,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
+          ADDED_LABEL: ${{ github.event.label.name }}
         run: |
           pr=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json isCrossRepository,headRefName,baseRefName,labels)
 
@@ -61,7 +65,8 @@ jobs:
             exit 1
           fi
 
-          labels=$(jq -r '[.labels[].name | select(. == "docs:guide" or . == "docs:announcement")] | join(",")' <<<"$pr")
+          # The label just added wins, so a label switch works before the old label is removed.
+          labels=${ADDED_LABEL:-$(jq -r '[.labels[].name | select(. == "docs:guide" or . == "docs:announcement")] | join(",")' <<<"$pr")}
 
           if [ "$labels" != "docs:guide" ] && [ "$labels" != "docs:announcement" ]; then
             echo "::error::Expected exactly one of docs:guide and docs:announcement, found: ${labels:-none}"
@@ -97,7 +102,7 @@ jobs:
             --max-turns 30
             --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git:*),Bash(gh:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*)"
           prompt: |
-            Read `.agents/skills/document-feature/SKILL.md` and its linked files, then follow the skill in its "CI mode".
+            Read `.agents/skills/document-feature/SKILL.md` and `.agents/skills/document-feature/CI.md`, then follow the skill in CI mode.
 
             - Repository: ${{ github.repository }}
             - Pull request: #${{ steps.pr.outputs.number }}
