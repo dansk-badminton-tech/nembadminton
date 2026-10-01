@@ -56,24 +56,12 @@ Run them with `bin/test dusk` (see above). For running them against the dev stac
 
 ### Running browser tests in CI:
 
-Browser tests are **not** run automatically on push or PR. They must be triggered manually because they are time-consuming and typically only needed before merging.
+Browser tests are slow, so they don't run on every PR push. They run when a PR has the `ci:browser-tests` label, and on every push to `master`. The workflow is defined in `.github/workflows/browser-testing.yml`.
 
-The workflow is defined in `.github/workflows/browser-testing.yml`.
-
-**From GitHub UI:** Go to Actions > "Browser testing" > "Run workflow".
-
-**From the CLI** (requires [GitHub CLI](https://cli.github.com/)):
-
-```bash
-# Run on the current branch
-gh workflow run "Browser testing"
-
-# Run on a specific branch
-gh workflow run "Browser testing" --ref my-branch
-
-# Watch the run progress
-gh run watch
-```
+- Add the label once the PR's code and UI changes are done. The tests run when the label is added and again on every later push while it stays on; a newer push cancels the older in-progress run.
+- Agents: add the label when a PR that changes UI or browser tests is done (`gh pr edit <number> --add-label ci:browser-tests`). Don't use `gh workflow run`.
+- A passing run is not required to merge.
+- To rerun without pushing, remove the label and add it again, or use Actions > "Browser testing" > "Run workflow".
 
 ## Agent skills
 
