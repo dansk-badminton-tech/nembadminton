@@ -48,7 +48,7 @@ import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import TournamentTiersQuery from "../../../queries/tournamentTiers.graphql";
 import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 import {formatDateTime} from "../../helpers";
-import {resolveRecommendedRankingVersion} from "../common/ranking-version";
+import {resolveRecommendedNewestRankingVersion} from "../common/ranking-version";
 import {timeToMonth} from "./helper";
 import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
@@ -105,6 +105,7 @@ export default {
             selectedPlayingDate: null,
             playingDateChanged: false,
             rankingVersions: [],
+            newestRankingVersions: [],
             tiers: [],
             teams: [],
             teamsFailed: false,
@@ -121,7 +122,7 @@ export default {
             return normalizeDateToDay(this.teamRoundDate);
         },
         recommendedVersion() {
-            return resolveRecommendedRankingVersion(this.rankingVersions, this.selectedPlayingDate);
+            return resolveRecommendedNewestRankingVersion(this.rankingVersions, this.newestRankingVersions, this.selectedPlayingDate);
         },
         recommendedRankingLabel() {
             if (this.recommendedVersion === null) {
@@ -189,8 +190,13 @@ export default {
             query: gql`
                 query {
                     rankingVersions
+                    newestRankingVersions
                 }
-            `
+            `,
+            update: data => data.rankingVersions,
+            result({data}) {
+                this.newestRankingVersions = data?.newestRankingVersions ?? [];
+            }
         },
         tiers: {
             query: TournamentTiersQuery,
