@@ -350,3 +350,52 @@ test('the blocked comment says nothing was pushed and includes the errors', () =
     assert.match(comment, /Nothing was pushed/)
     assert.match(comment, /```\nyarn build failed:\nerror during build: boom\n```/)
 })
+
+test('/docs refresh commits under its own message', () => {
+    const result = review({
+        trigger: 'refresh',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'modified', path: announcement}],
+    })
+
+    assert.equal(result.publishable, true)
+    assert.equal(result.commitMessage, 'docs: refresh drafts (agent)')
+})
+
+test('/docs refresh may move the drafted announcement when the comment asks for a new date', () => {
+    const merged = 'resources/help/news/2026-10-07-nye-holdrunder.md'
+    const result = review({
+        trigger: 'refresh',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'renamed', path: merged, from: announcement}],
+    })
+
+    assert.equal(result.publishable, true)
+    assert.deepEqual(result.problems, [])
+})
+
+test('the summary of a /docs follow-up that changes nothing says so and keeps listing the open questions', () => {
+    const comment = outcomeComment(review({
+        trigger: 'comment',
+        committed: [{change: 'added', path: announcement}],
+        working: [],
+        validationErrors: [`${announcement}: unresolved TODO(agent) marker "Hvornår udrulles ændringen?"`],
+    }))
+
+    assert.match(comment, /The `\/docs` comment changed nothing in the drafts\. Nothing was pushed\./)
+    assert.doesNotMatch(comment, /already has what/)
+    assert.match(comment, /- \[ \] `resources\/help\/news\/2026-10-01-nye-holdrunder\.md`: Hvornår udrulles ændringen\?/)
+})
+
+test('the summary of a /docs follow-up lists the markers it left open', () => {
+    const comment = outcomeComment(review({
+        trigger: 'comment',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'modified', path: announcement}],
+        validationErrors: [`${announcement}: unresolved TODO(agent) marker "Gælder det også for ungdomshold?"`],
+    }))
+
+    assert.match(comment, /pushed `docs: apply \/docs comment \(agent\)`/)
+    assert.match(comment, /- `resources\/help\/news\/2026-10-01-nye-holdrunder\.md` \(updated\)/)
+    assert.match(comment, /- \[ \] `resources\/help\/news\/2026-10-01-nye-holdrunder\.md`: Gælder det også for ungdomshold\?/)
+})

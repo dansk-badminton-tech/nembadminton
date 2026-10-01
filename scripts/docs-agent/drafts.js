@@ -10,6 +10,12 @@ const commitMessages = {
     'docs:announcement': 'docs: draft release announcement (agent)',
 }
 
+// What started the run: the label being added, a `/docs <answers>` comment, or `/docs refresh`.
+const followUpCommitMessages = {
+    comment: 'docs: apply /docs comment (agent)',
+    refresh: 'docs: refresh drafts (agent)',
+}
+
 function change(status, path, from) {
     const kind = status.includes('R') ? 'renamed'
         : status.includes('D') ? 'deleted'
@@ -62,8 +68,9 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     const branch = [...committed, ...working]
     const branchGuides = branch.filter(isGuideEdit)
     const committedAnnouncements = committed.filter(isNewAnnouncement).map(c => c.path)
+    const isFollowUp = trigger in followUpCommitMessages
     // A /docs follow-up may move the announcement drafted on this branch to another date.
-    const isMovedDraft = c => trigger === 'comment'
+    const isMovedDraft = c => isFollowUp
         && c.change === 'deleted'
         && committedAnnouncements.includes(c.path)
     const movedDrafts = working.filter(isMovedDraft).map(c => c.path)
@@ -135,7 +142,8 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     return {
         publishable: problems.length === 0,
         label,
-        commitMessage: trigger === 'comment' ? 'docs: apply /docs comment (agent)' : commitMessages[label],
+        isFollowUp,
+        commitMessage: followUpCommitMessages[trigger] ?? commitMessages[label],
         changed: working,
         openQuestions,
         // Earlier guide changes are kept; the owner decides whether to remove them.
@@ -153,8 +161,11 @@ export function outcomeComment(review) {
         ].join('\n')
     }
 
+    const unchanged = review.isFollowUp
+        ? 'The `/docs` comment changed nothing in the drafts. Nothing was pushed.'
+        : `The branch already has what \`${review.label}\` needs. Nothing was pushed.`
     const lines = review.changed.length === 0
-        ? [`The branch already has what \`${review.label}\` needs. Nothing was pushed.`, '']
+        ? [unchanged, '']
         : [
             `The docs agent pushed \`${review.commitMessage}\`:`,
             '',
