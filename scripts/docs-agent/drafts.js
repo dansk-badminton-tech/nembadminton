@@ -10,6 +10,18 @@ const commitMessages = {
     'docs:announcement': 'docs: draft release announcement (agent)',
 }
 
+// Runs started by a `/docs <answers>` comment or `/docs refresh`, rather than by the label.
+const followUps = {
+    comment: {
+        commitMessage: 'docs: apply /docs comment (agent)',
+        unchanged: 'The `/docs` comment changed nothing in the drafts. Nothing was pushed.',
+    },
+    refresh: {
+        commitMessage: 'docs: refresh drafts (agent)',
+        unchanged: '`/docs refresh` found the drafts up to date. Nothing was pushed.',
+    },
+}
+
 function change(status, path, from) {
     const kind = status.includes('R') ? 'renamed'
         : status.includes('D') ? 'deleted'
@@ -62,8 +74,9 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     const branch = [...committed, ...working]
     const branchGuides = branch.filter(isGuideEdit)
     const committedAnnouncements = committed.filter(isNewAnnouncement).map(c => c.path)
+    const followUp = Object.hasOwn(followUps, trigger) ? followUps[trigger] : null
     // A /docs follow-up may move the announcement drafted on this branch to another date.
-    const isMovedDraft = c => trigger === 'comment'
+    const isMovedDraft = c => followUp !== null
         && c.change === 'deleted'
         && committedAnnouncements.includes(c.path)
     const movedDrafts = working.filter(isMovedDraft).map(c => c.path)
@@ -135,7 +148,8 @@ export function reviewDrafts({label, trigger, committed: committedChanges, worki
     return {
         publishable: problems.length === 0,
         label,
-        commitMessage: trigger === 'comment' ? 'docs: apply /docs comment (agent)' : commitMessages[label],
+        commitMessage: followUp?.commitMessage ?? commitMessages[label],
+        unchangedMessage: followUp?.unchanged ?? `The branch already has what \`${label}\` needs. Nothing was pushed.`,
         changed: working,
         openQuestions,
         // Earlier guide changes are kept; the owner decides whether to remove them.
@@ -154,7 +168,7 @@ export function outcomeComment(review) {
     }
 
     const lines = review.changed.length === 0
-        ? [`The branch already has what \`${review.label}\` needs. Nothing was pushed.`, '']
+        ? [review.unchangedMessage, '']
         : [
             `The docs agent pushed \`${review.commitMessage}\`:`,
             '',
