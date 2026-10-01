@@ -58,10 +58,10 @@ Write descriptive link text. Link to public sources when they are necessary to c
 
 ## Open questions
 
-When the evidence cannot verify a behavior, leave an agent TODO marker where the answer belongs instead of guessing:
+When the workflow records an unverified behavior as an open question instead of asking it, put a TODO(agent) marker where the answer belongs:
 
 ```md
 <!-- TODO(agent): Hvilken knap gemmer holdopstillingen? -->
 ```
 
-Write one marker per question, phrased so a human can answer it directly. `yarn docs:validate` fails while any marker remains and quotes each open question, so a draft with unanswered questions cannot be merged. Replace the marker with the verified text once the question is answered.
+Write exactly this syntax, one marker per question, phrased so a human can answer it directly. The marker is an exception to the raw-HTML rule above only because it never ships: `yarn docs:validate` fails while any marker remains, quoting each open question, and also rejects malformed or empty markers because they would be shown on the Help page as text. A draft with open questions therefore cannot be merged. Replace each marker with the verified text once its question is answered.
