@@ -77,12 +77,15 @@ jobs:
             echo "number=$PR_NUMBER"
             echo "label=$labels"
             echo "head_ref=$(jq -r .headRefName <<<"$pr")"
+            echo "base_ref=$(jq -r .baseRefName <<<"$pr")"
           } >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.pr.outputs.head_ref }}
           fetch-depth: 0
+          # The push must use the Claude GitHub App token that the action configures, not GITHUB_TOKEN.
+          persist-credentials: false
 
       - name: Setup NodeJS
         uses: actions/setup-node@v7
@@ -103,13 +106,13 @@ jobs:
           DOCS_TRIGGER: ${{ github.event_name == 'issue_comment' && 'comment' || 'label' }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
-          BASE_REF: master
+          BASE_REF: ${{ steps.pr.outputs.base_ref }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: >-
             --model ${{ env.DOCS_MODEL }}
             --max-turns 30
-            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git merge-base:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh issue view:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*),Bash(node scripts/docs-agent/publish-drafts.mjs)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git merge-base:*),Bash(git mv resources/help/news/:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh issue view:*),Bash(yarn docs:validate),Bash(yarn build),Bash(date:*),Bash(node scripts/docs-agent/publish-drafts.mjs)"
           prompt: |
             Read `.agents/skills/document-feature/SKILL.md` and `.agents/skills/document-feature/CI.md`, then follow the skill in CI mode.
 
@@ -130,6 +133,10 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         run: |
-          if [ ! -f "$RUNNER_TEMP/docs-agent-outcome" ]; then
+          outcome=$(cat "$RUNNER_TEMP/docs-agent-outcome" 2>/dev/null || echo missing)
+
+          if [ "$outcome" = "missing" ]; then
             gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The docs agent stopped before publishing its drafts. Nothing was pushed. See the [workflow run]($RUN_URL)."
+          elif [[ "$outcome" == *"not commented"* ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "The docs agent finished (${outcome%%,*}) but could not post its summary. See the [workflow run]($RUN_URL)."
           fi

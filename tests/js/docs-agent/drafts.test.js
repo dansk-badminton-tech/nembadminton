@@ -259,9 +259,9 @@ test('the docs agent never deletes or renames files', () => {
 
     assert.equal(result.publishable, false)
     assert.deepEqual(result.problems, [
-        'The docs agent never deletes or renames files, but these were:\n'
+        'The docs agent never deletes files, but these were deleted or renamed:\n'
             + '- resources/help/guides/gammel.md\n'
-            + '- resources/help/guides/a.md -> resources/help/guides/b.md',
+            + '- resources/help/guides/a.md',
     ])
 })
 
@@ -272,8 +272,9 @@ test('the comment for a run with nothing to add says nothing was pushed and list
     }))
 
     assert.match(comment, /already has what `docs:announcement` needs\. Nothing was pushed\./)
-    assert.match(comment, /no longer fit `docs:announcement`/)
+    assert.match(comment, /User Guide changes on the branch don't fit `docs:announcement`/)
     assert.match(comment, /never deletes files/)
+    assert.match(comment, /switch the label back to `docs:guide`/)
     assert.match(comment, /- `resources\/help\/guides\/opret-og-klargoer-en-holdrunde\.md`/)
 })
 
@@ -286,6 +287,42 @@ test('a /docs follow-up commits under its own message', () => {
 
     assert.equal(result.publishable, true)
     assert.equal(result.commitMessage, 'docs: apply /docs comment (agent)')
+})
+
+test('a /docs follow-up may move the drafted announcement to another date', () => {
+    const merged = 'resources/help/news/2026-10-07-nye-holdrunder.md'
+    const result = review({
+        trigger: 'comment',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'deleted', path: announcement}, {change: 'added', path: merged}],
+    })
+
+    assert.equal(result.publishable, true)
+    assert.deepEqual(result.problems, [])
+})
+
+test('a /docs follow-up may move the drafted announcement with git mv', () => {
+    const merged = 'resources/help/news/2026-10-07-nye-holdrunder.md'
+    const result = review({
+        trigger: 'comment',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'renamed', path: merged, from: announcement}],
+    })
+
+    assert.equal(result.publishable, true)
+    assert.deepEqual(result.changed, [{change: 'deleted', path: announcement}, {change: 'added', path: merged}])
+})
+
+test('a /docs follow-up still may not remove announcements from master', () => {
+    const published = 'resources/help/news/2026-09-22-visuelt-loeft.md'
+    const result = review({
+        trigger: 'comment',
+        committed: [{change: 'added', path: announcement}],
+        working: [{change: 'deleted', path: published}],
+    })
+
+    assert.equal(result.publishable, false)
+    assert.deepEqual(result.problems, [`The docs agent never deletes files, but these were deleted or renamed:\n- ${published}`])
 })
 
 test('the summary comment names the file and lists open questions', () => {

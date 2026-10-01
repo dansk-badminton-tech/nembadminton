@@ -3,7 +3,7 @@
 // pushes them to the PR head branch or pushes nothing. Either way it comments on the PR with the
 // outcome. The document-feature workflow sets the environment variables read below.
 import {spawnSync} from 'node:child_process'
-import {writeFileSync} from 'node:fs'
+import {existsSync, writeFileSync} from 'node:fs'
 import {join} from 'node:path'
 import {validateHelpDocuments} from '../../resources/js/admin-v2/help/markdown.js'
 import {loadHelpDocuments} from '../load-help-documents.mjs'
@@ -31,6 +31,13 @@ async function validationErrors() {
 
 if (GITHUB_ACTIONS !== 'true' || !DOCS_LABEL || !DOCS_TRIGGER || !PR_NUMBER || !HEAD_REF || !BASE_REF) {
     console.error('publish-drafts only runs in the document-feature workflow.')
+    process.exit(2)
+}
+
+const outcomeFile = RUNNER_TEMP ? join(RUNNER_TEMP, 'docs-agent-outcome') : null
+
+if (outcomeFile && existsSync(outcomeFile)) {
+    console.error('publish-drafts already ran in this job; it publishes once per run.')
     process.exit(2)
 }
 
@@ -76,8 +83,9 @@ if (!commented.ok) {
     console.error(`Could not comment on the PR:\n${commented.output}`)
 }
 
-if (RUNNER_TEMP) {
-    writeFileSync(join(RUNNER_TEMP, 'docs-agent-outcome'), review.publishable ? 'published' : 'blocked')
+// Marks the run as done; the workflow comments itself when this is missing.
+if (outcomeFile) {
+    writeFileSync(outcomeFile, `${review.publishable ? 'published' : 'blocked'}${commented.ok ? '' : ', not commented'}`)
 }
 
 process.exitCode = review.publishable ? 0 : 1

@@ -45,24 +45,44 @@ function list(heading, paths) {
     return [heading, ...paths.map(path => `- ${path}`)].join('\n')
 }
 
-export function reviewDrafts({label, trigger, committed, working, validationErrors, build, today}) {
+// A rename is a deletion plus an addition, so a moved draft passes the same checks as both.
+function splitRenames(changes) {
+    return changes.flatMap(c => (c.change === 'renamed'
+        ? [{change: 'deleted', path: c.from}, {change: 'added', path: c.path}]
+        : [c]))
+}
+
+export function reviewDrafts({label, trigger, committed: committedChanges, working: workingChanges, validationErrors, build, today}) {
     const problems = []
+    const committed = splitRenames(committedChanges)
+    const working = splitRenames(workingChanges)
     const isEdit = c => c.change === 'added' || c.change === 'modified'
+    const isGuideEdit = c => isEdit(c) && guidePath.test(c.path)
+    const isNewAnnouncement = c => c.change === 'added' && announcementPath.test(c.path)
     const branch = [...committed, ...working]
-    const branchGuides = branch.filter(c => isEdit(c) && guidePath.test(c.path))
-    const draftedAnnouncements = branch.filter(c => c.change === 'added' && announcementPath.test(c.path))
-    const newAnnouncements = working.filter(c => c.change === 'added' && announcementPath.test(c.path))
-    const removed = working.filter(c => !isEdit(c))
+    const branchGuides = branch.filter(isGuideEdit)
+    const committedAnnouncements = committed.filter(isNewAnnouncement).map(c => c.path)
+    // A /docs follow-up may move the announcement drafted on this branch to another date.
+    const isMovedDraft = c => trigger === 'comment'
+        && c.change === 'deleted'
+        && committedAnnouncements.includes(c.path)
+    const movedDrafts = working.filter(isMovedDraft).map(c => c.path)
+    const newAnnouncements = working.filter(isNewAnnouncement)
+    const draftedAnnouncements = [
+        ...committedAnnouncements.filter(path => !movedDrafts.includes(path)).map(path => ({path})),
+        ...newAnnouncements,
+    ]
+    const removed = working.filter(c => c.change === 'deleted' && !isMovedDraft(c))
     const outsideHelp = working.filter(c => isEdit(c) && !guidePath.test(c.path) && !announcementPath.test(c.path))
-    const changedGuides = working.filter(c => isEdit(c) && guidePath.test(c.path))
+    const changedGuides = working.filter(isGuideEdit)
     const editedHistory = working.filter(c => c.change === 'modified'
         && announcementPath.test(c.path)
         && !draftedAnnouncements.some(drafted => drafted.path === c.path))
 
     if (removed.length > 0) {
         problems.push(list(
-            'The docs agent never deletes or renames files, but these were:',
-            removed.map(c => (c.change === 'renamed' ? `${c.from} -> ${c.path}` : c.path)),
+            'The docs agent never deletes files, but these were deleted or renamed:',
+            removed.map(c => c.path),
         ))
     }
 
@@ -80,7 +100,7 @@ export function reviewDrafts({label, trigger, committed, working, validationErro
     }
 
     for (const drafted of newAnnouncements) {
-        if (drafted.path.match(announcementPath)[1] !== today) {
+        if (trigger === 'label' && drafted.path.match(announcementPath)[1] !== today) {
             problems.push(`${drafted.path} must be dated ${today}, the day of the run.`)
         }
     }
@@ -119,9 +139,7 @@ export function reviewDrafts({label, trigger, committed, working, validationErro
         changed: working,
         openQuestions,
         // Earlier guide changes are kept; the owner decides whether to remove them.
-        offLabel: label === 'docs:announcement'
-            ? committed.filter(c => isEdit(c) && guidePath.test(c.path)).map(c => c.path)
-            : [],
+        offLabel: label === 'docs:announcement' ? committed.filter(isGuideEdit).map(c => c.path) : [],
         problems,
     }
 }
@@ -140,13 +158,13 @@ export function outcomeComment(review) {
         : [
             `The docs agent pushed \`${review.commitMessage}\`:`,
             '',
-            ...review.changed.map(c => `- \`${c.path}\` (${c.change === 'added' ? 'new' : 'updated'})`),
+            ...review.changed.map(c => `- \`${c.path}\` (${{added: 'new', modified: 'updated', deleted: 'moved'}[c.change]})`),
             '',
         ]
 
     if (review.offLabel.length > 0) {
         lines.push(
-            `These changes on the branch no longer fit \`${review.label}\`. The docs agent never deletes files, so remove them yourself if they should go:`,
+            `These User Guide changes on the branch don't fit \`${review.label}\`. The docs agent never deletes files: remove them yourself, or switch the label back to \`docs:guide\` to keep them.`,
             '',
             ...review.offLabel.map(path => `- \`${path}\``),
             '',
