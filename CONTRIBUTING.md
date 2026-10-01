@@ -58,7 +58,7 @@ Run JavaScript unit tests:
 yarn test:js
 ```
 
-For end-to-end tests with Laravel Dusk, follow the [browser testing instructions](README.md#browser-tests-end-to-end). Browser tests run separately from the regular PR checks.
+For end-to-end tests with Laravel Dusk, follow the [browser testing instructions](README.md#browser-tests-end-to-end). Browser tests run separately from the regular PR checks: add the `ci:browser-tests` label to the PR when its code and UI changes are done.
 
 ## Before opening a pull request
 

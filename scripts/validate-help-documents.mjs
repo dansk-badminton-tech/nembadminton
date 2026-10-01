@@ -1,7 +1,7 @@
 import {readdir, readFile} from 'node:fs/promises'
 import {relative, resolve} from 'node:path'
 import {fileURLToPath} from 'node:url'
-import {findOpenAgentQuestions, parseHelpDocument, validateHelpDocuments} from '../resources/js/admin-v2/help/markdown.js'
+import {parseHelpDocument, validateHelpDocuments} from '../resources/js/admin-v2/help/markdown.js'
 
 const projectRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const collections = [
@@ -24,7 +24,7 @@ try {
         }
     }
 
-    const errors = [...validateHelpDocuments(documents), ...findOpenAgentQuestions(documents)]
+    const errors = validateHelpDocuments(documents)
 
     if (errors.length > 0) {
         throw new Error(errors.join('\n'))

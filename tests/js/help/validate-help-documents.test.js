@@ -1,6 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {findOpenAgentQuestions, validateHelpDocuments} from '../../../resources/js/admin-v2/help/markdown.js'
+import {validateHelpDocuments} from '../../../resources/js/admin-v2/help/markdown.js'
 
 const requiredPages = [
     {kind: 'page', slug: 'faq', path: 'pages/faq.md', title: 'FAQ', summary: 'Svar.', body: 'Tekst.'},
@@ -15,8 +15,8 @@ function announcement(slug, metadata = {}) {
     return {kind: 'news', slug, path: `news/${slug}.md`, title: 'Nyt', summary: 'Nyt.', body: 'Tekst.', published: slug.slice(0, 10), ...metadata}
 }
 
-function validate(...guides) {
-    return validateHelpDocuments([...requiredPages, ...guides])
+function validate(...documents) {
+    return validateHelpDocuments([...requiredPages, ...documents])
 }
 
 test('a guide without journey placement is valid', () => {
@@ -60,23 +60,43 @@ test('journey placement is only allowed on guides', () => {
     ])
 })
 
-test('open agent questions do not stop the Help area from rendering a draft', () => {
-    assert.deepEqual(validate(guide('scenarier', {body: 'Tekst.\n\n<!-- TODO(agent): Hvad hedder knappen? -->'})), [])
-})
+test('a guide containing a TODO(agent) marker names the file and quotes the question', () => {
+    const body = 'Tekst.\n\n<!-- TODO(agent): Hvilken knap gemmer holdopstillingen? -->\n\nMere tekst.'
 
-test('an open agent question is reported', () => {
-    const draft = guide('scenarier', {body: 'Tekst.\n\n<!-- TODO(agent): Hvad hedder knappen? -->'})
-
-    assert.deepEqual(findOpenAgentQuestions([...requiredPages, draft]), [
-        'guides/scenarier.md: resolve open agent question "Hvad hedder knappen?"',
+    assert.deepEqual(validate(guide('gem-holdopstilling', {body})), [
+        'guides/gem-holdopstilling.md: unresolved TODO(agent) marker "Hvilken knap gemmer holdopstillingen?"',
     ])
 })
 
-test('every open agent question in a document is reported', () => {
-    const draft = announcement('2026-09-21-nyt', {body: '<!-- TODO(agent): Første? -->\n\nTekst.\n\n<!--TODO(agent):Anden?-->'})
+test('a Release Announcement reports every TODO(agent) marker it contains', () => {
+    const body = '<!-- TODO(agent): Hvornår udrulles ændringen? -->\n\nTekst.\n\n<!--TODO(agent):\nGælder det også\nfor ungdomshold?\n-->'
 
-    assert.deepEqual(findOpenAgentQuestions([...requiredPages, draft]), [
-        'news/2026-09-21-nyt.md: resolve open agent question "Første?"',
-        'news/2026-09-21-nyt.md: resolve open agent question "Anden?"',
+    assert.deepEqual(validate(announcement('2026-09-21-nyt', {body})), [
+        'news/2026-09-21-nyt.md: unresolved TODO(agent) marker "Hvornår udrulles ændringen?"',
+        'news/2026-09-21-nyt.md: unresolved TODO(agent) marker "Gælder det også for ungdomshold?"',
     ])
+})
+
+test('a TODO(agent) marker without a question is reported', () => {
+    assert.deepEqual(validate(guide('andet', {body: 'Tekst.\n\n<!-- TODO(agent): -->'})), [
+        'guides/andet.md: TODO(agent) marker has no question',
+    ])
+})
+
+test('a malformed TODO(agent) marker is reported instead of being published as text', () => {
+    const body = [
+        '<!-- TODO(agent) Mangler kolon? -->',
+        '<!-- todo (agent): Små bogstaver? -->',
+        '<!-- TODO(agent): Ikke lukket?',
+    ].join('\n\n')
+
+    assert.deepEqual(validate(guide('andet', {body})), [
+        'guides/andet.md: malformed TODO(agent) marker; use <!-- TODO(agent): <question> -->',
+        'guides/andet.md: malformed TODO(agent) marker; use <!-- TODO(agent): <question> -->',
+        'guides/andet.md: malformed TODO(agent) marker; use <!-- TODO(agent): <question> -->',
+    ])
+})
+
+test('ordinary comments are not TODO(agent) markers', () => {
+    assert.deepEqual(validate(guide('andet', {body: 'Tekst.\n\n<!-- En almindelig kommentar -->'})), [])
 })
