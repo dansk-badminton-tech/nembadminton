@@ -41,6 +41,7 @@ class MemberManagementPage extends Page
             '@search-input' => '[dusk="search-name-input"]',
             '@gender-select' => '[dusk="gender-select"]',
             '@show-inactive-switch' => '[dusk="show-inactive-switch"]',
+            '@only-permanent-cancellations-switch' => '[dusk="only-permanent-cancellations-switch"]',
             '@members-table' => '[dusk="member-management-card"]',
             '@info-message' => '[dusk="info-message"]',
             '@card' => '[dusk="member-management-card"]',
@@ -72,6 +73,15 @@ class MemberManagementPage extends Page
     public function toggleShowInactive(Browser $browser): self
     {
         $browser->click('@show-inactive-switch');
+        return $this;
+    }
+
+    /**
+     * Toggle showing only members with permanent afbud
+     */
+    public function toggleOnlyPermanentCancellations(Browser $browser): self
+    {
+        $browser->click('@only-permanent-cancellations-switch');
         return $this;
     }
 
