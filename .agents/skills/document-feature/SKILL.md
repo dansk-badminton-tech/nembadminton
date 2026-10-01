@@ -4,7 +4,7 @@ description: Draft the Danish user documentation for a feature that is ready to 
 disable-model-invocation: true
 ---
 
-Document the feature on the current branch. The output is a reviewed draft in the working tree, never a commit.
+Document the feature on the current branch. The output is a reviewed draft in the working tree, never a commit. When the `Document feature` workflow runs you in GitHub Actions, follow [CI.md](./CI.md) instead where it says so.
 
 ## Process
 
