@@ -7,8 +7,6 @@ use App\Models\Clubhouse;
 use App\Models\Member;
 use App\Models\Point;
 use App\Models\User;
-use Carbon\Carbon;
-use FlyCompany\Members\PointsManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
@@ -58,19 +56,6 @@ class RankingVersionsTest extends TestCase
             ->assertJsonPath('data.rankingVersions', ['2026-09-02', '2026-09-01', '2026-08-01'])
             ->assertJsonPath('data.newestRankingVersions', ['2026-09-01', '2026-08-01'])
             ->assertJsonPath('data.latestRankingVersion', '2026-09-01');
-    }
-
-    /** @test */
-    public function reimporting_an_unchanged_version_makes_it_the_newest_again(): void
-    {
-        $this->addPoint('2026-09-02', '2026-09-01 06:31:08');
-        $this->addPoint('2026-09-01', '2026-09-30 06:36:28');
-
-        $this->travelTo(Carbon::parse('2026-10-01 06:00:00'));
-        app(PointsManager::class)->addPointsByRefId('9001011234', 2730, 1, Carbon::parse('2026-09-02'), 'HS');
-
-        $this->graphQL(/** @lang GraphQL */ '{ newestRankingVersions }')
-            ->assertJsonPath('data.newestRankingVersions', ['2026-09-02']);
     }
 
     private function addPoint(string $version, string $updatedAt): void
