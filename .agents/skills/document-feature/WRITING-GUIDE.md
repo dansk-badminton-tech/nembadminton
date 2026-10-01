@@ -55,3 +55,13 @@ Announcements are historical records. Correct factual or language errors, but re
 Use headings, paragraphs, lists, links, emphasis, code, tables, and blockquotes. Raw HTML is rendered as text. Start body headings at `##` because the page renders the document title as its `h1`.
 
 Write descriptive link text. Link to public sources when they are necessary to complete the task. Screenshots are outside the initial documentation workflow.
+
+## Open questions
+
+When the evidence cannot verify a behavior, leave an agent TODO marker where the answer belongs instead of guessing:
+
+```md
+<!-- TODO(agent): Hvilken knap gemmer holdopstillingen? -->
+```
+
+Write one marker per question, phrased so a human can answer it directly. `yarn docs:validate` fails while any marker remains and quotes each open question, so a draft with unanswered questions cannot be merged. Replace the marker with the verified text once the question is answered.

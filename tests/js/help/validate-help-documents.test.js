@@ -57,3 +57,27 @@ test('journey placement is only allowed on guides', () => {
         'news/2026-09-21-nyt.md: journey is only allowed on guides',
     ])
 })
+
+test('a guide containing an agent TODO marker names the file and quotes the question', () => {
+    const body = 'Tekst.\n\n<!-- TODO(agent): Hvilken knap gemmer holdopstillingen? -->\n\nMere tekst.'
+
+    assert.deepEqual(validate(guide('gem-holdopstilling', {body})), [
+        'guides/gem-holdopstilling.md: unresolved agent question "Hvilken knap gemmer holdopstillingen?"',
+    ])
+})
+
+test('a Release Announcement reports every agent TODO marker it contains', () => {
+    const body = '<!-- TODO(agent): Hvornår udrulles ændringen? -->\n\nTekst.\n\n<!--TODO(agent):\nGælder det også\nfor ungdomshold?\n-->'
+    const announcement = {kind: 'news', slug: '2026-09-21-nyt', path: 'news/2026-09-21-nyt.md', title: 'Nyt', summary: 'Nyt.', body, published: '2026-09-21'}
+
+    assert.deepEqual(validateHelpDocuments([...requiredPages, announcement]), [
+        'news/2026-09-21-nyt.md: unresolved agent question "Hvornår udrulles ændringen?"',
+        'news/2026-09-21-nyt.md: unresolved agent question "Gælder det også for ungdomshold?"',
+    ])
+})
+
+test('ordinary comments and prose mentioning TODO(agent) are not agent markers', () => {
+    const body = 'Tekst om TODO(agent) uden kommentar.\n\n<!-- En almindelig kommentar -->'
+
+    assert.deepEqual(validate(guide('andet', {body})), [])
+})
