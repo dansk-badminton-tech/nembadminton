@@ -14,6 +14,10 @@ _Avoid_: User (unless referring to system login account)
 A system account with login credentials, roles, and clubhouse permissions.
 _Avoid_: Member, player
 
+**Clubhouse**:
+The organisation a User works in, linked to one or more badminton clubs. Team rounds, teams, cancellation collectors, invitations and memberships belong to a Clubhouse, and a User only reads and changes their own Clubhouse's data (see **Clubhouse isolation** in `CONTRIBUTING.md`). Members, clubs and ranking data are shared across Clubhouses.
+_Avoid_: Tenant, organisation, club (a club is the badmintonplayer.dk club)
+
 **TeamRound**:
 A specific match round (holdrunde) across a club's teams on a given date.
 _Avoid_: Match, fight, team fight

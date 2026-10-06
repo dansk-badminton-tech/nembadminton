@@ -1,0 +1,5 @@
+# Clubhouse isolation is enforced per GraphQL field
+
+Each Clubhouse's data is isolated from other Clubhouses by checks on each GraphQL field and mutation: a policy that compares the User's `clubhouse_id` with the model's, an injected `clubhouse_id` on create, or a resolver filter. It is not enforced by a global Eloquent scope. Several models are owned only indirectly (through a TeamRound or a CancellationCollector), some entry points are public on purpose by an unguessable id or token, and jobs and listeners run without a User, so a single global scope would have to be bypassed in exactly the places that matter most. The trade-off is that isolation is only as good as each field, so the rules live in `CONTRIBUTING.md` under **Clubhouse isolation**, every code review checks them, and the `clubhouse-isolation-review` skill checks them in depth before merge.
+
+Members, Clubs, Points and ranking versions from badmintonplayer.dk are shared data, deliberately readable and writable across Clubhouses (including `playable`, `inactive` and inactive overrides). This is the only exception to the rules.
