@@ -64,6 +64,10 @@ class TeamFightEditPage extends Page
             '@team-table-section' => "[dusk='team-table-section']",
             '@add-teams-section' => "[dusk='add-teams-section']",
             '@add-13-kamps-hold-button' => "[dusk='add-13-kamps-hold-button']",
+            '@squad-team-section' => "[dusk='squad-team-section']",
+            '@squad-team-empty' => "[dusk='squad-team-empty']",
+            '@squad-create-team-option' => "[dusk='squad-create-team-option']",
+            '@squad-manual-entry-option' => "[dusk='squad-manual-entry-option']",
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
@@ -342,15 +346,93 @@ class TeamFightEditPage extends Page
             $browser->type("[dusk='custom-category-count-{$category}']", (string) $count);
         }
 
+        $this->startManualSquadEntry($browser);
         $browser->type("[dusk='squad-name-input']", $name)
             ->type("[dusk='squad-tier-input']", $tier)
             ->assertEnabled('@add-13-kamps-hold-button');
         $this->submitSquad($browser);
     }
 
+    /**
+     * Pick the "Uden hold" card to reveal Navn/Niveau.
+     */
+    public function startManualSquadEntry(Browser $browser): void
+    {
+        $browser->waitFor("@squad-manual-entry-option[aria-pressed='false']")
+            ->assertSeeIn('@squad-manual-entry-option', 'Uden hold')
+            ->click('@squad-manual-entry-option')
+            ->waitFor("@squad-manual-entry-option[aria-pressed='true']")
+            ->waitFor("[dusk='squad-name-input']");
+    }
+
+    /**
+     * Clicking the selected "Uden hold" card again closes the Navn/Niveau fields.
+     */
+    public function cancelManualSquadEntry(Browser $browser): void
+    {
+        $browser->click("@squad-manual-entry-option[aria-pressed='true']")
+            ->waitFor("@squad-manual-entry-option[aria-pressed='false']")
+            ->waitUntilMissing("[dusk='squad-name-input']");
+    }
+
+    public function selectSquadTeam(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}']")
+            ->click("[dusk='squad-team-option-{$teamId}']")
+            ->waitFor("[dusk='squad-team-option-{$teamId}'][aria-pressed='true']");
+    }
+
+    /**
+     * Clicking the selected Team button again deselects it.
+     */
+    public function deselectSquadTeam(Browser $browser, int $teamId): void
+    {
+        $browser->click("[dusk='squad-team-option-{$teamId}'][aria-pressed='true']")
+            ->waitFor("[dusk='squad-team-option-{$teamId}'][aria-pressed='false']");
+    }
+
+    public function assertNoSquadTeamSelected(Browser $browser): void
+    {
+        $browser->assertMissing("[dusk^='squad-team-option-'][aria-pressed='true']");
+    }
+
+    public function assertSquadTeamAdded(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}'] [dusk='squad-team-added']")
+            ->assertSeeIn("[dusk='squad-team-option-{$teamId}']", '✓ tilføjet');
+    }
+
+    public function assertSquadTeamNotAdded(Browser $browser, int $teamId): void
+    {
+        $browser->waitFor("[dusk='squad-team-option-{$teamId}']")
+            ->assertMissing("[dusk='squad-team-option-{$teamId}'] [dusk='squad-team-added']");
+    }
+
+    /**
+     * Create a Team through the "Nyt hold" card; the form selects it once saved.
+     */
+    public function createTeamFromSquadForm(Browser $browser, string $name, string $groupName): void
+    {
+        $browser->waitFor('@squad-create-team-option')
+            ->assertSeeIn('@squad-create-team-option', 'Nyt hold')
+            ->click('@squad-create-team-option')
+            ->waitFor("[dusk='team-name-input']")
+            ->type("[dusk='team-name-input']", $name)
+            ->type("[dusk='team-group-input']", $groupName)
+            ->click("[dusk='team-submit']")
+            ->waitUntilMissing("[dusk='team-name-input']");
+    }
+
+    public function submitSquadForm(Browser $browser): void
+    {
+        $browser->waitFor('@add-13-kamps-hold-button')
+            ->scrollTo('@add-13-kamps-hold-button');
+        $this->submitSquad($browser);
+    }
+
     private function submitSquad(Browser $browser): void
     {
-        $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj til holdopstilling');
+        $browser->assertSeeIn('@add-13-kamps-hold-button', 'Tilføj');
         $browser->script("document.querySelector(\"[dusk='add-13-kamps-hold-button']\").click()");
     }
 
