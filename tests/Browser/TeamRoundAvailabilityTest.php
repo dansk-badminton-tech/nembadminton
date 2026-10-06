@@ -6,6 +6,7 @@ use App\Models\Cancellation;
 use App\Models\CancellationCollector;
 use App\Models\Clubhouse;
 use App\Models\Member;
+use App\Models\Point;
 use App\Models\Squad;
 use App\Models\TeamRound;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
@@ -26,6 +27,8 @@ class TeamRoundAvailabilityTest extends DuskTestCase
     private const LINK_MEMBER = ['refId' => '910128-22', 'name' => 'Michella Skov'];
 
     private const ALLOCATED_MEMBER = ['refId' => '960206-04', 'name' => 'Karoline Keller Rolsted'];
+
+    private const TOO_YOUNG_MEMBER = ['refId' => '120516-01', 'name' => 'Olivia Biering'];
 
     public function test_administrator_can_register_assign_and_remove_team_round_afbud(): void
     {
@@ -145,6 +148,37 @@ class TeamRoundAvailabilityTest extends DuskTestCase
                 ->assertCancellationRemovalDisabled()
                 ->assignCancelledMember(self::LINK_MEMBER['refId'])
                 ->waitForTextIn("[dusk='squad-0'] [dusk='cancellation-tag']", 'Afbud');
+        });
+    }
+
+    public function test_player_under_15_by_end_of_season_start_year_gets_a_warning(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $this->createTeamRoundWithSquad($browser, 'Too young journey');
+            // The seed data has no July 2025 ranking for this youth player.
+            $tooYoung = Member::query()->where('refId', self::TOO_YOUNG_MEMBER['refId'])->firstOrFail();
+            Point::query()->create([
+                'member_id' => $tooYoung->id,
+                'points' => 1075,
+                'category' => 'DS',
+                'vintage' => 'U15',
+                'version' => '2025-07-02',
+            ]);
+
+            $browser->refresh()->on(new TeamFightEditPage)
+                ->searchMembers(self::TOO_YOUNG_MEMBER['name'])
+                ->waitFor($this->availableMember(self::TOO_YOUNG_MEMBER))
+                ->fillCategorySlot(0, '1. DS', self::TOO_YOUNG_MEMBER['name'])
+                ->waitForTextIn("[dusk='squad-0'] [dusk='too-young-tag']", 'Under 15 år')
+                ->mouseover("[dusk='squad-0'] [dusk='too-young-tag']")
+                ->waitForTextIn("[dusk='squad-0'] .b-tooltip.is-warning .tooltip-content", 'ikke fyldt 15 år senest 31.12.2025');
+
+            $browser->removeSquadMember(0, self::TOO_YOUNG_MEMBER['name'])
+                ->searchMembers(self::MEMBER['name'])
+                ->waitFor($this->availableMember(self::MEMBER))
+                ->fillCategorySlot(0, '1. DS', self::MEMBER['name'])
+                ->waitForTextIn('@team-table-section', self::MEMBER['name'])
+                ->assertMissing("[dusk='squad-0'] [dusk='too-young-tag']");
         });
     }
 

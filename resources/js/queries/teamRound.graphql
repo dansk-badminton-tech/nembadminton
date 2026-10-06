@@ -71,5 +71,6 @@ query teamRound($id: ID!, $scenarioId: ID){
         season {
             id
         }
+        seasonStartYear
     }
 }
