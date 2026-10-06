@@ -18,6 +18,9 @@ A website for holding turnerings rules in badminton. https://badminton.dk/holdtu
   - Can be associated with a clubhouse for access control
   - Used for authentication and authorization
 
+### Clubhouse isolation
+When you change GraphQL schema, policies, models or resolvers, follow **Clubhouse isolation** in `CONTRIBUTING.md`: a User reads and changes only their own Clubhouse's data.
+
 Testing:
 
 ## Running PHP and browser tests (any checkout or git worktree)
@@ -76,4 +79,4 @@ Canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-hu
 
 ### Domain docs
 
-Single-context (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
+Single-context (`GLOSSARY.md` and `docs/adr/`). See `docs/agents/domain.md`.
