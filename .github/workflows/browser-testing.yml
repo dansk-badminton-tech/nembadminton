@@ -5,12 +5,25 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types: [labeled, synchronize, reopened]
+    branches:
+      - master
 
 env:
   APP_ENV: dusk.ci
 
 jobs:
   browser-tests:
+    # On PRs, run only while the `ci:browser-tests` label is on: when it is added,
+    # and on every later push. Adding other labels does not start a run.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'ci:browser-tests') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci:browser-tests'))
+    concurrency:
+      group: browser-testing-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     services:
       mysql:

@@ -35,7 +35,7 @@ Omit `journey` for a guide outside the holdrunde journey; it is listed under "An
 
 ## Release Announcements
 
-Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it.
+Store Release Announcements in `resources/help/news/<YYYY-MM-DD>-<slug>.md`. Use the intended deployment date. If that date is unknown, ask for it; in CI mode, use the day of the run instead.
 
 ```md
 ---
@@ -55,3 +55,13 @@ Announcements are historical records. Correct factual or language errors, but re
 Use headings, paragraphs, lists, links, emphasis, code, tables, and blockquotes. Raw HTML is rendered as text. Start body headings at `##` because the page renders the document title as its `h1`.
 
 Write descriptive link text. Link to public sources when they are necessary to complete the task. Screenshots are outside the initial documentation workflow.
+
+## Open questions
+
+When the workflow records an unverified behavior as an open question instead of asking it, put a TODO(agent) marker where the answer belongs:
+
+```md
+<!-- TODO(agent): Hvilken knap gemmer holdopstillingen? -->
+```
+
+Write exactly this syntax, one marker per question, phrased so a human can answer it directly. The marker is an exception to the raw-HTML rule above only because it never ships: `yarn docs:validate` fails while any marker remains, quoting each open question, and also rejects malformed or empty markers because they would be shown on the Help page as text. A draft with open questions therefore cannot be merged. Replace each marker with the verified text once its question is answered.
