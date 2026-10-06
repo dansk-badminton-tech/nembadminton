@@ -44,10 +44,12 @@ Kopien indeholder holdene, deres kampinformation og spillerne fra den officielle
 
 Tilføj holdene under **Holdene i holdrunden** i rækkefølge med det bedste hold først. Holdene nummereres **Hold 1**, **Hold 2** og så videre, og rækkefølgen bruges, når holdopstillingen valideres.
 
-1. Vælg holdets størrelse under **Antal kampe**. Vælg **Tilpas**, hvis holdet ikke følger et af standardformaterne, og angiv antallet af kampe i hver kategori: **MD**, **DS**, **DD**, **HS** og **HD**.
-2. Vælg holdets **Spilledato**. Den er som udgangspunkt holdrundens dato, og du kan vælge dagen før, dagen efter eller en anden dato.
-3. Udfyld eventuelt **Hold / Navn / Niveau (valgfri)** med holdets navn og niveau, fx "Højbjerg 1" og "1. division". Har klubben oprettet sine hold under **Hold** i menuen, kan du i stedet vælge holdet i feltet "Vælg fra hold".
-4. Vælg **Tilføj til holdopstilling**.
+1. Vælg holdet øverst under **Hold**. Holdene fra holdrundens sæson vises som kort med holdets niveau og pulje. Holdets navn og niveau udfyldes automatisk, og et hold, der allerede er tilføjet i holdrunden, er markeret med **✓ tilføjet**. Vælg holdet igen for at fravælge det.
+   - Mangler holdet i oversigten, vælg **Nyt hold**. Du opretter holdet i et vindue, og det vælges, når du har gemt det. Holdet gemmes under **Hold** i menuen, så du kan bruge det igen næste gang. Har klubben endnu ingen hold, vises en opfordring til at oprette dem først.
+   - Skal holdet kun bruges i denne holdrunde, vælg **Uden hold**. Så kan du selv udfylde navn og niveau, fx "Højbjerg 1" og "1. division". Begge er valgfrie. Uden navn vises holdet som "Hold" efterfulgt af nummeret.
+2. Vælg holdets størrelse under **Antal kampe**. Vælg **Tilpas**, hvis holdet ikke følger et af standardformaterne, og angiv antallet af kampe i hver kategori: **MD**, **DS**, **DD**, **HS** og **HD**.
+3. Vælg holdets **Spilledato**. Den er som udgangspunkt holdrundens dato, og du kan vælge dagen før, dagen efter eller en anden dato.
+4. Vælg knappen under formularen. Den hedder fx **Tilføj "Højbjerg 1" til holdopstillingen** og nævner det valgte hold eller det navn, du har skrevet.
 
 Gentag trinene for hvert hold i holdrunden.
 
@@ -60,6 +62,12 @@ Hold med deres egen rangliste bliver ikke opdateret, når du skifter holdrundens
 1. Vælg **Rediger holdet** i tandhjulsmenuen ved holdet.
 2. Vælg en anden **Rangliste**, eller vælg **Nulstil**, hvis holdet skal bruge holdrundens rangliste.
 3. Vælg **Gem**. Pointene på holdet opdateres til den valgte rangliste.
+
+### Tilknyt et hold bagefter
+
+Er et hold tilføjet med **Uden hold**, kan du knytte det til et af sæsonens hold senere. Vælg **Rediger holdet**, og vælg holdet under **Tilknyt hold**. Holdets navn ændres til det tilknyttede holds navn. Hold, der allerede bruges af et andet hold i holdrunden, tilbydes ikke.
+
+Et tilknyttet hold viser det niveau, holdet har under **Hold** i menuen. Ændrer du niveauet dér, følger holdet i holdrunden med. Kobler du holdet fra igen, beholder det sit nuværende niveau, som du så kan rette i feltet **Niveau**.
 
 ## Udfyld kampinformation
 
