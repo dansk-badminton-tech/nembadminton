@@ -78,6 +78,7 @@ Rettelsen gælder kun spilleren på denne plads i denne holdrunde. Står spiller
 Kontrollen er en hjælp, men den dækker ikke alle regler. I disse situationer skal du selv tage stilling:
 
 - **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Hvis en ungdomsspiller ellers ville udløse en niveau- eller kategorifejl, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategorivalidering** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
+- **Spillere under 15 år:** En spiller, der ikke er fyldt 15 år senest 31.12. i det kalenderår, sæsonen starter, er markeret med **Under 15 år** ved navnet på holdopstillingen (§ 31, stk. 1). Hold markøren over mærket for at se begrundelsen. Sæsonen er holdrundens sæson, og har holdrunden ingen sæson, bruges sæsonen for spilledatoen. Mangler begge dele, vises mærket ikke. Mærket er en advarsel: Du kan stadig gemme, dele og give besked, så du skal selv vurdere, om spilleren må spille på holdet.
 - **Spillere i andre holdrunder:** Spillere markeret med **Optaget på:** er ikke en del af kontrollen.
 - **Et hold, der bevidst ikke er fuldt besat:** Slå kontakten ved **Hold fuldendt** fra. Kontrollen viser **Deaktiveret**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene. Valget gemmes ikke, så kontakten er slået til igen, næste gang du åbner holdrunden.
 
