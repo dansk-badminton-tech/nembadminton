@@ -328,7 +328,7 @@ export default {
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
         resolveLabel(player, category, league) {
-            return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, this.tooYoungPlayers, this.season)
+            return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, this.tooYoungPlayers, parseInt(this.season))
         },
         isTooYoung(player) {
             return isTooYoung(this.tooYoungPlayers, player);
