@@ -8,7 +8,7 @@ Document the feature on the current branch. The output is a reviewed draft in th
 
 ## Process
 
-1. Build an **evidence map**. Read the current PR and its linked issue and comments when they exist. Find the merge base with the PR base branch, then inspect every committed, staged, unstaged, and untracked change since it. Read relevant tests, user-visible routes and labels, existing Help documents, `CONTEXT.md`, and applicable ADRs. This step is complete when every changed user-visible behavior is accounted for and every instruction you may write has a source.
+1. Build an **evidence map**. Read the current PR and its linked issue and comments when they exist. Find the merge base with the PR base branch, then inspect every committed, staged, unstaged, and untracked change since it. Read relevant tests, user-visible routes and labels, existing Help documents, `../../../GLOSSARY.md`, and applicable ADRs. This step is complete when every changed user-visible behavior is accounted for and every instruction you may write has a source.
 
 2. Classify the documentation impact:
 
@@ -22,6 +22,6 @@ Document the feature on the current branch. The output is a reviewed draft in th
 
 4. Run `yarn docs:validate`, then run `yarn build`. Resolve every documentation error and any build failure caused by the draft. Existing unrelated failures should be reported with evidence rather than hidden.
 
-5. Review the final diff. Check that it contains the smallest documentation change that fully explains the user impact, uses canonical terms from `CONTEXT.md`, and contains no implementation details. Leave all changes uncommitted.
+5. Review the final diff. Check that it contains the smallest documentation change that fully explains the user impact, uses canonical terms from `GLOSSARY.md`, and contains no implementation details. Leave all changes uncommitted.
 
 6. Report the classification, changed Help files, validation results, and any remaining questions. For `docs:not-needed`, report only the rationale, label state, and that no documentation files were created.

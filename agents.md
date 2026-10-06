@@ -76,4 +76,4 @@ Canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-hu
 
 ### Domain docs
 
-Single-context (`CONTEXT.md` and `docs/adr/`). See `docs/agents/domain.md`.
+Single-context (`GLOSSARY.md` and `docs/adr/`). See `docs/agents/domain.md`.
