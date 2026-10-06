@@ -171,7 +171,11 @@ class TeamRoundAvailabilityTest extends DuskTestCase
                 ->fillCategorySlot(0, '1. DS', self::TOO_YOUNG_MEMBER['name'])
                 ->waitForTextIn("[dusk='squad-0'] [dusk='too-young-tag']", 'Under 15 år')
                 ->mouseover("[dusk='squad-0'] [dusk='too-young-tag']")
-                ->waitForTextIn("[dusk='squad-0'] .b-tooltip.is-warning .tooltip-content", 'ikke fyldt 15 år senest 31.12.2025');
+                ->waitForTextIn("[dusk='squad-0'] .b-tooltip.is-warning .tooltip-content", 'ikke fyldt 15 år senest 31.12.2025')
+                // The tag carries the warning; the name tooltip stays about ranking.
+                ->mouseover("[dusk='squad-0'] p.handle")
+                ->pause(300)
+                ->assertDontSeeIn("[dusk='squad-0'] .b-tooltip.is-info", '31.12.2025');
 
             $browser->removeSquadMember(0, self::TOO_YOUNG_MEMBER['name'])
                 ->searchMembers(self::MEMBER['name'])

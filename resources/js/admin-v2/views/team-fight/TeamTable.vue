@@ -104,7 +104,7 @@
                                 type="is-info"
                                 class="is-pulled-left"
                                 size="is-large"
-                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category) || !hasPointsInCategory(player, category.category) || isTooYoung(player)"
+                                :active="isPlayingToHigh(player) || isPlayingToHighInSquad(player, category.category) || !hasPointsInCategory(player, category.category)"
                                 multilined>
                                 <template v-slot:content>
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
@@ -343,7 +343,7 @@ export default {
             return isDoubleCategory(category)
         },
         resolveLabel(player, category, league) {
-            return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad, this.tooYoungPlayers, this.seasonStartYear)
+            return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
         },
         isTooYoung(player) {
             return isTooYoung(this.tooYoungPlayers, player);
