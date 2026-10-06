@@ -130,6 +130,24 @@ class Member extends Model
         return $query;
     }
 
+    /**
+     * Leave out members whose status is permanent afbud: not inactive and not playable.
+     * Inactive members are kept, since their status is inactive whatever playable says.
+     *
+     * @param  Builder<Member>  $builder
+     * @return Builder<Member>
+     */
+    public function scopeExcludePermanentCancellations(Builder $builder, ?bool $exclude): Builder
+    {
+        if (! ($exclude ?? false)) {
+            return $builder;
+        }
+
+        return $builder->where(function (Builder $builder) {
+            $builder->where('inactive', '=', true)->orWhere('playable', '=', true);
+        });
+    }
+
     public function scopeActive(Builder $builder): Builder
     {
         return $builder->where('inactive', '=', false);

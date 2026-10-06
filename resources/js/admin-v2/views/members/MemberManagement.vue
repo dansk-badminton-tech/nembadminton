@@ -3,17 +3,26 @@ import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
 import CardComponent from "@/components/CardComponent.vue";
 import gql from "graphql-tag";
+import {debounce} from "@/helpers.js";
+
+const GENDERS = ['MEN', 'WOMEN'];
 
 export default {
     name: "MemberManagement",
     components: {CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
     data() {
+        const query = this.$route.query;
+        const searchName = typeof query.q === 'string' ? query.q : '';
+        const hidden = typeof query.skjul === 'string' ? query.skjul.split(',') : [];
+
         return {
             titleStack: ['Admin', 'Spillere'],
-            searchName: '',
-            selectedGender: null,
-            showInactive: false,
+            searchName,
+            appliedSearchName: searchName,
+            selectedGender: GENDERS.includes(query.gender) ? query.gender : null,
+            showInactive: !hidden.includes('inaktive'),
+            showPermanentCancellations: !hidden.includes('afbud'),
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
@@ -30,6 +39,42 @@ export default {
                 {value: 'WOMEN', label: 'Dame'}
             ]
         },
+        hiddenGroups() {
+            const hidden = [];
+
+            if (!this.showInactive) {
+                hidden.push('inaktive');
+            }
+
+            if (!this.showPermanentCancellations) {
+                hidden.push('afbud');
+            }
+
+            return hidden;
+        },
+        hasNarrowingFilters() {
+            return this.hiddenGroups.length > 0 || this.selectedGender !== null || this.appliedSearchName.trim() !== '';
+        },
+        emptyMessage() {
+            const searchName = this.appliedSearchName.trim();
+
+            return searchName !== '' ? `Ingen spillere matcher "${searchName}"` : 'Ingen spillere';
+        },
+        emptyHints() {
+            const hints = [];
+            const hiddenLabels = {inaktive: 'inaktive spillere', afbud: 'spillere med permanent afbud'};
+
+            if (this.hiddenGroups.length > 0) {
+                const hidden = this.hiddenGroups.map(group => hiddenLabels[group]).join(' og ');
+                hints.push(`${hidden.charAt(0).toUpperCase()}${hidden.slice(1)} er skjult.`);
+            }
+
+            if (this.selectedGender) {
+                hints.push(`Kun ${this.getGenderLabel(this.selectedGender).toLowerCase()}spillere vises.`);
+            }
+
+            return hints;
+        },
         membersList() {
             return this.members?.membersSearch?.data ?? [];
         },
@@ -40,12 +85,13 @@ export default {
     apollo: {
         members: {
             query: gql`
-                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $inactive: Boolean, $page: Int!, $first: Int!) {
+                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $inactive: Boolean, $excludePermanentCancellations: Boolean, $page: Int!, $first: Int!) {
                     membersSearch(
                         clubhouse: $clubhouse
                         name: $name
                         gender: $gender
                         inactive: $inactive
+                        excludePermanentCancellations: $excludePermanentCancellations
                         page: $page
                         first: $first
                     ) {
@@ -77,8 +123,8 @@ export default {
                     first: this.perPage
                 };
 
-                if (this.searchName && this.searchName.trim() !== '') {
-                    vars.name = `%${this.searchName}%`;
+                if (this.appliedSearchName.trim() !== '') {
+                    vars.name = `%${this.appliedSearchName.trim()}%`;
                 }
 
                 if (this.selectedGender) {
@@ -87,6 +133,10 @@ export default {
 
                 if (!this.showInactive) {
                     vars.inactive = false;
+                }
+
+                if (!this.showPermanentCancellations) {
+                    vars.excludePermanentCancellations = true;
                 }
 
                 return vars;
@@ -104,10 +154,52 @@ export default {
             }
         }
     },
+    watch: {
+        searchName() {
+            this.applySearchName();
+        },
+        showInactive() {
+            this.filtersChanged();
+        },
+        showPermanentCancellations() {
+            this.filtersChanged();
+        },
+        selectedGender() {
+            this.filtersChanged();
+        }
+    },
     methods: {
-        search() {
+        applySearchName: debounce(function () {
+            this.appliedSearchName = this.searchName;
+            this.filtersChanged();
+        }, 300),
+        filtersChanged() {
             this.currentPage = 1;
-            this.$apollo.queries.members.refetch();
+
+            // Keep the filters in the URL, so a refresh or a shared link shows the same list.
+            const {q, skjul, gender, ...query} = this.$route.query;
+            const searchName = this.appliedSearchName.trim();
+
+            if (searchName !== '') {
+                query.q = searchName;
+            }
+
+            if (this.hiddenGroups.length > 0) {
+                query.skjul = this.hiddenGroups.join(',');
+            }
+
+            if (this.selectedGender) {
+                query.gender = this.selectedGender;
+            }
+
+            this.$router.replace({query});
+        },
+        showAllMembers() {
+            this.searchName = '';
+            this.appliedSearchName = '';
+            this.selectedGender = null;
+            this.showInactive = true;
+            this.showPermanentCancellations = true;
         },
         onPageChange(page) {
             this.currentPage = page;
@@ -266,14 +358,13 @@ export default {
                         <b-field label="Søg på navn" expanded>
                             <b-input
                                 v-model="searchName"
-                                @update:modelValue="search"
                                 placeholder="Indtast navn..."
                                 icon="magnify"
                                 dusk="search-name-input"
                             ></b-input>
                         </b-field>
                         <b-field label="Køn">
-                            <b-select v-model="selectedGender" @update:modelValue="search" dusk="gender-select">
+                            <b-select v-model="selectedGender" dusk="gender-select">
                                 <option
                                     v-for="option in genderOptions"
                                     :key="option.value"
@@ -283,8 +374,9 @@ export default {
                                 </option>
                             </b-select>
                         </b-field>
-                        <b-field label="Vis inaktive">
-                            <b-switch v-model="showInactive" @update:modelValue="search" dusk="show-inactive-switch"></b-switch>
+                        <b-field label="Vis" grouped>
+                            <b-switch v-model="showInactive" dusk="show-inactive-switch">Inaktive</b-switch>
+                            <b-switch v-model="showPermanentCancellations" dusk="show-permanent-cancellations-switch">Permanent afbud</b-switch>
                         </b-field>
                     </b-field>
 
@@ -377,8 +469,20 @@ export default {
                         </b-table-column>
 
                         <template v-slot:empty>
-                            <div class="has-text-centered">
-                                Ingen spillere fundet
+                            <div class="has-text-centered" dusk="members-empty">
+                                <p>{{ emptyMessage }}</p>
+                                <p v-for="hint in emptyHints" :key="hint" class="is-size-7 has-text-grey">
+                                    {{ hint }}
+                                </p>
+                                <b-button
+                                    v-if="hasNarrowingFilters"
+                                    type="is-text"
+                                    class="mt-2"
+                                    @click="showAllMembers"
+                                    dusk="show-all-members"
+                                >
+                                    Vis alle spillere
+                                </b-button>
                             </div>
                         </template>
                     </b-table>

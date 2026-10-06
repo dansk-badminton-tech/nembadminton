@@ -65,7 +65,7 @@ Vælg den status, der passer til, hvor længe spilleren er væk:
 
 Du giver permanent afbud på én af to måder:
 
-- På siden **Spillere**: vælg **Lav afbud permanent** ved spilleren, og senere **Annuller permanent afbud**.
+- På siden **Spillere**: vælg **Lav afbud permanent** ved spilleren, og senere **Annuller permanent afbud**. Slå **Kun permanent afbud** til over listen for kun at se spillere med permanent afbud. Filteret virker sammen med søgning på navn, **Køn** og **Vis inaktive**.
 - I holdrunden, når spilleren allerede har afbud på spilledatoen: slå **Vis afbud** til, og vælg **Lav afbud permanent (Alle holdrunder)** ved spilleren. Slå **Vis permanent afbud** til for at se alle spillere med permanent afbud, og vælg **Annuller permanent afbud**, når spilleren kan spille igen.
 
 **Inaktiv** sættes automatisk ud fra badmintonplayer.dk, når spilleren ikke har spillet 4 kampe i en kategori inden for de sidste 12 måneder. Du kan ændre det på siden **Spillere** med **Marker som inaktiv** eller **Marker som aktiv**. Inaktive spillere er skjult under **Søg på spiller**, men du kan finde dem ved at slå **Vis inaktive** til.

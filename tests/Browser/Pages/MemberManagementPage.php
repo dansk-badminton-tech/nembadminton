@@ -41,6 +41,9 @@ class MemberManagementPage extends Page
             '@search-input' => '[dusk="search-name-input"]',
             '@gender-select' => '[dusk="gender-select"]',
             '@show-inactive-switch' => '[dusk="show-inactive-switch"]',
+            '@show-permanent-cancellations-switch' => '[dusk="show-permanent-cancellations-switch"]',
+            '@members-empty' => '[dusk="members-empty"]',
+            '@show-all-members' => '[dusk="show-all-members"]',
             '@members-table' => '[dusk="member-management-card"]',
             '@info-message' => '[dusk="info-message"]',
             '@card' => '[dusk="member-management-card"]',
@@ -67,11 +70,20 @@ class MemberManagementPage extends Page
     }
 
     /**
-     * Toggle show inactive members
+     * Toggle showing inactive members
      */
     public function toggleShowInactive(Browser $browser): self
     {
         $browser->click('@show-inactive-switch');
+        return $this;
+    }
+
+    /**
+     * Toggle showing members with permanent afbud
+     */
+    public function toggleShowPermanentCancellations(Browser $browser): self
+    {
+        $browser->click('@show-permanent-cancellations-switch');
         return $this;
     }
 
