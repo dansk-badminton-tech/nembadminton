@@ -142,7 +142,6 @@ class MemberManagementTest extends DuskTestCase
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->filterByStatus('alle')
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
                     ->toggleMemberInactiveStatusById($member->id)
@@ -168,32 +167,33 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
-     * Test that inactive members are hidden by default and shown under "Inaktive"
+     * Test that inactive members are shown by default and can be hidden
      */
-    public function testFilterInactiveMembers(): void
+    public function testHideInactiveMembers(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
 
-            [$inactiveMember, $activeMember] = $this->activePlayableMembers($clubhouse, 2)->all();
-            $inactiveMember->update(['inactive' => true]);
+            $member = $this->activePlayableMembers($clubhouse, 1)->first();
+            $member->update(['inactive' => true]);
 
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->searchMember($inactiveMember->name)
-                    ->waitForTextIn('@members-empty', 'Ingen aktive spillere matcher')
-                    ->filterByStatus('inaktive')
-                    ->assertMemberStatus($inactiveMember->name, 'Inaktiv')
-                    ->searchMember($activeMember->name)
-                    ->waitForTextIn('@members-empty', 'Ingen inaktive spillere matcher');
+                    ->searchMember($member->name)
+                    ->assertMemberStatus($member->name, 'Inaktiv')
+                    ->toggleShowInactive()
+                    ->waitForTextIn('@members-empty', 'Ingen spillere matcher')
+                    ->assertSeeIn('@members-empty', 'Inaktive spillere er skjult.')
+                    ->toggleShowInactive()
+                    ->assertMemberStatus($member->name, 'Inaktiv');
         });
     }
 
     /**
-     * Test showing only members with permanent afbud
+     * Test that members with permanent afbud are shown by default and can be hidden
      */
-    public function testFilterPermanentCancellations(): void
+    public function testHidePermanentCancellations(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
@@ -204,12 +204,13 @@ class MemberManagementTest extends DuskTestCase
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->searchMember($playableMember->name)
-                    ->waitForTextIn('@members-table', $playableMember->name)
-                    ->filterByStatus('afbud')
-                    ->waitForTextIn('@members-empty', 'Ingen spillere med permanent afbud matcher')
                     ->searchMember($cancelledMember->name)
-                    ->assertMemberStatus($cancelledMember->name, 'Permanent afbud');
+                    ->assertMemberStatus($cancelledMember->name, 'Permanent afbud')
+                    ->toggleShowPermanentCancellations()
+                    ->waitForTextIn('@members-empty', 'Ingen spillere matcher')
+                    ->assertSeeIn('@members-empty', 'Spillere med permanent afbud er skjult.')
+                    ->searchMember($playableMember->name)
+                    ->assertMemberStatus($playableMember->name, 'Aktiv');
         });
     }
 
@@ -222,20 +223,21 @@ class MemberManagementTest extends DuskTestCase
             $clubhouse = Clubhouse::first();
 
             $member = $this->activePlayableMembers($clubhouse, 1)->first();
-            $member->update(['playable' => false]);
 
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->filterByStatus('afbud')
+                    ->toggleShowInactive()
+                    ->toggleShowPermanentCancellations()
                     ->searchMember($member->name)
-                    ->assertMemberStatus($member->name, 'Permanent afbud')
-                    ->assertQueryStringHas('status', 'afbud')
+                    ->assertMemberStatus($member->name, 'Aktiv')
+                    ->assertQueryStringHas('skjul', 'inaktive,afbud')
                     ->assertQueryStringHas('q', $member->name)
                     ->refresh()
                     ->waitForTextIn('@members-table', $member->name)
                     ->assertInputValue('@search-input', $member->name)
-                    ->assertMemberStatus($member->name, 'Permanent afbud');
+                    ->assertNotChecked('@show-inactive-switch input')
+                    ->assertNotChecked('@show-permanent-cancellations-switch input');
         });
     }
 
@@ -250,13 +252,14 @@ class MemberManagementTest extends DuskTestCase
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->filterByStatus('inaktive')
+                    ->toggleShowInactive()
                     ->searchMember('ingen spiller hedder sådan')
-                    ->waitForTextIn('@members-empty', 'Ingen inaktive spillere matcher')
+                    ->waitForTextIn('@members-empty', 'Ingen spillere matcher')
                     ->click('@show-all-members')
                     ->waitUntilMissing('@members-empty')
                     ->assertInputValue('@search-input', '')
-                    ->assertQueryStringHas('status', 'alle')
+                    ->assertChecked('@show-inactive-switch input')
+                    ->assertQueryStringMissing('skjul')
                     ->assertQueryStringMissing('q');
         });
     }

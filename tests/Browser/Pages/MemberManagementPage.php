@@ -40,7 +40,8 @@ class MemberManagementPage extends Page
         return [
             '@search-input' => '[dusk="search-name-input"]',
             '@gender-select' => '[dusk="gender-select"]',
-            '@status-filter' => '[dusk="status-filter"]',
+            '@show-inactive-switch' => '[dusk="show-inactive-switch"]',
+            '@show-permanent-cancellations-switch' => '[dusk="show-permanent-cancellations-switch"]',
             '@members-empty' => '[dusk="members-empty"]',
             '@show-all-members' => '[dusk="show-all-members"]',
             '@members-table' => '[dusk="member-management-card"]',
@@ -69,11 +70,20 @@ class MemberManagementPage extends Page
     }
 
     /**
-     * Filter by status: aktive, afbud, inaktive or alle
+     * Toggle showing inactive members
      */
-    public function filterByStatus(Browser $browser, string $status): self
+    public function toggleShowInactive(Browser $browser): self
     {
-        $browser->click("[dusk='status-filter-{$status}']");
+        $browser->click('@show-inactive-switch');
+        return $this;
+    }
+
+    /**
+     * Toggle showing members with permanent afbud
+     */
+    public function toggleShowPermanentCancellations(Browser $browser): self
+    {
+        $browser->click('@show-permanent-cancellations-switch');
         return $this;
     }
 

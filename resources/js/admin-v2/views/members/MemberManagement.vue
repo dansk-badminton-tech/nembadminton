@@ -5,13 +5,6 @@ import CardComponent from "@/components/CardComponent.vue";
 import gql from "graphql-tag";
 import {debounce} from "@/helpers.js";
 
-const STATUS_FILTERS = {
-    aktive: {label: 'Aktive', empty: 'Ingen aktive spillere', variables: {inactive: false}},
-    afbud: {label: 'Permanent afbud', empty: 'Ingen spillere med permanent afbud', variables: {inactive: false, playable: false}},
-    inaktive: {label: 'Inaktive', empty: 'Ingen inaktive spillere', variables: {inactive: true}},
-    alle: {label: 'Alle', empty: 'Ingen spillere', variables: {}}
-};
-const DEFAULT_STATUS = 'aktive';
 const GENDERS = ['MEN', 'WOMEN'];
 
 export default {
@@ -21,13 +14,15 @@ export default {
     data() {
         const query = this.$route.query;
         const searchName = typeof query.q === 'string' ? query.q : '';
+        const hidden = typeof query.skjul === 'string' ? query.skjul.split(',') : [];
 
         return {
             titleStack: ['Admin', 'Spillere'],
             searchName,
             appliedSearchName: searchName,
             selectedGender: GENDERS.includes(query.gender) ? query.gender : null,
-            status: Object.hasOwn(STATUS_FILTERS, query.status) ? query.status : DEFAULT_STATUS,
+            showInactive: !hidden.includes('inaktive'),
+            showPermanentCancellations: !hidden.includes('afbud'),
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
@@ -44,17 +39,41 @@ export default {
                 {value: 'WOMEN', label: 'Dame'}
             ]
         },
-        statusOptions() {
-            return Object.entries(STATUS_FILTERS).map(([value, filter]) => ({value, label: filter.label}));
+        hiddenGroups() {
+            const hidden = [];
+
+            if (!this.showInactive) {
+                hidden.push('inaktive');
+            }
+
+            if (!this.showPermanentCancellations) {
+                hidden.push('afbud');
+            }
+
+            return hidden;
         },
         hasNarrowingFilters() {
-            return this.status !== 'alle' || this.selectedGender !== null || this.appliedSearchName.trim() !== '';
+            return this.hiddenGroups.length > 0 || this.selectedGender !== null || this.appliedSearchName.trim() !== '';
         },
         emptyMessage() {
-            const message = STATUS_FILTERS[this.status].empty;
             const searchName = this.appliedSearchName.trim();
 
-            return searchName !== '' ? `${message} matcher "${searchName}"` : message;
+            return searchName !== '' ? `Ingen spillere matcher "${searchName}"` : 'Ingen spillere';
+        },
+        emptyHints() {
+            const hints = [];
+            const hiddenLabels = {inaktive: 'inaktive spillere', afbud: 'spillere med permanent afbud'};
+
+            if (this.hiddenGroups.length > 0) {
+                const hidden = this.hiddenGroups.map(group => hiddenLabels[group]).join(' og ');
+                hints.push(`${hidden.charAt(0).toUpperCase()}${hidden.slice(1)} er skjult.`);
+            }
+
+            if (this.selectedGender) {
+                hints.push(`Kun ${this.getGenderLabel(this.selectedGender).toLowerCase()}spillere vises.`);
+            }
+
+            return hints;
         },
         membersList() {
             return this.members?.membersSearch?.data ?? [];
@@ -66,13 +85,13 @@ export default {
     apollo: {
         members: {
             query: gql`
-                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $playable: Boolean, $inactive: Boolean, $page: Int!, $first: Int!) {
+                query membersSearch($clubhouse: Int!, $name: String, $gender: [Gender!], $inactive: Boolean, $excludePermanentCancellations: Boolean, $page: Int!, $first: Int!) {
                     membersSearch(
                         clubhouse: $clubhouse
                         name: $name
                         gender: $gender
-                        playable: $playable
                         inactive: $inactive
+                        excludePermanentCancellations: $excludePermanentCancellations
                         page: $page
                         first: $first
                     ) {
@@ -101,8 +120,7 @@ export default {
                 const vars = {
                     clubhouse: this.clubhouseId,
                     page: this.currentPage,
-                    first: this.perPage,
-                    ...STATUS_FILTERS[this.status].variables
+                    first: this.perPage
                 };
 
                 if (this.appliedSearchName.trim() !== '') {
@@ -111,6 +129,14 @@ export default {
 
                 if (this.selectedGender) {
                     vars.gender = [this.selectedGender];
+                }
+
+                if (!this.showInactive) {
+                    vars.inactive = false;
+                }
+
+                if (!this.showPermanentCancellations) {
+                    vars.excludePermanentCancellations = true;
                 }
 
                 return vars;
@@ -132,7 +158,10 @@ export default {
         searchName() {
             this.applySearchName();
         },
-        status() {
+        showInactive() {
+            this.filtersChanged();
+        },
+        showPermanentCancellations() {
             this.filtersChanged();
         },
         selectedGender() {
@@ -148,15 +177,15 @@ export default {
             this.currentPage = 1;
 
             // Keep the filters in the URL, so a refresh or a shared link shows the same list.
-            const {q, status, gender, ...query} = this.$route.query;
+            const {q, skjul, gender, ...query} = this.$route.query;
             const searchName = this.appliedSearchName.trim();
 
             if (searchName !== '') {
                 query.q = searchName;
             }
 
-            if (this.status !== DEFAULT_STATUS) {
-                query.status = this.status;
+            if (this.hiddenGroups.length > 0) {
+                query.skjul = this.hiddenGroups.join(',');
             }
 
             if (this.selectedGender) {
@@ -169,7 +198,8 @@ export default {
             this.searchName = '';
             this.appliedSearchName = '';
             this.selectedGender = null;
-            this.status = 'alle';
+            this.showInactive = true;
+            this.showPermanentCancellations = true;
         },
         onPageChange(page) {
             this.currentPage = page;
@@ -344,17 +374,9 @@ export default {
                                 </option>
                             </b-select>
                         </b-field>
-                        <b-field label="Status" dusk="status-filter">
-                            <b-radio-button
-                                v-for="option in statusOptions"
-                                :key="option.value"
-                                v-model="status"
-                                :native-value="option.value"
-                                :dusk="`status-filter-${option.value}`"
-                                type="is-info"
-                            >
-                                {{ option.label }}
-                            </b-radio-button>
+                        <b-field label="Vis" grouped>
+                            <b-switch v-model="showInactive" dusk="show-inactive-switch">Inaktive</b-switch>
+                            <b-switch v-model="showPermanentCancellations" dusk="show-permanent-cancellations-switch">Permanent afbud</b-switch>
                         </b-field>
                     </b-field>
 
@@ -449,8 +471,8 @@ export default {
                         <template v-slot:empty>
                             <div class="has-text-centered" dusk="members-empty">
                                 <p>{{ emptyMessage }}</p>
-                                <p v-if="selectedGender" class="is-size-7 has-text-grey">
-                                    Kun {{ getGenderLabel(selectedGender).toLowerCase() }}spillere vises.
+                                <p v-for="hint in emptyHints" :key="hint" class="is-size-7 has-text-grey">
+                                    {{ hint }}
                                 </p>
                                 <b-button
                                     v-if="hasNarrowingFilters"

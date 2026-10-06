@@ -8,6 +8,8 @@ extend type Query{
         gender: [Gender!] @in
         playable: Boolean @where
         inactive: Boolean @where
+        "Leave out members with permanent afbud (playable is false and not inactive)"
+        excludePermanentCancellations: Boolean @scope
         orderBy: _ @orderBy(columns: ["name"])
         whereCancellations: _ @whereConditions(columns: ["cancellations", "date", "team_round_id", "user_id", "playable", "clubhouse_id"])
         "Need to have at least one point"
