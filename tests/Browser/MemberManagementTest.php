@@ -142,7 +142,7 @@ class MemberManagementTest extends DuskTestCase
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->toggleShowInactive()
+                    ->filterByStatus('alle')
                     ->waitForText($member->name)
                     ->assertMemberStatus($member->name, 'Aktiv')
                     ->toggleMemberInactiveStatusById($member->id)
@@ -168,53 +168,37 @@ class MemberManagementTest extends DuskTestCase
     }
 
     /**
-     * Test toggling show inactive members filter
+     * Test that inactive members are hidden by default and shown under "Inaktive"
      */
-    public function testToggleShowInactiveMembers(): void
+    public function testFilterInactiveMembers(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
 
-            // Create an inactive member for testing
-            $inactiveMember = Member::whereHas('clubs', function ($query) use ($clubhouse) {
-                $query->where('club_id', $clubhouse->clubs->first()->id);
-            })->first();
-
-            if ($inactiveMember) {
-                $inactiveMember->update(['inactive' => true]);
-            }
+            [$inactiveMember, $activeMember] = $this->activePlayableMembers($clubhouse, 2)->all();
+            $inactiveMember->update(['inactive' => true]);
 
             $browser->visit(new LoginPage())
                     ->loginSPA('testing@gmail.com', 'Test1234')
                     ->visit(new MemberManagementPage($clubhouse->id))
-                    ->waitFor('@members-table')
-                    // Inactive members should not be visible by default
-                    ->assertDontSee($inactiveMember->name)
-                    ->toggleShowInactive()
-                    ->pause(1000)
-                    // Now inactive members should be visible
-                    ->assertSee($inactiveMember->name)
-                    ->assertMemberStatus($inactiveMember->name, 'Inaktiv');
+                    ->searchMember($inactiveMember->name)
+                    ->waitForTextIn('@members-empty', 'Ingen aktive spillere matcher')
+                    ->filterByStatus('inaktive')
+                    ->assertMemberStatus($inactiveMember->name, 'Inaktiv')
+                    ->searchMember($activeMember->name)
+                    ->waitForTextIn('@members-empty', 'Ingen inaktive spillere matcher');
         });
     }
 
     /**
      * Test showing only members with permanent afbud
      */
-    public function testFilterOnlyPermanentCancellations(): void
+    public function testFilterPermanentCancellations(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
 
-            $members = Member::whereHas('clubs', function ($query) use ($clubhouse) {
-                $query->where('club_id', $clubhouse->clubs->first()->id);
-            })->where('inactive', false)->where('playable', true)->take(2)->get();
-
-            if ($members->count() < 2) {
-                $this->markTestSkipped('Need two active playable members for testing');
-            }
-
-            [$cancelledMember, $playableMember] = $members->all();
+            [$cancelledMember, $playableMember] = $this->activePlayableMembers($clubhouse, 2)->all();
             $cancelledMember->update(['playable' => false]);
 
             $browser->visit(new LoginPage())
@@ -222,11 +206,75 @@ class MemberManagementTest extends DuskTestCase
                     ->visit(new MemberManagementPage($clubhouse->id))
                     ->searchMember($playableMember->name)
                     ->waitForTextIn('@members-table', $playableMember->name)
-                    ->toggleOnlyPermanentCancellations()
-                    ->waitForTextIn('@members-table', 'Ingen spillere fundet')
+                    ->filterByStatus('afbud')
+                    ->waitForTextIn('@members-empty', 'Ingen spillere med permanent afbud matcher')
                     ->searchMember($cancelledMember->name)
                     ->assertMemberStatus($cancelledMember->name, 'Permanent afbud');
         });
+    }
+
+    /**
+     * Test that the filters are kept in the URL and restored from it
+     */
+    public function testFiltersAreKeptInUrl(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+
+            $member = $this->activePlayableMembers($clubhouse, 1)->first();
+            $member->update(['playable' => false]);
+
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
+                    ->visit(new MemberManagementPage($clubhouse->id))
+                    ->filterByStatus('afbud')
+                    ->searchMember($member->name)
+                    ->assertMemberStatus($member->name, 'Permanent afbud')
+                    ->assertQueryStringHas('status', 'afbud')
+                    ->assertQueryStringHas('q', $member->name)
+                    ->refresh()
+                    ->waitForTextIn('@members-table', $member->name)
+                    ->assertInputValue('@search-input', $member->name)
+                    ->assertMemberStatus($member->name, 'Permanent afbud');
+        });
+    }
+
+    /**
+     * Test that "Vis alle spillere" in the empty state clears the filters
+     */
+    public function testShowAllMembersFromEmptyState(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+
+            $browser->visit(new LoginPage())
+                    ->loginSPA('testing@gmail.com', 'Test1234')
+                    ->visit(new MemberManagementPage($clubhouse->id))
+                    ->filterByStatus('inaktive')
+                    ->searchMember('ingen spiller hedder sådan')
+                    ->waitForTextIn('@members-empty', 'Ingen inaktive spillere matcher')
+                    ->click('@show-all-members')
+                    ->waitUntilMissing('@members-empty')
+                    ->assertInputValue('@search-input', '')
+                    ->assertQueryStringHas('status', 'alle')
+                    ->assertQueryStringMissing('q');
+        });
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, Member>
+     */
+    private function activePlayableMembers(Clubhouse $clubhouse, int $count)
+    {
+        $members = Member::whereHas('clubs', function ($query) use ($clubhouse) {
+            $query->where('club_id', $clubhouse->clubs->first()->id);
+        })->where('inactive', false)->where('playable', true)->orderBy('name')->take($count)->get();
+
+        if ($members->count() < $count) {
+            $this->markTestSkipped("Need {$count} active playable members for testing");
+        }
+
+        return $members;
     }
 
     /**

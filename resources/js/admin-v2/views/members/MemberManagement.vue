@@ -3,18 +3,31 @@ import TitleBar from "@/components/TitleBar.vue";
 import HeroBar from "@/components/HeroBar.vue";
 import CardComponent from "@/components/CardComponent.vue";
 import gql from "graphql-tag";
+import {debounce} from "@/helpers.js";
+
+const STATUS_FILTERS = {
+    aktive: {label: 'Aktive', empty: 'Ingen aktive spillere', variables: {inactive: false}},
+    afbud: {label: 'Permanent afbud', empty: 'Ingen spillere med permanent afbud', variables: {inactive: false, playable: false}},
+    inaktive: {label: 'Inaktive', empty: 'Ingen inaktive spillere', variables: {inactive: true}},
+    alle: {label: 'Alle', empty: 'Ingen spillere', variables: {}}
+};
+const DEFAULT_STATUS = 'aktive';
+const GENDERS = ['MEN', 'WOMEN'];
 
 export default {
     name: "MemberManagement",
     components: {CardComponent, HeroBar, TitleBar},
     inject: ['clubhouseId'],
     data() {
+        const query = this.$route.query;
+        const searchName = typeof query.q === 'string' ? query.q : '';
+
         return {
             titleStack: ['Admin', 'Spillere'],
-            searchName: '',
-            selectedGender: null,
-            showInactive: false,
-            onlyPermanentCancellations: false,
+            searchName,
+            appliedSearchName: searchName,
+            selectedGender: GENDERS.includes(query.gender) ? query.gender : null,
+            status: Object.hasOwn(STATUS_FILTERS, query.status) ? query.status : DEFAULT_STATUS,
             currentPage: 1,
             perPage: 20,
             isTogglingInactive: false,
@@ -30,6 +43,18 @@ export default {
                 {value: 'MEN', label: 'Herre'},
                 {value: 'WOMEN', label: 'Dame'}
             ]
+        },
+        statusOptions() {
+            return Object.entries(STATUS_FILTERS).map(([value, filter]) => ({value, label: filter.label}));
+        },
+        hasNarrowingFilters() {
+            return this.status !== 'alle' || this.selectedGender !== null || this.appliedSearchName.trim() !== '';
+        },
+        emptyMessage() {
+            const message = STATUS_FILTERS[this.status].empty;
+            const searchName = this.appliedSearchName.trim();
+
+            return searchName !== '' ? `${message} matcher "${searchName}"` : message;
         },
         membersList() {
             return this.members?.membersSearch?.data ?? [];
@@ -76,23 +101,16 @@ export default {
                 const vars = {
                     clubhouse: this.clubhouseId,
                     page: this.currentPage,
-                    first: this.perPage
+                    first: this.perPage,
+                    ...STATUS_FILTERS[this.status].variables
                 };
 
-                if (this.searchName && this.searchName.trim() !== '') {
-                    vars.name = `%${this.searchName}%`;
+                if (this.appliedSearchName.trim() !== '') {
+                    vars.name = `%${this.appliedSearchName.trim()}%`;
                 }
 
                 if (this.selectedGender) {
                     vars.gender = [this.selectedGender];
-                }
-
-                if (this.onlyPermanentCancellations) {
-                    vars.playable = false;
-                }
-
-                if (!this.showInactive) {
-                    vars.inactive = false;
                 }
 
                 return vars;
@@ -110,10 +128,48 @@ export default {
             }
         }
     },
+    watch: {
+        searchName() {
+            this.applySearchName();
+        },
+        status() {
+            this.filtersChanged();
+        },
+        selectedGender() {
+            this.filtersChanged();
+        }
+    },
     methods: {
-        search() {
+        applySearchName: debounce(function () {
+            this.appliedSearchName = this.searchName;
+            this.filtersChanged();
+        }, 300),
+        filtersChanged() {
             this.currentPage = 1;
-            this.$apollo.queries.members.refetch();
+
+            // Keep the filters in the URL, so a refresh or a shared link shows the same list.
+            const {q, status, gender, ...query} = this.$route.query;
+            const searchName = this.appliedSearchName.trim();
+
+            if (searchName !== '') {
+                query.q = searchName;
+            }
+
+            if (this.status !== DEFAULT_STATUS) {
+                query.status = this.status;
+            }
+
+            if (this.selectedGender) {
+                query.gender = this.selectedGender;
+            }
+
+            this.$router.replace({query});
+        },
+        showAllMembers() {
+            this.searchName = '';
+            this.appliedSearchName = '';
+            this.selectedGender = null;
+            this.status = 'alle';
         },
         onPageChange(page) {
             this.currentPage = page;
@@ -272,14 +328,13 @@ export default {
                         <b-field label="Søg på navn" expanded>
                             <b-input
                                 v-model="searchName"
-                                @update:modelValue="search"
                                 placeholder="Indtast navn..."
                                 icon="magnify"
                                 dusk="search-name-input"
                             ></b-input>
                         </b-field>
                         <b-field label="Køn">
-                            <b-select v-model="selectedGender" @update:modelValue="search" dusk="gender-select">
+                            <b-select v-model="selectedGender" dusk="gender-select">
                                 <option
                                     v-for="option in genderOptions"
                                     :key="option.value"
@@ -289,11 +344,17 @@ export default {
                                 </option>
                             </b-select>
                         </b-field>
-                        <b-field label="Vis inaktive">
-                            <b-switch v-model="showInactive" @update:modelValue="search" dusk="show-inactive-switch"></b-switch>
-                        </b-field>
-                        <b-field label="Kun permanent afbud">
-                            <b-switch v-model="onlyPermanentCancellations" @update:modelValue="search" dusk="only-permanent-cancellations-switch"></b-switch>
+                        <b-field label="Status" dusk="status-filter">
+                            <b-radio-button
+                                v-for="option in statusOptions"
+                                :key="option.value"
+                                v-model="status"
+                                :native-value="option.value"
+                                :dusk="`status-filter-${option.value}`"
+                                type="is-info"
+                            >
+                                {{ option.label }}
+                            </b-radio-button>
                         </b-field>
                     </b-field>
 
@@ -386,8 +447,20 @@ export default {
                         </b-table-column>
 
                         <template v-slot:empty>
-                            <div class="has-text-centered">
-                                Ingen spillere fundet
+                            <div class="has-text-centered" dusk="members-empty">
+                                <p>{{ emptyMessage }}</p>
+                                <p v-if="selectedGender" class="is-size-7 has-text-grey">
+                                    Kun {{ getGenderLabel(selectedGender).toLowerCase() }}spillere vises.
+                                </p>
+                                <b-button
+                                    v-if="hasNarrowingFilters"
+                                    type="is-text"
+                                    class="mt-2"
+                                    @click="showAllMembers"
+                                    dusk="show-all-members"
+                                >
+                                    Vis alle spillere
+                                </b-button>
                             </div>
                         </template>
                     </b-table>
