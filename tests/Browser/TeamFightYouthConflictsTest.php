@@ -3,6 +3,7 @@
 namespace Tests\Browser;
 
 use App\Models\TeamRound;
+use Database\Seeders\YouthTeamRoundSeeder;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
 use Tests\Browser\Pages\LoginPage;
@@ -25,7 +26,7 @@ class TeamFightYouthConflictsTest extends DuskTestCase
 
     private function openConflictRound(Browser $browser): void
     {
-        $teamRound = TeamRound::where('name', 'Ungdom - 3. runde (konflikter)')->sole();
+        $teamRound = TeamRound::where('name', YouthTeamRoundSeeder::CONFLICT_ROUND)->sole();
 
         $browser->visit(new LoginPage)
             ->loginSPA('testing@gmail.com', 'Test1234')
@@ -69,7 +70,7 @@ class TeamFightYouthConflictsTest extends DuskTestCase
 
             $browser->assertPlayerHighlight(0, '2. HD', 'Jesper Lauge Andersen', 'success')
                 ->assertPlayerTooltipContains(0, '2. HD', 'Jesper Lauge Andersen', 'OBS: Har U15/U17/U19 makker')
-                ->assertPlayerTooltipContains(0, '2. HD', 'Jesper Lauge Andersen', 'Lauge Almlund Højgaard')
+                ->assertPlayerTooltipContains(0, '2. HD', 'Jesper Lauge Andersen', 'Victor R. Andersen')
                 ->assertPlayerHighlight(0, '2. HD', 'Aske Groth Jensen', 'success')
                 ->assertPlayerHighlight(0, '3. HD', 'Jakob Christensen', null);
         });

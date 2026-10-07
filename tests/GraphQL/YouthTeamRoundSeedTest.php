@@ -5,6 +5,7 @@ namespace Tests\GraphQL;
 use App\Models\SquadMember;
 use App\Models\TeamRound;
 use Database\Seeders\TestingDataSeeder;
+use Database\Seeders\YouthTeamRoundSeeder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
@@ -18,8 +19,6 @@ class YouthTeamRoundSeedTest extends TestCase
     use DatabaseMigrations;
     use MakesGraphQLRequests;
 
-    private const YOUTH_PLAYER = 'Aske Groth Jensen';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,11 +28,11 @@ class YouthTeamRoundSeedTest extends TestCase
 
     public function test_conflict_round_reports_only_the_youth_conflicts_within_squads(): void
     {
-        $input = $this->validationInput(TeamRound::where('name', 'Ungdom - 3. runde (konflikter)')->sole());
+        $input = $this->validationInput(TeamRound::where('name', YouthTeamRoundSeeder::CONFLICT_ROUND)->sole());
 
         $this->assertSame([true, true], $this->spotsFulfilled($input));
 
-        $conflicts = collect($this->mutate('validateSquads', $input, 'isYouthPlayer hasYouthPlayerPartner belowPlayer { name }'))
+        $conflicts = collect($this->mutate('validateSquads', $input, 'name category isYouthPlayer hasYouthPlayerPartner belowPlayer { name }'))
             ->map(fn (array $conflict) => [
                 $conflict['name'],
                 $conflict['category'],
@@ -46,9 +45,11 @@ class YouthTeamRoundSeedTest extends TestCase
             ->all();
 
         $this->assertSame([
-            // Doubles: the senior partner of a Youth Player sits above a stronger pair
-            ['Aske Groth Jensen', 'HD', true, false, ['Lauge Almlund Højgaard', 'Jakob Christensen']],
-            ['Jesper Lauge Andersen', 'HD', false, true, ['Lauge Almlund Højgaard', 'Jakob Christensen']],
+            // Doubles: pairs with a Youth Player sit above a stronger senior pair
+            ['Aske Groth Jensen', 'HD', true, false, ['Victor R. Andersen', 'Jakob Christensen']],
+            ['Jesper Lauge Andersen', 'HD', false, true, ['Victor R. Andersen', 'Jakob Christensen']],
+            ['Lars Juncker', 'HD', false, true, ['Victor R. Andersen', 'Jakob Christensen']],
+            ['Lauge Almlund Højgaard', 'HD', true, false, ['Victor R. Andersen', 'Jakob Christensen']],
             // Singles: a senior with more points is placed below a Youth Player
             ['Aske Groth Jensen', 'HS', true, false, ['Jakob Christensen']],
         ], $conflicts);
@@ -56,14 +57,14 @@ class YouthTeamRoundSeedTest extends TestCase
 
     public function test_youth_players_are_skipped_in_the_cross_squad_validation(): void
     {
-        $input = $this->validationInput(TeamRound::where('name', 'Ungdom - 3. runde (konflikter)')->sole());
+        $input = $this->validationInput(TeamRound::where('name', YouthTeamRoundSeeder::CONFLICT_ROUND)->sole());
 
         // Mathilde Hay-Schmidt (U19, DS 2113) on Hold 2 has more points than
         // Nanna Reese (DS 1876) on Hold 1, but Youth Players are not compared.
-        $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'isYouthPlayer'));
+        $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name'));
     }
 
-    public function test_earlier_rounds_in_the_season_are_valid_and_place_the_youth_player_differently(): void
+    public function test_earlier_rounds_report_no_conflicts_and_place_the_youth_player_differently(): void
     {
         $rounds = TeamRound::where('name', 'like', 'Ungdom - %')->orderBy('round')->get();
 
@@ -74,12 +75,12 @@ class YouthTeamRoundSeedTest extends TestCase
         foreach ($rounds->take(2) as $round) {
             $input = $this->validationInput($round);
             $this->assertSame([true, true], $this->spotsFulfilled($input), $round->name);
-            $this->assertSame([], $this->mutate('validateSquads', $input, 'isYouthPlayer'), $round->name);
-            $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'isYouthPlayer'), $round->name);
+            $this->assertSame([], $this->mutate('validateSquads', $input, 'name'), $round->name);
+            $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name'), $round->name);
         }
 
         $placements = $rounds->map(fn (TeamRound $round) => SquadMember::query()
-            ->where('name', self::YOUTH_PLAYER)
+            ->where('name', 'Aske Groth Jensen')
             ->whereHas('category.squad', fn ($query) => $query->where('team_round_id', $round->id))
             ->with('category.squad')
             ->get()
@@ -148,8 +149,6 @@ class YouthTeamRoundSeedTest extends TestCase
      */
     private function mutate(string $mutation, array $input, string $fields): array
     {
-        $fields = $mutation === 'validateBasicSquads' ? $fields : 'name category '.$fields;
-
         return $this->graphQL(
             "mutation (\$input: [ValidateTeam!]!) { {$mutation}(input: \$input) { {$fields} } }",
             ['input' => $input]

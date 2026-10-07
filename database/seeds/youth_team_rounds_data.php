@@ -4,16 +4,20 @@
  * Three holdrunder in the same Season (2025) and Clubhouse that follow one
  * Youth Player, Aske Groth Jensen (U17), through the season:
  *
- *   1. "Ungdom - 1. runde"               — valid; Aske on Hold 2 (1. HS, 2. HD)
- *   2. "Ungdom - 2. runde"               — valid; Aske on Hold 1 (4. HS, 3. HD)
+ *   1. "Ungdom - 1. runde"               — Aske on Hold 2 (1. HS, 2. HD)
+ *   2. "Ungdom - 2. runde"               — Aske on Hold 1 (4. HS, 3. HD)
  *   3. "Ungdom - 3. runde (konflikter)"  — Aske on Hold 1 (3. HS, 2. HD) with Youth Player conflicts:
  *        - Within squad, youth above: Jakob Christensen (HS 2420) is placed below Aske (HS 2225).
  *        - Within squad, youth below: Lauge Almlund Højgaard (U19, HS 2677) is placed below
  *          Jesper Lauge Andersen (HS 2422).
- *        - Doubles: Jesper Lauge Andersen + Aske (4417) at 2. HD above
- *          Lauge Almlund Højgaard + Jakob Christensen (4628) at 3. HD, so Jesper "Har U15/U17/U19 makker".
+ *        - Doubles: Victor R. Andersen + Jakob Christensen (5192) at 3. HD are stronger than
+ *          Jesper Lauge Andersen + Aske (4417) at 2. HD and Lars Juncker + Lauge (4907) at 1. HD,
+ *          so Jesper and Lars "Har U15/U17/U19 makker".
  *        - Across squads: Mathilde Hay-Schmidt (U19, DS 2113) on Hold 2 has more points than
  *          Nanna Reese (DS 1876) at 2. DS on Hold 1.
+ *
+ * Rounds 1 and 2 report no conflicts today, but only because Youth Players are not
+ * validated on points: their youth placements would be conflicts for seniors.
  *
  * Players are Members by name; their Juli 2025 points are copied from the points table.
  * Every Squad is a 13-kamps hold and lists categories in the order they are created.
@@ -67,7 +71,9 @@ $round2Hold2 = array_merge($hold2, [
 $round3Hold1 = array_merge($hold1, [
     '3. HS' => ['Aske Groth Jensen'],
     '4. HS' => ['Jakob Christensen'],
+    '1. HD' => ['Lars Juncker', 'Lauge Almlund Højgaard'],
     '2. HD' => ['Jesper Lauge Andersen', 'Aske Groth Jensen'],
+    '3. HD' => ['Victor R. Andersen', 'Jakob Christensen'],
 ]);
 $round3Hold2 = $round2Hold2;
 
@@ -88,7 +94,7 @@ return [
     ],
     [
         'id' => 'U3hWd9PqL2sMx7BzG5kTj4Fy',
-        'name' => 'Ungdom - 3. runde (konflikter)',
+        'name' => Database\Seeders\YouthTeamRoundSeeder::CONFLICT_ROUND,
         'game_date' => '2025-11-01',
         'round' => 3,
         'squads' => [$round3Hold1, $round3Hold2],
