@@ -1,6 +1,7 @@
 import {difference, uniq} from "lodash/array.js";
 import {isArray} from "lodash";
 import {formatBelowPlayers} from './views/team-fight/validation-status.js'
+import {isTooYoung, tooYoungMessage} from './views/team-fight/too-young.js'
 
 export function chunk(array, size) {
     const chunked_arr = [];
@@ -257,8 +258,11 @@ export function highlight(playingToHighCrossSquads, playingToHighInSquad, player
     return {};
 }
 
-export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad) {
+export function resolveToolTip(player, category, league, playingToHighCrossSquads, playingToHighInSquad, tooYoungPlayers = [], seasonStartYear = null) {
     let msg = []
+    if (isTooYoung(tooYoungPlayers, player)) {
+        msg.push("<b>" + tooYoungMessage(seasonStartYear) + "</b>")
+    }
     let resolveNames = (playerWithBelowPlayers) => {
         let names = formatBelowPlayers(playerWithBelowPlayers.belowPlayer, x => (x.category
                                                                                  ? x.category + ': '

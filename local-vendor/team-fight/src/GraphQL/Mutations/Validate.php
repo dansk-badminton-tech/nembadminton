@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
+use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use FlyCompany\TeamFight\TeamValidator;
@@ -68,6 +69,19 @@ class Validate
 
         /** @var Squad[] $squads */
         return $this->teamValidator->validateBasicSquads($squads);
+    }
+
+    /**
+     * @param  array{input: array<int, array<string, mixed>>, seasonStartYear: int}  $args
+     * @return Player[]
+     *
+     * @throws ExceptionInterface
+     */
+    public function validateTooYoungPlayers(mixed $rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
+    {
+        $squads = (new Collection($args['input']))->pluck('squad');
+
+        return $this->teamValidator->validateTooYoungPlayers($this->deserializeSquads($squads), $args['seasonStartYear']);
     }
 
     /**

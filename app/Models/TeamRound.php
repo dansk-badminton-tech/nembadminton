@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Util\Util;
+use Carbon\Carbon;
+use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\TeamFight\ScenarioManager;
 use FlyCompany\TeamFight\SquadManager;
 use Illuminate\Database\Eloquent\Builder;
@@ -63,6 +65,21 @@ class TeamRound extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * The calendar year the TeamRound's season starts in, from its season or else its game date.
+     */
+    public function seasonStartYear(): ?int
+    {
+        if ($this->season_id !== null) {
+            return (int) $this->season_id;
+        }
+        if ($this->game_date === null) {
+            return null;
+        }
+
+        return BadmintonPlayerHelper::seasonStartYearFor(Carbon::parse($this->game_date));
     }
 
     public function resolveName()

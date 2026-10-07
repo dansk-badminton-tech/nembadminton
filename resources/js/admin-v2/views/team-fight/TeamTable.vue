@@ -128,6 +128,20 @@
                                 </div>
                             </b-tooltip>
                             <b-tooltip
+                                v-if="isTooYoung(player)"
+                                type="is-warning"
+                                :label="tooYoungLabel"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag
+                                    type="is-warning is-light"
+                                    size="is-small"
+                                    dusk="too-young-tag">
+                                    <b-icon icon="alert" size="is-small" class="mr-1"></b-icon>
+                                    Under 15 år
+                                </b-tag>
+                            </b-tooltip>
+                            <b-tooltip
                                 v-if="player.cancellation"
                                 type="is-danger"
                                 :label="cancellationTooltip(player.cancellation)"
@@ -225,6 +239,7 @@ import {
     badmintonPlayerUrl
 } from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
+import {isTooYoung, tooYoungMessage} from "./too-young.js";
 
 export default {
     name: 'TeamTable',
@@ -267,10 +282,21 @@ export default {
             type: Array,
             default: []
         },
+        tooYoungPlayers: {
+            type: Array,
+            default: () => []
+        },
+        seasonStartYear: {
+            type: Number,
+            default: null
+        },
         loading: Boolean
     },
     computed: {
-        getCurrentSeason
+        getCurrentSeason,
+        tooYoungLabel() {
+            return tooYoungMessage(this.seasonStartYear)
+        }
     },
     data(){
         return {
@@ -318,6 +344,9 @@ export default {
         },
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.playingToHigh, this.playingToHighInSquad)
+        },
+        isTooYoung(player) {
+            return isTooYoung(this.tooYoungPlayers, player);
         },
         isPlayingToHigh(player) {
             return isPlayingToHighByBadmintonPlayerId(this.playingToHigh, player);

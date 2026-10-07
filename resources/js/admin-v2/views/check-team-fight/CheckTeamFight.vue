@@ -133,7 +133,7 @@
                         <b-tooltip
                             v-for="player in props.row.players"
                             :key="player.name+props.row.category"
-                            :active="isPlayingToHighInLevel(player) || isPlayingToHighInCategory(player, props.row.category)">
+                            :active="isPlayingToHighInLevel(player) || isPlayingToHighInCategory(player, props.row.category) || isTooYoung(player)">
                             <template v-slot:content>
                                 <span v-html="resolveLabel(player, props.row.category, team.squad.league)"></span>
                             </template>
@@ -141,6 +141,10 @@
                                 ({{findPositions(player, props.row.category) }})
                             </p>
                             <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
+                            <b-tag v-if="isTooYoung(player)" type="is-warning is-light" dusk="too-young-tag">
+                                <b-icon icon="alert" size="is-small" class="mr-1"></b-icon>
+                                Under 15 år
+                            </b-tag>
                         </b-tooltip>
                     </b-table-column>
                     <b-table-column width="30%" :td-attrs="team.resultAttrs" v-slot="props" field="results" label="Result">
@@ -170,6 +174,7 @@ import RankingListDropdown from "../../components/ranking-list-dropdown/RankingL
 import OptionalRanking from "./OptionalRanking.vue";
 import {determineBadmintonMatchWinner} from "./score.js";
 import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
+import {isTooYoung} from "../team-fight/too-young.js";
 import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {
@@ -205,6 +210,7 @@ export default {
             teams: [],
             playingToHighInLevel: [],
             playingToHighInCategory: [],
+            tooYoungPlayers: [],
             rankingList: null,
             activeStep: 0,
             fetchingAndValidating: false,
@@ -322,7 +328,10 @@ export default {
             swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
         },
         resolveLabel(player, category, league) {
-            return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory)
+            return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, this.tooYoungPlayers, parseInt(this.season))
+        },
+        isTooYoung(player) {
+            return isTooYoung(this.tooYoungPlayers, player);
         },
         isPlayingToHighInLevel(player) {
             return isPlayingToHighByBadmintonPlayerId(this.currentPlayingToHighInLevel, player);
@@ -497,9 +506,37 @@ export default {
                 this.validatingSquad = false
             })
         },
+        validateTooYoungPlayers() {
+            this.$apollo.mutate(
+                {
+                    mutation: gql`mutation validateTooYoungPlayers($input: [ValidateTeam!]!, $seasonStartYear: Int!){
+                        validateTooYoungPlayers(input: $input, seasonStartYear: $seasonStartYear){
+                            refId
+                            name
+                        }
+                    }
+                    `,
+                    variables: {
+                        input: wrapInTeamAndSquads(this.teams.map(team => team.squad)),
+                        seasonStartYear: parseInt(this.season)
+                    }
+                }
+            ).then(({data}) => {
+                this.tooYoungPlayers = data.validateTooYoungPlayers
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateTooYoungPlayers) <br/> ${error.graphQLErrors.map((error) => {return error.message}).join(', ')}`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+        },
         validate() {
             this.validateCrossSquads()
             this.validateSquads()
+            this.validateTooYoungPlayers()
         },
         goToStart() {
             this.done = false;

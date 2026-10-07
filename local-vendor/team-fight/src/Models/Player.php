@@ -40,4 +40,9 @@ class Player
     {
         return Util::calculateVintageByRefId($this->refId, $season);
     }
+
+    public function isTooYoungForSenior(int $seasonStartYear): bool
+    {
+        return Util::isTooYoungForSeniorByRefId($this->refId, $seasonStartYear);
+    }
 }

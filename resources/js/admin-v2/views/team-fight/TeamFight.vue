@@ -182,6 +182,8 @@
                                :season-id="teamRound?.season?.id"
                                :used-team-ids="usedTeamIds"
                                :teams-base-validations="validateBasicSquads"
+                               :too-young-players="tooYoungPlayers"
+                               :season-start-year="teamRound.seasonStartYear"
                                :version="new Date(version)"
                                :loading="saving"
                     />
@@ -343,6 +345,7 @@ export default {
             validateBasicSquads: [],
             playingToHighList: [],
             playingToHighSquadList: [],
+            tooYoungPlayers: [],
             teamCount: 1,
             players: [],
             saving: false,
@@ -928,7 +931,42 @@ export default {
                         })
                 })
         },
+        validateTooYoungPlayers() {
+            if (!this.teamRound.seasonStartYear) {
+                this.tooYoungPlayers = [];
+                return;
+            }
+            this.$apollo.mutate(
+                {
+                    mutation: gql`
+                        mutation validateTooYoungPlayers($input: [ValidateTeam!]!, $seasonStartYear: Int!){
+                            validateTooYoungPlayers(input: $input, seasonStartYear: $seasonStartYear){
+                                id
+                                refId
+                                name
+                            }
+                        }
+                    `,
+                    variables: {
+                        input: wrapInTeamAndSquads(this.teamRound.squads),
+                        seasonStartYear: this.teamRound.seasonStartYear
+                    }
+                })
+                .then(({data}) => {
+                    this.tooYoungPlayers = data.validateTooYoungPlayers;
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Noget gik galt under valideringen af holdet (validateTooYoungPlayers)`
+                        })
+                })
+        },
         validate() {
+            this.validateTooYoungPlayers();
             this.$apollo.mutate(
                 {
                     mutation: gql`

@@ -335,6 +335,8 @@ type TeamRound {
     gameDate: Date @rename(attribute: "game_date"),
     "Season"
     season: Season @belongsTo
+    "Calendar year the season starts in (from the season, or else the game date)"
+    seasonStartYear: Int @method
     "Updated at"
     updatedAt: DateTime @rename(attribute: "updated_at")
     "Created at"

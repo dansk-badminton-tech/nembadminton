@@ -93,9 +93,24 @@ class Util
 
     public static function calculateVintageByRefId(string $refId, ?Carbon $season = null): Vintage
     {
-        $birthdayStr = Str::substr($refId, 0, 6);
-        $birthday = Carbon::createFromFormat('ymd', $birthdayStr);
+        return self::calculateVintage(self::birthdayFromRefId($refId), $season);
+    }
 
-        return self::calculateVintage($birthday, $season);
+    /**
+     * §31 stk. 1: A player must turn 15 no later than 31.12. in the calendar year the season starts.
+     */
+    public static function isTooYoungForSenior(Carbon $birthday, int $seasonStartYear): bool
+    {
+        return $birthday->year > $seasonStartYear - 15;
+    }
+
+    public static function isTooYoungForSeniorByRefId(string $refId, int $seasonStartYear): bool
+    {
+        return self::isTooYoungForSenior(self::birthdayFromRefId($refId), $seasonStartYear);
+    }
+
+    private static function birthdayFromRefId(string $refId): Carbon
+    {
+        return Carbon::createFromFormat('ymd', Str::substr($refId, 0, 6));
     }
 }

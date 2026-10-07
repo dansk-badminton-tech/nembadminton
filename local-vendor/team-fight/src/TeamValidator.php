@@ -478,4 +478,26 @@ class TeamValidator
 
         return $playingToHigh;
     }
+
+    /**
+     * §31 stk. 1: Players who have not turned 15 by 31.12. in the calendar year the season starts.
+     *
+     * @param  Squad[]  $squads
+     * @return Player[]
+     */
+    public function validateTooYoungPlayers(array $squads, int $seasonStartYear): array
+    {
+        $tooYoung = [];
+        foreach ($squads as $squad) {
+            foreach ($squad->categories as $category) {
+                foreach ($category->players as $player) {
+                    if ($player->refId !== null && $player->isTooYoungForSenior($seasonStartYear)) {
+                        $tooYoung[$player->refId] = $player;
+                    }
+                }
+            }
+        }
+
+        return array_values($tooYoung);
+    }
 }
