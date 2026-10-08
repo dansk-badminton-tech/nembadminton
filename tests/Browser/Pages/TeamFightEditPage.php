@@ -777,6 +777,62 @@ class TeamFightEditPage extends Page
     }
 
     /**
+     * Assert all three validation checks have run and show "OK".
+     */
+    public function assertAllValidationsOk(Browser $browser): void
+    {
+        $this->scrollToValidation($browser);
+        $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
+            ->waitForTextIn('@validation-invalid-level', 'OK', 10)
+            ->waitForTextIn('@validation-invalid-category', 'OK', 10);
+    }
+
+    /**
+     * Assert how a placed player is highlighted in a category of a squad.
+     *
+     * @param  string|null  $color  'success' (green), 'danger' (red) or null (no highlight)
+     */
+    public function assertPlayerHighlight(Browser $browser, int $squadIndex, string $categoryName, string $name, ?string $color): void
+    {
+        $classes = $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "player.querySelector('p.handle').className");
+        $highlight = preg_match('/has-background-(success|danger)/', $classes, $match) ? $match[1] : null;
+
+        PHPUnit::assertSame($color, $highlight, "Highlight of {$name} in {$categoryName} on squad {$squadIndex}");
+    }
+
+    public function assertPlayerTooltipContains(Browser $browser, int $squadIndex, string $categoryName, string $name, string $text): void
+    {
+        $tooltip = $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "player.querySelector('.tooltip-content')?.textContent ?? ''");
+
+        PHPUnit::assertStringContainsString($text, $tooltip, "Tooltip of {$name} in {$categoryName} on squad {$squadIndex}");
+    }
+
+    /**
+     * Wait for a player in a squad's category row and evaluate a JS expression on it (bound as `player`).
+     */
+    private function placedPlayerProperty(Browser $browser, int $squadIndex, string $categoryName, string $name, string $expression): string
+    {
+        $lookup = json_encode(['squad' => "[dusk='squad-{$squadIndex}']", 'category' => $categoryName, 'name' => $name], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $script = <<<JS
+            const lookup = {$lookup};
+            const row = Array.from(document.querySelectorAll(lookup.squad + ' tr'))
+                .find(tr => tr.querySelector('th')?.textContent.trim() === lookup.category);
+            const player = Array.from(row?.querySelectorAll('.b-tooltip') ?? [])
+                .find(tooltip => tooltip.querySelector('p.handle')?.textContent.includes(lookup.name));
+            return player ? {$expression} : null;
+        JS;
+
+        $value = null;
+        $browser->waitUsing(10, 200, function () use ($browser, $script, &$value) {
+            $value = $browser->script($script)[0] ?? null;
+
+            return $value !== null;
+        }, "{$name} is not placed in {$categoryName} on squad {$squadIndex}");
+
+        return $value;
+    }
+
+    /**
      * Scroll the validation section into view and wait for it to render.
      */
     private function scrollToValidation(Browser $browser): void
