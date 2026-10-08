@@ -10,6 +10,14 @@ A platform for holding tournament and team match management in Danish badminton,
 A badminton player with official ranking data from badmintonplayer.dk.
 _Avoid_: User (unless referring to system login account)
 
+**Youth Player** (ungdomsspiller):
+A Member whose ranking places them in the U15, U17 or U19 age group. Under §38 stk. 5 a Youth Player is placed by current playing strength in senior play, so their place in a lineup is the coach's judgement and not decided by ranking points alone.
+_Avoid_: Young player, junior
+
+**Season History** (sæsonhistorik):
+Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
+_Avoid_: Placement history, match history
+
 **User**:
 A system account with login credentials, roles, and clubhouse permissions.
 _Avoid_: Member, player
