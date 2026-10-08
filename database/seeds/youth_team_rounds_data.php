@@ -1,5 +1,7 @@
 <?php
 
+use Database\Seeders\YouthTeamRoundSeeder;
+
 /**
  * Three holdrunder in the same Season (2025) and Clubhouse that follow one
  * Youth Player, Aske Groth Jensen (U17), through the season:
@@ -94,7 +96,7 @@ return [
     ],
     [
         'id' => 'U3hWd9PqL2sMx7BzG5kTj4Fy',
-        'name' => Database\Seeders\YouthTeamRoundSeeder::CONFLICT_ROUND,
+        'name' => YouthTeamRoundSeeder::CONFLICT_ROUND,
         'game_date' => '2025-11-01',
         'round' => 3,
         'squads' => [$round3Hold1, $round3Hold2],

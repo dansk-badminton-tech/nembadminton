@@ -6,7 +6,6 @@ use App\Models\SquadMember;
 use App\Models\TeamRound;
 use Database\Seeders\TestingDataSeeder;
 use Database\Seeders\YouthTeamRoundSeeder;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
@@ -16,14 +15,16 @@ use Tests\TestCase;
  */
 class YouthTeamRoundSeedTest extends TestCase
 {
-    use DatabaseMigrations;
     use MakesGraphQLRequests;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(TestingDataSeeder::class);
+        // TestingDataSeeder needs fresh auto-increment ids (Clubhouse 1, User 1), which
+        // RefreshDatabase and DatabaseTruncation don't give after other tests have run.
+        $this->artisan('migrate:fresh', ['--seed' => true, '--seeder' => TestingDataSeeder::class]);
+        $this->beforeApplicationDestroyed(fn () => $this->artisan('migrate:fresh'));
     }
 
     public function test_conflict_round_reports_only_the_youth_conflicts_within_squads(): void
