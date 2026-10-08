@@ -110,7 +110,8 @@
                                     <span v-html="resolveLabel(player, category.category, squad.league)"></span>
                                 </template>
                                 <div class="is-flex is-justify-content-space-between is-align-items-center ml-2">
-                                    <p class="handle" v-bind:class="highlight(player, category.category)">
+                                    <p class="handle" v-bind:class="highlight(player, category.category)"
+                                       @click="historyVariant === 'B' && toggleHistory(squad, category, player)">
                                         <b-icon
                                             v-show="player.gender === 'MEN'"
                                             icon="gender-male"
@@ -179,11 +180,21 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <!-- PROTOTYPE (#254) Season History triggers -->
+                                <SeasonHistoryVariantA v-if="historyVariant === 'A'" :player="player" :empty="historyEmpty"/>
+                                <b-button v-if="historyVariant === 'B'" size="is-small" title="Opstillet tidligere i sæsonen"
+                                          :icon-right="expandedHistory[historyKey(squad, category, player)] ? 'chevron-up' : 'history'"
+                                          dusk="season-history-trigger"
+                                          @click="toggleHistory(squad, category, player)"></b-button>
+                                <SeasonHistoryVariantC v-if="historyVariant === 'C'" :player="player" :empty="historyEmpty"/>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
+                            <!-- PROTOTYPE (#254) Season History inline variants -->
+                            <SeasonHistoryVariantB v-if="historyVariant === 'B' && expandedHistory[historyKey(squad, category, player)]" :player="player" :empty="historyEmpty"/>
+                            <SeasonHistoryVariantD v-if="historyVariant === 'D'" :player="player" :empty="historyEmpty"/>
                         </div>
                         <PlayerSearch
                             v-if="category.players.length === 0"
@@ -215,6 +226,11 @@
                 <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
             </template>
         </b-modal>
+        <PrototypeSwitcher v-if="historyVariant"
+                           :variants="historyVariants"
+                           :current="historyVariant"
+                           toggle-param="history-empty"
+                           toggle-label="Tom historik"/>
     </div>
 </template>
 <script>
@@ -240,10 +256,26 @@ import {
 } from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
+// PROTOTYPE (#254): Season History variants, throwaway.
+import PrototypeSwitcher from "@/components/PrototypeSwitcher.vue";
+import SeasonHistoryVariantA from "./season-history-prototype/SeasonHistoryVariantA.vue";
+import SeasonHistoryVariantB from "./season-history-prototype/SeasonHistoryVariantB.vue";
+import SeasonHistoryVariantC from "./season-history-prototype/SeasonHistoryVariantC.vue";
+import SeasonHistoryVariantD from "./season-history-prototype/SeasonHistoryVariantD.vue";
+
+const HISTORY_VARIANTS = {
+    A: 'Popover fra ikon',
+    B: 'Udfold under spiller',
+    C: 'Sidepanel',
+    D: 'Altid synlig tidslinje',
+}
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch},
+    components: {
+        EditPlayerModal, PlayerSearch, PrototypeSwitcher,
+        SeasonHistoryVariantA, SeasonHistoryVariantB, SeasonHistoryVariantC, SeasonHistoryVariantD
+    },
     props: {
         version: Date,
         confirmDelete: Function,
@@ -296,15 +328,37 @@ export default {
         getCurrentSeason,
         tooYoungLabel() {
             return tooYoungMessage(this.seasonStartYear)
+        },
+        // PROTOTYPE (#254): only on with ?variant= (or in dev), so a stray build shows nothing.
+        historyVariants() {
+            return HISTORY_VARIANTS
+        },
+        historyVariant() {
+            const fromUrl = this.$route.query.variant
+            if (fromUrl && HISTORY_VARIANTS[fromUrl]) {
+                return fromUrl
+            }
+            return import.meta.env.DEV ? 'A' : null
+        },
+        historyEmpty() {
+            return this.$route.query['history-empty'] !== undefined
         }
     },
     data(){
         return {
             modalPlayer: {},
-            showPlayerModal: false
+            showPlayerModal: false,
+            expandedHistory: {}
         }
     },
     methods: {
+        historyKey(squad, category, player) {
+            return `${squad.id}-${category.id}-${player.id}`
+        },
+        toggleHistory(squad, category, player) {
+            const key = this.historyKey(squad, category, player)
+            this.expandedHistory[key] = !this.expandedHistory[key]
+        },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },
