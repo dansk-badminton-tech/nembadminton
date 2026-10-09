@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HelpSitemapController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,9 @@ Route::redirect('/', '/app/home-redirect');
 // declared before the SPA catch-all below so it is not swallowed by '/{any}'.
 Route::view('/privatlivspolitik', 'privacy')->name('privacy-policy');
 Route::view('/privacy-policy', 'privacy');
+
+// Help sitemap for search engines (ADR 0004). Must be declared before the SPA catch-all.
+Route::get('/sitemap.xml', [HelpSitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/{any}', 'Spa2Controller@index')->where('any', '.*');
 
