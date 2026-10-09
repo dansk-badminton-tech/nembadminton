@@ -51,6 +51,26 @@ class HelpSitemapTest extends TestCase
     }
 
     #[Test]
+    public function it_lists_urls_that_match_the_help_router(): void
+    {
+        $base = rtrim(config('app.url'), '/');
+        $entries = $this->entries();
+
+        foreach ([
+            '/app/help',
+            '/app/help/guides',
+            '/app/help/news',
+            '/app/help/faq',
+            '/app/help/about',
+            '/app/help/guides/opret-og-klargoer-en-holdrunde',
+            '/app/help/news/2026-09-21-nyt-hjaelpeomraade',
+        ] as $path) {
+            $this->assertArrayHasKey($base.$path, $entries);
+        }
+        $this->assertSame('2026-09-21', (string) $entries[$base.'/app/help/news/2026-09-21-nyt-hjaelpeomraade']->lastmod);
+    }
+
+    #[Test]
     public function only_release_announcements_carry_their_filename_date_as_lastmod(): void
     {
         $base = rtrim(config('app.url'), '/').'/app/help';
