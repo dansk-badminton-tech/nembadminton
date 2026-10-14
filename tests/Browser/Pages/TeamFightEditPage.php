@@ -818,8 +818,10 @@ class TeamFightEditPage extends Page
      */
     public function openSeasonHistory(Browser $browser, int $squadIndex, string $categoryName, string $name): void
     {
-        $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "(player.querySelector(\"[dusk='season-history-open']\").click(), 'opened')");
-        $browser->waitFor('@season-history-modal')
+        // Mark the name so WebDriver clicks it for real, as a user would.
+        $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "(document.querySelectorAll('[data-season-history-target]').forEach(el => el.removeAttribute('data-season-history-target')), player.querySelector(\"[dusk='season-history-open']\").setAttribute('data-season-history-target', ''), 'marked')");
+        $browser->click('[data-season-history-target]')
+            ->waitFor('@season-history-modal')
             ->waitUntilMissing('@season-history-modal .loading-overlay.is-active');
     }
 

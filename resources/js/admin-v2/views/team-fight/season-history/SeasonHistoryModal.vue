@@ -6,8 +6,8 @@
                 <b-tag v-if="youth" type="is-success is-light" dusk="season-history-age-group">{{ ageGroupLabel(player) }}</b-tag>
                 <p class="is-size-7 has-text-grey mt-1" dusk="season-history-explanation">
                     <template v-if="category">Rækkefølgen i {{ CATEGORY_NAMES[category] }} på tværs af klubbens hold (1. hold øverst).</template>
-                    <template v-if="isDouble"> I double deler makkerne plads.</template>
                     Opstillinger, ikke resultater.
+                    <template v-if="isDouble">I double deler makkerne plads.</template>
                 </p>
             </div>
             <button type="button" class="delete" aria-label="Luk" dusk="season-history-close" @click="$emit('close')"></button>
@@ -94,8 +94,8 @@
 </template>
 <script>
 import TeamRoundSeasonHistoryQuery from "../../../../queries/teamRoundSeasonHistory.graphql";
-import {ageGroupLabel, isYoungPlayer} from "../../../helpers";
-import {CATEGORY_NAMES, EMPTY_TEXT, isDoubleCategory, NOT_PLACED_TEXT, seasonHistory} from "./season-history.js";
+import {ageGroupLabel, isDoubleCategory, isYoungPlayer} from "../../../helpers";
+import {CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, seasonHistory} from "./season-history.js";
 
 const PAD_L = 120
 const PAD_T = 40
@@ -130,13 +130,15 @@ export default {
                 return {id: this.teamRoundId}
             },
             update: data => data.teamRound.seasonHistory,
-            result({data}) {
-                if (data && this.category === null) {
-                    this.category = seasonHistory(data.teamRound.seasonHistory).defaultCategory(this.player.refId)
-                }
-            },
             error() {
                 this.error = true
+            }
+        }
+    },
+    watch: {
+        history(history) {
+            if (history && this.category === null) {
+                this.category = history.defaultCategory(this.player.refId)
             }
         }
     },
@@ -154,7 +156,7 @@ export default {
             return this.history.currentCategoriesOf(this.player.refId)
         },
         isDouble() {
-            return this.category !== null && isDoubleCategory(this.category)
+            return this.category !== null && isDoubleCategory({category: this.category})
         },
         chart() {
             return this.category ? this.history.chart(this.player.refId, this.category) : null

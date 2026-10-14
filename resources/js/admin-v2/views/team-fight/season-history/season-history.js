@@ -1,5 +1,5 @@
 // Season History (TeamRound.seasonHistory) for one player at a time: the categories they were placed in, their
-// Kategoriplads per round, and the lines of the players around them. The backend ranks the places; this only reads them.
+// Category Rank per round, and the lines of the players around them. The backend ranks the places; this only reads them.
 
 export const CATEGORIES = ['HS', 'DS', 'HD', 'DD', 'MD']
 export const CATEGORY_NAMES = {HS: 'herresingle', DS: 'damesingle', HD: 'herredouble', DD: 'damedouble', MD: 'mixdouble'}
@@ -7,12 +7,10 @@ export const EMPTY_TEXT = 'Ingen tidligere holdrunder i sæsonen'
 export const NOT_PLACED_TEXT = 'Ikke opstillet'
 
 // How far from the player another player may be placed, in any round, to get a line in the chart.
-const NEARBY = 2
+const NEARBY_PLACES = 2
+// As isYoungPlayer and isDoubleCategory in helpers.js, which can't be loaded outside the bundler (node:test).
 const YOUTH = ['U15', 'U17', 'U19']
-
-export function isDoubleCategory(category) {
-    return ['HD', 'DD', 'MD'].includes(category)
-}
+const DOUBLES = ['HD', 'DD', 'MD']
 
 function placeLabelOf(place) {
     return `Hold ${place.squadPosition} · ${place.label}`
@@ -22,14 +20,14 @@ function placeLabelOf(place) {
  * @param {Array} rounds TeamRound.seasonHistory: the earlier rounds oldest first, then the current one.
  */
 export function seasonHistory(rounds) {
-    // seats[category][round] = Map(refId -> place)
-    const seats = Object.fromEntries(CATEGORIES.map(category => [category, rounds.map(() => new Map())]))
+    // placesByRound[category][round] = Map(refId -> the place the player stands on)
+    const placesByRound = Object.fromEntries(CATEGORIES.map(category => [category, rounds.map(() => new Map())]))
     const players = new Map()
     rounds.forEach((round, r) => {
         for (const {category, places} of round.categories) {
             for (const place of places) {
                 for (const player of place.players) {
-                    seats[category][r].set(player.refId, place)
+                    placesByRound[category][r].set(player.refId, place)
                     if (!players.has(player.refId)) {
                         players.set(player.refId, {...player, youth: YOUTH.includes(player.vintage)})
                     }
@@ -39,7 +37,7 @@ export function seasonHistory(rounds) {
     })
     const currentRound = rounds.findIndex(round => round.isCurrent)
 
-    const seat = (refId, category, r) => seats[category]?.[r]?.get(refId) ?? null
+    const seat = (refId, category, r) => placesByRound[category]?.[r]?.get(refId) ?? null
     const placeOf = (refId, category, r) => seat(refId, category, r)?.place ?? null
     const roundIndexes = rounds.map((_, r) => r)
 
@@ -81,21 +79,19 @@ export function seasonHistory(rounds) {
         return roundIndexes.some(r => {
             const a = placeOf(subject, category, r)
             const b = placeOf(other, category, r)
-            return a !== null && b !== null && Math.abs(a - b) <= NEARBY
+            return a !== null && b !== null && Math.abs(a - b) <= NEARBY_PLACES
         })
     }
 
     return {
-        rounds,
         hasEarlierRounds: rounds.some(round => !round.isCurrent),
-        player: refId => players.get(refId) ?? null,
         placeOf,
         placeLabel,
         categoriesOf,
         currentCategoriesOf,
         defaultCategory(refId) {
             const now = currentCategoriesOf(refId)
-            return now.find(category => !isDoubleCategory(category)) ?? now[0] ?? categoriesOf(refId)[0] ?? null
+            return now.find(category => !DOUBLES.includes(category)) ?? now[0] ?? categoriesOf(refId)[0] ?? null
         },
         // Every category the player was placed in that round, with its place and partners.
         placementsOf(refId, r) {
@@ -110,9 +106,9 @@ export function seasonHistory(rounds) {
                 }]
             })
         },
-        // The player's line, drawn last, and the lines of everyone within NEARBY places of them in any round.
+        // The player's line, drawn last, and the lines of everyone within NEARBY_PLACES places of them in any round.
         chart(refId, category) {
-            const others = [...new Set(roundIndexes.flatMap(r => [...seats[category][r].keys()]))]
+            const others = [...new Set(roundIndexes.flatMap(r => [...placesByRound[category][r].keys()]))]
                 .filter(other => other !== refId && isNearby(refId, other, category))
             const lines = [
                 ...others.map(other => line(other, category, players.get(other).youth ? 'youth' : 'other')),

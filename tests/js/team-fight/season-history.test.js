@@ -57,7 +57,7 @@ test('the default category is the current single, then the first current one, th
     assert.equal(history.defaultCategory('unknown'), null)
 })
 
-test('a player has a Kategoriplads per round, or null where they were not placed', () => {
+test('a player has a Category Rank per round, or null where they were not placed', () => {
     const history = seasonHistory(rounds)
 
     assert.deepEqual([0, 1, 2].map(r => history.placeOf('3', 'HS', r)), [3, 2, 1])
@@ -126,12 +126,4 @@ test('the season has earlier rounds only when more than the current round is ret
     assert.equal(seasonHistory(rounds).hasEarlierRounds, true)
     assert.equal(seasonHistory([rounds[2]]).hasEarlierRounds, false)
     assert.equal(seasonHistory([]).hasEarlierRounds, false)
-})
-
-test('the player is found by refId with name and youth flag', () => {
-    const history = seasonHistory(rounds)
-
-    assert.deepEqual(history.player('3'), {refId: '3', name: 'Carl', gender: 'MEN', vintage: 'U17', youth: true})
-    assert.equal(history.player('1').youth, false)
-    assert.equal(history.player('unknown'), null)
 })

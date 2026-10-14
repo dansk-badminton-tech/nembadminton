@@ -109,6 +109,9 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
 
             $browser->click("[dusk='season-history-row-2']")
                 ->assertSeasonHistoryHighlighted(2);
+
+            $browser->click("[dusk='season-history-round-0']")
+                ->assertSeasonHistoryHighlighted(0);
         });
     }
 
