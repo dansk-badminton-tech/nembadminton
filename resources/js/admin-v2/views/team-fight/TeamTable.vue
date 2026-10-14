@@ -121,10 +121,7 @@
                                             icon="gender-female"
                                             size="is-small">
                                         </b-icon>
-                                        <span class="season-history-open" role="button" tabindex="0" title="Se sæsonhistorik"
-                                              dusk="season-history-open"
-                                              @click="openSeasonHistory(player)"
-                                              @keydown.enter="openSeasonHistory(player)">{{ player.name }}</span>
+                                        {{ player.name }}
                                         ({{findPositions(player, category.category) }})
                                     </p>
                                     <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
@@ -182,6 +179,8 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <b-button dusk="season-history-open" size="is-small" title="Sæsonhistorik" icon-right="history"
+                                          @click="openSeasonHistory(player)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
@@ -452,13 +451,6 @@ export default {
 }
 </script>
 <style scoped>
-.season-history-open {
-    cursor: pointer;
-}
-.season-history-open:hover,
-.season-history-open:focus-visible {
-    text-decoration: underline;
-}
 .squad-info-row {
     flex-wrap: wrap;
     gap: 0.25rem 0.5rem;

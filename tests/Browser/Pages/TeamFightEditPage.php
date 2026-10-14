@@ -814,12 +814,12 @@ class TeamFightEditPage extends Page
     }
 
     /**
-     * Click a placed player's name to open their Season History, and wait for it to load.
+     * Click a placed player's history icon to open their Season History, and wait for it to load.
      */
     public function openSeasonHistory(Browser $browser, int $squadIndex, string $categoryName, string $name): void
     {
-        // Mark the name so WebDriver clicks it for real, as a user would.
-        $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "(document.querySelectorAll('[data-season-history-target]').forEach(el => el.removeAttribute('data-season-history-target')), player.querySelector(\"[dusk='season-history-open']\").setAttribute('data-season-history-target', ''), 'marked')");
+        // Mark the player's icon so WebDriver clicks it for real, as a user would.
+        $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "(document.querySelectorAll('[data-season-history-target]').forEach(el => el.removeAttribute('data-season-history-target')), player.closest('[draggable]').querySelector(\"[dusk='season-history-open']\").setAttribute('data-season-history-target', ''), 'marked')");
         $browser->click('[data-season-history-target]')
             ->waitFor('@season-history-modal')
             ->waitUntilMissing('@season-history-modal .loading-overlay.is-active');
