@@ -103,6 +103,25 @@
                             <p v-else class="has-text-grey">
                                 <em>Ingen spillere endnu</em>
                             </p>
+                            <!-- PROTOTYPE #227 B: the Squad's reserves (from memory, ?variant=B only) -->
+                            <div v-if="prototypeReserves(squad).length" class="category-grid mt-3 prototype-reserves"
+                                 :dusk="'prototype-public-reserves-' + index">
+                                <div class="category-label">Reserve</div>
+                                <div class="category-players">
+                                    <div v-for="reserve in prototypeReserves(squad)" :key="reserve.refId" class="player-row">
+                                        <span class="player-name">
+                                            <b-icon v-if="reserve.gender === 'MEN'" icon="gender-male" size="is-small"></b-icon>
+                                            <b-icon v-if="reserve.gender === 'WOMEN'" icon="gender-female" size="is-small"></b-icon>
+                                            {{ reserve.name }}
+                                        </span>
+                                        <span class="player-tags">
+                                            <b-tag v-if="reserve.vintage && isYoungPlayer(reserve)" size="is-small" type="is-info">
+                                                {{ ageGroupLabel(reserve) }}
+                                            </b-tag>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,6 +144,7 @@
 
 <script>
 import gql from 'graphql-tag'
+import {reservesB} from "./reserve-prototype/reserve-prototype.js";
 import {ageGroupLabel, findPositions, getCurrentSeason, isYoungPlayer} from "../../helpers";
 import {
     formatGameDate,
@@ -137,6 +157,9 @@ import {
 export default {
     name: "TeamFightPublic",
     methods: {
+        prototypeReserves(squad) {
+            return this.$route.query.variant === 'B' ? reservesB(squad.id) : []
+        },
         ageGroupLabel,
         isYoungPlayer,
         findPositions,

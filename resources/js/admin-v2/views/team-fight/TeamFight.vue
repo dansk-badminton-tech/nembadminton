@@ -443,6 +443,10 @@ export default {
         openExportCsvModal() {
             this.$buefy.modal.open({
                 component: ExportCsvModal,
+                props: {
+                    prototypeVariant: this.$route.query.variant ?? null,
+                    squads: this.teamRound.squads
+                },
                 hasModalCard: true,
                 trapFocus: true,
                 events: {

@@ -1,7 +1,7 @@
 <template>
     <div dusk="team-table-section">
         <b-loading :is-full-page="false" :active="loading" :can-cancel="true"></b-loading>
-        <ReservePrototypeNotes v-if="variant" :variant="variant"/>
+        <ReservePrototypeNotes v-if="variant" :variant="variant" :team-round-id="teamRoundId"/>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -223,8 +223,7 @@
                 </tbody>
             </table>
             <ReserveMarksA v-if="variant === 'A'" :squad="squad" :squad-index="index"/>
-            <ReserveSectionB v-if="variant === 'B'" :squads="squads" :squad-index="index"
-                             @open-season-history="openSeasonHistory"/>
+            <ReserveSectionB v-if="variant === 'B'" :squads="squads" :squad-index="index"/>
         </div>
         <b-modal
             v-model="showPlayerModal"

@@ -89,9 +89,16 @@ export function seasonHistoryNote(variant, squads, refId) {
         const index = squads.findIndex(squad => isMarkedA(squad.id, refId))
         return index === -1 ? null : `Markeret som reserve på Hold ${index + 1} (kategoripladsen tæller som normalt)`
     }
-    if (variant === 'B') {
-        const reserve = reserveSquadOfB(squads, refId)
-        return reserve ? `Reserve på Hold ${reserve.index + 1} · ingen kategoriplads` : null
-    }
+    // B: Season History is unchanged; reserves don't appear in it.
     return null
+}
+
+// B: the lines the CSV export gets after each Squad's categories, per Squad ("Hold N").
+export function csvReserveLinesB(squads, includeCategories) {
+    return squads.map((squad, index) => ({
+        hold: `Hold ${index + 1}`,
+        lines: reservesB(squad.id).map((reserve, i) => includeCategories
+            ? `${i === 0 ? '"Reserve"' : ''},"${reserve.name}"`
+            : `"${reserve.name} (reserve)"`)
+    })).filter(squad => squad.lines.length)
 }

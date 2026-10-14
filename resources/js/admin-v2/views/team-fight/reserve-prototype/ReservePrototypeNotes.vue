@@ -13,12 +13,16 @@
                 <li><b>Lavere hold:</b> en spiller fra et lavere hold kan ikke markeres. Personen skal flyttes op og mister sin plads dernede.</li>
             </template>
             <template v-else>
-                <li><b>Markering:</b> "Tilføj reserve fra andet hold" på holdet (kun fra lavere hold), eller <b-icon icon="account-switch" size="is-small"/> på en ledig spiller i listen.</li>
-                <li><b>Kategoriplads:</b> reserven har ingen. De andre spilleres pladser ændrer sig ikke.</li>
-                <li><b>Sæsonhistorik:</b> "Reserve på Hold N · ingen kategoriplads" i rækken for denne holdrunde. En spiller fra et lavere hold beholder sin plads dernede.</li>
+                <li><b>Markering:</b> søg i "Reserver" på holdet (kun spillere fra lavere hold), eller klik <b-icon icon="account-switch" size="is-small"/> på en ledig spiller i listen.</li>
+                <li><b>Sæsonhistorik:</b> uændret. Reserver vises ikke, og en reserve-række har ingen sæsonhistorik-knap.</li>
                 <li><b>Ledige spillere:</b> en ledig spiller, der bliver reserve, er ikke længere ledig og forsvinder fra listen. En note over listen siger det.</li>
                 <li><b>"Optaget på":</b> reserven tæller som optaget i parallelle holdrunder med samme runde. Reserve-rækken viser spillerens eget "Optaget på"-mærke.</li>
                 <li><b>Lavere hold:</b> en spiller fra et lavere hold beholder sin plads og får mærket "Også reserve på Hold N" dér.</li>
+                <li><b>CSV:</b> reserverne kommer efter holdets kategorier. Se forhåndsvisningen i Del → CSV.</li>
+                <li><b>Offentligt link:</b> en "Reserve"-række på hvert holdkort.
+                    <router-link :to="{name: 'team-fight-public-view', params: {teamUUID: teamRoundId}, query: {variant: 'B'}}" dusk="prototype-public-link">
+                        Åbn det offentlige link i denne fane</router-link>
+                    (et nyt vindue kender ikke reserverne, for de gemmes ikke).</li>
             </template>
         </ul>
     </div>
@@ -29,7 +33,8 @@ import {VARIANTS} from "./reserve-prototype.js";
 export default {
     name: 'ReservePrototypeNotes',
     props: {
-        variant: {type: String, required: true}
+        variant: {type: String, required: true},
+        teamRoundId: {type: String, default: null}
     },
     computed: {
         title() {
