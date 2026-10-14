@@ -1,0 +1,26 @@
+query teamRoundSeasonHistory($id: ID!){
+    teamRound(id: $id){
+        id
+        seasonHistory{
+            id
+            name
+            gameDate
+            round
+            isCurrent
+            categories{
+                category
+                places{
+                    place
+                    squadPosition
+                    label
+                    players{
+                        refId
+                        name
+                        gender
+                        vintage
+                    }
+                }
+            }
+        }
+    }
+}

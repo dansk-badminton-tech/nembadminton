@@ -88,6 +88,12 @@ class TeamFightEditPage extends Page
             '@edit-squad-member-button' => "[dusk='edit-squad-member-button']",
             '@manual-correction-indicator' => "[dusk='manual-correction-indicator']",
             '@edit-player-close-button' => "[dusk='edit-player-close-button']",
+            '@season-history-modal' => "[dusk='season-history-modal']",
+            '@season-history-close' => "[dusk='season-history-close']",
+            '@season-history-explanation' => "[dusk='season-history-explanation']",
+            '@season-history-chart' => "[dusk='season-history-chart']",
+            '@season-history-hover-band' => "[dusk='season-history-hover-band']",
+            '@season-history-empty' => "[dusk='season-history-empty']",
         ];
     }
 
@@ -805,6 +811,40 @@ class TeamFightEditPage extends Page
         $tooltip = $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "player.querySelector('.tooltip-content')?.textContent ?? ''");
 
         PHPUnit::assertStringContainsString($text, $tooltip, "Tooltip of {$name} in {$categoryName} on squad {$squadIndex}");
+    }
+
+    /**
+     * Click a placed player's name to open their Season History, and wait for it to load.
+     */
+    public function openSeasonHistory(Browser $browser, int $squadIndex, string $categoryName, string $name): void
+    {
+        $this->placedPlayerProperty($browser, $squadIndex, $categoryName, $name, "(player.querySelector(\"[dusk='season-history-open']\").click(), 'opened')");
+        $browser->waitFor('@season-history-modal')
+            ->waitUntilMissing('@season-history-modal .loading-overlay.is-active');
+    }
+
+    public function selectSeasonHistoryCategory(Browser $browser, string $category): void
+    {
+        $browser->click("[dusk='season-history-category-{$category}']");
+    }
+
+    /**
+     * Season History rounds are indexed oldest first, the current round last.
+     */
+    public function assertSeasonHistoryRow(Browser $browser, int $round, string $text): void
+    {
+        $browser->assertSeeIn("[dusk='season-history-row-{$round}']", $text);
+    }
+
+    /**
+     * The chart's hover band and the table row both mark the given round, and no other row is marked.
+     */
+    public function assertSeasonHistoryHighlighted(Browser $browser, int $round): void
+    {
+        $browser->waitFor('@season-history-hover-band')
+            ->assertAttribute('@season-history-hover-band', 'data-round', (string) $round)
+            ->assertPresent("[dusk='season-history-row-{$round}'].is-hovered");
+        PHPUnit::assertCount(1, $browser->elements('@season-history-modal tr.is-hovered'));
     }
 
     /**

@@ -121,7 +121,10 @@
                                             icon="gender-female"
                                             size="is-small">
                                         </b-icon>
-                                        {{ player.name }}
+                                        <span class="season-history-open" role="button" tabindex="0" title="Se sæsonhistorik"
+                                              dusk="season-history-open"
+                                              @click="openSeasonHistory(player)"
+                                              @keydown.enter="openSeasonHistory(player)">{{ player.name }}</span>
                                         ({{findPositions(player, category.category) }})
                                     </p>
                                     <b-tag v-if="isYoungPlayer(player)">{{ageGroupLabel(player)}}</b-tag>
@@ -215,6 +218,17 @@
                 <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
             </template>
         </b-modal>
+        <b-modal
+            v-model="showSeasonHistory"
+            :full-screen="seasonHistoryFullScreen"
+            :can-cancel="['escape', 'x', 'outside']"
+            has-modal-card
+            trap-focus
+        >
+            <template #default="props">
+                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer" @close="props.close"/>
+            </template>
+        </b-modal>
     </div>
 </template>
 <script>
@@ -240,10 +254,11 @@ import {
 } from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
+import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch},
+    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal},
     props: {
         version: Date,
         confirmDelete: Function,
@@ -266,6 +281,7 @@ export default {
             default: []
         },
         scenarioId: [String, Number],
+        teamRoundId: String,
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -301,7 +317,10 @@ export default {
     data(){
         return {
             modalPlayer: {},
-            showPlayerModal: false
+            showPlayerModal: false,
+            seasonHistoryPlayer: null,
+            seasonHistoryFullScreen: false,
+            showSeasonHistory: false
         }
     },
     methods: {
@@ -403,6 +422,12 @@ export default {
             this.modalPlayer = player
             this.showPlayerModal = true
         },
+        openSeasonHistory(player) {
+            this.seasonHistoryPlayer = player
+            // Full-screen on a phone (Bulma's mobile breakpoint)
+            this.seasonHistoryFullScreen = window.matchMedia('(max-width: 768px)').matches
+            this.showSeasonHistory = true
+        },
         openEditSquadModal(squad) {
             this.$buefy.modal.open(
                 {
@@ -427,6 +452,13 @@ export default {
 }
 </script>
 <style scoped>
+.season-history-open {
+    cursor: pointer;
+}
+.season-history-open:hover,
+.season-history-open:focus-visible {
+    text-decoration: underline;
+}
 .squad-info-row {
     flex-wrap: wrap;
     gap: 0.25rem 0.5rem;

@@ -385,6 +385,8 @@ type SeasonHistoryCategory {
 type SeasonHistoryPlace {
     "Category Rank (Kategoriplads), 1-based"
     place: Int!
+    "1-based place of the Squad in the TeamRound's Squad order (Hold 1, Hold 2, ...)"
+    squadPosition: Int!
     "The Team's name, or the Squad's own name when it has no Team"
     teamName: String
     "The Squad's tier (række)"

@@ -47,6 +47,7 @@ class TeamRoundSeasonHistory
     {
         return [
             'place' => $slot->rank,
+            'squadPosition' => $slot->squad->position,
             'teamName' => $slot->squad->teamName,
             'tier' => $slot->squad->tier,
             'label' => $slot->categoryName,
