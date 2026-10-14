@@ -1,6 +1,7 @@
 <template>
     <div dusk="team-table-section">
         <b-loading :is-full-page="false" :active="loading" :can-cancel="true"></b-loading>
+        <ReservePrototypeNotes v-if="variant" :variant="variant"/>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -169,6 +170,17 @@
                                     Optaget på: {{ player.parallelAllocation.teamRoundName }}
                                 </b-tag>
                             </b-tooltip>
+                            <!-- PROTOTYPE #227 -->
+                            <b-tag v-if="variant === 'A' && isMarkedA(squad.id, player.refId)" size="is-small"
+                                   class="is-pulled-left ml-2 prototype-reserve-tag" dusk="reserve-tag-a">
+                                <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                Reserve
+                            </b-tag>
+                            <b-tag v-if="variant === 'B' && alsoReserveB(player)" size="is-small"
+                                   class="is-pulled-left ml-2 prototype-reserve-tag" dusk="also-reserve-tag-b">
+                                <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                Også reserve på Hold {{ alsoReserveB(player).index + 1 }}
+                            </b-tag>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
                                     dusk="manual-correction-indicator"
@@ -179,6 +191,11 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <b-button v-if="variant === 'A'" size="is-small" icon-right="account-switch"
+                                          dusk="toggle-reserve-a"
+                                          :type="isMarkedA(squad.id, player.refId) ? 'is-primary' : null"
+                                          :title="isMarkedA(squad.id, player.refId) ? 'Fjern reserve-mærke' : 'Markér som reserve (§43)'"
+                                          @click="toggleMarkA(squad.id, player.refId)"></b-button>
                                 <b-button dusk="season-history-open" size="is-small" title="Sæsonhistorik" icon-right="history"
                                           @click="openSeasonHistory(player)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
@@ -205,6 +222,9 @@
                 </tr>
                 </tbody>
             </table>
+            <ReserveMarksA v-if="variant === 'A'" :squad="squad" :squad-index="index"/>
+            <ReserveSectionB v-if="variant === 'B'" :squads="squads" :squad-index="index"
+                             @open-season-history="openSeasonHistory"/>
         </div>
         <b-modal
             v-model="showPlayerModal"
@@ -225,7 +245,8 @@
             trap-focus
         >
             <template #default="props">
-                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer" @close="props.close"/>
+                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer"
+                                    :prototype-note="seasonHistoryNote(variant, squads, seasonHistoryPlayer?.refId)" @close="props.close"/>
             </template>
         </b-modal>
     </div>
@@ -254,10 +275,14 @@ import {
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
 import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
+import ReservePrototypeNotes from "./reserve-prototype/ReservePrototypeNotes.vue";
+import ReserveMarksA from "./reserve-prototype/ReserveMarksA.vue";
+import ReserveSectionB from "./reserve-prototype/ReserveSectionB.vue";
+import {isMarkedA, prototypeVariant, reserveSquadOfB, seasonHistoryNote, toggleMarkA} from "./reserve-prototype/reserve-prototype.js";
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal},
+    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal, ReservePrototypeNotes, ReserveMarksA, ReserveSectionB},
     props: {
         version: Date,
         confirmDelete: Function,
@@ -309,6 +334,9 @@ export default {
     },
     computed: {
         getCurrentSeason,
+        variant() {
+            return prototypeVariant(this.$route)
+        },
         tooYoungLabel() {
             return tooYoungMessage(this.seasonStartYear)
         }
@@ -323,6 +351,12 @@ export default {
         }
     },
     methods: {
+        isMarkedA,
+        toggleMarkA,
+        seasonHistoryNote,
+        alsoReserveB(player) {
+            return reserveSquadOfB(this.squads, player.refId)
+        },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },
@@ -475,6 +509,10 @@ export default {
     color: #363636;
     border-color: #7a7a7a;
     background-color: #fafafa;
+}
+.prototype-reserve-tag {
+    background: #ede9fe;
+    color: #5b21b6;
 }
 .squad-info-row .squad-info-missing em {
     font-style: italic;

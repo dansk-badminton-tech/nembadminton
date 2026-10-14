@@ -17,6 +17,7 @@
             <b-message v-if="error" type="is-danger">Sæsonhistorikken kunne ikke hentes.</b-message>
             <template v-else-if="history">
                 <p v-if="!history.hasEarlierRounds" class="has-text-grey" dusk="season-history-empty">{{ EMPTY_TEXT }}</p>
+                <p v-if="!history.hasEarlierRounds && prototypeNote" class="prototype-note mt-2">Denne holdrunde: {{ prototypeNote }}</p>
                 <template v-else>
                     <b-field v-if="categories.length" class="mb-3">
                         <b-radio-button v-for="c in categories" :key="c" v-model="category" :native-value="c" size="is-small"
@@ -77,11 +78,13 @@
                                     <template v-else>–</template>
                                 </td>
                                 <td class="is-size-7">
-                                    <em v-if="!row.placements.length" class="has-text-grey">{{ NOT_PLACED_TEXT }}</em>
+                                    <em v-if="!row.placements.length && !(row.round.isCurrent && prototypeNote)" class="has-text-grey">{{ NOT_PLACED_TEXT }}</em>
                                     <span v-for="p in row.placements" :key="p.category" class="placement"
                                           :class="{'has-text-weight-semibold': p.category === category}">
                                         {{ p.category }} nr. {{ p.place }} · {{ p.label }}<span v-if="p.partners.length" class="has-text-grey has-text-weight-normal"> m. {{ p.partners.join(', ') }}</span>
                                     </span>
+                                    <!-- PROTOTYPE #227 -->
+                                    <span v-if="row.round.isCurrent && prototypeNote" class="placement prototype-note" dusk="season-history-reserve-note">{{ prototypeNote }}</span>
                                 </td>
                             </tr>
                             </tbody>
@@ -108,7 +111,9 @@ export default {
     props: {
         teamRoundId: {type: String, required: true},
         // The lineup's player: refId, name and vintage
-        player: {type: Object, required: true}
+        player: {type: Object, required: true},
+        // PROTOTYPE #227: reserve note for the current round's row
+        prototypeNote: {type: String, default: null}
     },
     emits: ['close'],
     data() {
@@ -220,6 +225,7 @@ export default {
 tr.is-hovered td { background: #eef6fc; }
 tbody tr { cursor: pointer; }
 .placement { display: block; }
+.prototype-note { color: #5b21b6; font-weight: 600; }
 .nowrap { white-space: nowrap; }
 .key { display: inline-block; width: 18px; height: 0; vertical-align: middle; border-top: 3px solid; margin-right: 4px; }
 .key.subject { border-color: #3e8ed0; }

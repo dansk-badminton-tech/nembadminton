@@ -20,10 +20,15 @@
             </b-radio-button>
         </b-field>
         <p class="mt-4" v-html="resolveHelperTextForCancellation"></p>
+        <!-- PROTOTYPE #227 B: reserves are no longer Available Members -->
+        <b-message v-if="variant === 'B' && hiddenReserves.length" type="is-light" class="prototype-hidden mt-3" dusk="hidden-reserves-note">
+            Ikke ledige, fordi de er reserver:
+            <span v-for="(r, i) in hiddenReserves" :key="r.refId">{{ i ? ', ' : '' }}{{ r.name }} (Hold {{ r.index + 1 }})</span>
+        </b-message>
         <b-table
             dusk="player-search-table"
             class="mt-5"
-            :data="membersList"
+            :data="visibleMembers"
             :paginated="true"
             :backend-pagination="true"
             :loading="apolloLoading || loading"
@@ -66,6 +71,16 @@
                               @click.stop="addPlayerCustom(props.row)"></b-button>
                 </div>
                 <div class="buttons" v-if="!showCancellation">
+                    <b-dropdown v-if="variant === 'B'" aria-role="list" position="is-bottom-left" class="mr-2">
+                        <template #trigger>
+                            <b-button size="is-small" icon-right="account-switch" title="Tilføj som reserve (§43)"
+                                      :dusk="'add-reserve-button-'+(props.index + 1)"></b-button>
+                        </template>
+                        <b-dropdown-item v-for="(squad, i) in squads" :key="squad.id" aria-role="listitem"
+                                         @click="addAsReserve(squad, props.row)">
+                            Reserve på Hold {{ i + 1 }}
+                        </b-dropdown-item>
+                    </b-dropdown>
                     <b-button size="is-small" type="is-danger" v-show="props.row.ownerId" icon-right="delete" @click="deleteMember(props.row)"></b-button>
                     <b-button size="is-small" title="Afbud (Denne holdrunde)"
                               icon-right="account-off" @click="makeCancellation(props.row)"></b-button>
@@ -152,6 +167,7 @@ import MemberSearchCancellation from "./memberSearchCancellation.gql"
 import ME from "../../../queries/me.gql";
 import {on as onAppEvent} from '@/store/events'
 import {BSidebar, BSwitch} from "buefy";
+import {addReserveB, prototypeVariant, reserveSquadOfB, reserveState} from "./reserve-prototype/reserve-prototype.js";
 
 export default {
     name: 'PlayersListSearch',
@@ -163,9 +179,25 @@ export default {
         addPlayer: Function,
         version: Date,
         loading: Boolean,
-        gameDate: Date
+        gameDate: Date,
+        // PROTOTYPE #227
+        squads: {type: Array, default: () => []}
     },
     computed: {
+        variant() {
+            return prototypeVariant(this.$route)
+        },
+        hiddenReserves() {
+            return this.squads.flatMap((squad, index) => (reserveState.reservesB[squad.id] ?? [])
+                .filter(r => r.source === 'available')
+                .map(r => ({...r, index})))
+        },
+        visibleMembers() {
+            if (this.variant !== 'B' || !this.membersList) {
+                return this.membersList
+            }
+            return this.membersList.filter(member => !reserveSquadOfB(this.squads, member.refId))
+        },
         resolveHelperTextForCancellation() {
             if (this.showCancellation) {
                 return 'Inkluderer afbud fra afbudslink for datoen <strong>' + this.gameDate.toISOString().substring(0, 10) + '</strong>'
@@ -249,6 +281,17 @@ export default {
         }
     },
     methods: {
+        addAsReserve(squad, member) {
+            addReserveB(squad.id, {
+                refId: member.refId,
+                name: member.name,
+                gender: member.gender,
+                vintage: member.vintage,
+                points: member.points,
+                parallelAllocation: member.parallelAllocation,
+                source: 'available'
+            })
+        },
         refreshMembers() {
             this.$apollo.queries.memberSearch.refresh()
             this.$apollo.queries.memberSearchCancellation.refresh()

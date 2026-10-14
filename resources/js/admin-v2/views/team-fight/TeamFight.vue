@@ -72,6 +72,7 @@
                                         :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
                                         :scenario-id="selectedScenarioId"
                                         :version="new Date(version)" :game-date="gameDate"
+                                        :squads="teamRound.squads"
                                        @open-add-member="openAddMemberModal"/>
                 </div>
                 <div class="column is-6 container">
@@ -195,6 +196,7 @@
                 </div>
             </div>
         </section>
+        <PrototypeSwitcher :variants="reserveVariants"/>
     </div>
 </template>
 
@@ -231,6 +233,8 @@ import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 import ExportCsvModal from "./ExportCsvModal.vue";
+import PrototypeSwitcher from "../../components/PrototypeSwitcher.vue";
+import {VARIANTS as reserveVariants} from "./reserve-prototype/reserve-prototype.js";
 
 export default {
     name: "TeamFight",
@@ -244,7 +248,8 @@ export default {
         RankingVersionSelect,
         TeamTable,
         TeamRoundSettingsModal,
-        ValidateTeams
+        ValidateTeams,
+        PrototypeSwitcher
     },
     props: {
         teamRoundId: String
@@ -343,6 +348,7 @@ export default {
     data() {
         return {
             titleStack: ['Admin', 'Holdrunde'],
+            reserveVariants,
             validateBasicSquads: [],
             playingToHighList: [],
             playingToHighSquadList: [],
