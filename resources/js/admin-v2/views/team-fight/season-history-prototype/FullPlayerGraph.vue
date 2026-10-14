@@ -23,8 +23,12 @@
                 </b-field>
                 <p v-if="!season.hasEarlier" class="has-text-grey">{{ EMPTY_TEXT }}</p>
                 <div v-else class="chart-wrap">
-                    <svg :viewBox="`0 0 ${W} ${H}`" class="chart" role="img">
-                        <text v-for="(round, r) in season.rounds" :key="round.key" :x="x(r)" y="14" text-anchor="middle" class="axis">
+                    <svg ref="chart" :viewBox="`0 0 ${W} ${H}`" class="chart" role="img"
+                         @mousemove="hoverAt" @click="hoverAt" @mouseleave="hoverRound = null">
+                        <rect v-if="hoverRound !== null" :x="x(hoverRound) - band / 2" y="0" :width="band" :height="H"
+                              class="hover-band" dusk="graph-hover-band"/>
+                        <text v-for="(round, r) in season.rounds" :key="round.key" :x="x(r)" y="14" text-anchor="middle" class="axis"
+                              :class="{hovered: r === hoverRound}">
                             {{ round.isCurrent ? 'Nu' : 'R' + (r + 1) }}
                         </text>
                         <line v-for="(round, r) in season.rounds" :key="'g' + round.key" :x1="x(r)" :x2="x(r)" :y1="24" :y2="H - 8" class="grid"/>
@@ -52,7 +56,8 @@
                     <tr><th>Runde</th><th>Nr. i {{ category }}</th><th>Opstillet</th></tr>
                     </thead>
                     <tbody>
-                    <tr v-for="row in rows" :key="row.round.key">
+                    <tr v-for="row in rows" :key="row.round.key" :class="{hovered: row.r === hoverRound}"
+                        :dusk="'graph-row-' + row.r" @mouseenter="hoverRound = row.r" @mouseleave="hoverRound = null">
                         <td class="nowrap">{{ row.round.name }} <span class="is-size-7 has-text-grey">· {{ formatDate(row.round.gameDate) }}</span></td>
                         <td class="nowrap">{{ row.rank ?? '–' }}</td>
                         <td class="is-size-7">
@@ -88,6 +93,8 @@ export default {
         return {
             EMPTY_TEXT, NOT_PLACED_TEXT, CATEGORY_LABEL, PAD_L, W,
             category: now.find(c => c === 'HS' || c === 'DS') || now[0] || all[0],
+            // The round under the mouse in the chart or table; both highlight it.
+            hoverRound: null,
         }
     },
     computed: {
@@ -111,6 +118,7 @@ export default {
         },
         rows() {
             return this.season.rounds.map((round, r) => ({
+                r,
                 round,
                 rank: this.model.rank(this.player.refId, this.category, r),
                 placements: this.model.placementsAt(this.player.refId, r),
@@ -145,6 +153,12 @@ export default {
         },
         H() {
             return PAD_T + Math.max(this.rankRange.length, 1) * ROW_H
+        },
+        step() {
+            return (W - PAD_L - LABEL_W - 10) / Math.max(this.R - 1, 1)
+        },
+        band() {
+            return Math.min(this.step, 60)
         },
         lines() {
             const me = this.info.refId
@@ -197,7 +211,14 @@ export default {
             return `${p.category} nr. ${p.rank} · ` + formatPlacement(p)
         },
         x(r) {
-            return PAD_L + 10 + r * ((W - PAD_L - LABEL_W - 10) / Math.max(this.R - 1, 1))
+            return PAD_L + 10 + r * this.step
+        },
+        // Nearest round to the pointer, from its position in viewBox units; a tap works the same on mobile.
+        hoverAt(event) {
+            const box = this.$refs.chart.getBoundingClientRect()
+            const vx = (event.clientX - box.left) * W / box.width
+            const r = Math.round((vx - PAD_L - 10) / this.step)
+            this.hoverRound = r >= 0 && r < this.R && Math.abs(vx - this.x(r)) <= this.step / 2 ? r : null
         },
         y(rank) {
             const min = this.rankRange[0]?.rank ?? 1
@@ -212,6 +233,9 @@ export default {
 .chart { width: 100%; min-width: 600px; height: auto; }
 .chart .axis { font-size: 11px; fill: #7a7a7a; }
 .chart .grid { stroke: #f0f0f0; }
+.chart .hover-band { fill: #eef6fc; }
+.chart .axis.hovered { fill: #1d5d90; font-weight: 700; }
+tr.hovered td { background: #eef6fc; }
 .chart .label { font-size: 12px; fill: #4a4a4a; }
 .chart .label.youth { fill: #257953; }
 .chart .label.subject { font-weight: 700; fill: #1d5d90; }
