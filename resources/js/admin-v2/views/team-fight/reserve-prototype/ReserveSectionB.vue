@@ -33,7 +33,7 @@
                 {{ reserve.name }}
             </span>
             <b-tag size="is-small" class="is-pulled-left ml-2" :class="reserve.source === 'available' ? 'is-light' : 'is-info is-light'">
-                {{ reserve.source === 'available' ? 'Ledig spiller' : `Står også på Hold ${reserve.source + 1} · ${reserve.category}` }}
+                {{ reserve.source === 'available' ? 'Ledig spiller' : `Fra Hold ${reserve.source + 1} · ${reserve.category}` }}
             </b-tag>
             <b-tag v-if="reserve.parallelAllocation" size="is-small" type="is-warning is-light" class="is-pulled-left ml-2">
                 <b-icon icon="alert-circle" size="is-small" class="mr-1"/>
