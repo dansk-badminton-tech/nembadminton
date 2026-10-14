@@ -179,6 +179,8 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
+                                <b-button dusk="season-history-open" size="is-small" title="Sæsonhistorik" icon-right="history"
+                                          @click="openSeasonHistory(player)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
@@ -215,6 +217,17 @@
                 <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
             </template>
         </b-modal>
+        <b-modal
+            v-model="showSeasonHistory"
+            :full-screen="seasonHistoryFullScreen"
+            :can-cancel="['escape', 'x', 'outside']"
+            has-modal-card
+            trap-focus
+        >
+            <template #default="props">
+                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer" @close="props.close"/>
+            </template>
+        </b-modal>
     </div>
 </template>
 <script>
@@ -240,10 +253,11 @@ import {
 } from "./helper";
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
+import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch},
+    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal},
     props: {
         version: Date,
         confirmDelete: Function,
@@ -266,6 +280,7 @@ export default {
             default: []
         },
         scenarioId: [String, Number],
+        teamRoundId: String,
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -301,7 +316,10 @@ export default {
     data(){
         return {
             modalPlayer: {},
-            showPlayerModal: false
+            showPlayerModal: false,
+            seasonHistoryPlayer: null,
+            seasonHistoryFullScreen: false,
+            showSeasonHistory: false
         }
     },
     methods: {
@@ -402,6 +420,12 @@ export default {
         openEditPlayerModal(player) {
             this.modalPlayer = player
             this.showPlayerModal = true
+        },
+        openSeasonHistory(player) {
+            this.seasonHistoryPlayer = player
+            // Full-screen on a phone (Bulma's mobile breakpoint)
+            this.seasonHistoryFullScreen = window.matchMedia('(max-width: 768px)').matches
+            this.showSeasonHistory = true
         },
         openEditSquadModal(squad) {
             this.$buefy.modal.open(

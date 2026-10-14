@@ -178,6 +178,7 @@
                                :playing-to-high-in-squad="playingToHighSquadList"
                                :squads="teamRound.squads"
                                :scenario-id="selectedScenarioId"
+                               :team-round-id="teamRoundId"
                                :clubhouse-id="clubhouseId"
                                :season-id="teamRound?.season?.id"
                                :used-team-ids="usedTeamIds"

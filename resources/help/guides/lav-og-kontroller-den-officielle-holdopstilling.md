@@ -32,6 +32,21 @@ Feltet viser også spillere med afbud, så kontrollér selv, at spilleren kan sp
 - **Flyt:** Træk spillerens navn til en anden plads på samme eller et andet hold.
 - **Fjern:** Vælg krydset **Slet** ud for spilleren. Spilleren fjernes kun fra holdopstillingen og vises igen på listen.
 
+### Se en spillers sæsonhistorik
+
+Sæsonhistorikken viser, hvor en spiller stod i klubbens tidligere holdrunder i samme sæson. Den er en hjælp, når du skal placere en spiller, især en ungdomsspiller, som du placerer efter nuværende styrke. Historikken viser opstillinger, ikke resultater.
+
+1. Vælg historikikonet **Sæsonhistorik** ud for spilleren på holdet. Ikonet står ved siden af **Rediger** og **Slet**.
+2. Vælg kategori øverst i vinduet. Kategorien, spilleren står i nu, er markeret med **· nu**, og vinduet starter på den. Står spilleren ikke i nogen kategori nu, starter vinduet på den første kategori, spilleren har stået i.
+3. Aflæs grafen. Den viser spillerens plads i kategorien på tværs af klubbens hold, med **1. hold** øverst, i hver holdrunde, med **Nu** som den seneste. Spillerens egen linje er tyk og blå. Andre ungdomsspillere er grønne og stiplede, og spillere, der højst har stået 2 pladser fra spilleren, er grå.
+4. Hold markøren over en holdrunde i grafen, eller tryk på den på en telefon, for at fremhæve den i grafen og i tabellen under grafen.
+5. Brug tabellen til at se, hvor spilleren stod i hver holdrunde. Den nyeste holdrunde står øverst. Kolonnen **Opstillet** viser alle spillerens pladser i holdrunden, fx **HS nr. 4 · Hold 1 · 4. HS**. I double står makkerne på samme plads og er nævnt i tabellen. Står spilleren ikke på et hold i en holdrunde, står der **Ikke opstillet**.
+6. Luk vinduet med krydset, med **Esc**, eller ved at vælge uden for vinduet.
+
+**Nu** er den holdopstilling, du har gemt i holdrunden lige nu. Er der ingen tidligere holdrunder i sæsonen, viser vinduet **Ingen tidligere holdrunder i sæsonen**.
+
+Sæsonhistorikken bruger kun de officielle holdopstillinger i klubbens tidligere holdrunder, så den viser ikke udkast.
+
 ## Kontrollér holdopstillingen
 
 Over holdene viser Nembadminton tre kontroller, som opdateres, hver gang du ændrer holdopstillingen:

@@ -74,6 +74,7 @@ class SeasonHistoryTest extends TestCase
                 'category' => 'HS',
                 'places' => [[
                     'place' => 1,
+                    'squadPosition' => 1,
                     'teamName' => 'Højbjerg 1',
                     'tier' => '2. division',
                     'label' => '1. HS',
@@ -113,6 +114,7 @@ class SeasonHistoryTest extends TestCase
             ],
             $this->places($categories[0]),
         );
+        $this->assertSame([1, 1, 2], array_column($categories[0]['places'], 'squadPosition'));
         $this->assertSame([], $categories[1]['places']);
         $this->assertSame([[1, 'Hold 1', 'Danmarksserien', '1. HD', ['Anders', 'Bo']]], $this->places($categories[2]));
         $this->assertSame([[1, 'Hold 1', 'Danmarksserien', '1. DD', ['Eva', 'Fie']]], $this->places($categories[3]));
@@ -300,6 +302,7 @@ class SeasonHistoryTest extends TestCase
                             category
                             places {
                                 place
+                                squadPosition
                                 teamName
                                 tier
                                 label
