@@ -29,20 +29,29 @@ class SeasonHistoryPrototypeScreenshotTest extends DuskTestCase
 
             foreach (['desktop' => [1400, 1000], 'phone' => [390, 844]] as $size => [$w, $h]) {
                 $browser->resize($w, $h);
-                foreach (['A', 'B', 'C', 'D'] as $variant) {
+                foreach (["A", "B", "C", "D", "E"] as $variant) {
                     $browser->visit($base.'?variant='.$variant)
                         ->waitFor("[dusk='squad-0'] [dusk='edit-squad-member-button']", 20)
                         ->waitFor('@prototype-switcher')
                         ->pause(500);
-                    if ($variant !== 'D') {
+                    if (in_array($variant, ["A", "D", "E"])) {
                         $browser->click("[dusk='squad-0'] [dusk='season-history-trigger']")->pause(800);
                     }
                     $browser->screenshot("season-history-{$size}-{$variant}");
                 }
-                $browser->visit($base.'?variant=D&history-empty=1')
+                $browser->visit($base.'?variant=C')
+                    ->waitFor('.matrix tr.youth', 20)
+                    ->script("document.querySelector('.matrix tr.youth').scrollIntoView({block: 'center'})");
+                $youthName = $browser->script("return document.querySelector('.matrix tr.youth td').childNodes[0].textContent.trim()")[0];
+                $browser->pause(300)->screenshot("season-history-{$size}-C-youth");
+                $browser->visit($base.'?variant=E')
+                    ->waitFor("[dusk='squad-0'] [dusk='edit-squad-member-button']", 20)
+                    ->script("[...document.querySelectorAll('p.handle')].find(p => p.textContent.includes(".json_encode($youthName)."))?.click()");
+                $browser->pause(800)->screenshot("season-history-{$size}-E-youth");
+                $browser->visit($base.'?variant=B&history-empty=1')
                     ->waitFor("[dusk='squad-0'] [dusk='edit-squad-member-button']", 20)
                     ->pause(500)
-                    ->screenshot("season-history-{$size}-D-empty");
+                    ->screenshot("season-history-{$size}-B-empty");
             }
         });
     }

@@ -1,6 +1,8 @@
 <template>
     <div dusk="team-table-section">
         <b-loading :is-full-page="false" :active="loading" :can-cancel="true"></b-loading>
+        <!-- PROTOTYPE (#254) quick C: club-wide order table -->
+        <QuickOrderMatrix v-if="historyVariant === 'C'" :season="season"/>
         <div v-for="(squad, index) in squads" :key="squad.id" class="column is-full" :dusk="'squad-' + index">
             <table class="table is-striped mt-5 is-fullwidth">
                 <thead>
@@ -111,7 +113,7 @@
                                 </template>
                                 <div class="is-flex is-justify-content-space-between is-align-items-center ml-2">
                                     <p class="handle" v-bind:class="highlight(player, category.category)"
-                                       @click="historyVariant === 'B' && toggleHistory(squad, category, player)">
+                                       @click="openFullPlayer(player)">
                                         <b-icon
                                             v-show="player.gender === 'MEN'"
                                             icon="gender-male"
@@ -181,20 +183,17 @@
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <!-- PROTOTYPE (#254) Season History triggers -->
-                                <SeasonHistoryVariantA v-if="historyVariant === 'A'" :player="player" :empty="historyEmpty"/>
-                                <b-button v-if="historyVariant === 'B'" size="is-small" title="Opstillet tidligere i sæsonen"
-                                          :icon-right="expandedHistory[historyKey(squad, category, player)] ? 'chevron-up' : 'history'"
+                                <QuickOrderPopover v-if="historyVariant === 'A'" :season="season" :player="player"/>
+                                <b-button v-if="isFullVariant" size="is-small" title="Spilleroverblik" icon-right="account-details"
                                           dusk="season-history-trigger"
-                                          @click="toggleHistory(squad, category, player)"></b-button>
-                                <SeasonHistoryVariantC v-if="historyVariant === 'C'" :player="player" :empty="historyEmpty"/>
+                                          @click="openFullPlayer(player)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
                                           @click="deletePlayer(squad, category, player)"></b-button>
                             </div>
                             <!-- PROTOTYPE (#254) Season History inline variants -->
-                            <SeasonHistoryVariantB v-if="historyVariant === 'B' && expandedHistory[historyKey(squad, category, player)]" :player="player" :empty="historyEmpty"/>
-                            <SeasonHistoryVariantD v-if="historyVariant === 'D'" :player="player" :empty="historyEmpty"/>
+                            <QuickOrderTrend v-if="historyVariant === 'B'" :season="season" :player="player"/>
                         </div>
                         <PlayerSearch
                             v-if="category.players.length === 0"
@@ -226,6 +225,8 @@
                 <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
             </template>
         </b-modal>
+        <FullPlayerPanel v-if="historyVariant === 'D' && fullPlayer" :season="season" :player="fullPlayer" @close="fullPlayer = null"/>
+        <FullPlayerGraph v-if="historyVariant === 'E' && fullPlayer" :season="season" :player="fullPlayer" @close="fullPlayer = null"/>
         <PrototypeSwitcher v-if="historyVariant"
                            :variants="historyVariants"
                            :current="historyVariant"
@@ -258,23 +259,26 @@ import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
 // PROTOTYPE (#254): Season History variants, throwaway.
 import PrototypeSwitcher from "@/components/PrototypeSwitcher.vue";
-import SeasonHistoryVariantA from "./season-history-prototype/SeasonHistoryVariantA.vue";
-import SeasonHistoryVariantB from "./season-history-prototype/SeasonHistoryVariantB.vue";
-import SeasonHistoryVariantC from "./season-history-prototype/SeasonHistoryVariantC.vue";
-import SeasonHistoryVariantD from "./season-history-prototype/SeasonHistoryVariantD.vue";
+import QuickOrderPopover from "./season-history-prototype/QuickOrderPopover.vue";
+import QuickOrderTrend from "./season-history-prototype/QuickOrderTrend.vue";
+import QuickOrderMatrix from "./season-history-prototype/QuickOrderMatrix.vue";
+import FullPlayerPanel from "./season-history-prototype/FullPlayerPanel.vue";
+import FullPlayerGraph from "./season-history-prototype/FullPlayerGraph.vue";
+import {buildSeason} from "./season-history-prototype/season.js";
 
 const HISTORY_VARIANTS = {
-    A: 'Popover fra ikon',
-    B: 'Udfold under spiller',
-    C: 'Sidepanel',
-    D: 'Altid synlig tidslinje',
+    A: 'Hurtig: popover med rækkefølge',
+    B: 'Hurtig: trend under navnet',
+    C: 'Hurtig: rækkefølge-tabel',
+    D: 'Fuld: spillerpanel',
+    E: 'Fuld: graf over rækkefølgen',
 }
 
 export default {
     name: 'TeamTable',
     components: {
         EditPlayerModal, PlayerSearch, PrototypeSwitcher,
-        SeasonHistoryVariantA, SeasonHistoryVariantB, SeasonHistoryVariantC, SeasonHistoryVariantD
+        QuickOrderPopover, QuickOrderTrend, QuickOrderMatrix, FullPlayerPanel, FullPlayerGraph
     },
     props: {
         version: Date,
@@ -342,22 +346,26 @@ export default {
         },
         historyEmpty() {
             return this.$route.query['history-empty'] !== undefined
+        },
+        isFullVariant() {
+            return this.historyVariant === 'D' || this.historyVariant === 'E'
+        },
+        season() {
+            return this.historyVariant ? buildSeason(this.squads, {empty: this.historyEmpty}) : null
         }
     },
     data(){
         return {
             modalPlayer: {},
             showPlayerModal: false,
-            expandedHistory: {}
+            fullPlayer: null
         }
     },
     methods: {
-        historyKey(squad, category, player) {
-            return `${squad.id}-${category.id}-${player.id}`
-        },
-        toggleHistory(squad, category, player) {
-            const key = this.historyKey(squad, category, player)
-            this.expandedHistory[key] = !this.expandedHistory[key]
+        openFullPlayer(player) {
+            if (this.isFullVariant) {
+                this.fullPlayer = player
+            }
         },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
