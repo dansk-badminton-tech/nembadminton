@@ -23,6 +23,8 @@ class TeamRound extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
     protected $fillable = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id', 'season_id'];
 
     protected static function booted(): void
@@ -48,7 +50,18 @@ class TeamRound extends Model
 
     public function scopeVisibleToUser(Builder $query): Builder
     {
-        $user = Auth::user();
+        return $this->scopeVisibleTo($query, Auth::user());
+    }
+
+    /**
+     * The TeamRounds the User may see: all of them, except for a User whose primary role is player, who sees only those
+     * where they stand in the Official Lineup.
+     *
+     * @param  Builder<TeamRound>  $query
+     * @return Builder<TeamRound>
+     */
+    public function scopeVisibleTo(Builder $query, ?User $user): Builder
+    {
         if ($user && $user->primaryRole?->name === Role::PLAYER->value) {
             return $query->whereHas('squads.categories', function (Builder $categoryQuery) use ($user) {
                 $categoryQuery->where(function (Builder $sub) {

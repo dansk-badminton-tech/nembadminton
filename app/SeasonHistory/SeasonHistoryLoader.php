@@ -13,6 +13,7 @@ use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 /**
@@ -26,7 +27,37 @@ class SeasonHistoryLoader
             ->where('clubhouse_id', $clubhouse->id)
             ->where(fn (Builder $query) => $query->where('season_id', $seasonStartYear)->orWhereNull('season_id'))
             ->get()
-            ->filter(fn (TeamRound $teamRound) => $teamRound->seasonStartYear() === $seasonStartYear)
+            ->filter(fn (TeamRound $teamRound) => $teamRound->seasonStartYear() === $seasonStartYear);
+
+        return $this->history($teamRounds);
+    }
+
+    /**
+     * The Season History up to a TeamRound: its Clubhouse's TeamRounds in its Season on an earlier game date, then the
+     * TeamRound itself, last. TeamRounds on the same date are left out, and so are TeamRounds without a Season. A
+     * TeamRound without a Season or game date has no earlier TeamRounds.
+     */
+    public function upTo(TeamRound $teamRound): SeasonHistory
+    {
+        // The TeamRound is loaded again, so the lineup relations below aren't set on the caller's model.
+        $teamRounds = TeamRound::query()
+            ->whereKey($teamRound->id)
+            ->when($teamRound->season_id !== null && $teamRound->game_date !== null, fn (Builder $query) => $query
+                ->orWhere(fn (Builder $query) => $query
+                    ->where('clubhouse_id', $teamRound->clubhouse_id)
+                    ->where('season_id', $teamRound->season_id)
+                    ->whereDate('game_date', '<', Carbon::parse($teamRound->game_date)->toDateString())))
+            ->get();
+
+        return $this->history($teamRounds);
+    }
+
+    /**
+     * @param  EloquentCollection<int, TeamRound>  $teamRounds
+     */
+    private function history(EloquentCollection $teamRounds): SeasonHistory
+    {
+        $teamRounds = $teamRounds
             ->load([
                 'officialScenario',
                 'squads.team.tier',
@@ -76,7 +107,7 @@ class SeasonHistoryLoader
                     categoryName: $category->name,
                     squad: $lineupSquad,
                     players: collect($category->players)
-                        ->map(fn (SquadMember $player) => new SlotPlayer((string) $player->member_ref_id, (string) $player->name, (string) $player->gender))
+                        ->map(fn (SquadMember $player) => new SlotPlayer((string) $player->member_ref_id, (string) $player->name, (string) $player->gender, $player->getVintage()))
                         ->values()
                         ->all(),
                 );

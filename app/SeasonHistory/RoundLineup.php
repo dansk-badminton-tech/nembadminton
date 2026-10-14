@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\SeasonHistory;
 
+use App\Enums\SeasonPhase;
+
 /**
  * The Official Lineup of one TeamRound: its Squads in order and a ladder of CategorySlots per category.
  */
@@ -21,6 +23,15 @@ final readonly class RoundLineup
         public array $squads,
         public array $ladders,
     ) {}
+
+    /**
+     * The TeamRound's phase, taken from its highest Squad because the phase can depend on the tier. Null when the
+     * TeamRound has no round number.
+     */
+    public function phase(): ?SeasonPhase
+    {
+        return $this->squads[0]->phase ?? SeasonPhase::fromRound($this->round, null);
+    }
 
     /**
      * @return list<CategorySlot>
