@@ -48,6 +48,8 @@ class SeasonHistoryPrototypeScreenshotTest extends DuskTestCase
                     ->waitFor("[dusk='squad-0'] [dusk='edit-squad-member-button']", 20)
                     ->script("[...document.querySelectorAll('p.handle')].find(p => p.textContent.includes(".json_encode($youthName)."))?.click()");
                 $browser->pause(800)->screenshot("season-history-{$size}-E-youth");
+                $browser->script("document.querySelector(\"[dusk='graph-category-HD'] input\")?.click()");
+                $browser->pause(500)->screenshot("season-history-{$size}-E-youth-HD");
                 $browser->visit($base.'?variant=B&history-empty=1')
                     ->waitFor("[dusk='squad-0'] [dusk='edit-squad-member-button']", 20)
                     ->pause(500)
