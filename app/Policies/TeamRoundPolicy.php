@@ -24,7 +24,7 @@ class TeamRoundPolicy
      */
     public function viewSeasonHistory(User $user, TeamRound $teamRound): bool
     {
-        return $this->view($user, $teamRound) && TeamRound::query()->visibleToUser()->whereKey($teamRound->id)->exists();
+        return $this->view($user, $teamRound) && TeamRound::query()->visibleTo($user)->whereKey($teamRound->id)->exists();
     }
 
     public function create(User $user): bool
