@@ -20,8 +20,6 @@ use Illuminate\Support\Collection;
  */
 class SeasonHistoryLoader
 {
-    public const CATEGORIES = ['HS', 'DS', 'HD', 'DD', 'MD'];
-
     public function load(Clubhouse $clubhouse, int $seasonStartYear): SeasonHistory
     {
         $teamRounds = TeamRound::query()
@@ -54,7 +52,7 @@ class SeasonHistoryLoader
         $official = $this->officialCategories($teamRound);
 
         $squads = [];
-        $ladders = array_fill_keys(self::CATEGORIES, []);
+        $ladders = array_fill_keys(SeasonHistory::CATEGORIES, []);
         foreach ($teamRound->squads->values() as $index => $squad) {
             /** @var Squad $squad */
             $tier = $squad->effectiveTier();
@@ -97,7 +95,7 @@ class SeasonHistoryLoader
 
     /**
      * The categories of the TeamRound's Official Lineup: those of its official scenario, or for older TeamRounds
-     * without one, those without a scenario. Mirrors the export of the Official Lineup.
+     * without one, those without a scenario. Same semantics as TeamRound::scopeVisibleToUser.
      *
      * @return Collection<int, SquadCategory>
      */
@@ -108,14 +106,9 @@ class SeasonHistoryLoader
         $categories = $squads->flatMap(fn (Squad $squad) => $squad->categories);
         /** @var TeamRoundScenario|null $officialScenario */
         $officialScenario = $teamRound->officialScenario;
-        $officialScenarioId = $officialScenario?->id;
-        if ($officialScenarioId !== null) {
-            $official = $categories->where('team_round_scenario_id', $officialScenarioId);
-            if ($official->isNotEmpty()) {
-                return $official;
-            }
-        }
 
-        return $categories->whereNull('team_round_scenario_id');
+        return $officialScenario === null
+            ? $categories->whereNull('team_round_scenario_id')
+            : $categories->where('team_round_scenario_id', $officialScenario->id);
     }
 }

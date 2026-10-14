@@ -8,9 +8,15 @@ use App\Enums\SeasonPhase;
 
 /**
  * Season History of a Clubhouse: the Official Lineups of its TeamRounds in one Season.
+ *
+ * The lookups take an optional phase. Without one they count every TeamRound, also those whose phase is unknown;
+ * with one they throw UnknownPhaseException as soon as one of the Member's TeamRounds has no round number.
  */
 final readonly class SeasonHistory
 {
+    /** The categories, each its own ladder, in display order. */
+    public const CATEGORIES = ['HS', 'DS', 'HD', 'DD', 'MD'];
+
     /**
      * @param  list<RoundLineup>  $rounds  Ordered by game date, then round number.
      */
@@ -129,7 +135,7 @@ final readonly class SeasonHistory
             }
         }
 
-        return array_values(array_filter(SeasonHistoryLoader::CATEGORIES, fn (string $category) => isset($played[$category])));
+        return array_values(array_filter(self::CATEGORIES, fn (string $category) => isset($played[$category])));
     }
 
     /**

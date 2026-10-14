@@ -324,15 +324,15 @@ class SeasonHistoryTest extends TestCase
     {
         for ($i = 0; $i < $count; $i++) {
             $round = $this->teamRound(round: 1);
-            $round->scenarios()->create(['name' => 'Plan A', 'is_official' => true]);
+            $official = $round->scenarios()->create(['name' => 'Plan A', 'is_official' => true]);
             $team = Team::factory()->withTier(TournamentTier::query()->firstOrCreate(['tier_name' => '2. division']))
                 ->create(['clubhouse_id' => $this->clubhouse->id]);
             foreach ([1, 2, 3] as $order) {
                 $squad = $this->squad($round, "Klub $order", order: $order, team: $order === 1 ? $team : null);
                 if ($order === 1) {
-                    $this->category($squad, 'HD', '1. HD', ['0101011111', '0101012222']);
+                    $this->category($squad, 'HD', '1. HD', ['0101011111', '0101012222'], $official->id);
                 }
-                $this->category($squad, 'HS', '1. HS', ['0101012222']);
+                $this->category($squad, 'HS', '1. HS', ['0101012222'], $official->id);
             }
         }
     }
