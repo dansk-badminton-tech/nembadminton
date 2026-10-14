@@ -356,7 +356,7 @@ class SeasonHistoryTest extends TestCase
     }
 
     /**
-     * The categories of a Member's only placement as [category, Kategoriplads, partner name].
+     * The categories of a Member's only placement as [category, Category Rank, partner name].
      *
      * @return list<array{string, int, string|null}>
      */
