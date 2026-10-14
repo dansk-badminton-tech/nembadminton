@@ -23,6 +23,8 @@ class TeamRound extends Model
 
     public $incrementing = false;
 
+    protected $keyType = 'string';
+
     protected $fillable = ['teams', 'name', 'game_date', 'version', 'round', 'user_id', 'clubhouse_id', 'season_id'];
 
     protected static function booted(): void

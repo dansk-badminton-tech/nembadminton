@@ -353,6 +353,58 @@ type TeamRound {
     scenarios: [TeamRoundScenario!]! @hasMany(relation: "scenarios")
     "Official scenario"
     officialScenario: TeamRoundScenario @hasOne(relation: "officialScenario")
+    "Season History: the Category Rank ladder of every earlier TeamRound of the Clubhouse in the Season, oldest first, then this TeamRound's own. Official Lineups only."
+    seasonHistory: [SeasonHistoryRound!]! @guard @canRoot(ability: "viewSeasonHistory") @field(resolver: "App\\GraphQL\\Queries\\TeamRoundSeasonHistory")
+}
+
+"A TeamRound in the Season History"
+type SeasonHistoryRound {
+    "TeamRound ID"
+    id: ID!
+    "Display name of the TeamRound"
+    name: String!
+    gameDate: Date
+    "Round number (runde)"
+    round: Int
+    "Null when the TeamRound has no round number"
+    phase: SeasonPhase
+    "True for the viewed TeamRound, which comes last"
+    isCurrent: Boolean!
+    "One ladder per category: HS, DS, HD, DD, MD"
+    categories: [SeasonHistoryCategory!]!
+}
+
+type SeasonHistoryCategory {
+    "HS, DS, HD, DD or MD"
+    category: String!
+    "The category's places across the Clubhouse's Squads, in team order"
+    places: [SeasonHistoryPlace!]!
+}
+
+"A place in a category's ladder. In doubles both partners share it."
+type SeasonHistoryPlace {
+    "Category Rank (Kategoriplads), 1-based"
+    place: Int!
+    "The Team's name, or the Squad's own name when it has no Team"
+    teamName: String
+    "The Squad's tier (række)"
+    tier: String
+    "Category name, e.g. \"2. HS\""
+    label: String!
+    players: [SeasonHistoryPlayer!]!
+}
+
+type SeasonHistoryPlayer {
+    refId: String!
+    name: String!
+    gender: Gender!
+    vintage: Vintage!
+}
+
+enum SeasonPhase {
+    GRUNDSPIL @enum(value: "grundspil")
+    SLUTSPIL @enum(value: "slutspil")
+    KVALIFIKATION @enum(value: "kvalifikation")
 }
 
 type TeamRoundScenario {
