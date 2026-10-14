@@ -18,6 +18,14 @@ _Avoid_: Young player, junior
 Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
 _Avoid_: Placement history, match history
 
+**Category Rank** (kategoriplads):
+A place's rank in one category across a Clubhouse's Squads in one TeamRound. The places are ordered by Squad order (highest team first) and then by the category's number: the first men's single on the highest team is rank 1, the second men's single on that team rank 2, and the first men's single on the next team rank 3. In doubles and mixed doubles both partners stand on the same place and share its Category Rank. Each category (HS, DS, HD, DD, MD) is its own ladder; places in different categories are never compared. An empty place keeps its rank.
+_Avoid_: Position (the ranking-list position), placement
+
+**Season Phase** (fase):
+The part of the season a TeamRound belongs to, decided by its round number and not its date (§45): **group stage** (grundspil) is round 1–7, or 1–9 in Badmintonligaen (§9 stk. 1); **qualification** (kvalifikation) is round 12 (§27 stk. 1); **play-offs** (slutspil) is every other round after the group stage (§15). A TeamRound without a round number has an unknown Season Phase.
+_Avoid_: Tournament phase (a badmintonplayer.dk group type), stage
+
 **User**:
 A system account with login credentials, roles, and clubhouse permissions.
 _Avoid_: Member, player
