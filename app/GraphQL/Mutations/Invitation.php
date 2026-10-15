@@ -5,6 +5,7 @@ namespace App\GraphQL\Mutations;
 use App\Enums\Role;
 use App\Models\Invitation as InvitationModel;
 use App\Models\User;
+use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -15,8 +16,7 @@ class Invitation
      */
     public function acceptInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        /** @var InvitationModel $invitation */
-        $invitation = InvitationModel::query()->where('token', '=', $args['token'])->where('status', '=', 'pending')->firstOrFail();
+        $invitation = $this->findAnswerableInvitation($args['token']);
         $invitation->accept();
         $invitation->saveOrFail();
 
@@ -28,10 +28,24 @@ class Invitation
 
     public function declineInvitation($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        /** @var InvitationModel $invitation */
-        $invitation = InvitationModel::query()->where('token', '=', $args['token'])->where('status', '=', 'pending')->firstOrFail();
+        $invitation = $this->findAnswerableInvitation($args['token']);
         $invitation->decline();
         $invitation->saveOrFail();
+
+        return $invitation;
+    }
+
+    /**
+     * A pending invitation that has not expired yet.
+     */
+    private function findAnswerableInvitation(string $token): InvitationModel
+    {
+        /** @var InvitationModel $invitation */
+        $invitation = InvitationModel::query()->where('token', '=', $token)->where('status', '=', 'pending')->firstOrFail();
+
+        if ($invitation->isExpired()) {
+            throw new UserError('Invitationen er udløbet');
+        }
 
         return $invitation;
     }

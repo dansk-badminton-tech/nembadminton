@@ -102,6 +102,11 @@ class Invitation extends Model
         return URL::query('/app/invitation/'.$this->token);
     }
 
+    public function isExpired(): bool
+    {
+        return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
     public function accept()
     {
         $this->accepted_at = Carbon::now();

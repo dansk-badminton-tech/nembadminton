@@ -42,7 +42,31 @@ class ClubHousePage extends Page
     {
         return [
             '@invitation-list' => "[dusk='invitation-list']",
+            '@member-list' => "[dusk='member-list']",
+            '@invitation-email-input' => "input[dusk='invitation-email-input']",
+            '@send-invitation-button' => "[dusk='send-invitation-button']",
         ];
+    }
+
+    /**
+     * Invite someone from the Invitationer tab, keeping the default role.
+     */
+    public function inviteMember(Browser $browser, string $email): void
+    {
+        $browser->waitFor("[dusk='open-invite-modal']")
+            ->click("[dusk='open-invite-modal']")
+            ->waitFor('@invitation-email-input')
+            ->type('@invitation-email-input', $email)
+            ->click('@send-invitation-button');
+    }
+
+    /**
+     * Remove a User from the Medlemmer tab.
+     */
+    public function removeMember(Browser $browser, int $userId): void
+    {
+        $browser->waitFor("[dusk='remove-member-{$userId}']")
+            ->click("[dusk='remove-member-{$userId}']");
     }
 
     /**

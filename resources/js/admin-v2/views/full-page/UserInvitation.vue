@@ -7,11 +7,19 @@
         <template v-slot:default>
             <div>
                 <b-message
-                    v-if="!me"
+                    v-if="!me && !isExpired"
                     title="Opret bruger"
                     type="is-info"
                     aria-close-label="Close message">
                     Du skal oprette dig som bruger først, før du kan acceptere invitationen.
+                </b-message>
+                <b-message
+                    v-if="isExpired"
+                    dusk="invitation-expired"
+                    title="Invitationen er udløbet"
+                    type="is-warning"
+                    :closable="false">
+                    Bed den som inviterede dig om at sende en ny invitation.
                 </b-message>
                 <h2 class="subtitle">Invitation</h2>
                 <div class="content">
@@ -38,7 +46,7 @@
         </template>
         <template v-slot:footer>
             <footer class="card-footer">
-                <a v-if="!isLoggedIn" dusk="sign-up-link" class="card-footer-item" @click="goToSignUp">Opret bruger</a>
+                <a v-if="!isLoggedIn && !isExpired" dusk="sign-up-link" class="card-footer-item" @click="goToSignUp">Opret bruger</a>
                 <a v-if="isLoggedIn && !isInvitationPending" dusk="continue-link" class="card-footer-item" @click="goToDashboard">Videre</a>
                 <a v-if="isLoggedIn && isInvitationPending" dusk="decline-button" class="card-footer-item" @click="declineInvitation">Afvis</a>
                 <a v-if="isLoggedIn && isInvitationPending" dusk="accept-button" class="card-footer-item" @click="acceptInvitation">Accepter</a>
@@ -77,7 +85,10 @@ export default {
             return !!this.me
         },
         isInvitationPending(){
-            return this.invitation?.status.toLowerCase() === 'pending'
+            return this.invitation?.status.toLowerCase() === 'pending' && !this.isExpired
+        },
+        isExpired(){
+            return this.invitation?.status.toLowerCase() === 'pending' && this.invitation?.expired === true
         }
     },
     apollo: {
@@ -92,6 +103,7 @@ export default {
                         role
                         status
                         expiresAt
+                        expired
                         acceptedAt
                         inviter {
                             name

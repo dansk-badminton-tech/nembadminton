@@ -37,6 +37,7 @@ class InvitationPage extends Page
             '@continue-link' => "[dusk='continue-link']",
             '@accept-button' => "[dusk='accept-button']",
             '@decline-button' => "[dusk='decline-button']",
+            '@expired' => "[dusk='invitation-expired']",
         ];
     }
 }

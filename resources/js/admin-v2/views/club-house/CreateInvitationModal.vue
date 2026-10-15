@@ -10,6 +10,7 @@
                 <b-field label="Email" message="Email address til den som du vil invitere">
                     <b-input
                         v-model="formData.email"
+                        dusk="invitation-email-input"
                         type="email"
                         placeholder="daniel@gmail.com"
                         required>
@@ -27,7 +28,7 @@
 
         <footer class="modal-card-foot">
             <b-button @click="$emit('close')">Cancel</b-button>
-            <b-button type="is-info" :loading="isSubmitting" @click="handleSubmit">Send Invitation</b-button>
+            <b-button type="is-info" dusk="send-invitation-button" :loading="isSubmitting" @click="handleSubmit">Send Invitation</b-button>
         </footer>
     </div>
 </template>
@@ -77,13 +78,7 @@ export default {
                     variables: {
                         input: {
                             email: this.formData.email,
-                            role: this.formData.role,
-                            inviter: {
-                                connect: this.user.id
-                            },
-                            clubhouse: {
-                                connect: this.clubhouseId
-                            }
+                            role: this.formData.role
                         },
                     },
                     refetchQueries: [{

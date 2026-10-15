@@ -67,7 +67,7 @@ export default {
         >
             <template v-slot:header>
                 <div class="card-header-icon">
-                    <b-button @click="showModal = true" type="is-info" aria-label="more options">Inviter medlem</b-button>
+                    <b-button @click="showModal = true" dusk="open-invite-modal" type="is-info" aria-label="more options">Inviter medlem</b-button>
                 </div>
             </template>
             <template v-slot:default>
@@ -87,7 +87,7 @@ export default {
                         {{ props.row.role }}
                     </b-table-column>
                     <b-table-column field="status" sortable label="Status" v-slot="props">
-                        {{ props.row.status }}
+                        {{ props.row.status === 'PENDING' && props.row.expired ? 'EXPIRED' : props.row.status }}
                     </b-table-column>
                     <b-table-column field="expiresAt" sortable label="Udløber" v-slot="props">
                         {{ props.row.expiresAt }}
