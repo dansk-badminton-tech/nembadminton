@@ -5,7 +5,7 @@
             <span class="is-size-7 has-text-grey">· gemmes ikke, glemmes ved genindlæsning</span></p>
         <ul class="is-size-7">
             <template v-if="variant === 'A'">
-                <li><b>Registrering:</b> reserver er sjældne, så under hvert hold står kun et lille link "Tilføj reserve til Hold N". Først når man klikker, åbner formularen: vælg reserven (en spiller fra et lavere hold) og hvem vedkommende erstatter (en spiller på dette hold), fx "Nicoline Tang for Amanda Aarrebo Petersen" (som på badmintonplayer.dk).</li>
+                <li><b>Registrering:</b> reserver er sjældne, så under hvert hold står kun et stiplet felt "Tilføj reserve til Hold N" med en kort §43-forklaring. Først når man klikker, åbner formularen: vælg reserven (en spiller fra et lavere hold) og hvem vedkommende erstatter (en spiller på dette hold), fx "Nicoline Tang for Amanda Aarrebo Petersen" (som på badmintonplayer.dk).</li>
                 <li><b>Mærker:</b> den erstattede spiller får "Erstattes af …", og reserven får "Reserve på Hold N for …" på sin plads på det lavere hold. Hold musen over for at se reglerne.</li>
                 <li><b>Kategoripladser:</b> uændret. Den erstattede spiller bliver stående, og reserven beholder sin plads på det lavere hold.</li>
                 <li><b>Sæsonhistorik:</b> pladserne vises som normalt, med en note om hvem reserven var reserve for.</li>

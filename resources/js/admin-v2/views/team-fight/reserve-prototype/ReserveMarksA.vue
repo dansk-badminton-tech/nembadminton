@@ -2,30 +2,15 @@
     <!-- PROTOTYPE A (#227): records the coach's decision "X (from a lower Squad) is reserve for Y (on this Squad)",
          like the "Reserver" section on badmintonplayer.dk's match page. -->
     <!-- Minimal by default: only a small link between the Squads, the form opens on demand. -->
-    <!-- PROTOTYPE: three suggestions for the collapsed look, stacked so they can be compared. -->
-    <div v-if="!reserves.length && !adding" class="reserve-suggestions" :dusk="'reserve-marks-a-' + squadIndex">
-        <p class="suggestion-label">Forslag 1: bjælke med knap</p>
-        <div class="suggestion-1">
-            <span><b-icon icon="account-switch" size="is-small"/> <strong>Reserver</strong>
-                <span class="has-text-grey">· ingen på Hold {{ squadIndex + 1 }}</span></span>
-            <b-button size="is-small" icon-left="plus" dusk="reserve-a-open" @click="adding = true">Tilføj reserve</b-button>
-        </div>
-
-        <p class="suggestion-label">Forslag 2: stiplet felt</p>
-        <a class="suggestion-2" dusk="reserve-a-open-2" @click="adding = true">
+    <!-- Collapsed until the coach chooses to add a reserve (suggestion 2 of 3: dashed box). -->
+    <div v-if="!reserves.length && !adding" class="reserve-collapsed" :dusk="'reserve-marks-a-' + squadIndex">
+        <a class="reserve-add-box" dusk="reserve-a-open" @click="adding = true">
             <b-icon icon="plus-circle-outline"/>
             <span>
                 <strong>Tilføj reserve til Hold {{ squadIndex + 1 }}</strong><br>
                 <span class="is-size-7 has-text-grey">Kun hvis en spiller melder afbud pga. skade, sygdom eller force majeure (§43)</span>
             </span>
         </a>
-
-        <p class="suggestion-label">Forslag 3: række i holdtabellen</p>
-        <div class="suggestion-3">
-            <span class="suggestion-3-label">Reserve</span>
-            <span class="has-text-grey is-flex-grow-1">Ingen</span>
-            <b-button size="is-small" type="is-primary is-light" icon-left="account-switch" dusk="reserve-a-open-3" @click="adding = true">Tilføj</b-button>
-        </div>
     </div>
     <div v-else class="prototype-box" :dusk="'reserve-marks-a-' + squadIndex">
         <p class="mb-2"><strong>Reserver på Hold {{ squadIndex + 1 }}</strong></p>
@@ -188,28 +173,11 @@ export default {
     margin-top: -0.75rem;
     background: #faf5ff;
 }
-.reserve-suggestions {
+.reserve-collapsed {
     margin-top: -0.75rem;
     margin-bottom: 1rem;
 }
-.suggestion-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #8b5cf6;
-    margin: 0.75rem 0 0.25rem;
-}
-.suggestion-1 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: #f5f5f5;
-    border-radius: 6px;
-}
-.suggestion-2 {
+.reserve-add-box {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -218,21 +186,9 @@ export default {
     border-radius: 6px;
     color: #4a4a4a;
 }
-.suggestion-2:hover {
+.reserve-add-box:hover {
     border-color: #8b5cf6;
     background: #faf5ff;
-}
-.suggestion-3 {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0.75rem;
-    border-top: 1px solid #ededed;
-    border-bottom: 1px solid #ededed;
-}
-.suggestion-3-label {
-    width: 3.5rem;
-    font-weight: 700;
 }
 .reserve-row {
     padding: 0.5rem 0;
