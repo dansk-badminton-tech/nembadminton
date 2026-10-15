@@ -8,6 +8,7 @@ use App\Models\Squad;
 use App\Models\SquadMember;
 use App\Models\SquadReserve;
 use App\Models\TeamRound;
+use App\Models\TeamRoundScenario;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,10 @@ class ReserveManager
      */
     public function scope(TeamRound $teamRound, ?int $scenarioId): ?int
     {
-        return $scenarioId ?? $teamRound->officialScenario?->id;
+        /** @var TeamRoundScenario|null $officialScenario */
+        $officialScenario = $teamRound->officialScenario;
+
+        return $scenarioId ?? $officialScenario?->id;
     }
 
     /**
@@ -36,7 +40,7 @@ class ReserveManager
      */
     public function reservesOf(Squad $squad, ?int $scenarioId): Collection
     {
-        return $this->inScope($squad->reserves(), $this->scope($squad->teamRound, $scenarioId))->orderBy('id')->get();
+        return $this->inScope($squad->reserves()->getQuery(), $this->scope($squad->teamRound, $scenarioId))->orderBy('id')->get();
     }
 
     /**
@@ -55,6 +59,7 @@ class ReserveManager
         return DB::transaction(function () use ($squad, $teamRound, $scenarioId, $reserveRefId, $replacedRefId) {
             TeamRound::query()->whereKey($teamRound->id)->lockForUpdate()->first();
 
+            /** @var Collection<int, Squad> $squads */
             $squads = $teamRound->squads()->get()->values();
             $squadIndex = $squads->search(fn (Squad $candidate) => $candidate->id === $squad->id);
             $placements = $squads->map(fn (Squad $candidate) => $this->placedMembers($candidate, $scenarioId));
@@ -100,12 +105,10 @@ class ReserveManager
     }
 
     /**
-     * @template TBuilder of Builder<SquadReserve>|\Illuminate\Database\Eloquent\Relations\HasMany<SquadReserve, Squad>
-     *
-     * @param  TBuilder  $query
-     * @return TBuilder
+     * @param  Builder<SquadReserve>  $query
+     * @return Builder<SquadReserve>
      */
-    private function inScope($query, ?int $scope)
+    private function inScope(Builder $query, ?int $scope): Builder
     {
         return $scope === null ? $query->whereNull('team_round_scenario_id') : $query->where('team_round_scenario_id', $scope);
     }

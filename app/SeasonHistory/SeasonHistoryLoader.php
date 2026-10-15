@@ -94,12 +94,12 @@ class SeasonHistoryLoader
         $reserves = [];
         $ladders = array_fill_keys(SeasonHistory::CATEGORIES, []);
         foreach ($teamRound->squads->values() as $index => $squad) {
+            /** @var Squad $squad */
+            $tier = $squad->effectiveTier();
             foreach ($squad->reserves->where('team_round_scenario_id', $officialScenario?->id) as $reserve) {
                 /** @var SquadReserve $reserve */
                 $reserves[] = new RoundReserve($reserve->reserve_ref_id, $reserve->reserve_name, $reserve->replaced_name, $index + 1);
             }
-            /** @var Squad $squad */
-            $tier = $squad->effectiveTier();
             $lineupSquad = new LineupSquad(
                 squadId: $squad->id,
                 position: $index + 1,

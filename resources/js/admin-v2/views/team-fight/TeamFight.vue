@@ -165,11 +165,15 @@
                                       :basic-squads="validateBasicSquads"
                                       :invalid-category-list="playingToHighSquadList"
                                       :invalid-level-list="playingToHighList"
+                                      :reserve-findings="reserveFindings"
+                                      :show-reserves="hasReserves"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
+                               :add-reserve="addReserve"
+                               :remove-reserve="removeReserve"
                                :update-squad="updateSquad"
                                :move-squad-order-down="moveSquadOrderDown"
                                :move-squad-order-up="moveSquadOrderUp"
@@ -210,6 +214,7 @@ import {
     isWomensSingle
 } from "@/helpers.js";
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
+import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -290,6 +295,9 @@ export default {
             }
             return hasInvalidLevel(this.playingToHighList)
         },
+        hasReserves() {
+            return (this.teamRound?.squads || []).some(squad => squad.reserves?.length)
+        },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
@@ -347,6 +355,7 @@ export default {
             playingToHighList: [],
             playingToHighSquadList: [],
             tooYoungPlayers: [],
+            reserveFindings: [],
             teamCount: 1,
             players: [],
             saving: false,
@@ -966,8 +975,91 @@ export default {
                         })
                 })
         },
+        validateReserves() {
+            this.$apollo.mutate(
+                {
+                    mutation: ValidateReservesMutation,
+                    variables: {
+                        input: wrapInTeamAndSquads(this.teamRound.squads)
+                    }
+                })
+                .then(({data}) => {
+                    this.reserveFindings = data.validateReserves;
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Noget gik galt under valideringen af holdet (validateReserves)`
+                        })
+                })
+        },
+        addReserve({squad, reserveRefId, replacedRefId}) {
+            this.saving = true
+            return this.$apollo.mutate({
+                mutation: gql`
+                    mutation addSquadReserve($squadId: ID!, $scenarioId: ID, $reserveRefId: String!, $replacedRefId: String!){
+                        addSquadReserve(squadId: $squadId, scenarioId: $scenarioId, reserveRefId: $reserveRefId, replacedRefId: $replacedRefId){
+                            id
+                        }
+                    }
+                `,
+                variables: {
+                    squadId: squad.id,
+                    scenarioId: this.selectedScenarioId,
+                    reserveRefId,
+                    replacedRefId
+                },
+                refetchQueries: this.teamRoundRefetchQueries(),
+                awaitRefetchQueries: true
+            })
+                .catch(({graphQLErrors}) => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 5000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: 'Kunne ikke tilføje reserven. ' + extractErrorMessages(graphQLErrors).join(', ')
+                        })
+                })
+                .finally(() => {
+                    this.saving = false
+                })
+        },
+        removeReserve(record) {
+            this.saving = true
+            return this.$apollo.mutate({
+                mutation: gql`
+                    mutation deleteSquadReserve($id: ID!){
+                        deleteSquadReserve(id: $id){
+                            id
+                        }
+                    }
+                `,
+                variables: {
+                    id: record.id
+                },
+                refetchQueries: this.teamRoundRefetchQueries(),
+                awaitRefetchQueries: true
+            })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Kunne ikke fjerne reserven :(`
+                        })
+                })
+                .finally(() => {
+                    this.saving = false
+                })
+        },
         validate() {
             this.validateTooYoungPlayers();
+            this.validateReserves();
             this.$apollo.mutate(
                 {
                     mutation: gql`

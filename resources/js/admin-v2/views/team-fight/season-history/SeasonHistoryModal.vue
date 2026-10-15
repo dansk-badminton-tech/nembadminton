@@ -82,6 +82,9 @@
                                           :class="{'has-text-weight-semibold': p.category === category}">
                                         {{ p.category }} nr. {{ p.place }} · {{ p.label }}<span v-if="p.partners.length" class="has-text-grey has-text-weight-normal"> m. {{ p.partners.join(', ') }}</span>
                                     </span>
+                                    <span v-if="row.reserveNote" class="placement has-text-info-dark" dusk="season-history-reserve-note">
+                                        {{ row.reserveNote }}
+                                    </span>
                                 </td>
                             </tr>
                             </tbody>
@@ -96,6 +99,7 @@
 import TeamRoundSeasonHistoryQuery from "../../../../queries/teamRoundSeasonHistory.graphql";
 import {ageGroupLabel, isDoubleCategory, isYoungPlayer} from "../../../helpers";
 import {CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, seasonHistory} from "./season-history.js";
+import {seasonHistoryReserveNote} from "../reserves.js";
 
 const PAD_L = 120
 const PAD_T = 40
@@ -166,7 +170,8 @@ export default {
                 r,
                 round,
                 place: this.category ? this.history.placeOf(this.player.refId, this.category, r) : null,
-                placements: this.history.placementsOf(this.player.refId, r)
+                placements: this.history.placementsOf(this.player.refId, r),
+                reserveNote: seasonHistoryReserveNote(round, this.player.refId)
             })).reverse()
         },
         H() {

@@ -41,11 +41,17 @@ class SquadReserve extends Model
         'team_round_scenario_id' => 'integer',
     ];
 
+    /**
+     * @return BelongsTo<Squad, $this>
+     */
     public function squad(): BelongsTo
     {
         return $this->belongsTo(Squad::class);
     }
 
+    /**
+     * @return BelongsTo<TeamRoundScenario, $this>
+     */
     public function scenario(): BelongsTo
     {
         return $this->belongsTo(TeamRoundScenario::class, 'team_round_scenario_id');

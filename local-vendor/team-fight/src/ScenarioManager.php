@@ -116,6 +116,7 @@ class ScenarioManager
      */
     public function cloneOfficialLineupToScenario(TeamRound $teamRound, TeamRoundScenario $targetScenario): void
     {
+        /** @var TeamRoundScenario|null $officialScenario */
         $officialScenario = $teamRound->officialScenario;
 
         foreach ($teamRound->squads as $squad) {

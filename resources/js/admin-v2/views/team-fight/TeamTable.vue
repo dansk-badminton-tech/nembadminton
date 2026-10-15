@@ -169,6 +169,39 @@
                                     Optaget på: {{ player.parallelAllocation.teamRoundName }}
                                 </b-tag>
                             </b-tooltip>
+                            <b-tooltip
+                                v-if="reserveAbove(index, player)"
+                                type="is-dark"
+                                :label="reserveTooltip(reserveAbove(index, player))"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag size="is-small" type="is-info is-light" dusk="reserve-tag">
+                                    <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                    Reserve på Hold {{ reserveAbove(index, player).index + 1 }} for {{ reserveAbove(index, player).record.replaced.name }}
+                                </b-tag>
+                            </b-tooltip>
+                            <b-tooltip
+                                v-if="replacedBy(squad, player.refId)"
+                                type="is-dark"
+                                :label="replacedTooltip(replacedBy(squad, player.refId))"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag size="is-small" type="is-warning is-light" dusk="replaced-tag">
+                                    <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                    Erstattes af {{ replacedBy(squad, player.refId).reserve.name }}
+                                </b-tag>
+                            </b-tooltip>
+                            <b-tooltip
+                                v-if="player.reserveQuarantine"
+                                type="is-warning"
+                                :label="quarantineTooltip(player.reserveQuarantine)"
+                                class="is-pulled-left ml-2"
+                                multilined>
+                                <b-tag size="is-small" type="is-warning is-light" dusk="reserve-quarantine-tag">
+                                    <b-icon icon="timer-sand" size="is-small" class="mr-1"></b-icon>
+                                    {{ quarantineLabel(player.reserveQuarantine) }}
+                                </b-tag>
+                            </b-tooltip>
                             <b-tooltip type="is-info" class="is-pulled-left" label="Point er redigeret manuelt">
                                 <b-icon
                                     dusk="manual-correction-indicator"
@@ -205,6 +238,8 @@
                 </tr>
                 </tbody>
             </table>
+            <ReserveSection :squads="squads" :squad-index="index" :loading="loading"
+                            @add="addReserve" @remove="removeReserve"/>
         </div>
         <b-modal
             v-model="showPlayerModal"
@@ -254,13 +289,17 @@ import {
 import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
 import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
+import ReserveSection from "./ReserveSection.vue";
+import {quarantineLabel, quarantineTooltip, replacedBy, reserveOnHigherSquad} from "./reserves.js";
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal},
+    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal, ReserveSection},
     props: {
         version: Date,
         confirmDelete: Function,
+        addReserve: Function,
+        removeReserve: Function,
         moveSquadOrderUp: Function,
         moveSquadOrderDown: Function,
         playerMove: Function,
@@ -323,6 +362,20 @@ export default {
         }
     },
     methods: {
+        replacedBy,
+        quarantineLabel,
+        // Where the player on this Squad is a reserve on a higher Squad, or null.
+        reserveAbove(squadIndex, player) {
+            const found = reserveOnHigherSquad(this.squads, player.refId)
+            return found && found.index < squadIndex ? found : null
+        },
+        quarantineTooltip,
+        reserveTooltip({index, record}) {
+            return `Reserve (§43): spiller også på Hold ${index + 1} for ${record.replaced.name}, der meldte afbud pga. skade, sygdom eller force majeure. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`
+        },
+        replacedTooltip(record) {
+            return `Meldt afbud pga. skade, sygdom eller force majeure. ${record.reserve.name} fra et lavere hold spiller i stedet som reserve (§43) og må ikke spille i næste spillerunde (§44).`
+        },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)
         },

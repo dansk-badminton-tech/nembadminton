@@ -72,6 +72,8 @@ class Squad extends Model implements Sortable
 
     /**
      * Reserve records of every Scenario; ScenarioManager and ReserveManager pick a Scenario's.
+     *
+     * @return HasMany<SquadReserve, $this>
      */
     public function reserves(): HasMany
     {

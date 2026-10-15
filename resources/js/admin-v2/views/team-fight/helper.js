@@ -1,3 +1,5 @@
+import {validationReserves} from "./reserves.js";
+
 export function hasInvalidCategory(playingToHighSquadList) {
     const playersWithoutYouthPartner = filterYouthFromCategory(playingToHighSquadList)
     return playersWithoutYouthPartner.length > 0
@@ -29,6 +31,7 @@ export function wrapSquadsInTeamWithoutLeague(squads){
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
+            reserves: validationReserves(squad),
             categories: squad.categories.map((category) => ({
                 id: category.id,
                 category: category.category,
@@ -55,6 +58,7 @@ export function wrapInTeamAndSquads(squads) {
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
+            reserves: validationReserves(squad),
             categories: squad.categories.map((category) => ({
                 id: category.id,
                 category: category.category,

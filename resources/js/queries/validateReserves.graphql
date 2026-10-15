@@ -1,0 +1,23 @@
+mutation validateReserves($input: [ValidateTeam!]!){
+    validateReserves(input: $input){
+        type
+        squadIndex
+        category
+        categoryName
+        reserve{
+            refId
+            name
+            points
+        }
+        replaced{
+            refId
+            name
+            points
+        }
+        betterReserve{
+            refId
+            name
+            points
+        }
+    }
+}

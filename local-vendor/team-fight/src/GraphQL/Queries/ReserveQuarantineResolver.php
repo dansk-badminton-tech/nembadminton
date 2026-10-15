@@ -8,6 +8,8 @@ use App\Models\Squad;
 use App\Models\SquadMember;
 use App\Models\SquadReserve;
 use App\Models\TeamRound;
+use App\Models\TeamRoundScenario;
+use App\Models\User;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -31,6 +33,7 @@ class ReserveQuarantineResolver
     private static ?Request $cachedRequest = null;
 
     /**
+     * @param  array<string, mixed>  $args
      * @return array<string, mixed>|null
      */
     public function __invoke(SquadMember $root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): ?array
@@ -41,7 +44,8 @@ class ReserveQuarantineResolver
         }
 
         $teamRoundId = SquadMemberTeamRound::of($root);
-        $clubhouseId = $context->user()?->clubhouse_id;
+        $user = $context->user();
+        $clubhouseId = $user instanceof User ? $user->clubhouse_id : null;
         if ($teamRoundId === '' || $clubhouseId === null) {
             return null;
         }
@@ -82,7 +86,9 @@ class ReserveQuarantineResolver
         $reserves = SquadReserve::query()
             ->where(function (Builder $query) use ($previousRounds) {
                 foreach ($previousRounds as $previousRound) {
-                    $officialScenarioId = $previousRound->officialScenario?->id;
+                    /** @var TeamRoundScenario|null $officialScenario */
+                    $officialScenario = $previousRound->officialScenario;
+                    $officialScenarioId = $officialScenario?->id;
                     $query->orWhere(fn (Builder $scope) => $scope
                         ->whereIn('squad_id', $previousRound->squads->pluck('id'))
                         ->when(
