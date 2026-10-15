@@ -83,6 +83,16 @@ jobs:
       - name: Link public storage
         run: php artisan storage:link
 
+      # octane:install fetches the release from the GitHub API without a token and hits the shared per-IP rate limit
+      # (403). Download the binary with the job token instead (the same asset Octane picks); octane:install then
+      # finds it and skips the download.
+      - name: Download FrankenPHP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download --repo php/frankenphp --pattern frankenphp-linux-x86_64-gnu --output frankenphp
+          chmod +x frankenphp
+
       - name: Install FrankenPHP
         run: php artisan octane:install --server=frankenphp --no-interaction
 
