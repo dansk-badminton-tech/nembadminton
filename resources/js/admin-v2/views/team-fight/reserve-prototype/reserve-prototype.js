@@ -34,6 +34,20 @@ export function isMarkedA(squadId, refId) {
     return reserveEntryA(squadId, refId) !== null
 }
 
+// A: the entry whose reserve replaces refId on this Squad ("Erstattes af X"), or null.
+export function replacedByA(squadId, refId) {
+    return reservesA(squadId).find(r => r.forRefId === refId) ?? null
+}
+
+// A: where refId (placed on a lower Squad) is reserve on a higher Squad: {index, entry}, or null.
+export function reserveOnHigherA(squads, refId) {
+    for (const [index, squad] of squads.entries()) {
+        const entry = reserveEntryA(squad.id, refId)
+        if (entry) return {index, entry}
+    }
+    return null
+}
+
 export function addReserveA(squadId, entry) {
     reserveState.marksA[squadId] = [...reservesA(squadId).filter(r => r.refId !== entry.refId), entry]
 }

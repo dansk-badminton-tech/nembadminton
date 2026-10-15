@@ -5,12 +5,10 @@
             <span class="is-size-7 has-text-grey">· gemmes ikke, glemmes ved genindlæsning</span></p>
         <ul class="is-size-7">
             <template v-if="variant === 'A'">
-                <li><b>Registrering:</b> sæt reserven ind på pladsen som normalt. Under holdet i "Reserver": vælg reserven (en spiller på holdet) og hvem vedkommende erstatter, fx "Nicoline Tang for Amanda Aarrebo Petersen" (som på badmintonplayer.dk).</li>
-                <li><b>Mærke:</b> reserven får "Reserve for …" på sine pladser. Hold musen over for at se reglerne.</li>
-                <li><b>Kategoriplads:</b> uændret. Reserven står på en almindelig plads og har sin kategoriplads.</li>
-                <li><b>Sæsonhistorik:</b> pladsen vises som normalt, med en note om hvem spilleren var reserve for.</li>
-                <li><b>Ledige spillere og "Optaget på":</b> uændret. Reserven er en opstillet spiller.</li>
-                <li><b>Lavere hold:</b> en spiller fra et lavere hold kan endnu ikke stå på to hold. Personen skal flyttes op og mister sin plads dernede.</li>
+                <li><b>Registrering:</b> under holdet i "Reserver": vælg reserven (en spiller fra et lavere hold) og hvem vedkommende erstatter (en spiller på dette hold), fx "Nicoline Tang for Amanda Aarrebo Petersen" (som på badmintonplayer.dk).</li>
+                <li><b>Mærker:</b> den erstattede spiller får "Erstattes af …", og reserven får "Reserve på Hold N for …" på sin plads på det lavere hold. Hold musen over for at se reglerne.</li>
+                <li><b>Kategoripladser:</b> uændret. Den erstattede spiller bliver stående, og reserven beholder sin plads på det lavere hold.</li>
+                <li><b>Sæsonhistorik:</b> pladserne vises som normalt, med en note om hvem reserven var reserve for.</li>
                 <li><b>CSV:</b> "Reserve","Navn for Navn" efter holdets kategorier. Se forhåndsvisningen i Del → CSV.</li>
                 <li><b>Offentligt link:</b> en "Reserve"-række på hvert holdkort.
                     <router-link :to="{name: 'team-fight-public-view', params: {teamUUID: teamRoundId}, query: {variant: 'A'}}">

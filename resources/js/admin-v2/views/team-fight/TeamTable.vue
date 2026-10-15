@@ -171,12 +171,20 @@
                                 </b-tag>
                             </b-tooltip>
                             <!-- PROTOTYPE #227 -->
-                            <b-tooltip v-if="variant === 'A' && reserveEntryA(squad.id, player.refId)" multilined
+                            <b-tooltip v-if="variant === 'A' && reserveOnHigherA(squads, player.refId)" multilined
                                        class="is-pulled-left ml-2" type="is-dark"
-                                       :label="`Reservespiller (§43): sat ind for ${reserveEntryA(squad.id, player.refId).forName}, der blev skadet, syg eller fik forfald, før holdopstillingen blev udvekslet. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`">
+                                       :label="`Reservespiller (§43): spiller også på Hold ${reserveOnHigherA(squads, player.refId).index + 1} for ${reserveOnHigherA(squads, player.refId).entry.forName}, der blev skadet, syg eller fik forfald, før holdopstillingen blev udvekslet. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`">
                                 <b-tag size="is-small" class="prototype-reserve-tag" dusk="reserve-tag-a">
                                     <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
-                                    Reserve for {{ reserveEntryA(squad.id, player.refId).forName }}
+                                    Reserve på Hold {{ reserveOnHigherA(squads, player.refId).index + 1 }} for {{ reserveOnHigherA(squads, player.refId).entry.forName }}
+                                </b-tag>
+                            </b-tooltip>
+                            <b-tooltip v-if="variant === 'A' && replacedByA(squad.id, player.refId)" multilined
+                                       class="is-pulled-left ml-2" type="is-dark"
+                                       :label="`Meldt afbud (skade, sygdom eller force majeure). ${replacedByA(squad.id, player.refId).name} fra Hold ${replacedByA(squad.id, player.refId).fromIndex + 1} spiller i stedet som reserve (§43).`">
+                                <b-tag size="is-small" type="is-warning is-light" dusk="replaced-tag-a">
+                                    <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                    Erstattes af {{ replacedByA(squad.id, player.refId).name }}
                                 </b-tag>
                             </b-tooltip>
                             <b-tag v-if="variant === 'B' && alsoReserveB(player)" size="is-small"
@@ -220,7 +228,7 @@
                 </tr>
                 </tbody>
             </table>
-            <ReserveMarksA v-if="variant === 'A'" :squad="squad" :squad-index="index"/>
+            <ReserveMarksA v-if="variant === 'A'" :squads="squads" :squad-index="index"/>
             <ReserveSectionB v-if="variant === 'B'" :squads="squads" :squad-index="index"/>
         </div>
         <b-modal
@@ -275,7 +283,7 @@ import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
 import ReservePrototypeNotes from "./reserve-prototype/ReservePrototypeNotes.vue";
 import ReserveMarksA from "./reserve-prototype/ReserveMarksA.vue";
 import ReserveSectionB from "./reserve-prototype/ReserveSectionB.vue";
-import {prototypeVariant, reserveEntryA, reserveSquadOfB, seasonHistoryNote} from "./reserve-prototype/reserve-prototype.js";
+import {prototypeVariant, replacedByA, reserveOnHigherA, reserveSquadOfB, seasonHistoryNote} from "./reserve-prototype/reserve-prototype.js";
 
 export default {
     name: 'TeamTable',
@@ -348,7 +356,8 @@ export default {
         }
     },
     methods: {
-        reserveEntryA,
+        replacedByA,
+        reserveOnHigherA,
         seasonHistoryNote,
         alsoReserveB(player) {
             return reserveSquadOfB(this.squads, player.refId)
