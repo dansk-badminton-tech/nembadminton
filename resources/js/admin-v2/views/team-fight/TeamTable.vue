@@ -171,11 +171,14 @@
                                 </b-tag>
                             </b-tooltip>
                             <!-- PROTOTYPE #227 -->
-                            <b-tag v-if="variant === 'A' && isMarkedA(squad.id, player.refId)" size="is-small"
-                                   class="is-pulled-left ml-2 prototype-reserve-tag" dusk="reserve-tag-a">
-                                <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
-                                Reserve
-                            </b-tag>
+                            <b-tooltip v-if="variant === 'A' && isMarkedA(squad.id, player.refId)" multilined
+                                       class="is-pulled-left ml-2" type="is-dark"
+                                       label="Reservespiller (§43): sat ind i stedet for en spiller, der blev skadet, syg eller fik forfald, før holdopstillingen blev udvekslet. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.">
+                                <b-tag size="is-small" class="prototype-reserve-tag" dusk="reserve-tag-a">
+                                    <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
+                                    Reserve
+                                </b-tag>
+                            </b-tooltip>
                             <b-tag v-if="variant === 'B' && alsoReserveB(player)" size="is-small"
                                    class="is-pulled-left ml-2 prototype-reserve-tag" dusk="also-reserve-tag-b">
                                 <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
