@@ -1,5 +1,6 @@
 <template>
     <card-component
+        dusk="invitation-page"
         title="Tilmeld klub"
         icon="lock"
     >
@@ -37,10 +38,10 @@
         </template>
         <template v-slot:footer>
             <footer class="card-footer">
-                <a v-if="!isLoggedIn" class="card-footer-item" @click="goToSignUp">Opret bruger</a>
-                <a v-if="isLoggedIn && !isInvitationPending" class="card-footer-item" @click="goToDashboard">Videre</a>
-                <a v-if="isLoggedIn && isInvitationPending" class="card-footer-item" @click="declineInvitation">Afvis</a>
-                <a v-if="isLoggedIn && isInvitationPending" class="card-footer-item" @click="acceptInvitation">Accepter</a>
+                <a v-if="!isLoggedIn" dusk="sign-up-link" class="card-footer-item" @click="goToSignUp">Opret bruger</a>
+                <a v-if="isLoggedIn && !isInvitationPending" dusk="continue-link" class="card-footer-item" @click="goToDashboard">Videre</a>
+                <a v-if="isLoggedIn && isInvitationPending" dusk="decline-button" class="card-footer-item" @click="declineInvitation">Afvis</a>
+                <a v-if="isLoggedIn && isInvitationPending" dusk="accept-button" class="card-footer-item" @click="acceptInvitation">Accepter</a>
             </footer>
         </template>
     </card-component>
@@ -72,7 +73,8 @@ export default {
     },
     computed: {
         isLoggedIn(){
-            return this.me !== undefined
+            // A guest's `me` query resolves to null, not undefined
+            return !!this.me
         },
         isInvitationPending(){
             return this.invitation?.status.toLowerCase() === 'pending'

@@ -25,7 +25,7 @@ export default {
                         }
                     }`,
                 variables: {
-                    id: invitation.idclu
+                    id: invitation.id
                 },
                 refetchQueries: [{query: clubhouse, variables: {id: this.clubhouseId}}]
             }).then((data) => {
@@ -61,6 +61,7 @@ export default {
             </template>
         </b-modal>
         <card-component
+            dusk="invitation-list"
             title="Invitationer"
             icon="home"
         >
@@ -111,6 +112,7 @@ export default {
                                 size="is-small"
                                 type="is-danger"
                                 title="Slet invitation"
+                                :dusk="`delete-invitation-${props.row.id}`"
                                 @click="confirmDelete(props.row)"
                                 v-if="props.row.status === 'PENDING'"
                             />
