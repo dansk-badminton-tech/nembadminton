@@ -155,6 +155,19 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor('@player-search-input');
         $this->replaceInputValue($browser, '@player-search-input', $name);
+
+        if ($name === '') {
+            return;
+        }
+
+        // The search is debounced, so the unfiltered list stays on screen for a moment.
+        // Acting on it (e.g. clicking a row's button) races the re-render that moves the row.
+        $needle = json_encode(mb_strtolower($name), JSON_THROW_ON_ERROR);
+        $browser->waitUsing(10, 100, fn () => $browser->script(<<<JS
+            return [...document.querySelectorAll("[dusk='player-search-panel'] table tbody tr")]
+                .filter(row => row.querySelector("[dusk^='available-player-']"))
+                .every(row => row.querySelector("[dusk^='available-player-']").textContent.toLowerCase().includes({$needle}));
+        JS)[0], "Player search did not filter on [{$name}].");
     }
 
     public function toggleMemberFilter(Browser $browser, string $filter): void
