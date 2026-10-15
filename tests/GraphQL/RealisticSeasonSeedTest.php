@@ -16,6 +16,7 @@ use Database\Seeders\RealisticSeasonSeeder;
 use Database\Seeders\TestingDataSeeder;
 use FlyCompany\TeamFight\GraphQL\Queries\ReserveQuarantineResolver;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
@@ -35,7 +36,11 @@ class RealisticSeasonSeedTest extends TestCase
         // TestingDataSeeder needs fresh auto-increment ids (Clubhouse 1, User 1), which
         // RefreshDatabase and DatabaseTruncation don't give after other tests have run.
         $this->artisan('migrate:fresh', ['--seed' => true, '--seeder' => TestingDataSeeder::class]);
-        $this->beforeApplicationDestroyed(fn () => $this->artisan('migrate:fresh'));
+        $this->beforeApplicationDestroyed(function () {
+            $this->artisan('migrate:fresh');
+            // The next RefreshDatabase test must migrate and seed again: this test emptied its seeded tables.
+            RefreshDatabaseState::$migrated = false;
+        });
     }
 
     protected function tearDown(): void
