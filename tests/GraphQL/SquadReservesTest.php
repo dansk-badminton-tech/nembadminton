@@ -43,6 +43,16 @@ class SquadReservesTest extends TestCase
         mutation ($id: ID!) { deleteSquadReserve(id: $id) { id } }
     ';
 
+    private const UPDATE = /** @lang GraphQL */ '
+        mutation ($id: ID!, $reserveRefId: String!, $replacedRefId: String!) {
+            updateSquadReserve(id: $id, reserveRefId: $reserveRefId, replacedRefId: $replacedRefId) {
+                id
+                reserve { name }
+                replaced { name }
+            }
+        }
+    ';
+
     private const READ = /** @lang GraphQL */ '
         query ($id: ID!, $scenarioId: ID) {
             teamRound(id: $id) {
@@ -148,6 +158,80 @@ class SquadReservesTest extends TestCase
         $this->graphQL(self::DELETE, ['id' => $id])->assertJsonMissingPath('errors');
 
         $this->assertDatabaseCount('squad_reserves', 0);
+    }
+
+    /** @test */
+    public function it_changes_the_reserve_of_a_record_in_place(): void
+    {
+        $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
+
+        $this->update($id, '9001013333', '9001011111')
+            ->assertJsonMissingPath('errors')
+            ->assertJsonPath('data.updateSquadReserve.id', $id)
+            ->assertJsonPath('data.updateSquadReserve.reserve.name', 'Zara')
+            ->assertJsonPath('data.updateSquadReserve.replaced.name', 'Yrsa');
+
+        $this->assertSame(['Zara'], $this->reserveNames(0, null));
+    }
+
+    /** @test */
+    public function it_changes_the_replaced_member_and_keeps_the_same_reserve(): void
+    {
+        $this->place($this->squads[0], '2. DS', 'DS', '9001014444', 'Vera');
+        $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
+
+        $this->update($id, '9001012222', '9001014444')
+            ->assertJsonMissingPath('errors')
+            ->assertJsonPath('data.updateSquadReserve.reserve.name', 'Xenia')
+            ->assertJsonPath('data.updateSquadReserve.replaced.name', 'Vera');
+    }
+
+    /** @test */
+    public function a_rejected_change_keeps_the_record(): void
+    {
+        $this->place($this->squads[0], '2. DS', 'DS', '9001014444', 'Vera');
+        $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
+
+        $this->update($id, '9001014444', '9001011111')->assertGraphQLErrorMessage('Reserven skal komme fra et lavere hold.');
+
+        $this->assertSame(['Xenia'], $this->reserveNames(0, null));
+    }
+
+    /** @test */
+    public function a_change_cant_reuse_a_reserve_of_another_record(): void
+    {
+        $this->place($this->squads[0], '2. DS', 'DS', '9001014444', 'Vera');
+        $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
+        $id = $this->add($this->squads[0], '9001013333', '9001014444')->json('data.addSquadReserve.id');
+
+        $this->update($id, '9001012222', '9001014444')->assertGraphQLErrorMessage('Xenia er allerede reserve.');
+    }
+
+    /** @test */
+    public function a_change_stays_in_the_records_scenario(): void
+    {
+        $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
+        $draftId = $this->createScenario('Plan B');
+        $draftReserve = SquadReserve::query()->where('team_round_scenario_id', $draftId)->sole();
+
+        $this->update($draftReserve->id, '9001013333', '9001011111')->assertJsonMissingPath('errors');
+
+        $this->assertSame(['Xenia'], $this->reserveNames(0, null));
+        $this->assertSame(['Zara'], $this->reserveNames(0, $draftId));
+    }
+
+    /** @test */
+    public function it_denies_changing_a_reserve_in_another_clubhouse_or_without_edit_permission(): void
+    {
+        $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
+
+        $this->actingAsUserOf(Clubhouse::factory()->create());
+        $this->update($id, '9001013333', '9001011111')->assertGraphQLErrorMessage('This action is unauthorized.');
+
+        $this->actingAsUserOf($this->clubhouse, [Permission::VIEW_TEAMROUNDS]);
+        $this->update($id, '9001013333', '9001011111')->assertGraphQLErrorMessage('This action is unauthorized.');
+
+        $this->assertSame('9001012222', SquadReserve::query()->sole()->reserve_ref_id);
     }
 
     /** @test */
@@ -291,6 +375,11 @@ class SquadReservesTest extends TestCase
             'reserveRefId' => $reserveRefId,
             'replacedRefId' => $replacedRefId,
         ]);
+    }
+
+    private function update(int|string $id, string $reserveRefId, string $replacedRefId): TestResponse
+    {
+        return $this->graphQL(self::UPDATE, ['id' => $id, 'reserveRefId' => $reserveRefId, 'replacedRefId' => $replacedRefId]);
     }
 
     private function assertRejected(TestResponse $response, string $message): void

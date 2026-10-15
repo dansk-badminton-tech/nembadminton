@@ -78,6 +78,30 @@ class TeamFightReservePlayerTest extends DuskTestCase
         });
     }
 
+    public function test_editing_a_reserve_changes_the_record_and_the_tags(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $this->openRound($browser, 'Ungdom - 1. runde');
+            $browser->addReserve(0, 'Cecillie Henriksen', 'Nanna Reese');
+
+            // The form opens on the record, with its players chosen.
+            $browser->click("[dusk='reserve-section-0'] [dusk='reserve-edit']")
+                ->waitFor("[dusk='reserve-section-0'] [dusk='reserve-form']")
+                ->assertSeeIn("[dusk='reserve-section-0'] [dusk='reserve-editing']", 'Ret Cecillie Henriksen for Nanna Reese')
+                ->assertInputValue("[dusk='reserve-section-0'] input[dusk='reserve-player']", 'Cecillie Henriksen')
+                ->assertInputValue("[dusk='reserve-section-0'] input[dusk='reserve-replaced']", 'Nanna Reese')
+                ->click("[dusk='reserve-section-0'] [dusk='reserve-cancel']")
+                ->waitUntilMissing("[dusk='reserve-section-0'] [dusk='reserve-form']");
+
+            $browser->editReserve(0, 'Tine Gade', 'Tanja Damsgaard');
+
+            $this->assertCount(1, $browser->elements("[dusk='reserve-section-0'] [dusk='reserve-row']"));
+            $browser->assertSeeIn("[dusk='squad-0'] [dusk='replaced-tag']", 'Erstattes af Tine Gade')
+                ->assertSeeIn("[dusk='squad-1'] [dusk='reserve-tag']", 'Reserve på Hold 1 for Tanja Damsgaard')
+                ->assertDontSeeIn("[dusk='squad-0']", 'Erstattes af Cecillie Henriksen');
+        });
+    }
+
     public function test_the_reserve_is_tagged_with_quarantine_in_the_next_round(): void
     {
         $this->browse(function (Browser $browser) {
