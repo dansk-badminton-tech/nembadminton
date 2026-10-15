@@ -91,7 +91,7 @@ export default defineComponent(
                     .catch(({message}) => {
                         if (message.match(/Unauthenticated/i)) {
                             if(!this.firstLoad){
-                                this.$router.push({name: 'login'})
+                                this.$router.push({name: 'login', query: {redirect: this.$route.fullPath}})
                             }
                         } else {
                             this.$buefy.snackbar.open(

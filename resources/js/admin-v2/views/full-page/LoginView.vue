@@ -95,6 +95,7 @@ import SocialLoginButtons from '@/components/auth/SocialLoginButtons.vue'
 import gql from "graphql-tag";
 import {setAuthToken} from "../../../auth";
 import ME from "../../../queries/me.gql";
+import {internalRedirectPath} from "../../router/login-redirect";
 
 export default defineComponent({
                                    name: 'LoginView',
@@ -140,8 +141,11 @@ export default defineComponent({
                                                        message: `Velkommen tilbage!`
                                                    })
                                                setAuthToken(data.login.access_token)
+                                               const redirect = internalRedirectPath(this.$route.query.redirect)
                                                if(data.login.user.clubhouse === null){
                                                    this.$router.push({name: 'sign-up-finish'})
+                                               }else if(redirect !== null){
+                                                   this.$router.push(redirect)
                                                }else{
                                                   this.$router.push({name: 'home', params: {clubhouseId: data.login.user.clubhouse.id}})
                                                }
