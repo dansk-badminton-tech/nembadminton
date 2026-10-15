@@ -32,6 +32,7 @@ query clubhouse($id: ID!){
             url
             inviteeEmail
             expiresAt
+            expired
             acceptedAt
             createdAt
         }

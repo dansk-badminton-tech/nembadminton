@@ -11,7 +11,7 @@ extend type Mutation {
     updateClubhouse(input: UpdateClubhouseInput! @spread) : Clubhouse @guard @update @canFind(ability: "update", find: "id") @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\ClubhouseUpdated")
 
     # Send an invitation to a user
-    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @event(dispatch: "App\\Events\\InvitationCreated")
+    invite(input: CreateInvitationInput! @spread) : Invitation @create @guard @hasPermission(name: "edit clubhouse") @inject(context: "user.id", name: "invited_by") @inject(context: "user.clubhouse_id", name: "clubhouse_id") @event(dispatch: "App\\Events\\InvitationCreated")
 
     # Accept an invitation
     acceptInvitation(token: ID!): Invitation @guard @field(resolver: "\\App\\GraphQL\\Mutations\\Invitation@acceptInvitation")
@@ -69,8 +69,6 @@ input AcceptInvitation {
 
 input CreateInvitationInput {
     email: String! @rename(attribute: "invitee_email")
-    inviter: CreateUserBelongsTo!
-    clubhouse: CreateClubhouseBelongsTo!
     role: MemberRole
 }
 
@@ -78,14 +76,6 @@ enum MemberRole {
     COACH @enum(value: "coach")
     PLAYER @enum(value: "player")
     CLUB_ADMIN @enum(value: "club-admin")
-}
-
-input CreateClubhouseBelongsTo {
-    connect: ID
-}
-
-input CreateUserBelongsTo {
-    connect: ID
 }
 
 type Invitation {
@@ -98,6 +88,8 @@ type Invitation {
     invitee: User @belongsTo
     url: String!
     expiresAt: DateTime @rename(attribute: "expires_at")
+    "Whether the invitation can no longer be accepted or declined"
+    expired: Boolean! @method(name: "isExpired")
     acceptedAt: DateTime @rename(attribute: "accepted_at")
     createdAt: DateTime @rename(attribute: "created_at")
     updatedAt: DateTime @rename(attribute: "updated_at")
