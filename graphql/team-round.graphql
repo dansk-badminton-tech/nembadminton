@@ -64,6 +64,10 @@ extend type Mutation {
     promoteScenario(scenarioId: ID!): TeamRound! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario")
     "Rename a scenario"
     renameScenario(scenarioId: ID!, name: String!): TeamRoundScenario! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario")
+    "Record that a reserve from a lower Squad plays for a player on this Squad (§43), in a Scenario or, without one, the official lineup. Rejected when the reserve isn't on a lower Squad, the replaced player isn't on this Squad, or either already has a record in the lineup."
+    addSquadReserve(squadId: ID!, scenarioId: ID, reserveRefId: String!, replacedRefId: String!): SquadReserve! @guard @canFind(ability: "editReserves", find: "squadId", model: "Squad") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadReserve")
+    "Remove a reserve record"
+    deleteSquadReserve(id: ID! @eq): SquadReserve @guard @canFind(ability: "delete", find: "id") @delete
     "Delete a draft scenario and all associated categories, players, and points"
     deleteScenario(scenarioId: ID!): Boolean! @guard @canFind(ability: "delete", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\DeleteScenario")
 }
@@ -273,6 +277,22 @@ type SquadCategory {
     players: [SquadMember!]!
 }
 
+"A reserve record (§43): the reserve, from a lower Squad, plays for the replaced player on the Squad"
+type SquadReserve {
+    id: ID!
+    reserve: SquadReservePlayer! @method(name: "reservePlayer")
+    replaced: SquadReservePlayer! @method(name: "replacedPlayer")
+    "Null for the lineup of a TeamRound without an official Scenario"
+    scenarioId: ID @rename(attribute: "team_round_scenario_id")
+}
+
+type SquadReservePlayer {
+    refId: String!
+    name: String!
+    gender: Gender!
+    vintage: Vintage!
+}
+
 type PlacedPlayerCancellation {
     "The player has a permanent afbud (playable = false) and cannot play in any team round."
     permanent: Boolean!
@@ -315,6 +335,8 @@ type Squad {
     playingCity: String @rename(attribute: "playing_city")
     "Categories"
     categories(scenarioId: ID): [SquadCategory!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadCategoriesResolver")
+    "Reserve records (§43) on this Squad, in the Scenario or, without one, the official lineup"
+    reserves(scenarioId: ID): [SquadReserve!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadReservesResolver")
     "Order"
     order: Int!
     "Ranking version"

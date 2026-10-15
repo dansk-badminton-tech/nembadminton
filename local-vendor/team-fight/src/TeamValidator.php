@@ -112,6 +112,11 @@ class TeamValidator
         /** @var Player $player */
         foreach ($players as $player) {
             foreach ($playersFromHighSquads as $playerHigh) {
+                // A Reserve Player stands on both their own Squad and the Squad they play for (§45); never compare
+                // a Member with themselves.
+                if ($player->refId === $playerHigh->refId) {
+                    continue;
+                }
                 $invalid = [];
                 // A comparison should only be made in the category or categories in which the players on the higher-ranked team participate.
                 $categories = $playerToCategoriesLookupMap[$playerHigh->refId] ?? [];
@@ -477,6 +482,93 @@ class TeamValidator
         }
 
         return $playingToHigh;
+    }
+
+    public const STRENGTH_INCREASE = 'STRENGTH_INCREASE';
+
+    public const BETTER_RESERVE_AVAILABLE = 'BETTER_RESERVE_AVAILABLE';
+
+    /**
+     * §43 findings for the reserve records that count, in each of the replaced player's categories on the Squad:
+     * - STRENGTH_INCREASE (§43 stk. 3, an error): the reserve has more points than the replaced player.
+     * - BETTER_RESERVE_AVAILABLE (§43 stk. 2, a warning): a Member of the replaced player's gender on a lower Squad,
+     *   who isn't the reserve or a reserve themselves, has more points than the reserve and no more than the replaced
+     *   player. The finding names the best such Member.
+     *
+     * A player without points in a category counts as 0 there.
+     *
+     * @param  Squad[]  $squads
+     * @return list<array<string, mixed>>
+     */
+    public function validateReserves(array $squads): array
+    {
+        $lineup = new ReserveLineup($squads);
+        $records = $lineup->records();
+        $squads = array_values($squads);
+        $reserveRefIds = array_map(fn (array $record) => $record['reserve']->refId, $records);
+
+        $findings = [];
+        foreach ($records as $record) {
+            ['squadIndex' => $squadIndex, 'reserve' => $reserve, 'replaced' => $replaced] = $record;
+            $candidates = array_filter(
+                $lineup->playersBelow($squadIndex),
+                fn (Player $player) => $player->gender === $replaced->gender && ! in_array($player->refId, $reserveRefIds, true),
+            );
+
+            foreach ($squads[$squadIndex]->categories as $category) {
+                if (! in_array($replaced->refId, array_map(fn (Player $player) => $player->refId, $category->players), true)) {
+                    continue;
+                }
+                $reservePoints = $this->categoryPoints($reserve, $category->category);
+                $replacedPoints = $this->categoryPoints($replaced, $category->category);
+                $finding = [
+                    'squadIndex' => $squadIndex,
+                    'category' => $category->category,
+                    'categoryName' => $category->name,
+                    'reserve' => $this->findingPlayer($reserve, $reservePoints),
+                    'replaced' => $this->findingPlayer($replaced, $replacedPoints),
+                    'betterReserve' => null,
+                ];
+
+                if ($reservePoints > $replacedPoints) {
+                    $findings[] = ['type' => self::STRENGTH_INCREASE] + $finding;
+
+                    continue;
+                }
+
+                $best = null;
+                $bestPoints = null;
+                foreach ($candidates as $candidate) {
+                    $points = $this->categoryPoints($candidate, $category->category);
+                    if ($points > $reservePoints && $points <= $replacedPoints && ($bestPoints === null || $points > $bestPoints)) {
+                        $best = $candidate;
+                        $bestPoints = $points;
+                    }
+                }
+                if ($best !== null) {
+                    $findings[] = ['type' => self::BETTER_RESERVE_AVAILABLE, 'betterReserve' => $this->findingPlayer($best, $bestPoints)] + $finding;
+                }
+            }
+        }
+
+        return $findings;
+    }
+
+    private function categoryPoints(Player $player, string $category): int
+    {
+        try {
+            return (int) $this->getPlayerCategoryPoint($player, $category);
+        } catch (PointNotFoundInCategoryException) {
+            return 0;
+        }
+    }
+
+    /**
+     * @return array{refId: string|null, name: string, points: int}
+     */
+    private function findingPlayer(Player $player, int $points): array
+    {
+        return ['refId' => $player->refId, 'name' => $player->name, 'points' => $points];
     }
 
     /**

@@ -7,6 +7,7 @@ namespace FlyCompany\TeamFight;
 use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
+use App\Models\SquadReserve;
 use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
 use Illuminate\Database\Eloquent\Collection;
@@ -71,6 +72,10 @@ class ScenarioManager
                         ->whereIn('squad_id', $squadIds)
                         ->whereNull('team_round_scenario_id')
                         ->update(['team_round_scenario_id' => $preservedDraft->id]);
+                    SquadReserve::query()
+                        ->whereIn('squad_id', $squadIds)
+                        ->whereNull('team_round_scenario_id')
+                        ->update(['team_round_scenario_id' => $preservedDraft->id]);
                 }
             }
 
@@ -119,6 +124,7 @@ class ScenarioManager
                 $this->cloneCategory($category, $targetScenario->id);
             }
         }
+        $this->cloneReserves($teamRound, $officialScenario?->id, $targetScenario);
     }
 
     /**
@@ -131,6 +137,28 @@ class ScenarioManager
             foreach ($categories as $category) {
                 $this->cloneCategory($category, $targetScenario->id);
             }
+        }
+        $this->cloneReserves($teamRound, $sourceScenarioId, $targetScenario);
+    }
+
+    /**
+     * Copies the reserve records of one lineup of the TeamRound into a Scenario. A null source is the lineup outside any
+     * Scenario.
+     */
+    private function cloneReserves(TeamRound $teamRound, ?int $sourceScenarioId, TeamRoundScenario $targetScenario): void
+    {
+        $reserves = SquadReserve::query()
+            ->whereIn('squad_id', $teamRound->squads()->select('id'))
+            ->when(
+                $sourceScenarioId === null,
+                fn ($query) => $query->whereNull('team_round_scenario_id'),
+                fn ($query) => $query->where('team_round_scenario_id', $sourceScenarioId),
+            )
+            ->get();
+        foreach ($reserves as $reserve) {
+            $copy = $reserve->replicate();
+            $copy->team_round_scenario_id = $targetScenario->id;
+            $copy->save();
         }
     }
 
