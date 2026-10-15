@@ -75,9 +75,9 @@ The host can open the Dusk application at `http://localhost:8000`. Selenium shar
 
 **Run in CI:**
 
-Browser tests are slow, so they don't run on every PR push. Add the `ci:browser-tests` label to a PR when its code and UI changes are done. The tests run when the label is added and again on every later push while it stays on. They also run on every push to `master`. A passing run is not required to merge.
+Browser tests are slow, so they skip draft PRs. Open a PR as a draft and mark it ready for review when its code and UI changes are done. The tests run when a PR is opened as ready or marked ready, and again on every later push. They also run on every push to `master`. A passing run is not required to merge.
 
-To rerun without pushing, remove the label and add it again, or run the workflow manually: Actions > "Browser testing" > "Run workflow" (or `gh workflow run "Browser testing" --ref my-branch`).
+To rerun without pushing, convert the PR to draft and mark it ready again, or run the workflow manually: Actions > "Browser testing" > "Run workflow" (or `gh workflow run "Browser testing" --ref my-branch`).
 
 Failed browser tests are automatically retried once before the workflow is marked as failed.
 

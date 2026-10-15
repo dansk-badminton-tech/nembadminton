@@ -6,7 +6,7 @@ on:
     branches:
       - master
   pull_request:
-    types: [labeled, synchronize, reopened]
+    types: [opened, ready_for_review, synchronize, reopened]
     branches:
       - master
 
@@ -15,20 +15,9 @@ env:
 
 jobs:
   browser-tests:
-    # Adding any other label still starts a run of this workflow, and its job is skipped.
-    # The PR shows only the newest check run per name, so a skipped run named
-    # `browser-tests` would hide the real run and its result. Give those runs another name.
-    # GitHub shows a skipped job's name expression as raw text. That still differs from
-    # `browser-tests`, but a constant like ${{ 'x' }} would be evaluated and clash again.
-    name: >-
-      ${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:browser-tests')
-      && 'browser-tests (label ignored)' || 'browser-tests' }}
-    # On PRs, run only while the `ci:browser-tests` label is on: when it is added,
-    # and on every later push. Adding other labels does not start a run.
-    if: >-
-      github.event_name != 'pull_request' ||
-      (github.event.action == 'labeled' && github.event.label.name == 'ci:browser-tests') ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci:browser-tests'))
+    # On PRs, run only when the PR is ready for review: when it is opened as ready or
+    # marked ready, and on every later push. Draft PRs are skipped.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     concurrency:
       group: browser-testing-${{ github.event.pull_request.number || github.ref }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
