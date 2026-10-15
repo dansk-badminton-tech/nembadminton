@@ -1,12 +1,14 @@
 <template>
     <!-- PROTOTYPE A (#227): records the coach's decision "X (from a lower Squad) is reserve for Y (on this Squad)",
          like the "Reserver" section on badmintonplayer.dk's match page. -->
-    <div class="prototype-box" :dusk="'reserve-marks-a-' + squadIndex">
-        <p class="mb-2"><strong>Reserver (§43)</strong></p>
-        <p v-if="!reserves.length" class="has-text-grey is-size-7 mb-3">
-            Ingen. Melder en spiller på Hold {{ squadIndex + 1 }} afbud pga. skade, sygdom eller force majeure,
-            så vælg reserven fra et lavere hold og hvem vedkommende erstatter.
-        </p>
+    <!-- Minimal by default: only a small link between the Squads, the form opens on demand. -->
+    <div v-if="!reserves.length && !adding" class="reserve-minimal" :dusk="'reserve-marks-a-' + squadIndex">
+        <a class="is-size-7 has-text-grey" dusk="reserve-a-open" @click="adding = true">
+            <b-icon icon="account-switch" size="is-small"/> Tilføj reserve til Hold {{ squadIndex + 1 }}
+        </a>
+    </div>
+    <div v-else class="prototype-box" :dusk="'reserve-marks-a-' + squadIndex">
+        <p class="mb-2"><strong>Reserver på Hold {{ squadIndex + 1 }}</strong></p>
         <div v-for="reserve in reserves" :key="reserve.refId" class="reserve-row" dusk="reserve-row-a">
             <div class="is-flex is-align-items-center" style="gap: 0.75rem;">
                 <b-icon icon="account-switch" class="has-text-primary"/>
@@ -20,7 +22,16 @@
                 <b-button size="is-small" title="Fjern reserve" icon-right="close" @click="removeReserveA(squad.id, reserve.refId)"/>
             </div>
         </div>
-        <div class="add-form">
+        <div v-if="!adding" class="pt-2">
+            <a class="is-size-7" dusk="reserve-a-open" @click="adding = true">
+                <b-icon icon="plus" size="is-small"/> Tilføj endnu en reserve
+            </a>
+        </div>
+        <div v-else class="add-form">
+            <p class="has-text-grey is-size-7 mb-3">
+                Melder en spiller på Hold {{ squadIndex + 1 }} afbud pga. skade, sygdom eller force majeure (§43),
+                så vælg reserven fra et lavere hold og hvem vedkommende erstatter.
+            </p>
             <b-field :label="`Reserve fra et lavere hold`" class="mb-3">
                 <b-autocomplete
                     v-model="reserveSearch"
@@ -56,7 +67,8 @@
                     <template #empty>Ingen spillere på Hold {{ squadIndex + 1 }} matcher.</template>
                 </b-autocomplete>
             </b-field>
-            <div class="has-text-right">
+            <div class="buttons is-right">
+                <b-button dusk="reserve-a-cancel" @click="cancel">Annuller</b-button>
                 <b-button type="is-primary" icon-left="plus" :disabled="!reserveCandidate || !forPlayer"
                           dusk="reserve-a-add" @click="add">Tilføj reserve</b-button>
             </div>
@@ -77,7 +89,8 @@ export default {
             reserveSearch: '',
             reserveCandidate: null,
             forSearch: '',
-            forPlayer: null
+            forPlayer: null,
+            adding: false
         }
     },
     computed: {
@@ -137,8 +150,12 @@ export default {
                 forRefId: this.forPlayer.refId,
                 forName: this.forPlayer.name
             })
+            this.cancel()
+        },
+        cancel() {
             this.reserveCandidate = this.forPlayer = null
             this.reserveSearch = this.forSearch = ''
+            this.adding = false
         }
     }
 }
@@ -150,6 +167,13 @@ export default {
     padding: 0.75rem 1rem;
     margin-top: -0.75rem;
     background: #faf5ff;
+}
+.reserve-minimal {
+    margin-top: -0.75rem;
+    padding: 0.25rem 0 0.5rem;
+}
+.reserve-minimal a:hover {
+    color: #8b5cf6 !important;
 }
 .reserve-row {
     padding: 0.5rem 0;
