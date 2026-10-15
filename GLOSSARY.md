@@ -46,6 +46,14 @@ _Avoid_: Squad
 One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
 _Avoid_: Team, sub-team
 
+**Reserve Player** (reservespiller):
+A Member marked on one Squad as having replaced a player there after injury, illness or force majeure before the lineups were exchanged (§43 stk. 1). The mark belongs to the Member on that Squad, not to a category. A Member is only a Reserve Player when the mark is set; it is never inferred from where they were placed.
+_Avoid_: Substitute, stand-in, afløser
+
+**Reserve Quarantine** (karantæne):
+The ban on a Reserve Player playing on any Team in the next round after the round they were a reserve in (§44). The next round is the round number one higher, whatever its date (§45); a TeamRound without a round number gives no Reserve Quarantine. Only a Reserve Player in an Official Lineup is in Reserve Quarantine.
+_Avoid_: Suspension, karantæneperiode
+
 ### Lineup Scenarios
 
 **Scenario**:
