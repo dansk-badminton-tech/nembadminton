@@ -7,6 +7,7 @@ namespace App\GraphQL\Queries;
 use App\Models\TeamRound;
 use App\SeasonHistory\CategorySlot;
 use App\SeasonHistory\RoundLineup;
+use App\SeasonHistory\RoundReserve;
 use App\SeasonHistory\SeasonHistory;
 use App\SeasonHistory\SeasonHistoryLoader;
 use App\SeasonHistory\SlotPlayer;
@@ -37,6 +38,12 @@ class TeamRoundSeasonHistory
                 'category' => $category,
                 'places' => array_map($this->place(...), $round->ladder($category)),
             ], SeasonHistory::CATEGORIES),
+            'reserves' => array_map(fn (RoundReserve $reserve) => [
+                'refId' => $reserve->refId,
+                'name' => $reserve->name,
+                'replacedName' => $reserve->replacedName,
+                'squadPosition' => $reserve->squadPosition,
+            ], $round->reserves),
         ], $this->loader->upTo($teamRound)->rounds());
     }
 

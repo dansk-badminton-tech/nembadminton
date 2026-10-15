@@ -9,6 +9,7 @@ use App\Models\Clubhouse;
 use App\Models\Squad;
 use App\Models\SquadCategory;
 use App\Models\SquadMember;
+use App\Models\SquadReserve;
 use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
 use Carbon\Carbon;
@@ -68,6 +69,11 @@ class SeasonHistoryLoader
                         ->orWhereIn('team_round_scenario_id', TeamRoundScenario::query()->where('is_official', true)->select('id')))
                     ->orderBy('id'),
                 'squads.categories.players' => fn ($query) => $query->orderBy('id'),
+                'squads.reserves' => fn ($query) => $query
+                    ->where(fn ($query) => $query
+                        ->whereNull('team_round_scenario_id')
+                        ->orWhereIn('team_round_scenario_id', TeamRoundScenario::query()->where('is_official', true)->select('id')))
+                    ->orderBy('id'),
             ])
             ->sortBy([
                 fn (TeamRound $a, TeamRound $b) => [$a->game_date, $a->round, $a->id] <=> [$b->game_date, $b->round, $b->id],
@@ -82,9 +88,16 @@ class SeasonHistoryLoader
         $round = $teamRound->round === null ? null : (int) $teamRound->round;
         $official = $this->officialCategories($teamRound);
 
+        /** @var TeamRoundScenario|null $officialScenario */
+        $officialScenario = $teamRound->officialScenario;
         $squads = [];
+        $reserves = [];
         $ladders = array_fill_keys(SeasonHistory::CATEGORIES, []);
         foreach ($teamRound->squads->values() as $index => $squad) {
+            foreach ($squad->reserves->where('team_round_scenario_id', $officialScenario?->id) as $reserve) {
+                /** @var SquadReserve $reserve */
+                $reserves[] = new RoundReserve($reserve->reserve_ref_id, $reserve->reserve_name, $reserve->replaced_name, $index + 1);
+            }
             /** @var Squad $squad */
             $tier = $squad->effectiveTier();
             $lineupSquad = new LineupSquad(
@@ -121,6 +134,7 @@ class SeasonHistoryLoader
             gameDate: $teamRound->game_date === null ? null : Carbon::parse($teamRound->game_date)->toDateString(),
             squads: $squads,
             ladders: $ladders,
+            reserves: $reserves,
         );
     }
 

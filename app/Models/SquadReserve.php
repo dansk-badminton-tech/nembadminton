@@ -37,6 +37,10 @@ class SquadReserve extends Model
         'replaced_gender',
     ];
 
+    protected $casts = [
+        'team_round_scenario_id' => 'integer',
+    ];
+
     public function squad(): BelongsTo
     {
         return $this->belongsTo(Squad::class);

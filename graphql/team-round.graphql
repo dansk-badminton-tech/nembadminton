@@ -258,6 +258,20 @@ type SquadMember {
     parallelAllocation: ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
     "The player's afbud for the team round they are placed in, or null when they have none."
     cancellation: PlacedPlayerCancellation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\PlacedPlayerCancellationResolver")
+    "Reserve Quarantine (§44): where the player was a Reserve Player in the Official Lineup of the round before, in the same Clubhouse and Season. Null for a User of another Clubhouse."
+    reserveQuarantine: ReserveQuarantine @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ReserveQuarantineResolver")
+}
+
+"Where a placed player was a Reserve Player in the round before"
+type ReserveQuarantine {
+    "The TeamRound the player was a reserve in"
+    teamRoundId: ID!
+    teamRoundName: String!
+    round: Int!
+    "1-based place of the Squad they were a reserve on (Hold 1, Hold 2, ...)"
+    squadPosition: Int!
+    "The player they replaced"
+    replacedName: String!
 }
 
 type SquadPoint {
@@ -394,6 +408,18 @@ type SeasonHistoryRound {
     isCurrent: Boolean!
     "One ladder per category: HS, DS, HD, DD, MD"
     categories: [SeasonHistoryCategory!]!
+    "The Reserve Players of the Official Lineup, in Squad order"
+    reserves: [SeasonHistoryReserve!]!
+}
+
+"A Reserve Player in a round's Official Lineup"
+type SeasonHistoryReserve {
+    refId: String!
+    name: String!
+    "The player they played for"
+    replacedName: String!
+    "1-based place of the Squad they were a reserve on"
+    squadPosition: Int!
 }
 
 type SeasonHistoryCategory {
