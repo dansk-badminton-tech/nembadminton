@@ -7,7 +7,6 @@ namespace Database\Seeders;
 use App\Enums\CanonicalTournamentTier;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Random\Engine\Mt19937;
 use Random\Randomizer;
 
@@ -255,7 +254,8 @@ class RealisticSeasonSeeder extends Seeder
      */
     private function seedTeamRound(int $round, string $gameDate, string $version, array $playing, array $opponents, array $teamIds, array $lineup, ?array $reserve): void
     {
-        $teamRoundId = Str::random(24);
+        // A fixed id keeps the order of TeamRounds on the same date and round number stable (Season History sorts by id).
+        $teamRoundId = str_pad(sprintf('bc37amager2025runde%02d', $round), 24, 'x');
         DB::table('team_rounds')->insert([
             'id' => $teamRoundId,
             'name' => null,

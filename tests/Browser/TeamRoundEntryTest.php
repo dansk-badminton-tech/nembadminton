@@ -29,6 +29,8 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->visit($dashboard)
                 ->on($dashboard)
                 ->selectSeasonFilter('all')
+                // Oldest first: the seeded Season's later rounds would push this one off the first page.
+                ->sortByGameDate()
                 ->waitForRound('3x13 Kamps - Valid')
                 ->assertRoundRowContainsText('3x13 Kamps - Valid', ['2025-07-14', 'Juli 2025'])
                 ->openRound('3x13 Kamps - Valid')
@@ -56,6 +58,8 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->waitForRoundToDisappear('Previous season journey')
                 ->assertRoundNamesInclude('Current season journey')
                 ->assertRoundNamesExclude('Previous season journey', 'Earlier season journey')
+                // Oldest first: the seeded Season's rounds are newer than the July rounds below.
+                ->sortByGameDate()
                 ->selectSeasonFilter('previous')
                 ->waitForRound('Previous season journey')
                 ->waitForRoundToDisappear('Current season journey')
@@ -65,8 +69,11 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->waitForRoundToDisappear('Previous season journey')
                 ->assertRoundNamesExclude('Current season journey', 'Previous season journey')
                 ->selectSeasonFilter('all')
-                ->waitForRound('Current season journey')
-                ->assertRoundNamesInclude('Current season journey', 'Previous season journey', 'Earlier season journey')
+                ->waitForFirstRound('Earlier season journey')
+                ->assertRoundNamesInclude('Previous season journey')
+                // The newest round is on the last page oldest first, so sort newest first to see it.
+                ->sortByGameDate()
+                ->waitForFirstRound('Current season journey')
                 ->selectSeasonFilter('current')
                 ->waitForRound('Current season journey')
                 ->waitForRoundToDisappear('Previous season journey')
@@ -159,6 +166,8 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->visit($dashboard)
                 ->on($dashboard)
                 ->selectSeasonFilter('all')
+                // Oldest first: the seeded Season's later rounds would push this one off the first page.
+                ->sortByGameDate()
                 ->waitForRound('3x13 Kamps - Valid')
                 ->assertRoundNamesExclude('Blocked entry journey');
         });
@@ -190,6 +199,8 @@ class TeamRoundEntryTest extends DuskTestCase
                 ->visit($dashboard)
                 ->on($dashboard)
                 ->selectSeasonFilter('all')
+                // Oldest first: the seeded Season's later rounds would push this one off the first page.
+                ->sortByGameDate()
                 ->waitForRound('New entry journey')
                 ->assertRoundRowContainsText('New entry journey', ['2', '2025-07-15', 'Juli 2025']);
         });

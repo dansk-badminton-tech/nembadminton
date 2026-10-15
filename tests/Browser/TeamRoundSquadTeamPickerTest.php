@@ -99,7 +99,8 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
         $clubhouse = Clubhouse::firstOrFail();
 
         $this->browse(function (Browser $browser) use ($clubhouse) {
-            $teamRound = $this->createTeamRound($browser, $clubhouse->id, 'No teams journey');
+            // The seeded Season 2025 has Teams (RealisticSeasonSeeder); 2026 has none.
+            $teamRound = $this->createTeamRound($browser, $clubhouse->id, 'No teams journey', 2026);
 
             $browser->waitFor('@squad-team-empty')
                 ->assertSeeIn('@squad-team-empty', 'Opret jeres hold først, så udfyldes navn og niveau automatisk')
@@ -109,7 +110,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
 
             $team = Team::where('name', 'Højbjerg 1')->sole();
             $this->assertSame($clubhouse->id, $team->clubhouse_id);
-            $this->assertSame(2025, $team->season_id);
+            $this->assertSame(2026, $team->season_id);
 
             $browser->waitFor("[dusk='squad-team-option-{$team->id}'][aria-pressed='true']")
                 ->assertSeeIn("[dusk='squad-team-option-{$team->id}']", 'Pulje 3')
@@ -124,7 +125,7 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
         });
     }
 
-    private function createTeamRound(Browser $browser, int $clubhouseId, string $name): TeamRound
+    private function createTeamRound(Browser $browser, int $clubhouseId, string $name, int $seasonStartYear = 2025): TeamRound
     {
         $createPage = new TeamFightCreatePage($clubhouseId);
 
@@ -135,14 +136,14 @@ class TeamRoundSquadTeamPickerTest extends DuskTestCase
             ->waitUntilEnabled('@name-input')
             ->type('@name-input', $name)
             ->setRound(1)
-            ->selectDate(7, 2025, 14)
+            ->selectDate(7, $seasonStartYear, 14)
             ->selectRankingByText('Juli 2025')
             ->click('@submit-button')
             ->waitForText('Dit hold er gemt')
             ->on(new TeamFightEditPage);
 
         $teamRound = TeamRound::where('name', $name)->sole();
-        $this->assertSame(2025, $teamRound->season_id);
+        $this->assertSame($seasonStartYear, $teamRound->season_id);
 
         return $teamRound;
     }
