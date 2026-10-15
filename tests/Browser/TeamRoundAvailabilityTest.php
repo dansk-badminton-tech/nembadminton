@@ -94,7 +94,8 @@ class TeamRoundAvailabilityTest extends DuskTestCase
     public function test_seeded_cancellation_link_and_parallel_allocation_are_visible_in_editor(): void
     {
         $this->browse(function (Browser $browser) {
-            $this->createTeamRoundWithSquad($browser, 'Availability warnings journey');
+            // Season 2026: round 1 of the seeded Season 2025 (RealisticSeasonSeeder) would be the parallel round instead.
+            $this->createTeamRoundWithSquad($browser, 'Availability warnings journey', 2026);
             $teamRound = TeamRound::query()->where('name', 'Availability warnings journey')->firstOrFail();
 
             $collector = CancellationCollector::query()->create([
@@ -105,7 +106,7 @@ class TeamRoundAvailabilityTest extends DuskTestCase
             $linkCancellation = new Cancellation(['refId' => self::LINK_MEMBER['refId'], 'email' => 'member@example.com']);
             $linkCancellation->cancellationCollector()->associate($collector);
             $linkCancellation->save();
-            $linkCancellation->dates()->create(['date' => '2025-07-14']);
+            $linkCancellation->dates()->create(['date' => '2026-07-14']);
 
             $parallelRound = TeamRound::query()->create([
                 'name' => 'Parallel Veteranrunde',
@@ -186,7 +187,7 @@ class TeamRoundAvailabilityTest extends DuskTestCase
         });
     }
 
-    private function createTeamRoundWithSquad(Browser $browser, string $name): void
+    private function createTeamRoundWithSquad(Browser $browser, string $name, int $year = 2025): void
     {
         $page = new TeamFightCreatePage(Clubhouse::firstOrFail()->id);
         $browser->visit(new LoginPage)
@@ -196,7 +197,7 @@ class TeamRoundAvailabilityTest extends DuskTestCase
             ->waitUntilEnabled('@name-input')
             ->type('@name-input', $name)
             ->setRound(1)
-            ->selectDate(7, 2025, 14)
+            ->selectDate(7, $year, 14)
             ->selectRankingByText('Juli 2025')
             ->click('@submit-button')
             ->waitForText('Dit hold er gemt')
