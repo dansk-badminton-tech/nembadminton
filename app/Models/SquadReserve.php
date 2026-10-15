@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Util;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -40,6 +41,17 @@ class SquadReserve extends Model
     protected $casts = [
         'team_round_scenario_id' => 'integer',
     ];
+
+    /**
+     * The records of one lineup: a Scenario's, or with null those outside any Scenario.
+     *
+     * @param  Builder<SquadReserve>  $query
+     * @return Builder<SquadReserve>
+     */
+    public function scopeInLineup(Builder $query, ?int $scenarioId): Builder
+    {
+        return $scenarioId === null ? $query->whereNull('team_round_scenario_id') : $query->where('team_round_scenario_id', $scenarioId);
+    }
 
     /**
      * @return BelongsTo<Squad, $this>

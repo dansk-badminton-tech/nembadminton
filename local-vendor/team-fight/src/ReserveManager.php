@@ -40,7 +40,7 @@ class ReserveManager
      */
     public function reservesOf(Squad $squad, ?int $scenarioId): Collection
     {
-        return $this->inScope($squad->reserves()->getQuery(), $this->scope($squad->teamRound, $scenarioId))->orderBy('id')->get();
+        return $squad->reserves()->inLineup($this->scope($squad->teamRound, $scenarioId))->orderBy('id')->get();
     }
 
     /**
@@ -83,7 +83,7 @@ class ReserveManager
             }
 
             $scope = $this->scope($teamRound, $scenarioId);
-            $existing = $this->inScope(SquadReserve::query()->whereIn('squad_id', $squads->pluck('id')), $scope);
+            $existing = SquadReserve::query()->whereIn('squad_id', $squads->pluck('id'))->inLineup($scope);
             if ((clone $existing)->where('reserve_ref_id', $reserveRefId)->exists()) {
                 throw new ReserveRejectedException("{$reserve->name} er allerede reserve.");
             }
@@ -102,15 +102,6 @@ class ReserveManager
                 'replaced_gender' => $replaced->gender,
             ]);
         });
-    }
-
-    /**
-     * @param  Builder<SquadReserve>  $query
-     * @return Builder<SquadReserve>
-     */
-    private function inScope(Builder $query, ?int $scope): Builder
-    {
-        return $scope === null ? $query->whereNull('team_round_scenario_id') : $query->where('team_round_scenario_id', $scope);
     }
 
     /**

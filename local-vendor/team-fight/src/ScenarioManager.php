@@ -150,11 +150,7 @@ class ScenarioManager
     {
         $reserves = SquadReserve::query()
             ->whereIn('squad_id', $teamRound->squads()->select('id'))
-            ->when(
-                $sourceScenarioId === null,
-                fn ($query) => $query->whereNull('team_round_scenario_id'),
-                fn ($query) => $query->where('team_round_scenario_id', $sourceScenarioId),
-            )
+            ->inLineup($sourceScenarioId)
             ->get();
         foreach ($reserves as $reserve) {
             $copy = $reserve->replicate();

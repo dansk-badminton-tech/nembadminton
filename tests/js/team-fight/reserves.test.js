@@ -77,6 +77,10 @@ test('a stale record gets a soft warning', () => {
     xeniaUp[0].categories.push(category('2. DS', [xenia]))
     xeniaUp[1].categories = []
     assert.deepEqual(reserveWarnings(xeniaUp, 0, record('r1', xenia, yrsa)), ['Xenia står nu på Hold 1, ikke et lavere hold'])
+
+    const xeniaGone = squads()
+    xeniaGone[1].categories = []
+    assert.deepEqual(reserveWarnings(xeniaGone, 0, record('r1', xenia, yrsa)), ['Xenia står ikke længere på et lavere hold'])
 })
 
 test('validation gets each Squad\'s records as refIds', () => {

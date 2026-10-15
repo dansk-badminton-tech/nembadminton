@@ -79,7 +79,9 @@ export function reserveWarnings(squads, squadIndex, record) {
         warnings.push(`${record.replaced.name} står ikke længere på Hold ${squadIndex + 1}`)
     }
     const index = placedSquadIndex(squads, record.reserve.refId)
-    if (index !== -1 && index <= squadIndex) {
+    if (index === -1) {
+        warnings.push(`${record.reserve.name} står ikke længere på et lavere hold`)
+    } else if (index <= squadIndex) {
         warnings.push(`${record.reserve.name} står nu på Hold ${index + 1}, ikke et lavere hold`)
     }
     return warnings

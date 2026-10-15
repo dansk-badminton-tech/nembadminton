@@ -225,7 +225,6 @@ export default {
                         reserves{
                             id
                             reserve{
-                                refId
                                 name
                                 gender
                                 vintage

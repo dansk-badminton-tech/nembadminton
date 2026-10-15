@@ -88,14 +88,9 @@ class ReserveQuarantineResolver
                 foreach ($previousRounds as $previousRound) {
                     /** @var TeamRoundScenario|null $officialScenario */
                     $officialScenario = $previousRound->officialScenario;
-                    $officialScenarioId = $officialScenario?->id;
                     $query->orWhere(fn (Builder $scope) => $scope
                         ->whereIn('squad_id', $previousRound->squads->pluck('id'))
-                        ->when(
-                            $officialScenarioId === null,
-                            fn (Builder $q) => $q->whereNull('team_round_scenario_id'),
-                            fn (Builder $q) => $q->where('team_round_scenario_id', $officialScenarioId),
-                        ));
+                        ->inLineup($officialScenario?->id));
                 }
             })
             ->orderBy('id')
