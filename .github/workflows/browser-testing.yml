@@ -15,6 +15,12 @@ env:
 
 jobs:
   browser-tests:
+    # Adding any other label still starts a run of this workflow, and its job is skipped.
+    # The PR shows only the newest check run per name, so a skipped run named
+    # `browser-tests` would hide the real run and its result. Give those runs another name.
+    name: >-
+      ${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:browser-tests')
+      && 'browser-tests (label ignored)' || 'browser-tests' }}
     # On PRs, run only while the `ci:browser-tests` label is on: when it is added,
     # and on every later push. Adding other labels does not start a run.
     if: >-
