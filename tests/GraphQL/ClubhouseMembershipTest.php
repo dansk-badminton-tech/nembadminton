@@ -4,12 +4,14 @@ namespace Tests\GraphQL;
 
 use App\Enums\Role;
 use App\Events\InvitationCreated;
+use App\Mail\Invitation as InvitationMail;
 use App\Models\Clubhouse;
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
@@ -178,6 +180,22 @@ class ClubhouseMembershipTest extends TestCase
             'status' => 'pending',
         ]);
         Event::assertDispatched(InvitationCreated::class);
+    }
+
+    /** @test */
+    public function the_invitation_email_is_queued_so_a_mail_failure_does_not_fail_the_invite(): void
+    {
+        Mail::fake();
+        $clubhouse = Clubhouse::factory()->create();
+        $admin = $this->userInClubhouse($clubhouse, Role::CLUB_ADMIN);
+
+        $this->actingAs($admin, 'api');
+
+        $this->inviteMutation(['email' => 'new@example.com', 'role' => 'COACH'])
+            ->assertJsonMissingPath('errors');
+
+        Mail::assertQueued(InvitationMail::class, fn (InvitationMail $mail) => $mail->hasTo('new@example.com'));
+        Mail::assertNothingSent();
     }
 
     /** @test */
