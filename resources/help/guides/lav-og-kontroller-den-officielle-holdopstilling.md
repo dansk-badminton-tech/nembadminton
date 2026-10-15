@@ -47,6 +47,34 @@ Sæsonhistorikken viser, hvor en spiller stod i klubbens tidligere holdrunder i 
 
 Sæsonhistorikken bruger kun de officielle holdopstillinger i klubbens tidligere holdrunder, så den viser ikke udkast.
 
+## Sæt en reservespiller ind
+
+Melder en spiller afbud på grund af skade, sygdom eller force majeure, før holdopstillingerne er udvekslet, må en spiller fra et lavere hold komme ind som reservespiller (§ 43). Du registrerer det som "reserven for den spiller, der er meldt afbud".
+
+1. Find holdet, hvor spilleren er meldt afbud, og vælg **Tilføj reserve til Hold 1** (med nummeret på holdet) under holdet.
+2. Vælg reserven under **Reserve fra et lavere hold**. Listen viser spillere, der står på et lavere hold, og som ikke allerede er reserve.
+3. Vælg spilleren, der erstattes, under **Erstatter**. Listen viser spillere på holdet, som ikke allerede har en reserve.
+4. Vælg **Tilføj reserve**. Vil du fortryde, vælger du **Annuller**.
+
+Reserven overtager alle den erstattede spillers pladser på holdet, når holdopstillingen kontrolleres. Reserven beholder sin egen plads på det lavere hold. Reserven er markeret med **Reserve på Hold 1 for** og navnet, og den erstattede spiller er markeret med **Erstattes af** og navnet. Reserver på et hold står under **Reserver på Hold 1**. Vælg blyanten **Ret reserve** for at ændre en reserve, eller krydset **Fjern reserve** for at fjerne den. Vil du tilføje flere reserver på samme hold, vælger du **Tilføj endnu en reserve**.
+
+Står reserven eller den erstattede spiller ikke længere på de rigtige hold, viser reserven en advarsel, fx at spilleren ikke længere står på et lavere hold. En sådan reserve tæller ikke med i kontrollen, så ret eller fjern den.
+
+Reserverne gælder den opstilling, der er valgt ved **Holdene i holdrunden**, og følger med, når du kopierer eller [arbejder med scenarier](/app/help/guides/arbejd-med-scenarier-i-en-holdrunde). Den officielle holdopstilling viser dem også i den delte holdopstilling under **Reserve** og i sæsonhistorikken.
+
+### Kontrol af reserver
+
+Har holdopstillingen reserver, viser kontrollerne også **Reserver (§43)**:
+
+- **Fejl:** Reserven har flere point end den erstattede spiller i en af dennes kategorier. Det er en styrkeforøgelse, som ikke er tilladt (§ 43, stk. 3). Vælg en anden reserve.
+- **Advarsel:** Der er en bedre reserve på et lavere hold (§ 43, stk. 2). Åbn **Advarsler om reserver** for at se hvem. Kun du ved, hvem der er tilgængelig, så vurdér selv, om du skal skifte reserve.
+
+De øvrige kontroller bruger holdopstillingen, som den spilles med reserven på pladsen.
+
+### Karantæne efter en reserve
+
+En spiller, der har været reserve, må ikke spille på noget hold i næste spillerunde (§ 44). Står spilleren på et hold i klubbens næste holdrunde i samme sæson, viser Nembadminton **Karantæne · reserve i R4 på Hold 1** ved spillerens navn. Hold markøren over mærket for at se, hvem spilleren var reserve for. Mærket er en advarsel: Du kan stadig gemme og dele, så du skal selv vurdere, om spilleren må spille. Mærket vises kun på den officielle holdopstilling, og kun når holdrunderne har et rundenummer.
+
 ## Kontrollér holdopstillingen
 
 Over holdene viser Nembadminton tre kontroller, som opdateres, hver gang du ændrer holdopstillingen:
