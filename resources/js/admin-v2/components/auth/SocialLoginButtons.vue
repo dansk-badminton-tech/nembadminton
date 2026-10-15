@@ -24,6 +24,7 @@ import { setAuthToken } from '../../../auth'
 import ME from '../../../queries/me.gql'
 import { extractErrors } from '@/helpers'
 import { setUser } from '@/store/user'
+import { internalRedirectPath } from '@/router/login-redirect'
 
 const GOOGLE_SDK_URL = 'https://accounts.google.com/gsi/client'
 
@@ -170,6 +171,11 @@ export default defineComponent({
             }
             if (this.mode === 'signup') {
                 this.$router.push({ name: 'sign-up-finish' })
+                return
+            }
+            const redirect = internalRedirectPath(this.$route.query.redirect)
+            if (redirect !== null) {
+                this.$router.push(redirect)
                 return
             }
             this.$router.push({ name: 'home', params: {clubhouseId: clubhouseId} })
