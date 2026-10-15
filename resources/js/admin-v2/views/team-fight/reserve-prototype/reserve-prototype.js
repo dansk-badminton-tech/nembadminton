@@ -13,7 +13,8 @@ export function prototypeVariant(route) {
     return VARIANTS[variant] ? variant : null
 }
 
-// A: squadId -> list of refIds marked as reserve among the Squad's placed Members.
+// A: squadId -> list of reserve entries {refId, name, gender, vintage, forRefId, forName}: a Member placed
+//    on the Squad who plays "for" (instead of) another Member, like badmintonplayer.dk's "Reserver" section.
 // B: squadId -> list of reserve entries {refId, name, gender, vintage, parallelAllocation, source}
 //    where source is 'available' or the index of the lower Squad they also stand on.
 export const reserveState = reactive({
@@ -21,13 +22,31 @@ export const reserveState = reactive({
     reservesB: {}
 })
 
-export function isMarkedA(squadId, refId) {
-    return (reserveState.marksA[squadId] ?? []).includes(refId)
+export function reservesA(squadId) {
+    return reserveState.marksA[squadId] ?? []
 }
 
-export function toggleMarkA(squadId, refId) {
-    const marks = reserveState.marksA[squadId] ?? []
-    reserveState.marksA[squadId] = marks.includes(refId) ? marks.filter(r => r !== refId) : [...marks, refId]
+export function reserveEntryA(squadId, refId) {
+    return reservesA(squadId).find(r => r.refId === refId) ?? null
+}
+
+export function isMarkedA(squadId, refId) {
+    return reserveEntryA(squadId, refId) !== null
+}
+
+export function addReserveA(squadId, entry) {
+    reserveState.marksA[squadId] = [...reservesA(squadId).filter(r => r.refId !== entry.refId), entry]
+}
+
+export function removeReserveA(squadId, refId) {
+    reserveState.marksA[squadId] = reservesA(squadId).filter(r => r.refId !== refId)
+}
+
+// The reserves shown on the public link and in the CSV, for either variant.
+export function publicReserves(variant, squadId) {
+    if (variant === 'A') return reservesA(squadId)
+    if (variant === 'B') return reservesB(squadId)
+    return []
 }
 
 export function reservesB(squadId) {
@@ -87,18 +106,22 @@ export function candidatesB(squads, squadIndex) {
 export function seasonHistoryNote(variant, squads, refId) {
     if (variant === 'A') {
         const index = squads.findIndex(squad => isMarkedA(squad.id, refId))
-        return index === -1 ? null : `Markeret som reserve på Hold ${index + 1} (kategoripladsen tæller som normalt)`
+        return index === -1 ? null : `Reserve på Hold ${index + 1} for ${reserveEntryA(squads[index].id, refId).forName} (kategoripladsen tæller som normalt)`
     }
     // B: Season History is unchanged; reserves don't appear in it.
     return null
 }
 
-// B: the lines the CSV export gets after each Squad's categories, per Squad ("Hold N").
-export function csvReserveLinesB(squads, includeCategories) {
+// The lines the CSV export gets after each Squad's categories, per Squad ("Hold N").
+// A names who the reserve played for: "Nicoline Tang for Amanda Aarrebo Petersen".
+export function csvReserveLines(variant, squads, includeCategories) {
     return squads.map((squad, index) => ({
         hold: `Hold ${index + 1}`,
-        lines: reservesB(squad.id).map((reserve, i) => includeCategories
-            ? `${i === 0 ? '"Reserve"' : ''},"${reserve.name}"`
-            : `"${reserve.name} (reserve)"`)
+        lines: publicReserves(variant, squad.id).map((reserve, i) => {
+            const text = reserve.forName ? `${reserve.name} for ${reserve.forName}` : reserve.name
+            return includeCategories
+                ? `${i === 0 ? '"Reserve"' : ''},"${text}"`
+                : `"${text} (reserve)"`
+        })
     })).filter(squad => squad.lines.length)
 }

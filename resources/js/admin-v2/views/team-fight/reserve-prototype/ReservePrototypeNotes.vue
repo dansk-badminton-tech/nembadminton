@@ -5,12 +5,16 @@
             <span class="is-size-7 has-text-grey">· gemmes ikke, glemmes ved genindlæsning</span></p>
         <ul class="is-size-7">
             <template v-if="variant === 'A'">
-                <li><b>Markering:</b> klik <b-icon icon="account-switch" size="is-small"/> på en opstillet spiller, eller brug "Markér reserve" under holdet.</li>
+                <li><b>Registrering:</b> sæt reserven ind på pladsen som normalt. Under holdet i "Reserver": vælg reserven (en spiller på holdet) og hvem vedkommende erstatter, fx "Nicoline Tang for Amanda Aarrebo Petersen" (som på badmintonplayer.dk).</li>
+                <li><b>Mærke:</b> reserven får "Reserve for …" på sine pladser. Hold musen over for at se reglerne.</li>
                 <li><b>Kategoriplads:</b> uændret. Reserven står på en almindelig plads og har sin kategoriplads.</li>
-                <li><b>Sæsonhistorik:</b> pladsen vises som normalt, med en note om at spilleren er reserve.</li>
-                <li><b>Ledige spillere:</b> uændret. Reserven står allerede på holdet.</li>
-                <li><b>"Optaget på":</b> uændret. Reserven er en opstillet spiller.</li>
-                <li><b>Lavere hold:</b> en spiller fra et lavere hold kan ikke markeres. Personen skal flyttes op og mister sin plads dernede.</li>
+                <li><b>Sæsonhistorik:</b> pladsen vises som normalt, med en note om hvem spilleren var reserve for.</li>
+                <li><b>Ledige spillere og "Optaget på":</b> uændret. Reserven er en opstillet spiller.</li>
+                <li><b>Lavere hold:</b> en spiller fra et lavere hold kan endnu ikke stå på to hold. Personen skal flyttes op og mister sin plads dernede.</li>
+                <li><b>CSV:</b> "Reserve","Navn for Navn" efter holdets kategorier. Se forhåndsvisningen i Del → CSV.</li>
+                <li><b>Offentligt link:</b> en "Reserve"-række på hvert holdkort.
+                    <router-link :to="{name: 'team-fight-public-view', params: {teamUUID: teamRoundId}, query: {variant: 'A'}}">
+                        Åbn det offentlige link i denne fane</router-link>.</li>
             </template>
             <template v-else>
                 <li><b>Markering:</b> søg i "Reserver" på holdet (kun spillere fra lavere hold), eller klik <b-icon icon="account-switch" size="is-small"/> på en ledig spiller i listen.</li>

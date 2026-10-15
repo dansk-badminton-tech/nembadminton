@@ -103,7 +103,7 @@
                             <p v-else class="has-text-grey">
                                 <em>Ingen spillere endnu</em>
                             </p>
-                            <!-- PROTOTYPE #227 B: the Squad's reserves (from memory, ?variant=B only) -->
+                            <!-- PROTOTYPE #227: the Squad's reserves (from memory, ?variant=A or B only) -->
                             <div v-if="prototypeReserves(squad).length" class="category-grid mt-3 prototype-reserves"
                                  :dusk="'prototype-public-reserves-' + index">
                                 <div class="category-label">Reserve</div>
@@ -113,6 +113,7 @@
                                             <b-icon v-if="reserve.gender === 'MEN'" icon="gender-male" size="is-small"></b-icon>
                                             <b-icon v-if="reserve.gender === 'WOMEN'" icon="gender-female" size="is-small"></b-icon>
                                             {{ reserve.name }}
+                                            <span v-if="reserve.forName" class="has-text-grey">for {{ reserve.forName }}</span>
                                         </span>
                                         <span class="player-tags">
                                             <b-tag v-if="reserve.vintage && isYoungPlayer(reserve)" size="is-small" type="is-info">
@@ -144,7 +145,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import {reservesB} from "./reserve-prototype/reserve-prototype.js";
+import {publicReserves} from "./reserve-prototype/reserve-prototype.js";
 import {ageGroupLabel, findPositions, getCurrentSeason, isYoungPlayer} from "../../helpers";
 import {
     formatGameDate,
@@ -158,7 +159,7 @@ export default {
     name: "TeamFightPublic",
     methods: {
         prototypeReserves(squad) {
-            return this.$route.query.variant === 'B' ? reservesB(squad.id) : []
+            return publicReserves(this.$route.query.variant, squad.id)
         },
         ageGroupLabel,
         isYoungPlayer,

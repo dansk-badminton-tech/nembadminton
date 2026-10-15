@@ -171,12 +171,12 @@
                                 </b-tag>
                             </b-tooltip>
                             <!-- PROTOTYPE #227 -->
-                            <b-tooltip v-if="variant === 'A' && isMarkedA(squad.id, player.refId)" multilined
+                            <b-tooltip v-if="variant === 'A' && reserveEntryA(squad.id, player.refId)" multilined
                                        class="is-pulled-left ml-2" type="is-dark"
-                                       label="Reservespiller (§43): sat ind i stedet for en spiller, der blev skadet, syg eller fik forfald, før holdopstillingen blev udvekslet. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.">
+                                       :label="`Reservespiller (§43): sat ind for ${reserveEntryA(squad.id, player.refId).forName}, der blev skadet, syg eller fik forfald, før holdopstillingen blev udvekslet. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`">
                                 <b-tag size="is-small" class="prototype-reserve-tag" dusk="reserve-tag-a">
                                     <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
-                                    Reserve
+                                    Reserve for {{ reserveEntryA(squad.id, player.refId).forName }}
                                 </b-tag>
                             </b-tooltip>
                             <b-tag v-if="variant === 'B' && alsoReserveB(player)" size="is-small"
@@ -194,11 +194,6 @@
                                 </b-icon>
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
-                                <b-button v-if="variant === 'A'" size="is-small" icon-right="account-switch"
-                                          dusk="toggle-reserve-a"
-                                          :type="isMarkedA(squad.id, player.refId) ? 'is-primary' : null"
-                                          :title="isMarkedA(squad.id, player.refId) ? 'Fjern reserve-mærke' : 'Markér som reserve (§43)'"
-                                          @click="toggleMarkA(squad.id, player.refId)"></b-button>
                                 <b-button dusk="season-history-open" size="is-small" title="Sæsonhistorik" icon-right="history"
                                           @click="openSeasonHistory(player)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
@@ -280,7 +275,7 @@ import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
 import ReservePrototypeNotes from "./reserve-prototype/ReservePrototypeNotes.vue";
 import ReserveMarksA from "./reserve-prototype/ReserveMarksA.vue";
 import ReserveSectionB from "./reserve-prototype/ReserveSectionB.vue";
-import {isMarkedA, prototypeVariant, reserveSquadOfB, seasonHistoryNote, toggleMarkA} from "./reserve-prototype/reserve-prototype.js";
+import {prototypeVariant, reserveEntryA, reserveSquadOfB, seasonHistoryNote} from "./reserve-prototype/reserve-prototype.js";
 
 export default {
     name: 'TeamTable',
@@ -353,8 +348,7 @@ export default {
         }
     },
     methods: {
-        isMarkedA,
-        toggleMarkA,
+        reserveEntryA,
         seasonHistoryNote,
         alsoReserveB(player) {
             return reserveSquadOfB(this.squads, player.refId)
