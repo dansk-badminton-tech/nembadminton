@@ -46,6 +46,10 @@ _Avoid_: Squad
 One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
 _Avoid_: Team, sub-team
 
+**Paper Squad** (papirhold):
+A Squad entered for a Team whose match is not played in a TeamRound where a lower Team of the club does play (§38 stk. 7). It is lined up like any other Squad and keeps its place in the Squad order, so lower Squads are compared against it. Its own players must meet only the paper-team rule: they stand only in categories they have played this season, and they have played on the same or a lower Team before. A Paper Squad's placements count as played, except for the 20 October deadline (§32 stk. 1 c).
+_Avoid_: Oversidderhold, bye team, dummy team
+
 **Reserve Player** (reservespiller):
 A Member marked on one Squad as having replaced a player there after injury, illness or force majeure before the lineups were exchanged (§43 stk. 1). The mark belongs to the Member on that Squad, not to a category. A Member is only a Reserve Player when the mark is set; it is never inferred from where they were placed.
 _Avoid_: Substitute, stand-in, afløser
