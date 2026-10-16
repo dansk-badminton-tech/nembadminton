@@ -51,6 +51,7 @@ final readonly class PaperSquadRule
             fn (string $category) => in_array($category, $categories, true) && ! in_array($category, $played, true),
         ));
         $matchCount = $this->earlier->matchCountOnSameOrLowerTeam($refId, $this->teamId);
+        // The regulation names only the group stage and the playoffs; the qualification round counts as the playoffs.
         $requiredMatchCount = SeasonPhase::fromRound($this->round, $this->tier) === SeasonPhase::GRUNDSPIL
             ? self::GROUP_STAGE_MATCHES
             : self::PLAYOFF_MATCHES;

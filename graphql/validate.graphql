@@ -29,7 +29,7 @@ type PaperSquadPlayer {
     unplayedCategories: [String!]!
     "Earlier team matches this season on the Paper Squad's Team or a lower one"
     matchCount: Int!
-    "Earlier team matches the rule needs: 0 in round 1, 1 in the group stage, 2 in the playoffs"
+    "Earlier team matches the rule needs: 1 in the group stage from round 2, 2 in the playoffs. Round 1 is exempt, so it has no findings."
     requiredMatchCount: Int!
 }
 
@@ -76,7 +76,7 @@ input ValidateTeam{
 input ValidateSquad{
     id: ID
     playerLimit: Int!
-    "A Paper Squad (§38 stk. 7): its own lineup skips the rank order on the team and the strength order against higher Squads"
+    "A Paper Squad (§38 stk. 7): its own lineup skips the rank order on the team and the strength order against higher Squads. Like the rest of the lineup it comes from the editor; these checks are advisory and need no TeamRound."
     isPaperSquad: Boolean
     categories: [ValidateCategory]
     "Reserve records on this Squad. Only validateReserves reads them; the other checks validate the lineup as placed, which is the lineup as played."

@@ -7,7 +7,6 @@ namespace App\GraphQL\Mutations;
 use App\Models\Squad;
 use App\Models\TeamRound;
 use App\SeasonHistory\PaperSquadRule;
-use App\SeasonHistory\SeasonHistory;
 use App\SeasonHistory\SeasonHistoryLoader;
 
 /**
@@ -33,12 +32,12 @@ class ValidatePaperSquads
             ->filter(fn (Squad $squad) => $squad->is_paper_squad && $squad->team_id !== null)
             ->keyBy('id');
 
-        /** @var array<int, array{Squad, array<string, mixed>}> $lineup Paper Squads in the lineup, by lineup index. */
+        /** @var array<int, array{squad: Squad, lineup: array<string, mixed>}> $lineup Paper Squads in the lineup, by lineup index. */
         $lineup = [];
         foreach ($args['input'] as $index => $team) {
             $squad = $paperSquads->get($team['squad']['id'] ?? null);
             if ($squad !== null) {
-                $lineup[$index] = [$squad, $team['squad']];
+                $lineup[$index] = ['squad' => $squad, 'lineup' => $team['squad']];
             }
         }
 
@@ -51,17 +50,17 @@ class ValidatePaperSquads
 
         $earlier = $this->loader->before($teamRound);
         $players = [];
-        foreach ($lineup as $index => [$squad, $input]) {
+        foreach ($lineup as $index => ['squad' => $squad, 'lineup' => $input]) {
             $rule = new PaperSquadRule($earlier, (int) $teamRound->round, (int) $squad->team_id, $squad->effectiveTier());
-            foreach ($this->playersOf($input) as $refId => [$name, $categories]) {
+            foreach ($this->playersOf($input) as $refId => $player) {
                 // A numeric refId becomes an int array key.
                 $refId = (string) $refId;
-                $breach = $rule->check($refId, $categories);
+                $breach = $rule->check($refId, $player['categories']);
                 if ($breach !== null) {
                     $players[] = [
                         'squadIndex' => $index,
                         'refId' => $refId,
-                        'name' => $name,
+                        'name' => $player['name'],
                         'unplayedCategories' => $breach->unplayedCategories,
                         'matchCount' => $breach->matchCount,
                         'requiredMatchCount' => $breach->requiredMatchCount,
@@ -77,21 +76,18 @@ class ValidatePaperSquads
      * The players on a lineup Squad with the categories they stand in, in lineup order.
      *
      * @param  array<string, mixed>  $squad
-     * @return array<string, array{string, list<string>}>
+     * @return array<string, array{name: string, categories: list<string>}>
      */
     private function playersOf(array $squad): array
     {
         $players = [];
         foreach ($squad['categories'] ?? [] as $category) {
             foreach ($category['players'] ?? [] as $player) {
-                $players[$player['refId']][0] = $player['name'];
-                $players[$player['refId']][1][] = $category['category'];
+                $players[$player['refId']]['name'] = $player['name'];
+                $players[$player['refId']]['categories'][] = $category['category'];
             }
         }
 
-        return array_map(fn (array $player) => [
-            $player[0],
-            array_values(array_intersect(SeasonHistory::CATEGORIES, $player[1])),
-        ], $players);
+        return $players;
     }
 }
