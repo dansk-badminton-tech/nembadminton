@@ -71,9 +71,19 @@ export function seasonHistory(rounds) {
             segment.push({round: r, place})
         }
         if (segment.length) segments.push(segment)
+        // From the end of one segment to the start of the next: the rounds the player was not placed.
+        const gaps = segments.slice(1).map((next, i) => [segments[i].at(-1), next[0]])
         const player = players.get(refId)
-        return {refId, name: player.name, kind, segments, end: segments.at(-1)?.at(-1) ?? null}
+        return {refId, name: player.name, kind, segments, gaps, end: segments.at(-1)?.at(-1) ?? null}
     }
+
+    // The player and their partners on their place in round r, the player first.
+    function pairOf(refId, category, r) {
+        const players = seat(refId, category, r)?.players ?? []
+        return [...players.filter(p => p.refId === refId), ...players.filter(p => p.refId !== refId)].map(p => p.name)
+    }
+
+    const kindOf = (refId, subject) => refId === subject ? 'subject' : (players.get(refId).youth ? 'youth' : 'other')
 
     function isNearby(subject, other, category) {
         return roundIndexes.some(r => {
@@ -87,6 +97,7 @@ export function seasonHistory(rounds) {
         hasEarlierRounds: rounds.some(round => !round.isCurrent),
         placeOf,
         placeLabel,
+        pairOf,
         categoriesOf,
         currentCategoriesOf,
         defaultCategory(refId) {
@@ -111,9 +122,10 @@ export function seasonHistory(rounds) {
             const others = [...new Set(roundIndexes.flatMap(r => [...placesByRound[category][r].keys()]))]
                 .filter(other => other !== refId && isNearby(refId, other, category))
             const lines = [
-                ...others.map(other => line(other, category, players.get(other).youth ? 'youth' : 'other')),
+                ...others.map(other => line(other, category, kindOf(other, refId))),
                 line(refId, category, 'subject'),
             ]
+            const inChart = new Set(lines.map(l => l.refId))
             const placesInChart = lines.flatMap(l => l.segments.flat().map(point => point.place))
             const places = []
             if (placesInChart.length) {
@@ -121,23 +133,25 @@ export function seasonHistory(rounds) {
                     places.push({place, label: placeLabel(category, place)})
                 }
             }
-            // Partners end on the same point: one label per point, the player's name first.
+            // Partners end on the same point: one label per point, the player's name first. A partner without a line
+            // of their own is named too, so a pair is never shown as half a pair.
             const labels = new Map()
             for (const l of [...lines].reverse()) {
                 if (!l.end) continue
                 const key = `${l.end.round}-${l.end.place}`
                 if (!labels.has(key)) {
-                    labels.set(key, {key, round: l.end.round, place: l.end.place, names: [], subject: false, youth: false})
+                    const partners = (seat(l.refId, category, l.end.round)?.players ?? []).filter(p => !inChart.has(p.refId))
+                    labels.set(key, {key, round: l.end.round, place: l.end.place, names: [], partners})
                 }
-                const label = labels.get(key)
-                label.names.push(l.name)
-                label.subject ||= l.kind === 'subject'
-                label.youth ||= l.kind === 'youth'
+                labels.get(key).names.push({name: l.name, kind: l.kind})
             }
             return {
                 lines,
                 places,
-                labels: [...labels.values()].map(({names, ...label}) => ({...label, text: names.join(' / ')})),
+                labels: [...labels.values()].map(({partners, ...label}) => {
+                    const names = [...label.names, ...partners.map(p => ({name: p.name, kind: kindOf(p.refId, refId)}))]
+                    return {...label, names, text: names.map(n => n.name).join(' / ')}
+                }),
             }
         },
     }

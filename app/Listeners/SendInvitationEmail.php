@@ -24,6 +24,7 @@ class SendInvitationEmail
      */
     public function handle(InvitationCreated $event): void
     {
-        Mail::to($event->invitation->invitee_email)->send(new Invitation($event->invitation));
+        // Queued, so an unreachable mail server does not fail the invite mutation
+        Mail::to($event->invitation->invitee_email)->queue(new Invitation($event->invitation));
     }
 }

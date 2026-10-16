@@ -217,18 +217,6 @@ parameters:
 			path: app/GraphQL/Mutations/Membership.php
 
 		-
-			message: '#^Offset ''clubhouseId'' does not exist on array\{\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: app/GraphQL/Mutations/Membership.php
-
-		-
-			message: '#^Offset ''userId'' does not exist on array\{\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: app/GraphQL/Mutations/Membership.php
-
-		-
 			message: '#^PHPDoc tag @param for parameter \$resolveInfo with type GraphQL\\Type\\Definition\\ResolveInfo is not subtype of native type Nuwave\\Lighthouse\\Execution\\ResolveInfo\.$#'
 			identifier: parameter.phpDocType
 			count: 1

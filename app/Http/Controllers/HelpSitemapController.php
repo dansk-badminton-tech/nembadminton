@@ -32,8 +32,8 @@ class HelpSitemapController extends Controller
             $urls[] = ['loc' => $base.'/'.$slug];
         }
 
-        return response()
-            ->view('sitemap', ['urls' => $urls])
+        // The declaration stays out of the Blade view: with short_open_tag on, Blade reads "<?xml" as PHP.
+        return response('<?xml version="1.0" encoding="UTF-8"?>'."\n".view('sitemap', ['urls' => $urls])->render())
             ->header('Content-Type', 'application/xml');
     }
 

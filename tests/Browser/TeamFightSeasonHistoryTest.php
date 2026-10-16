@@ -75,8 +75,12 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
                 ->waitForTextIn('@season-history-explanation', 'herredouble')
                 ->assertSeeIn('@season-history-explanation', 'I double deler makkerne plads.')
                 ->assertSeeIn("[dusk='season-history-row-2']", 'nr. 3 · Hold 1 · 3. HD')
-                // Partners on the same point share one label.
-                ->assertSeeIn('@season-history-chart', 'Aske Groth Jensen / Jesper Lauge Andersen');
+                // Partners on the same point share one label, one name per line.
+                ->assertScript(
+                    "[...document.querySelectorAll('[dusk=\"season-history-label\"]')]"
+                    .".some(label => [...label.querySelectorAll('tspan')].map(name => name.textContent.trim()).join(' ') === 'Aske Groth Jensen / Jesper Lauge Andersen')",
+                    true
+                );
         });
     }
 

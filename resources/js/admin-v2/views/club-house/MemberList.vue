@@ -107,6 +107,7 @@ export default {
             </template>
         </b-modal>
         <card-component
+            dusk="member-list"
             title="Medlemmer"
             icon="home"
         >
@@ -166,6 +167,7 @@ export default {
                                 size="is-small"
                                 type="is-danger"
                                 title="Fjern medlem fra klubben"
+                                :dusk="`remove-member-${props.row.id}`"
                                 @click="deleteMembership(props.row)"
                                 :disabled="props.row.id === user.id"
                             />

@@ -16,7 +16,7 @@ final readonly class Membership
      * Return a value for the field.
      *
      * @param  null  $root  Always null, since this field has no parent.
-     * @param  array{}  $args  The field arguments passed by the client.
+     * @param  array{clubhouseId: string, userId: string}  $args  The field arguments passed by the client.
      * @param  GraphQLContext  $context  Shared between all fields.
      * @param  \GraphQL\Type\Definition\ResolveInfo  $resolveInfo  Metadata for advanced query resolution.
      * @return mixed The result of resolving the field, matching what was promised in the schema
@@ -36,8 +36,19 @@ final readonly class Membership
             throw new UserError('You cannot delete someone elses membership');
         }
 
-        $user->clubhouses()->detach();
-        $user->clubhouse()->dissociate();
+        $clubhouseId = (int) $args['clubhouseId'];
+
+        // Only this Clubhouse's membership and roles; memberships of other Clubhouses stay
+        setPermissionsTeamId($clubhouseId);
+        $user->syncRoles([]);
+        $user->clubhouses()->detach($clubhouseId);
+
+        $remainingClubhouse = $user->clubhouses()->first();
+        if ($remainingClubhouse !== null) {
+            $user->clubhouse()->associate($remainingClubhouse);
+        } else {
+            $user->clubhouse()->dissociate();
+        }
         $user->save();
 
         return true;

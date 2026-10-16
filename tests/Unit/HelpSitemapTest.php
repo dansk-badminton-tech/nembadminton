@@ -29,6 +29,23 @@ class HelpSitemapTest extends TestCase
     }
 
     #[Test]
+    public function it_starts_with_the_xml_declaration(): void
+    {
+        $this->assertStringStartsWith(
+            '<?xml version="1.0" encoding="UTF-8"?>'."\n<urlset",
+            $this->get('/sitemap.xml')->getContent()
+        );
+    }
+
+    #[Test]
+    public function the_view_has_no_php_open_tag(): void
+    {
+        // Production runs with short_open_tag on, where Blade's tokenizer reads "<?" as PHP
+        // and leaves the line uncompiled (Sentry PHP-LARAVEL-63). The controller adds the declaration.
+        $this->assertStringNotContainsString('<?', file_get_contents(resource_path('views/sitemap.blade.php')));
+    }
+
+    #[Test]
     public function it_lists_exactly_the_help_routes_for_the_markdown_files(): void
     {
         $base = rtrim(config('app.url'), '/').'/app/help';
