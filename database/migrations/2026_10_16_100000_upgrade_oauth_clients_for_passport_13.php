@@ -33,7 +33,9 @@ return new class extends Migration
                     ? config('auth.providers.'.($client->provider ?: config('auth.guards.api.provider')).'.model')
                     : null,
                 'redirect_uris' => $client->redirect_uris,
-                'grant_types' => $client->grant_types,
+                // Not the inferred grant types: they include client_credentials, which makes
+                // Passport reject tokens of the user whose id equals the client id.
+                'grant_types' => $client->password_client ? ['password', 'refresh_token'] : $client->grant_types,
             ])->save());
         }
 
