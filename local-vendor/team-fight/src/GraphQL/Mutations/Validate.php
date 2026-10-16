@@ -85,11 +85,33 @@ class Validate
     }
 
     /**
+     * §43 findings for the reserve records in the lineup.
+     *
+     * @param  array{input: array<int, array<string, mixed>>}  $args
+     * @return list<array<string, mixed>>
+     */
+    public function validateReserves(mixed $rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
+    {
+        $squads = (new Collection($args['input']))->pluck('squad');
+
+        return $this->teamValidator->validateReserves($this->deserializeSquads($squads));
+    }
+
+    /**
      * @param  Collection<int|string, mixed>  $squads
      * @return Squad[]
      */
     private function deserializeSquads(Collection $squads): array
     {
+        // Reserves are optional and may arrive as null.
+        $squads = $squads->map(function ($squad) {
+            if (is_array($squad)) {
+                $squad['reserves'] ??= [];
+            }
+
+            return $squad;
+        });
+
         // GraphQL IDs arrive as strings, including numeric IDs backed by integer properties.
         return $this->serializer->denormalize($squads->toArray(), Squad::class.'[]', null, [
             AbstractObjectNormalizer::DISABLE_TYPE_ENFORCEMENT => true,

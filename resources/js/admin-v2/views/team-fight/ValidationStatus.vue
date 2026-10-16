@@ -60,7 +60,32 @@
                     </div>
                 </b-tooltip>
             </div>
+            <div class="control" v-if="showReserves">
+                <b-tooltip
+                    type="is-info"
+                    :label="reserveTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Reserver (§43)</span>
+                        <span
+                            dusk="validation-reserves"
+                            :class="reserveStatusClass"
+                            class="tag is-medium">
+                            <b-icon :icon="reserveStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ reserveStatusText }}
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
         </div>
+
+        <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
+            <div class="message-body">
+                <ul>
+                    <li v-for="message in reserveMessages" :key="message">{{ message }}</li>
+                </ul>
+            </div>
+        </article>
 
         <div v-if="hasErrors" class="mt-3">
             <b-collapse
@@ -98,6 +123,7 @@
 </template>
 <script>
 import {buildValidationErrors, invalidLevelTip} from './validation-status.js'
+import {reserveFindingMessages} from './reserves.js'
 
 export default {
     name: 'ValidationStatus',
@@ -124,6 +150,16 @@ export default {
         invalidLevelList: {
             type: Array,
             default: () => []
+        },
+        // §43 stk. 3 findings from validateReserves
+        reserveFindings: {
+            type: Array,
+            default: () => []
+        },
+        // Show the §43 status, when the lineup has reserves
+        showReserves: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -166,6 +202,22 @@ export default {
         },
         allErrors() {
             return buildValidationErrors(this)
+        },
+        reserveMessages() {
+            return reserveFindingMessages(this.reserveFindings)
+        },
+        reserveStatusClass() {
+            return this.reserveMessages.length ? 'is-warning' : 'is-success'
+        },
+        reserveStatusIcon() {
+            return this.reserveMessages.length ? 'alert' : 'check-circle'
+        },
+        reserveStatusText() {
+            return this.reserveMessages.length ? 'Advarsel' : 'OK'
+        },
+        reserveTip() {
+            if (this.reserveMessages.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Holdet må ikke blive stærkere end planlagt (§43 stk. 3); vurder selv, om det er tilfældet.'
+            return 'Ingen reserve har flere point end spilleren, vedkommende erstatter (§43 stk. 3).'
         },
         incompleteTeamTip() {
             if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'

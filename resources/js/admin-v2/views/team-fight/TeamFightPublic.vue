@@ -99,6 +99,27 @@
                                         </div>
                                     </div>
                                 </template>
+                                <template v-if="squad.reserves && squad.reserves.length">
+                                    <div class="category-label">Reserve</div>
+                                    <div class="category-players" :dusk="'public-reserves-' + index">
+                                        <div
+                                            v-for="record in squad.reserves"
+                                            :key="record.id"
+                                            class="player-row"
+                                            dusk="public-reserve">
+                                            <span class="player-name">
+                                                <b-icon v-if="record.reserve.gender === 'MEN'" icon="gender-male" size="is-small"></b-icon>
+                                                <b-icon v-if="record.reserve.gender === 'WOMEN'" icon="gender-female" size="is-small"></b-icon>
+                                                {{ record.reserve.name }} <span class="has-text-grey">for {{ record.replaced.name }}</span>
+                                            </span>
+                                            <span class="player-tags">
+                                                <b-tag v-if="isYoungPlayer(record.reserve)" size="is-small" type="is-info">
+                                                    {{ ageGroupLabel(record.reserve) }}
+                                                </b-tag>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                             <p v-else class="has-text-grey">
                                 <em>Ingen spillere endnu</em>
@@ -201,6 +222,17 @@ export default {
                         playingZipCode
                         playingCity
                         externalTeamFightID
+                        reserves{
+                            id
+                            reserve{
+                                name
+                                gender
+                                vintage
+                            }
+                            replaced{
+                                name
+                            }
+                        }
                         categories{
                             id
                             category

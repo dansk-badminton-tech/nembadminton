@@ -3231,7 +3231,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: local-vendor/team-fight/src/ScenarioManager.php
 
 		-

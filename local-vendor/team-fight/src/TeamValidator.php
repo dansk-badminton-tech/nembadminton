@@ -479,6 +479,60 @@ class TeamValidator
         return $playingToHigh;
     }
 
+    public const STRENGTH_INCREASE = 'STRENGTH_INCREASE';
+
+    /**
+     * §43 stk. 3 findings for the reserve records that count: STRENGTH_INCREASE, a warning, in each category the reserve
+     * plays on the Squad where they have more points than the replaced player. The lineup as played passes the other
+     * checks like any lineup; this only points out a reserve who may make the team stronger than planned.
+     *
+     * A player without points in a category counts as 0 there.
+     *
+     * @param  Squad[]  $squads
+     * @return list<array<string, mixed>>
+     */
+    public function validateReserves(array $squads): array
+    {
+        $findings = [];
+        foreach ((new ReserveLineup($squads))->records() as $record) {
+            ['squadIndex' => $squadIndex, 'reserve' => $reserve, 'replaced' => $replaced, 'categories' => $categories] = $record;
+
+            foreach ($categories as $category) {
+                $reservePoints = $this->categoryPoints($reserve, $category->category);
+                $replacedPoints = $this->categoryPoints($replaced, $category->category);
+                if ($reservePoints > $replacedPoints) {
+                    $findings[] = [
+                        'type' => self::STRENGTH_INCREASE,
+                        'squadIndex' => $squadIndex,
+                        'category' => $category->category,
+                        'categoryName' => $category->name,
+                        'reserve' => $this->findingPlayer($reserve, $reservePoints),
+                        'replaced' => $this->findingPlayer($replaced, $replacedPoints),
+                    ];
+                }
+            }
+        }
+
+        return $findings;
+    }
+
+    private function categoryPoints(Player $player, string $category): int
+    {
+        try {
+            return (int) $this->getPlayerCategoryPoint($player, $category);
+        } catch (PointNotFoundInCategoryException) {
+            return 0;
+        }
+    }
+
+    /**
+     * @return array{refId: string|null, name: string, points: int}
+     */
+    private function findingPlayer(Player $player, int $points): array
+    {
+        return ['refId' => $player->refId, 'name' => $player->name, 'points' => $points];
+    }
+
     /**
      * §31 stk. 1: Players who have not turned 15 by 31.12. in the calendar year the season starts.
      *

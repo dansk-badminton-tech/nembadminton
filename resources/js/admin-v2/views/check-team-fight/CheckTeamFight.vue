@@ -114,6 +114,8 @@
                           :hide-incomplete-team="true"
                           :invalid-category="errorSquadCheck"
                           :invalid-level="errorCrossSquadCheck"
+                          :reserve-findings="reserveFindings"
+                          :show-reserves="hasReserves"
                           :loading-category="validatingSquad"
                           :loading-level="validatingCrossSquad"
         ></ValidationStatus>
@@ -175,6 +177,7 @@ import OptionalRanking from "./OptionalRanking.vue";
 import {determineBadmintonMatchWinner} from "./score.js";
 import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
 import {isTooYoung} from "../team-fight/too-young.js";
+import ValidateReservesMutation from "../../../queries/validateReserves.graphql";
 import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
 
 export default {
@@ -211,6 +214,7 @@ export default {
             playingToHighInLevel: [],
             playingToHighInCategory: [],
             tooYoungPlayers: [],
+            reserveFindings: [],
             rankingList: null,
             activeStep: 0,
             fetchingAndValidating: false,
@@ -253,6 +257,9 @@ export default {
                 return this.currentPlayingToHighInCategory?.length > 0
             }
             return hasInvalidCategory(this.playingToHighInCategory)
+        },
+        hasReserves() {
+            return this.teams.some(team => team.squad.reserves?.length)
         },
         errorCrossSquadCheck() {
             return hasInvalidLevel(this.playingToHighInLevel)
@@ -533,10 +540,30 @@ export default {
                 })
             })
         },
+        validateReserves() {
+            this.$apollo.mutate({
+                mutation: ValidateReservesMutation,
+                variables: {
+                    input: wrapInTeamAndSquads(this.teams.map(team => team.squad))
+                }
+            })
+            .then(({data}) => {
+                this.reserveFindings = data.validateReserves
+            })
+            .catch((error) => {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: `Noget gik galt under valideringen af holdet (validateReserves)`,
+                    position: 'is-bottom',
+                    type: 'is-danger'
+                })
+            })
+        },
         validate() {
             this.validateCrossSquads()
             this.validateSquads()
             this.validateTooYoungPlayers()
+            this.validateReserves()
         },
         goToStart() {
             this.done = false;

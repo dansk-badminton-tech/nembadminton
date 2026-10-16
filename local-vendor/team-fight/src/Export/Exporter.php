@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\Export;
 
+use App\Models\Squad;
+use App\Models\SquadReserve;
 use App\Models\TeamRound;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -40,6 +42,16 @@ class Exporter
                     }
                     $data[] = '"'.$player->name.'"';
                     $csv[] = implode(',', $data);
+                }
+            }
+            /** @var Squad $squad */
+            $reserves = $squad->reserves->filter(fn (SquadReserve $reserve) => $reserve->team_round_scenario_id === $officialScenarioId)->values();
+            foreach ($reserves as $reserveIndex => $reserve) {
+                $text = "{$reserve->reserve_name} for {$reserve->replaced_name}";
+                if ($includeCategories) {
+                    $csv[] = ($reserveIndex === 0 ? '"Reserve"' : '').',"'.$text.'"';
+                } else {
+                    $csv[] = '"'.$text.' (reserve)"';
                 }
             }
             $csv[] = '';

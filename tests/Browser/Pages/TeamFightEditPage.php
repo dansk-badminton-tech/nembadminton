@@ -462,6 +462,38 @@ class TeamFightEditPage extends Page
     }
 
     /**
+     * Records a reserve through the Squad's dashed "Tilføj reserve" box: $reserveName, an Available Member or a Member
+     * on a lower Squad, plays for $replacedName on the Squad.
+     */
+    public function addReserve(Browser $browser, int $squadIndex, string $reserveName, string $replacedName): void
+    {
+        $browser->click("[dusk='reserve-open-{$squadIndex}']")
+            ->waitFor("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-form']");
+        $this->chooseReserveOption($browser, $squadIndex, 'reserve-player', $reserveName);
+        $this->chooseReserveOption($browser, $squadIndex, 'reserve-replaced', $replacedName);
+        $browser->click("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-add']")
+            ->waitForTextIn("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-row']", "{$reserveName} for {$replacedName}");
+    }
+
+    private function chooseReserveOption(Browser $browser, int $squadIndex, string $field, string $name): void
+    {
+        $inputSelector = "[dusk='reserve-section-{$squadIndex}'] input[dusk='{$field}']";
+        $inputSelectorJson = json_encode($inputSelector, JSON_THROW_ON_ERROR);
+        $nameJson = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+
+        $browser->click($inputSelector)->keys($inputSelector, $name);
+        $browser->waitUsing(10, 100, fn () => $browser->script(<<<JS
+            return Array.from(document.querySelector({$inputSelectorJson}).closest('.autocomplete').querySelectorAll('.dropdown-item'))
+                .some(element => element.textContent.includes({$nameJson}));
+        JS)[0] ?? false, "{$name} did not appear in {$field}");
+        $browser->script(<<<JS
+            Array.from(document.querySelector({$inputSelectorJson}).closest('.autocomplete').querySelectorAll('.dropdown-item'))
+                .find(element => element.textContent.includes({$nameJson}))
+                .click();
+        JS);
+    }
+
+    /**
      * Fill an inline autocomplete slot within a specific squad and category.
      *
      * Uses dusk selectors for targeting:

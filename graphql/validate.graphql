@@ -7,6 +7,32 @@ extend type Mutation {
     validateBasicSquads(input: [ValidateTeam!]!) : [BaseValidation!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateBasicSquads")
     "Players who have not turned 15 by 31.12. in the calendar year the season starts (§31 stk. 1). A warning, not a hard rule."
     validateTooYoungPlayers(input: [ValidateTeam!]!, seasonStartYear: Int!) : [TooYoungPlayer!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTooYoungPlayers")
+    "§43 stk. 3 findings for the Squads' reserve records: a reserve with more points than the replaced player is a possible strength increase, a warning. Only records whose reserve stands on the Squad and whose replaced player doesn't count."
+    validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
+}
+
+enum ReserveFindingType {
+    "§43 stk. 3: the reserve has more points than the replaced player in a category the reserve plays on the Squad. A warning: whether the team is stronger than planned is the club's judgement."
+    STRENGTH_INCREASE
+}
+
+type ReserveFinding {
+    type: ReserveFindingType!
+    "0-based index of the Squad the reserve plays on"
+    squadIndex: Int!
+    "HS, DS, HD, DD or MD"
+    category: String!
+    "Category name, e.g. \"1. HD\""
+    categoryName: String!
+    reserve: ReserveFindingPlayer!
+    replaced: ReserveFindingPlayer!
+}
+
+type ReserveFindingPlayer {
+    refId: String
+    name: String!
+    "Points in the finding's category; 0 when the player has none there"
+    points: Int!
 }
 
 type TooYoungPlayer {
@@ -29,6 +55,15 @@ input ValidateSquad{
     id: ID
     playerLimit: Int!
     categories: [ValidateCategory]
+    "Reserve records on this Squad. Only validateReserves reads them; the other checks validate the lineup as placed, which is the lineup as played."
+    reserves: [ValidateReserve!]
+}
+
+input ValidateReserve {
+    "The reserve, placed on this Squad"
+    reserveRefId: String!
+    "The replaced player with their points; they no longer stand on this Squad"
+    replaced: ValidateMember!
 }
 
 input ValidateCategory {

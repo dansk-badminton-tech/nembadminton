@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use App\Models\CancellationCollector;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
@@ -22,6 +23,9 @@ class CancellationTest extends DuskTestCase
 
     public function testCancellationFlow(): void
     {
+        // The flow starts without a collector; remove the one RealisticSeasonSeeder seeds.
+        CancellationCollector::query()->delete();
+
         $this->browse(function (Browser $browser) {
             // 1. Login
             $browser->visit(new LoginPage())

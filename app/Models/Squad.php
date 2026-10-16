@@ -70,6 +70,16 @@ class Squad extends Model implements Sortable
         return $this->hasMany(SquadCategory::class);
     }
 
+    /**
+     * Reserve records of every Scenario; ScenarioManager and ReserveManager pick a Scenario's.
+     *
+     * @return HasMany<SquadReserve, $this>
+     */
+    public function reserves(): HasMany
+    {
+        return $this->hasMany(SquadReserve::class);
+    }
+
     public function teamRound(): BelongsTo
     {
         return $this->belongsTo(TeamRound::class, 'team_round_id');

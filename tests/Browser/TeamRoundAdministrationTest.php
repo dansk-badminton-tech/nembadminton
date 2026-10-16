@@ -63,6 +63,8 @@ class TeamRoundAdministrationTest extends DuskTestCase
             $browser->visit($dashboardPage)
                 ->on($dashboardPage)
                 ->press('Vis alle')
+                // Oldest first: the seeded Season's later rounds would push this one off the first page.
+                ->sortByGameDate()
                 ->waitForTextIn('@team-fights-table', 'Edited administration journey')
                 ->assertSeeIn('@team-fights-table', '2025-08-15')
                 ->assertSeeIn('@team-fights-table', 'August 2025')
@@ -92,6 +94,8 @@ class TeamRoundAdministrationTest extends DuskTestCase
             $browser->visit($dashboardPage)
                 ->on($dashboardPage)
                 ->press('Vis alle')
+                // Oldest first: the seeded Season's later rounds would push this one off the first page.
+                ->sortByGameDate()
                 ->waitForTextIn('@team-fights-table', 'Kopi af Edited administration journey')
                 ->deleteTeamRound('Kopi af Edited administration journey', false)
                 ->assertSeeIn('@team-fights-table', 'Kopi af Edited administration journey')

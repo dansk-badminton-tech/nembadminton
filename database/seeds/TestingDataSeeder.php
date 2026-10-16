@@ -34,5 +34,7 @@ class TestingDataSeeder extends Seeder
         $this->call(YouthTeamRoundSeeder::class);
 
         $this->call(TournamentTierSeeder::class);
+
+        $this->call(RealisticSeasonSeeder::class);
     }
 }

@@ -46,6 +46,13 @@ query teamRound($id: ID!, $scenarioId: ID){
                         squadOrder
                         categoryName
                     }
+                    reserveQuarantine{
+                        teamRoundId
+                        teamRoundName
+                        round
+                        squadPosition
+                        replacedName
+                    }
                     points{
                         id
                         category
@@ -55,6 +62,27 @@ query teamRound($id: ID!, $scenarioId: ID){
                         corrected_manually
                         version
                     }
+                }
+            }
+            reserves(scenarioId: $scenarioId){
+                id
+                reserve{
+                    refId
+                    name
+                    gender
+                    vintage
+                }
+                replaced{
+                    refId
+                    name
+                    gender
+                    vintage
+                }
+                replacedPoints{
+                    category
+                    points
+                    position
+                    vintage
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\Squad;
 use App\Models\User;
@@ -28,6 +29,14 @@ class SquadPolicy
     public function delete(User $user, Squad $squad): bool
     {
         return $user->clubhouse_id === $squad->teamRound->clubhouse_id;
+    }
+
+    /**
+     * Adding a reserve record needs the same permission as editing category slots.
+     */
+    public function editReserves(User $user, Squad $squad): bool
+    {
+        return $user->clubhouse_id === $squad->teamRound->clubhouse_id && $user->hasPermissionTo(Permission::EDIT_TEAMROUNDS);
     }
 
     public function restore(User $user, Squad $squad): bool {}

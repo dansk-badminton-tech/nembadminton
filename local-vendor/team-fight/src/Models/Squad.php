@@ -14,4 +14,9 @@ class Squad
      * @var Category[]
      */
     public array $categories = [];
+
+    /**
+     * @var Reserve[]
+     */
+    public array $reserves = [];
 }

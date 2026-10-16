@@ -15,7 +15,8 @@ use Tests\DuskTestCase;
  * The Season History modal on the seeded "Ungdom" holdrunder (see YouthTeamRoundSeeder), which follow
  * Aske Groth Jensen from Hold 2 · 1. HS in round 1 to Hold 1 · 3. HS in round 3.
  *
- * Rounds are indexed oldest first: 0 = "Ungdom - 1. runde", 1 = "Ungdom - 2. runde", 2 = the viewed round.
+ * Rounds are indexed oldest first, with the seeded Season's rounds 1-3 (RealisticSeasonSeeder) in between:
+ * 0 = "Ungdom - 1. runde", 1 = round 1, 2 = "Ungdom - 2. runde", 3 = round 2, 4 = round 3, 5 = the viewed round.
  */
 class TeamFightSeasonHistoryTest extends DuskTestCase
 {
@@ -55,15 +56,15 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
 
             // Newest first, with the place in HS and every placement with its partner.
             $this->assertSame(
-                ['season-history-row-2', 'season-history-row-1', 'season-history-row-0'],
+                ['season-history-row-5', 'season-history-row-4', 'season-history-row-3', 'season-history-row-2', 'season-history-row-1', 'season-history-row-0'],
                 $browser->script("return Array.from(document.querySelectorAll(\"[dusk='season-history-table'] tbody tr\")).map(tr => tr.getAttribute('dusk'))")[0],
             );
             $browser->assertSeasonHistoryRow(0, 'Ungdom - 1. runde')
                 ->assertSeasonHistoryRow(0, 'nr. 5 · Hold 2 · 1. HS')
                 ->assertSeasonHistoryRow(0, 'HD nr. 5 · Hold 2 · 2. HD m. Magnus Venge-Jep')
-                ->assertSeasonHistoryRow(1, 'nr. 4 · Hold 1 · 4. HS')
-                ->assertSeasonHistoryRow(2, 'nr. 3 · Hold 1 · 3. HS')
-                ->assertSeasonHistoryRow(2, 'HD nr. 2 · Hold 1 · 2. HD m. Jesper Lauge Andersen');
+                ->assertSeasonHistoryRow(2, 'nr. 4 · Hold 1 · 4. HS')
+                ->assertSeasonHistoryRow(5, 'nr. 3 · Hold 1 · 3. HS')
+                ->assertSeasonHistoryRow(5, 'HD nr. 2 · Hold 1 · 2. HD m. Jesper Lauge Andersen');
 
             // The chart has the player and the players around them, labelled by place.
             $browser->assertSeeIn('@season-history-chart', 'Hold 2 · 1. HS')
@@ -73,7 +74,7 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
             $browser->selectSeasonHistoryCategory('HD')
                 ->waitForTextIn('@season-history-explanation', 'herredouble')
                 ->assertSeeIn('@season-history-explanation', 'I double deler makkerne plads.')
-                ->assertSeeIn("[dusk='season-history-row-1']", 'nr. 3 · Hold 1 · 3. HD')
+                ->assertSeeIn("[dusk='season-history-row-2']", 'nr. 3 · Hold 1 · 3. HD')
                 // Partners on the same point share one label, one name per line.
                 ->assertScript(
                     "[...document.querySelectorAll('[dusk=\"season-history-label\"]')]"
