@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Exceptions\PaperSquadWithoutTeamException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,6 +29,8 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property string|null $playing_city
  * @property Carbon|null $version
  * @property string|null $tier
+ * @property int|null $team_id
+ * @property bool $is_paper_squad
  * @property Team|null $team
  */
 class Squad extends Model implements Sortable
@@ -42,6 +45,11 @@ class Squad extends Model implements Sortable
 
     protected $casts = [
         'playing_datetime' => 'datetime',
+        'is_paper_squad' => 'boolean',
+    ];
+
+    protected $attributes = [
+        'is_paper_squad' => false,
     ];
 
     protected $fillable = [
@@ -51,6 +59,7 @@ class Squad extends Model implements Sortable
         'team_id',
         'name',
         'tier',
+        'is_paper_squad',
         'external_team_fight_id',
         'playing_datetime',
         'playing_place',
@@ -59,6 +68,16 @@ class Squad extends Model implements Sortable
         'playing_city',
         'version',
     ];
+
+    protected static function booted(): void
+    {
+        // Only a Squad with a Team can be a Paper Squad; a one-off Squad without a Team can't.
+        static::saving(function (Squad $squad) {
+            if ($squad->is_paper_squad && $squad->team_id === null) {
+                throw new PaperSquadWithoutTeamException;
+            }
+        });
+    }
 
     public function buildSortQuery(): Builder
     {

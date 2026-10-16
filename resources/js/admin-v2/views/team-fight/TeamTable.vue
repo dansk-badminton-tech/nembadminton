@@ -8,7 +8,10 @@
                     <th colspan="2">
                         <div class="is-flex is-justify-content-space-between is-align-items-start">
                             <div class="is-flex-grow-1">
-                                <h2><strong>Hold {{ index + 1 }}</strong> - {{ squad.effectiveTier }} {{ squad.name }}</h2>
+                                <h2>
+                                    <strong>Hold {{ index + 1 }}</strong> - {{ squad.effectiveTier }} {{ squad.name }}
+                                    <b-tag v-if="squad.isPaperSquad" type="is-warning is-light" class="ml-2" dusk="squad-paper-squad-tag">Papirhold</b-tag>
+                                </h2>
                                 <div class="tags squad-info-row mt-2" :dusk="'squad-info-' + index">
                                     <b-tooltip type="is-info" :label="squad.playingDatetime ? formatPlayingDatetimeLong(squad.playingDatetime) : 'Spillestart er ikke angivet. Klik for at udfylde.'">
                                         <b-tag

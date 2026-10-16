@@ -16,6 +16,7 @@ final readonly class LineupSquad
      * @param  string|null  $teamName  The Team's name, or the Squad's own name when it has no Team.
      * @param  string|null  $tier  The Squad's effective tier (række).
      * @param  SeasonPhase|null  $phase  Null when the TeamRound has no round number.
+     * @param  bool  $isPaperSquad  The Squad is a Paper Squad (papirhold). Its places count as played like any other.
      */
     public function __construct(
         public int $squadId,
@@ -24,5 +25,6 @@ final readonly class LineupSquad
         public ?string $teamName,
         public ?string $tier,
         public ?SeasonPhase $phase,
+        public bool $isPaperSquad,
     ) {}
 }

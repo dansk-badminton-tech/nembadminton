@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Squad;
 use App\Models\TeamRound;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -44,8 +45,23 @@ class TeamMail extends Mailable
                 'teamName' => $this->team->name,
                 'message' => $this->message ?? 'Ingen besked',
                 'url' => url("/app/team-fight/{$this->team->id}/public-view"),
+                'paperSquads' => $this->paperSquadLabels(),
             ]
         );
+    }
+
+    /**
+     * The round's Paper Squads (papirhold) as "Hold 2 (Team name)", in Squad order.
+     *
+     * @return list<string>
+     */
+    private function paperSquadLabels(): array
+    {
+        return Squad::query()->where('team_round_id', $this->team->id)->with('team')->orderBy('order')->get()->values()
+            ->filter(fn (Squad $squad) => $squad->is_paper_squad)
+            ->map(fn (Squad $squad, int $index) => 'Hold '.($index + 1).' ('.($squad->team->name ?? $squad->name).')')
+            ->values()
+            ->all();
     }
 
     /**

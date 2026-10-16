@@ -50,6 +50,7 @@ class TeamRoundSeasonHistory
             'squadPosition' => $slot->squad->position,
             'teamName' => $slot->squad->teamName,
             'tier' => $slot->squad->tier,
+            'isPaperSquad' => $slot->squad->isPaperSquad,
             'label' => $slot->categoryName,
             'players' => array_map(fn (SlotPlayer $player) => [
                 'refId' => $player->refId,

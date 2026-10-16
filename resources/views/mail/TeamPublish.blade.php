@@ -8,6 +8,10 @@ Besked:
     @endforeach
 @endcomponent
 
+@if(count($paperSquads) > 0)
+**Papirhold: {{ implode(', ', $paperSquads) }}**
+
+@endif
 # Se holdrunden via linket
 
 <x-mail::button :url="$url">

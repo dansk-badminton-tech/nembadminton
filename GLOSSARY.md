@@ -46,6 +46,10 @@ _Avoid_: Squad
 One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
 _Avoid_: Team, sub-team
 
+**Paper Squad** (papirhold):
+A Squad whose match is not played, because the opponent has withdrawn or the match is cancelled (§35A, §38 stk. 7), but which is still lined up in full like any other Squad and keeps its place in the Squad order. The coach marks it on the Squad, so it holds in every Scenario of the TeamRound, and can mark or unmark it later. Only a Squad with a Team can be a Paper Squad. Its places count as played in the Season History; only the 20 October rule (§32 stk. 1 c) leaves them out.
+_Avoid_: Walkover, cancelled squad
+
 **Reserve Player** (reservespiller):
 A Member marked on one Squad as having replaced a player there after injury, illness or force majeure before the lineups were exchanged (§43 stk. 1). The mark records which player the Reserve Player replaces ("X for Y") and belongs to the Squad, not to a category. The Squad shows the lineup as played: the Reserve Player stands in the Squad's slots instead of the replaced player, and the normal checks validate that lineup. A Reserve Player with more points than the replaced player, in a category they play on the Squad, is a warning (§43 stk. 3). The Reserve Player is an Available Member, or comes from a lower Squad of the same lineup and also keeps their own slot there; it is the only way a Member stands on two Squads of a TeamRound. A Member is only a Reserve Player when the mark is set; it is never inferred from where they were placed.
 _Avoid_: Substitute, stand-in, afløser

@@ -165,6 +165,26 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
+    public function a_placement_shows_whether_it_was_on_a_paper_squad_and_still_counts_as_played(): void
+    {
+        $this->member('0101011111', 'Anders');
+        $hold1 = Team::factory()->withCustomTier('2. division')->create(['name' => 'Klub 1', 'clubhouse_id' => $this->clubhouse->id]);
+        foreach ([1 => false, 2 => true] as $roundNumber => $isPaperSquad) {
+            $round = $this->teamRound(round: $roundNumber, attributes: ['game_date' => "2026-09-2{$roundNumber}"]);
+            $squad = $this->squad($round, 'ignored', order: 1, team: $hold1, isPaperSquad: $isPaperSquad);
+            $this->category($squad, 'HS', '1. HS', ['0101011111']);
+        }
+
+        $history = $this->load();
+
+        $this->assertSame(
+            [['Runde 1', false], ['Runde 2', true]],
+            array_map(fn (Placement $placement) => [$placement->round->name, $placement->isPaperSquad()], $history->placementsFor('0101011111')),
+        );
+        $this->assertSame(2, $history->teamMatchCount('0101011111', $hold1->id));
+    }
+
+    #[Test]
     public function an_empty_seat_keeps_its_slot_in_the_ladder(): void
     {
         $this->member('0101011111', 'Anders');
@@ -404,7 +424,7 @@ class SeasonHistoryTest extends TestCase
         ]);
     }
 
-    private function squad(TeamRound $round, string $name, int $order, ?Team $team = null, ?string $tier = null): Squad
+    private function squad(TeamRound $round, string $name, int $order, ?Team $team = null, ?string $tier = null, bool $isPaperSquad = false): Squad
     {
         $squad = Squad::query()->create([
             'team_round_id' => $round->id,
@@ -412,6 +432,7 @@ class SeasonHistoryTest extends TestCase
             'name' => $name,
             'team_id' => $team?->id,
             'tier' => $tier,
+            'is_paper_squad' => $isPaperSquad,
         ]);
         // Sortable assigns the next order on create, so set the wanted order afterwards.
         $squad->update(['order' => $order]);
