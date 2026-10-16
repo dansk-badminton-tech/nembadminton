@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TeamsCrudTest extends TestCase
@@ -43,7 +44,7 @@ class TeamsCrudTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_lists_teams_for_own_clubhouse_only(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::VIEW_TEAMS]);
@@ -64,7 +65,7 @@ class TeamsCrudTest extends TestCase
             ->assertJson(['data' => ['teams' => ['paginatorInfo' => ['total' => 2]]]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_filters_teams_by_season_id(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::VIEW_TEAMS]);
@@ -92,7 +93,7 @@ class TeamsCrudTest extends TestCase
             ->assertJson(['data' => ['teams' => ['paginatorInfo' => ['total' => 2]]]]);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_listing_teams_without_permission(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([]);
@@ -106,7 +107,7 @@ class TeamsCrudTest extends TestCase
             ->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_resolves_tier_relation_on_single_team_query(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::VIEW_TEAMS]);
@@ -136,7 +137,7 @@ class TeamsCrudTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_team_with_tier_id(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -175,7 +176,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_team_with_custom_tier_name(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -208,7 +209,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_team_with_both_tier_id_and_custom_tier_name(): void
     {
         $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -230,7 +231,7 @@ class TeamsCrudTest extends TestCase
         $this->assertDatabaseMissing('teams', ['name' => 'Konflikt']);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_name_when_creating_team(): void
     {
         $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -244,7 +245,7 @@ class TeamsCrudTest extends TestCase
             ->assertJsonStructure(['errors']);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_season_when_creating_team(): void
     {
         $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -259,7 +260,7 @@ class TeamsCrudTest extends TestCase
         $this->assertDatabaseMissing('teams', ['name' => 'Mangler sæson']);
     }
 
-    /** @test */
+    #[Test]
     public function it_injects_clubhouse_id_from_authenticated_user_on_create(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::CREATE_TEAMS]);
@@ -279,7 +280,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_team_name_and_group_name(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::EDIT_TEAMS]);
@@ -323,7 +324,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_updating_team_in_another_clubhouse(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::EDIT_TEAMS]);
@@ -340,7 +341,7 @@ class TeamsCrudTest extends TestCase
         $this->assertDatabaseHas('teams', ['id' => $team->id, 'name' => 'Foreign']);
     }
 
-    /** @test */
+    #[Test]
     public function it_deletes_own_team(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::DELETE_TEAMS]);
@@ -356,7 +357,7 @@ class TeamsCrudTest extends TestCase
         $this->assertDatabaseMissing('teams', ['id' => $team->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_deleting_team_in_another_clubhouse(): void
     {
         [$clubhouse] = $this->actingClubhouseUser([Permission::DELETE_TEAMS]);
@@ -373,7 +374,7 @@ class TeamsCrudTest extends TestCase
         $this->assertDatabaseHas('teams', ['id' => $team->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_persists_team_id_when_creating_squad_with_team_reference(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([
@@ -426,7 +427,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_squad_with_optional_name_and_tier_as_free_text(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([
@@ -477,7 +478,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_squad_without_name_or_tier(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([
@@ -515,7 +516,7 @@ class TeamsCrudTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_resolves_squad_team_relation_in_team_round_query(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
@@ -571,7 +572,7 @@ class TeamsCrudTest extends TestCase
         ', ['id' => $teamRound->id]);
     }
 
-    /** @test */
+    #[Test]
     public function squad_with_team_uses_the_teams_current_tier_as_effective_tier(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
@@ -599,7 +600,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function squad_with_team_uses_the_teams_custom_tier_name_when_team_has_no_tier(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
@@ -617,7 +618,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function squad_without_team_uses_its_own_tier_as_effective_tier(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
@@ -634,7 +635,7 @@ class TeamsCrudTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function update_squad_attaches_a_team_and_resolves_its_tier(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([

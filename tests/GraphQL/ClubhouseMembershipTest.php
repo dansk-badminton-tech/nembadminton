@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -106,7 +107,7 @@ class ClubhouseMembershipTest extends TestCase
 
     // Viewing users and invitations
 
-    /** @test */
+    #[Test]
     public function a_club_admin_sees_the_users_and_invitations_of_their_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -124,7 +125,7 @@ class ClubhouseMembershipTest extends TestCase
         $response->assertJsonPath('data.clubhouse.invitations', [['id' => (string) $invitation->id]]);
     }
 
-    /** @test */
+    #[Test]
     public function a_player_does_not_see_the_users_or_invitations_of_their_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -139,7 +140,7 @@ class ClubhouseMembershipTest extends TestCase
             ->assertJsonPath('data.clubhouse.invitations', null);
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_cannot_see_another_clubhouses_users_or_invitations(): void
     {
         $ownClubhouse = Clubhouse::factory()->create();
@@ -157,7 +158,7 @@ class ClubhouseMembershipTest extends TestCase
 
     // Inviting
 
-    /** @test */
+    #[Test]
     public function a_club_admin_invites_a_user_into_their_own_clubhouse(): void
     {
         Event::fake([InvitationCreated::class]);
@@ -182,7 +183,7 @@ class ClubhouseMembershipTest extends TestCase
         Event::assertDispatched(InvitationCreated::class);
     }
 
-    /** @test */
+    #[Test]
     public function the_invitation_email_is_queued_so_a_mail_failure_does_not_fail_the_invite(): void
     {
         Mail::fake();
@@ -198,7 +199,7 @@ class ClubhouseMembershipTest extends TestCase
         Mail::assertNothingSent();
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_cannot_invite_a_user_into_another_clubhouse(): void
     {
         Event::fake([InvitationCreated::class]);
@@ -220,7 +221,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertDatabaseMissing('invitations', ['invited_by' => $otherAdmin->id]);
     }
 
-    /** @test */
+    #[Test]
     public function a_player_cannot_invite(): void
     {
         Event::fake([InvitationCreated::class]);
@@ -236,7 +237,7 @@ class ClubhouseMembershipTest extends TestCase
         Event::assertNotDispatched(InvitationCreated::class);
     }
 
-    /** @test */
+    #[Test]
     public function a_guest_cannot_invite(): void
     {
         $this->inviteMutation(['email' => 'new@example.com', 'role' => 'COACH'])
@@ -247,7 +248,7 @@ class ClubhouseMembershipTest extends TestCase
 
     // Accepting and declining
 
-    /** @test */
+    #[Test]
     public function accepting_an_invitation_joins_the_clubhouse_with_the_invited_role(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -270,7 +271,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertNotNull($invitation->refresh()->accepted_at);
     }
 
-    /** @test */
+    #[Test]
     public function an_expired_invitation_cannot_be_accepted(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -290,7 +291,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertCount(0, $invitee->clubhouses);
     }
 
-    /** @test */
+    #[Test]
     public function an_expired_invitation_cannot_be_declined(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -307,7 +308,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertSame('pending', $invitation->refresh()->status);
     }
 
-    /** @test */
+    #[Test]
     public function the_invitation_link_tells_whether_it_has_expired(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -323,7 +324,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->graphQL($query, ['token' => $expired->token])->assertJsonPath('data.invitation.expired', true);
     }
 
-    /** @test */
+    #[Test]
     public function an_accepted_invitation_cannot_be_accepted_again(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -339,7 +340,7 @@ class ClubhouseMembershipTest extends TestCase
             ->assertJsonPath('data.acceptInvitation', null);
     }
 
-    /** @test */
+    #[Test]
     public function declining_an_invitation_does_not_join_the_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -358,7 +359,7 @@ class ClubhouseMembershipTest extends TestCase
 
     // Removing a membership
 
-    /** @test */
+    #[Test]
     public function a_club_admin_removes_a_member_from_their_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -378,7 +379,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertFalse($player->hasRole(Role::PLAYER->value));
     }
 
-    /** @test */
+    #[Test]
     public function removing_a_member_keeps_their_membership_of_other_clubhouses(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -400,7 +401,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertTrue($member->unsetRelation('roles')->hasRole(Role::PLAYER->value));
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_cannot_remove_themselves(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -414,7 +415,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertSame($clubhouse->id, $admin->refresh()->clubhouse_id);
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_cannot_remove_a_member_of_another_clubhouse(): void
     {
         $ownClubhouse = Clubhouse::factory()->create();
@@ -432,7 +433,7 @@ class ClubhouseMembershipTest extends TestCase
         $this->assertSame($otherClubhouse->id, $otherPlayer->refresh()->clubhouse_id);
     }
 
-    /** @test */
+    #[Test]
     public function a_player_cannot_remove_a_member(): void
     {
         $clubhouse = Clubhouse::factory()->create();

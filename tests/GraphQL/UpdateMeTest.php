@@ -6,6 +6,7 @@ use App\Models\Clubhouse;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UpdateMeTest extends TestCase
@@ -15,7 +16,7 @@ class UpdateMeTest extends TestCase
 
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
-    /** @test */
+    #[Test]
     public function it_allows_the_user_to_update_their_profile_including_unclaimed_player_id(): void
     {
         $user = User::factory()->create([
@@ -53,7 +54,7 @@ class UpdateMeTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_updating_profile_while_keeping_own_player_id(): void
     {
         $user = User::factory()->create([
@@ -92,7 +93,7 @@ class UpdateMeTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_fails_validation_if_player_id_is_already_claimed_in_same_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -137,7 +138,7 @@ class UpdateMeTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_allows_same_player_id_in_different_clubhouses(): void
     {
         $clubhouseA = Clubhouse::factory()->create();

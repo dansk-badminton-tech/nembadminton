@@ -5,13 +5,12 @@ namespace Tests\Unit;
 
 use FlyCompany\Scraper\Parser;
 use Illuminate\Support\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ParserTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_parses_team_fights_with_multiple_rounds()
     {
         $html = <<<HTML
@@ -38,9 +37,7 @@ HTML;
         $this->assertEquals('2027-03-13', $results[0]['roundDate']->format('Y-m-d'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_parses_team_fights_with_single_round()
     {
         $html = <<<HTML

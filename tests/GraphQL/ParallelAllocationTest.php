@@ -12,6 +12,7 @@ use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ParallelAllocationTest extends TestCase
@@ -21,9 +22,7 @@ class ParallelAllocationTest extends TestCase
 
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_parallel_allocation_for_player_assigned_in_matching_round_in_same_season_and_clubhouse()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -160,9 +159,7 @@ class ParallelAllocationTest extends TestCase
         $response->assertJsonPath('data.memberSearchPoints.data.1.parallelAllocation', null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_null_when_round_or_season_differs()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -291,9 +288,7 @@ class ParallelAllocationTest extends TestCase
         $responseSeason->assertJsonPath('data.memberSearchPoints.data.0.parallelAllocation', null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_returns_null_when_active_round_has_no_round_or_season_set()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -361,9 +356,7 @@ class ParallelAllocationTest extends TestCase
         $response->assertJsonPath('data.memberSearchPoints.data.0.parallelAllocation', null);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_executes_batch_lookup_without_n_plus_one_queries()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -452,9 +445,7 @@ class ParallelAllocationTest extends TestCase
         $this->assertLessThan(15, $queryCount);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_resolves_parallel_allocation_on_squad_member_in_team_round_query(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -591,9 +582,7 @@ class ParallelAllocationTest extends TestCase
         $this->assertNull($playerB['parallelAllocation']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_executes_batch_lookup_without_n_plus_one_queries_on_team_round(): void
     {
         $clubhouse = Clubhouse::factory()->create();

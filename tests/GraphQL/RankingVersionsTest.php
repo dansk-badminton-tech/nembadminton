@@ -9,6 +9,7 @@ use App\Models\Point;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RankingVersionsTest extends TestCase
@@ -43,7 +44,7 @@ class RankingVersionsTest extends TestCase
         ]), 'api');
     }
 
-    /** @test */
+    #[Test]
     public function the_most_recently_imported_version_of_a_republished_month_is_the_newest(): void
     {
         $this->addPoint('2026-08-01', '2026-08-01 06:00:00');

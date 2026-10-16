@@ -17,6 +17,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -89,7 +90,7 @@ class SquadReservesTest extends TestCase
         $this->place($this->squads[2], '1. DS', 'DS', '9001013333', 'Zara');
     }
 
-    /** @test */
+    #[Test]
     public function it_records_a_reserve_from_a_lower_squad_and_reads_it_back(): void
     {
         $this->add($this->squads[0], '9001012222', '9001011111')
@@ -105,7 +106,7 @@ class SquadReservesTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function adding_a_reserve_puts_them_in_the_replaced_players_slots(): void
     {
         $xenia = Member::query()->where('refId', '9001012222')->sole();
@@ -122,7 +123,7 @@ class SquadReservesTest extends TestCase
         ], $this->slots(null));
     }
 
-    /** @test */
+    #[Test]
     public function removing_a_reserve_puts_the_replaced_player_back(): void
     {
         $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
@@ -133,13 +134,13 @@ class SquadReservesTest extends TestCase
         $this->assertSame([['1. DS', ['Xenia'], []]], $this->slots(null)[1]);
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_may_come_from_any_lower_squad(): void
     {
         $this->add($this->squads[0], '9001013333', '9001011111')->assertJsonMissingPath('errors');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_reserve_from_the_same_squad(): void
     {
         $this->place($this->squads[0], '2. DS', 'DS', '9001014444', 'Vera');
@@ -147,13 +148,13 @@ class SquadReservesTest extends TestCase
         $this->assertRejected($this->add($this->squads[0], '9001014444', '9001011111'), 'Reserven skal komme fra et lavere hold.');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_reserve_from_a_higher_squad(): void
     {
         $this->assertRejected($this->add($this->squads[1], '9001011111', '9001012222'), 'Reserven skal komme fra et lavere hold.');
     }
 
-    /** @test */
+    #[Test]
     public function an_available_member_of_the_clubhouse_can_be_a_reserve(): void
     {
         $this->clubMember('9001015555', 'Una');
@@ -163,7 +164,7 @@ class SquadReservesTest extends TestCase
             ->assertJsonPath('data.addSquadReserve.reserve', ['refId' => '9001015555', 'name' => 'Una', 'gender' => 'WOMEN', 'vintage' => 'SEN']);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_reserve_who_isnt_a_member_of_the_clubhouse(): void
     {
         $this->member('9001015555', 'Una');
@@ -171,7 +172,7 @@ class SquadReservesTest extends TestCase
         $this->assertRejected($this->add($this->squads[0], '9001015555', '9001011111'), 'Reserven er ikke medlem af klubben.');
     }
 
-    /** @test */
+    #[Test]
     public function the_replaced_player_has_their_points_at_the_squads_ranking_version(): void
     {
         $yrsa = Member::query()->where('refId', '9001011111')->sole();
@@ -188,13 +189,13 @@ class SquadReservesTest extends TestCase
             ->assertJsonPath('data.teamRound.squads.0.reserves.0.replacedPoints', []);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_replaced_member_who_isnt_on_the_squad(): void
     {
         $this->assertRejected($this->add($this->squads[0], '9001013333', '9001012222'), 'Spilleren, der erstattes, står ikke på holdet.');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_second_record_for_the_same_reserve(): void
     {
         $this->place($this->squads[0], '2. DS', 'DS', '9001014444', 'Vera');
@@ -203,7 +204,7 @@ class SquadReservesTest extends TestCase
         $this->assertRejected($this->add($this->squads[0], '9001012222', '9001014444'), 'Xenia er allerede reserve.');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_second_record_for_the_same_replaced_member(): void
     {
         $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
@@ -211,7 +212,7 @@ class SquadReservesTest extends TestCase
         $this->assertRejected($this->add($this->squads[0], '9001013333', '9001011111'), 'Yrsa er allerede erstattet.');
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_a_record(): void
     {
         $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
@@ -221,7 +222,7 @@ class SquadReservesTest extends TestCase
         $this->assertDatabaseCount('squad_reserves', 0);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_adding_a_reserve_in_another_clubhouse(): void
     {
         $this->actingAsUserOf(Clubhouse::factory()->create());
@@ -230,7 +231,7 @@ class SquadReservesTest extends TestCase
         $this->assertDatabaseCount('squad_reserves', 0);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_removing_a_reserve_in_another_clubhouse(): void
     {
         $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
@@ -240,7 +241,7 @@ class SquadReservesTest extends TestCase
         $this->assertDatabaseCount('squad_reserves', 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_reading_reserves_of_another_clubhouse_through_authenticated_queries(): void
     {
         $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
@@ -253,7 +254,7 @@ class SquadReservesTest extends TestCase
         ', ['clubhouseId' => $this->clubhouse->id])->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function a_user_without_edit_permission_cant_change_reserves(): void
     {
         $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
@@ -264,7 +265,7 @@ class SquadReservesTest extends TestCase
         $this->assertDatabaseCount('squad_reserves', 1);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_scenario_of_another_team_round(): void
     {
         $otherRound = TeamRound::factory()->create(['clubhouse_id' => $this->clubhouse->id, 'user_id' => $this->teamRound->user_id]);
@@ -276,7 +277,7 @@ class SquadReservesTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function reserves_are_scoped_per_scenario_and_copied_when_a_scenario_is_cloned(): void
     {
         $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
@@ -297,7 +298,7 @@ class SquadReservesTest extends TestCase
         $this->assertSame(['Zara'], $this->reserveNames(0, $cloneId));
     }
 
-    /** @test */
+    #[Test]
     public function promotion_carries_the_reserves_over(): void
     {
         $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');

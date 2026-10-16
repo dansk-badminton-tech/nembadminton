@@ -8,6 +8,7 @@ use App\Models\TournamentGroup;
 use App\Models\TournamentTier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TournamentGroupsTest extends TestCase
@@ -17,9 +18,7 @@ class TournamentGroupsTest extends TestCase
 
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_tournament_groups_for_a_specific_season(): void
     {
         $season2025 = Season::query()->create([
@@ -84,9 +83,7 @@ class TournamentGroupsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_filter_tournament_groups_by_phase_type(): void
     {
         $season = Season::query()->create([
