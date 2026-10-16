@@ -101,24 +101,8 @@ export function quarantineTooltip(quarantine) {
         + 'En spiller, der har været reserve, må ikke spille på noget hold i næste spillerunde (§44).'
 }
 
-// The §43 findings of validateReserves as messages: strength increases are errors, better reserves are warnings.
+// The §43 stk. 3 findings of validateReserves as error messages.
 export function reserveFindingMessages(findings) {
-    const errors = []
-    const warnings = []
-    for (const finding of findings) {
-        const hold = `Hold ${finding.squadIndex + 1}`
-        const {reserve, replaced, categoryName} = finding
-        if (finding.type === 'STRENGTH_INCREASE') {
-            errors.push(`${hold}: Reserven ${reserve.name} har flere point end ${replaced.name} i ${categoryName} (${reserve.points} mod ${replaced.points}). Det er en styrkeforøgelse (§43 stk. 3).`)
-        } else if (finding.type === 'BETTER_RESERVE_AVAILABLE') {
-            warnings.push(`${hold}: Bedre reserve tilgængelig: ${finding.betterReserve.name} (${finding.betterReserve.points} point i ${categoryName}) i stedet for ${reserve.name} for ${replaced.name} (§43 stk. 2).`)
-        }
-    }
-    return {errors, warnings}
-}
-
-// Season History: the note on a player's row for a round they were a reserve in, or null.
-export function seasonHistoryReserveNote(round, refId) {
-    const reserve = (round.reserves ?? []).find(candidate => candidate.refId === refId)
-    return reserve ? `Reserve på Hold ${reserve.squadPosition} for ${reserve.replacedName}` : null
+    return findings.map(({squadIndex, reserve, replaced, categoryName}) =>
+        `Hold ${squadIndex + 1}: Reserven ${reserve.name} har flere point end ${replaced.name} i ${categoryName} (${reserve.points} mod ${replaced.points}). Det er en styrkeforøgelse (§43 stk. 3).`)
 }

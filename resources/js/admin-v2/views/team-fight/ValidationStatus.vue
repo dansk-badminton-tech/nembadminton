@@ -111,39 +111,6 @@
                 </div>
             </b-collapse>
         </div>
-
-        <div v-if="reserveMessages.warnings.length" class="mt-3">
-            <b-collapse
-                aria-id="reserveWarnings"
-                class="panel is-warning"
-                animation="slide"
-                v-model="isWarningsOpen">
-                <template #trigger>
-                    <div
-                        class="panel-heading"
-                        role="button"
-                        aria-controls="reserveWarnings"
-                        :aria-expanded="isWarningsOpen">
-                        <div class="is-flex is-justify-content-space-between">
-                            <span>
-                                <b-icon icon="alert" size="is-small" class="mr-1"></b-icon>
-                                <span>Advarsler om reserver</span>
-                            </span>
-                            <b-icon :icon="isWarningsOpen ? 'menu-up' : 'menu-down'"></b-icon>
-                        </div>
-                    </div>
-                </template>
-                <div class="panel-block">
-                    <div class="content is-small">
-                        <ul>
-                            <li v-for="(warning, index) in reserveMessages.warnings" :key="index" dusk="validation-reserve-warning">
-                                {{ warning }}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </b-collapse>
-        </div>
     </div>
 </template>
 <script>
@@ -176,7 +143,7 @@ export default {
             type: Array,
             default: () => []
         },
-        // §43 findings from validateReserves: strength increases (errors) and better reserves (warnings)
+        // §43 stk. 3 findings from validateReserves
         reserveFindings: {
             type: Array,
             default: () => []
@@ -189,8 +156,7 @@ export default {
     },
     data() {
         return {
-            isOpen: false,
-            isWarningsOpen: true
+            isOpen: false
         }
     },
     methods: {
@@ -225,30 +191,26 @@ export default {
         },
         hasErrors() {
             return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true
-                || this.reserveMessages.errors.length > 0;
+                || this.reserveMessages.length > 0;
         },
         allErrors() {
-            return [...buildValidationErrors(this), ...this.reserveMessages.errors]
+            return [...buildValidationErrors(this), ...this.reserveMessages]
         },
         reserveMessages() {
             return reserveFindingMessages(this.reserveFindings)
         },
         reserveStatusClass() {
-            if (this.reserveMessages.errors.length) return 'is-danger'
-            return this.reserveMessages.warnings.length ? 'is-warning' : 'is-success'
+            return this.reserveMessages.length ? 'is-danger' : 'is-success'
         },
         reserveStatusIcon() {
-            if (this.reserveMessages.errors.length) return 'alert-circle'
-            return this.reserveMessages.warnings.length ? 'alert' : 'check-circle'
+            return this.reserveMessages.length ? 'alert-circle' : 'check-circle'
         },
         reserveStatusText() {
-            if (this.reserveMessages.errors.length) return 'Fejl'
-            return this.reserveMessages.warnings.length ? 'Advarsel' : 'OK'
+            return this.reserveMessages.length ? 'Fejl' : 'OK'
         },
         reserveTip() {
-            if (this.reserveMessages.errors.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Der må ikke ske styrkeforøgelse (§43 stk. 3).'
-            if (this.reserveMessages.warnings.length) return 'Der er en bedre reserve på et lavere hold. Reserven skal være den bedst mulige blandt de tilgængelige (§43 stk. 2); kun du ved, hvem der er tilgængelig.'
-            return 'Reserverne overholder §43 stk. 2 og 3.'
+            if (this.reserveMessages.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Der må ikke ske styrkeforøgelse (§43 stk. 3).'
+            return 'Reserverne overholder §43 stk. 3.'
         },
         incompleteTeamTip() {
             if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'

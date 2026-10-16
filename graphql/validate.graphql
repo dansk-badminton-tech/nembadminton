@@ -7,15 +7,13 @@ extend type Mutation {
     validateBasicSquads(input: [ValidateTeam!]!) : [BaseValidation!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateBasicSquads")
     "Players who have not turned 15 by 31.12. in the calendar year the season starts (§31 stk. 1). A warning, not a hard rule."
     validateTooYoungPlayers(input: [ValidateTeam!]!, seasonStartYear: Int!) : [TooYoungPlayer!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTooYoungPlayers")
-    "§43 findings for the Squads' reserve records: a strength increase (an error) and a better reserve available (a warning). Records whose replaced player isn't on the Squad, or whose reserve isn't on a lower Squad, are left out."
+    "§43 stk. 3 findings for the Squads' reserve records: a reserve with more points than the replaced player is a strength increase, an error. Records whose replaced player isn't on the Squad, or whose reserve isn't on a lower Squad, are left out."
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
 }
 
 enum ReserveFindingType {
     "§43 stk. 3: the reserve has more points than the replaced player in one of their categories. An error."
     STRENGTH_INCREASE
-    "§43 stk. 2: a Member on a lower Squad has more points than the reserve and no more than the replaced player. A warning."
-    BETTER_RESERVE_AVAILABLE
 }
 
 type ReserveFinding {
@@ -28,8 +26,6 @@ type ReserveFinding {
     categoryName: String!
     reserve: ReserveFindingPlayer!
     replaced: ReserveFindingPlayer!
-    "The best better reserve. Only for BETTER_RESERVE_AVAILABLE."
-    betterReserve: ReserveFindingPlayer
 }
 
 type ReserveFindingPlayer {
@@ -59,7 +55,7 @@ input ValidateSquad{
     id: ID
     playerLimit: Int!
     categories: [ValidateCategory]
-    "Reserve records on this Squad. Validation applies them first: each reserve takes every category slot of the player they replace."
+    "Reserve records on this Squad. Only validateReserves reads them; the other checks validate the lineup as placed."
     reserves: [ValidateReserve!]
 }
 

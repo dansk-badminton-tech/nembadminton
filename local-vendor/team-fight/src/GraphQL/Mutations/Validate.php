@@ -7,7 +7,6 @@ namespace FlyCompany\TeamFight\GraphQL\Mutations;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
-use FlyCompany\TeamFight\ReserveLineup;
 use FlyCompany\TeamFight\TeamValidator;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Collection;
@@ -38,7 +37,7 @@ class Validate
         $teams = new Collection($args['input']);
 
         $squads = $teams->pluck('squad');
-        $squads = $this->lineupAsPlayed($squads);
+        $squads = $this->deserializeSquads($squads);
         $playingToHigh = $this->teamValidator->validateCrossSquadsLeagueV3($squads);
 
         return $playingToHigh;
@@ -51,7 +50,7 @@ class Validate
     {
         $squads = new Collection($args['input']);
         $squads = $squads->pluck('squad');
-        $squads = $this->lineupAsPlayed($squads);
+        $squads = $this->deserializeSquads($squads);
         //        $this->teamValidator->validateSquads($squads);
 
         $playingToHigh = [];
@@ -66,7 +65,7 @@ class Validate
     {
         $squads = new Collection($args['input']);
         $squads = $squads->pluck('squad');
-        $squads = $this->lineupAsPlayed($squads);
+        $squads = $this->deserializeSquads($squads);
 
         /** @var Squad[] $squads */
         return $this->teamValidator->validateBasicSquads($squads);
@@ -82,7 +81,7 @@ class Validate
     {
         $squads = (new Collection($args['input']))->pluck('squad');
 
-        return $this->teamValidator->validateTooYoungPlayers($this->lineupAsPlayed($squads), $args['seasonStartYear']);
+        return $this->teamValidator->validateTooYoungPlayers($this->deserializeSquads($squads), $args['seasonStartYear']);
     }
 
     /**
@@ -96,17 +95,6 @@ class Validate
         $squads = (new Collection($args['input']))->pluck('squad');
 
         return $this->teamValidator->validateReserves($this->deserializeSquads($squads));
-    }
-
-    /**
-     * The lineup as played: each reserve in the place of the player they replace (§43). The existing checks run on it.
-     *
-     * @param  Collection<int|string, mixed>  $squads
-     * @return Squad[]
-     */
-    private function lineupAsPlayed(Collection $squads): array
-    {
-        return (new ReserveLineup($this->deserializeSquads($squads)))->asPlayed();
     }
 
     /**

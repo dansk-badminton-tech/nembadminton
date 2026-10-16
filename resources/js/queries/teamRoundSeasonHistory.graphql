@@ -7,11 +7,6 @@ query teamRoundSeasonHistory($id: ID!){
             gameDate
             round
             isCurrent
-            reserves{
-                refId
-                replacedName
-                squadPosition
-            }
             categories{
                 category
                 places{

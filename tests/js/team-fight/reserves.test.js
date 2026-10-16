@@ -9,7 +9,6 @@ import {
     reserveOrigin,
     reserveOnHigherSquad,
     reserveWarnings,
-    seasonHistoryReserveNote,
     validationReserves
 } from '../../../resources/js/admin-v2/views/team-fight/reserves.js'
 
@@ -92,20 +91,11 @@ test('the quarantine tag names the round and the Squad', () => {
     assert.equal(quarantineLabel({round: 4, squadPosition: 1}), 'Karantæne · reserve i R4 på Hold 1')
 })
 
-test('§43 findings become errors and warnings that name the players and the category', () => {
+test('§43 stk. 3 findings become errors that name the players and the category', () => {
     const reserve = {refId: '3', name: 'Xenia', points: 1200}
     const replaced = {refId: '1', name: 'Yrsa', points: 1100}
-    const {errors, warnings} = reserveFindingMessages([
-        {type: 'STRENGTH_INCREASE', squadIndex: 0, category: 'DS', categoryName: '1. DS', reserve, replaced, betterReserve: null},
-        {type: 'BETTER_RESERVE_AVAILABLE', squadIndex: 1, category: 'DD', categoryName: '2. DD', reserve, replaced, betterReserve: {name: 'Zara', points: 1150}},
-    ])
-    assert.deepEqual(errors, ['Hold 1: Reserven Xenia har flere point end Yrsa i 1. DS (1200 mod 1100). Det er en styrkeforøgelse (§43 stk. 3).'])
-    assert.deepEqual(warnings, ['Hold 2: Bedre reserve tilgængelig: Zara (1150 point i 2. DD) i stedet for Xenia for Yrsa (§43 stk. 2).'])
-})
-
-test('Season History notes who the player was a reserve for in a round', () => {
-    const round = {reserves: [{refId: '3', name: 'Xenia', replacedName: 'Yrsa', squadPosition: 1}]}
-    assert.equal(seasonHistoryReserveNote(round, '3'), 'Reserve på Hold 1 for Yrsa')
-    assert.equal(seasonHistoryReserveNote(round, '1'), null)
-    assert.equal(seasonHistoryReserveNote({}, '3'), null)
+    assert.deepEqual(
+        reserveFindingMessages([{type: 'STRENGTH_INCREASE', squadIndex: 0, category: 'DS', categoryName: '1. DS', reserve, replaced}]),
+        ['Hold 1: Reserven Xenia har flere point end Yrsa i 1. DS (1200 mod 1100). Det er en styrkeforøgelse (§43 stk. 3).'],
+    )
 })

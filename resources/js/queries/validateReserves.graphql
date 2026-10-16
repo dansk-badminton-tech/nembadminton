@@ -14,10 +14,5 @@ mutation validateReserves($input: [ValidateTeam!]!){
             name
             points
         }
-        betterReserve{
-            refId
-            name
-            points
-        }
     }
 }

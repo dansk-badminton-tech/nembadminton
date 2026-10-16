@@ -139,35 +139,6 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function each_round_lists_the_reserves_of_its_official_lineup(): void
-    {
-        $this->member('0101012222', 'Bo');
-        $this->member('0101013333', 'Carl');
-        $earlier = $this->teamRound(round: 1, attributes: ['game_date' => '2026-09-20']);
-        $official = $earlier->scenarios()->create(['name' => 'Plan A', 'is_official' => true]);
-        $draft = $earlier->scenarios()->create(['name' => 'Plan B', 'is_official' => false]);
-        $hold1 = $this->squad($earlier, 'Hold 1', order: 1);
-        $this->squad($earlier, 'Hold 2', order: 2);
-        $this->reserve($hold1, 'Bo', 'Anders', $official->id);
-        $this->reserve($hold1, 'Carl', 'Anders', $draft->id);
-        $viewed = $this->teamRound(round: 2, attributes: ['game_date' => '2026-10-04']);
-        $this->squad($viewed, 'Hold 1', order: 1);
-        $viewedHold2 = $this->squad($viewed, 'Hold 2', order: 2);
-        $this->reserve($viewedHold2, 'Carl', 'Bo', null);
-
-        $rounds = $this->graphQL(/** @lang GraphQL */ '
-            query ($id: ID!) {
-                teamRound(id: $id) { seasonHistory { reserves { refId name replacedName squadPosition } } }
-            }
-        ', ['id' => $viewed->id])->json('data.teamRound.seasonHistory');
-
-        $this->assertSame([
-            ['reserves' => [['refId' => '0101012222', 'name' => 'Bo', 'replacedName' => 'Anders', 'squadPosition' => 1]]],
-            ['reserves' => [['refId' => '0101013333', 'name' => 'Carl', 'replacedName' => 'Bo', 'squadPosition' => 2]]],
-        ], $rounds);
-    }
-
-    #[Test]
     public function only_earlier_rounds_of_the_same_season_count(): void
     {
         Season::query()->firstOrCreate(['id' => 2025], ['season_name' => '2025/2026']);
@@ -402,21 +373,6 @@ class SeasonHistoryTest extends TestCase
         $squad->update(['order' => $order]);
 
         return $squad;
-    }
-
-    private function reserve(Squad $squad, string $reserveName, string $replacedName, ?int $scenarioId): void
-    {
-        $reserve = Member::query()->where('name', $reserveName)->firstOrFail();
-        $replaced = Member::query()->where('name', $replacedName)->firstOrFail();
-        $squad->reserves()->create([
-            'team_round_scenario_id' => $scenarioId,
-            'reserve_ref_id' => $reserve->refId,
-            'reserve_name' => $reserve->name,
-            'reserve_gender' => $reserve->gender,
-            'replaced_ref_id' => $replaced->refId,
-            'replaced_name' => $replaced->name,
-            'replaced_gender' => $replaced->gender,
-        ]);
     }
 
     /**

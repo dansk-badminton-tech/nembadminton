@@ -37,23 +37,30 @@
                             <rect v-for="(round, r) in rounds" :key="'hit-' + round.id" :x="x(r) - step / 2" y="0" :width="step" :height="H"
                                   class="hit" :dusk="'season-history-round-' + r" @mouseenter="hoverRound = r" @click="hoverRound = r"/>
                             <g v-for="line in chart.lines" :key="line.refId" :class="line.kind">
+                                <line v-for="([from, to], i) in line.gaps" :key="'gap-' + i" class="gap"
+                                      :x1="x(from.round)" :y1="y(from.place)" :x2="x(to.round)" :y2="y(to.place)"/>
                                 <polyline v-for="(segment, i) in line.segments" :key="i" fill="none"
                                           :points="segment.map(point => `${x(point.round)},${y(point.place)}`).join(' ')"/>
                                 <template v-for="segment in line.segments">
                                     <circle v-for="point in segment" :key="point.round" :cx="x(point.round)" :cy="y(point.place)"
                                             :r="line.kind === 'subject' ? 5 : 3.5" @mouseenter="hoverRound = point.round" @click="hoverRound = point.round">
-                                        <title>{{ line.name }}: {{ history.placeLabel(category, point.place, point.round) }} ({{ rounds[point.round].name }})</title>
+                                        <title>{{ history.pairOf(line.refId, category, point.round).join(' / ') }}: {{ history.placeLabel(category, point.place, point.round) }} ({{ rounds[point.round].name }})</title>
                                     </circle>
                                 </template>
                             </g>
-                            <text v-for="label in chart.labels" :key="label.key" :x="x(label.round) + 10" :y="y(label.place) + 4"
-                                  class="label" :class="{subject: label.subject, youth: label.youth}">{{ label.text }}</text>
+                            <!-- A pair's names stack, one per line, each coloured as its own player. -->
+                            <text v-for="label in chart.labels" :key="label.key" class="label" dusk="season-history-label"
+                                  :y="y(label.place) + 4 - (label.names.length - 1) * NAME_H / 2">
+                                <tspan v-for="(n, i) in label.names" :key="i" :class="n.kind" :x="x(label.round) + 10"
+                                       :dy="i ? NAME_H : 0">{{ n.name }}{{ i < label.names.length - 1 ? ' /' : '' }}</tspan>
+                            </text>
                         </svg>
                     </div>
                     <p v-if="chart" class="is-size-7 mt-2">
                         <span class="key subject"></span> {{ player.name }}
                         <span class="key youth ml-3"></span> Ungdomsspiller
                         <span class="key other ml-3"></span> Spillere højst 2 pladser fra
+                        <span class="key gap ml-3"></span> Ikke opstillet i runden
                     </p>
                     <div class="table-container mt-4">
                         <table class="table is-narrow is-fullwidth" dusk="season-history-table">
@@ -82,9 +89,6 @@
                                           :class="{'has-text-weight-semibold': p.category === category}">
                                         {{ p.category }} nr. {{ p.place }} · {{ p.label }}<span v-if="p.partners.length" class="has-text-grey has-text-weight-normal"> m. {{ p.partners.join(', ') }}</span>
                                     </span>
-                                    <span v-if="row.reserveNote" class="placement has-text-info-dark" dusk="season-history-reserve-note">
-                                        {{ row.reserveNote }}
-                                    </span>
                                 </td>
                             </tr>
                             </tbody>
@@ -99,13 +103,16 @@
 import TeamRoundSeasonHistoryQuery from "../../../../queries/teamRoundSeasonHistory.graphql";
 import {ageGroupLabel, isDoubleCategory, isYoungPlayer} from "../../../helpers";
 import {CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, seasonHistory} from "./season-history.js";
-import {seasonHistoryReserveNote} from "../reserves.js";
 
 const PAD_L = 120
 const PAD_T = 40
-const LABEL_W = 220
+const PLOT_W = 620
 const ROW_H = 28
-const W = 960
+// Taller rows when a pair's names stack, so neighbouring pairs don't run together.
+const PAIR_ROW_H = 40
+// The line height of a pair's stacked names, and roughly how wide a character of a name is.
+const NAME_H = 13
+const CHAR_W = 7
 
 export default {
     name: 'SeasonHistoryModal',
@@ -117,7 +124,7 @@ export default {
     emits: ['close'],
     data() {
         return {
-            CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, PAD_L, W,
+            CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, PAD_L, NAME_H,
             rounds: null,
             category: null,
             error: false,
@@ -170,15 +177,25 @@ export default {
                 r,
                 round,
                 place: this.category ? this.history.placeOf(this.player.refId, this.category, r) : null,
-                placements: this.history.placementsOf(this.player.refId, r),
-                reserveNote: seasonHistoryReserveNote(round, this.player.refId)
+                placements: this.history.placementsOf(this.player.refId, r)
             })).reverse()
         },
+        rowHeight() {
+            return this.chart.labels.some(label => label.names.length > 1) ? PAIR_ROW_H : ROW_H
+        },
         H() {
-            return PAD_T + Math.max(this.chart.places.length, 1) * ROW_H
+            return PAD_T + Math.max(this.chart.places.length, 1) * this.rowHeight
+        },
+        // Room right of the last round for its labels: wide enough for the longest name, so none is cut off.
+        labelWidth() {
+            const longest = Math.max(0, ...this.chart.labels.flatMap(label => label.names.map(n => n.name.length + 2)))
+            return Math.max(160, 30 + longest * CHAR_W)
+        },
+        W() {
+            return PAD_L + PLOT_W + this.labelWidth
         },
         step() {
-            return (W - PAD_L - LABEL_W) / Math.max(this.rounds.length - 1, 1)
+            return PLOT_W / Math.max(this.rounds.length - 1, 1)
         }
     },
     methods: {
@@ -187,7 +204,7 @@ export default {
             return PAD_L + 20 + r * this.step
         },
         y(place) {
-            return PAD_T + (place - (this.chart.places[0]?.place ?? 1)) * ROW_H
+            return PAD_T + (place - (this.chart.places[0]?.place ?? 1)) * this.rowHeight
         },
         roundShortName(round) {
             if (round.isCurrent) {
@@ -214,8 +231,11 @@ export default {
 .chart .hover-band { fill: #eef6fc; }
 .chart .hit { fill: transparent; cursor: pointer; }
 .chart .label { font-size: 12px; fill: #4a4a4a; }
-.chart .label.youth { fill: #257953; }
-.chart .label.subject { font-weight: 700; fill: #1d5d90; }
+.chart .label tspan.youth { fill: #257953; }
+.chart .label tspan.subject { font-weight: 700; fill: #1d5d90; }
+.chart .gap { stroke: #c4c4c4; stroke-width: 1.5; stroke-dasharray: 1 4; stroke-linecap: round; }
+.chart .subject .gap { stroke: #3e8ed0; stroke-width: 2; }
+.chart .youth .gap { stroke: #48c78e; }
 .chart .other polyline { stroke: #c4c4c4; stroke-width: 2; }
 .chart .other circle { fill: #c4c4c4; }
 .chart .youth polyline { stroke: #48c78e; stroke-width: 2.5; stroke-dasharray: 6 4; }
@@ -230,4 +250,5 @@ tbody tr { cursor: pointer; }
 .key.subject { border-color: #3e8ed0; }
 .key.youth { border-color: #48c78e; border-top-style: dashed; }
 .key.other { border-color: #c4c4c4; }
+.key.gap { border-color: #c4c4c4; border-top-style: dotted; }
 </style>

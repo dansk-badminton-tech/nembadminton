@@ -40,8 +40,6 @@ class SeasonLineupGenerator
      */
     public const RANKING_CATEGORIES = ['M' => ['HS', 'HD', 'MxH'], 'K' => ['DS', 'DD', 'MxD']];
 
-    private const SINGLES_LIMIT = 50;
-
     private const DOUBLES_LIMIT = 100;
 
     /**
@@ -109,8 +107,8 @@ class SeasonLineupGenerator
 
     /**
      * A Reserve Player for the Team at the index (§43): a player from a lower Team plays for the weakest player of the
-     * Team they can replace. The reserve is the best player below with no more points than the replaced one in any of
-     * their categories, and the lineup as played stays valid.
+     * Team they can replace. The reserve is the strongest player below with no more points than the replaced one in any
+     * of their categories (§43 stk. 3).
      *
      * @param  list<array<string, mixed>>  $lineup
      * @return array{squad: int, reserve: array<string, mixed>, replaced: array<string, mixed>}
@@ -140,14 +138,12 @@ class SeasonLineupGenerator
             });
             uasort($candidates, fn (array $a, array $b) => self::strength($b, $version) <=> self::strength($a, $version));
 
-            foreach ($candidates as $reserve) {
-                if ($this->isValidReserve($lineup[$teamIndex], $categories, $sameGender, $reserve, $replaced, $version)) {
-                    return ['squad' => $teamIndex, 'reserve' => $reserve, 'replaced' => $replaced];
-                }
+            if ($candidates !== []) {
+                return ['squad' => $teamIndex, 'reserve' => reset($candidates), 'replaced' => $replaced];
             }
         }
 
-        throw new RuntimeException("No valid Reserve Player for Team {$teamIndex}");
+        throw new RuntimeException("No Reserve Player for Team {$teamIndex}");
     }
 
     /**
@@ -275,68 +271,6 @@ class SeasonLineupGenerator
         $candidates = array_values(array_filter($this->seniors[$gender], fn (array $player) => ! in_array($player['refId'], $away, true)));
 
         return $candidates[$this->randomizer->getInt(0, count($candidates) - 1)]['refId'];
-    }
-
-    /**
-     * Whether the record raises no §43 finding and the lineup as played keeps its order (TeamValidator).
-     *
-     * @param  array<string, mixed>  $team
-     * @param  list<string>  $categories
-     * @param  array<string, array<string, mixed>>  $sameGenderBelow
-     * @param  array<string, mixed>  $reserve
-     * @param  array<string, mixed>  $replaced
-     */
-    private function isValidReserve(array $team, array $categories, array $sameGenderBelow, array $reserve, array $replaced, string $version): bool
-    {
-        foreach ($sameGenderBelow as $other) {
-            if ($other['refId'] === $reserve['refId']) {
-                continue;
-            }
-            $strongerInEvery = true;
-            foreach ($categories as $category) {
-                $points = self::points($other, $category, $version);
-                // §43 stk. 2: a better reserve available
-                if ($points > self::points($reserve, $category, $version) && $points <= self::points($replaced, $category, $version)) {
-                    return false;
-                }
-                $strongerInEvery = $strongerInEvery && $points > self::points($reserve, $category, $version) + self::SINGLES_LIMIT;
-            }
-            // Across Squads: nobody below may be stronger than the reserve in all of their categories
-            if ($strongerInEvery) {
-                return false;
-            }
-        }
-
-        foreach ($team['categories'] as &$category) {
-            $category['players'] = array_map(fn (array $player) => $player['refId'] === $replaced['refId'] ? $reserve : $player, $category['players']);
-        }
-        unset($category);
-
-        return $this->isOrdered($team, $version);
-    }
-
-    /**
-     * @param  array<string, mixed>  $team
-     */
-    private function isOrdered(array $team, string $version): bool
-    {
-        $byCategory = [];
-        foreach ($team['categories'] as $category) {
-            $byCategory[$category['category']][] = array_sum(array_map(fn (array $player) => self::points($player, $category['category'], $version), $category['players']));
-        }
-
-        foreach ($byCategory as $category => $points) {
-            $limit = in_array($category, ['HS', 'DS'], true) ? self::SINGLES_LIMIT : self::DOUBLES_LIMIT;
-            foreach ($points as $upper => $upperPoints) {
-                foreach (array_slice($points, $upper + 1) as $lowerPoints) {
-                    if ($lowerPoints > $upperPoints + $limit) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 
     /**

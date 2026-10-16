@@ -14,7 +14,6 @@ final readonly class RoundLineup
     /**
      * @param  list<LineupSquad>  $squads  In Squad order, highest team first.
      * @param  array<string, list<CategorySlot>>  $ladders  Keyed by category; each category is its own ladder.
-     * @param  list<RoundReserve>  $reserves
      */
     public function __construct(
         public string $teamRoundId,
@@ -23,7 +22,6 @@ final readonly class RoundLineup
         public ?string $gameDate,
         public array $squads,
         public array $ladders,
-        public array $reserves = [],
     ) {}
 
     /**

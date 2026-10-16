@@ -408,18 +408,6 @@ type SeasonHistoryRound {
     isCurrent: Boolean!
     "One ladder per category: HS, DS, HD, DD, MD"
     categories: [SeasonHistoryCategory!]!
-    "The Reserve Players of the Official Lineup, in Squad order"
-    reserves: [SeasonHistoryReserve!]!
-}
-
-"A Reserve Player in a round's Official Lineup"
-type SeasonHistoryReserve {
-    refId: String!
-    name: String!
-    "The player they played for"
-    replacedName: String!
-    "1-based place of the Squad they were a reserve on"
-    squadPosition: Int!
 }
 
 type SeasonHistoryCategory {
