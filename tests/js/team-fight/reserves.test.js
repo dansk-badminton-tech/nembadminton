@@ -52,13 +52,6 @@ test('the replaced field offers Members on this Squad who are not replaced yet, 
     assert.deepEqual(replaceableMembers(squads([record('r1', xenia, yrsa)])[0]).map(m => m.name), ['Vera'])
 })
 
-test('editing a record offers its own reserve and replaced Member again', () => {
-    const edited = record('r1', xenia, yrsa)
-    const lineup = squads([edited, record('r2', tine, vera)])
-    assert.deepEqual(reserveCandidates(lineup, 0, edited).map(c => c.player.name), ['Xenia', 'Zara'])
-    assert.deepEqual(replaceableMembers(lineup[0], edited).map(m => m.name), ['Yrsa'])
-})
-
 test('tags: Y is replaced on this Squad; X is a reserve on a higher Squad', () => {
     const lineup = squads([record('r1', xenia, yrsa)])
     assert.equal(replacedBy(lineup[0], '1').reserve.name, 'Xenia')

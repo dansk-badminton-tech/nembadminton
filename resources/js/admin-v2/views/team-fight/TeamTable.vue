@@ -239,7 +239,7 @@
                 </tbody>
             </table>
             <ReserveSection :squads="squads" :squad-index="index" :loading="loading"
-                            @add="addReserve" @update="updateReserve" @remove="removeReserve"/>
+                            @add="addReserve" @remove="removeReserve"/>
         </div>
         <b-modal
             v-model="showPlayerModal"
@@ -299,7 +299,6 @@ export default {
         version: Date,
         confirmDelete: Function,
         addReserve: Function,
-        updateReserve: Function,
         removeReserve: Function,
         moveSquadOrderUp: Function,
         moveSquadOrderDown: Function,

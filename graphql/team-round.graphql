@@ -66,8 +66,6 @@ extend type Mutation {
     renameScenario(scenarioId: ID!, name: String!): TeamRoundScenario! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario")
     "Record that a reserve from a lower Squad plays for a player on this Squad (§43), in a Scenario or, without one, the official lineup. Rejected when the reserve isn't on a lower Squad, the replaced player isn't on this Squad, or either already has a record in the lineup."
     addSquadReserve(squadId: ID!, scenarioId: ID, reserveRefId: String!, replacedRefId: String!): SquadReserve! @guard @canFind(ability: "editReserves", find: "squadId", model: "Squad") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadReserve")
-    "Change who plays for whom in a reserve record, on the same Squad and in the same lineup. Rejected for the same reasons as addSquadReserve, and then the record is left as it was."
-    updateSquadReserve(id: ID!, reserveRefId: String!, replacedRefId: String!): SquadReserve! @guard @canFind(ability: "update", find: "id") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\UpdateSquadReserve")
     "Remove a reserve record"
     deleteSquadReserve(id: ID! @eq): SquadReserve @guard @canFind(ability: "delete", find: "id") @delete
     "Delete a draft scenario and all associated categories, players, and points"

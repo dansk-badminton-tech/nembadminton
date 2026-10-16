@@ -20,11 +20,9 @@ function reserveRefIds(squads) {
 }
 
 // "Reserve fra et lavere hold": Members placed on a lower Squad who aren't a reserve anywhere in the lineup yet, each
-// with the first lower Squad and category they stand on. When editing, `except` is the record being changed, whose own
-// reserve is offered again.
-export function reserveCandidates(squads, squadIndex, except = null) {
+// with the first lower Squad and category they stand on.
+export function reserveCandidates(squads, squadIndex) {
     const taken = reserveRefIds(squads)
-    if (except) taken.delete(except.reserve.refId)
     const seen = new Set()
     const candidates = []
     squads.forEach((squad, index) => {
@@ -38,10 +36,9 @@ export function reserveCandidates(squads, squadIndex, except = null) {
     return candidates
 }
 
-// "Erstatter": Members placed on this Squad who haven't been replaced yet, with the names of their categories. When
-// editing, `except` is the record being changed, whose own replaced Member is offered again.
-export function replaceableMembers(squad, except = null) {
-    const replaced = new Set((squad.reserves ?? []).filter(record => record.id !== except?.id).map(record => record.replaced.refId))
+// "Erstatter": Members placed on this Squad who haven't been replaced yet, with the names of their categories.
+export function replaceableMembers(squad) {
+    const replaced = new Set((squad.reserves ?? []).map(record => record.replaced.refId))
     const members = new Map()
     squad.categories.forEach(category => category.players.forEach(player => {
         if (replaced.has(player.refId)) return

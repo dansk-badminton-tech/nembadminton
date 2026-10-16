@@ -173,7 +173,6 @@
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
                                :add-reserve="addReserve"
-                               :update-reserve="updateReserve"
                                :remove-reserve="removeReserve"
                                :update-squad="updateSquad"
                                :move-squad-order-down="moveSquadOrderDown"
@@ -1023,37 +1022,6 @@ export default {
                             type: 'is-danger',
                             queue: false,
                             message: 'Kunne ikke tilføje reserven. ' + extractErrorMessages(graphQLErrors).join(', ')
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
-        },
-        updateReserve({record, reserveRefId, replacedRefId}) {
-            this.saving = true
-            return this.$apollo.mutate({
-                mutation: gql`
-                    mutation updateSquadReserve($id: ID!, $reserveRefId: String!, $replacedRefId: String!){
-                        updateSquadReserve(id: $id, reserveRefId: $reserveRefId, replacedRefId: $replacedRefId){
-                            id
-                        }
-                    }
-                `,
-                variables: {
-                    id: record.id,
-                    reserveRefId,
-                    replacedRefId
-                },
-                refetchQueries: this.teamRoundRefetchQueries(),
-                awaitRefetchQueries: true
-            })
-                .catch(({graphQLErrors}) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 5000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: 'Kunne ikke rette reserven. ' + extractErrorMessages(graphQLErrors).join(', ')
                         })
                 })
                 .finally(() => {

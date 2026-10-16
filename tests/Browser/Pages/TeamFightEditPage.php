@@ -475,31 +475,12 @@ class TeamFightEditPage extends Page
             ->waitForTextIn("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-row']", "{$reserveName} for {$replacedName}");
     }
 
-    /**
-     * Change the first reserve record on the Squad to "reserve for replaced" through its edit button.
-     */
-    public function editReserve(Browser $browser, int $squadIndex, string $reserveName, string $replacedName): void
-    {
-        $browser->click("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-edit']")
-            ->waitFor("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-form']");
-        $this->chooseReserveOption($browser, $squadIndex, 'reserve-player', $reserveName);
-        $this->chooseReserveOption($browser, $squadIndex, 'reserve-replaced', $replacedName);
-        $browser->click("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-save']")
-            ->waitForTextIn("[dusk='reserve-section-{$squadIndex}'] [dusk='reserve-row']", "{$reserveName} for {$replacedName}");
-    }
-
     private function chooseReserveOption(Browser $browser, int $squadIndex, string $field, string $name): void
     {
         $inputSelector = "[dusk='reserve-section-{$squadIndex}'] input[dusk='{$field}']";
         $inputSelectorJson = json_encode($inputSelector, JSON_THROW_ON_ERROR);
         $nameJson = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 
-        // The edit form starts with the record's names filled in.
-        $browser->script(<<<JS
-            const input = document.querySelector({$inputSelectorJson});
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-        JS);
         $browser->click($inputSelector)->keys($inputSelector, $name);
         $browser->waitUsing(10, 100, fn () => $browser->script(<<<JS
             return Array.from(document.querySelector({$inputSelectorJson}).closest('.autocomplete').querySelectorAll('.dropdown-item'))
