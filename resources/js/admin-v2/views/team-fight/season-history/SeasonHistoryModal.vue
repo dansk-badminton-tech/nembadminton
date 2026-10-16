@@ -88,6 +88,8 @@
                                     <span v-for="p in row.placements" :key="p.category" class="placement"
                                           :class="{'has-text-weight-semibold': p.category === category}">
                                         {{ p.category }} nr. {{ p.place }} · {{ p.label }}<span v-if="p.partners.length" class="has-text-grey has-text-weight-normal"> m. {{ p.partners.join(', ') }}</span>
+                                        <b-tag v-if="p.isPaperSquad" type="is-warning is-light" size="is-small" class="ml-1"
+                                               dusk="season-history-paper-squad-tag">Papirhold</b-tag>
                                     </span>
                                 </td>
                             </tr>

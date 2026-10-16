@@ -12,6 +12,7 @@ query teamRoundSeasonHistory($id: ID!){
                 places{
                     place
                     squadPosition
+                    isPaperSquad
                     label
                     players{
                         refId
