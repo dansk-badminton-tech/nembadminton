@@ -20,7 +20,7 @@
                     <div v-if="origin(record)" class="is-size-7 has-text-grey">
                         Fra Hold {{ origin(record).index + 1 }} · {{ origin(record).categoryName }}
                     </div>
-                    <div v-else class="is-size-7 has-text-grey">Ikke på et hold i holdrunden</div>
+                    <div v-else class="is-size-7 has-text-grey">Ledig spiller</div>
                     <div v-if="warnings(record).length" class="tags mt-1 mb-0">
                         <b-tag v-for="warning in warnings(record)" :key="warning" size="is-small" type="is-warning is-light"
                                dusk="reserve-row-warning">{{ warning }}</b-tag>
@@ -39,7 +39,8 @@
             <p class="has-text-grey is-size-7 mb-3">
                 Melder en spiller på Hold {{ squadIndex + 1 }} afbud pga. skade, sygdom eller force majeure, før
                 holdopstillingen er udvekslet, må der sættes en reserve ind (§43). Reserven kan være en ledig spiller
-                eller en spiller fra et lavere hold. Vælg reserven og hvem vedkommende erstatter.
+                eller en spiller fra et lavere hold. Vælg reserven og hvem vedkommende erstatter. Reserven sættes ind på
+                spillerens pladser; ret derefter rækkefølgen, hvis pointene kræver det.
             </p>
             <b-field label="Reserve" class="mb-3">
                 <b-autocomplete
@@ -160,7 +161,7 @@ export default {
     },
     methods: {
         origin(record) {
-            return reserveOrigin(this.squads, record)
+            return reserveOrigin(this.squads, this.squadIndex, record)
         },
         warnings(record) {
             return reserveWarnings(this.squads, this.squadIndex, record)

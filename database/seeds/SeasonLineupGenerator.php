@@ -42,6 +42,8 @@ class SeasonLineupGenerator
 
     private const DOUBLES_LIMIT = 100;
 
+    private const CROSS_SQUAD_LIMIT = 50;
+
     /**
      * @param  array{M: list<array<string, mixed>>, K: list<array<string, mixed>>}  $seniors  Strongest first
      * @param  array{M: list<array<string, mixed>>, K: list<array<string, mixed>>}  $youth  Strongest first
@@ -73,7 +75,7 @@ class SeasonLineupGenerator
      *
      * @param  list<array{format: string, men: int, women: int, youth: bool}>  $teams
      * @param  list<string>  $away  refIds of cancelled players
-     * @return list<array{categories: list<array{category: string, name: string, players: list<array<string, mixed>>}>}>
+     * @return list<array{format: string, categories: list<array{category: string, name: string, players: list<array<string, mixed>>}>}>
      */
     public function lineup(array $teams, string $version, array $away): array
     {
@@ -99,7 +101,7 @@ class SeasonLineupGenerator
             if (count($men) < $team['men'] || count($women) < $team['women']) {
                 throw new RuntimeException('Not enough players for a Team');
             }
-            $lineup[] = ['categories' => $this->place(self::FORMATS[$team['format']], $men, $women, $version)];
+            $lineup[] = ['format' => $team['format'], 'categories' => $this->place(self::FORMATS[$team['format']], $men, $women, $version)];
         }
 
         return $lineup;
@@ -108,10 +110,12 @@ class SeasonLineupGenerator
     /**
      * A Reserve Player for the Team at the index (§43): a player from a lower Team plays for the weakest player of the
      * Team they can replace. The reserve is the strongest player below with no more points than the replaced one in any
-     * of their categories (§43 stk. 3).
+     * of their categories (§43 stk. 3), and with no senior left below who is stronger in all the reserve's categories
+     * (the normal check across Teams). The lineup is the one as played: the Team is placed again by points with the
+     * reserve instead of the replaced player, and the reserve keeps their slot below.
      *
      * @param  list<array<string, mixed>>  $lineup
-     * @return array{squad: int, reserve: array<string, mixed>, replaced: array<string, mixed>}
+     * @return array{squad: int, reserve: array<string, mixed>, replaced: array<string, mixed>, lineup: list<array<string, mixed>>}
      */
     public function reserve(array $lineup, int $teamIndex, string $version): array
     {
@@ -138,12 +142,47 @@ class SeasonLineupGenerator
             });
             uasort($candidates, fn (array $a, array $b) => self::strength($b, $version) <=> self::strength($a, $version));
 
-            if ($candidates !== []) {
-                return ['squad' => $teamIndex, 'reserve' => reset($candidates), 'replaced' => $replaced];
+            foreach ($candidates as $reserve) {
+                $players = [...array_values(array_filter($onTeam, fn (array $player) => $player['refId'] !== $replaced['refId'])), $reserve];
+                $categories = $this->place(
+                    self::FORMATS[$lineup[$teamIndex]['format']],
+                    array_values(array_filter($players, fn (array $player) => $player['gender'] === 'M')),
+                    array_values(array_filter($players, fn (array $player) => $player['gender'] === 'K')),
+                    $version,
+                );
+                if (! $this->strongerBelow($below, $reserve, self::categoriesOf(['categories' => $categories], $reserve['refId']), $version)) {
+                    $lineup[$teamIndex]['categories'] = $categories;
+
+                    return ['squad' => $teamIndex, 'reserve' => $reserve, 'replaced' => $replaced, 'lineup' => $lineup];
+                }
             }
         }
 
         throw new RuntimeException("No Reserve Player for Team {$teamIndex}");
+    }
+
+    /**
+     * Whether a senior below, other than the reserve, has more than the limit above the reserve in all of the reserve's
+     * categories on the Team (TeamValidator's check across Teams; youth players are left out of it).
+     *
+     * @param  array<string, array<string, mixed>>  $below
+     * @param  array<string, mixed>  $reserve
+     * @param  list<string>  $categories
+     */
+    private function strongerBelow(array $below, array $reserve, array $categories, string $version): bool
+    {
+        $youth = array_column([...$this->youth['M'], ...$this->youth['K']], 'refId');
+        foreach ($below as $player) {
+            if ($player['refId'] === $reserve['refId'] || $player['gender'] !== $reserve['gender'] || in_array($player['refId'], $youth, true)) {
+                continue;
+            }
+            $stronger = array_filter($categories, fn (string $category) => self::points($player, $category, $version) > self::points($reserve, $category, $version) + self::CROSS_SQUAD_LIMIT);
+            if (count($stronger) === count($categories)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

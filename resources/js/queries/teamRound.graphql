@@ -78,7 +78,7 @@ query teamRound($id: ID!, $scenarioId: ID){
                     gender
                     vintage
                 }
-                reservePoints{
+                replacedPoints{
                     category
                     points
                     position

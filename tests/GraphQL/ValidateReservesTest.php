@@ -13,8 +13,8 @@ use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
 /**
- * Validation of a lineup with Reserve Players (§43): X, an Available Member or a Member on a lower Squad, plays for Y on a
- * Squad. Only §43 stk. 3 looks at the records.
+ * Validation of a lineup with Reserve Players (§43): X stands in the Squad's slots as played, instead of Y. The normal
+ * checks validate that lineup; only the §43 stk. 3 warning looks at the records.
  */
 class ValidateReservesTest extends TestCase
 {
@@ -53,35 +53,40 @@ class ValidateReservesTest extends TestCase
     ';
 
     /** @test */
-    public function the_order_checks_validate_the_lineup_as_placed(): void
+    public function the_lineup_as_played_passes_the_normal_checks(): void
     {
-        // Y (200) stands below Anders (100) on Hold 1: a breach. A record "X for Y" doesn't change that, because §43
-        // stk. 3 measures the reserve against the original lineup.
-        $anders = $this->men('Anders', 'HS', 100);
-        $y = $this->men('Y', 'HS', 200);
-        $x = $this->men('X', 'HS', 100);
-        $hold1 = $this->squad([['1. HS', 'HS', [$anders]], ['2. HS', 'HS', [$y]]]);
-        $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $withoutRecord = $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->json('data.validateSquads');
-        $crossWithoutRecord = $this->validate(self::CROSS_SQUADS_QUERY, [$hold1, $hold2])->json('data.validateCrossSquads');
+        // Lin Dan (1. HS on Hold 1) is ill. Daniel from Hold 2 comes in, Jesper moves up to 1. HS and Daniel takes 2. HS.
+        // Daniel keeps his slot on Hold 2 and is never compared with himself.
+        $jesper = $this->men('Jesper', 'HS', 400);
+        $daniel = $this->men('Daniel', 'HS', 300);
+        $hold1 = $this->squad([['1. HS', 'HS', [$jesper]], ['2. HS', 'HS', [$daniel]]]);
+        $hold2 = $this->squad([['1. HS', 'HS', [$daniel]]]);
+        $hold1->reserves = [$this->record('Daniel', $this->men('Lin Dan', 'HS', 900))];
 
-        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
+        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateSquads', []);
+        $this->validate(self::CROSS_SQUADS_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateCrossSquads', []);
+        $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', []);
+    }
 
-        $this->assertNotEmpty($withoutRecord);
-        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateSquads', $withoutRecord);
-        $this->validate(self::CROSS_SQUADS_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateCrossSquads', $crossWithoutRecord);
+    /** @test */
+    public function a_reserve_in_the_wrong_order_breaks_the_order_check(): void
+    {
+        // Daniel left in Lin Dan's 1. HS, above the stronger Jesper.
+        $daniel = $this->men('Daniel', 'HS', 300);
+        $hold1 = $this->squad([['1. HS', 'HS', [$daniel]], ['2. HS', 'HS', [$this->men('Jesper', 'HS', 400)]]]);
+        $hold1->reserves = [$this->record('Daniel', $this->men('Lin Dan', 'HS', 900))];
+
+        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1])->assertJsonPath('data.validateSquads.0.refId', 'Daniel');
     }
 
     /** @test */
     public function a_reserve_stronger_than_the_replaced_player_is_a_strength_increase(): void
     {
-        $y = $this->men('Y', 'HS', 100);
         $x = $this->men('X', 'HS', 120);
-        $hold1 = $this->squad([['1. HS', 'HS', [$y]]]);
-        $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
+        $hold1 = $this->squad([['1. HS', 'HS', [$x]]]);
+        $hold1->reserves = [$this->record('X', $this->men('Y', 'HS', 100))];
 
-        $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', [[
+        $this->validate(self::RESERVES_QUERY, [$hold1])->assertJsonPath('data.validateReserves', [[
             'type' => 'STRENGTH_INCREASE',
             'squadIndex' => 0,
             'category' => 'HS',
@@ -92,50 +97,38 @@ class ValidateReservesTest extends TestCase
     }
 
     /** @test */
-    public function an_available_member_is_checked_with_the_points_in_the_record(): void
-    {
-        // X isn't placed on any Squad; the record carries their points.
-        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 100)]]]);
-        $hold1->reserves = [['reserve' => $this->men('X', 'HS', 130), 'replacedRefId' => 'Y']];
-
-        $this->validate(self::RESERVES_QUERY, [$hold1])
-            ->assertJsonPath('data.validateReserves.0.reserve', ['refId' => 'X', 'name' => 'X', 'points' => 130]);
-    }
-
-    /** @test */
     public function a_reserve_as_strong_as_the_replaced_player_is_fine(): void
     {
-        $x = $this->men('X', 'HS', 100);
-        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 100)]]]);
-        $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
-
-        $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', []);
-    }
-
-    /** @test */
-    public function a_stale_record_changes_nothing(): void
-    {
-        // X stands on the same Squad as Y: the record doesn't count.
-        $x = $this->men('X', 'HS', 300);
-        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 200)]], ['2. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
+        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('X', 'HS', 100)]]]);
+        $hold1->reserves = [$this->record('X', $this->men('Y', 'HS', 100))];
 
         $this->validate(self::RESERVES_QUERY, [$hold1])->assertJsonPath('data.validateReserves', []);
     }
 
     /** @test */
-    public function the_reserve_is_checked_in_every_category_of_the_replaced_player(): void
+    public function a_stale_record_changes_nothing(): void
     {
-        // Y plays 1. HS and 1. HD on Hold 1. X is weaker in HS and stronger in HD.
-        $y = $this->menWithPoints('Y', ['HS' => 100, 'HD' => 100]);
-        $partner = $this->menWithPoints('Partner', ['HD' => 100]);
-        $x = $this->menWithPoints('X', ['HS' => 90, 'HD' => 120]);
-        $hold1 = $this->squad([['1. HS', 'HS', [$y]], ['1. HD', 'HD', [$y, $partner]]]);
-        $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
+        // Y still stands on the Squad, or X doesn't: the record doesn't count.
+        $x = $this->men('X', 'HS', 300);
+        $y = $this->men('Y', 'HS', 200);
+        $both = $this->squad([['1. HS', 'HS', [$x]], ['2. HS', 'HS', [$y]]]);
+        $both->reserves = [$this->record('X', $y)];
+        $neither = $this->squad([['1. HS', 'HS', [$this->men('Z', 'HS', 100)]]]);
+        $neither->reserves = [$this->record('X', $y)];
 
-        $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', [[
+        $this->validate(self::RESERVES_QUERY, [$both, $neither])->assertJsonPath('data.validateReserves', []);
+    }
+
+    /** @test */
+    public function the_reserve_is_checked_in_every_category_they_play_on_the_squad(): void
+    {
+        // X plays 1. HS and 1. HD on Hold 1 for Y. X is weaker in HS and stronger in HD.
+        $x = $this->menWithPoints('X', ['HS' => 90, 'HD' => 120]);
+        $partner = $this->menWithPoints('Partner', ['HD' => 100]);
+        $hold1 = $this->squad([['1. HS', 'HS', [$x]], ['1. HD', 'HD', [$x, $partner]]]);
+        $hold1->reserves = [$this->record('X', $this->menWithPoints('Y', ['HS' => 100, 'HD' => 100]))];
+
+        $this->validate(self::RESERVES_QUERY, [$hold1])->assertJsonPath('data.validateReserves', [[
             'type' => 'STRENGTH_INCREASE',
             'squadIndex' => 0,
             'category' => 'HD',
@@ -143,6 +136,14 @@ class ValidateReservesTest extends TestCase
             'reserve' => ['refId' => 'X', 'name' => 'X', 'points' => 120],
             'replaced' => ['refId' => 'Y', 'name' => 'Y', 'points' => 100],
         ]]);
+    }
+
+    /**
+     * @return array{reserveRefId: string, replaced: Player}
+     */
+    private function record(string $reserveRefId, Player $replaced): array
+    {
+        return ['reserveRefId' => $reserveRefId, 'replaced' => $replaced];
     }
 
     /**

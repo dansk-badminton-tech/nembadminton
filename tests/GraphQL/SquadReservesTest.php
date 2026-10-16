@@ -21,7 +21,7 @@ use Tests\TestCase;
 
 /**
  * Reserve records (§43) on a Squad: "X for Y", where X is an Available Member of the Clubhouse or comes from a lower
- * Squad of the same lineup.
+ * Squad of the same lineup. Adding a record puts X in Y's slots; removing it puts Y back.
  */
 class SquadReservesTest extends TestCase
 {
@@ -45,6 +45,14 @@ class SquadReservesTest extends TestCase
         mutation ($id: ID!) { deleteSquadReserve(id: $id) { id } }
     ';
 
+    private const SLOTS = /** @lang GraphQL */ '
+        query ($id: ID!, $scenarioId: ID) {
+            teamRound(id: $id) {
+                squads { categories(scenarioId: $scenarioId) { name players { name points { category points } } } }
+            }
+        }
+    ';
+
     private const READ = /** @lang GraphQL */ '
         query ($id: ID!, $scenarioId: ID) {
             teamRound(id: $id) {
@@ -55,7 +63,7 @@ class SquadReservesTest extends TestCase
 
     private const READ_POINTS = /** @lang GraphQL */ '
         query ($id: ID!) {
-            teamRound(id: $id) { squads { reserves { reservePoints { category points position } } } }
+            teamRound(id: $id) { squads { reserves { replacedPoints { category points position } } } }
         }
     ';
 
@@ -98,6 +106,34 @@ class SquadReservesTest extends TestCase
     }
 
     /** @test */
+    public function adding_a_reserve_puts_them_in_the_replaced_players_slots(): void
+    {
+        $xenia = Member::query()->where('refId', '9001012222')->sole();
+        $xenia->points()->create(['points' => 700, 'position' => 20, 'category' => 'DS', 'vintage' => 'SEN', 'version' => $this->teamRound->version]);
+        $this->place($this->squads[0], '1. DD', 'DD', '9001011111', 'Yrsa');
+
+        $this->add($this->squads[0], '9001012222', '9001011111')->assertJsonMissingPath('errors');
+
+        // Xenia plays 1. DS and 1. DD on Hold 1 with her points, and keeps her 1. DS on Hold 2.
+        $this->assertSame([
+            [['1. DS', ['Xenia'], [['category' => 'DS', 'points' => 700]]], ['1. DD', ['Xenia'], [['category' => 'DS', 'points' => 700]]]],
+            [['1. DS', ['Xenia'], []]],
+            [['1. DS', ['Zara'], []]],
+        ], $this->slots(null));
+    }
+
+    /** @test */
+    public function removing_a_reserve_puts_the_replaced_player_back(): void
+    {
+        $id = $this->add($this->squads[0], '9001012222', '9001011111')->json('data.addSquadReserve.id');
+
+        $this->graphQL(self::DELETE, ['id' => $id])->assertJsonMissingPath('errors');
+
+        $this->assertSame([['1. DS', ['Yrsa'], []]], $this->slots(null)[0]);
+        $this->assertSame([['1. DS', ['Xenia'], []]], $this->slots(null)[1]);
+    }
+
+    /** @test */
     public function a_reserve_may_come_from_any_lower_squad(): void
     {
         $this->add($this->squads[0], '9001013333', '9001011111')->assertJsonMissingPath('errors');
@@ -136,19 +172,20 @@ class SquadReservesTest extends TestCase
     }
 
     /** @test */
-    public function the_reserve_has_their_points_at_the_squads_ranking_version(): void
+    public function the_replaced_player_has_their_points_at_the_squads_ranking_version(): void
     {
-        $una = $this->clubMember('9001015555', 'Una');
-        $una->points()->create(['points' => 900, 'position' => 12, 'category' => 'DS', 'vintage' => 'SEN', 'version' => $this->teamRound->version]);
-        $una->points()->create(['points' => 1, 'position' => 99, 'category' => 'DS', 'vintage' => 'SEN', 'version' => '2001-01-01']);
+        $yrsa = Member::query()->where('refId', '9001011111')->sole();
+        $yrsa->points()->create(['points' => 900, 'position' => 12, 'category' => 'DS', 'vintage' => 'SEN', 'version' => $this->teamRound->version]);
+        $yrsa->points()->create(['points' => 1, 'position' => 99, 'category' => 'DS', 'vintage' => 'SEN', 'version' => '2001-01-01']);
+        $this->clubMember('9001015555', 'Una');
         $this->add($this->squads[0], '9001015555', '9001011111')->assertJsonMissingPath('errors');
 
         $this->graphQL(self::READ_POINTS, ['id' => $this->teamRound->id])
-            ->assertJsonPath('data.teamRound.squads.0.reserves.0.reservePoints', [['category' => 'DS', 'points' => 900, 'position' => 12]]);
+            ->assertJsonPath('data.teamRound.squads.0.reserves.0.replacedPoints', [['category' => 'DS', 'points' => 900, 'position' => 12]]);
 
         $this->actingAsUserOf(Clubhouse::factory()->create());
         $this->graphQL(self::READ_POINTS, ['id' => $this->teamRound->id])
-            ->assertJsonPath('data.teamRound.squads.0.reserves.0.reservePoints', []);
+            ->assertJsonPath('data.teamRound.squads.0.reserves.0.replacedPoints', []);
     }
 
     /** @test */
@@ -355,6 +392,24 @@ class SquadReservesTest extends TestCase
         ', ['teamRoundId' => $this->teamRound->id, 'name' => $name, 'sourceScenarioId' => $sourceScenarioId])
             ->assertJsonMissingPath('errors')
             ->json('data.createScenario.id');
+    }
+
+    /**
+     * Per Squad: [category name, player names, the first player's points].
+     *
+     * @return list<list<array{0: string, 1: list<string>, 2: list<array{category: string, points: int}>}>>
+     */
+    private function slots(?int $scenarioId): array
+    {
+        $squads = $this->graphQL(self::SLOTS, ['id' => $this->teamRound->id, 'scenarioId' => $scenarioId])
+            ->assertJsonMissingPath('errors')
+            ->json('data.teamRound.squads');
+
+        return array_map(fn (array $squad) => array_map(fn (array $category) => [
+            $category['name'],
+            array_column($category['players'], 'name'),
+            $category['players'][0]['points'] ?? [],
+        ], $squad['categories']), $squads);
     }
 
     /**

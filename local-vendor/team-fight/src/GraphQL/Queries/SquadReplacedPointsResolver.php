@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 /**
- * SquadReserve.reservePoints: the reserve's ranking points at the Squad's ranking version, so the editor can check a
- * reserve who isn't placed (§43 stk. 3). Empty for a User of another Clubhouse.
+ * SquadReserve.replacedPoints: the replaced player's ranking points at the Squad's ranking version, so the editor can
+ * check the reserve against a player who no longer stands on the Squad (§43 stk. 3). Empty for a User of another
+ * Clubhouse.
  */
-class SquadReservePointsResolver
+class SquadReplacedPointsResolver
 {
     /**
      * @param  array<string, mixed>  $args
@@ -32,7 +33,7 @@ class SquadReservePointsResolver
         }
 
         return Point::query()
-            ->whereIn('member_id', Member::query()->where('refId', $root->reserve_ref_id)->select('id'))
+            ->whereIn('member_id', Member::query()->where('refId', $root->replaced_ref_id)->select('id'))
             ->whereDate('version', $squad->version ?? $teamRound->version)
             ->orderBy('category')
             ->get();

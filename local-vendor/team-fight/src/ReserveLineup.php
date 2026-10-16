@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight;
 
+use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\Squad;
 
 /**
- * A lineup with its reserve records (§43): on a Squad, X plays for Y. X is an Available Member or stands on a lower
- * Squad.
+ * A lineup as played with its reserve records (§43): on a Squad, X plays for Y. X stands in the Squad's slots instead of
+ * Y, and may also keep a slot on a lower Squad.
  */
 class ReserveLineup
 {
@@ -27,45 +28,41 @@ class ReserveLineup
     }
 
     /**
-     * The records that count: Y stands on the record's Squad and X doesn't stand on that Squad or a higher one. Stale
+     * The records that count, each with the categories X plays on the Squad: X stands on the Squad and Y doesn't. Stale
      * records are left out.
      *
-     * @return list<array{squadIndex: int, reserve: Player, replaced: Player}>
+     * @return list<array{squadIndex: int, reserve: Player, replaced: Player, categories: list<Category>}>
      */
     public function records(): array
     {
         $records = [];
         foreach ($this->squads as $squadIndex => $squad) {
             foreach ($squad->reserves as $record) {
-                $replaced = $this->playerOn($squad, $record->replacedRefId);
-                if ($replaced === null || $this->standsOnOrAbove($squadIndex, $record->reserve->refId)) {
+                $categories = $this->categoriesOf($squad, $record->reserveRefId);
+                if ($categories === [] || $this->categoriesOf($squad, $record->replaced->refId) !== []) {
                     continue;
                 }
-                $records[] = ['squadIndex' => $squadIndex, 'reserve' => $record->reserve, 'replaced' => $replaced];
+                $reserve = $this->playerIn($categories[0], $record->reserveRefId);
+                $records[] = ['squadIndex' => $squadIndex, 'reserve' => $reserve, 'replaced' => $record->replaced, 'categories' => $categories];
             }
         }
 
         return $records;
     }
 
-    private function standsOnOrAbove(int $squadIndex, string $refId): bool
+    /**
+     * @return list<Category>
+     */
+    private function categoriesOf(Squad $squad, string $refId): array
     {
-        foreach (array_slice($this->squads, 0, $squadIndex + 1) as $squad) {
-            if ($this->playerOn($squad, $refId) !== null) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_values(array_filter($squad->categories, fn (Category $category) => $this->playerIn($category, $refId) !== null));
     }
 
-    private function playerOn(Squad $squad, string $refId): ?Player
+    private function playerIn(Category $category, string $refId): ?Player
     {
-        foreach ($squad->categories as $category) {
-            foreach ($category->players as $player) {
-                if ($player->refId === $refId) {
-                    return $player;
-                }
+        foreach ($category->players as $player) {
+            if ($player->refId === $refId) {
+                return $player;
             }
         }
 

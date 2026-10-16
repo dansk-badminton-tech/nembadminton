@@ -6,6 +6,7 @@ namespace Tests\GraphQL;
 
 use App\Enums\SeasonPhase;
 use App\Models\Cancellation;
+use App\Models\Member;
 use App\Models\Squad;
 use App\Models\SquadMember;
 use App\Models\SquadReserve;
@@ -133,6 +134,24 @@ class RealisticSeasonSeedTest extends TestCase
         );
     }
 
+    public function test_the_reserves_are_placed_as_played(): void
+    {
+        $reserves = SquadReserve::query()->with('squad.teamRound.squads')->get()
+            ->filter(fn (SquadReserve $reserve) => $reserve->squad->teamRound->season_id === 2025);
+
+        foreach ($reserves as $reserve) {
+            $placed = fn (Squad $squad, string $refId) => SquadMember::query()
+                ->where('member_ref_id', $refId)
+                ->whereHas('category', fn ($query) => $query->where('squad_id', $squad->id))
+                ->exists();
+            $below = $reserve->squad->teamRound->squads->where('order', '>', $reserve->squad->order);
+
+            $this->assertTrue($placed($reserve->squad, $reserve->reserve_ref_id), 'The reserve plays on the Squad');
+            $this->assertFalse($placed($reserve->squad, $reserve->replaced_ref_id), 'The replaced player is off the Squad');
+            $this->assertTrue($below->contains(fn (Squad $squad) => $placed($squad, $reserve->reserve_ref_id)), 'The reserve keeps their slot below');
+        }
+    }
+
     public function test_cancelled_players_are_not_placed_on_their_dates(): void
     {
         $cancellations = Cancellation::query()->with('dates', 'cancellationCollector')->get();
@@ -195,19 +214,33 @@ class RealisticSeasonSeedTest extends TestCase
                         'name' => $category->name,
                         'players' => $category->players->map($this->validationPlayer(...))->all(),
                     ])->all(),
-                // The seeded reserves stand on a lower Squad, so their player there carries their points.
+                // The replaced player no longer stands on the Squad; their points come from the ranking.
                 'reserves' => $squad->reserves()->inLineup($scenarioId)->get()->map(fn (SquadReserve $reserve) => [
-                    'reserve' => $this->validationPlayer(SquadMember::query()
-                        ->where('member_ref_id', $reserve->reserve_ref_id)
-                        ->whereHas('category', fn ($query) => $query
-                            ->where('team_round_scenario_id', $scenarioId)
-                            ->whereIn('squad_id', $round->squads->pluck('id')))
-                        ->with('points')
-                        ->firstOrFail()),
-                    'replacedRefId' => $reserve->replaced_ref_id,
+                    'reserveRefId' => $reserve->reserve_ref_id,
+                    'replaced' => $this->rankedPlayer($reserve->replaced_ref_id, (string) ($squad->version ?? $round->version)),
                 ])->all(),
             ],
         ])->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function rankedPlayer(string $refId, string $version): array
+    {
+        $member = Member::query()->where('refId', $refId)->sole();
+
+        return [
+            'gender' => $member->gender === 'M' ? 'MEN' : 'WOMEN',
+            'name' => $member->name,
+            'refId' => $refId,
+            'points' => $member->points()->whereDate('version', $version)->get()->map(fn ($point) => [
+                'category' => $point->category,
+                'points' => $point->points,
+                'position' => $point->position,
+                'vintage' => $point->vintage,
+            ])->all(),
+        ];
     }
 
     /**

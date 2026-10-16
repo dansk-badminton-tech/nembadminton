@@ -47,7 +47,7 @@ One Team's lineup and match setup for a single TeamRound. A Squad is normally cr
 _Avoid_: Team, sub-team
 
 **Reserve Player** (reservespiller):
-A Member marked on one Squad as having replaced a player there after injury, illness or force majeure before the lineups were exchanged (§43 stk. 1). The mark records which player on that Squad the Reserve Player replaces ("X for Y") and belongs to the Squad, not to a category. The lineup is validated as placed; the Reserve Player is only checked against the replaced player, in each of that player's categories (§43 stk. 3). The Reserve Player is an Available Member, or comes from a lower Squad of the same lineup and keeps their own slot there. A Member is only a Reserve Player when the mark is set; it is never inferred from where they were placed.
+A Member marked on one Squad as having replaced a player there after injury, illness or force majeure before the lineups were exchanged (§43 stk. 1). The mark records which player the Reserve Player replaces ("X for Y") and belongs to the Squad, not to a category. The Squad shows the lineup as played: the Reserve Player stands in the Squad's slots instead of the replaced player, and the normal checks validate that lineup. A Reserve Player with more points than the replaced player, in a category they play on the Squad, is a warning (§43 stk. 3). The Reserve Player is an Available Member, or comes from a lower Squad of the same lineup and also keeps their own slot there; it is the only way a Member stands on two Squads of a TeamRound. A Member is only a Reserve Player when the mark is set; it is never inferred from where they were placed.
 _Avoid_: Substitute, stand-in, afløser
 
 **Reserve Quarantine** (karantæne):

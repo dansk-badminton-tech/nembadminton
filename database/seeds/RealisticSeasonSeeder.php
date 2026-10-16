@@ -109,6 +109,7 @@ class RealisticSeasonSeeder extends Seeder
             );
 
             $reserve = isset(self::RESERVES[$round]) ? $generator->reserve($lineup, self::RESERVES[$round], $version) : null;
+            $lineup = $reserve['lineup'] ?? $lineup;
             if ($round === self::DRAFT_ROUND) {
                 $lineup = $generator->withOrderingError($lineup, 0, $version);
             }

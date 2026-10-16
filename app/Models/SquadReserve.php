@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * A reserve record (§43): on the Squad, the reserve Member from a lower Squad plays for the replaced Member. Scoped per
- * Scenario like category slots.
+ * A reserve record (§43): on the Squad, the reserve Member, an Available Member or one from a lower Squad, plays for the
+ * replaced Member and stands in their slots. Scoped per Scenario like category slots.
  *
  * @property int $id
  * @property int $squad_id

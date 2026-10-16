@@ -12,7 +12,8 @@ use Tests\DuskTestCase;
 
 /**
  * Reserve Players (§43) on the seeded "Ungdom - 1. runde" (see YouthTeamRoundSeeder): Cecillie Henriksen (Hold 2 ·
- * 2. DS), or an Available Member, plays for Nanna Reese (Hold 1 · 2. DS and 2. DD).
+ * 2. DS), or an Available Member, plays for Nanna Reese (Hold 1 · 2. DS and 2. DD). Adding the reserve puts them in
+ * Nanna's slots; removing it puts Nanna back.
  */
 class TeamFightReservePlayerTest extends DuskTestCase
 {
@@ -51,7 +52,7 @@ class TeamFightReservePlayerTest extends DuskTestCase
         });
     }
 
-    public function test_adding_a_reserve_shows_the_row_and_both_tags_and_removing_it_clears_them(): void
+    public function test_adding_a_reserve_puts_them_in_the_slots_and_removing_it_puts_the_player_back(): void
     {
         $this->browse(function (Browser $browser) {
             $this->openRound($browser, 'Ungdom - 1. runde');
@@ -60,22 +61,28 @@ class TeamFightReservePlayerTest extends DuskTestCase
 
             $browser->assertSeeIn("[dusk='reserve-section-0']", 'Reserver på Hold 1')
                 ->assertSeeIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Fra Hold 2 · 2. DS')
-                ->assertSeeIn("[dusk='squad-0'] [dusk='replaced-tag']", 'Erstattes af Cecillie Henriksen')
+                ->assertSeeIn("[dusk='squad-0'] [dusk='reserve-for-tag']", 'Reserve for Nanna Reese')
                 ->assertSeeIn("[dusk='squad-1'] [dusk='reserve-tag']", 'Reserve på Hold 1 for Nanna Reese')
+                ->assertMissing("[dusk='reserve-row-warning']")
                 ->waitFor('[dusk="validation-reserves"]');
-            // Nanna stands on 2. DS and 2. DD; both slots get the tag.
-            $this->assertCount(2, $browser->elements("[dusk='squad-0'] [dusk='replaced-tag']"));
+            // Cecillie took Nanna's 2. DS and 2. DD; both slots get the tag.
+            $this->assertCount(2, $browser->elements("[dusk='squad-0'] [dusk='reserve-for-tag']"));
+            $this->assertSame(0, $this->slotsOf($browser, 0, 'Nanna Reese'));
+            $this->assertSame(2, $this->slotsOf($browser, 0, 'Cecillie Henriksen'));
+            $this->assertGreaterThan(0, $this->slotsOf($browser, 1, 'Cecillie Henriksen'), 'Cecillie keeps her slots on Hold 2');
 
             // The record survives a reload.
             $browser->refresh()
-                ->waitForTextIn("[dusk='squad-0']", 'Nanna Reese')
-                ->waitForTextIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Cecillie Henriksen for Nanna Reese');
+                ->waitForTextIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Cecillie Henriksen for Nanna Reese')
+                ->assertSeeIn("[dusk='squad-0']", 'Cecillie Henriksen');
 
             $browser->click("[dusk='reserve-section-0'] [dusk='reserve-remove']")
                 ->waitUntilMissing("[dusk='reserve-section-0'] [dusk='reserve-row']")
                 ->assertSeeIn("[dusk='reserve-section-0']", 'Tilføj reserve til Hold 1')
-                ->assertMissing("[dusk='replaced-tag']")
+                ->assertMissing("[dusk='reserve-for-tag']")
                 ->assertMissing("[dusk='reserve-tag']");
+            $this->assertSame(2, $this->slotsOf($browser, 0, 'Nanna Reese'));
+            $this->assertSame(0, $this->slotsOf($browser, 0, 'Cecillie Henriksen'));
         });
     }
 
@@ -94,12 +101,26 @@ class TeamFightReservePlayerTest extends DuskTestCase
 
             $browser->addReserve(0, $available->name, 'Nanna Reese');
 
-            $browser->assertSeeIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Ikke på et hold i holdrunden')
-                ->assertSeeIn("[dusk='squad-0'] [dusk='replaced-tag']", "Erstattes af {$available->name}")
+            $browser->assertSeeIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Ledig spiller')
+                ->assertSeeIn("[dusk='squad-0'] [dusk='reserve-for-tag']", 'Reserve for Nanna Reese')
+                ->assertSeeIn("[dusk='squad-0']", $available->name)
                 ->assertMissing("[dusk='reserve-tag']")
                 ->assertMissing("[dusk='reserve-row-warning']")
                 ->waitFor('[dusk="validation-reserves"]');
         });
+    }
+
+    /**
+     * How many slots on the Squad hold the player (the name cells, not the tags).
+     */
+    private function slotsOf(Browser $browser, int $squadIndex, string $name): int
+    {
+        $nameJson = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+
+        return $browser->script(<<<JS
+            return Array.from(document.querySelectorAll("[dusk='squad-{$squadIndex}'] p.handle"))
+                .filter(element => element.textContent.includes({$nameJson})).length;
+        JS)[0];
     }
 
     public function test_the_reserve_is_tagged_with_quarantine_in_the_next_round(): void

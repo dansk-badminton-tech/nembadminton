@@ -1,6 +1,7 @@
 // Reserve Players (§43) in the TeamRound editor: on a Squad, X plays "for" Y on this Squad. X is an Available Member or
-// stands on a lower Squad of the same lineup. A Squad's records are squad.reserves:
-// [{id, reserve: {refId, name, gender, vintage}, replaced: {...}, reservePoints: [{category, points, position, vintage}]}].
+// stands on a lower Squad of the same lineup. Adding the record puts X in Y's slots, so the Squad shows the lineup as
+// played; X keeps their slot on a lower Squad. A Squad's records are squad.reserves:
+// [{id, reserve: {refId, name, gender, vintage}, replaced: {...}, replacedPoints: [{category, points, position, vintage}]}].
 // Framework-free, so node:test can load it.
 
 function playersOf(squad) {
@@ -47,12 +48,12 @@ export function reserveCandidates(squads, squadIndex, availableMembers = []) {
     return [...lowerSquadCandidates(squads, squadIndex), ...available]
 }
 
-// "Erstatter": Members placed on this Squad who haven't been replaced yet, with the names of their categories.
+// "Erstatter": Members placed on this Squad who aren't a reserve there, with the names of their categories.
 export function replaceableMembers(squad) {
-    const replaced = new Set((squad.reserves ?? []).map(record => record.replaced.refId))
+    const reserves = new Set((squad.reserves ?? []).map(record => record.reserve.refId))
     const members = new Map()
     squad.categories.forEach(category => category.players.forEach(player => {
-        if (replaced.has(player.refId)) return
+        if (reserves.has(player.refId)) return
         if (!members.has(player.refId)) {
             members.set(player.refId, {refId: player.refId, name: player.name, gender: player.gender, categories: []})
         }
@@ -61,9 +62,9 @@ export function replaceableMembers(squad) {
     return [...members.values()]
 }
 
-// The record whose reserve replaces refId on this Squad ("Erstattes af X"), or null.
-export function replacedBy(squad, refId) {
-    return (squad.reserves ?? []).find(record => record.replaced.refId === refId) ?? null
+// The record whose reserve is refId on this Squad ("Reserve for Y"), or null.
+export function reserveOn(squad, refId) {
+    return (squad.reserves ?? []).find(record => record.reserve.refId === refId) ?? null
 }
 
 // Where refId is a reserve for someone on another Squad ("Reserve på Hold N for Y"): {index, record}, or null.
@@ -75,9 +76,10 @@ export function reserveOnHigherSquad(squads, refId) {
     return null
 }
 
-// Where the reserve stands now ("Fra Hold M · <category>"): {index, categoryName}, or null for an Available Member.
-export function reserveOrigin(squads, record) {
-    const index = placedSquadIndex(squads, record.reserve.refId)
+// The lower Squad the reserve also plays on ("Fra Hold M · <category>"): {index, categoryName}, or null for an Available
+// Member.
+export function reserveOrigin(squads, squadIndex, record) {
+    const index = squads.findIndex((squad, i) => i > squadIndex && standsOn(squad, record.reserve.refId))
     if (index === -1) return null
     const category = squads[index].categories.find(c => c.players.some(player => player.refId === record.reserve.refId))
     return {index, categoryName: category.name}
@@ -86,27 +88,26 @@ export function reserveOrigin(squads, record) {
 // Soft warnings on a record the lineup changed under. Such a record doesn't count in validation.
 export function reserveWarnings(squads, squadIndex, record) {
     const warnings = []
-    if (!standsOn(squads[squadIndex], record.replaced.refId)) {
-        warnings.push(`${record.replaced.name} står ikke længere på Hold ${squadIndex + 1}`)
+    if (!standsOn(squads[squadIndex], record.reserve.refId)) {
+        warnings.push(`${record.reserve.name} står ikke på Hold ${squadIndex + 1}`)
     }
-    const index = placedSquadIndex(squads, record.reserve.refId)
-    if (index !== -1 && index <= squadIndex) {
-        warnings.push(`${record.reserve.name} står nu på Hold ${index + 1}, ikke et lavere hold`)
+    if (standsOn(squads[squadIndex], record.replaced.refId)) {
+        warnings.push(`${record.replaced.name} står stadig på Hold ${squadIndex + 1}`)
     }
     return warnings
 }
 
-// A Squad's records in the validation input (ValidateSquad.reserves), with the reserve's points at the Squad's ranking
-// version.
+// A Squad's records in the validation input (ValidateSquad.reserves), with the replaced player's points at the Squad's
+// ranking version.
 export function validationReserves(squad) {
     return (squad.reserves ?? []).map(record => ({
-        reserve: {
-            refId: record.reserve.refId,
-            name: record.reserve.name,
-            gender: record.reserve.gender,
-            points: (record.reservePoints ?? []).map(({category, points, position, vintage}) => ({category, points, position, vintage}))
-        },
-        replacedRefId: record.replaced.refId
+        reserveRefId: record.reserve.refId,
+        replaced: {
+            refId: record.replaced.refId,
+            name: record.replaced.name,
+            gender: record.replaced.gender,
+            points: (record.replacedPoints ?? []).map(({category, points, position, vintage}) => ({category, points, position, vintage}))
+        }
     }))
 }
 
@@ -119,8 +120,8 @@ export function quarantineTooltip(quarantine) {
         + 'En spiller, der har været reserve, må ikke spille på noget hold i næste spillerunde (§44).'
 }
 
-// The §43 stk. 3 findings of validateReserves as error messages.
+// The §43 stk. 3 findings of validateReserves as warnings: the club judges whether the team is stronger than planned.
 export function reserveFindingMessages(findings) {
     return findings.map(({squadIndex, reserve, replaced, categoryName}) =>
-        `Hold ${squadIndex + 1}: Reserven ${reserve.name} har flere point end ${replaced.name} i ${categoryName} (${reserve.points} mod ${replaced.points}). Det er en styrkeforøgelse (§43 stk. 3).`)
+        `Hold ${squadIndex + 1}: Reserven ${reserve.name} har flere point end ${replaced.name} i ${categoryName} (${reserve.points} mod ${replaced.points}). Er holdet stærkere end planlagt (§43 stk. 3)?`)
 }

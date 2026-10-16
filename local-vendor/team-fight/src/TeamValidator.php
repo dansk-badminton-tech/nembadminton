@@ -482,8 +482,9 @@ class TeamValidator
     public const STRENGTH_INCREASE = 'STRENGTH_INCREASE';
 
     /**
-     * §43 stk. 3 findings for the reserve records that count: STRENGTH_INCREASE, an error, in each of the replaced
-     * player's categories on the Squad where the reserve has more points than the replaced player.
+     * §43 stk. 3 findings for the reserve records that count: STRENGTH_INCREASE, a warning, in each category the reserve
+     * plays on the Squad where they have more points than the replaced player. The lineup as played passes the other
+     * checks like any lineup; this only points out a reserve who may make the team stronger than planned.
      *
      * A player without points in a category counts as 0 there.
      *
@@ -492,16 +493,11 @@ class TeamValidator
      */
     public function validateReserves(array $squads): array
     {
-        $squads = array_values($squads);
-
         $findings = [];
         foreach ((new ReserveLineup($squads))->records() as $record) {
-            ['squadIndex' => $squadIndex, 'reserve' => $reserve, 'replaced' => $replaced] = $record;
+            ['squadIndex' => $squadIndex, 'reserve' => $reserve, 'replaced' => $replaced, 'categories' => $categories] = $record;
 
-            foreach ($squads[$squadIndex]->categories as $category) {
-                if (! in_array($replaced->refId, array_map(fn (Player $player) => $player->refId, $category->players), true)) {
-                    continue;
-                }
+            foreach ($categories as $category) {
                 $reservePoints = $this->categoryPoints($reserve, $category->category);
                 $replacedPoints = $this->categoryPoints($replaced, $category->category);
                 if ($reservePoints > $replacedPoints) {

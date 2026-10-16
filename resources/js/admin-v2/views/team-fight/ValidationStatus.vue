@@ -79,6 +79,14 @@
             </div>
         </div>
 
+        <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
+            <div class="message-body">
+                <ul>
+                    <li v-for="message in reserveMessages" :key="message">{{ message }}</li>
+                </ul>
+            </div>
+        </article>
+
         <div v-if="hasErrors" class="mt-3">
             <b-collapse
                 aria-id="contentIdForA11y1"
@@ -190,27 +198,26 @@ export default {
             return this.statusText(this.incompleteTeam)
         },
         hasErrors() {
-            return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true
-                || this.reserveMessages.length > 0;
+            return this.incompleteTeam === true || this.invalidCategory === true || this.invalidLevel === true;
         },
         allErrors() {
-            return [...buildValidationErrors(this), ...this.reserveMessages]
+            return buildValidationErrors(this)
         },
         reserveMessages() {
             return reserveFindingMessages(this.reserveFindings)
         },
         reserveStatusClass() {
-            return this.reserveMessages.length ? 'is-danger' : 'is-success'
+            return this.reserveMessages.length ? 'is-warning' : 'is-success'
         },
         reserveStatusIcon() {
-            return this.reserveMessages.length ? 'alert-circle' : 'check-circle'
+            return this.reserveMessages.length ? 'alert' : 'check-circle'
         },
         reserveStatusText() {
-            return this.reserveMessages.length ? 'Fejl' : 'OK'
+            return this.reserveMessages.length ? 'Advarsel' : 'OK'
         },
         reserveTip() {
-            if (this.reserveMessages.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Der må ikke ske styrkeforøgelse (§43 stk. 3).'
-            return 'Reserverne overholder §43 stk. 3.'
+            if (this.reserveMessages.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Holdet må ikke blive stærkere end planlagt (§43 stk. 3); vurder selv, om det er tilfældet.'
+            return 'Ingen reserve har flere point end spilleren, vedkommende erstatter (§43 stk. 3).'
         },
         incompleteTeamTip() {
             if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'

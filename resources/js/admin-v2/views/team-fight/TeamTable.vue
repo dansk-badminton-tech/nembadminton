@@ -181,14 +181,14 @@
                                 </b-tag>
                             </b-tooltip>
                             <b-tooltip
-                                v-if="replacedBy(squad, player.refId)"
+                                v-if="reserveOn(squad, player.refId)"
                                 type="is-dark"
-                                :label="replacedTooltip(replacedBy(squad, player.refId))"
+                                :label="reserveOnTooltip(reserveOn(squad, player.refId))"
                                 class="is-pulled-left ml-2"
                                 multilined>
-                                <b-tag size="is-small" type="is-warning is-light" dusk="replaced-tag">
+                                <b-tag size="is-small" type="is-info is-light" dusk="reserve-for-tag">
                                     <b-icon icon="account-switch" size="is-small" class="mr-1"></b-icon>
-                                    Erstattes af {{ replacedBy(squad, player.refId).reserve.name }}
+                                    Reserve for {{ reserveOn(squad, player.refId).replaced.name }}
                                 </b-tag>
                             </b-tooltip>
                             <b-tooltip
@@ -291,7 +291,7 @@ import EditPlayerModal from "@/views/team-fight/EditPlayerModal.vue";
 import {isTooYoung, tooYoungMessage} from "./too-young.js";
 import SeasonHistoryModal from "./season-history/SeasonHistoryModal.vue";
 import ReserveSection from "./ReserveSection.vue";
-import {quarantineLabel, quarantineTooltip, replacedBy, reserveOnHigherSquad} from "./reserves.js";
+import {quarantineLabel, quarantineTooltip, reserveOn, reserveOnHigherSquad} from "./reserves.js";
 
 export default {
     name: 'TeamTable',
@@ -363,7 +363,7 @@ export default {
         }
     },
     methods: {
-        replacedBy,
+        reserveOn,
         quarantineLabel,
         // Where the player on this Squad is a reserve on a higher Squad, or null.
         reserveAbove(squadIndex, player) {
@@ -374,8 +374,8 @@ export default {
         reserveTooltip({index, record}) {
             return `Reserve (§43): spiller også på Hold ${index + 1} for ${record.replaced.name}, der meldte afbud pga. skade, sygdom eller force majeure. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`
         },
-        replacedTooltip(record) {
-            return `Meldt afbud pga. skade, sygdom eller force majeure. ${record.reserve.name} spiller i stedet som reserve (§43) og må ikke spille i næste spillerunde (§44).`
+        reserveOnTooltip(record) {
+            return `Reserve (§43) for ${record.replaced.name}, der meldte afbud pga. skade, sygdom eller force majeure. Holdet tjekkes, som det spiller. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`
         },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)

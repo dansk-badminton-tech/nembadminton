@@ -49,24 +49,27 @@ Sæsonhistorikken bruger kun de officielle holdopstillinger i klubbens tidligere
 
 ## Sæt en reservespiller ind
 
-Melder en spiller afbud på grund af skade, sygdom eller force majeure, før holdopstillingerne er udvekslet, må en spiller fra et lavere hold komme ind som reservespiller (§ 43). Du registrerer det som "reserven for den spiller, der er meldt afbud".
+Melder en spiller afbud på grund af skade, sygdom eller force majeure, før holdopstillingerne er udvekslet, må en anden spiller komme ind som reservespiller (§ 43). Reserven kan være en ledig spiller eller en spiller fra et lavere hold. Du registrerer det som "reserven for den spiller, der er meldt afbud", og holdet viser derefter opstillingen, som den spilles.
 
 1. Find holdet, hvor spilleren er meldt afbud, og vælg **Tilføj reserve til Hold 1** (med nummeret på holdet) under holdet.
 2. Vælg reserven under **Reserve**. Listen viser først spillere, der står på et lavere hold, og derefter ledige spillere, som ikke står på et hold i holdrunden. Spillere, der allerede er reserve, er ikke med.
 3. Vælg spilleren, der erstattes, under **Erstatter**. Listen viser spillere på holdet, som ikke allerede har en reserve.
 4. Vælg **Tilføj reserve**. Vil du fortryde, vælger du **Annuller**.
+5. Reserven står nu på den erstattede spillers pladser. Ret rækkefølgen på holdet, hvis reservens point kræver det, ved at trække spillerne på plads.
 
-Kommer reserven fra et lavere hold, beholder reserven sin plads der. Reserven er markeret med **Reserve på Hold 1 for** og navnet, og den erstattede spiller er markeret med **Erstattes af** og navnet. Reserver på et hold står under **Reserver på Hold 1**. Vælg krydset **Fjern reserve** for at fjerne en reserve. Vil du ændre en reserve, fjerner du den og tilføjer den igen. Vil du tilføje flere reserver på samme hold, vælger du **Tilføj endnu en reserve**.
+Eksempel: Lin Dan spiller 1. HS og Jesper 2. HS på Hold 1. Lin Dan bliver syg, og Daniel fra Hold 2 kommer ind som reserve. Daniel står først på 1. HS, men har færre point end Jesper. Træk Jesper op på 1. HS og Daniel ned på 2. HS.
 
-Står den erstattede spiller ikke længere på holdet, eller står reserven nu på samme eller et højere hold, viser reserven en advarsel. En sådan reserve tæller ikke med i kontrollen, så ret eller fjern den.
+Kommer reserven fra et lavere hold, beholder reserven sin plads der og spiller på begge hold. På holdet er reserven markeret med **Reserve for** og navnet på den erstattede spiller, og på det lavere hold med **Reserve på Hold 1 for** og navnet. Reserver på et hold står under **Reserver på Hold 1**. Vælg krydset **Fjern reserve** for at fjerne en reserve; så kommer den erstattede spiller tilbage på reservens pladser. Vil du ændre en reserve, fjerner du den og tilføjer den igen. Vil du tilføje flere reserver på samme hold, vælger du **Tilføj endnu en reserve**.
+
+Står reserven ikke længere på holdet, eller står den erstattede spiller der igen, viser reserven en advarsel. En sådan reserve tæller ikke med i kontrollen, så ret eller fjern den.
 
 Reserverne gælder den opstilling, der er valgt ved **Holdene i holdrunden**, og følger med, når du kopierer eller [arbejder med scenarier](/app/help/guides/arbejd-med-scenarier-i-en-holdrunde). Den officielle holdopstilling viser dem også i den delte holdopstilling under **Reserve**.
 
 ### Kontrol af reserver
 
-Har holdopstillingen reserver, viser kontrollerne også **Reserver (§43)**. Den viser en fejl, hvis reserven har flere point end den erstattede spiller i en af dennes kategorier. Det er en styrkeforøgelse, som ikke er tilladt (§ 43, stk. 3). Vælg en anden reserve.
+De almindelige kontroller af rækkefølgen på holdet og mellem holdene kontrollerer holdopstillingen, som den spilles, med reserven. En reserve, der også spiller på et lavere hold, sammenlignes ikke med sig selv.
 
-De øvrige kontroller bruger den oprindelige holdopstilling, uden reserven, fordi reserven måles mod den (§ 43, stk. 3). Reglen om at bruge den bedst mulige reserve (§ 43, stk. 2) kontrolleres ikke, fordi kun du ved, hvem der er tilgængelig.
+Har holdopstillingen reserver, viser kontrollerne også **Reserver (§43)**. Den viser en advarsel, hvis reserven har flere point end den erstattede spiller i en kategori, reserven spiller på holdet. Holdet må ikke blive stærkere end planlagt (§ 43, stk. 3), men det er en vurdering, så du kan stadig gemme og dele. Reglen om at bruge den bedst mulige reserve (§ 43, stk. 2) kontrolleres ikke, fordi kun du ved, hvem der er tilgængelig.
 
 ### Karantæne efter en reserve
 
