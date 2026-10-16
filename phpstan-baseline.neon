@@ -1405,20 +1405,8 @@ parameters:
 			path: app/Models/TeamRound.php
 
 		-
-			message: '#^Method App\\Models\\TeamRound\:\:squads\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/TeamRound.php
-
-		-
 			message: '#^Method App\\Models\\TeamRound\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
-			count: 1
-			path: app/Models/TeamRound.php
-
-		-
-			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Models/TeamRound.php
 
@@ -2743,12 +2731,6 @@ parameters:
 			path: local-vendor/team-fight/src/Enricher.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$categories\.$#'
-			identifier: property.notFound
-			count: 1
-			path: local-vendor/team-fight/src/Export/Exporter.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2799,12 +2781,6 @@ parameters:
 		-
 			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\CopyTeam\:\:copyTeam\(\) has parameter \$rootValue with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
-
-		-
-			message: '#^Parameter \#1 \$sourceSquad of method FlyCompany\\TeamFight\\SquadManager\:\:copySquad\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
 			count: 1
 			path: local-vendor/team-fight/src/GraphQL/Mutations/CopyTeam.php
 
@@ -3193,12 +3169,6 @@ parameters:
 			path: local-vendor/team-fight/src/Notifier.php
 
 		-
-			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: local-vendor/team-fight/src/Notifier.php
-
-		-
 			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3217,18 +3187,6 @@ parameters:
 			path: local-vendor/team-fight/src/ScenarioManager.php
 
 		-
-			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: local-vendor/team-fight/src/ScenarioManager.php
-
-		-
-			message: '#^Parameter \#1 \$squad of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\Squad, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: local-vendor/team-fight/src/ScenarioManager.php
-
-		-
 			message: '#^Parameter \#2 \$officialScenario of method FlyCompany\\TeamFight\\ScenarioManager\:\:getOfficialCategories\(\) expects App\\Models\\TeamRoundScenario\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3242,12 +3200,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$category\.$#'
-			identifier: property.notFound
-			count: 1
-			path: local-vendor/team-fight/src/SquadManager.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: local-vendor/team-fight/src/SquadManager.php
@@ -3285,12 +3237,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$vintage\.$#'
 			identifier: property.notFound
-			count: 1
-			path: local-vendor/team-fight/src/SquadManager.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:categories\(\)\.$#'
-			identifier: method.notFound
 			count: 1
 			path: local-vendor/team-fight/src/SquadManager.php
 

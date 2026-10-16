@@ -53,6 +53,7 @@ export default {
                 this.name = newValue.name
                 this.tier = newValue.tier
                 this.team = newValue.team
+                this.isPaperSquad = newValue.isPaperSquad ?? false
                 this.playingDatetime = newValue.playingDatetime
                                        ? new Date(newValue.playingDatetime)
                                        : null
@@ -95,6 +96,7 @@ export default {
             name: null,
             tier: null,
             team: null,
+            isPaperSquad: false,
             playingDatetime: null,
             playingPlace: null,
             playingAddress: null,
@@ -124,6 +126,8 @@ export default {
                 this.tier = teamTierLabel(this.team) || null;
             }
             this.team = null;
+            // Only a squad with a team can be a paper squad.
+            this.isPaperSquad = false;
         },
         updateToRankingList(newVersion) {
             return this.$apollo
@@ -214,6 +218,7 @@ export default {
                                 name
                                 tier
                                 effectiveTier
+                                isPaperSquad
                                 team {
                                     id
                                     name
@@ -240,6 +245,7 @@ export default {
                             name: this.name,
                             tier: this.tier,
                             teamId: this.team?.id ?? null,
+                            isPaperSquad: this.isPaperSquad,
                             externalTeamFightID: this.externalTeamFightID,
                             playingDatetime: this.playingDatetime
                                              ? formatDateTime(this.playingDatetime)
@@ -412,6 +418,13 @@ export default {
                             {{ option.label }}
                         </b-button>
                     </div>
+                </b-field>
+                <b-field
+                    v-if="hasTeam"
+                    message="Holdet stiller ikke op til kampen, men opstilles som et almindeligt hold.">
+                    <b-switch v-model="isPaperSquad" :disabled="loading" dusk="edit-squad-paper-squad-switch">
+                        Papirhold
+                    </b-switch>
                 </b-field>
                 <b-field label="Holdnavn">
                     <b-input

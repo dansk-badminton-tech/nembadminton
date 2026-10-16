@@ -28,4 +28,12 @@ final readonly class Placement
     {
         return $this->squad->phase;
     }
+
+    /**
+     * True when the Placement is on a Paper Squad (papirhold).
+     */
+    public function isPaperSquad(): bool
+    {
+        return $this->squad->isPaperSquad;
+    }
 }

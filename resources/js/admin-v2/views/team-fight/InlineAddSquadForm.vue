@@ -69,6 +69,19 @@
                         : 'Vælg et hold, så udfyldes navn og niveau automatisk.' }}
                 </p>
 
+                <b-field
+                    v-if="teamSelected"
+                    class="mt-2 mb-0"
+                    message="Holdet stiller ikke op til kampen, men opstilles som et almindeligt hold.">
+                    <b-switch
+                        :model-value="isPaperSquad"
+                        :disabled="loading"
+                        dusk="squad-paper-squad-switch"
+                        @update:modelValue="$emit('toggle-paper-squad', $event)">
+                        Papirhold
+                    </b-switch>
+                </b-field>
+
                 <div v-if="manualEntry" class="add-squad-form__manual-fields" dusk="squad-manual-fields">
                     <b-input
                         :model-value="selectedName"
@@ -232,6 +245,10 @@ export default {
             default: null
         },
         manualEntry: {
+            type: Boolean,
+            default: false
+        },
+        isPaperSquad: {
             type: Boolean,
             default: false
         },

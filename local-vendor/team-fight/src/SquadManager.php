@@ -114,6 +114,8 @@ class SquadManager
     public function copySquad(SquadModel $sourceSquad, TeamRound $targetTeam, ?int $officialScenarioId = null): SquadModel
     {
         $newSquad = $sourceSquad->replicate();
+        // A Paper Squad is about one match, so the copy for the next round starts as a regular Squad.
+        $newSquad->is_paper_squad = false;
         $targetTeam->squads()->save($newSquad);
 
         // A round with an official scenario uses that scenario's categories. Older rounds

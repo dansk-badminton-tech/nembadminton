@@ -8,6 +8,7 @@ query teamRound($id: ID!, $scenarioId: ID){
             name
             tier
             effectiveTier
+            isPaperSquad
             team{
                 id
                 name

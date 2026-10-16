@@ -10,7 +10,7 @@ const dan = player('4', 'Dan')
 const erik = player('5', 'Erik')
 const fie = player('6', 'Fie', 'SEN', 'WOMEN')
 
-const place = (place, squadPosition, label, players) => ({place, squadPosition, teamName: `Hold ${squadPosition}`, tier: 'Serie 1', label, players})
+const place = (place, squadPosition, label, players, isPaperSquad = false) => ({place, squadPosition, teamName: `Hold ${squadPosition}`, tier: 'Serie 1', isPaperSquad, label, players})
 const round = (id, name, isCurrent, categories) => ({
     id,
     name,
@@ -85,10 +85,20 @@ test('the placements of a round list every category with its place and partners'
     const history = seasonHistory(rounds)
 
     assert.deepEqual(history.placementsOf('1', 0), [
-        {category: 'HS', place: 1, label: 'Hold 1 · 1. HS', partners: []},
-        {category: 'HD', place: 1, label: 'Hold 1 · 1. HD', partners: ['Bo']},
+        {category: 'HS', place: 1, label: 'Hold 1 · 1. HS', partners: [], isPaperSquad: false},
+        {category: 'HD', place: 1, label: 'Hold 1 · 1. HD', partners: ['Bo'], isPaperSquad: false},
     ])
     assert.deepEqual(history.placementsOf('1', 2), [])
+})
+
+test('a placement on a Paper Squad is marked', () => {
+    const history = seasonHistory([
+        round('10', 'Runde 1', false, {HS: [place(1, 1, '1. HS', [anders]), place(2, 2, '1. HS', [bo], true)]}),
+        round('11', 'Runde 2', true, {HS: [place(1, 1, '1. HS', [bo])]}),
+    ])
+
+    assert.deepEqual(history.placementsOf('2', 0).map(p => [p.label, p.isPaperSquad]), [['Hold 2 · 1. HS', true]])
+    assert.deepEqual(history.placementsOf('1', 0).map(p => [p.label, p.isPaperSquad]), [['Hold 1 · 1. HS', false]])
 })
 
 test('the chart has the player and everyone within 2 places of them in any round', () => {

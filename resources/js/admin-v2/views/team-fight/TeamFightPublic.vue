@@ -26,7 +26,10 @@
                     dusk="team-fight-public-squad">
                     <div class="card squad-card" :dusk="'squad-card-' + index">
                         <div class="card-content">
-                            <p class="squad-eyebrow has-text-grey">HOLD {{ index + 1 }} - {{squad.name}}</p>
+                            <p class="squad-eyebrow has-text-grey">
+                                HOLD {{ index + 1 }} - {{squad.name}}
+                                <b-tag v-if="squad.isPaperSquad" type="is-warning is-light" class="ml-1" dusk="squad-paper-squad-tag">Papirhold</b-tag>
+                            </p>
                             <h2 v-if="squad.effectiveTier" class="is-size-4 has-text-weight-bold squad-title">
                                 {{ squad.effectiveTier }}
                             </h2>
@@ -216,6 +219,7 @@ export default {
                         playerLimit
                         name
                         effectiveTier
+                        isPaperSquad
                         playingDatetime
                         playingPlace
                         playingAddress
@@ -297,6 +301,10 @@ export default {
     font-size: 0.75rem;
     font-weight: 600;
     margin-bottom: 0.1rem;
+}
+.squad-eyebrow .tag {
+    text-transform: none;
+    letter-spacing: normal;
 }
 .squad-title {
     line-height: 1.2;

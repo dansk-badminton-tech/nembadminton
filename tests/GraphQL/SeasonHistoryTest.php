@@ -77,12 +77,27 @@ class SeasonHistoryTest extends TestCase
                     'squadPosition' => 1,
                     'teamName' => 'Højbjerg 1',
                     'tier' => '2. division',
+                    'isPaperSquad' => false,
                     'label' => '1. HS',
                     'players' => [['refId' => '0101011111', 'name' => 'Anders', 'gender' => 'MEN', 'vintage' => 'SEN']],
                 ]],
             ],
             $rounds[0]['categories'][0],
         );
+    }
+
+    #[Test]
+    public function a_place_on_a_paper_squad_is_marked(): void
+    {
+        $team = Team::factory()->create(['name' => 'Højbjerg 2', 'clubhouse_id' => $this->clubhouse->id]);
+        $viewed = $this->teamRound(round: 1);
+        $squad = $this->squad($viewed, 'x', order: 1, team: $team);
+        $squad->update(['is_paper_squad' => true]);
+        $this->category($squad, 'HS', '1. HS', ['0101011111']);
+
+        $places = $this->seasonHistory($viewed)->json('data.teamRound.seasonHistory.0.categories.0.places');
+
+        $this->assertSame([['Højbjerg 2', true]], array_map(fn (array $place) => [$place['teamName'], $place['isPaperSquad']], $places));
     }
 
     #[Test]
@@ -305,6 +320,7 @@ class SeasonHistoryTest extends TestCase
                                 squadPosition
                                 teamName
                                 tier
+                                isPaperSquad
                                 label
                                 players { refId name gender vintage }
                             }

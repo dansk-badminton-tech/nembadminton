@@ -10,6 +10,7 @@
             :selected-tier-name="selectedTierName"
             :selected-team-id="selectedTeamId"
             :manual-entry="manualEntry"
+            :is-paper-squad="selectedIsPaperSquad"
             :selected-playing-date="selectedPlayingDate"
             :match-count-options="matchCountOptions"
             :tier-options="tierOptions"
@@ -23,6 +24,7 @@
             @select-name="onNameChange"
             @select-tier="onTierChange"
             @select-team="onTeamChange"
+            @toggle-paper-squad="selectedIsPaperSquad = $event"
             @start-manual-entry="onStartManualEntry"
             @cancel-manual-entry="onCancelManualEntry"
             @create-team="teamFormOpen = true"
@@ -100,6 +102,7 @@ export default {
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
+            selectedIsPaperSquad: false,
             manualEntry: false,
             teamFormOpen: false,
             selectedPlayingDate: null,
@@ -307,6 +310,8 @@ export default {
         onTeamChange(team) {
             if (team === null || team === undefined) {
                 this.selectedTeamId = null;
+                // Only a squad with a team can be a paper squad.
+                this.selectedIsPaperSquad = false;
                 this.selectedName = '';
                 this.selectedTierName = '';
                 return;
@@ -370,6 +375,7 @@ export default {
             if (this.selectedTeamId !== null) {
                 // The squad shows the team's tier, so its own tier is left unset.
                 input.teamId = this.selectedTeamId;
+                input.isPaperSquad = this.selectedIsPaperSquad;
             } else {
                 const trimmedTier = this.selectedTierName.trim();
                 if (trimmedTier !== '') {
@@ -449,6 +455,7 @@ export default {
                 this.selectedName = '';
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
+                this.selectedIsPaperSquad = false;
             })
         }
     }

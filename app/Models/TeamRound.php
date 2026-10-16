@@ -129,6 +129,9 @@ class TeamRound extends Model
         return $this->hasMany(TeamActivityLog::class, 'team_round_id')->orderBy('created_at', 'desc');
     }
 
+    /**
+     * @return HasMany<Squad, $this>
+     */
     public function squads(): HasMany
     {
         return $this->hasMany(Squad::class, 'team_round_id', 'id')->orderBy('order');

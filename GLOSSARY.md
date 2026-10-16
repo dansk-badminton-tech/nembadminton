@@ -47,7 +47,7 @@ One Team's lineup and match setup for a single TeamRound. A Squad is normally cr
 _Avoid_: Team, sub-team
 
 **Paper Squad** (papirhold):
-A Squad entered for a Team whose match is not played in a TeamRound where a lower Team of the club does play (§38 stk. 7). It is lined up like any other Squad and keeps its place in the Squad order, so lower Squads are compared against it. Its own players must meet only the paper-team rule: they stand only in categories they have played this season, and they have played on the same or a lower Team before. A Paper Squad's placements count as played, except for the 20 October deadline (§32 stk. 1 c).
+A Squad entered for a Team whose match is not played in a TeamRound where a lower Team of the club does play (§38 stk. 7). It is lined up like any other Squad and keeps its place in the Squad order, so lower Squads are compared against it. Its own players must meet only the paper-team rule: they stand only in categories they have played this season, and they have played on the same or a lower Team before. A Paper Squad's placements count as played, except for the 20 October deadline (§32 stk. 1 c). The coach marks it on the Squad, so it holds in every Scenario of the TeamRound, and can mark or unmark it later, because a match can be cancelled after the lineup is made (§35A).
 _Avoid_: Oversidderhold, bye team, dummy team
 
 **Reserve Player** (reservespiller):

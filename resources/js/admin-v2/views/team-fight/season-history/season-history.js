@@ -114,6 +114,7 @@ export function seasonHistory(rounds) {
                     place: place.place,
                     label: placeLabelOf(place),
                     partners: place.players.filter(p => p.refId !== refId).map(p => p.name),
+                    isPaperSquad: place.isPaperSquad,
                 }]
             })
         },

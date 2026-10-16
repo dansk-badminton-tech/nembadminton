@@ -49,9 +49,21 @@ Tilføj holdene under **Holdene i holdrunden** i rækkefølge med det bedste hol
    - Skal holdet kun bruges i denne holdrunde, vælg **Uden hold**. Så kan du selv udfylde navn og niveau, fx "Højbjerg 1" og "1. division". Begge er valgfrie. Uden navn vises holdet som "Hold" efterfulgt af nummeret.
 2. Vælg holdets størrelse under **Antal kampe**. Vælg **Tilpas**, hvis holdet ikke følger et af standardformaterne, og angiv antallet af kampe i hver kategori: **MD**, **DS**, **DD**, **HS** og **HD**.
 3. Vælg holdets **Spilledato**. Den er som udgangspunkt holdrundens dato, og du kan vælge dagen før, dagen efter eller en anden dato.
-4. Vælg knappen under formularen. Den hedder fx **Tilføj "Højbjerg 1" til holdopstillingen** og nævner det valgte hold eller det navn, du har skrevet.
+4. Stiller holdet ikke op til kampen, men skal opstilles alligevel, så slå **Papirhold** til. Kontakten vises kun, når du har valgt et hold. Se [Marker et papirhold](#marker-et-papirhold).
+5. Vælg knappen under formularen. Den hedder fx **Tilføj "Højbjerg 1" til holdopstillingen** og nævner det valgte hold eller det navn, du har skrevet.
 
 Gentag trinene for hvert hold i holdrunden.
+
+## Marker et papirhold
+
+Et papirhold er et hold, der ikke stiller op til kampen, men som opstilles som et almindeligt hold, så de lavere hold stadig sammenlignes med det. Kun et hold, der er knyttet til et af klubbens hold, kan være papirhold. Et hold tilføjet med **Uden hold** kan ikke.
+
+- **Når du tilføjer holdet:** Slå **Papirhold** til, før du tilføjer holdet.
+- **Bagefter:** Vælg **Rediger holdet** i tandhjulsmenuen ved holdet, slå **Papirhold** til eller fra, og vælg **Gem**. Det er nyttigt, hvis en kamp bliver aflyst, efter at holdopstillingen er lavet.
+
+Markeringen gælder holdet i alle holdrundens scenarier. Holdet får mærket **Papirhold** ved holdets navn i holdopstillingen, i den delte holdopstilling og i sæsonhistorikken. Når du sender holdopstillingen på e-mail, står papirholdene nævnt i mailen, fx **Papirhold: Hold 2 (Højbjerg 2)**. Fjerner du holdets tilknytning til et hold, slås **Papirhold** fra.
+
+Kopierer du holdrunden til den næste, starter holdene som almindelige hold, så du skal markere et papirhold igen.
 
 ## Kontrollér holdenes ranglister
 
