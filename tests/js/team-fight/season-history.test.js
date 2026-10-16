@@ -117,8 +117,8 @@ test('a line breaks where the player was not placed', () => {
 test('partners ending on the same point share one label', () => {
     const chart = seasonHistory(rounds).chart('3', 'HD')
 
-    assert.deepEqual(chart.labels.map(label => [label.text, label.round, label.place, label.subject]), [
-        ['Carl / Bo', 2, 1, true],
+    assert.deepEqual(chart.labels.map(label => [label.text, label.round, label.place]), [
+        ['Carl / Bo', 2, 1],
     ])
 })
 
@@ -126,4 +126,43 @@ test('the season has earlier rounds only when more than the current round is ret
     assert.equal(seasonHistory(rounds).hasEarlierRounds, true)
     assert.equal(seasonHistory([rounds[2]]).hasEarlierRounds, false)
     assert.equal(seasonHistory([]).hasEarlierRounds, false)
+})
+
+test('a line that breaks is bridged across the rounds the player was not placed', () => {
+    const history = seasonHistory([
+        rounds[0],
+        round('11', 'Runde 2', false, {HS: [place(1, 1, '1. HS', [bo])]}),
+        round('12', 'Runde 3', true, {HS: [place(1, 1, '1. HS', [bo]), place(2, 1, '2. HS', [anders])]}),
+    ])
+
+    const lines = history.chart('1', 'HS').lines
+    assert.deepEqual(lines.find(line => line.name === 'Anders').gaps, [[{round: 0, place: 1}, {round: 2, place: 2}]])
+    assert.deepEqual(lines.find(line => line.name === 'Bo').gaps, [])
+})
+
+test('the pair on a place names the player first, then their partners', () => {
+    const history = seasonHistory(rounds)
+
+    assert.deepEqual(history.pairOf('2', 'HD', 0), ['Bo', 'Anders'])
+    assert.deepEqual(history.pairOf('1', 'HS', 0), ['Anders'])
+    assert.deepEqual(history.pairOf('1', 'HS', 2), [])
+})
+
+test('a label also names a partner who has no line in the chart', () => {
+    // Dan is never within 2 places of Anders, but ends on the same place as Carl, who is.
+    const history = seasonHistory([
+        round('10', 'Runde 1', false, {HD: [place(1, 1, '1. HD', [anders, bo]), place(2, 1, '2. HD', [carl, erik])]}),
+        round('11', 'Runde 2', true, {HD: [place(1, 1, '1. HD', [anders, bo]), place(4, 2, '2. HD', [carl, dan])]}),
+    ])
+
+    assert.deepEqual(history.chart('1', 'HD').labels.map(label => label.text), ['Anders / Bo', 'Erik', 'Carl / Dan'])
+})
+
+test('each name in a label has its own kind, so a youth partner does not colour the whole pair', () => {
+    const chart = seasonHistory(rounds).chart('2', 'HD')
+
+    assert.deepEqual(chart.labels[0].names, [
+        {name: 'Bo', kind: 'subject'},
+        {name: 'Carl', kind: 'youth'},
+    ])
 })
