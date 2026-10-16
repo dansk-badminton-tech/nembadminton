@@ -167,6 +167,8 @@
                                       :invalid-level-list="playingToHighList"
                                       :reserve-findings="reserveFindings"
                                       :show-reserves="hasReserves"
+                                      :paper-squad-validation="paperSquadValidation"
+                                      :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
@@ -215,6 +217,8 @@ import {
 } from "@/helpers.js";
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
+import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
+import {hasPaperSquad} from "./paper-squads.js"
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -298,6 +302,9 @@ export default {
         hasReserves() {
             return (this.teamRound?.squads || []).some(squad => squad.reserves?.length)
         },
+        hasPaperSquad() {
+            return hasPaperSquad(this.teamRound?.squads)
+        },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
@@ -356,6 +363,7 @@ export default {
             playingToHighSquadList: [],
             tooYoungPlayers: [],
             reserveFindings: [],
+            paperSquadValidation: null,
             teamCount: 1,
             players: [],
             saving: false,
@@ -1057,9 +1065,36 @@ export default {
                     this.saving = false
                 })
         },
+        validatePaperSquads() {
+            if (!this.hasPaperSquad) {
+                this.paperSquadValidation = null;
+                return;
+            }
+            this.$apollo.mutate(
+                {
+                    mutation: ValidatePaperSquadsMutation,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        input: wrapInTeamAndSquads(this.teamRound.squads)
+                    }
+                })
+                .then(({data}) => {
+                    this.paperSquadValidation = data.validatePaperSquads;
+                })
+                .catch(() => {
+                    this.$buefy.snackbar.open(
+                        {
+                            duration: 4000,
+                            type: 'is-danger',
+                            queue: false,
+                            message: `Noget gik galt under valideringen af holdet (validatePaperSquads)`
+                        })
+                })
+        },
         validate() {
             this.validateTooYoungPlayers();
             this.validateReserves();
+            this.validatePaperSquads();
             this.$apollo.mutate(
                 {
                     mutation: gql`

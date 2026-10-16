@@ -77,6 +77,23 @@
                     </div>
                 </b-tooltip>
             </div>
+            <div class="control" v-if="showPaperSquads">
+                <b-tooltip
+                    type="is-info"
+                    :label="paperSquadTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Papirhold (§38 stk. 7)</span>
+                        <span
+                            dusk="validation-paper-squads"
+                            :class="paperSquadStatusClass"
+                            class="tag is-medium">
+                            <b-icon :icon="paperSquadStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ paperSquadStatusText }}
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
         </div>
 
         <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
@@ -84,6 +101,15 @@
                 <ul>
                     <li v-for="message in reserveMessages" :key="message">{{ message }}</li>
                 </ul>
+            </div>
+        </article>
+
+        <article v-if="showPaperSquads && paperSquadMessages.length" class="message is-warning is-small mt-3" dusk="paper-squad-warnings">
+            <div class="message-body">
+                <ul>
+                    <li v-for="message in paperSquadMessages" :key="message">{{ message }}</li>
+                </ul>
+                <p v-if="paperSquadValidation && paperSquadValidation.players.length" class="mt-2">{{ paperSquadAggravation }}</p>
             </div>
         </article>
 
@@ -124,6 +150,7 @@
 <script>
 import {buildValidationErrors, invalidLevelTip} from './validation-status.js'
 import {reserveFindingMessages} from './reserves.js'
+import {PAPER_SQUAD_AGGRAVATION, paperSquadMessages} from './paper-squads.js'
 
 export default {
     name: 'ValidationStatus',
@@ -160,11 +187,22 @@ export default {
         showReserves: {
             type: Boolean,
             default: false
+        },
+        // §38 stk. 7 findings from validatePaperSquads; null until it has run
+        paperSquadValidation: {
+            type: Object,
+            default: null
+        },
+        // Show the §38 stk. 7 status, when the lineup has a Paper Squad
+        showPaperSquads: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
         return {
-            isOpen: false
+            isOpen: false,
+            paperSquadAggravation: PAPER_SQUAD_AGGRAVATION
         }
     },
     methods: {
@@ -218,6 +256,24 @@ export default {
         reserveTip() {
             if (this.reserveMessages.length) return 'En reserve har flere point end spilleren, vedkommende erstatter. Holdet må ikke blive stærkere end planlagt (§43 stk. 3); vurder selv, om det er tilfældet.'
             return 'Ingen reserve har flere point end spilleren, vedkommende erstatter (§43 stk. 3).'
+        },
+        paperSquadMessages() {
+            return paperSquadMessages(this.paperSquadValidation)
+        },
+        paperSquadStatusClass() {
+            if (this.paperSquadValidation === null) return 'is-light'
+            return this.paperSquadMessages.length ? 'is-warning' : 'is-success'
+        },
+        paperSquadStatusIcon() {
+            if (this.paperSquadValidation === null) return 'minus-circle-outline'
+            return this.paperSquadMessages.length ? 'alert' : 'check-circle'
+        },
+        paperSquadStatusText() {
+            if (this.paperSquadValidation === null) return 'Afventer'
+            return this.paperSquadMessages.length ? 'Advarsel' : 'OK'
+        },
+        paperSquadTip() {
+            return 'På et papirhold må en spiller kun stå i kategorier, de har spillet i sæsonen, og skal have stået på samme eller et lavere hold før: mindst 1 gang i grundspillet fra runde 2 og mindst 2 gange i slutspillet (§38 stk. 7). Rangordenen på papirholdet og styrkeordenen mod højere hold kontrolleres ikke.'
         },
         incompleteTeamTip() {
             if (this.ignoreIncompleteTeam) return 'Tjekket er slået fra. Hold valideres uden krav om fuld besætning. Slå til igen via kontakten.'

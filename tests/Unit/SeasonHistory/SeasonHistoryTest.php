@@ -249,6 +249,27 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
+    public function the_history_before_a_team_round_has_only_earlier_dates_of_its_clubhouse_and_season(): void
+    {
+        $this->member('0101011111', 'Anders');
+        $rounds = [
+            $this->teamRound(round: 1, attributes: ['name' => 'earlier', 'game_date' => '2026-09-20']),
+            $this->teamRound(round: 2, attributes: ['name' => 'same date', 'game_date' => '2026-10-04']),
+            $this->teamRound(round: 3, attributes: ['name' => 'later', 'game_date' => '2026-10-11']),
+            $this->teamRound(round: 1, attributes: ['name' => 'other clubhouse', 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id]),
+        ];
+        $viewed = $this->teamRound(round: 2, attributes: ['name' => 'viewed', 'game_date' => '2026-10-04']);
+        foreach ([...$rounds, $viewed] as $round) {
+            $this->category($this->squad($round, 'Klub 1', order: 1), 'HS', '1. HS', ['0101011111']);
+        }
+        $loader = app(SeasonHistoryLoader::class);
+
+        $this->assertSame(['earlier'], $this->roundNamesOf($loader->before($viewed), '0101011111'));
+        $this->assertSame(['earlier', 'viewed'], $this->roundNamesOf($loader->upTo($viewed), '0101011111'));
+        $this->assertSame([], $loader->before($this->teamRound(round: 2, attributes: ['game_date' => null]))->rounds());
+    }
+
+    #[Test]
     public function it_answers_the_lookups_the_rules_need(): void
     {
         $this->member('0101011111', 'Anders');

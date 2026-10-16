@@ -55,6 +55,10 @@ class Validate
 
         $playingToHigh = [];
         foreach ($squads as $squad) {
+            // §38 stk. 7: only the paper-team rule holds for a Paper Squad's own lineup, see validatePaperSquads.
+            if ($squad->isPaperSquad) {
+                continue;
+            }
             $playingToHigh = array_merge($this->teamValidator->validateSquad($squad), $playingToHigh);
         }
 
@@ -103,10 +107,11 @@ class Validate
      */
     private function deserializeSquads(Collection $squads): array
     {
-        // Reserves are optional and may arrive as null.
+        // Reserves and the Paper Squad flag are optional and may arrive as null.
         $squads = $squads->map(function ($squad) {
             if (is_array($squad)) {
                 $squad['reserves'] ??= [];
+                $squad['isPaperSquad'] ??= false;
             }
 
             return $squad;

@@ -12,6 +12,7 @@ use App\Models\SquadMember;
 use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
 use Carbon\Carbon;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -33,23 +34,47 @@ class SeasonHistoryLoader
     }
 
     /**
-     * The Season History up to a TeamRound: its Clubhouse's TeamRounds in its Season on an earlier game date, then the
-     * TeamRound itself, last. TeamRounds on the same date are left out, and so are TeamRounds without a Season. A
-     * TeamRound without a Season or game date has no earlier TeamRounds.
+     * The Season History up to a TeamRound: its earlier TeamRounds (see before()), then the TeamRound itself, last.
      */
     public function upTo(TeamRound $teamRound): SeasonHistory
     {
         // The TeamRound is loaded again, so the lineup relations below aren't set on the caller's model.
         $teamRounds = TeamRound::query()
             ->whereKey($teamRound->id)
-            ->when($teamRound->season_id !== null && $teamRound->game_date !== null, fn (Builder $query) => $query
-                ->orWhere(fn (Builder $query) => $query
-                    ->where('clubhouse_id', $teamRound->clubhouse_id)
-                    ->where('season_id', $teamRound->season_id)
-                    ->whereDate('game_date', '<', Carbon::parse($teamRound->game_date)->toDateString())))
+            ->when($this->hasEarlierTeamRounds($teamRound), fn (Builder $query) => $query->orWhere($this->earlierThan($teamRound)))
             ->get();
 
         return $this->history($teamRounds);
+    }
+
+    /**
+     * The Season History before a TeamRound: its Clubhouse's TeamRounds in its Season on an earlier game date.
+     * TeamRounds on the same date are left out, and so are TeamRounds without a Season. A TeamRound without a Season or
+     * game date has no earlier TeamRounds.
+     */
+    public function before(TeamRound $teamRound): SeasonHistory
+    {
+        if (! $this->hasEarlierTeamRounds($teamRound)) {
+            return new SeasonHistory([]);
+        }
+
+        return $this->history(TeamRound::query()->where($this->earlierThan($teamRound))->get());
+    }
+
+    private function hasEarlierTeamRounds(TeamRound $teamRound): bool
+    {
+        return $teamRound->season_id !== null && $teamRound->game_date !== null;
+    }
+
+    /**
+     * @return Closure(Builder<TeamRound>): Builder<TeamRound>
+     */
+    private function earlierThan(TeamRound $teamRound): Closure
+    {
+        return fn (Builder $query) => $query
+            ->where('clubhouse_id', $teamRound->clubhouse_id)
+            ->where('season_id', $teamRound->season_id)
+            ->whereDate('game_date', '<', Carbon::parse($teamRound->game_date)->toDateString());
     }
 
     /**

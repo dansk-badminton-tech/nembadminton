@@ -31,6 +31,7 @@ export function wrapSquadsInTeamWithoutLeague(squads){
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
+            isPaperSquad: squad.isPaperSquad === true,
             reserves: validationReserves(squad),
             categories: squad.categories.map((category) => ({
                 id: category.id,
@@ -58,6 +59,7 @@ export function wrapInTeamAndSquads(squads) {
         squad: {
             id: squad.id,
             playerLimit: squad.playerLimit,
+            isPaperSquad: squad.isPaperSquad === true,
             reserves: validationReserves(squad),
             categories: squad.categories.map((category) => ({
                 id: category.id,

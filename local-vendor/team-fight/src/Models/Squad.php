@@ -10,6 +10,9 @@ class Squad
 
     public int $playerLimit;
 
+    /** A Paper Squad (§38 stk. 7) skips the rank order on the team and the strength order against higher Squads. */
+    public bool $isPaperSquad = false;
+
     /**
      * @var Category[]
      */

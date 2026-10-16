@@ -1,0 +1,13 @@
+mutation validatePaperSquads($teamRoundId: ID!, $input: [ValidateTeam!]!){
+    validatePaperSquads(teamRoundId: $teamRoundId, input: $input){
+        missingRound
+        players{
+            squadIndex
+            refId
+            name
+            unplayedCategories
+            matchCount
+            requiredMatchCount
+        }
+    }
+}
