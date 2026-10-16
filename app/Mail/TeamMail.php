@@ -57,7 +57,7 @@ class TeamMail extends Mailable
      */
     private function paperSquadLabels(): array
     {
-        return Squad::query()->where('team_round_id', $this->team->id)->with('team')->orderBy('order')->get()->values()
+        return $this->team->squads()->with('team')->get()->values()
             ->filter(fn (Squad $squad) => $squad->is_paper_squad)
             ->map(fn (Squad $squad, int $index) => 'Hold '.($index + 1).' ('.($squad->team->name ?? $squad->name).')')
             ->values()

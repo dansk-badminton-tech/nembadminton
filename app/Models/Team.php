@@ -51,6 +51,14 @@ class Team extends Model
         return $this->belongsTo(Season::class);
     }
 
+    protected static function booted(): void
+    {
+        // The squads lose their Team when it is deleted, and only a Squad with a Team can be a Paper Squad.
+        static::deleting(function (Team $team) {
+            $team->squads()->update(['is_paper_squad' => false]);
+        });
+    }
+
     public function squads(): HasMany
     {
         return $this->hasMany(Squad::class);

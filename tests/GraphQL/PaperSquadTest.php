@@ -120,6 +120,21 @@ class PaperSquadTest extends TestCase
     }
 
     #[Test]
+    public function deleting_the_team_of_a_paper_squad_makes_it_a_regular_squad_again(): void
+    {
+        $this->user->givePermissionTo(Permission::DELETE_TEAMS->value);
+        $team = $this->team();
+        $squad = $this->squad(['team_id' => $team->id, 'is_paper_squad' => true]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+            mutation($id: ID!) { deleteTeam(id: $id) { id } }
+        ', ['id' => (string) $team->id])->assertGraphQLErrorFree();
+
+        $this->assertDatabaseHas('squads', ['id' => $squad->id, 'team_id' => null, 'is_paper_squad' => false]);
+        $this->updateSquad(['id' => (string) $squad->id, 'name' => 'Uden hold'])->assertGraphQLErrorFree();
+    }
+
+    #[Test]
     public function it_denies_marking_a_squad_in_another_clubhouse_as_a_paper_squad(): void
     {
         $otherClubhouse = Clubhouse::factory()->create();
