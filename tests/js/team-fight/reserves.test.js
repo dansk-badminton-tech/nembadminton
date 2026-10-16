@@ -37,6 +37,18 @@ test('the reserve field offers Members on lower Squads who are not a reserve yet
     assert.deepEqual(reserveCandidates(squads(), 2), [])
 })
 
+test('the reserve field also offers Available Members who are not a reserve yet, after the lower Squads', () => {
+    const una = player('9', 'Una')
+    const ole = player('8', 'Ole', 'MEN')
+    assert.deepEqual(
+        reserveCandidates(squads(), 1, [una, ole]).map(c => [c.player.name, c.fromIndex]),
+        [['Zara', 2], ['Una', null], ['Ole', null]],
+    )
+    assert.deepEqual(reserveCandidates(squads([record('r1', una, yrsa)]), 1, [una, ole]).map(c => c.player.name), ['Zara', 'Ole'])
+    // A search result that is placed after all (e.g. a stale result) is never offered as an Available Member.
+    assert.deepEqual(reserveCandidates(squads(), 1, [yrsa]).map(c => c.player.name), ['Zara'])
+})
+
 test('a Member is offered once, from the first lower Squad they stand on', () => {
     const lineup = squads()
     lineup[2].categories.push(category('2. DS', [xenia]))
@@ -77,13 +89,19 @@ test('a stale record gets a soft warning', () => {
     xeniaUp[1].categories = []
     assert.deepEqual(reserveWarnings(xeniaUp, 0, record('r1', xenia, yrsa)), ['Xenia står nu på Hold 1, ikke et lavere hold'])
 
-    const xeniaGone = squads()
-    xeniaGone[1].categories = []
-    assert.deepEqual(reserveWarnings(xeniaGone, 0, record('r1', xenia, yrsa)), ['Xenia står ikke længere på et lavere hold'])
+    // A reserve who isn't placed is an Available Member, which is fine.
+    const xeniaAvailable = squads()
+    xeniaAvailable[1].categories = []
+    assert.deepEqual(reserveWarnings(xeniaAvailable, 0, record('r1', xenia, yrsa)), [])
 })
 
-test('validation gets each Squad\'s records as refIds', () => {
-    assert.deepEqual(validationReserves(squads([record('r1', xenia, yrsa)])[0]), [{reserveRefId: '3', replacedRefId: '1'}])
+test('validation gets each Squad\'s records with the reserve\'s points', () => {
+    const withPoints = {...record('r1', xenia, yrsa), reservePoints: [{category: 'DS', points: 900, position: 12, vintage: 'SEN', __typename: 'Point'}]}
+    assert.deepEqual(validationReserves({categories: [], reserves: [withPoints]}), [{
+        reserve: {refId: '3', name: 'Xenia', gender: 'WOMEN', points: [{category: 'DS', points: 900, position: 12, vintage: 'SEN'}]},
+        replacedRefId: '1'
+    }])
+    assert.deepEqual(validationReserves(squads([record('r1', xenia, yrsa)])[0])[0].reserve.points, [])
     assert.deepEqual(validationReserves({categories: []}), [])
 })
 

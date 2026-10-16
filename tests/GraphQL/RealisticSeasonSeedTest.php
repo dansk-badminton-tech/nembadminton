@@ -193,25 +193,40 @@ class RealisticSeasonSeedTest extends TestCase
                         'id' => $category->id,
                         'category' => $category->category,
                         'name' => $category->name,
-                        'players' => $category->players->map(fn ($player) => [
-                            'id' => $player->id,
-                            'gender' => $player->gender === 'M' ? 'MEN' : 'WOMEN',
-                            'name' => $player->name,
-                            'refId' => $player->member_ref_id,
-                            'points' => $player->points->map(fn ($point) => [
-                                'category' => $point->category,
-                                'points' => $point->points,
-                                'position' => $point->position,
-                                'vintage' => $point->vintage,
-                            ])->all(),
-                        ])->all(),
+                        'players' => $category->players->map($this->validationPlayer(...))->all(),
                     ])->all(),
+                // The seeded reserves stand on a lower Squad, so their player there carries their points.
                 'reserves' => $squad->reserves()->inLineup($scenarioId)->get()->map(fn (SquadReserve $reserve) => [
-                    'reserveRefId' => $reserve->reserve_ref_id,
+                    'reserve' => $this->validationPlayer(SquadMember::query()
+                        ->where('member_ref_id', $reserve->reserve_ref_id)
+                        ->whereHas('category', fn ($query) => $query
+                            ->where('team_round_scenario_id', $scenarioId)
+                            ->whereIn('squad_id', $round->squads->pluck('id')))
+                        ->with('points')
+                        ->firstOrFail()),
                     'replacedRefId' => $reserve->replaced_ref_id,
                 ])->all(),
             ],
         ])->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function validationPlayer(SquadMember $player): array
+    {
+        return [
+            'id' => $player->id,
+            'gender' => $player->gender === 'M' ? 'MEN' : 'WOMEN',
+            'name' => $player->name,
+            'refId' => $player->member_ref_id,
+            'points' => $player->points->map(fn ($point) => [
+                'category' => $point->category,
+                'points' => $point->points,
+                'position' => $point->position,
+                'vintage' => $point->vintage,
+            ])->all(),
+        ];
     }
 
     /**

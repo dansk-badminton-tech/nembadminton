@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight;
 
+use App\Models\Member;
 use App\Models\Squad;
 use App\Models\SquadMember;
 use App\Models\SquadReserve;
 use App\Models\TeamRound;
 use App\Models\TeamRoundScenario;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Reserve records (§43): on a Squad, X from a lower Squad of the same lineup plays for Y on this Squad. Records are
- * scoped per Scenario like category slots.
+ * Reserve records (§43): on a Squad, X plays for Y on this Squad. X is an Available Member of the Clubhouse or comes
+ * from a lower Squad of the same lineup. Records are scoped per Scenario like category slots.
  */
 class ReserveManager
 {
@@ -46,8 +46,9 @@ class ReserveManager
     /**
      * Records that X plays for Y on the Squad, in the given Scenario or the official lineup.
      *
-     * @throws ReserveRejectedException when X isn't on a lower Squad of the lineup, Y isn't on this Squad, X is already a
-     *                                  reserve or Y has already been replaced.
+     * @throws ReserveRejectedException when X stands on this or a higher Squad, an X who isn't placed isn't a Member of
+     *                                  the Clubhouse, Y isn't on this Squad, X is already a reserve or Y has already
+     *                                  been replaced.
      */
     public function add(Squad $squad, ?int $scenarioId, string $reserveRefId, string $replacedRefId): SquadReserve
     {
@@ -78,9 +79,9 @@ class ReserveManager
                     $reserve ??= $members[$reserveRefId];
                 }
             }
-            if ($reserve === null) {
-                throw new ReserveRejectedException('Reserven står ikke på et lavere hold.');
-            }
+            // Not placed in the lineup: an Available Member of the Clubhouse.
+            $reserve ??= Member::query()->clubhouse((int) $teamRound->clubhouse_id)->where('refId', $reserveRefId)->first()
+                ?? throw new ReserveRejectedException('Reserven er ikke medlem af klubben.');
 
             $scope = $this->scope($teamRound, $scenarioId);
             $existing = SquadReserve::query()->whereIn('squad_id', $squads->pluck('id'))->inLineup($scope);

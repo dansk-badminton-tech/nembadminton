@@ -239,6 +239,7 @@
                 </tbody>
             </table>
             <ReserveSection :squads="squads" :squad-index="index" :loading="loading"
+                            :team-round-id="teamRoundId" :scenario-id="scenarioId"
                             @add="addReserve" @remove="removeReserve"/>
         </div>
         <b-modal
@@ -374,7 +375,7 @@ export default {
             return `Reserve (§43): spiller også på Hold ${index + 1} for ${record.replaced.name}, der meldte afbud pga. skade, sygdom eller force majeure. Karantæne (§44): må ikke spille på noget hold i næste spillerunde.`
         },
         replacedTooltip(record) {
-            return `Meldt afbud pga. skade, sygdom eller force majeure. ${record.reserve.name} fra et lavere hold spiller i stedet som reserve (§43) og må ikke spille i næste spillerunde (§44).`
+            return `Meldt afbud pga. skade, sygdom eller force majeure. ${record.reserve.name} spiller i stedet som reserve (§43) og må ikke spille i næste spillerunde (§44).`
         },
         resolveVersionToUse(squad){
             return squad.version ? new Date(squad.version) : new Date(this.version)

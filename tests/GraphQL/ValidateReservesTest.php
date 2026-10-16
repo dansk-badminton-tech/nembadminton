@@ -13,7 +13,8 @@ use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
 /**
- * Validation of a lineup with Reserve Players (§43): X plays for Y on a Squad. Only §43 stk. 3 looks at the records.
+ * Validation of a lineup with Reserve Players (§43): X, an Available Member or a Member on a lower Squad, plays for Y on a
+ * Squad. Only §43 stk. 3 looks at the records.
  */
 class ValidateReservesTest extends TestCase
 {
@@ -64,7 +65,7 @@ class ValidateReservesTest extends TestCase
         $withoutRecord = $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->json('data.validateSquads');
         $crossWithoutRecord = $this->validate(self::CROSS_SQUADS_QUERY, [$hold1, $hold2])->json('data.validateCrossSquads');
 
-        $hold1->reserves = [['reserveRefId' => 'X', 'replacedRefId' => 'Y']];
+        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
 
         $this->assertNotEmpty($withoutRecord);
         $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateSquads', $withoutRecord);
@@ -78,7 +79,7 @@ class ValidateReservesTest extends TestCase
         $x = $this->men('X', 'HS', 120);
         $hold1 = $this->squad([['1. HS', 'HS', [$y]]]);
         $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserveRefId' => 'X', 'replacedRefId' => 'Y']];
+        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
 
         $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', [[
             'type' => 'STRENGTH_INCREASE',
@@ -91,11 +92,23 @@ class ValidateReservesTest extends TestCase
     }
 
     /** @test */
+    public function an_available_member_is_checked_with_the_points_in_the_record(): void
+    {
+        // X isn't placed on any Squad; the record carries their points.
+        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 100)]]]);
+        $hold1->reserves = [['reserve' => $this->men('X', 'HS', 130), 'replacedRefId' => 'Y']];
+
+        $this->validate(self::RESERVES_QUERY, [$hold1])
+            ->assertJsonPath('data.validateReserves.0.reserve', ['refId' => 'X', 'name' => 'X', 'points' => 130]);
+    }
+
+    /** @test */
     public function a_reserve_as_strong_as_the_replaced_player_is_fine(): void
     {
+        $x = $this->men('X', 'HS', 100);
         $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 100)]]]);
-        $hold2 = $this->squad([['1. HS', 'HS', [$this->men('X', 'HS', 100)]]]);
-        $hold1->reserves = [['reserveRefId' => 'X', 'replacedRefId' => 'Y']];
+        $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
+        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
 
         $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', []);
     }
@@ -104,8 +117,9 @@ class ValidateReservesTest extends TestCase
     public function a_stale_record_changes_nothing(): void
     {
         // X stands on the same Squad as Y: the record doesn't count.
-        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 200)]], ['2. HS', 'HS', [$this->men('X', 'HS', 300)]]]);
-        $hold1->reserves = [['reserveRefId' => 'X', 'replacedRefId' => 'Y']];
+        $x = $this->men('X', 'HS', 300);
+        $hold1 = $this->squad([['1. HS', 'HS', [$this->men('Y', 'HS', 200)]], ['2. HS', 'HS', [$x]]]);
+        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
 
         $this->validate(self::RESERVES_QUERY, [$hold1])->assertJsonPath('data.validateReserves', []);
     }
@@ -119,7 +133,7 @@ class ValidateReservesTest extends TestCase
         $x = $this->menWithPoints('X', ['HS' => 90, 'HD' => 120]);
         $hold1 = $this->squad([['1. HS', 'HS', [$y]], ['1. HD', 'HD', [$y, $partner]]]);
         $hold2 = $this->squad([['1. HS', 'HS', [$x]]]);
-        $hold1->reserves = [['reserveRefId' => 'X', 'replacedRefId' => 'Y']];
+        $hold1->reserves = [['reserve' => $x, 'replacedRefId' => 'Y']];
 
         $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', [[
             'type' => 'STRENGTH_INCREASE',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\GraphQL;
 
 use App\Enums\Permission;
+use App\Models\Club;
 use App\Models\Clubhouse;
 use App\Models\Member;
 use App\Models\Squad;
@@ -19,7 +20,8 @@ use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
 use Tests\TestCase;
 
 /**
- * Reserve records (§43) on a Squad: "X for Y", where X comes from a lower Squad of the same lineup.
+ * Reserve records (§43) on a Squad: "X for Y", where X is an Available Member of the Clubhouse or comes from a lower
+ * Squad of the same lineup.
  */
 class SquadReservesTest extends TestCase
 {
@@ -48,6 +50,12 @@ class SquadReservesTest extends TestCase
             teamRound(id: $id) {
                 squads { reserves(scenarioId: $scenarioId) { reserve { name } replaced { name } } }
             }
+        }
+    ';
+
+    private const READ_POINTS = /** @lang GraphQL */ '
+        query ($id: ID!) {
+            teamRound(id: $id) { squads { reserves { reservePoints { category points position } } } }
         }
     ';
 
@@ -110,11 +118,37 @@ class SquadReservesTest extends TestCase
     }
 
     /** @test */
-    public function it_rejects_a_reserve_who_isnt_placed(): void
+    public function an_available_member_of_the_clubhouse_can_be_a_reserve(): void
+    {
+        $this->clubMember('9001015555', 'Una');
+
+        $this->add($this->squads[0], '9001015555', '9001011111')
+            ->assertJsonMissingPath('errors')
+            ->assertJsonPath('data.addSquadReserve.reserve', ['refId' => '9001015555', 'name' => 'Una', 'gender' => 'WOMEN', 'vintage' => 'SEN']);
+    }
+
+    /** @test */
+    public function it_rejects_a_reserve_who_isnt_a_member_of_the_clubhouse(): void
     {
         $this->member('9001015555', 'Una');
 
-        $this->assertRejected($this->add($this->squads[0], '9001015555', '9001011111'), 'Reserven står ikke på et lavere hold.');
+        $this->assertRejected($this->add($this->squads[0], '9001015555', '9001011111'), 'Reserven er ikke medlem af klubben.');
+    }
+
+    /** @test */
+    public function the_reserve_has_their_points_at_the_squads_ranking_version(): void
+    {
+        $una = $this->clubMember('9001015555', 'Una');
+        $una->points()->create(['points' => 900, 'position' => 12, 'category' => 'DS', 'vintage' => 'SEN', 'version' => $this->teamRound->version]);
+        $una->points()->create(['points' => 1, 'position' => 99, 'category' => 'DS', 'vintage' => 'SEN', 'version' => '2001-01-01']);
+        $this->add($this->squads[0], '9001015555', '9001011111')->assertJsonMissingPath('errors');
+
+        $this->graphQL(self::READ_POINTS, ['id' => $this->teamRound->id])
+            ->assertJsonPath('data.teamRound.squads.0.reserves.0.reservePoints', [['category' => 'DS', 'points' => 900, 'position' => 12]]);
+
+        $this->actingAsUserOf(Clubhouse::factory()->create());
+        $this->graphQL(self::READ_POINTS, ['id' => $this->teamRound->id])
+            ->assertJsonPath('data.teamRound.squads.0.reserves.0.reservePoints', []);
     }
 
     /** @test */
@@ -273,6 +307,19 @@ class SquadReservesTest extends TestCase
             'playable' => true,
             'inactive' => false,
         ]);
+    }
+
+    /**
+     * A Member of a Club in the test's Clubhouse.
+     */
+    private function clubMember(string $refId, string $name): Member
+    {
+        $club = Club::query()->firstOrCreate(['badmintonPlayerId' => 88888], ['name1' => 'Test Club']);
+        $this->clubhouse->clubs()->syncWithoutDetaching([$club->id]);
+        $member = $this->member($refId, $name);
+        $member->clubs()->attach($club->id);
+
+        return $member;
     }
 
     private function place(Squad $squad, string $name, string $category, string $refId, string $memberName): void

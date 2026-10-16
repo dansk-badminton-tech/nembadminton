@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use App\Models\Member;
 use App\Models\TeamRound;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Laravel\Dusk\Browser;
@@ -11,7 +12,7 @@ use Tests\DuskTestCase;
 
 /**
  * Reserve Players (§43) on the seeded "Ungdom - 1. runde" (see YouthTeamRoundSeeder): Cecillie Henriksen (Hold 2 ·
- * 2. DS) plays for Nanna Reese (Hold 1 · 2. DS and 2. DD).
+ * 2. DS), or an Available Member, plays for Nanna Reese (Hold 1 · 2. DS and 2. DD).
  */
 class TeamFightReservePlayerTest extends DuskTestCase
 {
@@ -41,7 +42,7 @@ class TeamFightReservePlayerTest extends DuskTestCase
                 ->assertMissing("[dusk='reserve-section-0'] [dusk='reserve-form']")
                 ->click("[dusk='reserve-open-0']")
                 ->waitFor("[dusk='reserve-section-0'] [dusk='reserve-form']")
-                ->assertSeeIn("[dusk='reserve-section-0']", 'Reserve fra et lavere hold')
+                ->assertSeeIn("[dusk='reserve-section-0']", 'Reserven kan være en ledig spiller eller en spiller fra et lavere hold.')
                 ->assertSeeIn("[dusk='reserve-section-0']", 'Erstatter (spiller på Hold 1)')
                 ->assertAttribute("[dusk='reserve-section-0'] [dusk='reserve-add']", 'disabled', 'true')
                 ->click("[dusk='reserve-section-0'] [dusk='reserve-cancel']")
@@ -75,6 +76,29 @@ class TeamFightReservePlayerTest extends DuskTestCase
                 ->assertSeeIn("[dusk='reserve-section-0']", 'Tilføj reserve til Hold 1')
                 ->assertMissing("[dusk='replaced-tag']")
                 ->assertMissing("[dusk='reserve-tag']");
+        });
+    }
+
+    public function test_an_available_member_can_be_the_reserve(): void
+    {
+        $teamRound = TeamRound::where('name', 'Ungdom - 1. runde')->sole();
+        $available = Member::query()
+            ->clubhouse($teamRound->clubhouse_id)
+            ->notOnSquad($teamRound->id)
+            ->where('inactive', false)
+            ->orderBy('name')
+            ->firstOrFail();
+
+        $this->browse(function (Browser $browser) use ($available) {
+            $this->openRound($browser, 'Ungdom - 1. runde');
+
+            $browser->addReserve(0, $available->name, 'Nanna Reese');
+
+            $browser->assertSeeIn("[dusk='reserve-section-0'] [dusk='reserve-row']", 'Ikke på et hold i holdrunden')
+                ->assertSeeIn("[dusk='squad-0'] [dusk='replaced-tag']", "Erstattes af {$available->name}")
+                ->assertMissing("[dusk='reserve-tag']")
+                ->assertMissing("[dusk='reserve-row-warning']")
+                ->waitFor('[dusk="validation-reserves"]');
         });
     }
 

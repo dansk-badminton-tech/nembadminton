@@ -64,7 +64,7 @@ extend type Mutation {
     promoteScenario(scenarioId: ID!): TeamRound! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\PromoteScenario")
     "Rename a scenario"
     renameScenario(scenarioId: ID!, name: String!): TeamRoundScenario! @guard @canFind(ability: "update", find: "scenarioId", model: "TeamRoundScenario") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\RenameScenario")
-    "Record that a reserve from a lower Squad plays for a player on this Squad (§43), in a Scenario or, without one, the official lineup. Rejected when the reserve isn't on a lower Squad, the replaced player isn't on this Squad, or either already has a record in the lineup."
+    "Record that a reserve plays for a player on this Squad (§43), in a Scenario or, without one, the official lineup. The reserve is an Available Member of the Clubhouse or stands on a lower Squad. Rejected when the reserve stands on this or a higher Squad, a reserve who isn't placed isn't a Member of the Clubhouse, the replaced player isn't on this Squad, or either already has a record in the lineup."
     addSquadReserve(squadId: ID!, scenarioId: ID, reserveRefId: String!, replacedRefId: String!): SquadReserve! @guard @canFind(ability: "editReserves", find: "squadId", model: "Squad") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\AddSquadReserve")
     "Remove a reserve record"
     deleteSquadReserve(id: ID! @eq): SquadReserve @guard @canFind(ability: "delete", find: "id") @delete
@@ -291,11 +291,13 @@ type SquadCategory {
     players: [SquadMember!]!
 }
 
-"A reserve record (§43): the reserve, from a lower Squad, plays for the replaced player on the Squad"
+"A reserve record (§43): the reserve, an Available Member or a Member from a lower Squad, plays for the replaced player on the Squad"
 type SquadReserve {
     id: ID!
     reserve: SquadReservePlayer! @method(name: "reservePlayer")
     replaced: SquadReservePlayer! @method(name: "replacedPlayer")
+    "The reserve's ranking points at the Squad's ranking version, for checking a reserve who isn't placed (§43 stk. 3). Empty for a User of another Clubhouse."
+    reservePoints: [Point!]! @guard @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\SquadReservePointsResolver")
     "Null for the lineup of a TeamRound without an official Scenario"
     scenarioId: ID @rename(attribute: "team_round_scenario_id")
 }

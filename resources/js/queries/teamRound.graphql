@@ -78,6 +78,12 @@ query teamRound($id: ID!, $scenarioId: ID){
                     gender
                     vintage
                 }
+                reservePoints{
+                    category
+                    points
+                    position
+                    vintage
+                }
             }
         }
         name

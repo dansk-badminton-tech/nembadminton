@@ -1,6 +1,6 @@
 <template>
-    <!-- Reserve Players (§43) on a Squad: "X for Y", where X comes from a lower Squad. Reserves are rare, so the section
-         stays a small dashed box until the coach opens it. -->
+    <!-- Reserve Players (§43) on a Squad: "X for Y", where X is an Available Member or comes from a lower Squad. Reserves
+         are rare, so the section stays a small dashed box until the coach opens it. -->
     <div v-if="!reserves.length && !adding" class="reserve-collapsed" :dusk="'reserve-section-' + squadIndex">
         <a class="reserve-add-box" :dusk="'reserve-open-' + squadIndex" @click="adding = true">
             <b-icon icon="plus-circle-outline"/>
@@ -20,6 +20,7 @@
                     <div v-if="origin(record)" class="is-size-7 has-text-grey">
                         Fra Hold {{ origin(record).index + 1 }} · {{ origin(record).categoryName }}
                     </div>
+                    <div v-else class="is-size-7 has-text-grey">Ikke på et hold i holdrunden</div>
                     <div v-if="warnings(record).length" class="tags mt-1 mb-0">
                         <b-tag v-for="warning in warnings(record)" :key="warning" size="is-small" type="is-warning is-light"
                                dusk="reserve-row-warning">{{ warning }}</b-tag>
@@ -37,25 +38,27 @@
         <div v-else class="add-form" :class="{'has-rows': reserves.length}" dusk="reserve-form">
             <p class="has-text-grey is-size-7 mb-3">
                 Melder en spiller på Hold {{ squadIndex + 1 }} afbud pga. skade, sygdom eller force majeure, før
-                holdopstillingen er udvekslet, må der sættes en reserve ind fra et lavere hold (§43). Vælg reserven og
-                hvem vedkommende erstatter.
+                holdopstillingen er udvekslet, må der sættes en reserve ind (§43). Reserven kan være en ledig spiller
+                eller en spiller fra et lavere hold. Vælg reserven og hvem vedkommende erstatter.
             </p>
-            <b-field label="Reserve fra et lavere hold" class="mb-3">
+            <b-field label="Reserve" class="mb-3">
                 <b-autocomplete
                     v-model="reserveSearch"
                     field="player.name"
                     icon="magnify"
-                    placeholder="Søg spiller på et lavere hold..."
+                    placeholder="Søg ledig spiller eller spiller på et lavere hold..."
                     :data="filteredCandidates"
+                    :loading="$apollo.queries.availableMembers.loading"
                     :open-on-focus="true"
                     :keep-first="true"
                     dusk="reserve-player"
                     @select="option => reserveCandidate = option">
                     <template #default="props">
                         {{ props.option.player.name }}
-                        <small class="has-text-grey">· Hold {{ props.option.fromIndex + 1 }} · {{ props.option.categoryName }}</small>
+                        <small v-if="props.option.fromIndex === null" class="has-text-grey">· Ledig</small>
+                        <small v-else class="has-text-grey">· Hold {{ props.option.fromIndex + 1 }} · {{ props.option.categoryName }}</small>
                     </template>
-                    <template #empty>Ingen spillere på lavere hold matcher.</template>
+                    <template #empty>Ingen spillere matcher.</template>
                 </b-autocomplete>
             </b-field>
             <b-field :label="`Erstatter (spiller på Hold ${squadIndex + 1})`" class="mb-3">
@@ -84,13 +87,18 @@
     </div>
 </template>
 <script>
+import gql from "graphql-tag";
+import {debounce} from "../../helpers";
 import {replaceableMembers, reserveCandidates, reserveOrigin, reserveWarnings} from "./reserves.js";
 
 export default {
     name: 'ReserveSection',
+    inject: ['clubhouseId'],
     props: {
         squads: {type: Array, required: true},
         squadIndex: {type: Number, required: true},
+        teamRoundId: String,
+        scenarioId: [String, Number],
         loading: Boolean
     },
     emits: ['add', 'remove'],
@@ -100,8 +108,39 @@ export default {
             reserveCandidate: null,
             replacedSearch: '',
             replaced: null,
-            adding: false
+            adding: false,
+            // The name the Available Member search last ran for, set a moment after typing stops
+            availableSearch: '',
+            availableMembers: []
         }
+    },
+    apollo: {
+        // Available Members: the Clubhouse's Members who aren't placed in this lineup, like the player list.
+        availableMembers: {
+            query: gql`query reserveAvailableMembers($clubhouse: Int!, $name: String, $notOnSquad: String, $notOnScenario: ID){
+                membersSearch(clubhouse: $clubhouse, name: $name, inactive: false, notOnSquad: $notOnSquad, notOnScenario: $notOnScenario, orderBy: {column: NAME, order: ASC}) {
+                    data { refId name gender }
+                }
+            }`,
+            variables() {
+                return {
+                    clubhouse: parseInt(this.clubhouseId),
+                    name: '%' + this.availableSearch + '%',
+                    notOnSquad: this.scenarioId == null ? this.teamRoundId : null,
+                    notOnScenario: this.scenarioId
+                }
+            },
+            update: data => data.membersSearch.data,
+            fetchPolicy: 'network-only',
+            skip() {
+                return !this.adding
+            }
+        }
+    },
+    watch: {
+        reserveSearch: debounce(function (name) {
+            this.availableSearch = name.trim()
+        }, 300)
     },
     computed: {
         squad() {
@@ -112,7 +151,7 @@ export default {
         },
         filteredCandidates() {
             const needle = this.reserveSearch.trim().toLowerCase()
-            return reserveCandidates(this.squads, this.squadIndex).filter(c => c.player.name.toLowerCase().includes(needle))
+            return reserveCandidates(this.squads, this.squadIndex, this.availableMembers).filter(c => c.player.name.toLowerCase().includes(needle))
         },
         filteredReplaceable() {
             const needle = this.replacedSearch.trim().toLowerCase()
@@ -136,7 +175,7 @@ export default {
         },
         cancel() {
             this.reserveCandidate = this.replaced = null
-            this.reserveSearch = this.replacedSearch = ''
+            this.reserveSearch = this.replacedSearch = this.availableSearch = ''
             this.adding = false
         }
     }

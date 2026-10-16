@@ -462,8 +462,8 @@ class TeamFightEditPage extends Page
     }
 
     /**
-     * Records a reserve through the Squad's dashed "Tilføj reserve" box: $reserveName from a lower Squad plays for
-     * $replacedName on the Squad.
+     * Records a reserve through the Squad's dashed "Tilføj reserve" box: $reserveName, an Available Member or a Member
+     * on a lower Squad, plays for $replacedName on the Squad.
      */
     public function addReserve(Browser $browser, int $squadIndex, string $reserveName, string $replacedName): void
     {

@@ -1,5 +1,6 @@
-// Reserve Players (§43) in the TeamRound editor: on a Squad, X from a lower Squad of the same lineup plays "for" Y on
-// this Squad. A Squad's records are squad.reserves: [{id, reserve: {refId, name, gender, vintage}, replaced: {...}}].
+// Reserve Players (§43) in the TeamRound editor: on a Squad, X plays "for" Y on this Squad. X is an Available Member or
+// stands on a lower Squad of the same lineup. A Squad's records are squad.reserves:
+// [{id, reserve: {refId, name, gender, vintage}, replaced: {...}, reservePoints: [{category, points, position, vintage}]}].
 // Framework-free, so node:test can load it.
 
 function playersOf(squad) {
@@ -19,9 +20,9 @@ function reserveRefIds(squads) {
     return new Set(squads.flatMap(squad => (squad.reserves ?? []).map(record => record.reserve.refId)))
 }
 
-// "Reserve fra et lavere hold": Members placed on a lower Squad who aren't a reserve anywhere in the lineup yet, each
-// with the first lower Squad and category they stand on.
-export function reserveCandidates(squads, squadIndex) {
+// Members placed on a lower Squad who aren't a reserve anywhere in the lineup yet, each with the first lower Squad and
+// category they stand on.
+function lowerSquadCandidates(squads, squadIndex) {
     const taken = reserveRefIds(squads)
     const seen = new Set()
     const candidates = []
@@ -34,6 +35,16 @@ export function reserveCandidates(squads, squadIndex) {
         }))
     })
     return candidates
+}
+
+// The "Reserve" field: the Members on lower Squads, then the Available Members (fromIndex null) who aren't a reserve in
+// the lineup yet. availableMembers come from the membersSearch query, which leaves out placed Members.
+export function reserveCandidates(squads, squadIndex, availableMembers = []) {
+    const taken = reserveRefIds(squads)
+    const available = availableMembers
+        .filter(member => !taken.has(member.refId) && placedSquadIndex(squads, member.refId) === -1)
+        .map(member => ({player: member, fromIndex: null, categoryName: null}))
+    return [...lowerSquadCandidates(squads, squadIndex), ...available]
 }
 
 // "Erstatter": Members placed on this Squad who haven't been replaced yet, with the names of their categories.
@@ -64,7 +75,7 @@ export function reserveOnHigherSquad(squads, refId) {
     return null
 }
 
-// Where the reserve stands now ("Fra Hold M · <category>"): {index, categoryName}, or null when they aren't placed.
+// Where the reserve stands now ("Fra Hold M · <category>"): {index, categoryName}, or null for an Available Member.
 export function reserveOrigin(squads, record) {
     const index = placedSquadIndex(squads, record.reserve.refId)
     if (index === -1) return null
@@ -79,17 +90,24 @@ export function reserveWarnings(squads, squadIndex, record) {
         warnings.push(`${record.replaced.name} står ikke længere på Hold ${squadIndex + 1}`)
     }
     const index = placedSquadIndex(squads, record.reserve.refId)
-    if (index === -1) {
-        warnings.push(`${record.reserve.name} står ikke længere på et lavere hold`)
-    } else if (index <= squadIndex) {
+    if (index !== -1 && index <= squadIndex) {
         warnings.push(`${record.reserve.name} står nu på Hold ${index + 1}, ikke et lavere hold`)
     }
     return warnings
 }
 
-// A Squad's records in the validation input (ValidateSquad.reserves).
+// A Squad's records in the validation input (ValidateSquad.reserves), with the reserve's points at the Squad's ranking
+// version.
 export function validationReserves(squad) {
-    return (squad.reserves ?? []).map(record => ({reserveRefId: record.reserve.refId, replacedRefId: record.replaced.refId}))
+    return (squad.reserves ?? []).map(record => ({
+        reserve: {
+            refId: record.reserve.refId,
+            name: record.reserve.name,
+            gender: record.reserve.gender,
+            points: (record.reservePoints ?? []).map(({category, points, position, vintage}) => ({category, points, position, vintage}))
+        },
+        replacedRefId: record.replaced.refId
+    }))
 }
 
 export function quarantineLabel(quarantine) {

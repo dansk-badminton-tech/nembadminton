@@ -7,7 +7,7 @@ extend type Mutation {
     validateBasicSquads(input: [ValidateTeam!]!) : [BaseValidation!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateBasicSquads")
     "Players who have not turned 15 by 31.12. in the calendar year the season starts (§31 stk. 1). A warning, not a hard rule."
     validateTooYoungPlayers(input: [ValidateTeam!]!, seasonStartYear: Int!) : [TooYoungPlayer!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTooYoungPlayers")
-    "§43 stk. 3 findings for the Squads' reserve records: a reserve with more points than the replaced player is a strength increase, an error. Records whose replaced player isn't on the Squad, or whose reserve isn't on a lower Squad, are left out."
+    "§43 stk. 3 findings for the Squads' reserve records: a reserve with more points than the replaced player is a strength increase, an error. Records whose replaced player isn't on the Squad, or whose reserve stands on the same or a higher Squad, are left out."
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
 }
 
@@ -60,8 +60,8 @@ input ValidateSquad{
 }
 
 input ValidateReserve {
-    "The reserve, placed on a lower Squad"
-    reserveRefId: String!
+    "The reserve with their points: an Available Member, or a Member placed on a lower Squad"
+    reserve: ValidateMember!
     "The player on this Squad the reserve replaces"
     replacedRefId: String!
 }
