@@ -8,6 +8,7 @@ use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class MembersSearchTest extends TestCase
@@ -19,7 +20,7 @@ class MembersSearchTest extends TestCase
 
     private int $clubhouseId;
 
-    /** @test */
+    #[Test]
     public function it_ignores_a_null_not_on_scenario_filter(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -48,7 +49,7 @@ class MembersSearchTest extends TestCase
             ->assertJsonPath('data.membersSearch.data', []);
     }
 
-    /** @test */
+    #[Test]
     public function it_ignores_a_null_not_on_squad_filter(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -77,7 +78,7 @@ class MembersSearchTest extends TestCase
             ->assertJsonPath('data.membersSearch.data', []);
     }
 
-    /** @test */
+    #[Test]
     public function it_excludes_members_with_permanent_afbud_but_keeps_inactive_members(): void
     {
         $this->actingAsClubhouseWithMembers([

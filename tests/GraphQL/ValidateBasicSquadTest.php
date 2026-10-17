@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CategoryFactory;
 use Tests\TestCase;
 
@@ -25,9 +26,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function validSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -95,9 +96,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function invalidSquadInMD(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -165,9 +166,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function invalidSquadInDD(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -235,9 +236,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function oneInvalidSquadAndOneValidSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -342,9 +343,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function oneInvalidSquadAndTwoValidSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -486,9 +487,9 @@ class ValidateBasicSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playerOnlyInOneCategory(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');

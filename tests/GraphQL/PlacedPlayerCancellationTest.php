@@ -13,6 +13,7 @@ use App\Models\User;
 use FlyCompany\TeamFight\GraphQL\Queries\PlacedPlayerCancellationResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PlacedPlayerCancellationTest extends TestCase
@@ -51,9 +52,7 @@ class PlacedPlayerCancellationTest extends TestCase
         PlacedPlayerCancellationResolver::clearCache();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_marks_a_placed_player_with_an_afbudslink_cancellation_on_the_game_date(): void
     {
         $collector = $this->createCollector($this->clubhouse);
@@ -62,9 +61,7 @@ class PlacedPlayerCancellationTest extends TestCase
         $this->assertSame(['permanent' => false, 'viaCancellationLink' => true], $this->cancellationOf('ref-link'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_marks_a_placed_player_with_a_manual_cancellation_for_this_team_round(): void
     {
         $member = $this->placePlayer('ref-man');
@@ -74,9 +71,7 @@ class PlacedPlayerCancellationTest extends TestCase
         $this->assertSame(['permanent' => false, 'viaCancellationLink' => false], $this->cancellationOf('ref-man'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_marks_a_placed_player_with_a_permanent_cancellation(): void
     {
         $this->placePlayer('ref-perm', playable: false);
@@ -84,9 +79,7 @@ class PlacedPlayerCancellationTest extends TestCase
         $this->assertSame(['permanent' => true, 'viaCancellationLink' => false], $this->cancellationOf('ref-perm'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_ignores_cancellations_that_do_not_apply_to_this_team_round(): void
     {
         $this->placePlayer('ref-free');

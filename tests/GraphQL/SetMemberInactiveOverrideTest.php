@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SetMemberInactiveOverrideTest extends TestCase
@@ -32,7 +33,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_forces_member_inactive(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -64,7 +65,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         $this->assertEquals('FORCE_INACTIVE', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_forces_member_active(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -96,7 +97,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         $this->assertEquals('FORCE_ACTIVE', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_resets_member_override_to_auto(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -128,7 +129,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         $this->assertEquals('AUTO', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_authentication(): void
     {
         $member = Member::create([
@@ -144,7 +145,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         $response->assertGraphQLErrorMessage('Unauthenticated.');
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_error_when_member_not_found(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -157,7 +158,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         $response->assertGraphQLErrorMessage('Member not found.');
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_override_inactive_in_members_search(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -249,7 +250,7 @@ class SetMemberInactiveOverrideTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_filters_by_effective_inactive_in_member_search_points(): void
     {
         $clubhouse = Clubhouse::factory()->create();

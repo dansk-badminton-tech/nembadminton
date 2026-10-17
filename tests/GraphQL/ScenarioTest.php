@@ -18,6 +18,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ScenarioTest extends TestCase
@@ -40,7 +41,7 @@ class ScenarioTest extends TestCase
         return [$clubhouse, $user];
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_new_scenario_and_clones_categories_without_duplicating_team_round_or_squads(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -182,7 +183,7 @@ class ScenarioTest extends TestCase
         $this->assertEquals('1. DS', $scenarioCat2->name);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_creating_a_scenario_if_user_lacks_edit_permission(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([Permission::VIEW_TEAMROUNDS]);
@@ -209,7 +210,7 @@ class ScenarioTest extends TestCase
         $response->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_creating_a_scenario_for_another_clubhouse(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -238,7 +239,7 @@ class ScenarioTest extends TestCase
         $response->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_queries_squad_categories_scoped_by_scenario_id_or_defaults_to_official(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -316,7 +317,7 @@ class ScenarioTest extends TestCase
         $this->assertEquals('1. DS', $promotedCategories[0]['name']);
     }
 
-    /** @test */
+    #[Test]
     public function it_excludes_draft_scenarios_from_player_visible_to_user_scope(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -395,7 +396,7 @@ class ScenarioTest extends TestCase
         $this->assertTrue($visibleRoundsAfterPromotion->contains('id', $teamRound->id), 'Official scenario player must see round');
     }
 
-    /** @test */
+    #[Test]
     public function it_isolates_roster_mutations_to_draft_scenario_while_squad_logistics_stay_canonical(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -570,7 +571,7 @@ class ScenarioTest extends TestCase
         $this->assertEmpty($officialDsPlayers, 'Spiller 2 must NOT exist in Official DS');
     }
 
-    /** @test */
+    #[Test]
     public function it_creates_a_new_scenario_from_an_existing_scenario(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -705,7 +706,7 @@ class ScenarioTest extends TestCase
         $this->assertEquals(1, $scenarioADsCat->players()->count(), 'Scenario A must remain untouched when Scenario B is modified');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_creating_scenario_from_source_scenario_belonging_to_another_team_round(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -746,7 +747,7 @@ class ScenarioTest extends TestCase
         $this->assertNotNull($response->json('errors'));
     }
 
-    /** @test */
+    #[Test]
     public function it_promotes_a_draft_scenario_to_official_lineup_and_preserves_previous_official_as_draft(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -877,7 +878,7 @@ class ScenarioTest extends TestCase
         $this->assertFalse($scenariosC->firstWhere('id', (string) $preservedOldOfficial['id'])['isOfficial']);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_promoting_scenario_without_permission_or_in_another_clubhouse(): void
     {
         [$clubhouse1, $user1] = $this->actingClubhouseUser();
@@ -922,7 +923,7 @@ class ScenarioTest extends TestCase
         $this->assertNotNull($response3->json('errors'));
     }
 
-    /** @test */
+    #[Test]
     public function it_notifies_only_official_lineup_players(): void
     {
         Notification::fake();
@@ -1036,7 +1037,7 @@ class ScenarioTest extends TestCase
         Notification::assertNotSentTo($draftUser, \App\Notifications\TeamPublish::class);
     }
 
-    /** @test */
+    #[Test]
     public function it_renames_a_scenario(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -1086,7 +1087,7 @@ class ScenarioTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_renaming_scenario_without_permission_or_in_another_clubhouse(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -1139,7 +1140,7 @@ class ScenarioTest extends TestCase
         $noPermResponse->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_deletes_a_draft_scenario_and_all_associated_records(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -1243,7 +1244,7 @@ class ScenarioTest extends TestCase
         $this->assertDatabaseHas('squad_points', ['id' => $officialPoint->id]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_deleting_an_official_scenario(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -1279,7 +1280,7 @@ class ScenarioTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_denies_deleting_scenario_without_permission_or_in_another_clubhouse(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser();
@@ -1327,7 +1328,7 @@ class ScenarioTest extends TestCase
         $noPermResponse->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_cascades_deletion_when_parent_team_round_is_deleted(): void
     {
         [$clubhouse, $user] = $this->actingClubhouseUser([

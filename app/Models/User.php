@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Joselfonseca\LighthouseGraphQLPassport\HasSocialLogin;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\Permission\Traits\HasRoles;
@@ -30,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Role $primaryRole
  * @property Carbon $created_at
  */
-class User extends Authenticatable
+class User extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens, HasFactory, HasPushSubscriptions, HasRoles, HasSocialLogin, Notifiable;
 

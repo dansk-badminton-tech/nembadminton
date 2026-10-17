@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -54,7 +55,7 @@ class ReserveQuarantineTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_in_the_official_lineup_of_round_n_is_tagged_in_round_n_plus_1(): void
     {
         $round3 = $this->roundWithReserve(3, 'Runde 3 Senior');
@@ -71,7 +72,7 @@ class ReserveQuarantineTest extends TestCase
         $this->quarantineOf($otherRound4)->assertJsonPath('data.teamRound.squads.0.categories.0.players.0.reserveQuarantine.round', 3);
     }
 
-    /** @test */
+    #[Test]
     public function there_is_no_tag_two_rounds_later(): void
     {
         $this->roundWithReserve(3);
@@ -79,7 +80,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($this->roundWithXeniaPlaced(5));
     }
 
-    /** @test */
+    #[Test]
     public function there_is_no_tag_in_another_season(): void
     {
         $this->roundWithReserve(3);
@@ -87,7 +88,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($this->roundWithXeniaPlaced(4, season: 2025));
     }
 
-    /** @test */
+    #[Test]
     public function there_is_no_tag_in_another_clubhouse(): void
     {
         $this->roundWithReserve(3);
@@ -98,7 +99,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($this->roundWithXeniaPlaced(4));
     }
 
-    /** @test */
+    #[Test]
     public function there_is_no_tag_when_either_team_round_has_no_round_number(): void
     {
         $this->roundWithReserve(null);
@@ -109,7 +110,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($this->roundWithXeniaPlaced(null));
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_only_in_a_draft_scenario_gives_no_quarantine(): void
     {
         $round3 = $this->roundWithReserve(3);
@@ -119,7 +120,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($this->roundWithXeniaPlaced(4));
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_in_an_official_scenario_gives_quarantine(): void
     {
         $round3 = $this->roundWithReserve(3);
@@ -130,7 +131,7 @@ class ReserveQuarantineTest extends TestCase
             ->assertJsonPath('data.teamRound.squads.0.categories.0.players.0.reserveQuarantine.round', 3);
     }
 
-    /** @test */
+    #[Test]
     public function the_public_query_exposes_no_quarantine_data(): void
     {
         $this->roundWithReserve(3);
@@ -146,7 +147,7 @@ class ReserveQuarantineTest extends TestCase
         $this->assertNoQuarantine($round4);
     }
 
-    /** @test */
+    #[Test]
     public function the_lookup_is_one_query_however_many_players_are_placed(): void
     {
         $this->roundWithReserve(3);

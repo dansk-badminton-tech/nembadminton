@@ -10,6 +10,7 @@ use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -52,7 +53,7 @@ class ValidateReservesTest extends TestCase
         }
     ';
 
-    /** @test */
+    #[Test]
     public function the_lineup_as_played_passes_the_normal_checks(): void
     {
         // Lin Dan (1. HS on Hold 1) is ill. Daniel from Hold 2 comes in, Jesper moves up to 1. HS and Daniel takes 2. HS.
@@ -68,7 +69,7 @@ class ValidateReservesTest extends TestCase
         $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', []);
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_in_the_wrong_order_breaks_the_order_check(): void
     {
         // Daniel left in Lin Dan's 1. HS, above the stronger Jesper.
@@ -79,7 +80,7 @@ class ValidateReservesTest extends TestCase
         $this->validate(self::SQUAD_ORDER_QUERY, [$hold1])->assertJsonPath('data.validateSquads.0.refId', 'Daniel');
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_stronger_than_the_replaced_player_is_a_strength_increase(): void
     {
         $x = $this->men('X', 'HS', 120);
@@ -96,7 +97,7 @@ class ValidateReservesTest extends TestCase
         ]]);
     }
 
-    /** @test */
+    #[Test]
     public function a_reserve_as_strong_as_the_replaced_player_is_fine(): void
     {
         $hold1 = $this->squad([['1. HS', 'HS', [$this->men('X', 'HS', 100)]]]);
@@ -105,7 +106,7 @@ class ValidateReservesTest extends TestCase
         $this->validate(self::RESERVES_QUERY, [$hold1])->assertJsonPath('data.validateReserves', []);
     }
 
-    /** @test */
+    #[Test]
     public function a_stale_record_changes_nothing(): void
     {
         // Y still stands on the Squad, or X doesn't: the record doesn't count.
@@ -119,7 +120,7 @@ class ValidateReservesTest extends TestCase
         $this->validate(self::RESERVES_QUERY, [$both, $neither])->assertJsonPath('data.validateReserves', []);
     }
 
-    /** @test */
+    #[Test]
     public function the_reserve_is_checked_in_every_category_they_play_on_the_squad(): void
     {
         // X plays 1. HS and 1. HD on Hold 1 for Y. X is weaker in HS and stronger in HD.

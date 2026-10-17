@@ -12,13 +12,12 @@ use App\Models\TeamRound;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TeamRoundRelationsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function squad_has_canonical_team_round_relation(): void
     {
         $squad = new Squad();
@@ -30,9 +29,7 @@ class TeamRoundRelationsTest extends TestCase
         $this->assertSame('team_round_id', $teamRoundRelation->getForeignKeyName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cancellation_has_canonical_team_round_relation(): void
     {
         $cancellation = new Cancellation();
@@ -44,9 +41,7 @@ class TeamRoundRelationsTest extends TestCase
         $this->assertSame('team_round_id', $teamRoundRelation->getForeignKeyName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function team_receivers_has_canonical_team_round_relation(): void
     {
         $teamReceivers = new TeamReceivers();
@@ -58,9 +53,7 @@ class TeamRoundRelationsTest extends TestCase
         $this->assertSame('team_round_id', $teamRoundRelation->getForeignKeyName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function team_activity_log_has_canonical_team_round_relation(): void
     {
         $teamActivityLog = new TeamActivityLog();
@@ -72,9 +65,7 @@ class TeamRoundRelationsTest extends TestCase
         $this->assertSame('team_round_id', $teamRoundRelation->getForeignKeyName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function user_has_canonical_team_rounds_relation(): void
     {
         $user = new User();

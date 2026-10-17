@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CategoryFactory;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -29,8 +30,8 @@ class ValidateCrossSquadsTest extends TestCase
     /**
      * @return void
      * @throws \JsonException
-     * @test
      */
+    #[Test]
     public function missingCategoryInMixedDoubles() : void
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -161,8 +162,8 @@ class ValidateCrossSquadsTest extends TestCase
     /**
      * @return void
      * @throws \JsonException
-     * @test
      */
+    #[Test]
     public function missingCategoryInMensDoubles() : void
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -292,8 +293,8 @@ class ValidateCrossSquadsTest extends TestCase
     /**
      * @return void
      * @throws \JsonException
-     * @test
      */
+    #[Test]
     public function missingCategoryInWomenDoubles() : void
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -424,8 +425,8 @@ class ValidateCrossSquadsTest extends TestCase
     /**
      * @return void
      * @throws \JsonException
-     * @test
      */
+    #[Test]
     public function missingCategoryInMensSingles() : void
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -554,8 +555,8 @@ class ValidateCrossSquadsTest extends TestCase
     /**
      * @return void
      * @throws \JsonException
-     * @test
      */
+    #[Test]
     public function missingCategoryInWomenSingles() : void
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -684,9 +685,9 @@ class ValidateCrossSquadsTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function validTeamCross3Squads()
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 800, '101010-1');
@@ -816,9 +817,9 @@ class ValidateCrossSquadsTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMixDoubleCross2Squads()
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -941,9 +942,9 @@ class ValidateCrossSquadsTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMixDoubleCross3Squads()
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -1115,9 +1116,9 @@ class ValidateCrossSquadsTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMixDoubleCross3SquadsButStillValidBecauseItOnlyVialatesInOneCategory()
     {
         $squad1Women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -1250,9 +1251,9 @@ class ValidateCrossSquadsTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function SpecialCase()
     {
         $women1 = CategoryFactory::makeWomen('MxD', 1000, 'DD', 1000, 1000, '101010-1');

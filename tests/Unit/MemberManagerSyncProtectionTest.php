@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Member;
 use FlyCompany\Members\MemberManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class MemberManagerSyncProtectionTest extends TestCase
@@ -21,7 +22,7 @@ class MemberManagerSyncProtectionTest extends TestCase
         $this->memberManager = new MemberManager();
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_inactive_when_override_inactive_is_auto(): void
     {
         $member = Member::create([
@@ -40,7 +41,7 @@ class MemberManagerSyncProtectionTest extends TestCase
         $this->assertEquals('AUTO', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_protects_force_active_members_from_being_marked_inactive(): void
     {
         $member = Member::create([
@@ -59,7 +60,7 @@ class MemberManagerSyncProtectionTest extends TestCase
         $this->assertEquals('FORCE_ACTIVE', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_protects_force_inactive_members_from_being_marked_active(): void
     {
         $member = Member::create([
@@ -78,7 +79,7 @@ class MemberManagerSyncProtectionTest extends TestCase
         $this->assertEquals('FORCE_INACTIVE', $member->override_inactive);
     }
 
-    /** @test */
+    #[Test]
     public function it_updates_inactive_after_member_override_is_reset_to_auto(): void
     {
         $member = Member::create([

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InvitationTest extends TestCase
@@ -47,7 +48,7 @@ class InvitationTest extends TestCase
         ', ['id' => $id]);
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_can_delete_a_pending_invitation_in_their_clubhouse(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -63,7 +64,7 @@ class InvitationTest extends TestCase
         $this->assertDatabaseMissing('invitations', ['id' => $invitation->id]);
     }
 
-    /** @test */
+    #[Test]
     public function a_club_admin_cannot_delete_another_clubhouses_invitation(): void
     {
         $ownClubhouse = Clubhouse::factory()->create();
@@ -80,7 +81,7 @@ class InvitationTest extends TestCase
         $this->assertDatabaseHas('invitations', ['id' => $invitation->id]);
     }
 
-    /** @test */
+    #[Test]
     public function a_coach_cannot_delete_an_invitation(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -96,7 +97,7 @@ class InvitationTest extends TestCase
         $this->assertDatabaseHas('invitations', ['id' => $invitation->id]);
     }
 
-    /** @test */
+    #[Test]
     public function a_guest_cannot_accept_an_invitation(): void
     {
         $clubhouse = Clubhouse::factory()->create();

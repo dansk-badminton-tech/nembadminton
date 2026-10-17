@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Util;
 use FlyCompany\BadmintonPlayerAPI\Vintage;
 use Illuminate\Foundation\Testing\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 
 class VintageTest extends TestCase
@@ -16,9 +17,9 @@ class VintageTest extends TestCase
     use CreatesApplication;
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function calculateU19(): void
     {
         Carbon::setTestNow(Carbon::createFromFormat('Y-m-d', '2022-03-15'));
@@ -30,9 +31,9 @@ class VintageTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function calculateU17(): void
     {
         Carbon::setTestNow(Carbon::createFromFormat('Y-m-d', '2022-03-15'));
@@ -44,9 +45,9 @@ class VintageTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function calculateU15(): void
     {
         Carbon::setTestNow(Carbon::createFromFormat('Y-m-d', '2022-03-15'));

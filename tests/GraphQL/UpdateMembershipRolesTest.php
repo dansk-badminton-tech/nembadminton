@@ -7,6 +7,7 @@ use App\Models\Clubhouse;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Tests\TestCase;
 
@@ -54,7 +55,7 @@ class UpdateMembershipRolesTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_lets_a_club_admin_sync_a_members_roles(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -82,7 +83,7 @@ class UpdateMembershipRolesTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_non_club_admin(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -100,7 +101,7 @@ class UpdateMembershipRolesTest extends TestCase
         $response->assertJsonPath('errors.0.message', 'Only club admins can edit roles');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_self_edit(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -117,7 +118,7 @@ class UpdateMembershipRolesTest extends TestCase
         $response->assertJsonPath('errors.0.message', 'You cannot edit your own roles');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_cross_clubhouse_edit(): void
     {
         $clubhouseA = Clubhouse::factory()->create();
@@ -136,7 +137,7 @@ class UpdateMembershipRolesTest extends TestCase
         $response->assertJsonPath('errors.0.message', 'You cannot edit someone elses membership');
     }
 
-    /** @test */
+    #[Test]
     public function it_resets_primary_role_when_removed_from_role_set(): void
     {
         $clubhouse = Clubhouse::factory()->create();
