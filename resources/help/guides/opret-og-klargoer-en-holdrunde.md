@@ -14,7 +14,7 @@ Du skal kende rundenummeret, spilledatoen og de kampe, klubbens hold skal spille
 ## Opret holdrunden
 
 1. Vælg **Holdrunder** i menuen, og vælg **Opret holdrunde**.
-2. Angiv **Runde nr.** og **Runde spilledato**.
+2. Angiv **Runde nr.** og **Runde spilledato**. Brug rundenummeret fra turneringsprogrammet, også hvis kampen er flyttet. Se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
 3. Kontrollér **Rangliste** og **Sæson**. Begge vælges automatisk ud fra spilledatoen, og den anbefalede rangliste er markeret med **(Indstillet automatisk)**. Er ingen rangliste markeret, er ranglisten for datoen endnu ikke offentliggjort. Vælg så den rangliste, du vil planlægge efter, og skift den senere under **Rediger**.
 4. Giv eventuelt holdrunden et navn i **Navn (Valgfrit)**. Uden navn vises holdrunden med sit rundenummer.
 5. Vælg **Opret**.
