@@ -98,6 +98,21 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 | **… spiller på et for lavt rangeret hold i forhold til …** | Byt om på spillerne, så den bedst placerede spiller står på det højeste hold. |
 | **… spiller for højt i sin kategori (HS) i forhold til …** | Byt om på spillernes pladser i kategorien på holdet. |
 
+### Kontrol af papirhold
+
+Har holdopstillingen et [papirhold](/app/help/guides/opret-og-klargoer-en-holdrunde), viser kontrollerne også **Papirhold (§38 stk. 7)**. Den viser **Afventer**, indtil kontrollen er kørt, og derefter **OK** eller **Advarsel**. Spillerne på papirholdet skal opfylde reglen om papirhold:
+
+- De må kun stå i kategorier, de har spillet tidligere i sæsonen.
+- De skal tidligere i sæsonen have stået på papirholdets hold eller et lavere hold: mindst 1 gang i grundspillet fra runde 2 og mindst 2 gange i slutspillet og kvalifikationen. Runde 1 kontrolleres ikke.
+
+Nembadminton tæller kun holdrunder med en tidligere spilledato i klubben, så en holdrunde på samme dato tæller ikke med.
+
+Bryder en spiller reglen, står der en advarsel under kontrollerne for hver spiller, fx **Hold 2 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.** Under advarslerne står det, at en ulovlig spiller på et papirhold er en skærpende omstændighed, fordi klubbens underliggende hold kan blive taberdømt (§54 stk. 7).
+
+Advarslen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om spilleren kan stå på papirholdet. Mangler holdrunden et rundenummer, står der i stedet **Udfyld rundenummeret**, fordi reglen ikke kan kontrolleres; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
+
+Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
+
 ## Hvis en spiller mangler eller har forkerte point
 
 **Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med [afbud til holdrunden](/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde). Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.
