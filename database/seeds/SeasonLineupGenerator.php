@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Facades\DB;
 use Random\Randomizer;
 use RuntimeException;
 
 /**
- * Lineups for RealisticSeasonSeeder. Each round one or two seniors rest and cancelled players are away; the others
+ * Lineups for RealisticSeasonSeeder and PaperSquadSeasonSeeder, from a club's players (clubPool). Each round one or two seniors rest and cancelled players are away; the others
  * fill the Teams by their doubles points, and within a Team every category is placed by points. A player plays at
  * most two matches and at most one single, so every lineup follows TeamValidator: no player is placed above a
  * stronger one in a category, on the same Squad or a lower one. Every senior on the higher Teams plays doubles, so
@@ -20,6 +21,10 @@ class SeasonLineupGenerator
 {
     public const FORMAT_LIGA = 'liga';
 
+    /** Badmintonligaen and 1. division (§37 stk. 1). FORMAT_LIGA is an earlier Badmintonligaen format with 10 matches. */
+    public const FORMAT_9 = '9';
+
+    /** 2. division, 3. division and Danmarksserien (§37 stk. 2). */
     public const FORMAT_13 = '13';
 
     public const FORMAT_11 = '11';
@@ -29,6 +34,7 @@ class SeasonLineupGenerator
      */
     public const FORMATS = [
         self::FORMAT_LIGA => ['MD' => 1, 'DS' => 1, 'HS' => 3, 'DD' => 2, 'HD' => 3],
+        self::FORMAT_9 => ['MD' => 2, 'DS' => 2, 'HS' => 2, 'DD' => 1, 'HD' => 2],
         self::FORMAT_13 => ['MD' => 2, 'DS' => 2, 'HS' => 4, 'DD' => 2, 'HD' => 3],
         self::FORMAT_11 => ['MD' => 2, 'DS' => 2, 'HS' => 4, 'DD' => 1, 'HD' => 2],
     ];
@@ -53,6 +59,66 @@ class SeasonLineupGenerator
         private readonly array $youth,
         private readonly Randomizer $randomizer,
     ) {}
+
+    /**
+     * Members of the club with points in every category of their gender at every version, all with the given vintage,
+     * strongest first by their points at the first version.
+     *
+     * @param  list<string>  $versions
+     * @return array{M: list<array<string, mixed>>, K: list<array<string, mixed>>}
+     */
+    public static function clubPool(int $clubId, array $versions, string $vintage, int $men, int $women): array
+    {
+        $members = DB::table('members')
+            ->join('club_member', 'club_member.member_id', '=', 'members.id')
+            ->where('club_member.club_id', $clubId)
+            ->where('members.playable', true)
+            ->where('members.inactive', false)
+            ->orderBy('members.id')
+            ->get(['members.id', 'members.refId', 'members.name', 'members.gender']);
+
+        $points = DB::table('points')
+            ->whereIn('member_id', $members->pluck('id'))
+            ->whereIn('version', $versions)
+            ->get()
+            ->groupBy(['member_id', 'version']);
+
+        $pool = ['M' => [], 'K' => []];
+        foreach ($members as $member) {
+            $categories = self::RANKING_CATEGORIES[$member->gender] ?? null;
+            if ($categories === null) {
+                continue;
+            }
+
+            $byVersion = [];
+            foreach ($versions as $version) {
+                $rows = $points[$member->id][$version] ?? collect();
+                if ($rows->isEmpty() || $rows->contains(fn (object $row) => $row->vintage !== $vintage)) {
+                    continue 2;
+                }
+                $byCategory = $rows->pluck('points', 'category')->map(fn ($value) => (int) $value)->all();
+                if (array_diff($categories, array_keys($byCategory)) !== []) {
+                    continue 2;
+                }
+                $byVersion[$version] = ['points' => $byCategory, 'rows' => $rows->all()];
+            }
+
+            $pool[$member->gender][] = [
+                'id' => $member->id,
+                'refId' => $member->refId,
+                'name' => $member->name,
+                'gender' => $member->gender,
+                'versions' => $byVersion,
+            ];
+        }
+
+        foreach ($pool as $gender => $players) {
+            usort($players, fn (array $a, array $b) => self::strength($b, $versions[0]) <=> self::strength($a, $versions[0]) ?: $a['id'] <=> $b['id']);
+            $pool[$gender] = array_slice($players, 0, $gender === 'M' ? $men : $women);
+        }
+
+        return $pool;
+    }
 
     /**
      * @param  array<string, mixed>  $player

@@ -26,6 +26,8 @@ use Random\Randomizer;
  */
 class RealisticSeasonSeeder extends Seeder
 {
+    use SeedsSquadCategories;
+
     /** The play-off final: a draft Scenario only, with one deliberate ordering error. */
     public const DRAFT_ROUND = 11;
 
@@ -92,8 +94,8 @@ class RealisticSeasonSeeder extends Seeder
     public function run(): void
     {
         $generator = new SeasonLineupGenerator(
-            $this->pool(self::RANKING_VERSIONS, 'SEN', 27, 18),
-            $this->pool(self::RANKING_VERSIONS, 'U17', 7, 5),
+            SeasonLineupGenerator::clubPool(self::CLUB_ID, self::RANKING_VERSIONS, 'SEN', 27, 18),
+            SeasonLineupGenerator::clubPool(self::CLUB_ID, self::RANKING_VERSIONS, 'U17', 7, 5),
             new Randomizer(new Mt19937(self::SEED)),
         );
 
@@ -116,66 +118,6 @@ class RealisticSeasonSeeder extends Seeder
 
             $this->seedTeamRound($round, $gameDate, $version, $playing, $opponents, $teamIds, $lineup, $reserve);
         }
-    }
-
-    /**
-     * Members of the club with points in every category of their gender at every version, all with the given vintage,
-     * strongest first by their points at the first version.
-     *
-     * @param  list<string>  $versions
-     * @return array{M: list<array<string, mixed>>, K: list<array<string, mixed>>}
-     */
-    private function pool(array $versions, string $vintage, int $men, int $women): array
-    {
-        $members = DB::table('members')
-            ->join('club_member', 'club_member.member_id', '=', 'members.id')
-            ->where('club_member.club_id', self::CLUB_ID)
-            ->where('members.playable', true)
-            ->where('members.inactive', false)
-            ->orderBy('members.id')
-            ->get(['members.id', 'members.refId', 'members.name', 'members.gender']);
-
-        $points = DB::table('points')
-            ->whereIn('member_id', $members->pluck('id'))
-            ->whereIn('version', $versions)
-            ->get()
-            ->groupBy(['member_id', 'version']);
-
-        $pool = ['M' => [], 'K' => []];
-        foreach ($members as $member) {
-            $categories = SeasonLineupGenerator::RANKING_CATEGORIES[$member->gender] ?? null;
-            if ($categories === null) {
-                continue;
-            }
-
-            $byVersion = [];
-            foreach ($versions as $version) {
-                $rows = $points[$member->id][$version] ?? collect();
-                if ($rows->isEmpty() || $rows->contains(fn (object $row) => $row->vintage !== $vintage)) {
-                    continue 2;
-                }
-                $byCategory = $rows->pluck('points', 'category')->map(fn ($value) => (int) $value)->all();
-                if (array_diff($categories, array_keys($byCategory)) !== []) {
-                    continue 2;
-                }
-                $byVersion[$version] = ['points' => $byCategory, 'rows' => $rows->all()];
-            }
-
-            $pool[$member->gender][] = [
-                'id' => $member->id,
-                'refId' => $member->refId,
-                'name' => $member->name,
-                'gender' => $member->gender,
-                'versions' => $byVersion,
-            ];
-        }
-
-        foreach ($pool as $gender => $players) {
-            usort($players, fn (array $a, array $b) => SeasonLineupGenerator::strength($b, $versions[0]) <=> SeasonLineupGenerator::strength($a, $versions[0]) ?: $a['id'] <=> $b['id']);
-            $pool[$gender] = array_slice($players, 0, $gender === 'M' ? $men : $women);
-        }
-
-        return $pool;
     }
 
     /**
@@ -312,38 +254,6 @@ class RealisticSeasonSeeder extends Seeder
                     'updated_at' => now(),
                 ]);
             }
-        }
-    }
-
-    /**
-     * @param  array{category: string, name: string, players: list<array<string, mixed>>}  $category
-     */
-    private function seedCategory(int $squadId, ?int $scenarioId, array $category, string $version): void
-    {
-        $categoryId = DB::table('squad_categories')->insertGetId([
-            'category' => $category['category'],
-            'name' => $category['name'],
-            'squad_id' => $squadId,
-            'team_round_scenario_id' => $scenarioId,
-        ]);
-
-        foreach ($category['players'] as $player) {
-            $squadMemberId = DB::table('squad_members')->insertGetId([
-                'name' => $player['name'],
-                'gender' => $player['gender'],
-                'member_ref_id' => $player['refId'],
-                'squad_category_id' => $categoryId,
-            ]);
-
-            DB::table('squad_points')->insert(array_map(fn (object $point) => [
-                'points' => $point->points,
-                'category' => $point->category,
-                'position' => $point->position,
-                'squad_member_id' => $squadMemberId,
-                'vintage' => $point->vintage,
-                'corrected_manually' => 0,
-                'version' => $version,
-            ], $player['versions'][$version]['rows']));
         }
     }
 
