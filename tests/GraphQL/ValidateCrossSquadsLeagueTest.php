@@ -8,6 +8,7 @@ use Closure;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CategoryFactory;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -22,9 +23,7 @@ class ValidateCrossSquadsLeagueTest extends TestCase
         Carbon::withTestNow($knownDate, $callback);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase5() : void
     {
         $this->fixedInTime(function () {
@@ -55,9 +54,7 @@ class ValidateCrossSquadsLeagueTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase4() : void
     {
         $this->fixedInTime(function () {
@@ -86,9 +83,7 @@ class ValidateCrossSquadsLeagueTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase3() : void
     {
         $this->fixedInTime(function () {
@@ -126,9 +121,7 @@ class ValidateCrossSquadsLeagueTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase2() : void
     {
         $this->fixedInTime(function () {
@@ -163,9 +156,7 @@ class ValidateCrossSquadsLeagueTest extends TestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase1()
     {
         $this->fixedInTime(function () {
@@ -235,9 +226,9 @@ class ValidateCrossSquadsLeagueTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function twoWomenOver50PointsInMDAndDD()
     {
         $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
@@ -346,9 +337,9 @@ class ValidateCrossSquadsLeagueTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function womenWithin50PointsInMDButOverInDDShouldNotShow()
     {
         $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
@@ -429,9 +420,9 @@ class ValidateCrossSquadsLeagueTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function oneWomenOverInMDAndDD()
     {
         $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
@@ -532,9 +523,9 @@ class ValidateCrossSquadsLeagueTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function womenWithin50PointsInMDShouldNotShow() : void
     {
         $womenSpecial1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');
@@ -615,9 +606,9 @@ class ValidateCrossSquadsLeagueTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function validHappyScenario()
     {
         $women1 = CategoryFactory::makeWomen('MxD', 50, 'DD', 50, 0, '101010-1');

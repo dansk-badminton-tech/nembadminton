@@ -10,6 +10,7 @@ use FlyCompany\Scraper\BadmintonPlayerHelper;
 use FlyCompany\Scraper\Parser;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 
 class BadmintonPlayerTest extends TestCase
@@ -18,10 +19,10 @@ class BadmintonPlayerTest extends TestCase
     use CreatesApplication;
 
     /**
-     * @test
      * @return void
      * @throws \JsonException
      */
+    #[Test]
     public function getVersions(): void
     {
         $badmintonPlayer = new BadmintonPlayer(new Parser(), Cache::store());
@@ -30,10 +31,10 @@ class BadmintonPlayerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \JsonException
      */
+    #[Test]
     public function getRankingVersions(): void
     {
         $badmintonPlayer = new BadmintonPlayer(new Parser(), Cache::store());

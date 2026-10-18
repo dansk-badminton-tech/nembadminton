@@ -7,6 +7,7 @@ use App\Models\Clubhouse;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ResetMemberPlayerIdTest extends TestCase
@@ -54,7 +55,7 @@ class ResetMemberPlayerIdTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_lets_a_club_admin_reset_a_coachs_player_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -80,7 +81,7 @@ class ResetMemberPlayerIdTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_lets_a_club_admin_reset_a_players_player_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -106,7 +107,7 @@ class ResetMemberPlayerIdTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_lets_a_coach_reset_a_player_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -132,7 +133,7 @@ class ResetMemberPlayerIdTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_user_without_edit_clubhouse_permission(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -146,7 +147,7 @@ class ResetMemberPlayerIdTest extends TestCase
         $response->assertJsonPath('errors.0.message', 'This action is unauthorized.');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_self_reset(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -161,7 +162,7 @@ class ResetMemberPlayerIdTest extends TestCase
         $response->assertJsonPath('errors.0.message', 'You cannot reset your own player_id');
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_cross_clubhouse_reset(): void
     {
         $clubhouseA = Clubhouse::factory()->create();

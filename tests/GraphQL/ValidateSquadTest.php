@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CategoryFactory;
 use Tests\CreatesApplication;
 use Tests\TestCase;
@@ -26,9 +27,7 @@ class ValidateSquadTest extends TestCase
         Carbon::setTestNow();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function useCase1()
     {
         // abc Aalborg - 2021-10-30
@@ -63,9 +62,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMixValidateSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 50, 0, '101010-1');
@@ -140,9 +139,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMenSingleValidateSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 50, 0, '101010-1');
@@ -222,9 +221,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMensDoubleValidateSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -309,9 +308,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function playingToHighInMensDoubleAndMixDoubleValidateSquad(): void
     {
         $women1 = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-1');
@@ -406,9 +405,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function validatingSquadWithoutMDAndDSAndDD(): void
     {
         $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 250, 0, '101010-5');
@@ -461,9 +460,9 @@ class ValidateSquadTest extends TestCase
     }
 
     /**
-     * @test
      * @throws \JsonException
      */
+    #[Test]
     public function validatingSquadWithoutMDAndDSAndDDAndErrorInHS(): void
     {
         $men1 = CategoryFactory::makeMen('MxH', 0, 'HD', 250, 0, '101010-5');

@@ -12,6 +12,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\CreatesApplication;
 
 class BadmintonPlayerApiTest extends TestCase
@@ -31,9 +32,9 @@ class BadmintonPlayerApiTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function returnAllLeagueMatchesForCurrentSeason(): void
     {
 
@@ -51,9 +52,7 @@ class BadmintonPlayerApiTest extends TestCase
         self::assertIsInt($firstMatch->leagueMatchId);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function allPlayedMatches14DaysBack(): void
     {
         $body = file_get_contents(__DIR__ . '/playedMatchesLinups.json');
@@ -71,10 +70,10 @@ class BadmintonPlayerApiTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
+    #[Test]
     public function getPlayersRanking(){
         $body = file_get_contents(__DIR__ . '/playersRanking.json');
         $mock = new MockHandler([

@@ -11,13 +11,12 @@ use App\Models\SquadReserve;
 use App\Models\TeamRound;
 use FlyCompany\TeamFight\Export\Exporter;
 use Illuminate\Database\Eloquent\Collection;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ExporterTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function it_exports_csv_with_categories_by_default(): void
     {
         $team = new TeamRound();
@@ -36,9 +35,7 @@ class ExporterTest extends TestCase
         $this->assertSame($expected, $csv);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_exports_csv_without_categories_when_excluded(): void
     {
         $team = new TeamRound();
@@ -58,9 +55,7 @@ class ExporterTest extends TestCase
         $this->assertSame($expected, $csv);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_exports_the_reserves_of_the_official_lineup_after_each_squads_categories(): void
     {
         $team = $this->teamWithReserves();
@@ -74,9 +69,7 @@ class ExporterTest extends TestCase
         $this->assertSame($expected, (new Exporter)->exportToCSV($team));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_exports_the_reserves_without_categories(): void
     {
         $team = $this->teamWithReserves();
@@ -112,9 +105,7 @@ class ExporterTest extends TestCase
         return $team;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_removes_duplicate_players_within_squad_when_excluding_categories(): void
     {
         $team = new TeamRound();

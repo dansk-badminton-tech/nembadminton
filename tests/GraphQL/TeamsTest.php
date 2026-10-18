@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TeamsTest extends TestCase
@@ -33,9 +34,7 @@ class TeamsTest extends TestCase
 
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -70,9 +69,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_team_rounds_with_pagination()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -115,9 +112,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_export_a_team()
     {
         Storage::fake('public');
@@ -156,9 +151,7 @@ class TeamsTest extends TestCase
         $this->assertSame(Storage::disk('public')->url($files[0]), $response->json('data.export'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_export_a_team_excluding_categories()
     {
         Storage::fake('public');
@@ -237,9 +230,7 @@ class TeamsTest extends TestCase
         $this->assertSame(1, substr_count($contentWithoutBom, '"John Doe"'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_exports_only_the_official_lineup_when_the_team_round_has_draft_scenarios()
     {
         Storage::fake('public');
@@ -308,9 +299,7 @@ class TeamsTest extends TestCase
         $this->assertSame(1, substr_count($content, '"1. HS"'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_team_notification_activity()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -363,9 +352,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_team_round_receiver_by_team_round_id()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -408,9 +395,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_member_search_points_with_team_round_id_filter()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -502,7 +487,7 @@ class TeamsTest extends TestCase
           ->assertJsonPath('data.memberSearchPoints.data.0.refId', $member->refId);
     }
 
-    /** @test */
+    #[Test]
     public function member_lists_only_exclude_members_assigned_in_the_active_scenario(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -652,9 +637,7 @@ class TeamsTest extends TestCase
             ->assertJsonMissing(['refId' => $members[0]->refId]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_create_cancellation_with_team_round_id()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -699,9 +682,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_create_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -748,9 +729,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_update_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -801,9 +780,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_update_a_team_round_with_null_name()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -848,9 +825,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_delete_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -886,9 +861,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_copy_a_team_round()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -927,9 +900,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_copies_only_the_official_lineup_when_a_team_round_uses_scenarios()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1018,9 +989,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_create_a_squad()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1066,9 +1035,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_update_a_squad()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1123,9 +1090,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_delete_a_squad()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1166,9 +1131,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_move_squad_order_up()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1216,9 +1179,7 @@ class TeamsTest extends TestCase
         $this->assertSame(1, $second->order);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_move_squad_order_down()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1266,9 +1227,7 @@ class TeamsTest extends TestCase
         $this->assertSame(1, $second->order);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_add_a_squad_member_by_ref_id()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1350,9 +1309,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_update_a_squad_member()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1437,9 +1394,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_delete_a_squad_member()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1499,9 +1454,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_send_team_notification()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1554,9 +1507,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_send_team_notification_and_store_receivers()
     {
         Mail::fake();
@@ -1616,9 +1567,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_notifies_all_platform_players_and_reports_skipped()
     {
         Notification::fake();
@@ -1721,9 +1670,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function team_round_notifications_share_the_same_channels()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1746,9 +1693,7 @@ class TeamsTest extends TestCase
         $this->assertSame($expectedChannels, $updated->via($notifiable));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function team_publish_notification_addresses_mail_to_the_notifiable()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1770,9 +1715,7 @@ class TeamsTest extends TestCase
         $mailable->assertHasTo('player@example.com');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_can_query_reachable_player_ref_ids()
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -1872,9 +1815,7 @@ class TeamsTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_notifies_only_selected_platform_players()
     {
         Notification::fake();

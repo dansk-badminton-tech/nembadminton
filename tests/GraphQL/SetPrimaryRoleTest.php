@@ -7,6 +7,7 @@ use App\Models\Clubhouse;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class SetPrimaryRoleTest extends TestCase
@@ -31,7 +32,7 @@ class SetPrimaryRoleTest extends TestCase
         ', ['roleId' => $roleId]);
     }
 
-    /** @test */
+    #[Test]
     public function it_sets_primary_role_to_an_assigned_role(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -66,7 +67,7 @@ class SetPrimaryRoleTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_setting_a_role_the_user_does_not_have(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -89,7 +90,7 @@ class SetPrimaryRoleTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_rejects_a_non_existent_role_id(): void
     {
         $clubhouse = Clubhouse::factory()->create();
@@ -110,7 +111,7 @@ class SetPrimaryRoleTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_authentication(): void
     {
         $playerRoleId = \Spatie\Permission\Models\Role::where('name', Role::PLAYER->value)->first()->id;
