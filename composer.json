@@ -73,7 +73,8 @@
         },
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
-            "ion-bazan/composer-diff": true
+            "ion-bazan/composer-diff": true,
+            "php-http/discovery": true
         }
     },
     "extra": {
