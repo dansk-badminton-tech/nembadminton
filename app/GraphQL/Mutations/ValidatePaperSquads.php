@@ -7,6 +7,7 @@ namespace App\GraphQL\Mutations;
 use App\Models\Squad;
 use App\Models\TeamRound;
 use App\SeasonHistory\PaperSquadRule;
+use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistoryLoader;
 
 /**
@@ -64,6 +65,12 @@ class ValidatePaperSquads
                         'unplayedCategories' => $breach->unplayedCategories,
                         'matchCount' => $breach->matchCount,
                         'requiredMatchCount' => $breach->requiredMatchCount,
+                        'teamName' => (string) $squad->team?->name,
+                        'uncountedRounds' => array_map(fn (RoundLineup $round) => [
+                            'teamRoundId' => $round->teamRoundId,
+                            'name' => $round->name,
+                            'round' => $round->round,
+                        ], $breach->uncountedRounds),
                     ];
                 }
             }

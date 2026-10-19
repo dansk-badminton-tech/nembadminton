@@ -31,6 +31,17 @@ type PaperSquadPlayer {
     matchCount: Int!
     "Earlier team matches the rule needs: 1 in the group stage from round 2, 2 in the playoffs. Round 1 is exempt, so it has no findings."
     requiredMatchCount: Int!
+    "The name of the Paper Squad's Team"
+    teamName: String!
+    "Earlier TeamRounds the player stands in that have no Squad for the Paper Squad's Team, so they can't be compared and don't count. Only when matchCount is below requiredMatchCount; linking the Team on those Squads counts them."
+    uncountedRounds: [PaperSquadUncountedRound!]!
+}
+
+type PaperSquadUncountedRound {
+    teamRoundId: ID!
+    name: String!
+    "Null when the TeamRound has no round number"
+    round: Int
 }
 
 enum ReserveFindingType {

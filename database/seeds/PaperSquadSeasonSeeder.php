@@ -19,8 +19,9 @@ use Random\Randomizer;
  *   - Three Paper Squads (papirhold): the 2. division Team in round 4 (its opponent withdrew), the 1. division
  *     Team in round 6 (likewise) and the Badmintonligaen Team in round 10 (a bye in the quarter-final).
  *   - The round 4 Paper Squad meets the rule. The round 6 one has a player back from injury without an earlier match
- *     and a player in a category she hasn't played; the round 10 one a player back from injury with one earlier
- *     match where the play-offs need two. PaperSquadSeasonSeedTest pins these findings.
+ *     and a player in a category she hasn't played; the round 10 one a player back from injury whose only earlier
+ *     match, in round 9, can't be counted where the play-offs need two: round 9's lineups have no Team linked, as many
+ *     do in production, so the finding names round 9. PaperSquadSeasonSeedTest pins these findings.
  *   - Lineups come from SeasonLineupGenerator with a fixed seed, so every Official Lineup is otherwise valid.
  *
  * Needs MemberSeeder, PointSeeder, SeasonSeeder, ClubhouseSeeder and TournamentTierSeeder first.
@@ -68,6 +69,9 @@ class PaperSquadSeasonSeeder extends Seeder
         10 => ['2027-03-06', [null, 'Ballerup', 'Køge', 'Sundby']],
         11 => ['2027-03-20', ['Gentofte (semifinale)', 'Roskilde', 'Taastrup', 'Valby']],
     ];
+
+    /** Rounds whose Squads have no Team linked. */
+    private const ROUNDS_WITHOUT_TEAMS = [9];
 
     /**
      * Players out injured: the senior pool place (0-based, by points, M or K) and the rounds they miss.
@@ -152,7 +156,7 @@ class PaperSquadSeasonSeeder extends Seeder
             $squadId = DB::table('squads')->insertGetId([
                 'playerLimit' => $men + $women,
                 'team_round_id' => $teamRoundId,
-                'team_id' => $teamIds[$teamIndex],
+                'team_id' => in_array($round, self::ROUNDS_WITHOUT_TEAMS, true) ? null : $teamIds[$teamIndex],
                 'order' => $teamIndex + 1,
                 'name' => $opponent === null ? 'Papirhold' : 'mod '.$opponent,
                 'is_paper_squad' => $opponent === null,

@@ -79,7 +79,7 @@ class PaperSquadSeasonSeedTest extends TestCase
             ->mapWithKeys(fn (TeamRound $round) => [$round->round => [
                 'paperSquadTier' => $round->squads->firstWhere('is_paper_squad', true)->team->tierName(),
                 'players' => $this->graphQL(
-                    'mutation ($id: ID!, $input: [ValidateTeam!]!) { validatePaperSquads(teamRoundId: $id, input: $input) { missingRound players { name unplayedCategories matchCount requiredMatchCount } } }',
+                    'mutation ($id: ID!, $input: [ValidateTeam!]!) { validatePaperSquads(teamRoundId: $id, input: $input) { missingRound players { name unplayedCategories matchCount requiredMatchCount uncountedRounds { name round } } } }',
                     ['id' => $round->id, 'input' => $this->validationInput($round, null)]
                 )->assertJsonMissingPath('errors')->assertJsonPath('data.validatePaperSquads.missingRound', false)->json('data.validatePaperSquads.players'),
             ]])
@@ -90,12 +90,13 @@ class PaperSquadSeasonSeedTest extends TestCase
             4 => ['paperSquadTier' => '2. division', 'players' => []],
             6 => ['paperSquadTier' => '1. division', 'players' => [
                 // Back from injury: no earlier match, and no earlier DS or MD.
-                ['name' => 'Signe Markwall', 'unplayedCategories' => ['DS', 'MD'], 'matchCount' => 0, 'requiredMatchCount' => 1],
-                ['name' => 'Katrine Tingleff', 'unplayedCategories' => ['DD'], 'matchCount' => 4, 'requiredMatchCount' => 1],
+                ['name' => 'Signe Markwall', 'unplayedCategories' => ['DS', 'MD'], 'matchCount' => 0, 'requiredMatchCount' => 1, 'uncountedRounds' => []],
+                ['name' => 'Katrine Tingleff', 'unplayedCategories' => ['DD'], 'matchCount' => 4, 'requiredMatchCount' => 1, 'uncountedRounds' => []],
             ]],
-            // A bye in the quarter-final. Back from injury in round 9: one match, the play-offs need two.
+            // A bye in the quarter-final. Back from injury in round 9, whose lineups have no Team linked: that match
+            // can't be counted, and the play-offs need two.
             10 => ['paperSquadTier' => 'Badmintonligaen', 'players' => [
-                ['name' => 'Josefine Eggert Jackson', 'unplayedCategories' => [], 'matchCount' => 1, 'requiredMatchCount' => 2],
+                ['name' => 'Josefine Eggert Jackson', 'unplayedCategories' => [], 'matchCount' => 0, 'requiredMatchCount' => 2, 'uncountedRounds' => [['name' => 'Runde 9', 'round' => 9]]],
             ]],
         ], $findings);
     }

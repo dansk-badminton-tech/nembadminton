@@ -122,7 +122,56 @@ class ValidatePaperSquadsTest extends TestCase
             'unplayedCategories' => [],
             'matchCount' => 0,
             'requiredMatchCount' => 1,
+            'teamName' => 'Højbjerg 2',
+            'uncountedRounds' => [],
         ]]);
+    }
+
+    #[Test]
+    public function earlier_rounds_without_a_squad_for_the_paper_squads_team_are_named_so_they_can_be_linked(): void
+    {
+        $this->playedEarlier('2026-09-20', round: 1, onTeam: 1, category: 'HS', refIds: [self::ANDERS], withTeams: false);
+        $this->playedEarlier('2026-09-27', round: null, onTeam: 1, category: 'HS', refIds: [self::ANDERS], name: 'Ekstra runde', withTeams: false);
+        $this->playedEarlier('2026-10-04', round: 2, onTeam: 1, category: 'HS', refIds: [self::BO]);
+        [$round, $paper] = $this->paperRound(round: 3);
+
+        $response = $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]], ['HS', '2. HS', [self::BO]]], isPaperSquad: true)]);
+
+        $players = $response->json('data.validatePaperSquads.players');
+        $this->assertSame(['Anders'], array_column($players, 'name'));
+        $this->assertSame(0, $players[0]['matchCount']);
+        $this->assertSame('Højbjerg 1', $players[0]['teamName']);
+        $this->assertSame([[1, 'Runde 1'], [null, 'Ekstra runde']], array_map(
+            fn (array $uncounted) => [$uncounted['round'], $uncounted['name']],
+            $players[0]['uncountedRounds'],
+        ));
+    }
+
+    #[Test]
+    public function a_round_of_another_clubhouse_is_not_named(): void
+    {
+        $this->playedEarlier('2026-09-21', round: 1, onTeam: 1, category: 'HS', refIds: [self::ANDERS], name: 'En anden klubs runde', clubhouse: Clubhouse::factory()->create(), withTeams: false);
+        [$round, $paper] = $this->paperRound(round: 2);
+
+        $players = $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)])
+            ->json('data.validatePaperSquads.players');
+
+        $this->assertSame(0, $players[0]['matchCount']);
+        $this->assertSame([], $players[0]['uncountedRounds']);
+    }
+
+    #[Test]
+    public function rounds_without_the_team_are_not_named_when_the_player_has_enough_matches(): void
+    {
+        $this->playedEarlier('2026-09-20', round: 1, onTeam: 1, category: 'HS', refIds: [self::ANDERS], withTeams: false);
+        $this->playedEarlier('2026-09-27', round: 2, onTeam: 1, category: 'HS', refIds: [self::ANDERS]);
+        [$round, $paper] = $this->paperRound(round: 3);
+
+        $players = $this->validate($round, [$this->lineup($paper, [['HD', '1. HD', [self::ANDERS]]], isPaperSquad: true)])
+            ->json('data.validatePaperSquads.players');
+
+        $this->assertSame(['HD'], $players[0]['unplayedCategories']);
+        $this->assertSame([], $players[0]['uncountedRounds']);
     }
 
     #[Test]
@@ -241,7 +290,7 @@ class ValidatePaperSquadsTest extends TestCase
             mutation($teamRoundId: ID!, $input: [ValidateTeam!]!) {
                 validatePaperSquads(teamRoundId: $teamRoundId, input: $input) {
                     missingRound
-                    players { squadIndex refId name unplayedCategories matchCount requiredMatchCount }
+                    players { squadIndex refId name unplayedCategories matchCount requiredMatchCount teamName uncountedRounds { teamRoundId name round } }
                 }
             }
         ';
@@ -263,15 +312,16 @@ class ValidatePaperSquadsTest extends TestCase
 
     /**
      * An earlier TeamRound with Team 1 then Team 2, the players standing in one category on one of them.
+     * Without teams, its two Squads have no Team linked.
      *
      * @param  list<string>  $refIds
      */
-    private function playedEarlier(string $gameDate, int $round, int $onTeam, string $category, array $refIds, ?string $name = null, ?Clubhouse $clubhouse = null): void
+    private function playedEarlier(string $gameDate, ?int $round, int $onTeam, string $category, array $refIds, ?string $name = null, ?Clubhouse $clubhouse = null, bool $withTeams = true): void
     {
         $teamRound = $this->teamRound($round, $gameDate, $name, $clubhouse);
         $squads = [
-            1 => $this->squad($teamRound, $this->team1, order: 1),
-            2 => $this->squad($teamRound, $this->team2, order: 2),
+            1 => $this->squad($teamRound, $withTeams ? $this->team1 : null, order: 1),
+            2 => $this->squad($teamRound, $withTeams ? $this->team2 : null, order: 2),
         ];
         foreach ($refIds as $index => $refId) {
             $squadCategory = $squads[$onTeam]->categories()->create(['category' => $category, 'name' => ($index + 1).'. '.$category]);
@@ -292,12 +342,12 @@ class ValidatePaperSquadsTest extends TestCase
         ]);
     }
 
-    private function squad(TeamRound $round, Team $team, int $order, bool $isPaperSquad = false): Squad
+    private function squad(TeamRound $round, ?Team $team, int $order, bool $isPaperSquad = false): Squad
     {
         $squad = Squad::query()->create([
             'team_round_id' => $round->id,
             'playerLimit' => 10,
-            'team_id' => $team->id,
+            'team_id' => $team?->id,
             'is_paper_squad' => $isPaperSquad,
         ]);
         // Sortable assigns the next order on create, so set the wanted order afterwards.

@@ -34,6 +34,14 @@ final readonly class RoundLineup
     }
 
     /**
+     * The TeamRound's Squad for the Team; null when none of its Squads has the Team linked.
+     */
+    public function squadFor(int $teamId): ?LineupSquad
+    {
+        return array_find($this->squads, fn (LineupSquad $squad) => $squad->teamId === $teamId);
+    }
+
+    /**
      * @return list<CategorySlot>
      */
     public function ladder(string $category): array
