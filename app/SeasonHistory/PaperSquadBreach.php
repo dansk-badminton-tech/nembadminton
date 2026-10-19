@@ -19,6 +19,6 @@ final readonly class PaperSquadBreach
         public array $unplayedCategories,
         public int $matchCount,
         public int $requiredMatchCount,
-        public array $uncountedRounds = [],
+        public array $uncountedRounds,
     ) {}
 }

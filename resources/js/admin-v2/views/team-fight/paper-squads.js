@@ -44,7 +44,7 @@ function playerMessage({squadIndex, name, unplayedCategories, matchCount, requir
         breaches.push(`har stået på samme eller et lavere hold ${times(matchCount)} tidligere i sæsonen, men skal have stået der mindst ${times(requiredMatchCount)}`)
     }
     const message = `Hold ${squadIndex + 1} (papirhold): ${name} ${breaches.join(' og ')}.`
-    return tooFewMatches && uncountedRounds?.length ? `${message} ${uncountedMessage(uncountedRounds, teamName)}` : message
+    return tooFewMatches && uncountedRounds.length ? `${message} ${uncountedMessage(uncountedRounds, teamName)}` : message
 }
 
 // validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.

@@ -95,7 +95,7 @@ final readonly class SeasonHistory
         return count(array_filter(
             $this->placementsIn($refId, $phase),
             function (Placement $placement) use ($teamId) {
-                $teamSquad = array_find($placement->round->squads, fn (LineupSquad $squad) => $squad->teamId === $teamId);
+                $teamSquad = $placement->round->squadFor($teamId);
 
                 return $teamSquad !== null && $placement->squad->position >= $teamSquad->position;
             },
@@ -104,7 +104,7 @@ final readonly class SeasonHistory
 
     /**
      * The TeamRounds the Member stands in that have no Squad for the Team, in round order, each once.
-     * matchCountOnSameOrLowerTeam can't compare them, so the team manager can link the Team to count them.
+     * matchCountOnSameOrLowerTeam can't compare them, so the coach can link the Team to count them.
      *
      * @return list<RoundLineup>
      */
@@ -112,7 +112,7 @@ final readonly class SeasonHistory
     {
         return array_values(array_filter(
             $this->playedRounds($refId),
-            fn (RoundLineup $round) => array_find($round->squads, fn (LineupSquad $squad) => $squad->teamId === $teamId) === null,
+            fn (RoundLineup $round) => $round->squadFor($teamId) === null,
         ));
     }
 

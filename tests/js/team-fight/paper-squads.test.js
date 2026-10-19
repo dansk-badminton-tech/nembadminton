@@ -46,7 +46,7 @@ test('too few earlier matches on the same or a lower team are counted', () => {
 
 const uncounted = (round, name = `Runde ${round}`) => ({teamRoundId: `tr-${name}`, name, round})
 
-test('earlier rounds without the Team linked are named, so the team manager can link it', () => {
+test('earlier rounds without the Team linked are named, so the coach can link it', () => {
     assert.deepEqual(paperSquadMessages({missingRound: false, players: [
         finding({name: 'Signe Markwall', matchCount: 0, uncountedRounds: [uncounted(1), uncounted(2), uncounted(3)]}),
         finding({name: 'Anders', matchCount: 0, uncountedRounds: [uncounted(2)]}),

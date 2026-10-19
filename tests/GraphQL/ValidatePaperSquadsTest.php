@@ -148,6 +148,19 @@ class ValidatePaperSquadsTest extends TestCase
     }
 
     #[Test]
+    public function a_round_of_another_clubhouse_is_not_named(): void
+    {
+        $this->playedEarlier('2026-09-21', round: 1, onTeam: 1, category: 'HS', refIds: [self::ANDERS], name: 'En anden klubs runde', clubhouse: Clubhouse::factory()->create(), withTeams: false);
+        [$round, $paper] = $this->paperRound(round: 2);
+
+        $players = $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)])
+            ->json('data.validatePaperSquads.players');
+
+        $this->assertSame(0, $players[0]['matchCount']);
+        $this->assertSame([], $players[0]['uncountedRounds']);
+    }
+
+    #[Test]
     public function rounds_without_the_team_are_not_named_when_the_player_has_enough_matches(): void
     {
         $this->playedEarlier('2026-09-20', round: 1, onTeam: 1, category: 'HS', refIds: [self::ANDERS], withTeams: false);
