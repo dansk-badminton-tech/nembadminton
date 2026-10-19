@@ -111,6 +111,8 @@ Bryder en spiller reglen, står der en advarsel under kontrollerne for hver spil
 
 Advarslen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om spilleren kan stå på papirholdet. Mangler holdrunden et rundenummer, står der i stedet **Udfyld rundenummeret**, fordi reglen ikke kan kontrolleres; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
 
+Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner advarslen runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
+
 Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
 
 ## Hvis en spiller mangler eller har forkerte point

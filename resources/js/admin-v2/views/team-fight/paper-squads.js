@@ -4,6 +4,9 @@
 // Shown with the findings: why a breach on a Paper Squad matters.
 export const PAPER_SQUAD_AGGRAVATION = 'En ulovlig spiller på et papirhold er en skærpende omstændighed: klubbens underliggende hold kan blive taberdømt (§54 stk. 7).'
 
+// The Help guide on linking the Team in earlier TeamRounds, linked under the findings when a player has uncounted rounds.
+export const TEAM_LINK_GUIDE = 'tilknyt-holdet-i-tidligere-runder'
+
 export function hasPaperSquad(squads) {
     return (squads ?? []).some(squad => squad.isPaperSquad === true)
 }
@@ -26,25 +29,28 @@ function roundsOf(rounds) {
 }
 
 // Why earlier rounds didn't count: none of their Squads has the Paper Squad's Team, so the place can't be compared.
+// TEAM_LINK_GUIDE explains how to link it.
 function uncountedMessage(rounds, teamName) {
     const one = rounds.length === 1
     const matches = one ? '1 holdkamp' : `${rounds.length} holdkampe`
-    const there = one ? 'den runde' : 'de runder'
-    const lineups = one ? 'holdopstillingen' : 'holdopstillingerne'
-    return `${matches} (${roundsOf(rounds)}) kunne ikke tælles med, fordi ingen holdopstilling i ${there} er knyttet til ${teamName}. Vælg hold på ${lineups} i ${there}.`
+    return `${matches} (${roundsOf(rounds)}) kunne ikke tælles med, fordi ${teamName} ikke er tilknyttet i ${one ? 'den runde' : 'de runder'}.`
 }
 
-function playerMessage({squadIndex, name, unplayedCategories, matchCount, requiredMatchCount, teamName, uncountedRounds}) {
+function hasUncountedRounds({matchCount, requiredMatchCount, uncountedRounds}) {
+    return matchCount < requiredMatchCount && uncountedRounds.length > 0
+}
+
+function playerMessage(player) {
+    const {squadIndex, name, unplayedCategories, matchCount, requiredMatchCount, teamName, uncountedRounds} = player
     const breaches = []
     if (unplayedCategories.length) {
         breaches.push(`har ikke spillet ${unplayedCategories.join(', ')} tidligere i sæsonen`)
     }
-    const tooFewMatches = matchCount < requiredMatchCount
-    if (tooFewMatches) {
+    if (matchCount < requiredMatchCount) {
         breaches.push(`har stået på samme eller et lavere hold ${times(matchCount)} tidligere i sæsonen, men skal have stået der mindst ${times(requiredMatchCount)}`)
     }
     const message = `Hold ${squadIndex + 1} (papirhold): ${name} ${breaches.join(' og ')}.`
-    return tooFewMatches && uncountedRounds.length ? `${message} ${uncountedMessage(uncountedRounds, teamName)}` : message
+    return hasUncountedRounds(player) ? `${message} ${uncountedMessage(uncountedRounds, teamName)}` : message
 }
 
 // validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.
@@ -54,4 +60,9 @@ export function paperSquadMessages(validation) {
         return ['Holdrunden mangler rundenummer, så papirholdsreglen (§38 stk. 7) kan ikke kontrolleres. Udfyld rundenummeret.']
     }
     return validation.players.map(playerMessage)
+}
+
+// validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.
+export function showsTeamLinkGuide(validation) {
+    return (validation?.players ?? []).some(hasUncountedRounds)
 }
