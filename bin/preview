@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Boot this checkout's UI on a random localhost port, with a fresh in-memory
-# database seeded like the browser tests (TestingDataSeeder).
+# database seeded like the browser tests plus showcases (PreviewDataSeeder).
 # Works in any checkout or git worktree, next to the dev stack and bin/test.
 #
 # Usage:
@@ -29,7 +29,7 @@ yarn build
 compose down -v >/dev/null 2>&1
 compose up -d dusk-serve
 compose run --rm --no-deps --entrypoint php dusk \
-  artisan migrate --force --seed --seeder=TestingDataSeeder --env=dusk.local
+  artisan migrate --force --seed --seeder=PreviewDataSeeder --env=dusk.local
 
 port=$(compose port dusk-serve 80)
 cat <<EOF

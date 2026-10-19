@@ -30,7 +30,11 @@ class TeamValidator
         $listOfInvalidPlayers = [];
 
         while ($lastTeam = array_pop($squads)) {
-            $listOfInvalidPlayers[] = $this->compare($lastTeam, $squads);
+            // §38 stk. 7: only the paper-team rule holds for a Paper Squad's players, so it isn't compared against the
+            // Squads above it. The Squads below it are still compared against it.
+            if (! $lastTeam->isPaperSquad) {
+                $listOfInvalidPlayers[] = $this->compare($lastTeam, $squads);
+            }
         }
 
         return collect($listOfInvalidPlayers)->flatten(1)->map(function ($data) {

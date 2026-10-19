@@ -9,6 +9,28 @@ extend type Mutation {
     validateTooYoungPlayers(input: [ValidateTeam!]!, seasonStartYear: Int!) : [TooYoungPlayer!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTooYoungPlayers")
     "§43 stk. 3 findings for the Squads' reserve records: a reserve with more points than the replaced player is a possible strength increase, a warning. Only records whose reserve stands on the Squad and whose replaced player doesn't count."
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
+    "§38 stk. 7 findings for the TeamRound's Paper Squads, from the Season History before the TeamRound. A warning, not a hard rule. Which Squads are Paper Squads is read from the TeamRound, matched to the lineup by Squad id."
+    validatePaperSquads(teamRoundId: ID!, input: [ValidateTeam!]!) : PaperSquadValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePaperSquads")
+}
+
+type PaperSquadValidation {
+    "The TeamRound has a Paper Squad but no round number, so its phase is unknown and the paper-team rule isn't checked"
+    missingRound: Boolean!
+    "Players on a Paper Squad who break the paper-team rule, in lineup order"
+    players: [PaperSquadPlayer!]!
+}
+
+type PaperSquadPlayer {
+    "0-based index of the Paper Squad in the lineup"
+    squadIndex: Int!
+    refId: String!
+    name: String!
+    "Categories the player stands in on the Paper Squad without having played them earlier this season, in the order HS, DS, HD, DD, MD"
+    unplayedCategories: [String!]!
+    "Earlier team matches this season on the Paper Squad's Team or a lower one"
+    matchCount: Int!
+    "Earlier team matches the rule needs: 1 in the group stage from round 2, 2 in the playoffs. Round 1 is exempt, so it has no findings."
+    requiredMatchCount: Int!
 }
 
 enum ReserveFindingType {
@@ -54,6 +76,8 @@ input ValidateTeam{
 input ValidateSquad{
     id: ID
     playerLimit: Int!
+    "A Paper Squad (§38 stk. 7): its own lineup skips the rank order on the team and the strength order against higher Squads. Like the rest of the lineup it comes from the editor; these checks are advisory and need no TeamRound."
+    isPaperSquad: Boolean
     categories: [ValidateCategory]
     "Reserve records on this Squad. Only validateReserves reads them; the other checks validate the lineup as placed, which is the lineup as played."
     reserves: [ValidateReserve!]
