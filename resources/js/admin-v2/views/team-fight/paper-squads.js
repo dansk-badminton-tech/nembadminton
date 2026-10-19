@@ -12,15 +12,39 @@ function times(count) {
     return count === 1 ? '1 gang' : `${count} gange`
 }
 
-function playerMessage({squadIndex, name, unplayedCategories, matchCount, requiredMatchCount}) {
+// "1, 2 og 3"
+function listOf(items) {
+    return items.length > 1 ? `${items.slice(0, -1).join(', ')} og ${items.at(-1)}` : items.join('')
+}
+
+// The rounds by round number, a round without one by its TeamRound name: "runde 1, 2 og Ekstra runde".
+function roundsOf(rounds) {
+    const numbers = rounds.filter(round => round.round !== null).map(round => round.round)
+    const names = rounds.filter(round => round.round === null).map(round => round.name)
+    if (!names.length) return `runde ${listOf(numbers)}`
+    return listOf([...(numbers.length ? [`runde ${numbers.join(', ')}`] : []), ...names])
+}
+
+// Why earlier rounds didn't count: none of their Squads has the Paper Squad's Team, so the place can't be compared.
+function uncountedMessage(rounds, teamName) {
+    const one = rounds.length === 1
+    const matches = one ? '1 holdkamp' : `${rounds.length} holdkampe`
+    const there = one ? 'den runde' : 'de runder'
+    const lineups = one ? 'holdopstillingen' : 'holdopstillingerne'
+    return `${matches} (${roundsOf(rounds)}) kunne ikke tælles med, fordi ingen holdopstilling i ${there} er knyttet til ${teamName}. Vælg hold på ${lineups} i ${there}.`
+}
+
+function playerMessage({squadIndex, name, unplayedCategories, matchCount, requiredMatchCount, teamName, uncountedRounds}) {
     const breaches = []
     if (unplayedCategories.length) {
         breaches.push(`har ikke spillet ${unplayedCategories.join(', ')} tidligere i sæsonen`)
     }
-    if (matchCount < requiredMatchCount) {
+    const tooFewMatches = matchCount < requiredMatchCount
+    if (tooFewMatches) {
         breaches.push(`har stået på samme eller et lavere hold ${times(matchCount)} tidligere i sæsonen, men skal have stået der mindst ${times(requiredMatchCount)}`)
     }
-    return `Hold ${squadIndex + 1} (papirhold): ${name} ${breaches.join(' og ')}.`
+    const message = `Hold ${squadIndex + 1} (papirhold): ${name} ${breaches.join(' og ')}.`
+    return tooFewMatches && uncountedRounds?.length ? `${message} ${uncountedMessage(uncountedRounds, teamName)}` : message
 }
 
 // validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.

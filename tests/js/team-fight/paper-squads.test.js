@@ -12,6 +12,8 @@ const finding = (overrides) => ({
     unplayedCategories: [],
     matchCount: 1,
     requiredMatchCount: 1,
+    teamName: 'BC37 Amager 2',
+    uncountedRounds: [],
     ...overrides,
 })
 
@@ -39,6 +41,33 @@ test('too few earlier matches on the same or a lower team are counted', () => {
     ]}), [
         'Hold 2 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.',
         'Hold 1 (papirhold): Anders har ikke spillet HS tidligere i sæsonen og har stået på samme eller et lavere hold 1 gang tidligere i sæsonen, men skal have stået der mindst 2 gange.',
+    ])
+})
+
+const uncounted = (round, name = `Runde ${round}`) => ({teamRoundId: `tr-${name}`, name, round})
+
+test('earlier rounds without the Team linked are named, so the team manager can link it', () => {
+    assert.deepEqual(paperSquadMessages({missingRound: false, players: [
+        finding({name: 'Signe Markwall', matchCount: 0, uncountedRounds: [uncounted(1), uncounted(2), uncounted(3)]}),
+        finding({name: 'Anders', matchCount: 0, uncountedRounds: [uncounted(2)]}),
+    ]}), [
+        'Hold 1 (papirhold): Signe Markwall har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 3 holdkampe (runde 1, 2 og 3) kunne ikke tælles med, fordi ingen holdopstilling i de runder er knyttet til BC37 Amager 2. Vælg hold på holdopstillingerne i de runder.',
+        'Hold 1 (papirhold): Anders har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 1 holdkamp (runde 2) kunne ikke tælles med, fordi ingen holdopstilling i den runde er knyttet til BC37 Amager 2. Vælg hold på holdopstillingen i den runde.',
+    ])
+})
+
+test('a round without a round number is named by the TeamRound name', () => {
+    assert.deepEqual(paperSquadMessages({missingRound: false, players: [
+        finding({matchCount: 0, uncountedRounds: [uncounted(1), uncounted(null, 'Ekstra runde')]}),
+        finding({matchCount: 0, uncountedRounds: [uncounted(null, 'Ekstra runde')]}),
+    ]}).map(message => message.match(/\(([^()]*)\) kunne/)[1]), ['runde 1 og Ekstra runde', 'Ekstra runde'])
+})
+
+test('uncounted rounds are not named when the player has enough matches', () => {
+    assert.deepEqual(paperSquadMessages({missingRound: false, players: [
+        finding({unplayedCategories: ['HD'], uncountedRounds: [uncounted(1)]}),
+    ]}), [
+        'Hold 1 (papirhold): Bo har ikke spillet HD tidligere i sæsonen.',
     ])
 })
 

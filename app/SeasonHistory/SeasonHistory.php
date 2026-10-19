@@ -103,6 +103,20 @@ final readonly class SeasonHistory
     }
 
     /**
+     * The TeamRounds the Member stands in that have no Squad for the Team, in round order, each once.
+     * matchCountOnSameOrLowerTeam can't compare them, so the team manager can link the Team to count them.
+     *
+     * @return list<RoundLineup>
+     */
+    public function roundsWithoutTeam(string $refId, int $teamId): array
+    {
+        return array_values(array_filter(
+            $this->playedRounds($refId),
+            fn (RoundLineup $round) => array_find($round->squads, fn (LineupSquad $squad) => $squad->teamId === $teamId) === null,
+        ));
+    }
+
+    /**
      * The TeamRounds the Member stands in, in round order, each once.
      *
      * @return list<RoundLineup>

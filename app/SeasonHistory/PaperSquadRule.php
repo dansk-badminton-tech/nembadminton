@@ -60,6 +60,8 @@ final readonly class PaperSquadRule
             return null;
         }
 
-        return new PaperSquadBreach($unplayed, $matchCount, $requiredMatchCount);
+        $uncountedRounds = $matchCount < $requiredMatchCount ? $this->earlier->roundsWithoutTeam($refId, $this->teamId) : [];
+
+        return new PaperSquadBreach($unplayed, $matchCount, $requiredMatchCount, $uncountedRounds);
     }
 }

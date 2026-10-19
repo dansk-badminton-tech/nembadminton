@@ -310,6 +310,13 @@ class SeasonHistoryTest extends TestCase
         $this->assertSame(1, $history->matchCountOnSameOrLowerTeam('0101011111', $hold2->id, SeasonPhase::GRUNDSPIL));
         $this->assertSame(2, $history->matchCountOnSameOrLowerTeam('0101011111', $hold3->id));
 
+        // The rounds matchCountOnSameOrLowerTeam can't compare, because they have no Squad for the Team.
+        $roundNumbers = fn (array $rounds) => array_map(fn (RoundLineup $round) => $round->round, $rounds);
+        $this->assertSame([3, 8, 9], $roundNumbers($history->roundsWithoutTeam('0101011111', $hold1->id)));
+        $this->assertSame([9], $roundNumbers($history->roundsWithoutTeam('0101011111', $hold2->id)));
+        $this->assertSame([1, 2, 8], $roundNumbers($history->roundsWithoutTeam('0101011111', $hold3->id)));
+        $this->assertSame([], $history->roundsWithoutTeam('0101012222', $hold2->id));
+
         $this->assertSame(
             [[1, '2026-09-20'], [2, '2026-10-04'], [3, '2026-10-25'], [8, '2027-03-01'], [9, '2027-03-15']],
             array_map(fn (RoundLineup $round) => [$round->round, $round->gameDate], $history->playedRounds('0101011111')),

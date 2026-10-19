@@ -20,7 +20,9 @@ use Random\Randomizer;
  *     Team in round 6 (likewise) and the Badmintonligaen Team in round 10 (a bye in the quarter-final).
  *   - The round 4 Paper Squad meets the rule. The round 6 one has a player back from injury without an earlier match
  *     and a player in a category she hasn't played; the round 10 one a player back from injury with one earlier
- *     match where the play-offs need two. PaperSquadSeasonSeedTest pins these findings.
+ *     match where the play-offs need two. That match is in round 9, whose lineups have no Team linked, as many do in
+ *     production; the finding names round 9 as a match that couldn't be counted. PaperSquadSeasonSeedTest pins these
+ *     findings.
  *   - Lineups come from SeasonLineupGenerator with a fixed seed, so every Official Lineup is otherwise valid.
  *
  * Needs MemberSeeder, PointSeeder, SeasonSeeder, ClubhouseSeeder and TournamentTierSeeder first.
@@ -68,6 +70,9 @@ class PaperSquadSeasonSeeder extends Seeder
         10 => ['2027-03-06', [null, 'Ballerup', 'Køge', 'Sundby']],
         11 => ['2027-03-20', ['Gentofte (semifinale)', 'Roskilde', 'Taastrup', 'Valby']],
     ];
+
+    /** Rounds whose Squads have no Team linked. */
+    private const ROUNDS_WITHOUT_TEAMS = [9];
 
     /**
      * Players out injured: the senior pool place (0-based, by points, M or K) and the rounds they miss.
@@ -152,7 +157,7 @@ class PaperSquadSeasonSeeder extends Seeder
             $squadId = DB::table('squads')->insertGetId([
                 'playerLimit' => $men + $women,
                 'team_round_id' => $teamRoundId,
-                'team_id' => $teamIds[$teamIndex],
+                'team_id' => in_array($round, self::ROUNDS_WITHOUT_TEAMS, true) ? null : $teamIds[$teamIndex],
                 'order' => $teamIndex + 1,
                 'name' => $opponent === null ? 'Papirhold' : 'mod '.$opponent,
                 'is_paper_squad' => $opponent === null,
