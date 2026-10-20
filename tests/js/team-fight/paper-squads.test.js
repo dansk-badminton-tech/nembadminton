@@ -1,8 +1,11 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
+import {existsSync} from 'node:fs'
 import {
     hasPaperSquad,
-    paperSquadMessages
+    paperSquadMessages,
+    showsTeamLinkGuide,
+    TEAM_LINK_GUIDE
 } from '../../../resources/js/admin-v2/views/team-fight/paper-squads.js'
 
 const finding = (overrides) => ({
@@ -51,8 +54,8 @@ test('earlier rounds without the Team linked are named, so the coach can link it
         finding({name: 'Signe Markwall', matchCount: 0, uncountedRounds: [uncounted(1), uncounted(2), uncounted(3)]}),
         finding({name: 'Anders', matchCount: 0, uncountedRounds: [uncounted(2)]}),
     ]}), [
-        'Hold 1 (papirhold): Signe Markwall har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 3 holdkampe (runde 1, 2 og 3) kunne ikke tælles med, fordi ingen holdopstilling i de runder er knyttet til BC37 Amager 2. Vælg hold på holdopstillingerne i de runder.',
-        'Hold 1 (papirhold): Anders har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 1 holdkamp (runde 2) kunne ikke tælles med, fordi ingen holdopstilling i den runde er knyttet til BC37 Amager 2. Vælg hold på holdopstillingen i den runde.',
+        'Hold 1 (papirhold): Signe Markwall har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 3 holdkampe (runde 1, 2 og 3) kunne ikke tælles med, fordi BC37 Amager 2 ikke er tilknyttet i de runder.',
+        'Hold 1 (papirhold): Anders har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang. 1 holdkamp (runde 2) kunne ikke tælles med, fordi BC37 Amager 2 ikke er tilknyttet i den runde.',
     ])
 })
 
@@ -69,6 +72,14 @@ test('uncounted rounds are not named when the player has enough matches', () => 
     ]}), [
         'Hold 1 (papirhold): Bo har ikke spillet HD tidligere i sæsonen.',
     ])
+})
+
+test('the guide on linking the Team shows only when a player has uncounted rounds', () => {
+    assert.equal(showsTeamLinkGuide({missingRound: false, players: [finding({matchCount: 0, uncountedRounds: [uncounted(1)]})]}), true)
+    assert.equal(showsTeamLinkGuide({missingRound: false, players: [finding({unplayedCategories: ['HD'], uncountedRounds: [uncounted(1)]})]}), false)
+    assert.equal(showsTeamLinkGuide({missingRound: false, players: [finding({matchCount: 0})]}), false)
+    assert.equal(showsTeamLinkGuide(null), false)
+    assert.ok(existsSync(`resources/help/guides/${TEAM_LINK_GUIDE}.md`))
 })
 
 test('the paper-squad status shows when a Squad in the lineup is a Paper Squad', () => {
