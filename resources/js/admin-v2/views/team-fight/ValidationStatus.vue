@@ -109,6 +109,9 @@
                 <ul>
                     <li v-for="message in paperSquadMessages" :key="message">{{ message }}</li>
                 </ul>
+                <p v-if="showsTeamLinkGuide" class="mt-2">
+                    <router-link :to="{name: 'help-guide', params: {slug: teamLinkGuide}}" target="_blank" dusk="paper-squad-team-link-guide">Sådan tilknytter du holdet i tidligere runder</router-link>
+                </p>
                 <p v-if="paperSquadValidation && paperSquadValidation.players.length" class="mt-2">{{ paperSquadAggravation }}</p>
             </div>
         </article>
@@ -150,7 +153,7 @@
 <script>
 import {buildValidationErrors, invalidLevelTip} from './validation-status.js'
 import {reserveFindingMessages} from './reserves.js'
-import {PAPER_SQUAD_AGGRAVATION, paperSquadMessages} from './paper-squads.js'
+import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, paperSquadMessages, showsTeamLinkGuide} from './paper-squads.js'
 
 export default {
     name: 'ValidationStatus',
@@ -202,7 +205,8 @@ export default {
     data() {
         return {
             isOpen: false,
-            paperSquadAggravation: PAPER_SQUAD_AGGRAVATION
+            paperSquadAggravation: PAPER_SQUAD_AGGRAVATION,
+            teamLinkGuide: TEAM_LINK_GUIDE
         }
     },
     methods: {
@@ -259,6 +263,9 @@ export default {
         },
         paperSquadMessages() {
             return paperSquadMessages(this.paperSquadValidation)
+        },
+        showsTeamLinkGuide() {
+            return showsTeamLinkGuide(this.paperSquadValidation)
         },
         paperSquadStatusClass() {
             if (this.paperSquadValidation === null) return 'is-light'
