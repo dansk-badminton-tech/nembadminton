@@ -46,7 +46,8 @@ export default {
             pollInterval: 2000,
             fetchPolicy: "network-only",
             result({data}) {
-                const allInitialized = data.me.clubhouse.clubs.every(club => club.initialized);
+                // Users without a clubhouse are redirected to sign-up-finish by App.vue
+                const allInitialized = data?.me?.clubhouse?.clubs?.every(club => club.initialized);
                 if (allInitialized) {
                     this.$buefy.snackbar.open({
                             message: 'Klubberne er nu importeret!',
