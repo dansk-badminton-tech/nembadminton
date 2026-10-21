@@ -2,7 +2,7 @@ FROM composer:2 AS build
 ADD . .
 RUN composer install --no-dev
 
-FROM php:8.4-apache AS base
+FROM php:8.4.27RC1-apache-trixie AS base
 RUN apt-get update && apt-get install -y libzip-dev zip libgmp-dev
 RUN pecl install redis && docker-php-ext-enable redis
 RUN pecl install ev && docker-php-ext-enable ev

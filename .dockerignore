@@ -11,3 +11,4 @@ storage/framework/cache/views
 storage/framework/logs
 !storage/framework/logs/.gitignore
 .git
+.claude
