@@ -40,6 +40,106 @@ class PrimaryRoleProbeTest extends TestCase
         $this->assertNotNull($user->primary_role_id, "user {$user->id} has clubhouse_id={$user->clubhouse_id} and primary_role_id=null");
     }
 
+    // Recovery probes: start stuck (clubhouse_id set, no roles, primary_role_id null), recover through UI mutations only
+
+    private function stuckUserIn(Clubhouse $clubhouse): User
+    {
+        $user = User::factory()->create(['clubhouse_id' => $clubhouse->id, 'primary_role_id' => null]);
+        $user->clubhouses()->attach($clubhouse);
+
+        return $user->refresh();
+    }
+
+    private function invite(Clubhouse $clubhouse, User $admin, string $role = 'player'): Invitation
+    {
+        return Invitation::query()->create(['clubhouse_id' => $clubhouse->id, 'invited_by' => $admin->id, 'invitee_email' => 'i@example.com', 'role' => $role]);
+    }
+
+    #[Test]
+    public function recover_admin_gives_role_again(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $admin = $this->userInClubhouse($clubhouse, Role::CLUB_ADMIN);
+        $stuck = $this->stuckUserIn($clubhouse);
+        $this->actingAs($admin, 'api');
+
+        $this->graphQL('mutation($c: ID!, $u: ID!) { updateMembershipRoles(clubhouseId: $c, userId: $u, roles: [PLAYER]) { id } }',
+            ['c' => (string) $clubhouse->id, 'u' => (string) $stuck->id])->assertJsonMissingPath('errors');
+
+        $this->assertInvariant($stuck);
+    }
+
+    #[Test]
+    public function recover_admin_sees_stuck_user_in_member_list(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $admin = $this->userInClubhouse($clubhouse, Role::CLUB_ADMIN);
+        $stuck = $this->stuckUserIn($clubhouse);
+        $this->actingAs($admin, 'api');
+
+        $ids = $this->graphQL('query($id: ID!) { clubhouse(id: $id) { users { id } } }', ['id' => (string) $clubhouse->id])
+            ->assertJsonMissingPath('errors')->json('data.clubhouse.users.*.id');
+
+        $this->assertContains((string) $stuck->id, $ids);
+    }
+
+    #[Test]
+    public function recover_accept_invitation_to_same_clubhouse(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $admin = $this->userInClubhouse($clubhouse, Role::CLUB_ADMIN);
+        $stuck = $this->stuckUserIn($clubhouse);
+        $invitation = $this->invite($clubhouse, $admin);
+        $this->actingAs($stuck, 'api');
+
+        $this->graphQL('mutation($t: ID!) { acceptInvitation(token: $t) { id } }', ['t' => $invitation->token])->assertJsonMissingPath('errors');
+
+        $this->assertInvariant($stuck);
+    }
+
+    #[Test]
+    public function recover_accept_invitation_to_other_clubhouse(): void
+    {
+        $a = Clubhouse::factory()->create();
+        $b = Clubhouse::factory()->create();
+        $adminB = $this->userInClubhouse($b, Role::CLUB_ADMIN);
+        $stuck = $this->stuckUserIn($a);
+        $invitation = $this->invite($b, $adminB);
+        $this->actingAs($stuck, 'api');
+
+        $this->graphQL('mutation($t: ID!) { acceptInvitation(token: $t) { id } }', ['t' => $invitation->token])->assertJsonMissingPath('errors');
+
+        $this->assertInvariant($stuck);
+        $this->assertSame($b->id, $stuck->clubhouse_id);
+    }
+
+    #[Test]
+    public function recover_user_sets_own_primary_role(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $stuck = $this->stuckUserIn($clubhouse);
+        $this->actingAs($stuck, 'api');
+        $playerRoleId = \Spatie\Permission\Models\Role::where('name', Role::PLAYER->value)->first()->id;
+
+        $this->graphQL('mutation($r: ID!) { setPrimaryRole(roleId: $r) { id } }', ['r' => (string) $playerRoleId])->assertJsonMissingPath('errors');
+
+        $this->assertInvariant($stuck);
+    }
+
+    #[Test]
+    public function recover_admin_removes_membership(): void
+    {
+        $clubhouse = Clubhouse::factory()->create();
+        $admin = $this->userInClubhouse($clubhouse, Role::CLUB_ADMIN);
+        $stuck = $this->stuckUserIn($clubhouse);
+        $this->actingAs($admin, 'api');
+
+        $this->graphQL('mutation($c: ID!, $u: ID!) { deleteMembership(clubhouseId: $c, userId: $u) }',
+            ['c' => (string) $clubhouse->id, 'u' => (string) $stuck->id])->assertJsonMissingPath('errors');
+
+        $this->assertNull($stuck->refresh()->clubhouse_id, 'no longer stuck: no clubhouse, so sign-up can create one');
+    }
+
     #[Test]
     public function update_roles_to_empty(): void
     {
