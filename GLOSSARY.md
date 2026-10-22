@@ -26,6 +26,10 @@ _Avoid_: Position (the ranking-list position), placement
 The part of the season a TeamRound belongs to, decided by its round number in the relevant tournament context, not its date (§45): **group stage** (grundspil) is round 1–7, or 1–9 in Badmintonligaen (§9 stk. 1); **play-offs** (slutspil) are rounds 8–11 below Liga and Liga's medal rounds 10–12 (quarterfinal, semifinal, gold/bronze); **qualification** (kvalifikation) is the separate qualification match, in round 12 (§27 stk. 1). Liga medal finals are playoffs even though they share round 12 with qualification. A promotion playoff group named "Kvalifikation til …" is not the qualification-match phase. A TeamRound without a round number has an unknown Season Phase.
 _Avoid_: Tournament phase (a badmintonplayer.dk group type), stage
 
+**Match Kind** (kampart):
+The nature of a Squad's match, distinguishing a Liga medal final from a separate qualification match even when their round numbers coincide. It belongs to that Squad's match setup and is the same in every Scenario of the TeamRound.
+_Avoid_: Season Phase, tournament phase
+
 **User**:
 A system account with login credentials, roles, and clubhouse permissions.
 _Avoid_: Member, player

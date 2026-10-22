@@ -13,7 +13,16 @@ The completed 2025/2026 DH season corroborates this structure:
 
 This agrees with the overall structure in §§9 and 16–25 of the regulations effective 1 July 2026. Qualification matches are round 12 under §27 stk. 1, but Liga gold/bronze are also round 12 and remain playoffs. Liga has no promotion to a higher domestic league; its ninth-placed Team can nevertheless play a qualification match to retain its Liga place (§17 stk. 2). Tier plus round therefore cannot distinguish every case. A group named "Kvalifikation til …" may be an ordinary promotion playoff group in rounds 8–11, not a qualification match.
 
-**Implementation gap:** `SeasonPhase::fromRound()` currently treats every round 12 as qualification. That fallback misclassifies Liga medal finals and is not the complete domain rule. Match-kind context must distinguish medal finals from qualification when round numbers overlap; its source/interface has not yet been decided. Do not replace this gap with date-based inference or assume the latest entered TeamRound is the final round.
+**Implementation gap:** `SeasonPhase::fromRound()` currently treats every round 12 as qualification. That fallback misclassifies Liga medal finals and is not the complete domain rule. Do not replace this gap with date-based inference or assume the latest entered TeamRound is the final round.
+
+## Agreed Match Kind design (not yet implemented)
+
+- For a Liga Squad in round 12, the coach explicitly chooses between a medal final (gold/bronze) and a qualification match. Other unambiguous tier/round combinations remain automatic. External metadata must not silently establish or overwrite the choice.
+- The Match Kind belongs to the Squad and is shared across its Scenarios, not to its season-long Team or the whole TeamRound: Squads within one TeamRound may have different match kinds. The Team's original tier remains unchanged.
+- An unresolved Match Kind, including in legacy data, does not prevent editing or saving, but affected eligibility checks must visibly state that eligibility cannot be fully verified. They must not silently assume a kind or report a passed check.
+- Copying a TeamRound preserves the explicit choice rather than resetting it: the maintainer prefers retaining it, given that this is the season's final match. A retained choice only affects classification when the Squad is Liga in round 12; elsewhere it is kept but ignored, and tier/round classification applies normally.
+- Paper Squads do not require the choice and do not receive a missing-Match-Kind eligibility warning. Their paper-team checks apply independently. If a Squad is unmarked as paper, a choice is needed for complete validation when it is Liga in round 12.
+- The coach may correct a choice after entering lineups. A correction recalculates affected validation across every Scenario without changing player placements or the Team's original tier.
 
 The historical Liga/1. division qualification match displays the composite round label "11/12". Its meaning and import handling remain unresolved; do not silently coerce it to an integer or use it to override §27 in the newer regulations. Detailed observations, source links and the historical-season caveat are recorded in [#224's findings](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6340885558).
 
