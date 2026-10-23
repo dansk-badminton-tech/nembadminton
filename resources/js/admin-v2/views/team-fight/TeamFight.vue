@@ -168,6 +168,7 @@
                                       :reserve-findings="reserveFindings"
                                       :show-reserves="hasReserves"
                                       :paper-squad-validation="paperSquadValidation"
+                                      :final-round-eligibility="finalRoundEligibility"
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
@@ -218,6 +219,7 @@ import {
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
+import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
 import {
     hasInvalidCategory,
@@ -364,6 +366,8 @@ export default {
             tooYoungPlayers: [],
             reserveFindings: [],
             paperSquadValidation: null,
+            finalRoundEligibility: null,
+            finalRoundEligibilityRequest: 0,
             teamCount: 1,
             players: [],
             saving: false,
@@ -1092,6 +1096,7 @@ export default {
                 })
         },
         validate() {
+            this.validateFinalRoundEligibility();
             this.validateTooYoungPlayers();
             this.validateReserves();
             this.validatePaperSquads();
@@ -1130,6 +1135,30 @@ export default {
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
                 })
+        },
+        validateFinalRoundEligibility() {
+            const request = ++this.finalRoundEligibilityRequest;
+            this.finalRoundEligibility = null;
+            this.$apollo.mutate({
+                mutation: ValidateFinalRoundEligibilityMutation,
+                variables: {
+                    teamRoundId: this.teamRoundId,
+                    input: wrapInTeamAndSquads(this.teamRound.squads)
+                }
+            }).then(({data}) => {
+                // A response from a previous placement or Scenario must not replace the current result.
+                if (request === this.finalRoundEligibilityRequest) {
+                    this.finalRoundEligibility = data.validateFinalRoundEligibility;
+                }
+            }).catch(() => {
+                if (request === this.finalRoundEligibilityRequest) {
+                    this.$buefy.snackbar.open({
+                        type: 'is-warning',
+                        message: 'Kunne ikke kontrollere tidligere hold (§38 stk. 8). Prøv igen.',
+                        queue: false
+                    });
+                }
+            });
         },
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(

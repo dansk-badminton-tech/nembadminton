@@ -104,6 +104,19 @@
             </div>
         </article>
 
+        <article v-if="finalRoundWarnings.length" class="message is-warning is-small mt-3" dusk="final-round-warnings">
+            <div class="message-body">
+                <ul>
+                    <li v-for="player in finalRoundWarnings" :key="`${player.squadIndex}-${player.refId}`">
+                        Hold {{ player.squadIndex + 1 }}: {{ player.name }}
+                        <template v-if="player.status === 'REQUIREMENT_NOT_MET'">har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).</template>
+                        <template v-else>— spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8). Kontrollér rundenummer, sæson, dato og holdtilknytning i denne og tidligere holdrunder.</template>
+                    </li>
+                </ul>
+                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen. Advarslen blokerer ikke redigering eller gemning.</p>
+            </div>
+        </article>
+
         <article v-if="showPaperSquads && paperSquadMessages.length" class="message is-warning is-small mt-3" dusk="paper-squad-warnings">
             <div class="message-body">
                 <ul>
@@ -158,6 +171,10 @@ import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, paperSquadMessages, showsTeamL
 export default {
     name: 'ValidationStatus',
     props: {
+        finalRoundEligibility: {
+            type: Array,
+            default: null
+        },
         incompleteTeam: Boolean,
         invalidCategory: Boolean,
         invalidLevel: Boolean,
@@ -227,6 +244,10 @@ export default {
         }
     },
     computed: {
+        finalRoundWarnings() {
+            return (this.finalRoundEligibility ?? []).filter(player =>
+                ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
+        },
         incompleteStatusClass() {
             if (this.ignoreIncompleteTeam) return 'is-warning'
             return this.statusClass(this.incompleteTeam)
