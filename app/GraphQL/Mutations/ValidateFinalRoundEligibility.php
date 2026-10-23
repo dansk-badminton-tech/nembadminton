@@ -39,9 +39,10 @@ class ValidateFinalRoundEligibility
                     $players[$player['refId']] = $player;
                 }
             }
+            $context = $this->currentContext($squad, $round);
             foreach ($players as $player) {
-                $status = $this->applicability($squad, $round);
-                $incompleteReasons = $status === 'CANNOT_VERIFY' ? $this->missingCurrentContext($squad, $round) : [];
+                $status = $context['status'];
+                $incompleteReasons = $context['incompleteReasons'];
                 $uncountedRounds = [];
                 if ($status === null) {
                     $earlier ??= $this->loader->before($round);
@@ -72,15 +73,26 @@ class ValidateFinalRoundEligibility
         return $results;
     }
 
-    /** null means the requirement applies and history must be checked. */
-    private function applicability(Squad $squad, TeamRound $round): ?string
+    /**
+     * A null status means the requirement applies and history must be checked.
+     *
+     * @return array{status: ?string, incompleteReasons: list<string>}
+     */
+    private function currentContext(Squad $squad, TeamRound $round): array
     {
         if ($squad->is_paper_squad) {
-            return 'NOT_APPLICABLE';
+            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
         }
         $tier = CanonicalTournamentTier::tryFromRawName($squad->effectiveTier());
-        if ($tier === null || $round->round === null) {
-            return 'CANNOT_VERIFY';
+        $missing = array_filter([
+            'MISSING_ROUND' => $round->round === null,
+            'UNKNOWN_TIER' => $tier === null,
+            'MISSING_TEAM' => $squad->team_id === null,
+            'MISSING_SEASON' => $round->season_id === null,
+            'MISSING_GAME_DATE' => $round->game_date === null,
+        ]);
+        if (isset($missing['UNKNOWN_TIER']) || isset($missing['MISSING_ROUND'])) {
+            return ['status' => 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing)];
         }
         $applicable = match ($tier) {
             CanonicalTournamentTier::BADMINTONLIGAEN => (int) $round->round === 12,
@@ -90,24 +102,9 @@ class ValidateFinalRoundEligibility
         };
 
         if (! $applicable) {
-            return 'NOT_APPLICABLE';
-        }
-        if ($squad->team_id === null || $round->season_id === null || $round->game_date === null) {
-            return 'CANNOT_VERIFY';
+            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
         }
 
-        return null;
-    }
-
-    /** @return list<string> */
-    private function missingCurrentContext(Squad $squad, TeamRound $round): array
-    {
-        return array_keys(array_filter([
-            'MISSING_ROUND' => $round->round === null,
-            'UNKNOWN_TIER' => CanonicalTournamentTier::tryFromRawName($squad->effectiveTier()) === null,
-            'MISSING_TEAM' => $squad->team_id === null,
-            'MISSING_SEASON' => $round->season_id === null,
-            'MISSING_GAME_DATE' => $round->game_date === null,
-        ]));
+        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing)];
     }
 }

@@ -53,20 +53,8 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
 
     public function test_pending_failed_and_obsolete_responses_never_look_like_a_completed_current_check(): void
     {
-        $clubhouse = Clubhouse::firstOrFail();
-        $team = Team::factory()->withCustomTier('2. division')->create([
-            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
-        ]);
-        $round = TeamRound::query()->create([
-            'name' => 'Validation races', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
-            'season_id' => 2026, 'round' => 11, 'clubhouse_id' => $clubhouse->id,
-            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
-        ]);
-        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
-        $squad->categories()->create(['name' => '1. DS', 'category' => 'DS'])->players()->create([
-            'member_ref_id' => $member->refId, 'name' => $member->name, 'gender' => $member->gender,
-        ]);
+        [$round] = $this->finalRoundWithMembers(['name' => 'Validation races'], [$member]);
 
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
@@ -185,23 +173,9 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
 
     public function test_uncertainty_names_the_historical_correction_target_without_claiming_ineligibility(): void
     {
-        $clubhouse = Clubhouse::firstOrFail();
-        $team = Team::factory()->withCustomTier('2. division')->create([
-            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
-        ]);
-        $round = TeamRound::query()->create([
-            'name' => 'Final round uncertainty', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
-            'season_id' => 2026, 'round' => 11, 'clubhouse_id' => $clubhouse->id,
-            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
-        ]);
-        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
         $other = Member::query()->where('gender', $member->gender)->where('refId', '!=', $member->refId)->firstOrFail();
-        foreach ([$member, $other] as $index => $player) {
-            $squad->categories()->create(['name' => ($index + 1).'. DS', 'category' => 'DS'])->players()->create([
-                'member_ref_id' => $player->refId, 'name' => $player->name, 'gender' => $player->gender,
-            ]);
-        }
+        [$round, $team] = $this->finalRoundWithMembers(['name' => 'Final round uncertainty'], [$member, $other]);
         $earlier = $round->replicate();
         $earlier->fill(['name' => 'Efterår uden holdlink', 'game_date' => '2026-09-20', 'round' => 2])->save();
         $historical = Squad::query()->create(['team_round_id' => $earlier->id, 'name' => 'Gammelt hold', 'playerLimit' => 10]);
@@ -253,20 +227,8 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
 
     public function test_eligibility_warning_does_not_block_saving_or_editing_the_lineup(): void
     {
-        $clubhouse = Clubhouse::firstOrFail();
-        $team = Team::factory()->withCustomTier('2. division')->create([
-            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
-        ]);
-        $round = TeamRound::query()->create([
-            'name' => 'Final round eligibility', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
-            'season_id' => 2026, 'round' => 11, 'clubhouse_id' => $clubhouse->id,
-            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
-        ]);
-        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
-        $squad->categories()->create(['name' => '1. DS', 'category' => 'DS'])->players()->create([
-            'member_ref_id' => $member->refId, 'name' => $member->name, 'gender' => $member->gender,
-        ]);
+        [$round] = $this->finalRoundWithMembers(['name' => 'Final round eligibility'], [$member]);
 
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
@@ -285,5 +247,31 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->waitFor('@team-table-section')->assertDontSeeIn('@team-table-section', $member->name)
                 ->assertMissing('@final-round-warnings');
         });
+    }
+
+    /**
+     * @param  array<string, mixed>  $roundAttributes
+     * @param  list<Member>  $members
+     * @return array{TeamRound, Team}
+     */
+    private function finalRoundWithMembers(array $roundAttributes, array $members): array
+    {
+        $clubhouse = Clubhouse::firstOrFail();
+        $team = Team::factory()->withCustomTier('2. division')->create([
+            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
+        ]);
+        $round = TeamRound::query()->create(array_merge([
+            'game_date' => '2026-10-11', 'version' => '2025-07-02',
+            'season_id' => 2026, 'round' => 11, 'clubhouse_id' => $clubhouse->id,
+            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
+        ], $roundAttributes));
+        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
+        foreach ($members as $index => $member) {
+            $squad->categories()->create(['name' => ($index + 1).'. DS', 'category' => 'DS'])->players()->create([
+                'member_ref_id' => $member->refId, 'name' => $member->name, 'gender' => $member->gender,
+            ]);
+        }
+
+        return [$round, $team];
     }
 }
