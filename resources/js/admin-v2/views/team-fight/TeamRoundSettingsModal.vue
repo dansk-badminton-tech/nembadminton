@@ -154,6 +154,7 @@ export default {
             })
         },
         save() {
+            this.$emit('saving')
             this.saving = true;
             this.$apollo.mutate({
                 mutation: gql`

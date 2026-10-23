@@ -288,6 +288,133 @@ class ValidateFinalRoundEligibilityTest extends TestCase
         ], ['HS', 'HD'])]];
     }
 
+    #[Test]
+    public function persisted_corrections_refresh_each_scenarios_placements_and_shared_applicability(): void
+    {
+        $this->user->givePermissionTo([Permission::EDIT_TEAMROUNDS->value, Permission::EDIT_TEAMS->value]);
+        $round = $this->round(['round' => 10]);
+        $ligaTeam = Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $this->clubhouse->id]);
+        $liga = $this->squad($round, $ligaTeam);
+        $division = $this->squad($round);
+        $this->place($liga);
+        $this->place($division);
+        $draft = $round->scenarios()->create(['name' => 'Plan B', 'is_official' => false]);
+        // Unlike the Official Lineup, this Scenario only places Anders on the division Squad, twice.
+        $this->place($division, ['team_round_scenario_id' => $draft->id]);
+        $this->place($division, ['team_round_scenario_id' => $draft->id, 'category' => 'HD']);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['NOT_APPLICABLE', 'NOT_APPLICABLE']);
+        $this->correctRound($round, ['round' => 11]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['NOT_APPLICABLE', 'REQUIREMENT_NOT_MET']);
+        $this->persistedCheck($round, $draft->id)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['REQUIREMENT_NOT_MET'])
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.squadIndex', 1);
+        $this->correctSquad($division, ['isPaperSquad' => true]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['NOT_APPLICABLE', 'NOT_APPLICABLE']);
+        $this->persistedCheck($round, $draft->id)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['NOT_APPLICABLE']);
+        $this->correctSquad($division, ['isPaperSquad' => false]);
+        $this->correctRound($round, ['round' => 12]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['REQUIREMENT_NOT_MET', 'REQUIREMENT_NOT_MET']);
+        $this->correctRound($round, ['round' => 11]);
+        $this->graphQL('mutation($input: UpdateTeamInput!) { updateTeam(input: $input) { customTierName } }', [
+            'input' => ['id' => $this->team->id, 'customTierName' => 'Badmintonligaen'],
+        ])->assertGraphQLErrorFree()->assertJsonPath('data.updateTeam.customTierName', 'Badmintonligaen');
+        $this->persistedCheck($round, $draft->id)->assertJsonPath('data.validateFinalRoundEligibility.*.status', ['NOT_APPLICABLE']);
+        $this->graphQL('query($id: ID!) { teamRound(id: $id) { scenarios { id isOfficial } squads { team { customTierName } categories { players { refId } } } } }', ['id' => $round->id])
+            ->assertGraphQLErrorFree()->assertJsonPath('data.teamRound.scenarios.0.isOfficial', false)
+            ->assertJsonPath('data.teamRound.squads.0.team.customTierName', 'Badmintonligaen')
+            ->assertJsonCount(1, 'data.teamRound.squads.0.categories.0.players')
+            ->assertJsonCount(1, 'data.teamRound.squads.1.categories.0.players');
+    }
+
+    private function correctRound(TeamRound $round, array $corrections): TestResponse
+    {
+        return $this->graphQL('mutation($input: UpdateTeamRoundInput!) { updateTeamRound(input: $input) { id round } }', [
+            'input' => array_merge(['id' => $round->id, 'version' => '2026-03-01', 'gameDate' => '2027-03-20'], $corrections),
+        ])->assertGraphQLErrorFree();
+    }
+
+    #[Test]
+    public function completing_current_context_and_historical_team_links_replaces_uncertainty_on_revalidation(): void
+    {
+        $this->user->givePermissionTo([Permission::EDIT_TEAMROUNDS->value, Permission::EDIT_TEAMS->value]);
+        $round = $this->round(['round' => null, 'season_id' => null, 'game_date' => null]);
+        $current = $this->squad($round);
+        $current->update(['team_id' => null, 'tier' => 'Ukendt']);
+        $this->place($current);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        $this->correctRound($round, ['round' => 11, 'seasonId' => 2026]);
+        $this->correctSquad($current, ['teamId' => $this->team->id]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.incompleteReasons', []);
+
+        $historicalRound = $this->round(['game_date' => '2026-09-20', 'round' => 2]);
+        $higherTeam = Team::factory()->withCustomTier('1. division')->create(['clubhouse_id' => $this->clubhouse->id]);
+        $higher = $this->squad($historicalRound, $higherTeam);
+        $this->place($higher);
+        $target = $this->squad($historicalRound);
+        $this->correctSquad($target, ['teamId' => null]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY')
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.uncountedRounds', [['teamRoundId' => $historicalRound->id]]);
+        $this->correctSquad($target, ['teamId' => $this->team->id]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.uncountedRounds', []);
+        $this->correctSquad($target, ['teamId' => null]);
+        $this->correctSquad($higher, ['teamId' => $this->team->id]);
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED')
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.incompleteReasons', [])
+            ->assertJsonPath('data.validateFinalRoundEligibility.0.uncountedRounds', []);
+        $this->graphQL('query($id: ID!) { teamRound(id: $id) { squads { team { id customTierName } categories { players { refId } } } scenarios { id isOfficial } } }', ['id' => $round->id])
+            ->assertGraphQLErrorFree()->assertJsonPath('data.teamRound.squads.0.team.customTierName', '2. division')
+            ->assertJsonPath('data.teamRound.squads.0.categories.0.players.0.refId', '0101011111')
+            ->assertJsonPath('data.teamRound.scenarios', []);
+    }
+
+    private function correctSquad(Squad $squad, array $corrections): TestResponse
+    {
+        return $this->graphQL('mutation($input: UpdateSquadInput!) { updateSquad(input: $input) { id team { id } isPaperSquad } }', [
+            'input' => array_merge(['id' => $squad->id], $corrections),
+        ])->assertGraphQLErrorFree();
+    }
+
+    #[Test]
+    public function correction_targets_and_new_team_links_remain_isolated_to_the_clubhouse(): void
+    {
+        $this->user->givePermissionTo([Permission::EDIT_TEAMROUNDS->value, Permission::EDIT_TEAMS->value]);
+        $round = $this->round();
+        $current = $this->squad($round);
+        $this->place($current);
+        $otherClubhouse = Clubhouse::factory()->create();
+        $foreignRound = $this->round(['clubhouse_id' => $otherClubhouse->id]);
+        $foreignTeam = Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $otherClubhouse->id]);
+        $foreignSquad = $this->squad($foreignRound, $foreignTeam);
+        $this->graphQL('mutation($input: UpdateSquadInput!) { updateSquad(input: $input) { id } }', [
+            'input' => ['id' => $foreignSquad->id, 'teamId' => $this->team->id],
+        ])->assertGraphQLErrorMessage('This action is unauthorized.');
+        $this->graphQL('mutation($input: UpdateSquadInput!) { updateSquad(input: $input) { id } }', [
+            'input' => ['id' => $current->id, 'teamId' => $foreignTeam->id],
+        ])->assertGraphQLValidationError('input.teamId', 'Vælg et hold fra dit eget klubhus.');
+        $this->graphQL('mutation($input: UpdateTeamRoundInput!) { updateTeamRound(input: $input) { id } }', [
+            'input' => ['id' => $foreignRound->id, 'round' => 10, 'version' => '2026-03-01', 'gameDate' => '2027-03-20'],
+        ])->assertGraphQLErrorMessage('This action is unauthorized.');
+        $this->graphQL('mutation($input: UpdateTeamInput!) { updateTeam(input: $input) { id } }', [
+            'input' => ['id' => $foreignTeam->id, 'customTierName' => '2. division'],
+        ])->assertGraphQLErrorMessage('This action is unauthorized.');
+        $this->persistedCheck($round)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->graphQL('query($id: ID!) { teamRound(id: $id) { squads { team { id } } } }', ['id' => $round->id])
+            ->assertGraphQLErrorFree()->assertJsonPath('data.teamRound.squads.0.team.id', (string) $this->team->id);
+    }
+
+    private function persistedCheck(TeamRound $round, ?int $scenarioId = null): TestResponse
+    {
+        $squads = $this->graphQL('query($id: ID!, $scenario: ID) {
+            teamRound(id: $id) { squads { id playerLimit categories(scenarioId: $scenario) { name category players { refId name gender points { category points position vintage } } } } }
+        }', ['id' => $round->id, 'scenario' => $scenarioId])->assertGraphQLErrorFree()->json('data.teamRound.squads');
+        $input = array_map(fn (array $squad) => ['name' => 'Hold', 'squad' => $squad], $squads);
+
+        return $this->graphQL('mutation($id: ID!, $input: [ValidateTeam!]!) {
+            validateFinalRoundEligibility(teamRoundId: $id, input: $input) { squadIndex refId status incompleteReasons uncountedRounds { teamRoundId } }
+        }', ['id' => $round->id, 'input' => $input])->assertGraphQLErrorFree();
+    }
+
     private function check(Squad $squad, ?array $input = null): TestResponse
     {
         return $this->graphQL('mutation($id: ID!, $input: [ValidateTeam!]!) {

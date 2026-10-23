@@ -168,11 +168,15 @@
                                       :reserve-findings="reserveFindings"
                                       :show-reserves="hasReserves"
                                       :paper-squad-validation="paperSquadValidation"
-                                      :final-round-eligibility="finalRoundEligibility"
+                                      :final-round-eligibility="finalRoundValidation.findings"
+                                      :final-round-validation-status="finalRoundValidation.status"
+                                      @revalidate="refreshTeam"
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
+                               @validation-pending="invalidateFinalRoundEligibility"
+                               @squad-updated="refreshTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
                                :add-reserve="addReserve"
@@ -221,6 +225,7 @@ import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
+import {createValidationState, invalidateValidation, runValidation} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -366,8 +371,7 @@ export default {
             tooYoungPlayers: [],
             reserveFindings: [],
             paperSquadValidation: null,
-            finalRoundEligibility: null,
-            finalRoundEligibilityRequest: 0,
+            finalRoundValidation: createValidationState(),
             teamCount: 1,
             players: [],
             saving: false,
@@ -389,6 +393,15 @@ export default {
             errorValidatingLevel: false
         }
     },
+    watch: {
+        selectedScenarioId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
+        teamRoundId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
+        saving: {flush: 'sync', handler(value) { if (value) this.invalidateFinalRoundEligibility() }},
+        updating: {flush: 'sync', handler(value) { if (value) this.invalidateFinalRoundEligibility() }}
+    },
+    beforeUnmount() {
+        this.invalidateFinalRoundEligibility()
+    },
     apollo: {
         clubhouse: {
             query: clubhouse,
@@ -400,13 +413,23 @@ export default {
         },
         teamRound: {
             query: TeamRoundQuery,
+            fetchPolicy: 'network-only',
+            notifyOnNetworkStatusChange: true,
+            watchLoading(loading) {
+                if (loading) this.invalidateFinalRoundEligibility()
+            },
+            error() {
+                this.invalidateFinalRoundEligibility()
+                this.finalRoundValidation.status = 'failed'
+            },
             variables() {
                 return {
                     id: this.teamRoundId,
                     scenarioId: this.selectedScenarioId
                 }
             },
-            result({data}) {
+            result({data, loading}) {
+                if (loading || !data?.teamRound) return
                 this.gameDate = new Date(data.teamRound.gameDate);
                 this.version = data.teamRound.version;
                 this.name = data.teamRound.name;
@@ -438,7 +461,8 @@ export default {
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
         refreshTeam() {
-            this.$apollo.queries.teamRound.refetch();
+            this.invalidateFinalRoundEligibility()
+            return this.$apollo.queries.teamRound.refetch();
         },
         openLinkSharingModal() {
             this.$buefy.modal.open({
@@ -475,6 +499,7 @@ export default {
                 },
                 scroll: "keep",
                 events: {
+                    saving: () => this.invalidateFinalRoundEligibility(),
                     close: () => {
                     },
                     save: () => {
@@ -685,9 +710,6 @@ export default {
             }
             this.updating = true;
             try {
-                if (String(this.selectedScenarioId) === String(scenario.id)) {
-                    this.selectedScenarioId = null;
-                }
                 await this.$apollo.mutate({
                     mutation: gql`
                         mutation DeleteScenario($scenarioId: ID!) {
@@ -696,8 +718,15 @@ export default {
                     `,
                     variables: {
                         scenarioId: String(scenario.id)
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries()
+                    }
+                });
+                if (String(this.selectedScenarioId) === String(scenario.id)) {
+                    this.selectedScenarioId = null;
+                }
+                // Do not let a pre-deletion Scenario switch satisfy the refresh via query deduplication.
+                await this.$apollo.queries.teamRound.refetch({
+                    id: this.teamRoundId,
+                    scenarioId: this.selectedScenarioId
                 });
                 this.$buefy.toast.open({
                     message: `Udkastet "${scenario.name}" blev slettet.`,
@@ -1137,28 +1166,19 @@ export default {
                 })
         },
         validateFinalRoundEligibility() {
-            const request = ++this.finalRoundEligibilityRequest;
-            this.finalRoundEligibility = null;
-            this.$apollo.mutate({
-                mutation: ValidateFinalRoundEligibilityMutation,
-                variables: {
-                    teamRoundId: this.teamRoundId,
-                    input: wrapInTeamAndSquads(this.teamRound.squads)
-                }
-            }).then(({data}) => {
-                // A response from a previous placement or Scenario must not replace the current result.
-                if (request === this.finalRoundEligibilityRequest) {
-                    this.finalRoundEligibility = data.validateFinalRoundEligibility;
-                }
-            }).catch(() => {
-                if (request === this.finalRoundEligibilityRequest) {
-                    this.$buefy.snackbar.open({
-                        type: 'is-warning',
-                        message: 'Kunne ikke kontrollere tidligere hold (§38 stk. 8). Prøv igen.',
-                        queue: false
-                    });
-                }
-            });
+            return runValidation(this.finalRoundValidation, async () => {
+                const {data} = await this.$apollo.mutate({
+                    mutation: ValidateFinalRoundEligibilityMutation,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        input: wrapInTeamAndSquads(this.teamRound.squads)
+                    }
+                })
+                return data?.validateFinalRoundEligibility
+            })
+        },
+        invalidateFinalRoundEligibility() {
+            invalidateValidation(this.finalRoundValidation)
         },
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(

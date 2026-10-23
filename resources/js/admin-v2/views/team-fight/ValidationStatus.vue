@@ -96,6 +96,13 @@
             </div>
         </div>
 
+        <div v-if="finalRoundValidationStatus" class="is-flex is-align-items-center is-flex-wrap-wrap mb-3" style="gap: 0.5rem;" aria-live="polite">
+            <span class="tag" :class="finalRoundValidationStatus === 'failed' || finalRoundWarnings.length ? 'is-warning' : 'is-light'" dusk="validation-final-round">
+                Tidligere hold (§38 stk. 8): {{ finalRoundStatusText }}
+            </span>
+            <b-button size="is-small" icon-left="refresh" dusk="revalidate-final-round" @click="$emit('revalidate')">Kontrollér igen</b-button>
+        </div>
+
         <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
             <div class="message-body">
                 <ul>
@@ -189,6 +196,10 @@ import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, paperSquadMessages, showsTeamL
 export default {
     name: 'ValidationStatus',
     props: {
+        finalRoundValidationStatus: {
+            type: String,
+            default: null
+        },
         finalRoundEligibility: {
             type: Array,
             default: null
@@ -272,6 +283,11 @@ export default {
         }
     },
     computed: {
+        finalRoundStatusText() {
+            if (this.finalRoundValidationStatus === 'failed') return 'Kunne ikke kontrolleres — prøv igen'
+            if (this.finalRoundValidationStatus !== 'complete') return 'Afventer kontrol'
+            return this.finalRoundWarnings.length ? 'Advarsel' : 'Kontrolleret'
+        },
         finalRoundWarnings() {
             return (this.finalRoundEligibility ?? []).filter(player =>
                 ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))

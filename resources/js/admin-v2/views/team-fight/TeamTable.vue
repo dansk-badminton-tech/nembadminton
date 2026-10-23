@@ -495,6 +495,8 @@ export default {
                         usedTeamIds: this.usedTeamIds
                     },
                     events: {
+                        saving: () => this.$emit('validation-pending'),
+                        saved: () => this.$emit('squad-updated'),
                         close() {
                         }
                     },
