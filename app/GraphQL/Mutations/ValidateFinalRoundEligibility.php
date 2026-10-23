@@ -7,6 +7,7 @@ namespace App\GraphQL\Mutations;
 use App\Enums\CanonicalTournamentTier;
 use App\Models\Squad;
 use App\Models\TeamRound;
+use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistoryLoader;
 
 /**
@@ -40,12 +41,15 @@ class ValidateFinalRoundEligibility
             }
             foreach ($players as $player) {
                 $status = $this->applicability($squad, $round);
+                $incompleteReasons = $status === 'CANNOT_VERIFY' ? $this->missingCurrentContext($squad, $round) : [];
+                $uncountedRounds = [];
                 if ($status === null) {
                     $earlier ??= $this->loader->before($round);
                     if ($earlier->matchCountOnSameOrLowerTeam($player['refId'], (int) $squad->team_id) > 0) {
                         $status = 'SATISFIED';
-                    } elseif ($earlier->roundsWithoutTeam($player['refId'], (int) $squad->team_id) !== []) {
+                    } elseif (($uncountedRounds = $earlier->roundsWithoutTeam($player['refId'], (int) $squad->team_id)) !== []) {
                         $status = 'CANNOT_VERIFY';
+                        $incompleteReasons = ['INCOMPARABLE_HISTORY'];
                     } else {
                         $status = 'REQUIREMENT_NOT_MET';
                     }
@@ -55,6 +59,12 @@ class ValidateFinalRoundEligibility
                     'refId' => $player['refId'],
                     'name' => $player['name'],
                     'status' => $status,
+                    'incompleteReasons' => $incompleteReasons,
+                    'uncountedRounds' => array_map(fn (RoundLineup $round) => [
+                        'teamRoundId' => $round->teamRoundId,
+                        'name' => $round->name,
+                        'round' => $round->round,
+                    ], $uncountedRounds),
                 ];
             }
         }
@@ -87,5 +97,17 @@ class ValidateFinalRoundEligibility
         }
 
         return null;
+    }
+
+    /** @return list<string> */
+    private function missingCurrentContext(Squad $squad, TeamRound $round): array
+    {
+        return array_keys(array_filter([
+            'MISSING_ROUND' => $round->round === null,
+            'UNKNOWN_TIER' => CanonicalTournamentTier::tryFromRawName($squad->effectiveTier()) === null,
+            'MISSING_TEAM' => $squad->team_id === null,
+            'MISSING_SEASON' => $round->season_id === null,
+            'MISSING_GAME_DATE' => $round->game_date === null,
+        ]));
     }
 }

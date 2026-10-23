@@ -107,12 +107,30 @@
         <article v-if="finalRoundWarnings.length" class="message is-warning is-small mt-3" dusk="final-round-warnings">
             <div class="message-body">
                 <ul>
-                    <li v-for="player in finalRoundWarnings" :key="`${player.squadIndex}-${player.refId}`">
+                    <li v-for="player in finalRoundWarnings" :key="`${player.squadIndex}-${player.refId}`"
+                        :dusk="`final-round-finding-${player.squadIndex}-${player.refId}`">
                         Hold {{ player.squadIndex + 1 }}: {{ player.name }}
                         <template v-if="player.status === 'REQUIREMENT_NOT_MET'">har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).</template>
-                        <template v-else>— spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8). Kontrollér rundenummer, sæson, dato og holdtilknytning i denne og tidligere holdrunder.</template>
+                        <template v-else>
+                            — spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).
+                            <ul v-if="finalRoundContextGuidance(player).length">
+                                <li v-for="guidance in finalRoundContextGuidance(player)" :key="guidance">{{ guidance }}</li>
+                            </ul>
+                            <template v-if="player.uncountedRounds.length">
+                                Tidligere opstillinger kan ikke sammenlignes. Tilknyt det aktuelle hold til den tilsvarende holdopstilling i hver af disse holdrunder via <strong>Rediger holdet → Tilknyt hold</strong>:
+                                <ul>
+                                    <li v-for="round in player.uncountedRounds" :key="round.teamRoundId">
+                                        <router-link :to="{name: 'team-fight-edit', params: {clubhouseId: $route.params.clubhouseId, teamUUID: round.teamRoundId}}"
+                                                     target="_blank" rel="noopener" :dusk="`final-round-correction-${round.teamRoundId}`">{{ round.name }}<template v-if="round.round !== null"> (runde {{ round.round }})</template></router-link>
+                                    </li>
+                                </ul>
+                            </template>
+                        </template>
                     </li>
                 </ul>
+                <p v-if="finalRoundWarnings.some(player => player.uncountedRounds.length)" class="mt-2">
+                    <router-link :to="{name: 'help-guide', params: {slug: teamLinkGuide}}" target="_blank" dusk="final-round-team-link-guide">Sådan tilknytter du holdet i tidligere runder</router-link>
+                </p>
                 <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen. Advarslen blokerer ikke redigering eller gemning.</p>
             </div>
         </article>
@@ -227,6 +245,16 @@ export default {
         }
     },
     methods: {
+        finalRoundContextGuidance(player) {
+            const guidance = {
+                MISSING_ROUND: 'Udfyld Runde nr. i holdrundens indstillinger.',
+                UNKNOWN_TIER: 'Angiv holdets række under Rediger holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold.',
+                MISSING_TEAM: 'Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.',
+                MISSING_SEASON: 'Holdrunden mangler sæson. Kontakt support for at få holdrundens sæson rettet; sæsonen kan ikke ændres i indstillingerne.',
+                MISSING_GAME_DATE: 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.'
+            }
+            return (player.incompleteReasons ?? []).map(reason => guidance[reason]).filter(Boolean)
+        },
         statusClass(status) {
             return {
                 'is-light': status === null,

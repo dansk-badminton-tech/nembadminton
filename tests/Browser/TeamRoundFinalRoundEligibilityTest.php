@@ -20,6 +20,56 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
 
     protected $seeder = 'TestingDataSeeder';
 
+    public function test_uncertainty_names_the_historical_correction_target_without_claiming_ineligibility(): void
+    {
+        $clubhouse = Clubhouse::firstOrFail();
+        $team = Team::factory()->withCustomTier('2. division')->create([
+            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
+        ]);
+        $round = TeamRound::query()->create([
+            'name' => 'Final round uncertainty', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
+            'season_id' => 2026, 'round' => 11, 'clubhouse_id' => $clubhouse->id,
+            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
+        ]);
+        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
+        $member = Member::query()->where('refId', '870114-15')->firstOrFail();
+        $other = Member::query()->where('gender', $member->gender)->where('refId', '!=', $member->refId)->firstOrFail();
+        foreach ([$member, $other] as $index => $player) {
+            $squad->categories()->create(['name' => ($index + 1).'. DS', 'category' => 'DS'])->players()->create([
+                'member_ref_id' => $player->refId, 'name' => $player->name, 'gender' => $player->gender,
+            ]);
+        }
+        $earlier = $round->replicate();
+        $earlier->fill(['name' => 'Efterår uden holdlink', 'game_date' => '2026-09-20', 'round' => 2])->save();
+        $historical = Squad::query()->create(['team_round_id' => $earlier->id, 'name' => 'Gammelt hold', 'playerLimit' => 10]);
+        $historical->categories()->create(['name' => '1. DS', 'category' => 'DS'])->players()->create([
+            'member_ref_id' => $member->refId, 'name' => $member->name, 'gender' => $member->gender,
+        ]);
+
+        $this->browse(function (Browser $browser) use ($round, $earlier, $member) {
+            $finding = '[dusk="final-round-finding-0-'.$member->refId.'"]';
+            $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitForTextIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud')
+                ->assertSeeIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen')
+                ->assertDontSeeIn($finding, 'har ikke stået på samme eller et lavere hold')
+                ->assertSeeIn($finding, 'Efterår uden holdlink (runde 2)')
+                ->assertSeeIn($finding, 'Tilknyt det aktuelle hold')
+                ->assertAttribute('[dusk="final-round-correction-'.$earlier->id.'"]', 'href', '/app/c-'.$round->clubhouse_id.'/team-fight/'.$earlier->id.'/edit')
+                ->assertVisible('[dusk="final-round-team-link-guide"]')
+                ->click('@settings-button')->waitFor('@settings-name')
+                ->type('@settings-name', 'Saved despite uncertainty')->click('@settings-save')
+                ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
+                ->waitForText('Saved despite uncertainty')
+                ->waitForTextIn('@final-round-warnings', 'Efterår uden holdlink')
+                ->removeMemberFromCategory(0, '1. DS', $member->name)
+                ->waitUntilMissing($finding)->refresh()->on(new TeamFightEditPage)
+                ->waitForTextIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold')
+                ->assertDontSeeIn('@team-table-section', $member->name)
+                ->assertDontSeeIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud');
+        });
+    }
+
     public function test_eligibility_warning_does_not_block_saving_or_editing_the_lineup(): void
     {
         $clubhouse = Clubhouse::firstOrFail();
