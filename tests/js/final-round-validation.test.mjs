@@ -25,8 +25,23 @@ test('the control is visible only in relevant rounds for a non-Paper Squad', () 
     assert.equal(showFinalRoundControl({round: 12, squads: []}), false)
 })
 
+test('the client check starts disabled and skips requests until explicitly enabled', async () => {
+    const state = createValidationState()
+    assert.equal(state.enabled, false)
+    assert.equal(state.status, 'disabled')
+    assert.equal(state.findings, null)
+    let requested = false
+    await runValidation(state, async () => { requested = true; return [] })
+    assert.equal(requested, false)
+    assert.equal(state.status, 'disabled')
+    setValidationEnabled(state, true)
+    await runValidation(state, async () => [])
+    assert.equal(state.status, 'complete')
+})
+
 test('disabling the client check clears findings and skips requests until enabled again', async () => {
     const state = createValidationState()
+    setValidationEnabled(state, true)
     await runValidation(state, async () => [{status: 'REQUIREMENT_NOT_MET'}])
     setValidationEnabled(state, false)
     assert.equal(state.status, 'disabled')
@@ -40,11 +55,12 @@ test('disabling the client check clears findings and skips requests until enable
     assert.equal(state.status, 'pending')
     await runValidation(state, async () => [])
     assert.equal(state.status, 'complete')
-    assert.equal(createValidationState().enabled, true)
+    assert.equal(createValidationState().enabled, false)
 })
 
 test('disabling the check invalidates an in-flight response', async () => {
     const state = createValidationState()
+    setValidationEnabled(state, true)
     const old = deferred()
     const pending = runValidation(state, () => old.promise)
     setValidationEnabled(state, false)
@@ -56,6 +72,7 @@ test('disabling the check invalidates an in-flight response', async () => {
 
 test('switching Scenario invalidates an outstanding check before the new lineup has loaded', async () => {
     const state = createValidationState()
+    setValidationEnabled(state, true)
     const old = deferred()
     const pending = runValidation(state, () => old.promise)
     invalidateValidation(state)
@@ -70,6 +87,7 @@ test('switching Scenario invalidates an outstanding check before the new lineup 
 
 test('failed validation remains explicitly failed until a successful retry', async () => {
     const state = createValidationState()
+    setValidationEnabled(state, true)
     await runValidation(state, async () => [])
     const failed = deferred()
     const pending = runValidation(state, () => failed.promise)
@@ -87,6 +105,7 @@ test('failed validation remains explicitly failed until a successful retry', asy
 test('older successes and failures cannot overwrite the latest completed lineup check', async () => {
     for (const outcome of ['success', 'failure']) {
         const state = createValidationState()
+        setValidationEnabled(state, true)
         const old = deferred()
         const pending = runValidation(state, () => old.promise)
         await runValidation(state, async () => [{status: 'NOT_APPLICABLE'}])
@@ -100,6 +119,7 @@ test('older successes and failures cannot overwrite the latest completed lineup 
 
 test('an absent result is not a completed check', async () => {
     const state = createValidationState()
+    setValidationEnabled(state, true)
     await runValidation(state, async () => null)
     assert.equal(state.status, 'failed')
     assert.equal(state.findings, null)

@@ -29,6 +29,10 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
             $control = '.field.is-grouped > [dusk="final-round-validation-control"]';
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
+                ->assertMissing('@final-round-warnings')
+                ->assertDisabled('@revalidate-final-round')
+                ->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->assertPresent($control.' .tags.has-addons > .tag.is-dark.is-medium')
                 ->assertPresent($control.' [dusk="validation-final-round"].tag.is-medium.is-warning')
@@ -45,11 +49,10 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->assertEnabled('@revalidate-final-round')
-                ->click('@toggle-final-round-check')
-                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
                 ->refresh()
-                ->waitForTextIn('@validation-final-round', 'Advarsel')
-                ->assertSeeIn('@final-round-warnings', $member->name);
+                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
+                ->assertDisabled('@revalidate-final-round')
+                ->assertMissing('@final-round-warnings');
         });
     }
 
@@ -92,6 +95,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->createScenarioFromOfficial('Tomt udkast')
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
@@ -165,6 +169,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member, $other) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->assertDontSeeIn('@final-round-warnings', $other->name)
                 ->createScenarioFromOfficial('Uden divisionsspilleren')
@@ -220,6 +225,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
             $finding = '[dusk="final-round-finding-0-'.$member->refId.'"]';
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud')
                 ->assertSeeIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen')
                 ->assertDontSeeIn($finding, 'har ikke stået på samme eller et lavere hold')
@@ -231,6 +237,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->type('@settings-name', 'Saved despite uncertainty')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Saved despite uncertainty')
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', 'Efterår uden holdlink');
 
             $original = $browser->driver->getWindowHandle();
@@ -252,6 +259,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->assertSeeIn('@team-table-section', $member->name)
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
                 ->waitUntilMissing($finding)->refresh()->on(new TeamFightEditPage)
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold')
                 ->assertDontSeeIn('@team-table-section', $member->name)
                 ->assertDontSeeIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud');
@@ -266,6 +274,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
                 ->assertSeeIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8)')
@@ -273,6 +282,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->type('@settings-name', 'Saved despite eligibility warning')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Saved despite eligibility warning')
+                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
                 ->waitForTextIn('[dusk="validation-final-round"]', 'OK')

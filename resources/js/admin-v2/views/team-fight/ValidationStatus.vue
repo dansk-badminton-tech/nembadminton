@@ -228,7 +228,7 @@ export default {
     props: {
         finalRoundValidationEnabled: {
             type: Boolean,
-            default: true
+            default: false
         },
         finalRoundValidationStatus: {
             type: String,

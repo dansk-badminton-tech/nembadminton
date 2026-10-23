@@ -124,7 +124,7 @@ I de sidste runder af sæsonen skal en spiller tidligere i sæsonen have stået 
 
 I andre runder og rækker er reglen ikke relevant, og kontrollen viser ingen advarsler.
 
-Over advarslerne viser Nembadminton **Tidligere hold (§38 stk. 8)** med en af disse tilstande: **Afventer kontrol**, **Kontrolleret**, **Advarsel** eller **Kunne ikke kontrolleres — prøv igen**. Kontrollen køres igen, når du ændrer holdopstillingen eller skifter scenarie. Vælg **Kontrollér igen** for at køre den med det samme, fx hvis den ikke kunne køres.
+I de relevante runder viser Nembadminton **Tidligere hold (§38 stk. 8)**. Kontrollen er som udgangspunkt **Deaktiveret**. Slå den til med kontakten, når du vil kontrollere tidligere hold; kontrollen kræver, at holdene er tilknyttet. Når kontrollen er slået til, viser den **Afventer**, **OK**, **Advarsel** eller **Fejlet** og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Brug opdateringsknappen for at køre den med det samme. Genindlæser du siden, er kontrollen slået fra igen.
 
 Der er to slags advarsler under kontrollerne, hver med holdets nummer og spillerens navn:
 

@@ -13,7 +13,7 @@ export function showFinalRoundControl(teamRound) {
 
 // The state may be reactive; always mutate the caller's state rather than a captured raw object.
 export function createValidationState() {
-    return {revision: 0, enabled: true, status: 'pending', findings: null}
+    return {revision: 0, enabled: false, status: 'disabled', findings: null}
 }
 
 export function invalidateValidation(state) {
