@@ -103,6 +103,13 @@ class TeamFightEditPage extends Page
         (new TeamFightCreatePage(0))->setRound($browser, $round);
     }
 
+    public function changeRoundNumber(Browser $browser, int $round): void
+    {
+        $this->scrollToCenter($browser, '@settings-button');
+        $browser->click('@settings-button')->waitFor('@settings-modal')->setRound($round)
+            ->click('@settings-save')->waitUntilMissing('@settings-modal');
+    }
+
     public function selectDate(Browser $browser, int $month, int $year, int $day): void
     {
         $browser->click('@date-picker');
