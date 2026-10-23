@@ -39,7 +39,7 @@ The organisation a User works in, linked to one or more badminton clubs. Team ro
 _Avoid_: Tenant, organisation, club (a club is the badmintonplayer.dk club)
 
 **TeamRound**:
-A specific match round (holdrunde) across a club's teams on a given date.
+One round (holdrunde) across a club's Teams, identified by its round number (§45). Its Squads can be played on different dates, because Badmintonligaen has its own schedule and a holdkamp can be moved; each Squad keeps the date its match is played.
 _Avoid_: Match, fight, team fight
 
 **Team** (hold):
