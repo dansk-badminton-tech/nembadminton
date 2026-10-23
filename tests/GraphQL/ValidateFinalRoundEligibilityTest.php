@@ -152,6 +152,30 @@ class ValidateFinalRoundEligibilityTest extends TestCase
     }
 
     #[Test]
+    public function non_applicable_squads_do_not_report_missing_comparison_context(): void
+    {
+        $round = $this->round(['round' => 10, 'season_id' => null, 'game_date' => null]);
+        $squad = $this->squad($round);
+        $squad->update(['team_id' => null, 'tier' => '2. division']);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'uncountedRounds' => [],
+        ]);
+
+        $round->update(['round' => null]);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'CANNOT_VERIFY',
+            'incompleteReasons' => ['MISSING_ROUND', 'MISSING_TEAM', 'MISSING_SEASON', 'MISSING_GAME_DATE'],
+            'uncountedRounds' => [],
+        ]);
+
+        $unknownTeam = Team::factory()->withCustomTier('Ukendt række')->create(['clubhouse_id' => $this->clubhouse->id]);
+        $squad->update(['is_paper_squad' => true, 'team_id' => $unknownTeam->id]);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'uncountedRounds' => [],
+        ]);
+    }
+
+    #[Test]
     public function uncomparable_history_is_inconclusive_unless_another_appearance_proves_the_requirement(): void
     {
         $current = $this->squad($this->round());
