@@ -71,6 +71,7 @@ class TeamFightEditPage extends Page
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
+            '@final-round-warnings' => "[dusk='final-round-warnings']",
             '@scenario-guide-link' => "[dusk='scenario-guide-link']",
             '@scenario-selector-dropdown' => "[dusk='scenario-selector-dropdown']",
             '@create-scenario-button' => "[dusk='create-scenario-button']",

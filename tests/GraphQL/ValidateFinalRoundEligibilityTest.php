@@ -1,0 +1,221 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\GraphQL;
+
+use App\Enums\Permission;
+use App\Models\Clubhouse;
+use App\Models\Member;
+use App\Models\Season;
+use App\Models\Squad;
+use App\Models\SquadCategory;
+use App\Models\Team;
+use App\Models\TeamRound;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
+use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+class ValidateFinalRoundEligibilityTest extends TestCase
+{
+    use MakesGraphQLRequests;
+    use RefreshDatabase;
+
+    protected string $seeder = 'RolesAndPermissionsSeeder';
+
+    private Clubhouse $clubhouse;
+
+    private User $user;
+
+    private Team $team;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Season::query()->firstOrCreate(['id' => 2026], ['season_name' => '2026/2027']);
+        $this->clubhouse = Clubhouse::factory()->create();
+        $this->user = User::factory()->create(['clubhouse_id' => $this->clubhouse->id]);
+        setPermissionsTeamId($this->clubhouse->id);
+        $this->user->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+        $this->actingAs($this->user, 'api');
+        $this->team = Team::factory()->withCustomTier('2. division')->create(['clubhouse_id' => $this->clubhouse->id]);
+        Member::query()->create(['refId' => '0101011111', 'name' => 'Anders', 'gender' => 'M', 'birthday' => '2001-01-01']);
+    }
+
+    #[Test]
+    public function no_earlier_appearance_warns_once_per_member_on_the_current_squad(): void
+    {
+        $squad = $this->squad($this->round());
+        $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility', [[
+            'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'REQUIREMENT_NOT_MET',
+        ]]);
+    }
+
+    private function round(array $attributes = []): TeamRound
+    {
+        return TeamRound::factory()->create(array_merge([
+            'clubhouse_id' => $this->clubhouse->id, 'user_id' => $this->user->id,
+            'season_id' => 2026, 'round' => 11, 'game_date' => '2027-03-20',
+        ], $attributes));
+    }
+
+    #[Test]
+    public function applicability_uses_each_squads_original_dh_tier_and_round_not_its_match_format(): void
+    {
+        foreach ([
+            ['Badmintonligaen', [10 => 'NOT_APPLICABLE', 11 => 'NOT_APPLICABLE', 12 => 'REQUIREMENT_NOT_MET']],
+            ['1. division', [10 => 'NOT_APPLICABLE', 11 => 'REQUIREMENT_NOT_MET', 12 => 'REQUIREMENT_NOT_MET']],
+            ['2. division', [10 => 'NOT_APPLICABLE', 11 => 'REQUIREMENT_NOT_MET', 12 => 'REQUIREMENT_NOT_MET']],
+            ['3. division', [10 => 'NOT_APPLICABLE', 11 => 'REQUIREMENT_NOT_MET', 12 => 'REQUIREMENT_NOT_MET']],
+            ['Danmarksserien', [10 => 'NOT_APPLICABLE', 11 => 'REQUIREMENT_NOT_MET', 12 => 'REQUIREMENT_NOT_MET']],
+        ] as [$tier, $rounds]) {
+            $team = Team::factory()->withCustomTier($tier)->create(['clubhouse_id' => $this->clubhouse->id]);
+            foreach ($rounds as $number => $expected) {
+                $squad = $this->squad($this->round(['round' => $number]), $team);
+                $squad->update(['tier' => 'Serie 1']);
+                $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', $expected);
+                $squad->update(['is_paper_squad' => true]);
+                $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'NOT_APPLICABLE');
+            }
+        }
+    }
+
+    private function squad(TeamRound $round, ?Team $team = null): Squad
+    {
+        return Squad::query()->create(['team_round_id' => $round->id, 'team_id' => ($team ?? $this->team)->id, 'playerLimit' => 10]);
+    }
+
+    #[Test]
+    public function one_same_or_lower_team_appearance_proves_the_requirement_using_historical_squad_order(): void
+    {
+        foreach (['Badmintonligaen', '1. division', '2. division', '3. division', 'Danmarksserien'] as $tier) {
+            $team = Team::factory()->withCustomTier($tier)->create(['clubhouse_id' => $this->clubhouse->id]);
+            foreach ($tier === 'Badmintonligaen' ? [12] : [11, 12] as $number) {
+                $current = $this->squad($this->round(['round' => $number]), $team);
+                $earlier = $this->round(['round' => 1, 'game_date' => '2026-09-20']);
+                $higher = $this->squad($earlier);
+                $same = $this->squad($earlier, $team);
+                // The nominally stronger tier is nevertheless lower in this historical Squad order.
+                $lower = $this->squad($earlier, Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $this->clubhouse->id]));
+                $category = $this->place($higher);
+                $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
+                $category->update(['squad_id' => $same->id]);
+                $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
+                $category->update(['squad_id' => $lower->id]);
+                $lower->update(['is_paper_squad' => true]);
+                $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
+                $earlier->delete();
+            }
+        }
+    }
+
+    private function place(Squad $squad, array $attributes = []): SquadCategory
+    {
+        $category = $squad->categories()->create(array_merge(['category' => 'HS', 'name' => '1. HS'], $attributes));
+        $category->players()->create(['name' => 'Anders', 'gender' => 'M', 'member_ref_id' => '0101011111']);
+
+        return $category;
+    }
+
+    #[Test]
+    public function incomplete_current_context_is_not_success_or_proven_ineligibility(): void
+    {
+        foreach (['round', 'season_id', 'game_date'] as $field) {
+            $squad = $this->squad($this->round([$field => null]));
+            $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        }
+        $squad = $this->squad($this->round());
+        $squad->update(['team_id' => null, 'tier' => '2. division']);
+        $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        $squad->update(['tier' => 'Ukendt række']);
+        $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+    }
+
+    #[Test]
+    public function uncomparable_history_is_inconclusive_unless_another_appearance_proves_the_requirement(): void
+    {
+        $current = $this->squad($this->round());
+        $earlier = $this->squad($this->round(['game_date' => '2026-09-20']));
+        $this->place($earlier);
+        $earlier->update(['team_id' => null]);
+        $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        $this->place($this->squad($this->round(['game_date' => '2026-09-27'])));
+        $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
+    }
+
+    #[Test]
+    public function only_earlier_official_lineups_in_this_season_and_clubhouse_count(): void
+    {
+        Season::query()->firstOrCreate(['id' => 2025], ['season_name' => '2025/2026']);
+        $current = $this->squad($this->round());
+        $this->place($current);
+        $this->place($this->squad($this->round(['game_date' => '2027-03-21'])));
+        $this->place($this->squad($this->round(['game_date' => '2027-03-20'])));
+        $this->place($this->squad($this->round(['game_date' => '2026-09-20', 'season_id' => 2025])));
+        $this->place($this->squad($this->round(['game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id])));
+        $earlier = $this->round(['game_date' => '2026-09-27']);
+        $draft = $earlier->scenarios()->create(['name' => 'Kladde', 'is_official' => false]);
+        $this->place($this->squad($earlier), ['team_round_scenario_id' => $draft->id]);
+        $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $draft->update(['is_official' => true]);
+        $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
+    }
+
+    #[Test]
+    public function mixed_tiers_and_current_scenario_placements_are_checked_independently(): void
+    {
+        $round = $this->round();
+        $liga = $this->squad($round, Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $this->clubhouse->id]));
+        $division = $this->squad($round);
+        $input = [$this->input($liga), $this->input($division)];
+        $this->check($division, $input)->assertJsonPath('data.validateFinalRoundEligibility', [
+            ['squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'NOT_APPLICABLE'],
+            ['squadIndex' => 1, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'REQUIREMENT_NOT_MET'],
+        ]);
+        $input[1]['squad']['categories'] = [];
+        $this->check($division, $input)->assertJsonCount(1, 'data.validateFinalRoundEligibility');
+        $round->update(['round' => 12]);
+        $this->check($division, $input)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
+    }
+
+    #[Test]
+    public function foreign_squad_ids_are_never_used_even_from_another_round_in_the_same_clubhouse(): void
+    {
+        $current = $this->squad($this->round());
+        $foreign = $this->squad($this->round(['clubhouse_id' => Clubhouse::factory()->create()->id]));
+        $otherRound = $this->squad($this->round());
+        $this->check($current, [$this->input($foreign), $this->input($otherRound)])->assertJsonPath('data.validateFinalRoundEligibility', []);
+    }
+
+    #[Test]
+    public function another_clubhouse_and_public_sharing_cannot_access_validation(): void
+    {
+        $current = $this->squad($this->round());
+        $query = 'mutation($id: ID!, $input: [ValidateTeam!]!) { validateFinalRoundEligibility(teamRoundId: $id, input: $input) { status } }';
+        $variables = ['id' => $current->team_round_id, 'input' => [$this->input($current)]];
+        $foreignUser = User::factory()->create(['clubhouse_id' => Clubhouse::factory()->create()->id]);
+        setPermissionsTeamId($foreignUser->clubhouse_id);
+        $foreignUser->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
+        $this->actingAs($foreignUser, 'api');
+        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('This action is unauthorized.');
+        auth('api')->forgetUser();
+        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+
+    private function input(Squad $squad): array
+    {
+        return ['name' => 'Hold', 'squad' => ['id' => (string) $squad->id, 'playerLimit' => 10, 'categories' => array_map(fn ($category) => [
+            'name' => '1. '.$category, 'category' => $category, 'players' => [['refId' => '0101011111', 'name' => 'Anders', 'gender' => 'MEN', 'points' => []]],
+        ], ['HS', 'HD'])]];
+    }
+
+    private function check(Squad $squad, ?array $input = null): TestResponse
+    {
+        return $this->graphQL('mutation($id: ID!, $input: [ValidateTeam!]!) {
+            validateFinalRoundEligibility(teamRoundId: $id, input: $input) { squadIndex refId name status }
+        }', ['id' => $squad->team_round_id, 'input' => $input ?? [$this->input($squad)]])->assertGraphQLErrorFree();
+    }
+}

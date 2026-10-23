@@ -1,4 +1,6 @@
 extend type Mutation {
+    "§38 stk. 8, checked against earlier Official Lineups. Advisory; never blocks saving."
+    validateFinalRoundEligibility(teamRoundId: ID!, input: [ValidateTeam!]!): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates categories for right streng order (category-ranking)"
@@ -11,6 +13,21 @@ extend type Mutation {
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
     "§38 stk. 7 findings for the TeamRound's Paper Squads, from the Season History before the TeamRound. A warning, not a hard rule. Which Squads are Paper Squads is read from the TeamRound, matched to the lineup by Squad id."
     validatePaperSquads(teamRoundId: ID!, input: [ValidateTeam!]!) : PaperSquadValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePaperSquads")
+}
+
+enum FinalRoundEligibilityStatus {
+    NOT_APPLICABLE
+    SATISFIED
+    REQUIREMENT_NOT_MET
+    CANNOT_VERIFY
+}
+
+type FinalRoundEligibilityPlayer {
+    squadIndex: Int!
+    refId: String!
+    name: String!
+    "SATISFIED only establishes the one-appearance requirement of §38 stk. 8."
+    status: FinalRoundEligibilityStatus!
 }
 
 type PaperSquadValidation {
