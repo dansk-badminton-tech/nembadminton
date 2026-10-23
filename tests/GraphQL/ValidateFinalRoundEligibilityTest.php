@@ -52,6 +52,9 @@ class ValidateFinalRoundEligibilityTest extends TestCase
         $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility', [[
             'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'REQUIREMENT_NOT_MET',
         ]]);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'REQUIREMENT_NOT_MET', 'incompleteReasons' => [], 'uncountedRounds' => [],
+        ]);
     }
 
     private function round(array $attributes = []): TeamRound
@@ -123,15 +126,29 @@ class ValidateFinalRoundEligibilityTest extends TestCase
     #[Test]
     public function incomplete_current_context_is_not_success_or_proven_ineligibility(): void
     {
-        foreach (['round', 'season_id', 'game_date'] as $field) {
+        foreach (['round' => 'MISSING_ROUND', 'season_id' => 'MISSING_SEASON', 'game_date' => 'MISSING_GAME_DATE'] as $field => $reason) {
             $squad = $this->squad($this->round([$field => null]));
-            $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+            $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+                'status' => 'CANNOT_VERIFY', 'incompleteReasons' => [$reason], 'uncountedRounds' => [],
+            ]);
         }
         $squad = $this->squad($this->round());
         $squad->update(['team_id' => null, 'tier' => '2. division']);
-        $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'CANNOT_VERIFY', 'incompleteReasons' => ['MISSING_TEAM'], 'uncountedRounds' => [],
+        ]);
         $squad->update(['tier' => 'Ukendt række']);
-        $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'CANNOT_VERIFY', 'incompleteReasons' => ['UNKNOWN_TIER', 'MISSING_TEAM'], 'uncountedRounds' => [],
+        ]);
+        $squad->update(['team_id' => Team::factory()->withCustomTier('Ukendt række')->create(['clubhouse_id' => $this->clubhouse->id])->id]);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'CANNOT_VERIFY', 'incompleteReasons' => ['UNKNOWN_TIER'], 'uncountedRounds' => [],
+        ]);
+        $squad->update(['is_paper_squad' => true]);
+        $this->diagnostics($squad)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'uncountedRounds' => [],
+        ]);
     }
 
     #[Test]
@@ -144,6 +161,47 @@ class ValidateFinalRoundEligibilityTest extends TestCase
         $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
         $this->place($this->squad($this->round(['game_date' => '2026-09-27'])));
         $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
+    }
+
+    #[Test]
+    public function uncertainty_identifies_each_incomparable_historical_round_once_and_proof_removes_it(): void
+    {
+        $current = $this->squad($this->round());
+        $missing = $this->round(['name' => 'Efterår uden holdlink', 'round' => 2, 'game_date' => '2026-09-20']);
+        $unknownPhase = $this->round(['name' => 'Ekstra holdrunde', 'round' => null, 'game_date' => '2026-09-27']);
+        foreach ([$missing, $unknownPhase] as $round) {
+            $squad = $this->squad($round);
+            $squad->update(['team_id' => null]);
+            $this->place($squad);
+            $this->place($squad, ['category' => 'HD', 'name' => '1. HD']);
+        }
+        $foreign = $this->squad($this->round([
+            'name' => 'Other Clubhouse secret', 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id,
+        ]));
+        $foreign->update(['team_id' => null]);
+        $this->place($foreign);
+        $this->diagnostics($current)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'CANNOT_VERIFY',
+            'incompleteReasons' => ['INCOMPARABLE_HISTORY'],
+            'uncountedRounds' => [
+                ['teamRoundId' => $missing->id, 'name' => 'Efterår uden holdlink', 'round' => 2],
+                ['teamRoundId' => $unknownPhase->id, 'name' => 'Ekstra holdrunde', 'round' => null],
+            ],
+        ]);
+
+        $this->place($this->squad($this->round(['round' => null, 'game_date' => '2026-10-04'])));
+        $this->diagnostics($current)->assertJsonPath('data.validateFinalRoundEligibility.0', [
+            'status' => 'SATISFIED', 'incompleteReasons' => [], 'uncountedRounds' => [],
+        ]);
+    }
+
+    private function diagnostics(Squad $squad): TestResponse
+    {
+        return $this->graphQL('mutation($id: ID!, $input: [ValidateTeam!]!) {
+            validateFinalRoundEligibility(teamRoundId: $id, input: $input) {
+                status incompleteReasons uncountedRounds { teamRoundId name round }
+            }
+        }', ['id' => $squad->team_round_id, 'input' => [$this->input($squad)]])->assertGraphQLErrorFree();
     }
 
     #[Test]
@@ -194,15 +252,33 @@ class ValidateFinalRoundEligibilityTest extends TestCase
     public function another_clubhouse_and_public_sharing_cannot_access_validation(): void
     {
         $current = $this->squad($this->round());
-        $query = 'mutation($id: ID!, $input: [ValidateTeam!]!) { validateFinalRoundEligibility(teamRoundId: $id, input: $input) { status } }';
+        $historical = $this->round(['name' => 'Confidential historical lineup', 'round' => 1, 'game_date' => '2026-09-20']);
+        $unlinked = $this->squad($historical);
+        $unlinked->update(['team_id' => null]);
+        $this->place($unlinked);
+        $this->diagnostics($current)->assertJsonPath('data.validateFinalRoundEligibility.0.uncountedRounds.0.teamRoundId', $historical->id);
+        $query = 'mutation($id: ID!, $input: [ValidateTeam!]!) {
+            validateFinalRoundEligibility(teamRoundId: $id, input: $input) {
+                status incompleteReasons uncountedRounds { teamRoundId name round }
+            }
+        }';
         $variables = ['id' => $current->team_round_id, 'input' => [$this->input($current)]];
         $foreignUser = User::factory()->create(['clubhouse_id' => Clubhouse::factory()->create()->id]);
         setPermissionsTeamId($foreignUser->clubhouse_id);
         $foreignUser->givePermissionTo(Permission::VIEW_TEAMROUNDS->value);
         $this->actingAs($foreignUser, 'api');
-        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('This action is unauthorized.');
+        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('This action is unauthorized.')
+            ->assertDontSee($historical->id)->assertDontSee('Confidential historical lineup');
         auth('api')->forgetUser();
-        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('Unauthenticated.');
+        $this->graphQL($query, $variables)->assertGraphQLErrorMessage('Unauthenticated.')
+            ->assertDontSee($historical->id)->assertDontSee('Confidential historical lineup');
+        // The intentional public TeamRound link remains usable, but cannot expose earlier rounds.
+        $this->graphQL('query($id: ID!) { teamRound(id: $id) { id } }', ['id' => $current->team_round_id])
+            ->assertGraphQLErrorFree()->assertJsonPath('data.teamRound.id', $current->team_round_id);
+        $this->graphQL('query($id: ID!) { teamRound(id: $id) { seasonHistory { id name } } }', ['id' => $current->team_round_id])
+            ->assertGraphQLErrorMessage('Unauthenticated.')
+            ->assertJsonPath('data.teamRound.seasonHistory', null)
+            ->assertDontSee($historical->id)->assertDontSee('Confidential historical lineup');
     }
 
     private function input(Squad $squad): array

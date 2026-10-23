@@ -4,5 +4,11 @@ mutation validateFinalRoundEligibility($teamRoundId: ID!, $input: [ValidateTeam!
         refId
         name
         status
+        incompleteReasons
+        uncountedRounds {
+            teamRoundId
+            name
+            round
+        }
     }
 }

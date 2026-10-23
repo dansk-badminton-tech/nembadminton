@@ -22,12 +22,25 @@ enum FinalRoundEligibilityStatus {
     CANNOT_VERIFY
 }
 
+enum FinalRoundEligibilityIncompleteReason {
+    INCOMPARABLE_HISTORY
+    MISSING_ROUND
+    UNKNOWN_TIER
+    MISSING_TEAM
+    MISSING_SEASON
+    MISSING_GAME_DATE
+}
+
 type FinalRoundEligibilityPlayer {
     squadIndex: Int!
     refId: String!
     name: String!
     "SATISFIED only establishes the one-appearance requirement of §38 stk. 8."
     status: FinalRoundEligibilityStatus!
+    "Explicit incomplete-validation markers for CANNOT_VERIFY; empty for every other status."
+    incompleteReasons: [FinalRoundEligibilityIncompleteReason!]!
+    "Earlier TeamRounds without a Squad linked to the target Team, each once. Empty when a qualifying appearance is proven."
+    uncountedRounds: [PaperSquadUncountedRound!]!
 }
 
 type PaperSquadValidation {
