@@ -1,12 +1,41 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {createValidationState, invalidateValidation, runValidation} from '../../resources/js/admin-v2/views/team-fight/final-round-validation.mjs'
+import {createValidationState, invalidateValidation, runValidation, setValidationEnabled} from '../../resources/js/admin-v2/views/team-fight/final-round-validation.mjs'
 
 function deferred() {
     let resolve, reject
     const promise = new Promise((yes, no) => { resolve = yes; reject = no })
     return {promise, resolve, reject}
 }
+
+test('disabling the client check clears findings and skips requests until enabled again', async () => {
+    const state = createValidationState()
+    await runValidation(state, async () => [{status: 'REQUIREMENT_NOT_MET'}])
+    setValidationEnabled(state, false)
+    assert.equal(state.status, 'disabled')
+    assert.equal(state.findings, null)
+    let requested = false
+    await runValidation(state, async () => { requested = true; return [] })
+    invalidateValidation(state)
+    assert.equal(requested, false)
+    assert.equal(state.status, 'disabled')
+    setValidationEnabled(state, true)
+    assert.equal(state.status, 'pending')
+    await runValidation(state, async () => [])
+    assert.equal(state.status, 'complete')
+    assert.equal(createValidationState().enabled, true)
+})
+
+test('disabling the check invalidates an in-flight response', async () => {
+    const state = createValidationState()
+    const old = deferred()
+    const pending = runValidation(state, () => old.promise)
+    setValidationEnabled(state, false)
+    old.resolve([{status: 'REQUIREMENT_NOT_MET'}])
+    await pending
+    assert.equal(state.status, 'disabled')
+    assert.equal(state.findings, null)
+})
 
 test('switching Scenario invalidates an outstanding check before the new lineup has loaded', async () => {
     const state = createValidationState()

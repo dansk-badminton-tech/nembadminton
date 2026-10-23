@@ -94,13 +94,43 @@
                     </div>
                 </b-tooltip>
             </div>
-        </div>
-
-        <div v-if="finalRoundValidationStatus" class="is-flex is-align-items-center is-flex-wrap-wrap mb-3" style="gap: 0.5rem;" aria-live="polite">
-            <span class="tag" :class="finalRoundValidationStatus === 'failed' || finalRoundWarnings.length ? 'is-warning' : 'is-light'" dusk="validation-final-round">
-                Tidligere hold (§38 stk. 8): {{ finalRoundStatusText }}
-            </span>
-            <b-button size="is-small" icon-left="refresh" dusk="revalidate-final-round" @click="$emit('revalidate')">Kontrollér igen</b-button>
+            <div class="control" v-if="finalRoundValidationStatus" dusk="final-round-validation-control">
+                <b-tooltip
+                    type="is-info"
+                    :label="finalRoundTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Tidligere hold (§38 stk. 8)</span>
+                        <span
+                            dusk="validation-final-round"
+                            :class="finalRoundStatusClass"
+                            class="tag is-medium"
+                            aria-live="polite">
+                            <b-icon :icon="finalRoundStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ finalRoundStatusText }}
+                        </span>
+                        <span class="tag is-medium is-white">
+                            <b-button
+                                size="is-small"
+                                icon-left="refresh"
+                                aria-label="Kontrollér tidligere hold igen"
+                                title="Kontrollér tidligere hold igen"
+                                :disabled="!finalRoundValidationEnabled"
+                                :loading="finalRoundValidationStatus === 'pending'"
+                                dusk="revalidate-final-round"
+                                @click="$emit('revalidate')" />
+                            <b-switch
+                                dusk="toggle-final-round-check"
+                                size="is-small"
+                                class="ml-2"
+                                aria-label="Kontrollér tidligere hold"
+                                :model-value="finalRoundValidationEnabled"
+                                @update:modelValue="$emit('update:finalRoundValidationEnabled', $event)">
+                            </b-switch>
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
         </div>
 
         <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
@@ -196,6 +226,10 @@ import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, paperSquadMessages, showsTeamL
 export default {
     name: 'ValidationStatus',
     props: {
+        finalRoundValidationEnabled: {
+            type: Boolean,
+            default: true
+        },
         finalRoundValidationStatus: {
             type: String,
             default: null
@@ -284,11 +318,30 @@ export default {
     },
     computed: {
         finalRoundStatusText() {
-            if (this.finalRoundValidationStatus === 'failed') return 'Kunne ikke kontrolleres — prøv igen'
-            if (this.finalRoundValidationStatus !== 'complete') return 'Afventer kontrol'
-            return this.finalRoundWarnings.length ? 'Advarsel' : 'Kontrolleret'
+            if (!this.finalRoundValidationEnabled) return 'Deaktiveret'
+            if (this.finalRoundValidationStatus === 'failed') return 'Fejlet'
+            if (this.finalRoundValidationStatus !== 'complete') return 'Afventer'
+            return this.finalRoundWarnings.length ? 'Advarsel' : 'OK'
+        },
+        finalRoundStatusClass() {
+            if (!this.finalRoundValidationEnabled) return 'is-warning'
+            if (this.finalRoundValidationStatus === 'failed') return 'is-warning'
+            if (this.finalRoundValidationStatus !== 'complete') return 'is-light'
+            return this.finalRoundWarnings.length ? 'is-warning' : 'is-success'
+        },
+        finalRoundStatusIcon() {
+            if (!this.finalRoundValidationEnabled) return 'cancel'
+            if (this.finalRoundValidationStatus === 'failed') return 'alert'
+            if (this.finalRoundValidationStatus !== 'complete') return 'minus-circle-outline'
+            return this.finalRoundWarnings.length ? 'alert' : 'check-circle'
+        },
+        finalRoundTip() {
+            if (!this.finalRoundValidationEnabled) return 'Kontrollen af tidligere hold er slået fra i denne visning. Slå til igen via kontakten.'
+            if (this.finalRoundValidationStatus === 'failed') return 'Tidligere hold kunne ikke kontrolleres. Prøv igen med opdateringsknappen.'
+            return 'I sidste slutspilsrunde og kvalifikation skal spilleren have stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8). Opdatér kontrollen efter rettelser i tidligere holdrunder.'
         },
         finalRoundWarnings() {
+            if (!this.finalRoundValidationEnabled) return []
             return (this.finalRoundEligibility ?? []).filter(player =>
                 ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
         },

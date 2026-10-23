@@ -170,6 +170,8 @@
                                       :paper-squad-validation="paperSquadValidation"
                                       :final-round-eligibility="finalRoundValidation.findings"
                                       :final-round-validation-status="finalRoundValidation.status"
+                                      :final-round-validation-enabled="finalRoundValidation.enabled"
+                                      @update:finalRoundValidationEnabled="onFinalRoundValidationEnabledChange"
                                       @revalidate="refreshTeam"
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
@@ -225,7 +227,7 @@ import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
-import {createValidationState, invalidateValidation, runValidation} from './final-round-validation.mjs'
+import {createValidationState, invalidateValidation, runValidation, setValidationEnabled} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -420,7 +422,7 @@ export default {
             },
             error() {
                 this.invalidateFinalRoundEligibility()
-                this.finalRoundValidation.status = 'failed'
+                if (this.finalRoundValidation.enabled) this.finalRoundValidation.status = 'failed'
             },
             variables() {
                 return {
@@ -747,6 +749,10 @@ export default {
         onIgnoreIncompleteTeamChange(value) {
             this.ignoreIncompleteTeam = value
             this.validate()
+        },
+        onFinalRoundValidationEnabledChange(value) {
+            setValidationEnabled(this.finalRoundValidation, value)
+            if (value) this.refreshTeam()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
             this.deletePlayerFromCategory(sourceSquad, sourceCategory, player).then(() => {
