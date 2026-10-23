@@ -15,23 +15,30 @@ This agrees with the overall structure in §§9 and 16–25 of the regulations e
 
 **Implementation gap:** `SeasonPhase::fromRound()` currently treats every round 12 as qualification. That fallback misclassifies Liga medal finals and is not the complete domain rule. Do not replace this gap with date-based inference or assume the latest entered TeamRound is the final round.
 
-## Agreed Match Kind design (not yet implemented)
+## Scope: rule applicability is not Season Phase classification
+
+The maintainer interprets §38 stk. 8 as applying both to final ordinary playoffs and to qualification. Its applicability is therefore determined per non-Paper Squad directly from tier and round: rounds 11 and 12 below Liga, and round 12 in Liga. Both possible Liga round-12 Match Kinds require the same check, so [#224](https://github.com/dansk-badminton-tech/nembadminton/issues/224) needs neither a Match Kind field nor a corrected Season Phase classifier. Missing Match Kind must not prevent that check from running. This does not classify Liga medal finals as qualification or fix the existing classifier gap.
+
+The broader classification work is deferred to [#293](https://github.com/dansk-badminton-tech/nembadminton/issues/293), which is not a dependency of #224. The design below is retained for that follow-up, not an instruction to expand #224's scope.
+
+## Agreed Match Kind design for the follow-up (not yet implemented)
 
 - For a Liga Squad in round 12, the coach explicitly chooses between a medal final (gold/bronze) and a qualification match. Other unambiguous tier/round combinations remain automatic. External metadata must not silently establish or overwrite the choice.
 - The Match Kind belongs to the Squad and is shared across its Scenarios, not to its season-long Team or the whole TeamRound: Squads within one TeamRound may have different match kinds. The Team's original tier remains unchanged.
-- An unresolved Match Kind, including in legacy data, does not prevent editing or saving, but affected eligibility checks must visibly state that eligibility cannot be fully verified. They must not silently assume a kind or report a passed check.
+- An unresolved Match Kind, including in legacy data, does not prevent editing or saving, but eligibility checks that genuinely depend on the distinction must visibly state that eligibility cannot be fully verified. They must not silently assume a kind or report a passed check. The §38 stk. 8 check applies to both kinds and does not depend on this distinction.
 - Copying a TeamRound preserves the explicit choice rather than resetting it: the maintainer prefers retaining it, given that this is the season's final match. A retained choice only affects classification when the Squad is Liga in round 12; elsewhere it is kept but ignored, and tier/round classification applies normally.
 - Paper Squads do not require the choice and do not receive a missing-Match-Kind eligibility warning. Their paper-team checks apply independently. If a Squad is unmarked as paper, a choice is needed for complete validation when it is Liga in round 12.
 - The coach may correct a choice after entering lineups. A correction recalculates affected validation across every Scenario without changing player placements or the Team's original tier.
 
-The historical Liga/1. division qualification match displays the composite round label "11/12". Its meaning and import handling remain unresolved; do not silently coerce it to an integer or use it to override §27 in the newer regulations. Detailed observations, source links and the historical-season caveat are recorded in [#224's findings](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6340885558).
+The 2025/2026 Liga/1. division qualification match displays the composite round label "11/12". A live comparison found plain round 12 for the corresponding 2024/2025 qualification match, alongside round 12 for that season's Liga gold and bronze matches. After also inspecting older seasons, the maintainer chose to treat 2025/2026 as an outlier and use round 12 for qualification, consistent with §27. This does not make Liga medal finals qualification or remove the explicit Liga round-12 choice. Interpreting/importing composite labels is outside #224's scope; their meaning remains unverified, and silent integer coercion must not be treated as authoritative classification evidence. Detailed observations and source links: [original findings](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6340885558) and [live season comparison](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6360238451).
 
 ## Rule consequences of distinguishing the match kinds
 
 - Liga gold/bronze are the final playoff round for §38 stk. 8: at least one earlier season appearance on the same or a lower Team. Ordinary playoffs below Liga reach that round at 11.
 - §32 covers both playoffs and qualification: Liga players need at least four club senior team appearances, 1. division players at least three, plus the 20 October condition, subject to the regulation's exceptions and dispensations.
 - The Liga/1. division qualification match uses the 1. division match format (§27 stk. 2), but each side retains its original division's player rules (§27 stk. 3). The separate appearance requirement in §27 stk. 5 explicitly excludes Teams covered by §32; do not stack it on top for these Teams.
-- Qualification must not become an ordinary final playoff round merely because its round number is 12. §27 stk. 6 retains ordinary lineup rules; any interpretation extending §38 stk. 8 to qualification must be explicit, not an accidental consequence of phase classification.
+- **Maintainer's agreed rule interpretation:** §38 stk. 8 also applies to qualification matches, through §27 stk. 6's reference to the ordinary lineup rules. Qualification remains a separate Season Phase; applying this eligibility condition does not reclassify it as an ordinary final playoff round. This is an explicit interpretation adopted for Nembadminton, not an external clarification from Badminton Danmark.
+- For this one-appearance requirement, a proven earlier same-or-lower-Team appearance satisfies the requirement even when other historical Team links are incomplete. If none is proven, complete comparable history yields an eligibility warning; incomplete history yields an explicit cannot-fully-verify marker identifying the affected historical TeamRounds rather than a claim of proven ineligibility. This agreed behavior is not yet implemented.
 - Paper Squads obey their own rule (§38 stk. 7), which explicitly says only that subsection must be met. A round-12 paper-team record does not establish actual qualification participation.
 
 ## Consequences
