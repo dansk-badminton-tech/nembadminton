@@ -1,3 +1,16 @@
+export function showFinalRoundControl(teamRound) {
+    const round = Number(teamRound?.round)
+    if (round !== 11 && round !== 12) return false
+    return (teamRound?.squads ?? []).some(squad => {
+        if (squad.isPaperSquad) return false
+        const tier = (squad.effectiveTier ?? '').trim()
+        // Unknown tier context stays visible for the server's uncertainty warning.
+        if (!tier) return true
+        if (/^badmintonligaen\b/i.test(tier)) return round === 12
+        return /^(?:[1-3]\.\s*division|danmarksserien)\b/i.test(tier)
+    })
+}
+
 // The state may be reactive; always mutate the caller's state rather than a captured raw object.
 export function createValidationState() {
     return {revision: 0, enabled: true, status: 'pending', findings: null}

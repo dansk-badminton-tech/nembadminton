@@ -341,7 +341,7 @@ export default {
             return 'I sidste slutspilsrunde og kvalifikation skal spilleren have stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8). Opdatér kontrollen efter rettelser i tidligere holdrunder.'
         },
         finalRoundWarnings() {
-            if (!this.finalRoundValidationEnabled) return []
+            if (!this.finalRoundValidationStatus || !this.finalRoundValidationEnabled) return []
             return (this.finalRoundEligibility ?? []).filter(player =>
                 ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
         },

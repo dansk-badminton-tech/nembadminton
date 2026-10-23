@@ -79,7 +79,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 };
             JS);
             $browser->confirmScenarioDeletion()->waitUntilMissing('@scenario-selector-dropdown')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
+                ->assertMissing('@final-round-validation-control')
                 ->assertMissing('@scenario-draft-warning-banner');
         });
     }
@@ -179,17 +179,17 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->click('[dusk="edit-squad-paper-squad-switch"]')
                 ->click('[dusk="edit-squad-save-button"]')
                 ->waitUntilMissing('[dusk="edit-squad-save-button"]')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
+                ->waitUntilMissing('@final-round-validation-control')
                 ->assertMissing('@final-round-warnings')
                 ->selectScenario('Uden divisionsspilleren')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
+                ->assertMissing('@final-round-validation-control')
                 ->assertSeeIn('[dusk="squad-1"]', 'Papirhold')
                 ->assertDontSeeIn('@team-table-section', $member->name)
                 ->changeRoundNumber(12)
                 ->waitForTextIn('@final-round-warnings', $other->name)
                 ->assertDontSeeIn('@final-round-warnings', $member->name)
                 ->changeRoundNumber(10)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
+                ->waitUntilMissing('@final-round-validation-control')
                 ->assertMissing('@final-round-warnings')
                 ->selectScenario('Officiel opstilling')
                 ->waitForTextIn('@team-table-section', $member->name)

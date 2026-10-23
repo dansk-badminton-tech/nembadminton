@@ -169,7 +169,7 @@
                                       :show-reserves="hasReserves"
                                       :paper-squad-validation="paperSquadValidation"
                                       :final-round-eligibility="finalRoundValidation.findings"
-                                      :final-round-validation-status="finalRoundValidation.status"
+                                      :final-round-validation-status="showFinalRoundControl ? finalRoundValidation.status : null"
                                       :final-round-validation-enabled="finalRoundValidation.enabled"
                                       @update:finalRoundValidationEnabled="onFinalRoundValidationEnabledChange"
                                       @revalidate="refreshTeam"
@@ -227,7 +227,7 @@ import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
-import {createValidationState, invalidateValidation, runValidation, setValidationEnabled} from './final-round-validation.mjs'
+import {createValidationState, invalidateValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -313,6 +313,9 @@ export default {
         },
         hasPaperSquad() {
             return hasPaperSquad(this.teamRound?.squads)
+        },
+        showFinalRoundControl() {
+            return showFinalRoundControl(this.teamRound)
         },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
@@ -1172,6 +1175,10 @@ export default {
                 })
         },
         validateFinalRoundEligibility() {
+            if (!this.showFinalRoundControl) {
+                this.invalidateFinalRoundEligibility()
+                return
+            }
             return runValidation(this.finalRoundValidation, async () => {
                 const {data} = await this.$apollo.mutate({
                     mutation: ValidateFinalRoundEligibilityMutation,
