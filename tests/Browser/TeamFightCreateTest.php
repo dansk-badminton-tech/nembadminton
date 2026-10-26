@@ -99,8 +99,14 @@ class TeamFightCreateTest extends DuskTestCase
                 ->on(new TeamFightCreatePage($clubhouse->id))
                 ->waitFor('@date-field')
                 ->assertSeeIn('@date-field', 'klubbens første holdkamp i runden')
-                ->assertAttributeContains('@date-guide', 'href', '/help/guides/opret-og-klargoer-en-holdrunde')
+                ->assertAttributeContains('@date-guide', 'href', '/help/guides/opret-og-klargoer-en-holdrunde#naar-holdene-spiller-paa-forskellige-datoer')
                 ->assertSeeIn('@ranking-field', 'Følger runde spilledatoen');
+
+            // The link lands on the section that explains the playing date.
+            $browser->visit('/app/help/guides/opret-og-klargoer-en-holdrunde#naar-holdene-spiller-paa-forskellige-datoer')
+                ->waitFor('#naar-holdene-spiller-paa-forskellige-datoer')
+                ->assertSeeIn('#naar-holdene-spiller-paa-forskellige-datoer', 'Når holdene spiller på forskellige datoer')
+                ->waitUsing(5, 100, fn () => $browser->script('return window.scrollY > 0;')[0]);
         });
     }
 }

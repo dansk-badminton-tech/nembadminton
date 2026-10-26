@@ -30,7 +30,7 @@
                             </template>
                             <template v-slot:message>
                                 Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.
-                                <router-link :to="{name: 'help-guide', params: {slug: 'opret-og-klargoer-en-holdrunde'}}" target="_blank" dusk="team-round-date-guide">Hvorfor?</router-link>
+                                <router-link :to="{name: 'help-guide', params: {slug: 'opret-og-klargoer-en-holdrunde'}, hash: '#naar-holdene-spiller-paa-forskellige-datoer'}" target="_blank" dusk="team-round-date-guide">Hvorfor?</router-link>
                             </template>
                             <b-datepicker
                                 append-to-body

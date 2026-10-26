@@ -22,6 +22,25 @@ markdown.renderer.rules.link_open = (tokens, index, options, environment, render
     return defaultLinkOpen(tokens, index, options, environment, renderer)
 }
 
+// The id a heading gets, so a link can point at its section: "Når holdene spiller" -> "naar-holdene-spiller".
+export function headingAnchor(text) {
+    return text
+        .toLowerCase()
+        .replace(/æ/g, 'ae')
+        .replace(/ø/g, 'oe')
+        .replace(/å/g, 'aa')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+}
+
+markdown.renderer.rules.heading_open = (tokens, index, options, environment, renderer) => {
+    tokens[index].attrSet('id', headingAnchor(tokens[index + 1].content))
+
+    return renderer.renderToken(tokens, index, options)
+}
+
 export function slugFromPath(path) {
     return path.split('/').pop().replace(/\.md$/, '')
 }

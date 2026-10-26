@@ -405,7 +405,7 @@ const router = createRouter({
                                         return savedPosition
                                     } else if (to.hash) {
                                         return {
-                                            selector: to.hash,
+                                            el: to.hash,
                                             behavior: 'smooth'
                                         }
                                     } else {
