@@ -53,19 +53,8 @@ export function wrapSquadsInTeamWithoutLeague(squads){
         }
     }))
 }
-function toValidatePoints(points) {
-    return points.map((point) => ({
-        category: point.category,
-        points: point.points,
-        position: point.position,
-        vintage: point.vintage
-    }))
-}
-
-// pickingPointsOf(squad, squadIndex, player) gives a player's points on the TeamRound's ranking for validateCrossSquads,
-// or undefined to compare their own points; see picking-points.js.
-export function wrapInTeamAndSquads(squads, pickingPointsOf = () => undefined) {
-    return squads.map((squad, squadIndex) => ({
+export function wrapInTeamAndSquads(squads) {
+    return squads.map((squad) => ({
         name: 'Team X',
         squad: {
             id: squad.id,
@@ -76,17 +65,18 @@ export function wrapInTeamAndSquads(squads, pickingPointsOf = () => undefined) {
                 id: category.id,
                 category: category.category,
                 name: category.name,
-                players: category.players.map((player) => {
-                    const pickingPoints = pickingPointsOf(squad, squadIndex, player)
-                    return {
-                        id: player.id,
-                        gender: player.gender,
-                        name: player.name,
-                        refId: player.refId,
-                        points: toValidatePoints(player.points),
-                        ...(pickingPoints === undefined ? {} : {pickingPoints: toValidatePoints(pickingPoints)})
-                    }
-                })
+                players: category.players.map((player) => ({
+                    id: player.id,
+                    gender: player.gender,
+                    name: player.name,
+                    refId: player.refId,
+                    points: player.points.map((point) => ({
+                        category: point.category,
+                        points: point.points,
+                        position: point.position,
+                        vintage: point.vintage
+                    }))
+                }))
             }))
         }
     }))

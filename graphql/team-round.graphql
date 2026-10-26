@@ -259,8 +259,6 @@ type SquadMember {
     vintage: Vintage! @method(name: "getVintage")
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
-    "The Member's points on the given ranking, e.g. the TeamRound's ranking for a player on a Squad with its own ranking (§38 stk. 4). Empty when the player has no points there."
-    rankingPoints(version: Date!): [RankingPoint!]! @method(name: "getRankingPoints")
     parallelAllocation: ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
     "The player's afbud for the team round they are placed in, or null when they have none."
     cancellation: PlacedPlayerCancellation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\PlacedPlayerCancellationResolver")
@@ -288,15 +286,6 @@ type SquadPoint {
     vintage: String
     version: Date
     corrected_manually: Boolean
-}
-
-"A Member's points in one category on a Ranking List; the category is null for the level"
-type RankingPoint {
-    points: Int
-    position: Int
-    category: String
-    vintage: String
-    version: Date
 }
 
 type SquadCategory {
@@ -408,7 +397,7 @@ type TeamRound {
     scenarios: [TeamRoundScenario!]! @hasMany(relation: "scenarios")
     "Official scenario"
     officialScenario: TeamRoundScenario @hasOne(relation: "officialScenario")
-    "Season History: the Category Rank ladder of every earlier TeamRound of the Clubhouse in the Season, oldest first, then this TeamRound's own. Official Lineups only."
+    "Season History: the Category Rank ladder of every earlier TeamRound of the Clubhouse in the Season, by round number (not game date), then this TeamRound's own. Earlier means a lower round number; without a round number, this TeamRound has no earlier TeamRounds. Official Lineups only."
     seasonHistory: [SeasonHistoryRound!]! @guard @canRoot(ability: "viewSeasonHistory") @field(resolver: "App\\GraphQL\\Queries\\TeamRoundSeasonHistory")
 }
 
@@ -423,7 +412,7 @@ type SeasonHistoryRound {
     round: Int
     "Null when the TeamRound has no round number"
     phase: SeasonPhase
-    "True for the viewed TeamRound, which comes last"
+    "True for the viewed TeamRound, which comes last. Only the viewed TeamRound can be without a round number."
     isCurrent: Boolean!
     "One ladder per category: HS, DS, HD, DD, MD"
     categories: [SeasonHistoryCategory!]!

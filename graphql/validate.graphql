@@ -1,6 +1,8 @@
 extend type Mutation {
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
+    "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own: its stored points on that Ranking List, with a coach's corrections, or else the Members' points on it."
+    validateTeamRoundCrossSquads(teamRoundId: ID!, scenarioId: ID) : [PlayingToHigh!]! @guard @canFind(ability: "view", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTeamRoundCrossSquads")
     "Validates categories for right streng order (category-ranking)"
     validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
     "Validates all spots is forfilled"
@@ -113,10 +115,7 @@ input ValidateMember {
     refId: String!
     name: String!
     gender: Gender!
-    "The player's points on the ranking of their Squad: its own ranking if it has one, else the TeamRound's. They decide the order on the Squad (§38 stk. 2-3)."
     points: [ValidatePoint!]!
-    "The player's points on the TeamRound's ranking, which decides which Squad they may stand on (§38 stk. 4). Only validateCrossSquads reads them; without them it compares points."
-    pickingPoints: [ValidatePoint!]
 }
 
 input ValidatePoint {

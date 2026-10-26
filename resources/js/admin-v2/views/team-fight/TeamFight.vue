@@ -219,7 +219,6 @@ import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
-import {hasOwnRanking, pickingPointsLookup} from "./picking-points.js"
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -381,7 +380,6 @@ export default {
             },
             ignoreIncompleteTeam: false,
             canValidateCrossSquads: false,
-            crossSquadsValidation: 0,
             canValidateSquads: false,
             errorValidatingCategory: false,
             errorValidatingLevel: false
@@ -912,66 +910,13 @@ export default {
                         })
                 })
         },
-        // Points on the TeamRound's ranking for players on Squads with their own ranking (§38 stk. 4), as a
-        // pickingPointsOf for wrapInTeamAndSquads.
-        teamRoundPickingPoints() {
-            const ownRankingSquadIds = this.teamRound.squads
-                .filter(squad => hasOwnRanking(squad, this.version))
-                .map(squad => squad.id)
-            if (ownRankingSquadIds.length === 0) {
-                return Promise.resolve(() => undefined)
-            }
-            return this.$apollo.query(
-                {
-                    query: gql`
-                        query teamRoundPickingPoints($id: ID!, $scenarioId: ID, $version: Date!){
-                            teamRound(id: $id){
-                                id
-                                squads{
-                                    id
-                                    categories(scenarioId: $scenarioId){
-                                        id
-                                        players{
-                                            id
-                                            refId
-                                            rankingPoints(version: $version){
-                                                category
-                                                points
-                                                position
-                                                vintage
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    `,
-                    variables: {
-                        id: this.teamRoundId,
-                        scenarioId: this.selectedScenarioId,
-                        version: this.version
-                    },
-                    fetchPolicy: 'network-only'
-                })
-                .then(({data}) => {
-                    const lookup = pickingPointsLookup(data.teamRound.squads
-                        .filter(squad => ownRankingSquadIds.includes(squad.id))
-                        .map(squad => ({
-                            key: squad.id,
-                            players: squad.categories.flatMap(category => category.players)
-                                .map(player => ({refId: player.refId, points: player.rankingPoints}))
-                        })))
-                    return (squad, squadIndex, player) => lookup(squad.id, player.refId)
-                })
-        },
         validateCrossSquads() {
             this.errorValidatingLevel = false
-            const validation = ++this.crossSquadsValidation
-            this.teamRoundPickingPoints().then(pickingPointsOf => this.$apollo.mutate(
+            this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation validateCrossSquads($input: [ValidateTeam!]!){
-                            validateCrossSquads(input: $input){
+                        mutation validateTeamRoundCrossSquads($teamRoundId: ID!, $scenarioId: ID){
+                            validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId){
                                 name
                                 id
                                 refId
@@ -986,14 +931,14 @@ export default {
                             }
                         }
                     `,
+                    // The server reads the lineup itself, with the points on the TeamRound's ranking (§38 stk. 4).
                     variables: {
-                        input: wrapInTeamAndSquads(this.teamRound.squads, pickingPointsOf)
+                        teamRoundId: this.teamRoundId,
+                        scenarioId: this.selectedScenarioId
                     }
-                }))
+                })
                 .then(({data}) => {
-                    if (validation === this.crossSquadsValidation) {
-                        this.playingToHighList = data.validateCrossSquads;
-                    }
+                    this.playingToHighList = data.validateTeamRoundCrossSquads;
                 })
                 .catch((error) => {
                     this.errorValidatingLevel = true

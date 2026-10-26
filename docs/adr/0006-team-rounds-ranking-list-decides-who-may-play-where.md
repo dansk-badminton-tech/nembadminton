@@ -6,8 +6,8 @@ We decided that the TeamRound's Ranking List always decides the comparison acros
 
 ## Consequences
 
-- `validateCrossSquads` stays stateless: the client sends each player's points on the TeamRound's Ranking List as the optional `pickingPoints`, next to `points`, which are still the Squad's own. Without `pickingPoints`, such as from a browser tab with an older bundle, it compares `points` as before. The other checks read only `points`.
-- The TeamRound editor reads those points through `SquadMember.rankingPoints(version:)`, only for Squads with their own Ranking List. "Tidligere holdkamp" fetches the team matches a second time on the shared Ranking List when a team match has its own.
+- The TeamRound editor validates the comparison across Squads with `validateTeamRoundCrossSquads(teamRoundId, scenarioId)`: the client sends no lineup, and the server reads it. A Squad on the TeamRound's Ranking List uses its stored points, so a coach's correction counts. A Squad with its own Ranking List stores points from that one, so the Members' points on the TeamRound's Ranking List are used, and a correction on it doesn't count there. The other checks still get the lineup from the client and read the Squad's own points.
+- `validateCrossSquads(input)` stays for "Tidligere holdkamp", which validates team matches from badmintonplayer.dk that aren't stored, and compares the points it's sent.
 - A Squad's saved points stay on its own Ranking List.
 - Creating a TeamRound fills the Ranking List from the playing date. In the TeamRound's settings, changing the date only marks the suggested Ranking List, since changing the Ranking List there updates every Squad's points.
 - Out of scope: suggesting the earliest Ranking List, and §38 stk. 1b's second part (a higher team that has finished the tournament uses the Ranking List of its final round). See [#226](https://github.com/dansk-badminton-tech/nembadminton/issues/226).
