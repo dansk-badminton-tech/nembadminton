@@ -99,6 +99,7 @@ class TeamFightCreateTest extends DuskTestCase
                 ->on(new TeamFightCreatePage($clubhouse->id))
                 ->waitFor('@date-field')
                 ->assertSeeIn('@date-field', 'klubbens første holdkamp i runden')
+                ->assertAttributeContains('@date-guide', 'href', '/help/guides/opret-og-klargoer-en-holdrunde')
                 ->assertSeeIn('@ranking-field', 'Følger runde spilledatoen');
         });
     }

@@ -15,9 +15,13 @@
                         required>
                     </b-numberinput>
                 </b-field>
-                <b-field dusk="team-fight-date-field" message="Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.">
+                <b-field dusk="team-fight-date-field">
                     <template v-slot:label>
                         Runde spilledato
+                    </template>
+                    <template v-slot:message>
+                        Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.
+                        <router-link :to="{name: 'help-guide', params: {slug: 'opret-og-klargoer-en-holdrunde'}}" target="_blank" dusk="team-round-date-guide">Hvorfor?</router-link>
                     </template>
                     <b-datepicker
                         dusk="team-fight-date-picker"
