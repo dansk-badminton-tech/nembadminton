@@ -24,7 +24,7 @@
                         </b-field>
                     </div>
                     <div class="column">
-                        <b-field>
+                        <b-field dusk="team-round-settings-date-field" message="Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.">
                             <template v-slot:label>
                                 Runde spilledato
                             </template>
@@ -44,9 +44,9 @@
                 <div class="columns">
                     <div class="column">
                         <b-field label="Rangliste" dusk="team-round-settings-ranking-field"
-                                 message="Vælg den tidligste rangliste, hvis holdene i runden spiller på forskellige ranglister. Den afgør, hvilket hold spillerne må stå på.">
+                                 message="Følger runde spilledatoen. Den afgør, hvilket hold spillerne må stå på.">
                             <RankingVersionSelect dusk="team-round-settings-ranking" @focus="oldVersion = version"
-                                                  v-model="version" expanded></RankingVersionSelect>
+                                                  v-model="version" :playing-date="gameDate" expanded></RankingVersionSelect>
                         </b-field>
                     </div>
                     <div class="column">

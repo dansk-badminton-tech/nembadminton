@@ -88,7 +88,7 @@ class TeamFightCreateTest extends DuskTestCase
         });
     }
 
-    public function test_the_ranking_field_explains_to_pick_the_earliest_ranking(): void
+    public function test_the_playing_date_is_the_clubs_first_match_and_sets_the_ranking(): void
     {
         $this->browse(function (Browser $browser) {
             $clubhouse = Clubhouse::first();
@@ -97,9 +97,9 @@ class TeamFightCreateTest extends DuskTestCase
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightCreatePage($clubhouse->id))
                 ->on(new TeamFightCreatePage($clubhouse->id))
-                ->waitFor('@ranking-field')
-                ->assertSeeIn('@ranking-field', 'Vælg den tidligste rangliste')
-                ->assertSeeIn('@ranking-field', 'hvilket hold spillerne må stå på');
+                ->waitFor('@date-field')
+                ->assertSeeIn('@date-field', 'klubbens første holdkamp i runden')
+                ->assertSeeIn('@ranking-field', 'Følger runde spilledatoen');
         });
     }
 }

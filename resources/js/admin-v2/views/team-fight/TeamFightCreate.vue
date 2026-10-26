@@ -15,7 +15,7 @@
                         required>
                     </b-numberinput>
                 </b-field>
-                <b-field>
+                <b-field dusk="team-fight-date-field" message="Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.">
                     <template v-slot:label>
                         Runde spilledato
                     </template>
@@ -30,7 +30,7 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste" dusk="team-fight-ranking-field"
-                         message="Vælg den tidligste rangliste, hvis holdene i runden spiller på forskellige ranglister. Den afgør, hvilket hold spillerne må stå på.">
+                         message="Følger runde spilledatoen. Den afgør, hvilket hold spillerne må stå på.">
                     <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" auto-select-recommended expanded/>
                 </b-field>
                 <b-field label="Sæson">
