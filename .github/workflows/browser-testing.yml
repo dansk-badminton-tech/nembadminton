@@ -18,8 +18,15 @@ jobs:
     # On PRs, run only when the PR is ready for review: when it is opened as ready or
     # marked ready, and on every later push. Draft PRs are skipped.
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    # The suite runs in parallel shards; bin/dusk-shard picks each shard's test classes.
+    # Keep fail-fast off so one failing shard does not cancel the others.
+    name: Browser tests (${{ matrix.shard }}/${{ strategy.job-total }})
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     concurrency:
-      group: browser-testing-${{ github.event.pull_request.number || github.ref }}
+      group: browser-testing-${{ github.event.pull_request.number || github.ref }}-${{ matrix.shard }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     services:
@@ -113,7 +120,7 @@ jobs:
       - name: Run Dusk tests
         id: dusk
         continue-on-error: true
-        run: php artisan dusk --log-junit=/tmp/dusk-results.xml -vvv
+        run: php artisan dusk --filter "$(bin/dusk-shard ${{ matrix.shard }} ${{ strategy.job-total }})" --log-junit=/tmp/dusk-results.xml -vvv
 
       - name: Retry failed Dusk tests
         if: steps.dusk.outcome == 'failure'
@@ -123,7 +130,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dusk-screenshots
+          name: dusk-screenshots-${{ matrix.shard }}
           path: tests/Browser/screenshots
           if-no-files-found: ignore
 
@@ -135,7 +142,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: frankenphp-logs
+          name: frankenphp-logs-${{ matrix.shard }}
           path: /tmp/frankenphp.log
           if-no-files-found: ignore
 
@@ -147,7 +154,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: laravel-logs
+          name: laravel-logs-${{ matrix.shard }}
           path: storage/logs/laravel.log
           if-no-files-found: ignore
 
@@ -155,5 +162,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: console
+          name: console-${{ matrix.shard }}
           path: tests/Browser/console
