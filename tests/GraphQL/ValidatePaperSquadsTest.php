@@ -141,10 +141,21 @@ class ValidatePaperSquadsTest extends TestCase
         $this->assertSame(['Anders'], array_column($players, 'name'));
         $this->assertSame(0, $players[0]['matchCount']);
         $this->assertSame('Højbjerg 1', $players[0]['teamName']);
-        $this->assertSame([[1, 'Runde 1'], [null, 'Ekstra runde']], array_map(
+        $this->assertSame([[1, 'Runde 1']], array_map(
             fn (array $uncounted) => [$uncounted['round'], $uncounted['name']],
             $players[0]['uncountedRounds'],
         ));
+    }
+
+    #[Test]
+    public function earlier_rounds_without_a_round_number_do_not_count(): void
+    {
+        $this->playedEarlier('2026-09-27', round: null, onTeam: 1, category: 'HS', refIds: [self::ANDERS], name: 'Ekstra runde');
+        [$round, $paper] = $this->paperRound(round: 2);
+
+        $players = $this->players($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)]);
+
+        $this->assertSame([['Anders', ['HS'], 0, 1]], $players);
     }
 
     #[Test]
