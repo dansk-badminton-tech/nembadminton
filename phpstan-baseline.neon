@@ -1123,12 +1123,6 @@ parameters:
 			path: app/Models/SquadMember.php
 
 		-
-			message: '#^Method App\\Models\\SquadMember\:\:points\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: app/Models/SquadMember.php
-
-		-
 			message: '#^Method App\\Models\\SquadMember\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
 			identifier: missingType.generics
 			count: 1
