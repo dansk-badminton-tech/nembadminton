@@ -7,36 +7,44 @@ namespace App\GraphQL\Mutations;
 use App\Enums\CanonicalTournamentTier;
 use App\Models\Squad;
 use App\Models\TeamRound;
+use App\Models\TeamRoundScenario;
 use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistoryLoader;
+use FlyCompany\TeamFight\ScenarioManager;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
- * §38 stk. 8 for the editor's current Scenario placements, using shared persisted Squad context.
- * Only the requested TeamRound's Squads are matched; client-provided metadata never establishes eligibility.
+ * §38 stk. 8 for a saved Scenario's placements and shared persisted Squad context.
  */
 class ValidateFinalRoundEligibility
 {
-    public function __construct(private readonly SeasonHistoryLoader $loader) {}
+    public function __construct(private readonly SeasonHistoryLoader $loader, private readonly ScenarioManager $scenarios) {}
 
     /**
-     * @param  array{teamRoundId: string, input: list<array<string, mixed>>}  $args
+     * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
      * @return list<array<string, mixed>>
      */
     public function __invoke(mixed $root, array $args): array
     {
-        $round = TeamRound::query()->with('squads.team.tier')->findOrFail($args['teamRoundId']);
-        $squads = $round->squads->keyBy('id');
+        $round = TeamRound::query()->with('squads.team.tier', 'officialScenario')->findOrFail($args['teamRoundId']);
+        // Resolve through the authorized TeamRound, never through an unchecked client Scenario id.
+        $scenarioId = null;
+        if (isset($args['scenarioId'])) {
+            /** @var TeamRoundScenario|null $scenario */
+            $scenario = $round->scenarios()->find($args['scenarioId']);
+            if ($scenario === null) {
+                throw new AuthorizationException;
+            }
+            $scenarioId = $scenario->id;
+        }
         $earlier = null;
         $results = [];
-        foreach ($args['input'] as $index => $team) {
-            $squad = $squads->get($team['squad']['id'] ?? null);
-            if ($squad === null) {
-                continue;
-            }
+        foreach ($round->squads->values() as $index => $squad) {
+            $squad->setRelation('teamRound', $round);
             $players = [];
-            foreach ($team['squad']['categories'] ?? [] as $category) {
-                foreach ($category['players'] ?? [] as $player) {
-                    $players[$player['refId']] = $player;
+            foreach ($this->scenarios->getCategories($squad, $scenarioId) as $category) {
+                foreach ($category->players as $player) {
+                    $players[$player->member_ref_id] = $player;
                 }
             }
             $context = $this->currentContext($squad, $round);
@@ -46,9 +54,9 @@ class ValidateFinalRoundEligibility
                 $uncountedRounds = [];
                 if ($status === null) {
                     $earlier ??= $this->loader->before($round);
-                    if ($earlier->matchCountOnSameOrLowerTeam($player['refId'], (int) $squad->team_id) > 0) {
+                    if ($earlier->matchCountOnSameOrLowerTeam($player->member_ref_id, (int) $squad->team_id) > 0) {
                         $status = 'SATISFIED';
-                    } elseif (($uncountedRounds = $earlier->roundsWithoutTeam($player['refId'], (int) $squad->team_id)) !== []) {
+                    } elseif (($uncountedRounds = $earlier->roundsWithoutTeam($player->member_ref_id, (int) $squad->team_id)) !== []) {
                         $status = 'CANNOT_VERIFY';
                         $incompleteReasons = ['INCOMPARABLE_HISTORY'];
                     } else {
@@ -57,8 +65,8 @@ class ValidateFinalRoundEligibility
                 }
                 $results[] = [
                     'squadIndex' => $index,
-                    'refId' => $player['refId'],
-                    'name' => $player['name'],
+                    'refId' => $player->member_ref_id,
+                    'name' => $player->name,
                     'status' => $status,
                     'incompleteReasons' => $incompleteReasons,
                     'uncountedRounds' => array_map(fn (RoundLineup $round) => [

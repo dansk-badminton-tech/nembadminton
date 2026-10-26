@@ -399,6 +399,7 @@ export default {
         }
     },
     watch: {
+        // Even server-loaded lineups can return late; discard results as soon as the view or saved data changes.
         selectedScenarioId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
         teamRoundId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
         saving: {flush: 'sync', handler(value) { if (value) this.invalidateFinalRoundEligibility() }},
@@ -1184,7 +1185,7 @@ export default {
                     mutation: ValidateFinalRoundEligibilityMutation,
                     variables: {
                         teamRoundId: this.teamRoundId,
-                        input: wrapInTeamAndSquads(this.teamRound.squads)
+                        scenarioId: this.selectedScenarioId
                     }
                 })
                 return data?.validateFinalRoundEligibility

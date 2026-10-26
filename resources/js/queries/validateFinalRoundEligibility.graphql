@@ -1,5 +1,5 @@
-mutation validateFinalRoundEligibility($teamRoundId: ID!, $input: [ValidateTeam!]!) {
-    validateFinalRoundEligibility(teamRoundId: $teamRoundId, input: $input) {
+mutation validateFinalRoundEligibility($teamRoundId: ID!, $scenarioId: ID) {
+    validateFinalRoundEligibility(teamRoundId: $teamRoundId, scenarioId: $scenarioId) {
         squadIndex
         refId
         name

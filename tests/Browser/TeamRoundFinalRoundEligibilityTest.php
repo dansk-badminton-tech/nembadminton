@@ -31,9 +31,23 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitForTextIn('@validation-final-round', 'Deaktiveret')
                 ->assertMissing('@final-round-warnings')
-                ->assertDisabled('@revalidate-final-round')
-                ->click('@toggle-final-round-check')
+                ->assertDisabled('@revalidate-final-round');
+            $browser->script(<<<'JS'
+                const originalFetch = window.fetch;
+                window.finalRoundRequests = [];
+                window.fetch = function (url, options) {
+                    const request = options?.body ? JSON.parse(options.body) : null;
+                    if (request?.operationName === 'validateFinalRoundEligibility') {
+                        window.finalRoundRequests.push(request.variables);
+                    }
+                    return originalFetch(url, options);
+                };
+            JS);
+            $browser->click('@toggle-final-round-check')
                 ->waitForTextIn('@final-round-warnings', $member->name)
+                ->assertScript('Object.keys(window.finalRoundRequests[0]).sort().join(",")', 'scenarioId,teamRoundId')
+                ->assertScript('window.finalRoundRequests[0].teamRoundId', $round->id)
+                ->assertScript('window.finalRoundRequests[0].scenarioId', null)
                 ->assertPresent($control.' .tags.has-addons > .tag.is-dark.is-medium')
                 ->assertPresent($control.' [dusk="validation-final-round"].tag.is-medium.is-warning')
                 ->assertAttribute('@revalidate-final-round', 'aria-label', 'Kontrollér tidligere hold igen')

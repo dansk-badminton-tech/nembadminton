@@ -1,6 +1,6 @@
 extend type Mutation {
     "§38 stk. 8, checked against earlier Official Lineups. Advisory; never blocks saving."
-    validateFinalRoundEligibility(teamRoundId: ID!, input: [ValidateTeam!]!): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
+    validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates categories for right streng order (category-ranking)"
