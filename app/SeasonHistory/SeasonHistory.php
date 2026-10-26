@@ -18,7 +18,7 @@ final readonly class SeasonHistory
     public const CATEGORIES = ['HS', 'DS', 'HD', 'DD', 'MD'];
 
     /**
-     * @param  list<RoundLineup>  $rounds  Ordered by game date, then round number.
+     * @param  list<RoundLineup>  $rounds  Ordered by round number, not game date.
      */
     public function __construct(
         private array $rounds,

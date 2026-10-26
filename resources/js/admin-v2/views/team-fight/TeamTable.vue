@@ -216,7 +216,7 @@
                             </b-tooltip>
                             <div class="buttons is-pulled-right">
                                 <b-button dusk="season-history-open" size="is-small" title="Sæsonhistorik" icon-right="history"
-                                          @click="openSeasonHistory(player)"></b-button>
+                                          @click="openSeasonHistory(player, category.category)"></b-button>
                                 <b-button dusk="edit-squad-member-button" :disabled="loading" size="is-small" title="Rediger" icon-right="pen"
                                           @click="openEditPlayerModal(player)"></b-button>
                                 <b-button :disabled="loading" size="is-small" title="Slet" icon-right="close"
@@ -264,7 +264,8 @@
             trap-focus
         >
             <template #default="props">
-                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer" @close="props.close"/>
+                <SeasonHistoryModal :team-round-id="teamRoundId" :player="seasonHistoryPlayer"
+                                    :initial-category="seasonHistoryCategory" @close="props.close"/>
             </template>
         </b-modal>
     </div>
@@ -361,6 +362,7 @@ export default {
             modalPlayer: {},
             showPlayerModal: false,
             seasonHistoryPlayer: null,
+            seasonHistoryCategory: null,
             seasonHistoryFullScreen: false,
             showSeasonHistory: false
         }
@@ -478,8 +480,9 @@ export default {
             this.modalPlayer = player
             this.showPlayerModal = true
         },
-        openSeasonHistory(player) {
+        openSeasonHistory(player, category) {
             this.seasonHistoryPlayer = player
+            this.seasonHistoryCategory = category
             // Full-screen on a phone (Bulma's mobile breakpoint)
             this.seasonHistoryFullScreen = window.matchMedia('(max-width: 768px)').matches
             this.showSeasonHistory = true
