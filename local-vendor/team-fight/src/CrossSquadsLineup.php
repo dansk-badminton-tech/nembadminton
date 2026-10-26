@@ -14,9 +14,10 @@ use App\Models\TeamRound;
 use Carbon\Carbon;
 
 /**
- * A TeamRound's lineup with the points that decide which Squad a player may stand on (§38 stk. 4): those on the
- * TeamRound's Ranking List. A Squad on that Ranking List uses its stored points, so a coach's correction counts. A
- * Squad with its own Ranking List stores points from that one, so it uses the Members' points on the TeamRound's.
+ * A TeamRound's lineup with the points that decide which Squad a player may stand on (§38 stk. 4): the Members' points
+ * on the TeamRound's Ranking List, for every Squad. A Squad's stored points, with a coach's corrections or points from
+ * its own Ranking List, only decide the order on the Squad (stk. 2-3). A player without points on the Ranking List has
+ * nothing to compare, like an unranked player. A TeamRound without a Ranking List uses the Squads' stored points.
  */
 class CrossSquadsLineup
 {
@@ -32,40 +33,37 @@ class CrossSquadsLineup
         $version = self::date($teamRound->version);
 
         $lineup = [];
-        $ownRankingRefIds = [];
+        $refIds = [];
         foreach ($teamRound->squads as $squad) {
             $categories = $this->scenarioManager->getCategories($squad, $scenarioId);
-            $ownRanking = $version !== null && $squad->version !== null && self::date($squad->version) !== $version;
-            if ($ownRanking) {
-                foreach ($categories as $category) {
-                    foreach ($category->players as $player) {
-                        $ownRankingRefIds[] = $player->member_ref_id;
-                    }
+            foreach ($categories as $category) {
+                foreach ($category->players as $player) {
+                    $refIds[] = $player->member_ref_id;
                 }
             }
-            $lineup[] = [$squad, $categories, $ownRanking];
+            $lineup[] = [$squad, $categories];
         }
 
-        $rankingPoints = $this->rankingPoints($version, $ownRankingRefIds);
+        $rankingPoints = $version === null ? null : $this->rankingPoints($version, $refIds);
 
         return array_map(static fn (array $entry) => self::squad(...$entry, rankingPoints: $rankingPoints), $lineup);
     }
 
     /**
      * @param  iterable<SquadCategory>  $categories
-     * @param  array<string, list<array<string, mixed>>>  $rankingPoints  by refId
+     * @param  array<string, list<array<string, mixed>>>|null  $rankingPoints  by refId, or null to use the stored points
      * @return array<string, mixed>
      */
-    private static function squad(Squad $squad, iterable $categories, bool $ownRanking, array $rankingPoints): array
+    private static function squad(Squad $squad, iterable $categories, ?array $rankingPoints): array
     {
         $players = static fn (SquadCategory $category) => collect($category->players)->map(fn (SquadMember $player) => [
             'id' => $player->id,
             'gender' => $player->gender,
             'name' => $player->name,
             'refId' => $player->member_ref_id,
-            'points' => $ownRanking
-                ? $rankingPoints[$player->member_ref_id] ?? []
-                : array_map(self::point(...), collect($player->points)->all()),
+            'points' => $rankingPoints === null
+                ? array_map(self::point(...), collect($player->points)->all())
+                : $rankingPoints[$player->member_ref_id] ?? [],
         ])->all();
 
         return [
@@ -84,9 +82,9 @@ class CrossSquadsLineup
      * @param  list<string>  $refIds
      * @return array<string, list<array<string, mixed>>> the Members' points on the Ranking List, by refId
      */
-    private function rankingPoints(?string $version, array $refIds): array
+    private function rankingPoints(string $version, array $refIds): array
     {
-        if ($version === null || $refIds === []) {
+        if ($refIds === []) {
             return [];
         }
 

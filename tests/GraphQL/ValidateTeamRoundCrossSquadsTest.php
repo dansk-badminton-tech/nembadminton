@@ -18,8 +18,8 @@ use Tests\TestCase;
 
 /**
  * §38 stk. 4: the TeamRound's Ranking List decides which Squad a player may stand on, also for a Squad with its own.
- * The server reads the lineup and points itself: a Squad's stored points when it plays on the TeamRound's Ranking
- * List, so a coach's correction counts, and the Members' points on it when the Squad has its own.
+ * The server reads the lineup and the Members' points on that Ranking List itself. A coach's correction of a Squad's
+ * points only counts for the order on the Squad (stk. 2-3).
  */
 class ValidateTeamRoundCrossSquadsTest extends TestCase
 {
@@ -53,6 +53,8 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
         ]);
         $this->member(self::ANDERS, 'Anders');
         $this->member(self::BO, 'Bo');
+        // Anders stands on Hold 1 with 2000 HS on the TeamRound's Ranking List in every test.
+        $this->rankingPoints(self::ANDERS, self::TEAM_ROUND_RANKING, 2000);
     }
 
     #[Test]
@@ -79,10 +81,33 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
     }
 
     #[Test]
-    public function a_squad_on_the_team_rounds_ranking_keeps_a_coachs_correction(): void
+    public function a_coachs_correction_does_not_count_across_squads(): void
     {
         $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
-        // On the Ranking List Bo has 1940, which is legal; the coach corrected him to 2060 on the Squad.
+        // On the Ranking List Bo has 1940, which is legal; the coach corrected him to 2060 on the Squad. The correction
+        // only counts for the order on the Squad.
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+        $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 1940);
+
+        $this->assertSame([], $this->validate());
+    }
+
+    #[Test]
+    public function a_player_with_only_points_added_by_the_coach_has_nothing_to_compare(): void
+    {
+        $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
+        // Bo isn't on the Ranking List; the coach added 2060 on the Squad. Like an unranked player, he is allowed.
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+
+        $this->assertSame([], $this->validate());
+    }
+
+    #[Test]
+    public function a_team_round_without_a_ranking_list_compares_the_squads_stored_points(): void
+    {
+        // Only a new TeamRound can be without one; changing it to none isn't possible.
+        TeamRound::query()->whereKey($this->teamRound->id)->update(['version' => null]);
+        $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
         $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
         $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 1940);
 
