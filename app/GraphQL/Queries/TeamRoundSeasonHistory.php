@@ -10,7 +10,6 @@ use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistory;
 use App\SeasonHistory\SeasonHistoryLoader;
 use App\SeasonHistory\SlotPlayer;
-use Carbon\Carbon;
 
 /**
  * TeamRound.seasonHistory: the Category Rank ladders of the Clubhouse's earlier TeamRounds in the Season, then the
@@ -39,36 +38,6 @@ class TeamRoundSeasonHistory
                 'places' => array_map($this->place(...), $round->ladder($category)),
             ], SeasonHistory::CATEGORIES),
         ], $this->loader->upTo($teamRound)->rounds());
-    }
-
-    /**
-     * TeamRound.seasonHistoryWithoutRound: the TeamRounds the Season History leaves out for lack of a round number.
-     *
-     * @return list<array<string, mixed>>
-     */
-    public function withoutRound(TeamRound $teamRound): array
-    {
-        return self::roundsWithoutNumber($this->loader->withoutRoundNumber($teamRound));
-    }
-
-    /**
-     * SeasonHistoryRoundWithoutNumber values.
-     *
-     * @param  iterable<TeamRound>  $teamRounds
-     * @return list<array<string, mixed>>
-     */
-    public static function roundsWithoutNumber(iterable $teamRounds): array
-    {
-        $rounds = [];
-        foreach ($teamRounds as $teamRound) {
-            $rounds[] = [
-                'id' => $teamRound->id,
-                'name' => $teamRound->resolveName(),
-                'gameDate' => $teamRound->game_date === null ? null : Carbon::parse($teamRound->game_date)->toDateString(),
-            ];
-        }
-
-        return $rounds;
     }
 
     /**

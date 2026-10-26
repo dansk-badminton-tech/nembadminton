@@ -50,8 +50,8 @@ class SeasonHistoryLoader
     /**
      * The Season History before a TeamRound: its Clubhouse's TeamRounds in its Season with a lower round number, since a
      * moved match keeps its round (§45). The game date doesn't matter. TeamRounds in the same round are left out, and so
-     * are TeamRounds without a Season or round number (see withoutRoundNumber()). A TeamRound without a Season or round
-     * number has no earlier TeamRounds.
+     * are TeamRounds without a Season or round number. A TeamRound without a Season or round number has no earlier
+     * TeamRounds. The round number has been required since before the 2026/2027 Season, so only older TeamRounds lack one.
      */
     public function before(TeamRound $teamRound): SeasonHistory
     {
@@ -60,27 +60,6 @@ class SeasonHistoryLoader
         }
 
         return $this->history(TeamRound::query()->where($this->earlierThan($teamRound))->get());
-    }
-
-    /**
-     * The other TeamRounds of the TeamRound's Clubhouse and Season without a round number. The Season History leaves
-     * them out, so the coach can fill in their round number. None when the TeamRound has no Season.
-     *
-     * @return EloquentCollection<int, TeamRound>
-     */
-    public function withoutRoundNumber(TeamRound $teamRound): EloquentCollection
-    {
-        if ($teamRound->season_id === null) {
-            return new EloquentCollection;
-        }
-
-        return TeamRound::query()
-            ->where('clubhouse_id', $teamRound->clubhouse_id)
-            ->where('season_id', $teamRound->season_id)
-            ->whereNull('round')
-            ->whereKeyNot($teamRound->id)
-            ->orderBy('id')
-            ->get();
     }
 
     private function hasEarlierTeamRounds(TeamRound $teamRound): bool

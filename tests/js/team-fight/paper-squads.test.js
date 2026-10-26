@@ -74,15 +74,6 @@ test('uncounted rounds are not named when the player has enough matches', () => 
     ])
 })
 
-test('earlier rounds without a round number are named with the findings, since they are not counted', () => {
-    const withoutRound = [{id: 'a', name: 'Ekstra runde', gameDate: null}, {id: 'b', name: 'Omkamp', gameDate: null}]
-    assert.deepEqual(paperSquadMessages({missingRound: false, players: [finding({matchCount: 0})], withoutRound}), [
-        'Hold 1 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.',
-        'Ekstra runde og Omkamp mangler rundenummer, så de tælles ikke med i papirholdsreglen. Udfyld rundenummeret.',
-    ])
-    assert.deepEqual(paperSquadMessages({missingRound: false, players: [], withoutRound}), [])
-})
-
 test('the guide on linking the Team shows only when a player has uncounted rounds', () => {
     assert.equal(showsTeamLinkGuide({missingRound: false, players: [finding({matchCount: 0, uncountedRounds: [uncounted(1)]})]}), true)
     assert.equal(showsTeamLinkGuide({missingRound: false, players: [finding({unplayedCategories: ['HD'], uncountedRounds: [uncounted(1)]})]}), false)

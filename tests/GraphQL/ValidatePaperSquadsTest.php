@@ -63,7 +63,7 @@ class ValidatePaperSquadsTest extends TestCase
         [$round, $paper] = $this->paperRound(round: 2);
 
         $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)])
-            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => false, 'players' => [], 'withoutRound' => []]);
+            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => false, 'players' => []]);
     }
 
     #[Test]
@@ -148,19 +148,14 @@ class ValidatePaperSquadsTest extends TestCase
     }
 
     #[Test]
-    public function earlier_rounds_without_a_round_number_are_left_out_and_named(): void
+    public function earlier_rounds_without_a_round_number_do_not_count(): void
     {
         $this->playedEarlier('2026-09-27', round: null, onTeam: 1, category: 'HS', refIds: [self::ANDERS], name: 'Ekstra runde');
         [$round, $paper] = $this->paperRound(round: 2);
 
-        $validation = $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)])
-            ->json('data.validatePaperSquads');
+        $players = $this->players($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)]);
 
-        $this->assertSame([['Anders', ['HS'], 0, 1]], array_map(
-            fn (array $player) => [$player['name'], $player['unplayedCategories'], $player['matchCount'], $player['requiredMatchCount']],
-            $validation['players'],
-        ));
-        $this->assertSame(['Ekstra runde'], array_column($validation['withoutRound'], 'name'));
+        $this->assertSame([['Anders', ['HS'], 0, 1]], $players);
     }
 
     #[Test]
@@ -208,7 +203,7 @@ class ValidatePaperSquadsTest extends TestCase
         [$round, $paper] = $this->paperRound(round: null);
 
         $this->validate($round, [$this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true)])
-            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => true, 'players' => [], 'withoutRound' => []]);
+            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => true, 'players' => []]);
     }
 
     #[Test]
@@ -218,7 +213,7 @@ class ValidatePaperSquadsTest extends TestCase
         $squad = $this->squad($round, $this->team1, order: 1);
 
         $this->validate($round, [$this->lineup($squad, [['HS', '1. HS', [self::ANDERS]]])])
-            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => false, 'players' => [], 'withoutRound' => []]);
+            ->assertJsonPath('data.validatePaperSquads', ['missingRound' => false, 'players' => []]);
     }
 
     #[Test]
@@ -307,7 +302,6 @@ class ValidatePaperSquadsTest extends TestCase
                 validatePaperSquads(teamRoundId: $teamRoundId, input: $input) {
                     missingRound
                     players { squadIndex refId name unplayedCategories matchCount requiredMatchCount teamName uncountedRounds { teamRoundId name round } }
-                    withoutRound { id name gameDate }
                 }
             }
         ';

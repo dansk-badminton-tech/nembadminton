@@ -59,14 +59,7 @@ export function paperSquadMessages(validation) {
     if (validation.missingRound) {
         return ['Holdrunden mangler rundenummer, så papirholdsreglen (§38 stk. 7) kan ikke kontrolleres. Udfyld rundenummeret.']
     }
-    const messages = validation.players.map(playerMessage)
-    // Rounds without a round number can't be earlier, so they may hold the missing matches.
-    const withoutRound = validation.withoutRound ?? []
-    if (messages.length && withoutRound.length) {
-        const names = listOf(withoutRound.map(round => round.name))
-        messages.push(`${names} mangler rundenummer, så ${withoutRound.length > 1 ? 'de' : 'den'} tælles ikke med i papirholdsreglen. Udfyld rundenummeret.`)
-    }
-    return messages
+    return validation.players.map(playerMessage)
 }
 
 // validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.

@@ -165,25 +165,4 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
                 ->assertSeeIn('@season-history-empty', 'Ingen tidligere holdrunder i sæsonen')
                 ->assertMissing('@season-history-chart');
         });
-    }
-
-    public function test_rounds_without_a_round_number_are_named_instead_of_guessed_from_the_date(): void
-    {
-        TeamRound::where('name', 'Ungdom - 2. runde')->update(['round' => null]);
-
-        $this->browse(function (Browser $browser) {
-            $this->openRound($browser, YouthTeamRoundSeeder::CONFLICT_ROUND, 'Aske Groth Jensen');
-
-            $browser->openSeasonHistory(0, '3. HS', 'Aske Groth Jensen')
-                ->assertSeeIn('@season-history-without-round', 'Ungdom - 2. runde mangler rundenummer og er ikke med.')
-                ->assertMissing("[dusk='season-history-row-4']");
-
-            $browser->click('@season-history-close')->waitUntilMissing('@season-history-modal');
-            TeamRound::where('name', YouthTeamRoundSeeder::CONFLICT_ROUND)->update(['round' => null]);
-            $browser->openSeasonHistory(0, '3. HS', 'Aske Groth Jensen')
-                ->assertSeeIn('@season-history-missing-round', 'Holdrunden mangler rundenummer')
-                ->assertMissing('@season-history-empty')
-                ->assertMissing('@season-history-chart');
-        });
-    }
-}
+    }}

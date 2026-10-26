@@ -30,7 +30,7 @@ Fasen afhænger også af holdets række. Runde 8 og 9 er slutspil i de fleste r�
 - **Holdrundens navn:** Har holdrunden ikke noget navn, vises den med rundenummeret, fx **Holdrunde nr. 5**.
 - **Spillere i andre holdrunder:** En spiller markeres med **Optaget på:**, når spilleren står på et hold i en anden af klubbens holdrunder med samme rundenummer i samme sæson. Se [Lav og kontrollér den officielle holdopstilling](/app/help/guides/lav-og-kontroller-den-officielle-holdopstilling).
 - **Karantæne efter en reserve:** Har en spiller været reserve i runde 4, viser Nembadminton **Karantæne** ved spilleren i klubbens holdrunde med runde 5 i samme sæson. Mærket vises kun, når begge holdrunder har et rundenummer.
-- **Sæsonhistorik og papirholdsreglen:** Tidligere holdrunder er klubbens holdrunder i samme sæson med et lavere rundenummer, uanset spilledatoen. Holdrunder med samme rundenummer tæller ikke som tidligere. En holdrunde uden rundenummer kommer ikke med, og Nembadminton nævner den, så du kan udfylde rundenummeret.
+- **Sæsonhistorik og papirholdsreglen:** Tidligere holdrunder er klubbens holdrunder i samme sæson med et lavere rundenummer, uanset spilledatoen. Holdrunder med samme rundenummer tæller ikke som tidligere.
 
 Et forkert rundenummer giver derfor forkerte advarsler: Holdrunder, der hører sammen, bliver ikke sammenlignet, og holdrunder, der ikke hører sammen, bliver det.
 

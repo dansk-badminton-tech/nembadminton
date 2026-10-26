@@ -198,15 +198,14 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function a_round_without_a_round_number_is_left_out_and_listed(): void
+    public function a_round_without_a_round_number_is_not_earlier(): void
     {
-        $extra = $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde', 'game_date' => '2026-09-20']);
+        $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde', 'game_date' => '2026-09-20']);
         $viewed = $this->teamRound(round: 2, attributes: ['game_date' => '2026-10-04']);
 
-        $teamRound = $this->seasonHistory($viewed)->json('data.teamRound');
+        $rounds = $this->seasonHistory($viewed)->json('data.teamRound.seasonHistory');
 
-        $this->assertSame([$viewed->id], array_column($teamRound['seasonHistory'], 'id'));
-        $this->assertSame([['id' => $extra->id, 'name' => 'Ekstra runde', 'gameDate' => '2026-09-20']], $teamRound['seasonHistoryWithoutRound']);
+        $this->assertSame([$viewed->id], array_column($rounds, 'id'));
     }
 
     #[Test]
@@ -244,12 +243,7 @@ class SeasonHistoryTest extends TestCase
         $response = $this->seasonHistory($viewed);
 
         $response->assertGraphQLErrorMessage('This action is unauthorized.');
-        $this->assertNull($response->json('data.teamRound.seasonHistory'));
-
-        // Asked for on its own, so seasonHistory's error can't hide it.
-        $this->graphQL(/** @lang GraphQL */ 'query ($id: ID!) { teamRound(id: $id) { seasonHistoryWithoutRound { id } } }', ['id' => $viewed->id])
-            ->assertGraphQLErrorMessage('This action is unauthorized.');
-    }
+        $this->assertNull($response->json('data.teamRound.seasonHistory'));    }
 
     #[Test]
     public function a_guest_with_the_public_link_cannot_read_the_season_history(): void
@@ -343,9 +337,7 @@ class SeasonHistoryTest extends TestCase
                                 players { refId name gender vintage }
                             }
                         }
-                    }
-                    seasonHistoryWithoutRound { id name gameDate }
-                }
+                    }                }
             }
         ', ['id' => $teamRound->id]);
     }

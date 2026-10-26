@@ -15,7 +15,7 @@ A Member whose ranking places them in the U15, U17 or U19 age group. Under §38 
 _Avoid_: Young player, junior
 
 **Season History** (sæsonhistorik):
-Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. Earlier means a lower round number, not an earlier date (§45): a moved match keeps its round, and TeamRounds in the same round are not earlier than each other. A TeamRound without a round number has no earlier TeamRounds and is left out of the others' history until its round number is filled in. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
+Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. Earlier means a lower round number, not an earlier date (§45): a moved match keeps its round, and TeamRounds in the same round are not earlier than each other. A TeamRound without a round number has no earlier TeamRounds and is left out of the others' history. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
 _Avoid_: Placement history, match history
 
 **Category Rank** (kategoriplads):

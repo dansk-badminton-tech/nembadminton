@@ -274,25 +274,6 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function team_rounds_without_a_round_number_are_left_out_and_listed(): void
-    {
-        Season::query()->firstOrCreate(['id' => 2025], ['season_name' => '2025/2026']);
-        $first = $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde']);
-        $second = $this->teamRound(round: null, attributes: ['name' => 'Omkamp']);
-        $this->teamRound(round: 1);
-        $this->teamRound(round: null, attributes: ['season_id' => 2025]);
-        $this->teamRound(round: null, attributes: ['clubhouse_id' => Clubhouse::factory()->create()->id]);
-        $viewed = $this->teamRound(round: 2);
-        $loader = app(SeasonHistoryLoader::class);
-
-        $ids = fn (TeamRound $teamRound) => $loader->withoutRoundNumber($teamRound)->modelKeys();
-        $this->assertEqualsCanonicalizing([$first->id, $second->id], $ids($viewed));
-        // Never the TeamRound itself.
-        $this->assertSame([$second->id], $ids($first));
-        $this->assertSame([], $ids($this->teamRound(round: 2, attributes: ['season_id' => null])));
-    }
-
-    #[Test]
     public function it_answers_the_lookups_the_rules_need(): void
     {
         $this->member('0101011111', 'Anders');

@@ -5,17 +5,6 @@ export const CATEGORIES = ['HS', 'DS', 'HD', 'DD', 'MD']
 export const CATEGORY_NAMES = {HS: 'herresingle', DS: 'damesingle', HD: 'herredouble', DD: 'damedouble', MD: 'mixdouble'}
 export const EMPTY_TEXT = 'Ingen tidligere holdrunder i sæsonen'
 export const NOT_PLACED_TEXT = 'Ikke opstillet'
-// Earlier rounds are those with a lower round number (§45), so without one there are none to find.
-export const MISSING_ROUND_TEXT = 'Holdrunden mangler rundenummer, så tidligere holdrunder kan ikke findes. Udfyld Runde nr. i holdrundens indstillinger.'
-
-// The note on TeamRound.seasonHistoryWithoutRound: the season's rounds left out because they have no round number.
-// Null when there are none.
-export function withoutRoundText(rounds) {
-    if (!rounds.length) return null
-    const names = rounds.map(round => round.name)
-    const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} og ${names.at(-1)}` : names[0]
-    return `${list} mangler rundenummer og er ikke med. Udfyld Runde nr. for at tage ${names.length > 1 ? 'dem' : 'den'} med.`
-}
 
 // How far from the player another player may be placed, in any round, to get a line in the chart.
 const NEARBY_PLACES = 2
@@ -106,7 +95,6 @@ export function seasonHistory(rounds) {
 
     return {
         hasEarlierRounds: rounds.some(round => !round.isCurrent),
-        missingRound: rounds.some(round => round.isCurrent && round.round === null),
         placeOf,
         placeLabel,
         pairOf,

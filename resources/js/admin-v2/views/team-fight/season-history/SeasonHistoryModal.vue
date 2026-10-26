@@ -16,11 +16,7 @@
             <b-loading :is-full-page="false" :active="$apollo.queries.rounds.loading"></b-loading>
             <b-message v-if="error" type="is-danger">Sæsonhistorikken kunne ikke hentes.</b-message>
             <template v-else-if="history">
-                <b-message v-if="history.missingRound" type="is-warning" size="is-small" dusk="season-history-missing-round">{{ MISSING_ROUND_TEXT }}</b-message>
-                <b-message v-else-if="withoutRoundText" type="is-warning" size="is-small" dusk="season-history-without-round">{{ withoutRoundText }}</b-message>
-                <template v-if="!history.hasEarlierRounds">
-                    <p v-if="!history.missingRound" class="has-text-grey" dusk="season-history-empty">{{ EMPTY_TEXT }}</p>
-                </template>
+                <p v-if="!history.hasEarlierRounds" class="has-text-grey" dusk="season-history-empty">{{ EMPTY_TEXT }}</p>
                 <template v-else>
                     <b-field v-if="categories.length" class="mb-3">
                         <b-radio-button v-for="c in categories" :key="c" v-model="category" :native-value="c" size="is-small"
@@ -108,7 +104,7 @@
 <script>
 import TeamRoundSeasonHistoryQuery from "../../../../queries/teamRoundSeasonHistory.graphql";
 import {ageGroupLabel, isDoubleCategory, isYoungPlayer} from "../../../helpers";
-import {CATEGORY_NAMES, EMPTY_TEXT, MISSING_ROUND_TEXT, NOT_PLACED_TEXT, seasonHistory, withoutRoundText} from "./season-history.js";
+import {CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, seasonHistory} from "./season-history.js";
 
 const PAD_L = 120
 const PAD_T = 40
@@ -131,10 +127,8 @@ export default {
     emits: ['close'],
     data() {
         return {
-            CATEGORY_NAMES, EMPTY_TEXT, MISSING_ROUND_TEXT, NOT_PLACED_TEXT, PAD_L, NAME_H,
+            CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, PAD_L, NAME_H,
             rounds: null,
-            // The season's rounds left out because they have no round number
-            withoutRound: [],
             category: this.initialCategory,
             error: false,
             // The round pointed at in the chart or the table; both highlight it.
@@ -150,9 +144,6 @@ export default {
                 return {id: this.teamRoundId}
             },
             update: data => data.teamRound.seasonHistory,
-            result({data}) {
-                this.withoutRound = data?.teamRound?.seasonHistoryWithoutRound ?? []
-            },
             error() {
                 this.error = true
             }
@@ -168,9 +159,6 @@ export default {
     computed: {
         history() {
             return this.rounds ? seasonHistory(this.rounds) : null
-        },
-        withoutRoundText() {
-            return withoutRoundText(this.withoutRound)
         },
         youth() {
             return isYoungPlayer(this.player)
