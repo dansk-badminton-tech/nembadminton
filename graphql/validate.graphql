@@ -18,6 +18,8 @@ type PaperSquadValidation {
     missingRound: Boolean!
     "Players on a Paper Squad who break the paper-team rule, in lineup order"
     players: [PaperSquadPlayer!]!
+    "Other TeamRounds of the Season without a round number, so they aren't counted as earlier. Empty when the rule isn't checked."
+    withoutRound: [SeasonHistoryRoundWithoutNumber!]!
 }
 
 type PaperSquadPlayer {

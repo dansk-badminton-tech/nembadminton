@@ -1,6 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {seasonHistory} from '../../../resources/js/admin-v2/views/team-fight/season-history/season-history.js'
+import {seasonHistory, withoutRoundText} from '../../../resources/js/admin-v2/views/team-fight/season-history/season-history.js'
 
 const player = (refId, name, vintage = 'SEN', gender = 'MEN') => ({refId, name, gender, vintage})
 const anders = player('1', 'Anders')
@@ -136,6 +136,20 @@ test('the season has earlier rounds only when more than the current round is ret
     assert.equal(seasonHistory(rounds).hasEarlierRounds, true)
     assert.equal(seasonHistory([rounds[2]]).hasEarlierRounds, false)
     assert.equal(seasonHistory([]).hasEarlierRounds, false)
+})
+
+test('a current round without a round number has no earlier rounds to find', () => {
+    assert.equal(seasonHistory([{...rounds[2], round: null}]).missingRound, true)
+    assert.equal(seasonHistory(rounds).missingRound, false)
+    assert.equal(seasonHistory([]).missingRound, false)
+})
+
+test('rounds left out for lack of a round number are named', () => {
+    assert.equal(withoutRoundText([]), null)
+    assert.equal(withoutRoundText([{id: 'a', name: 'Ekstra runde'}]),
+        'Ekstra runde mangler rundenummer og er ikke med. Udfyld Runde nr. for at tage den med.')
+    assert.equal(withoutRoundText([{id: 'a', name: 'Ekstra runde'}, {id: 'b', name: 'Omkamp'}, {id: 'c', name: 'Pokal'}]),
+        'Ekstra runde, Omkamp og Pokal mangler rundenummer og er ikke med. Udfyld Runde nr. for at tage dem med.')
 })
 
 test('a line that breaks is bridged across the rounds the player was not placed', () => {

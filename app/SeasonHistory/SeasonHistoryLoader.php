@@ -48,9 +48,10 @@ class SeasonHistoryLoader
     }
 
     /**
-     * The Season History before a TeamRound: its Clubhouse's TeamRounds in its Season on an earlier game date.
-     * TeamRounds on the same date are left out, and so are TeamRounds without a Season. A TeamRound without a Season or
-     * game date has no earlier TeamRounds.
+     * The Season History before a TeamRound: its Clubhouse's TeamRounds in its Season with a lower round number, since a
+     * moved match keeps its round (§45). The game date doesn't matter. TeamRounds in the same round are left out, and so
+     * are TeamRounds without a Season or round number (see withoutRoundNumber()). A TeamRound without a Season or round
+     * number has no earlier TeamRounds.
      */
     public function before(TeamRound $teamRound): SeasonHistory
     {
@@ -61,9 +62,30 @@ class SeasonHistoryLoader
         return $this->history(TeamRound::query()->where($this->earlierThan($teamRound))->get());
     }
 
+    /**
+     * The other TeamRounds of the TeamRound's Clubhouse and Season without a round number. The Season History leaves
+     * them out, so the coach can fill in their round number. None when the TeamRound has no Season.
+     *
+     * @return EloquentCollection<int, TeamRound>
+     */
+    public function withoutRoundNumber(TeamRound $teamRound): EloquentCollection
+    {
+        if ($teamRound->season_id === null) {
+            return new EloquentCollection;
+        }
+
+        return TeamRound::query()
+            ->where('clubhouse_id', $teamRound->clubhouse_id)
+            ->where('season_id', $teamRound->season_id)
+            ->whereNull('round')
+            ->whereKeyNot($teamRound->id)
+            ->orderBy('id')
+            ->get();
+    }
+
     private function hasEarlierTeamRounds(TeamRound $teamRound): bool
     {
-        return $teamRound->season_id !== null && $teamRound->game_date !== null;
+        return $teamRound->season_id !== null && $teamRound->round !== null;
     }
 
     /**
@@ -74,7 +96,7 @@ class SeasonHistoryLoader
         return fn (Builder $query) => $query
             ->where('clubhouse_id', $teamRound->clubhouse_id)
             ->where('season_id', $teamRound->season_id)
-            ->whereDate('game_date', '<', Carbon::parse($teamRound->game_date)->toDateString());
+            ->where('round', '<', (int) $teamRound->round);
     }
 
     /**
@@ -94,8 +116,9 @@ class SeasonHistoryLoader
                     ->orderBy('id'),
                 'squads.categories.players' => fn ($query) => $query->orderBy('id'),
             ])
+            // By round number, not game date (§45). Only load() can include TeamRounds without one; they come last.
             ->sortBy([
-                fn (TeamRound $a, TeamRound $b) => [$a->game_date, $a->round, $a->id] <=> [$b->game_date, $b->round, $b->id],
+                fn (TeamRound $a, TeamRound $b) => [$a->round === null, (int) $a->round, $a->id] <=> [$b->round === null, (int) $b->round, $b->id],
             ])
             ->values();
 

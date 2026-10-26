@@ -171,13 +171,13 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function a_viewed_round_without_a_season_or_game_date_returns_only_itself(): void
+    public function a_viewed_round_without_a_season_or_round_number_returns_only_itself(): void
     {
         $this->teamRound(round: 1, attributes: ['name' => 'earlier', 'game_date' => '2026-09-20']);
         $withoutSeason = $this->teamRound(round: 2, attributes: ['name' => 'no season', 'season_id' => null, 'game_date' => '2026-10-04']);
-        $withoutDate = $this->teamRound(round: 2, attributes: ['name' => 'no date', 'game_date' => null]);
+        $withoutRound = $this->teamRound(round: null, attributes: ['name' => 'no round', 'game_date' => '2026-10-04']);
 
-        foreach ([$withoutSeason, $withoutDate] as $viewed) {
+        foreach ([$withoutSeason, $withoutRound] as $viewed) {
             $rounds = $this->seasonHistory($viewed)->json('data.teamRound.seasonHistory');
 
             $this->assertSame([[$viewed->name, true]], array_map(fn (array $round) => [$round['name'], $round['isCurrent']], $rounds));
@@ -185,14 +185,28 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function a_round_without_a_round_number_has_no_round_or_phase(): void
+    public function the_round_number_not_the_game_date_decides_which_rounds_are_earlier(): void
     {
-        $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde', 'game_date' => '2026-09-20']);
-        $viewed = $this->teamRound(round: 2, attributes: ['game_date' => '2026-10-04']);
+        // A moved match keeps its round (§45).
+        $this->teamRound(round: 1, attributes: ['name' => 'moved', 'game_date' => '2026-10-25']);
+        $this->teamRound(round: 3, attributes: ['name' => 'later', 'game_date' => '2026-09-27']);
+        $viewed = $this->teamRound(round: 2, attributes: ['name' => 'viewed', 'game_date' => null]);
 
         $rounds = $this->seasonHistory($viewed)->json('data.teamRound.seasonHistory');
 
-        $this->assertSame(['Ekstra runde', null, null], [$rounds[0]['name'], $rounds[0]['round'], $rounds[0]['phase']]);
+        $this->assertSame([['moved', false], ['viewed', true]], array_map(fn (array $round) => [$round['name'], $round['isCurrent']], $rounds));
+    }
+
+    #[Test]
+    public function a_round_without_a_round_number_is_left_out_and_listed(): void
+    {
+        $extra = $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde', 'game_date' => '2026-09-20']);
+        $viewed = $this->teamRound(round: 2, attributes: ['game_date' => '2026-10-04']);
+
+        $teamRound = $this->seasonHistory($viewed)->json('data.teamRound');
+
+        $this->assertSame([$viewed->id], array_column($teamRound['seasonHistory'], 'id'));
+        $this->assertSame([['id' => $extra->id, 'name' => 'Ekstra runde', 'gameDate' => '2026-09-20']], $teamRound['seasonHistoryWithoutRound']);
     }
 
     #[Test]
@@ -231,6 +245,10 @@ class SeasonHistoryTest extends TestCase
 
         $response->assertGraphQLErrorMessage('This action is unauthorized.');
         $this->assertNull($response->json('data.teamRound.seasonHistory'));
+
+        // Asked for on its own, so seasonHistory's error can't hide it.
+        $this->graphQL(/** @lang GraphQL */ 'query ($id: ID!) { teamRound(id: $id) { seasonHistoryWithoutRound { id } } }', ['id' => $viewed->id])
+            ->assertGraphQLErrorMessage('This action is unauthorized.');
     }
 
     #[Test]
@@ -326,6 +344,7 @@ class SeasonHistoryTest extends TestCase
                             }
                         }
                     }
+                    seasonHistoryWithoutRound { id name gameDate }
                 }
             }
         ', ['id' => $teamRound->id]);

@@ -249,13 +249,15 @@ class SeasonHistoryTest extends TestCase
     }
 
     #[Test]
-    public function the_history_before_a_team_round_has_only_earlier_dates_of_its_clubhouse_and_season(): void
+    public function the_history_before_a_team_round_has_only_lower_round_numbers_of_its_clubhouse_and_season(): void
     {
         $this->member('0101011111', 'Anders');
         $rounds = [
-            $this->teamRound(round: 1, attributes: ['name' => 'earlier', 'game_date' => '2026-09-20']),
-            $this->teamRound(round: 2, attributes: ['name' => 'same date', 'game_date' => '2026-10-04']),
-            $this->teamRound(round: 3, attributes: ['name' => 'later', 'game_date' => '2026-10-11']),
+            // A moved match keeps its round (§45), so round 1 counts as earlier although it is played later.
+            $this->teamRound(round: 1, attributes: ['name' => 'earlier, moved', 'game_date' => '2026-10-25']),
+            $this->teamRound(round: 2, attributes: ['name' => 'same round', 'game_date' => '2026-09-20']),
+            $this->teamRound(round: 3, attributes: ['name' => 'later', 'game_date' => '2026-09-27']),
+            $this->teamRound(round: null, attributes: ['name' => 'no round number', 'game_date' => '2026-09-13']),
             $this->teamRound(round: 1, attributes: ['name' => 'other clubhouse', 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id]),
         ];
         $viewed = $this->teamRound(round: 2, attributes: ['name' => 'viewed', 'game_date' => '2026-10-04']);
@@ -264,9 +266,30 @@ class SeasonHistoryTest extends TestCase
         }
         $loader = app(SeasonHistoryLoader::class);
 
-        $this->assertSame(['earlier'], $this->roundNamesOf($loader->before($viewed), '0101011111'));
-        $this->assertSame(['earlier', 'viewed'], $this->roundNamesOf($loader->upTo($viewed), '0101011111'));
-        $this->assertSame([], $loader->before($this->teamRound(round: 2, attributes: ['game_date' => null]))->rounds());
+        $this->assertSame(['earlier, moved'], $this->roundNamesOf($loader->before($viewed), '0101011111'));
+        $this->assertSame(['earlier, moved', 'viewed'], $this->roundNamesOf($loader->upTo($viewed), '0101011111'));
+        // The game date doesn't matter.
+        $this->assertSame(['earlier, moved'], $this->roundNamesOf($loader->before($this->teamRound(round: 2, attributes: ['game_date' => null])), '0101011111'));
+        $this->assertSame([], $loader->before($this->teamRound(round: null))->rounds());
+    }
+
+    #[Test]
+    public function team_rounds_without_a_round_number_are_left_out_and_listed(): void
+    {
+        Season::query()->firstOrCreate(['id' => 2025], ['season_name' => '2025/2026']);
+        $first = $this->teamRound(round: null, attributes: ['name' => 'Ekstra runde']);
+        $second = $this->teamRound(round: null, attributes: ['name' => 'Omkamp']);
+        $this->teamRound(round: 1);
+        $this->teamRound(round: null, attributes: ['season_id' => 2025]);
+        $this->teamRound(round: null, attributes: ['clubhouse_id' => Clubhouse::factory()->create()->id]);
+        $viewed = $this->teamRound(round: 2);
+        $loader = app(SeasonHistoryLoader::class);
+
+        $ids = fn (TeamRound $teamRound) => $loader->withoutRoundNumber($teamRound)->modelKeys();
+        $this->assertEqualsCanonicalizing([$first->id, $second->id], $ids($viewed));
+        // Never the TeamRound itself.
+        $this->assertSame([$second->id], $ids($first));
+        $this->assertSame([], $ids($this->teamRound(round: 2, attributes: ['season_id' => null])));
     }
 
     #[Test]

@@ -46,4 +46,13 @@ The 2025/2026 Liga/1. division qualification match displays the composite round 
 - The phase depends on the Squad's tier as well as the round, so it is worked out per Squad. A TeamRound's phase is taken from its highest Squad.
 - A TeamRound without a round number has an unknown phase (`null`). We don't guess it from the date: a lookup that filters by phase throws `UnknownPhaseException` naming the TeamRound, so the coach can fill in **Runde nr.** instead of getting a quietly wrong count.
 - `SeasonPhase` is kept separate from `TournamentPhaseType`, which describes badmintonplayer.dk groups (puljer) and is not the same thing.
-- Season History still orders TeamRounds by game date; only the phase, and the round-based warnings (parallel allocation, Reserve Quarantine), use the round number.
+- ~~Season History still orders TeamRounds by game date.~~ Superseded below.
+
+## Amendment: Season History follows the round number too
+
+Season History, and the paper-team rule (§38 stk. 7) that counts earlier team matches from it, now also use the round number instead of the game date, for the same §45 reason: a moved match keeps its round.
+
+- A TeamRound is earlier when it is in the same Clubhouse and Season and has a strictly lower round number. TeamRounds in the same round (parallel TeamRounds) are never earlier than each other. The game date plays no part, not even as a tie-break: the history is ordered by round number, then TeamRound id.
+- Nembadminton supports only senior team tournaments, so a Season has one round sequence, and round order is enough. Tiers whose phases are numbered differently (Liga's group stage runs to round 9, the lower divisions' to round 7) need no special handling: a rule that cares about the phase still works it out per Squad from tier and round.
+- A TeamRound without a round number is never guessed from its date. Viewed, it has no earlier TeamRounds, and the Season History modal asks for **Runde nr.**. As a candidate, it is left out of every other TeamRound's history, and both the Season History modal and the paper-team findings name the left-out TeamRounds (`seasonHistoryWithoutRound`, `PaperSquadValidation.withoutRound`), so the coach can fill in their round number instead of getting a quietly wrong count.
+- `game_date` stays on TeamRound for display and defaults; Season History only shows it.

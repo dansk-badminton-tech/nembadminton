@@ -23,5 +23,9 @@ query teamRoundSeasonHistory($id: ID!){
                 }
             }
         }
+        seasonHistoryWithoutRound{
+            id
+            name
+        }
     }
 }

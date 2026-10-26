@@ -15,5 +15,9 @@ mutation validatePaperSquads($teamRoundId: ID!, $input: [ValidateTeam!]!){
                 round
             }
         }
+        withoutRound{
+            id
+            name
+        }
     }
 }

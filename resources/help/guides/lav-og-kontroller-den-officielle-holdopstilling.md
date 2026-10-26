@@ -34,7 +34,7 @@ Feltet viser også spillere med afbud, så kontrollér selv, at spilleren kan sp
 
 ### Se en spillers sæsonhistorik
 
-Sæsonhistorikken viser, hvor en spiller stod i klubbens tidligere holdrunder i samme sæson. Den er en hjælp, når du skal placere en spiller, især en ungdomsspiller, som du placerer efter nuværende styrke. Historikken viser opstillinger, ikke resultater.
+Sæsonhistorikken viser, hvor en spiller stod i klubbens tidligere holdrunder i samme sæson. Tidligere betyder et lavere rundenummer, også hvis kampen er flyttet til en anden dato. Den er en hjælp, når du skal placere en spiller, især en ungdomsspiller, som du placerer efter nuværende styrke. Historikken viser opstillinger, ikke resultater.
 
 1. Vælg historikikonet **Sæsonhistorik** ud for spilleren på holdet. Ikonet står ved siden af **Rediger** og **Slet**.
 2. Vælg kategori øverst i vinduet. Kategorien, spilleren står i nu, er markeret med **· nu**, og vinduet starter på den. Står spilleren ikke i nogen kategori nu, starter vinduet på den første kategori, spilleren har stået i.
@@ -43,7 +43,7 @@ Sæsonhistorikken viser, hvor en spiller stod i klubbens tidligere holdrunder i 
 5. Brug tabellen til at se, hvor spilleren stod i hver holdrunde. Den nyeste holdrunde står øverst. Kolonnen **Opstillet** viser alle spillerens pladser i holdrunden, fx **HS nr. 4 · Hold 1 · 4. HS**. I double står makkerne på samme plads og er nævnt i tabellen. Står spilleren ikke på et hold i en holdrunde, står der **Ikke opstillet**.
 6. Luk vinduet med krydset, med **Esc**, eller ved at vælge uden for vinduet.
 
-**Nu** er den holdopstilling, du har gemt i holdrunden lige nu. Er der ingen tidligere holdrunder i sæsonen, viser vinduet **Ingen tidligere holdrunder i sæsonen**.
+**Nu** er den holdopstilling, du har gemt i holdrunden lige nu. Er der ingen tidligere holdrunder i sæsonen, viser vinduet **Ingen tidligere holdrunder i sæsonen**. Mangler holdrunden et rundenummer, kan de tidligere holdrunder ikke findes, og vinduet beder dig udfylde **Runde nr.** Mangler en anden holdrunde i sæsonen et rundenummer, er den ikke med, og vinduet nævner den.
 
 Sæsonhistorikken bruger kun de officielle holdopstillinger i klubbens tidligere holdrunder, så den viser ikke udkast.
 
@@ -111,7 +111,7 @@ Bryder en spiller reglen, står der en advarsel under kontrollerne for hver spil
 
 Advarslen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om spilleren kan stå på papirholdet. Mangler holdrunden et rundenummer, står der i stedet **Udfyld rundenummeret**, fordi reglen ikke kan kontrolleres; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
 
-Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner advarslen runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
+Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner advarslen runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Holdrunder i sæsonen uden rundenummer tælles heller ikke med; advarslen nævner dem, så du kan udfylde rundenummeret.
 
 Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
+use App\GraphQL\Queries\TeamRoundSeasonHistory;
 use App\Models\Squad;
 use App\Models\TeamRound;
 use App\SeasonHistory\PaperSquadRule;
@@ -24,7 +25,7 @@ class ValidatePaperSquads
 
     /**
      * @param  array{teamRoundId: string, input: list<array{name: string, squad?: array<string, mixed>|null}>}  $args
-     * @return array{missingRound: bool, players: list<array<string, mixed>>}
+     * @return array{missingRound: bool, players: list<array<string, mixed>>, withoutRound: list<array<string, mixed>>}
      */
     public function __invoke(mixed $root, array $args): array
     {
@@ -43,10 +44,10 @@ class ValidatePaperSquads
         }
 
         if ($lineup === []) {
-            return ['missingRound' => false, 'players' => []];
+            return ['missingRound' => false, 'players' => [], 'withoutRound' => []];
         }
         if ($teamRound->round === null) {
-            return ['missingRound' => true, 'players' => []];
+            return ['missingRound' => true, 'players' => [], 'withoutRound' => []];
         }
 
         $earlier = $this->loader->before($teamRound);
@@ -76,7 +77,7 @@ class ValidatePaperSquads
             }
         }
 
-        return ['missingRound' => false, 'players' => $players];
+        return ['missingRound' => false, 'players' => $players, 'withoutRound' => TeamRoundSeasonHistory::roundsWithoutNumber($this->loader->withoutRoundNumber($teamRound))];
     }
 
     /**
