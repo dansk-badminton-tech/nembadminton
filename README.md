@@ -81,6 +81,8 @@ To rerun without pushing, convert the PR to draft and mark it ready again, or ru
 
 Failed browser tests are automatically retried once before the workflow is marked as failed.
 
+The suite runs in 4 parallel jobs ("Browser tests (1/4)" to "(4/4)"), each with its own database, app server and browser. `bin/dusk-shard` spreads the test classes over the jobs by their duration in `tests/Browser/timings.json`; run `bin/dusk-shard --plan 4` to see the split. A class missing from that file counts as 30 seconds, so new tests need no change there. Update the file when the jobs' durations drift apart.
+
 ## Projekt management
 
 **Forslår en feature:** https://github.com/dansk-badminton-tech/nembadminton/issues/new/choose

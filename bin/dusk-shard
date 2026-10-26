@@ -1,0 +1,60 @@
+#!/usr/bin/env php
+<?php
+
+// Print a PHPUnit --filter regex for one shard of the browser tests, so CI can
+// run them in parallel jobs (.github/workflows/browser-testing.yml).
+//
+// Every tests/Browser/*Test.php class lands in exactly one shard. Classes are
+// spread by their duration in tests/Browser/timings.json, longest first, onto
+// the shard with the least time so far. A class missing from timings.json
+// counts as DEFAULT_SECONDS, so new tests run without touching that file;
+// stale timings only make the shards less even.
+//
+// Usage:
+//   bin/dusk-shard <shard> <total>    e.g. php artisan dusk --filter "$(bin/dusk-shard 1 4)"
+//   bin/dusk-shard --plan <total>     show every shard's classes and seconds
+
+const DEFAULT_SECONDS = 30;
+
+$root = dirname(__DIR__);
+$args = array_slice($argv, 1);
+$plan = ($args[0] ?? null) === '--plan';
+if ($plan) {
+    array_shift($args);
+    array_unshift($args, '1');
+}
+
+[$shard, $total] = array_map('intval', $args + [null, null]);
+if ($total < 1 || $shard < 1 || $shard > $total) {
+    fwrite(STDERR, "Usage: bin/dusk-shard <shard> <total> | bin/dusk-shard --plan <total>\n");
+    exit(1);
+}
+
+$timings = json_decode(file_get_contents("$root/tests/Browser/timings.json"), true, flags: JSON_THROW_ON_ERROR);
+
+$classes = [];
+foreach (glob("$root/tests/Browser/*Test.php") as $file) {
+    $class = basename($file, '.php');
+    $classes[$class] = $timings[$class] ?? DEFAULT_SECONDS;
+}
+// Sort by duration, then name, so every job computes the same split.
+uksort($classes, fn (string $a, string $b) => [$classes[$b], $a] <=> [$classes[$a], $b]);
+
+$seconds = array_fill(1, $total, 0);
+$shards = array_fill(1, $total, []);
+foreach ($classes as $class => $duration) {
+    $lightest = array_search(min($seconds), $seconds, true);
+    $seconds[$lightest] += $duration;
+    $shards[$lightest][] = $class;
+}
+
+if ($plan) {
+    foreach ($shards as $index => $names) {
+        printf("%d/%d  %4ds  %s\n", $index, $total, $seconds[$index], implode(' ', $names));
+    }
+    exit(0);
+}
+
+// A shard can be empty when there are more shards than classes.
+$names = $shards[$shard] ?: ['NoBrowserTestsInThisShard'];
+echo '/^Tests\\\\Browser\\\\('.implode('|', $names).')::/';
