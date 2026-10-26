@@ -30,7 +30,7 @@
                     </b-datepicker>
                 </b-field>
                 <b-field label="Rangliste" dusk="team-fight-ranking-field"
-                         message="Spiller klubbens hold i runden både før og efter den 10., så vælg den tidligste rangliste. Den bruges til at afgøre, hvilket hold spillerne må stå på. Et hold, der spiller efter den 10., kan få sin egen rangliste til opstillingen under holdets indstillinger.">
+                         message="Vælg den tidligste rangliste, hvis holdene i runden spiller på forskellige ranglister. Den afgør, hvilket hold spillerne må stå på.">
                     <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" auto-select-recommended expanded/>
                 </b-field>
                 <b-field label="Sæson">

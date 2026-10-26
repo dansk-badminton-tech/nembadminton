@@ -98,8 +98,8 @@ class TeamFightCreateTest extends DuskTestCase
                 ->visit(new TeamFightCreatePage($clubhouse->id))
                 ->on(new TeamFightCreatePage($clubhouse->id))
                 ->waitFor('@ranking-field')
-                ->assertSeeIn('@ranking-field', 'så vælg den tidligste rangliste')
-                ->assertSeeIn('@ranking-field', 'egen rangliste til opstillingen');
+                ->assertSeeIn('@ranking-field', 'Vælg den tidligste rangliste')
+                ->assertSeeIn('@ranking-field', 'hvilket hold spillerne må stå på');
         });
     }
 }

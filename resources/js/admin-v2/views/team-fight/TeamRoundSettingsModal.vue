@@ -44,7 +44,7 @@
                 <div class="columns">
                     <div class="column">
                         <b-field label="Rangliste" dusk="team-round-settings-ranking-field"
-                                 message="Spiller klubbens hold i runden både før og efter den 10., så vælg den tidligste rangliste. Den bruges til at afgøre, hvilket hold spillerne må stå på. Et hold, der spiller efter den 10., kan få sin egen rangliste til opstillingen under holdets indstillinger.">
+                                 message="Vælg den tidligste rangliste, hvis holdene i runden spiller på forskellige ranglister. Den afgør, hvilket hold spillerne må stå på.">
                             <RankingVersionSelect dusk="team-round-settings-ranking" @focus="oldVersion = version"
                                                   v-model="version" expanded></RankingVersionSelect>
                         </b-field>
