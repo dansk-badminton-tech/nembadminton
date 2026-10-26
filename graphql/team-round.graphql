@@ -260,7 +260,7 @@ type SquadMember {
     isInSquad: Boolean! @field(resolver: "App\\Models\\SquadMember@getIsInSquad")
     points: [SquadPoint!] @hasMany
     "The Member's points on the given ranking, e.g. the TeamRound's ranking for a player on a Squad with its own ranking (§38 stk. 4). Empty when the player has no points there."
-    rankingPoints(version: Date!): [SquadPoint!]! @method(name: "getRankingPoints")
+    rankingPoints(version: Date!): [RankingPoint!]! @method(name: "getRankingPoints")
     parallelAllocation: ParallelTeamRoundAllocation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\ParallelAllocationResolver")
     "The player's afbud for the team round they are placed in, or null when they have none."
     cancellation: PlacedPlayerCancellation @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Queries\\PlacedPlayerCancellationResolver")
@@ -288,6 +288,15 @@ type SquadPoint {
     vintage: String
     version: Date
     corrected_manually: Boolean
+}
+
+"A Member's points in one category on a Ranking List; the category is null for the level"
+type RankingPoint {
+    points: Int
+    position: Int
+    category: String
+    vintage: String
+    version: Date
 }
 
 type SquadCategory {

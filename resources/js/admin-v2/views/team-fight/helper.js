@@ -53,7 +53,7 @@ export function wrapSquadsInTeamWithoutLeague(squads){
         }
     }))
 }
-function validatePoints(points) {
+function toValidatePoints(points) {
     return points.map((point) => ({
         category: point.category,
         points: point.points,
@@ -83,8 +83,8 @@ export function wrapInTeamAndSquads(squads, pickingPointsOf = () => undefined) {
                         gender: player.gender,
                         name: player.name,
                         refId: player.refId,
-                        points: validatePoints(player.points),
-                        ...(pickingPoints === undefined ? {} : {pickingPoints: validatePoints(pickingPoints)})
+                        points: toValidatePoints(player.points),
+                        ...(pickingPoints === undefined ? {} : {pickingPoints: toValidatePoints(pickingPoints)})
                     }
                 })
             }))

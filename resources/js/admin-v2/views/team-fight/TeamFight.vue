@@ -381,6 +381,7 @@ export default {
             },
             ignoreIncompleteTeam: false,
             canValidateCrossSquads: false,
+            crossSquadsValidation: 0,
             canValidateSquads: false,
             errorValidatingCategory: false,
             errorValidatingLevel: false
@@ -965,6 +966,7 @@ export default {
         },
         validateCrossSquads() {
             this.errorValidatingLevel = false
+            const validation = ++this.crossSquadsValidation
             this.teamRoundPickingPoints().then(pickingPointsOf => this.$apollo.mutate(
                 {
                     mutation: gql`
@@ -989,7 +991,9 @@ export default {
                     }
                 }))
                 .then(({data}) => {
-                    this.playingToHighList = data.validateCrossSquads;
+                    if (validation === this.crossSquadsValidation) {
+                        this.playingToHighList = data.validateCrossSquads;
+                    }
                 })
                 .catch((error) => {
                     this.errorValidatingLevel = true

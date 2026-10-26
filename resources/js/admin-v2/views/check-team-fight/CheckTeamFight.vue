@@ -179,7 +179,7 @@ import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
 import {isTooYoung} from "../team-fight/too-young.js";
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql";
 import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
-import {pickingPointsLookup} from "../team-fight/picking-points.js";
+import {hasOwnRanking, pickingPointsLookup} from "../team-fight/picking-points.js";
 
 export default {
     name: "CheckTeamFight",
@@ -309,11 +309,16 @@ export default {
         maybeMoveDown(index) {
             return this.castToArray(this.selectedTeamMatches).length - 1 === index
         },
+        // A team match keeps its own ranking when it moves
+        swapTeamMatches(from, to) {
+            swapObject(this.selectedTeamMatches, from, to)
+            swapObject(this.selectedVersionsForTeamMatches, from, to)
+        },
         moveUp(index) {
-            swapObject(this.selectedTeamMatches, index, index - 1)
+            this.swapTeamMatches(index, index - 1)
         },
         moveDown(index) {
-            swapObject(this.selectedTeamMatches, index, index + 1)
+            this.swapTeamMatches(index, index + 1)
         },
         castToArray(object) {
             return Object.values(object)
@@ -335,7 +340,7 @@ export default {
         drop(payload) {
             payload.event.target.closest('tr').classList.remove('is-selected')
             const droppedOnRowIndex = payload.index
-            swapObject(this.selectedTeamMatches, this.draggingRowIndex, droppedOnRowIndex)
+            this.swapTeamMatches(this.draggingRowIndex, droppedOnRowIndex)
         },
         resolveLabel(player, category, league) {
             return resolveToolTip(player, category, league, this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, this.tooYoungPlayers, parseInt(this.season))
@@ -358,7 +363,7 @@ export default {
         findPositions,
         ownRankingOf(index) {
             const version = this.selectedVersionsForTeamMatches[index]
-            return version && version !== this.rankingList ? version : null
+            return hasOwnRanking({version}, this.rankingList) ? version : null
         },
         badmintonPlayerTeamMatches() {
             this.fetchingAndValidating = true;
