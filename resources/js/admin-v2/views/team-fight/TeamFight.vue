@@ -915,8 +915,8 @@ export default {
             this.$apollo.mutate(
                 {
                     mutation: gql`
-                        mutation validateCrossSquads($input: [ValidateTeam!]!){
-                            validateCrossSquads(input: $input){
+                        mutation validateTeamRoundCrossSquads($teamRoundId: ID!, $scenarioId: ID){
+                            validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId){
                                 name
                                 id
                                 refId
@@ -931,12 +931,14 @@ export default {
                             }
                         }
                     `,
+                    // The server reads the lineup itself, with the points on the TeamRound's ranking (§38 stk. 4).
                     variables: {
-                        input: wrapInTeamAndSquads(this.teamRound.squads)
+                        teamRoundId: this.teamRoundId,
+                        scenarioId: this.selectedScenarioId
                     }
                 })
                 .then(({data}) => {
-                    this.playingToHighList = data.validateCrossSquads;
+                    this.playingToHighList = data.validateTeamRoundCrossSquads;
                 })
                 .catch((error) => {
                     this.errorValidatingLevel = true

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace FlyCompany\TeamFight\GraphQL\Mutations;
 
+use App\Models\TeamRound;
+use FlyCompany\TeamFight\CrossSquadsLineup;
 use FlyCompany\TeamFight\Models\Player;
 use FlyCompany\TeamFight\Models\SerializerHelper;
 use FlyCompany\TeamFight\Models\Squad;
@@ -21,10 +23,13 @@ class Validate
 
     private Serializer $serializer;
 
-    public function __construct(TeamValidator $teamValidator)
+    private CrossSquadsLineup $crossSquadsLineup;
+
+    public function __construct(TeamValidator $teamValidator, CrossSquadsLineup $crossSquadsLineup)
     {
         $this->serializer = SerializerHelper::getSerializer();
         $this->teamValidator = $teamValidator;
+        $this->crossSquadsLineup = $crossSquadsLineup;
     }
 
     /**
@@ -41,6 +46,25 @@ class Validate
         $playingToHigh = $this->teamValidator->validateCrossSquadsLeagueV3($squads);
 
         return $playingToHigh;
+    }
+
+    /**
+     * The TeamRound's lineup across its Squads, read from the server with the points on its Ranking List (§38 stk. 4).
+     *
+     * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
+     * @return Collection<int, mixed>
+     *
+     * @throws ExceptionInterface
+     */
+    public function validateTeamRoundCrossSquads(mixed $rootValue, array $args): Collection
+    {
+        $teamRound = TeamRound::query()->findOrFail($args['teamRoundId']);
+        $scenarioId = isset($args['scenarioId']) ? (int) $args['scenarioId'] : null;
+        /** @var Collection<int|string, mixed> $lineup */
+        $lineup = new Collection($this->crossSquadsLineup->of($teamRound, $scenarioId));
+        $squads = $this->deserializeSquads($lineup);
+
+        return $this->teamValidator->validateCrossSquadsLeagueV3($squads);
     }
 
     /**

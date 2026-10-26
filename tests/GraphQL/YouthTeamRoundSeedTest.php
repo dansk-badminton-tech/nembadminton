@@ -4,6 +4,7 @@ namespace Tests\GraphQL;
 
 use App\Models\SquadMember;
 use App\Models\TeamRound;
+use App\Models\User;
 use Database\Seeders\TestingDataSeeder;
 use Database\Seeders\YouthTeamRoundSeeder;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
@@ -63,6 +64,7 @@ class YouthTeamRoundSeedTest extends TestCase
         // Mathilde Hay-Schmidt (U19, DS 2113) on Hold 2 has more points than
         // Nanna Reese (DS 1876) on Hold 1, but Youth Players are not compared.
         $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name'));
+        $this->assertSame([], $this->teamRoundCrossSquads(TeamRound::where('name', YouthTeamRoundSeeder::CONFLICT_ROUND)->sole(), null, 'name'));
     }
 
     public function test_earlier_rounds_report_no_conflicts_and_place_the_youth_player_differently(): void
@@ -78,6 +80,7 @@ class YouthTeamRoundSeedTest extends TestCase
             $this->assertSame([true, true], $this->spotsFulfilled($input), $round->name);
             $this->assertSame([], $this->mutate('validateSquads', $input, 'name'), $round->name);
             $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name'), $round->name);
+            $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'name'), $round->name);
         }
 
         $placements = $rounds->map(fn (TeamRound $round) => SquadMember::query()
@@ -154,5 +157,21 @@ class YouthTeamRoundSeedTest extends TestCase
             "mutation (\$input: [ValidateTeam!]!) { {$mutation}(input: \$input) { {$fields} } }",
             ['input' => $input]
         )->assertJsonMissingPath('errors')->json("data.{$mutation}");
+    }
+
+    /**
+     * The editor's cross-Squad check (§38 stk. 4), which reads the lineup on the server, as User 1 who edits the seeded
+     * TeamRounds: a Scenario's lineup, or with null the official one.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function teamRoundCrossSquads(TeamRound $round, ?int $scenarioId, string $fields): array
+    {
+        $this->actingAs(User::query()->findOrFail(1), 'api');
+
+        return $this->graphQL(
+            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { {$fields} } }",
+            ['id' => $round->id, 'scenarioId' => $scenarioId]
+        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads');
     }
 }

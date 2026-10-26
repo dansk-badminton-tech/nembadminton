@@ -9,6 +9,7 @@ use App\Models\Squad;
 use App\Models\SquadMember;
 use App\Models\SquadReserve;
 use App\Models\TeamRound;
+use App\Models\User;
 
 /**
  * Validates the lineups of seeded TeamRounds with the validation mutations, as the editor does.
@@ -108,5 +109,21 @@ trait ValidatesSeededLineups
             "mutation (\$input: [ValidateTeam!]!) { {$mutation}(input: \$input) { {$fields} } }",
             ['input' => $input]
         )->assertJsonMissingPath('errors')->json("data.{$mutation}");
+    }
+
+    /**
+     * The editor's cross-Squad check (§38 stk. 4), which reads the lineup on the server, as User 1 who edits the seeded
+     * TeamRounds: a Scenario's lineup, or with null the official one.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function teamRoundCrossSquads(TeamRound $round, ?int $scenarioId, string $fields): array
+    {
+        $this->actingAs(User::query()->findOrFail(1), 'api');
+
+        return $this->graphQL(
+            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { {$fields} } }",
+            ['id' => $round->id, 'scenarioId' => $scenarioId]
+        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads');
     }
 }

@@ -15,9 +15,13 @@
                         required>
                     </b-numberinput>
                 </b-field>
-                <b-field>
+                <b-field dusk="team-fight-date-field">
                     <template v-slot:label>
                         Runde spilledato
+                    </template>
+                    <template v-slot:message>
+                        Vælg datoen for klubbens første holdkamp i runden. Ranglisten vælges ud fra den.
+                        <router-link :to="{name: 'help-guide', params: {slug: 'opret-og-klargoer-en-holdrunde'}, hash: '#naar-holdene-spiller-paa-forskellige-datoer'}" target="_blank" dusk="team-round-date-guide">Hvorfor?</router-link>
                     </template>
                     <b-datepicker
                         dusk="team-fight-date-picker"
@@ -29,7 +33,8 @@
                         trap-focus>
                     </b-datepicker>
                 </b-field>
-                <b-field label="Rangliste">
+                <b-field label="Rangliste" dusk="team-fight-ranking-field"
+                         message="Følger runde spilledatoen. Den afgør, hvilket hold spillerne må stå på.">
                     <RankingVersionSelect dusk="team-fight-ranking-select" required v-model="version" :playing-date="gameDate" auto-select-recommended expanded/>
                 </b-field>
                 <b-field label="Sæson">

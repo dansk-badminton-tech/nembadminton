@@ -14,7 +14,7 @@ Du skal kende rundenummeret, spilledatoen og de kampe, klubbens hold skal spille
 ## Opret holdrunden
 
 1. Vælg **Holdrunder** i menuen, og vælg **Opret holdrunde**.
-2. Angiv **Runde nr.** og **Runde spilledato**. Brug rundenummeret fra turneringsprogrammet, også hvis kampen er flyttet. Se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
+2. Angiv **Runde nr.** og **Runde spilledato**. Brug rundenummeret fra turneringsprogrammet, også hvis kampen er flyttet. Se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer). Som spilledato angiver du datoen for klubbens første holdkamp i runden. Se **Når holdene spiller på forskellige datoer** nedenfor.
 3. Kontrollér **Rangliste** og **Sæson**. Begge vælges automatisk ud fra spilledatoen, og den anbefalede rangliste er markeret med **(Indstillet automatisk)**. Er ingen rangliste markeret, er ranglisten for datoen endnu ikke offentliggjort. Vælg så den rangliste, du vil planlægge efter, og skift den senere under **Rediger**.
 4. Giv eventuelt holdrunden et navn i **Navn (Valgfrit)**. Uden navn vises holdrunden med sit rundenummer.
 5. Vælg **Opret**.
@@ -22,6 +22,14 @@ Du skal kende rundenummeret, spilledatoen og de kampe, klubbens hold skal spille
 Holdrunden åbnes med det samme, så du kan tilføje holdene.
 
 Den anbefalede rangliste følger [reglementet for DH-turneringen](https://badminton.dk/holdturneringsregler/). Den først offentliggjorte rangliste i en måned gælder fra den 10. i måneden til og med den 9. i den efterfølgende måned.
+
+### Når holdene spiller på forskellige datoer
+
+Holdrundens rangliste afgør, hvilket hold spillerne må stå på (§ 38, stk. 4). Spiller klubbens hold i samme runde under forskellige ranglister, gælder den tidligste rangliste (§ 38, stk. 1b). Det sker typisk, når ligaholdet spiller efter den 10. i måneden og resten af klubbens hold før.
+
+Angiv derfor datoen for klubbens første holdkamp i runden som **Runde spilledato**. Så vælges den tidligste rangliste automatisk. Ændrer du spilledatoen senere under **Rediger**, markeres den anbefalede rangliste med **(Indstillet automatisk)**, men du skal selv vælge den.
+
+Et hold, der spiller på en senere rangliste, kan få sin egen rangliste. Den bruges kun til rækkefølgen af spillerne på holdet. Se **Kontrollér holdenes ranglister** nedenfor.
 
 ### Når en måned står to gange
 
@@ -67,7 +75,7 @@ Kopierer du holdrunden til den næste, starter holdene som almindelige hold, så
 
 ## Kontrollér holdenes ranglister
 
-Holdrunden har én rangliste, men det enkelte hold kan bruge sin egen. Når du tilføjer et hold, vises ranglisten for holdets spilledato under **Spilledato**, fx "Rangliste: September 2026". Holdet får da sin egen rangliste, som vises i holdets overskrift. Står der "Rangliste: Bruger holdrundens rangliste", følger holdet holdrundens rangliste.
+Holdrunden har én rangliste, men det enkelte hold kan bruge sin egen. Holdets egen rangliste bruges kun til rækkefølgen af spillerne på holdet. Holdrundens rangliste afgør stadig, hvilket hold spillerne må stå på. Når du tilføjer et hold, vises ranglisten for holdets spilledato under **Spilledato**, fx "Rangliste: September 2026". Holdet får da sin egen rangliste, som vises i holdets overskrift. Står der "Rangliste: Bruger holdrundens rangliste", følger holdet holdrundens rangliste.
 
 Hold med deres egen rangliste bliver ikke opdateret, når du skifter holdrundens rangliste under **Rediger**. Sådan ændrer du et holds rangliste:
 
