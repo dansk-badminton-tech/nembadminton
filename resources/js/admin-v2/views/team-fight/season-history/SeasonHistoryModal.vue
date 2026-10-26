@@ -121,14 +121,15 @@ export default {
     props: {
         teamRoundId: {type: String, required: true},
         // The lineup's player: refId, name and vintage
-        player: {type: Object, required: true}
+        player: {type: Object, required: true},
+        initialCategory: {type: String, default: null}
     },
     emits: ['close'],
     data() {
         return {
             CATEGORY_NAMES, EMPTY_TEXT, NOT_PLACED_TEXT, PAD_L, NAME_H,
             rounds: null,
-            category: null,
+            category: this.initialCategory,
             error: false,
             // The round pointed at in the chart or the table; both highlight it.
             hoverRound: null

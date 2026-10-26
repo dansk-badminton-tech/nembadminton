@@ -84,6 +84,21 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
         });
     }
 
+    public function test_opening_history_preselects_the_category_of_the_clicked_row(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $this->openRound($browser, YouthTeamRoundSeeder::CONFLICT_ROUND, 'Aske Groth Jensen');
+
+            $browser->openSeasonHistory(0, '2. HD', 'Aske Groth Jensen')
+                ->assertPresent("[dusk='season-history-category-HD'] label.is-selected")
+                ->assertSeeIn('@season-history-explanation', 'herredouble');
+
+            $browser->click('@season-history-close')->waitUntilMissing('@season-history-modal');
+            $browser->openSeasonHistory(0, '3. HS', 'Aske Groth Jensen')
+                ->assertPresent("[dusk='season-history-category-HS'] label.is-selected");
+        });
+    }
+
     public function test_pointing_at_a_round_highlights_it_in_the_chart_and_the_table(): void
     {
         $this->browse(function (Browser $browser) {
