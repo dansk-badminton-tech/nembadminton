@@ -7,6 +7,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use FlyCompany\BadmintonPlayerAPI\Util;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,6 +42,20 @@ class SquadMember extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(SquadCategory::class, 'squad_category_id');
+    }
+
+    /**
+     * The Member's ranking points on the given ranking list, matched by refId.
+     *
+     * @return Collection<int, Point>
+     */
+    public function getRankingPoints(Carbon $version): Collection
+    {
+        return Point::query()
+            ->whereHas('member', fn (Builder $member) => $member->where('refId', $this->member_ref_id))
+            ->where('version', $version->toDateString())
+            ->orderBy('id')
+            ->get();
     }
 
     public function getIsInSquad(): bool

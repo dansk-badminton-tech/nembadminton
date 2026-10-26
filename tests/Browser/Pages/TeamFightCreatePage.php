@@ -34,6 +34,7 @@ class TeamFightCreatePage extends Page
             '@date-picker' => "[dusk='team-fight-date-picker']",
             '@season-select' => "[dusk='team-fight-season-select-wrapper']",
             '@ranking-select' => "[dusk='team-fight-ranking-select']",
+            '@ranking-field' => "[dusk='team-fight-ranking-field']",
             '@submit-button' => "[dusk='team-fight-submit-button']",
         ];
     }

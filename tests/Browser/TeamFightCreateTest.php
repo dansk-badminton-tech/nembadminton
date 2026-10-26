@@ -87,4 +87,19 @@ class TeamFightCreateTest extends DuskTestCase
             );
         });
     }
+
+    public function test_the_ranking_field_explains_to_pick_the_earliest_ranking(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $clubhouse = Clubhouse::first();
+
+            $browser->visit(new LoginPage())
+                ->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightCreatePage($clubhouse->id))
+                ->on(new TeamFightCreatePage($clubhouse->id))
+                ->waitFor('@ranking-field')
+                ->assertSeeIn('@ranking-field', 'så vælg den tidligste rangliste')
+                ->assertSeeIn('@ranking-field', 'egen rangliste til opstillingen');
+        });
+    }
 }

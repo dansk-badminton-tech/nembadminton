@@ -113,7 +113,10 @@ input ValidateMember {
     refId: String!
     name: String!
     gender: Gender!
+    "The player's points on the ranking of their Squad: its own ranking if it has one, else the TeamRound's. They decide the order on the Squad (§38 stk. 2-3)."
     points: [ValidatePoint!]!
+    "The player's points on the TeamRound's ranking, which decides which Squad they may stand on (§38 stk. 4). Only validateCrossSquads reads them; without them it compares points."
+    pickingPoints: [ValidatePoint!]
 }
 
 input ValidatePoint {

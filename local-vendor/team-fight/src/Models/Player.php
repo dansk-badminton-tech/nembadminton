@@ -26,6 +26,13 @@ class Player
      */
     public array $points = [];
 
+    /**
+     * Points on the TeamRound's ranking for the comparison across Squads (§38 stk. 4); null means the same as points.
+     *
+     * @var Point[]|null
+     */
+    public ?array $pickingPoints = null;
+
     public function getPlayingIn(): array
     {
         return $this->playingIn;

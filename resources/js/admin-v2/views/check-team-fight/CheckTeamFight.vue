@@ -179,6 +179,7 @@ import ValidationStatus from "@/views/team-fight/ValidationStatus.vue";
 import {isTooYoung} from "../team-fight/too-young.js";
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql";
 import {filterYouthFromLevel, hasInvalidCategory, hasInvalidLevel, wrapInTeamAndSquads, wrapSquadsInTeamWithoutLeague} from "../team-fight/helper";
+import {pickingPointsLookup} from "../team-fight/picking-points.js";
 
 export default {
     name: "CheckTeamFight",
@@ -211,6 +212,8 @@ export default {
             selectedTeamMatches: {},
             selectedVersionsForTeamMatches: [],
             teams: [],
+            // §38 stk. 4: the shared ranking decides the comparison across teams, see picking-points.js
+            pickingPointsOf: () => undefined,
             playingToHighInLevel: [],
             playingToHighInCategory: [],
             tooYoungPlayers: [],
@@ -353,10 +356,48 @@ export default {
             return simpleHighlight(this.currentPlayingToHighInLevel, this.currentPlayingToHighInCategory, player, category, this.markYouthAsError)
         },
         findPositions,
+        ownRankingOf(index) {
+            const version = this.selectedVersionsForTeamMatches[index]
+            return version && version !== this.rankingList ? version : null
+        },
         badmintonPlayerTeamMatches() {
             this.fetchingAndValidating = true;
             this.errorImporting = false;
-            this.$apollo.query(
+            const teamMatchCount = this.castToArray(this.selectedTeamMatches).length
+            const ownRankingIndexes = [...Array(teamMatchCount).keys()].filter(index => this.ownRankingOf(index) !== null)
+            Promise.all([
+                this.fetchTeamMatches(index => this.ownRankingOf(index)),
+                // The players' points on the shared ranking, for the team matches with their own ranking
+                ownRankingIndexes.length > 0 ? this.fetchTeamMatches(() => null) : null
+            ]).then(([teams, sharedRankingTeams]) => {
+                this.teams = teams.map(team => ({
+                    ...team,
+                    resultAttrs: (row, column) => this.resolveAttrs(row, column, team)
+                }))
+                const lookup = pickingPointsLookup(ownRankingIndexes.map(index => ({
+                    key: index,
+                    players: sharedRankingTeams[index].squad.categories.flatMap(category => category.players)
+                })))
+                this.pickingPointsOf = (squad, squadIndex, player) => lookup(squadIndex, player.refId)
+                this.done = true
+                this.validate()
+            }).catch((error) => {
+                this.fetchingAndValidating = false;
+                this.$buefy.toast.open({
+                                           duration: 5000,
+                                           message: `Et eller flere hold kunne ikke hentes`,
+                                           position: 'is-bottom',
+                                           type: 'is-danger'
+                                       })
+                this.errorImporting = true;
+                if (error.graphQLErrors){
+                    this.errorImportingErrors = error.graphQLErrors.map((error) => {return error.message});
+                }
+            })
+        },
+        // The selected team matches with points on each match's ranking: versionOf(index), or the shared ranking when null
+        fetchTeamMatches(versionOf) {
+            return this.$apollo.query(
                 {
                     query: gql`query ($input: BadmintonPlayerTeamMatchesInput!){
                         badmintonPlayerTeamMatches(input: $input){
@@ -400,9 +441,7 @@ export default {
                                     id: teamMatch.teamMatch.matchId,
                                     teamNameHint: teamMatch.team.name,
                                     league: teamMatch.team.league,
-                                    version: (typeof this.selectedVersionsForTeamMatches[index] === 'undefined'
-                                              ? null
-                                              : this.selectedVersionsForTeamMatches[index])
+                                    version: versionOf(index)
                                 }
                             }),
                             season: parseInt(this.season),
@@ -410,26 +449,7 @@ export default {
                         }
                     }
                 }
-            ).then(({data}) => {
-                this.teams = data.badmintonPlayerTeamMatches.map(team => ({
-                    ...team,
-                    resultAttrs: (row, column) => this.resolveAttrs(row, column, team)
-                }))
-                this.done = true
-                this.validate()
-            }).catch((error) => {
-                this.fetchingAndValidating = false;
-                this.$buefy.toast.open({
-                                           duration: 5000,
-                                           message: `Et eller flere hold kunne ikke hentes`,
-                                           position: 'is-bottom',
-                                           type: 'is-danger'
-                                       })
-                this.errorImporting = true;
-                if (error.graphQLErrors){
-                    this.errorImportingErrors = error.graphQLErrors.map((error) => {return error.message});
-                }
-            })
+            ).then(({data}) => data.badmintonPlayerTeamMatches)
         },
         validateCrossSquads() {
             this.validatingCrossSquad = true
@@ -452,7 +472,7 @@ export default {
                     }
                     `,
                     variables: {
-                        input: wrapInTeamAndSquads(this.teams.map(team => team.squad))
+                        input: wrapInTeamAndSquads(this.teams.map(team => team.squad), this.pickingPointsOf)
                     }
                 }
             )

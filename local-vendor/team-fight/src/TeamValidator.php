@@ -6,6 +6,7 @@ namespace FlyCompany\TeamFight;
 
 use FlyCompany\TeamFight\Models\Category;
 use FlyCompany\TeamFight\Models\Player;
+use FlyCompany\TeamFight\Models\Point;
 use FlyCompany\TeamFight\Models\Squad;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -126,12 +127,12 @@ class TeamValidator
                     }
 
                     try {
-                        $belowPlayerCategoryPoint = $this->getPlayerCategoryPoint($player, $category);
+                        $belowPlayerCategoryPoint = $this->getPlayerCategoryPoint($player, $category, $player->pickingPoints);
                     } catch (PointNotFoundInCategoryException $categoryException) {
                         $belowPlayerCategoryPoint = null;
                     }
                     try {
-                        $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($playerHigh, $category);
+                        $abovePlayerCategoryPoint = $this->getPlayerCategoryPoint($playerHigh, $category, $playerHigh->pickingPoints);
                     } catch (PointNotFoundInCategoryException $categoryException) {
                         $abovePlayerCategoryPoint = null;
                     }
@@ -273,9 +274,12 @@ class TeamValidator
         return new Collection($pairs);
     }
 
-    private function getPlayerCategoryPoint(Player $player, string $category)
+    /**
+     * @param  Point[]|null  $points  where to look for the points, the player's points when null
+     */
+    private function getPlayerCategoryPoint(Player $player, string $category, ?array $points = null)
     {
-        $points = $player->points;
+        $points ??= $player->points;
         foreach ($points as $point) {
             $category = $this->getRankingCategory($category, $player->gender);
             if ($point->category === $category) {
