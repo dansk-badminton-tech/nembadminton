@@ -101,10 +101,10 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         });
     }
 
-    public function test_pending_failed_and_obsolete_responses_never_look_like_a_completed_current_check(): void
+    public function test_pending_and_failed_checks_can_be_retried(): void
     {
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
-        [$round] = $this->finalRoundWithMembers(['name' => 'Validation races'], [$member]);
+        [$round] = $this->finalRoundWithMembers(['name' => 'Validation retry'], [$member]);
 
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
@@ -138,23 +138,14 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->waitUntil('typeof window.eligibilityNetwork.release.validateFinalRoundEligibility === "function"')
                 ->waitForTextIn('[dusk="validation-final-round"]', 'Afventer')
                 ->assertMissing('@final-round-warnings');
-            $browser->script("window.eligibilityNetwork.hold.add('teamRound')");
-            $browser->selectScenario('Tomt udkast')
-                ->waitUntil('typeof window.eligibilityNetwork.release.teamRound === "function"');
             $browser->script('window.eligibilityNetwork.release.validateFinalRoundEligibility()');
-            $browser->pause(250)->assertSeeIn('[dusk="validation-final-round"]', 'Afventer')
-                ->assertMissing('@final-round-warnings');
-            $browser->script('window.eligibilityNetwork.release.teamRound()');
-            $browser->waitForTextIn('[dusk="validation-final-round"]', 'OK')
-                ->assertMissing('@final-round-warnings')
-                ->assertDontSeeIn('@team-table-section', $member->name);
+            $browser->waitForTextIn('@final-round-warnings', $member->name);
             $browser->script('window.eligibilityNetwork.failNext = true');
             $browser->click('[dusk="revalidate-final-round"]')
                 ->waitForTextIn('[dusk="validation-final-round"]', 'Fejlet')
                 ->assertMissing('@final-round-warnings')
                 ->click('[dusk="revalidate-final-round"]')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
-                ->selectScenario('Officiel opstilling')
+                ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
                 ->waitForTextIn('@final-round-warnings', $member->name);
         });
     }

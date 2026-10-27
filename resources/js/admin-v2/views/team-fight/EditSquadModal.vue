@@ -208,7 +208,6 @@ export default {
                        })
         },
         updateSquad() {
-            this.$emit('saving')
             this.loading = true
             this.$apollo.mutate(
                 {

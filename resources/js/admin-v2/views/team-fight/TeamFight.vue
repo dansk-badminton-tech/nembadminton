@@ -177,7 +177,6 @@
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
-                               @validation-pending="invalidateFinalRoundEligibility"
                                @squad-updated="refreshTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -227,7 +226,7 @@ import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
-import {createValidationState, invalidateValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
+import {createValidationState, resetValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -398,16 +397,6 @@ export default {
             errorValidatingLevel: false
         }
     },
-    watch: {
-        // Even server-loaded lineups can return late; discard results as soon as the view or saved data changes.
-        selectedScenarioId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
-        teamRoundId: {flush: 'sync', handler: 'invalidateFinalRoundEligibility'},
-        saving: {flush: 'sync', handler(value) { if (value) this.invalidateFinalRoundEligibility() }},
-        updating: {flush: 'sync', handler(value) { if (value) this.invalidateFinalRoundEligibility() }}
-    },
-    beforeUnmount() {
-        this.invalidateFinalRoundEligibility()
-    },
     apollo: {
         clubhouse: {
             query: clubhouse,
@@ -421,11 +410,8 @@ export default {
             query: TeamRoundQuery,
             fetchPolicy: 'network-only',
             notifyOnNetworkStatusChange: true,
-            watchLoading(loading) {
-                if (loading) this.invalidateFinalRoundEligibility()
-            },
             error() {
-                this.invalidateFinalRoundEligibility()
+                resetValidation(this.finalRoundValidation)
                 if (this.finalRoundValidation.enabled) this.finalRoundValidation.status = 'failed'
             },
             variables() {
@@ -467,7 +453,6 @@ export default {
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
         refreshTeam() {
-            this.invalidateFinalRoundEligibility()
             return this.$apollo.queries.teamRound.refetch();
         },
         openLinkSharingModal() {
@@ -505,7 +490,6 @@ export default {
                 },
                 scroll: "keep",
                 events: {
-                    saving: () => this.invalidateFinalRoundEligibility(),
                     close: () => {
                     },
                     save: () => {
@@ -1177,7 +1161,7 @@ export default {
         },
         validateFinalRoundEligibility() {
             if (!this.showFinalRoundControl) {
-                this.invalidateFinalRoundEligibility()
+                resetValidation(this.finalRoundValidation)
                 return
             }
             return runValidation(this.finalRoundValidation, async () => {
@@ -1190,9 +1174,6 @@ export default {
                 })
                 return data?.validateFinalRoundEligibility
             })
-        },
-        invalidateFinalRoundEligibility() {
-            invalidateValidation(this.finalRoundValidation)
         },
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(

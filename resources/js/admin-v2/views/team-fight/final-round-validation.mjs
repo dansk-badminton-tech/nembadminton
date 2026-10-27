@@ -13,32 +13,30 @@ export function showFinalRoundControl(teamRound) {
 
 // The state may be reactive; always mutate the caller's state rather than a captured raw object.
 export function createValidationState() {
-    return {revision: 0, enabled: false, status: 'disabled', findings: null}
+    return {enabled: false, status: 'disabled', findings: null}
 }
 
-export function invalidateValidation(state) {
-    state.revision++
+export function resetValidation(state) {
     state.status = state.enabled ? 'pending' : 'disabled'
     state.findings = null
 }
 
 export function setValidationEnabled(state, enabled) {
     state.enabled = enabled
-    invalidateValidation(state)
+    resetValidation(state)
 }
 
 export async function runValidation(state, request) {
-    invalidateValidation(state)
+    resetValidation(state)
     if (!state.enabled) return
-    const revision = state.revision
     try {
         const findings = await request()
         if (!Array.isArray(findings)) throw new Error('Missing validation result')
-        if (revision === state.revision) {
+        if (state.enabled) {
             state.findings = findings
             state.status = 'complete'
         }
     } catch {
-        if (revision === state.revision) state.status = 'failed'
+        if (state.enabled) state.status = 'failed'
     }
 }
