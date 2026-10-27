@@ -498,6 +498,7 @@ export default {
                         usedTeamIds: this.usedTeamIds
                     },
                     events: {
+                        saved: () => this.$emit('squad-updated'),
                         close() {
                         }
                     },

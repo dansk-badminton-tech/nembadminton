@@ -179,7 +179,7 @@ input UpdateSquadInput {
     "Tier"
     tier: String
     "Optional organizational team this squad is created from (pass null to disconnect)"
-    teamId: ID @rename(attribute: "team_id")
+    teamId: ID @rename(attribute: "team_id") @rules(apply: ["App\\Rules\\TeamInClubhouse"])
     "Paper Squad (papirhold). Only a squad with a team can be one."
     isPaperSquad: Boolean @rename(attribute: "is_paper_squad")
     "Ranking version"

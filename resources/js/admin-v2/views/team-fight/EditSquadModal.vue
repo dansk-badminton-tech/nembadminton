@@ -271,6 +271,7 @@ export default {
                     }
                 })
                 .then(() => {
+                    this.$emit('saved')
                     this.$emit('close')
                 })
                 .catch(() => {

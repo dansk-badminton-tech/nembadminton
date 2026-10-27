@@ -113,6 +113,34 @@ Advarslen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om s
 Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner advarslen runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
 Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
 
+### Kontrol af tidligere hold i de sidste runder
+
+I de sidste runder af sæsonen skal en spiller tidligere i sæsonen have stået på samme eller et lavere hold (§ 38, stk. 8). Reglen gælder for alle hold undtagen papirhold:
+
+- **Badmintonligaen:** runde 12.
+- **1. division, 2. division, 3. division og Danmarksserien:** runde 11 og 12.
+
+I andre runder og rækker er reglen ikke relevant, og kontrollen viser ingen advarsler.
+
+I de relevante runder viser Nembadminton **Tidligere hold (§38 stk. 8)**. Kontrollen er som udgangspunkt **Deaktiveret**. Slå den til med kontakten, når du vil kontrollere tidligere hold; kontrollen kræver, at holdene er tilknyttet. Når kontrollen er slået til, viser den **Afventer**, **OK**, **Advarsel** eller **Fejlet** og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Brug opdateringsknappen for at køre den med det samme. Genindlæser du siden, er kontrollen slået fra igen.
+
+Der er to slags advarsler under kontrollerne, hver med holdets nummer og spillerens navn:
+
+- **… har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).** Nembadminton har fundet spillerens tidligere holdopstillinger i sæsonen, men spilleren har ikke stået på holdet eller et lavere hold. Vurdér, om spilleren må stå på holdet.
+- **… spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).** Nembadminton mangler oplysninger. Under advarslen står, hvad du skal rette:
+
+| Besked | Sådan retter du den |
+| --- | --- |
+| **Udfyld Runde nr. i holdrundens indstillinger.** | Angiv rundenummeret; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer). |
+| **Angiv holdets række under Rediger holdet.** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
+| **Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.** | Tilknyt holdet; se [Tilknyt et hold bagefter](/app/help/guides/opret-og-klargoer-en-holdrunde). |
+| **Angiv datoen i holdrundens indstillinger.** | Angiv **Runde spilledato**, så tidligere holdrunder kan findes. |
+| **Holdrunden mangler sæson.** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
+
+Kan spillerens tidligere opstillinger ikke sammenlignes, fordi holdet ikke er tilknyttet i de runder, står holdrunderne som links under advarslen. Åbn hver holdrunde, og tilknyt holdet som beskrevet i [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Kør derefter kontrollen igen.
+
+Kontrollen bruger kun tidligere officielle holdopstillinger i sæsonen. Advarslerne forhindrer ikke, at du redigerer, gemmer og deler, så du skal selv vurdere, om spilleren må spille.
+
 ## Hvis en spiller mangler eller har forkerte point
 
 **Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med [afbud til holdrunden](/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde). Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.

@@ -71,6 +71,7 @@ class TeamFightEditPage extends Page
             '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
             '@validation-invalid-level' => "[dusk='validation-invalid-level']",
             '@validation-invalid-category' => "[dusk='validation-invalid-category']",
+            '@final-round-warnings' => "[dusk='final-round-warnings']",
             '@scenario-guide-link' => "[dusk='scenario-guide-link']",
             '@scenario-selector-dropdown' => "[dusk='scenario-selector-dropdown']",
             '@create-scenario-button' => "[dusk='create-scenario-button']",
@@ -100,6 +101,13 @@ class TeamFightEditPage extends Page
     public function setRound(Browser $browser, int $round): void
     {
         (new TeamFightCreatePage(0))->setRound($browser, $round);
+    }
+
+    public function changeRoundNumber(Browser $browser, int $round): void
+    {
+        $this->scrollToCenter($browser, '@settings-button');
+        $browser->click('@settings-button')->waitFor('@settings-modal')->setRound($round)
+            ->click('@settings-save')->waitUntilMissing('@settings-modal');
     }
 
     public function selectDate(Browser $browser, int $month, int $year, int $day): void

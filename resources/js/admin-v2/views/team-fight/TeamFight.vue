@@ -168,10 +168,16 @@
                                       :reserve-findings="reserveFindings"
                                       :show-reserves="hasReserves"
                                       :paper-squad-validation="paperSquadValidation"
+                                      :final-round-eligibility="finalRoundValidation.findings"
+                                      :final-round-validation-status="showFinalRoundControl ? finalRoundValidation.status : null"
+                                      :final-round-validation-enabled="finalRoundValidation.enabled"
+                                      @update:finalRoundValidationEnabled="onFinalRoundValidationEnabledChange"
+                                      @revalidate="refreshTeam"
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
+                               @squad-updated="refreshTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
                                :add-reserve="addReserve"
@@ -218,7 +224,9 @@ import {
 import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
+import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
+import {createValidationState, resetValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
     hasInvalidLevel,
@@ -305,6 +313,9 @@ export default {
         hasPaperSquad() {
             return hasPaperSquad(this.teamRound?.squads)
         },
+        showFinalRoundControl() {
+            return showFinalRoundControl(this.teamRound)
+        },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
@@ -364,6 +375,7 @@ export default {
             tooYoungPlayers: [],
             reserveFindings: [],
             paperSquadValidation: null,
+            finalRoundValidation: createValidationState(),
             teamCount: 1,
             players: [],
             saving: false,
@@ -402,7 +414,8 @@ export default {
                     scenarioId: this.selectedScenarioId
                 }
             },
-            result({data}) {
+            result({data, loading}) {
+                if (loading || !data?.teamRound) return
                 this.gameDate = new Date(data.teamRound.gameDate);
                 this.version = data.teamRound.version;
                 this.name = data.teamRound.name;
@@ -434,7 +447,7 @@ export default {
             this.$router.push({name: 'team-fight-notify', params: {teamUUID: this.teamRoundId}})
         },
         refreshTeam() {
-            this.$apollo.queries.teamRound.refetch();
+            return this.$apollo.queries.teamRound.refetch();
         },
         openLinkSharingModal() {
             this.$buefy.modal.open({
@@ -714,6 +727,10 @@ export default {
         onIgnoreIncompleteTeamChange(value) {
             this.ignoreIncompleteTeam = value
             this.validate()
+        },
+        onFinalRoundValidationEnabledChange(value) {
+            setValidationEnabled(this.finalRoundValidation, value)
+            if (value) this.refreshTeam()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
             this.deletePlayerFromCategory(sourceSquad, sourceCategory, player).then(() => {
@@ -1094,6 +1111,7 @@ export default {
                 })
         },
         validate() {
+            this.validateFinalRoundEligibility();
             this.validateTooYoungPlayers();
             this.validateReserves();
             this.validatePaperSquads();
@@ -1132,6 +1150,22 @@ export default {
                             message: `Noget gik galt under valideringen af holdet (validateSquad)`
                         })
                 })
+        },
+        validateFinalRoundEligibility() {
+            if (!this.showFinalRoundControl) {
+                resetValidation(this.finalRoundValidation)
+                return
+            }
+            return runValidation(this.finalRoundValidation, async () => {
+                const {data} = await this.$apollo.mutate({
+                    mutation: ValidateFinalRoundEligibilityMutation,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        scenarioId: this.selectedScenarioId
+                    }
+                })
+                return data?.validateFinalRoundEligibility
+            })
         },
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(

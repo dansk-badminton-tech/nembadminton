@@ -88,4 +88,6 @@ For end-to-end tests with Laravel Dusk, follow the [browser testing instructions
 
 ## Before opening a pull request
 
+**Justify added complexity.** When adding defensive logic or changing existing behavior, identify whether it addresses a requirement, an observed problem, or a hypothetical edge case. Weigh the likelihood and impact against the complexity introduced, and prefer existing framework behavior over custom machinery. Leave unrelated working behavior unchanged; discuss low-impact hypothetical cases before adding special handling.
+
 Run `composer lint:syntax`, `composer format:check` and `composer analyse`, plus the relevant tests for your change. CI also builds the frontend and validates the Help documentation.
