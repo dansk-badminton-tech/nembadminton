@@ -689,10 +689,10 @@ export default {
             if (value) this.refreshTeam()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
-            return this.session.move(player, this.seat(targetSquad, targetCategory)).catch(shownByOnError)
+            return this.session.move(player, this.place(targetSquad, targetCategory)).catch(shownByOnError)
         },
         // Where a player is added: the Category, on the Squad's Ranking List or else the TeamRound's.
-        seat(squad, category) {
+        place(squad, category) {
             return {categoryId: category.id, version: squad.version ? squad.version : this.version}
         },
         exportToCSV(includeCategories = true) {
@@ -734,7 +734,7 @@ export default {
             }
         },
         addPlayer(squad, category, player) {
-            return this.session.addPlayer({...this.seat(squad, category), refId: player.refId})
+            return this.session.addPlayer({...this.place(squad, category), refId: player.refId})
                 .then((member) => {
                     setTimeout(() => {
                         this.focusNext(member)
@@ -981,41 +981,41 @@ export default {
                     message: 'Tilføjet til Hold ' + (squadIndex + 1) + ' i ' + category
                 })
         },
-        // The first Category, Squad by Squad, with a free seat for the player's gender.
-        findFreeSeat(player) {
+        // The first Category, Squad by Squad, with a free place for the player's gender.
+        findFreePlace(player) {
             for (const [index, squad] of this.teamRound.squads.entries()) {
                 for (const category of squad.categories) {
-                    if (this.hasFreeSeat(category, player)) {
+                    if (this.hasFreePlace(category, player)) {
                         return {index, squad, category}
                     }
                 }
             }
             return null
         },
-        hasFreeSeat(category, player) {
-            const seats = category.players.length
+        hasFreePlace(category, player) {
+            const taken = category.players.length
             if (isWomenDouble(category)) {
-                return seats < 2 && player.gender === 'WOMEN'
+                return taken < 2 && player.gender === 'WOMEN'
             }
             if (isMensDouble(category)) {
-                return seats < 2 && player.gender === 'MEN'
+                return taken < 2 && player.gender === 'MEN'
             }
             if (isMixDouble(category)) {
-                return seats === 0
-                    || (seats === 1 && containsWomen(category) && player.gender === 'MEN')
-                    || (seats === 1 && containsMen(category) && player.gender === 'WOMEN')
+                return taken === 0
+                    || (taken === 1 && containsWomen(category) && player.gender === 'MEN')
+                    || (taken === 1 && containsMen(category) && player.gender === 'WOMEN')
             }
             if (isMensSingle(category)) {
-                return seats < 1 && player.gender === 'MEN'
+                return taken < 1 && player.gender === 'MEN'
             }
             if (isWomensSingle(category)) {
-                return seats < 1 && player.gender === 'WOMEN'
+                return taken < 1 && player.gender === 'WOMEN'
             }
             return false
         },
         addPlayerToNextCategory(player) {
-            const seat = this.findFreeSeat(player)
-            if (seat === null) {
+            const place = this.findFreePlace(player)
+            if (place === null) {
                 this.$buefy.snackbar.open(
                     {
                         duration: 3000,
@@ -1025,8 +1025,8 @@ export default {
                     })
                 return Promise.resolve()
             }
-            const {index, squad, category} = seat
-            return this.session.addPlayer({...this.seat(squad, category), refId: player.refId})
+            const {index, squad, category} = place
+            return this.session.addPlayer({...this.place(squad, category), refId: player.refId})
                 .then(() => this.addedPlayerNotification(index, category.name))
                 .catch(shownByOnError)
         },

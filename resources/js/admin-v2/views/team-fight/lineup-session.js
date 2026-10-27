@@ -95,11 +95,12 @@ export function createLineupSession({gateway, teamRoundId, scenarioId = null, on
             return run('renameScenario', () => write('renameScenario', {name}))
         },
 
-        // Deletes the open Scenario and opens the official one.
+        // Deletes the open Scenario and opens the Official Lineup.
         deleteScenario() {
-            const deletedId = session.scenarioId
-            session.scenarioId = null
-            return run('deleteScenario', () => gateway.deleteScenario({teamRoundId: session.teamRoundId, scenarioId: deletedId}))
+            return run('deleteScenario', async () => {
+                await write('deleteScenario', {})
+                session.scenarioId = null
+            })
         },
 
         // The editor's query follows scenarioId, so switching needs no write.

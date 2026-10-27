@@ -119,7 +119,7 @@ export function createApolloLineupGateway(client) {
             `, {id})
         },
 
-        // The new Scenario is copied from scenarioId, or from the official Lineup when it is null.
+        // The new Scenario is copied from scenarioId, or from the Official Lineup when it is null.
         createScenario({teamRoundId, scenarioId, name}) {
             return mutate(gql`
                 mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {

@@ -109,6 +109,17 @@ test('deleting the open Scenario opens the official one', async () => {
     ])
 })
 
+test('a Scenario that fails to delete stays open', async () => {
+    const gateway = createFakeLineupGateway()
+    gateway.failOn('deleteScenario')
+    const session = createLineupSession({gateway, teamRoundId: '10', scenarioId: '5'})
+
+    await assert.rejects(session.deleteScenario())
+
+    assert.equal(session.scenarioId, '5')
+    assert.deepEqual(gateway.calls[1], {name: 'refetch', args: {teamRoundId: '10', scenarioId: '5'}})
+})
+
 test('revision goes up after each refetch', async () => {
     const gateway = createFakeLineupGateway()
     gateway.failOn('deleteSquad')
