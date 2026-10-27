@@ -54,6 +54,10 @@ _Avoid_: Squad
 One Team's match setup for a single TeamRound, and its part of each **Lineup** of that TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Its match setup is the same in every Scenario; its players can differ. The name Squad is kept.
 _Avoid_: Team, sub-team
 
+**Match Format** (kampformat):
+The matches a Squad plays, by category and number (e.g. 2 MD, 2 DS, 2 HS, 1 DD, 2 HD); the Squad's category places follow it. It belongs to the Squad's match setup, so it is the same in every Scenario. In the DH tournament the tier decides it: Badmintonligaen and 1. division play 9 matches, and 2. division, 3. division and Danmarksserien play 13 (§37). A qualification match for a place in Badmintonligaen or 1. division is played in the 1. division format, so a 2. division Team plays 9 matches there (§27 stk. 2). A kreds sets its own formats (§5 stk. 2).
+_Avoid_: Match count, antal kampe, squad size
+
 **Paper Squad** (papirhold):
 A Squad entered for a Team whose match is not played in a TeamRound where a lower Team of the club does play (§38 stk. 7). It is lined up like any other Squad and keeps its place in the Squad order, so lower Squads are compared against it. Its own players must meet only the paper-team rule: they stand only in categories they have played this season, and they have played on the same or a lower Team before. A Paper Squad's placements count as played, except for the 20 October deadline (§32 stk. 1 c). The coach marks it on the Squad, so it holds in every Scenario of the TeamRound, and can mark or unmark it later, because a match can be cancelled after the lineup is made (§35A).
 _Avoid_: Oversidderhold, bye team, dummy team
