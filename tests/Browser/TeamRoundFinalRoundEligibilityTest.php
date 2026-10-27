@@ -124,6 +124,10 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 window.fetch = async function (url, options) {
                     const operation = options?.body ? JSON.parse(options.body).operationName : null;
                     const network = window.eligibilityNetwork;
+                    if (operation === 'teamRound' && network.failRoundNext) {
+                        network.failRoundNext = false;
+                        throw new Error('Simulated lineup loading outage');
+                    }
                     if (operation === 'validateFinalRoundEligibility' && network.failNext) {
                         network.failNext = false;
                         throw new Error('Simulated validation outage');
@@ -147,6 +151,12 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->click('[dusk="revalidate-final-round"]')
                 ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
                 ->waitForTextIn('@final-round-warnings', $member->name);
+
+            $browser->script('window.eligibilityNetwork.failRoundNext = true');
+            $browser->click('@revalidate-final-round')
+                ->waitUntil('window.eligibilityNetwork.failRoundNext === false')
+                ->assertSeeIn('@validation-final-round', 'Advarsel')
+                ->assertSeeIn('@final-round-warnings', $member->name);
         });
     }
 

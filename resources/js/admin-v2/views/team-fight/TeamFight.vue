@@ -408,12 +408,6 @@ export default {
         },
         teamRound: {
             query: TeamRoundQuery,
-            fetchPolicy: 'network-only',
-            notifyOnNetworkStatusChange: true,
-            error() {
-                resetValidation(this.finalRoundValidation)
-                if (this.finalRoundValidation.enabled) this.finalRoundValidation.status = 'failed'
-            },
             variables() {
                 return {
                     id: this.teamRoundId,
