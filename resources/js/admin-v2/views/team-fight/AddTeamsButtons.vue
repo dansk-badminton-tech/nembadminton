@@ -6,6 +6,7 @@
             :teams-loading="$apollo.queries.teams.loading"
             :teams-failed="teamsFailed"
             :selected-match-count="selectedMatchCount"
+            :match-format-hint="matchFormatHint"
             :selected-name="selectedName"
             :selected-tier-name="selectedTierName"
             :selected-team-id="selectedTeamId"
@@ -55,6 +56,7 @@ import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions} from "./team-picker";
 import {teamTierLabel} from "./team-label";
+import {applyTierToMatchFormat} from "./match-format";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -92,12 +94,18 @@ export default {
         usedTeamIds: {
             type: Array,
             default: () => []
+        },
+        round: {
+            type: Number,
+            default: null
         }
     },
     data() {
         return {
             loading: false,
             selectedMatchCount: 13,
+            // The tier the Match Format was preselected from; null once the coach picks another.
+            suggestedTier: null,
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
@@ -146,6 +154,9 @@ export default {
         },
         teamOptions() {
             return buildTeamPickerOptions(this.teams, this.usedTeamIds);
+        },
+        matchFormatHint() {
+            return this.suggestedTier === null ? '' : `Valgt ud fra niveau (${this.suggestedTier})`;
         },
         nextSquadNumber() {
             return this.existingSquadCount + 1;
@@ -279,15 +290,28 @@ export default {
             this.selectedPlayingDate = date;
         },
         onMatchCountChange(matchCount) {
+            const previousMatchCount = this.selectedMatchCount;
             if (matchCount === CUSTOM_MATCH_COUNT) {
                 this.selectedMatchCount = CUSTOM_MATCH_COUNT;
-                return;
+            } else {
+                const parsedMatchCount = Number.parseInt(matchCount, 10);
+                this.selectedMatchCount = Number.isNaN(parsedMatchCount)
+                    ? null
+                    : parsedMatchCount;
             }
 
-            const parsedMatchCount = Number.parseInt(matchCount, 10);
-            this.selectedMatchCount = Number.isNaN(parsedMatchCount)
-                ? null
-                : parsedMatchCount;
+            if (this.selectedMatchCount !== previousMatchCount) {
+                this.suggestedTier = null;
+            }
+        },
+        applyTier(tierName) {
+            const form = applyTierToMatchFormat(
+                {matchCount: this.selectedMatchCount, suggestedTier: this.suggestedTier},
+                tierName,
+                this.round
+            );
+            this.selectedMatchCount = form.matchCount;
+            this.suggestedTier = form.suggestedTier;
         },
         onCustomCategoryCountChange({field, value}) {
             if (!Object.prototype.hasOwnProperty.call(this.customCategoryCounts, field)) {
@@ -304,7 +328,13 @@ export default {
             this.selectedName = typeof name === 'string' ? name : '';
         },
         onTierChange(tierName) {
-            this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+            const nextTierName = typeof tierName === 'string' ? tierName : '';
+            if (nextTierName === this.selectedTierName) {
+                return;
+            }
+            this.selectedTierName = nextTierName;
+            // Partial text never equals a tier name, so typing doesn't change the format.
+            this.applyTier(nextTierName);
         },
         onTeamChange(team) {
             if (team === null || team === undefined) {
@@ -313,12 +343,14 @@ export default {
                 this.selectedIsPaperSquad = false;
                 this.selectedName = '';
                 this.selectedTierName = '';
+                this.suggestedTier = null;
                 return;
             }
             this.selectedTeamId = team.id;
             this.selectedName = team.name || '';
             this.selectedTierName = teamTierLabel(team);
             this.manualEntry = false;
+            this.applyTier(this.selectedTierName);
         },
         onTeamCreated(team) {
             this.teamFormOpen = false;
@@ -415,6 +447,7 @@ export default {
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
                 this.selectedIsPaperSquad = false;
+                this.suggestedTier = null;
             }).catch(() => {
                 // The editor shows the failure through the session's onError; the form keeps its input.
             })

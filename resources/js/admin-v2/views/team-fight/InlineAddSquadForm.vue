@@ -113,7 +113,13 @@
 
             <div class="add-squad-form__panel-row">
                 <div class="add-squad-form__section add-squad-form__section--match-count">
-                    <p class="label is-small mb-2">Antal kampe</p>
+                    <p class="label is-small mb-2">
+                        Antal kampe
+                        <span
+                            v-if="matchFormatHint"
+                            class="has-text-grey has-text-weight-normal ml-1"
+                            dusk="match-format-hint">{{ matchFormatHint }}</span>
+                    </p>
                     <div class="buttons has-addons mb-0">
                         <b-button
                             v-for="matchCount in matchCountOptions"
@@ -121,6 +127,7 @@
                             size="is-small"
                             :disabled="loading"
                             :type="selectedMatchCount === matchCount ? 'is-link' : 'is-light'"
+                            :dusk="'match-count-option-' + matchCount"
                             @click="$emit('select-match-count', matchCount)">
                             {{ matchCount }}
                         </b-button>
@@ -255,6 +262,10 @@ export default {
         selectedMatchCount: {
             type: [Number, String],
             default: null
+        },
+        matchFormatHint: {
+            type: String,
+            default: ''
         },
         selectedName: {
             type: String,

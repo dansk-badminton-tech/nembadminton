@@ -199,7 +199,7 @@
                     <hr>
                     <AddTeamsButtons :team-round-date="gameDate" :season-id="teamRound?.season?.id"
                                      :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length"
-                                     :used-team-ids="usedTeamIds"/>
+                                     :used-team-ids="usedTeamIds" :round="round"/>
                 </div>
             </div>
         </section>
