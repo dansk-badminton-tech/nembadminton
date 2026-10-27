@@ -310,7 +310,6 @@ export default {
         playerMove: Function,
         deletePlayer: Function,
         addPlayer: Function,
-        updateSquad: Function,
         playingToHigh: {
             type: Array,
             default: []

@@ -68,9 +68,9 @@
                             Opret spiller
                         </b-button>
                     </div>
-                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="saving"
+                    <PlayersListSearch :clubhouse-id="clubhouseId" :loading="session.saving"
                                         :add-player="addPlayerToNextCategory" :team-round-id="this.teamRoundId"
-                                        :scenario-id="selectedScenarioId"
+                                        :scenario-id="session.scenarioId"
                                         :version="new Date(version)" :game-date="gameDate"
                                        @open-add-member="openAddMemberModal"/>
                 </div>
@@ -182,14 +182,13 @@
                                :add-player="addPlayer"
                                :add-reserve="addReserve"
                                :remove-reserve="removeReserve"
-                               :update-squad="updateSquad"
                                :move-squad-order-down="moveSquadOrderDown"
                                :move-squad-order-up="moveSquadOrderUp"
                                :player-move="playerMove"
                                :playing-to-high="playingToHighList"
                                :playing-to-high-in-squad="playingToHighSquadList"
                                :squads="teamRound.squads"
-                               :scenario-id="selectedScenarioId"
+                               :scenario-id="session.scenarioId"
                                :team-round-id="teamRoundId"
                                :clubhouse-id="clubhouseId"
                                :season-id="teamRound?.season?.id"
@@ -198,7 +197,7 @@
                                :too-young-players="tooYoungPlayers"
                                :season-start-year="teamRound.seasonStartYear"
                                :version="new Date(version)"
-                               :loading="saving"
+                               :loading="session.saving"
                     />
                     <hr>
                     <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :season-id="teamRound?.season?.id"
@@ -212,6 +211,7 @@
 
 <script>
 import gql from "graphql-tag"
+import {computed} from "vue"
 import {
     containsMen,
     containsWomen, extractErrorMessages,
@@ -240,7 +240,8 @@ import PlayersListSearch from "./PlayersListSearch.vue";
 import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
-import {emit as emitAppEvent} from '@/store/events'
+import {createLineupSession} from "./lineup-session.js";
+import {createApolloLineupGateway} from "./lineup-gateway-apollo.js";
 import TeamRoundSettingsModal from "./TeamRoundSettingsModal.vue";
 import ValidateTeams from "./ValidateTeams.vue";
 import TitleBar from "../../components/TitleBar.vue";
@@ -248,6 +249,27 @@ import HeroBar from "../../components/HeroBar.vue";
 import clubhouse from "../../../queries/clubhouse.gql";
 import AddMemberModal from "@/views/team-fight/AddMemberModal.vue";
 import ExportCsvModal from "./ExportCsvModal.vue";
+
+// The toast for each failed LineupSession operation; the server's messages are added after it.
+const LINEUP_EDIT_MESSAGES = {
+    addPlayer: 'Kunne ikke tilføje spiller til holdet :(',
+    removePlayer: 'Kunne ikke fjerne spilleren fra holdet :(',
+    move: 'Kunne ikke flytte spilleren :(',
+    addReserve: 'Kunne ikke tilføje reserven.',
+    removeReserve: 'Kunne ikke fjerne reserven :(',
+    createSquad: 'Kunne ikke tilføje holdet til holdopstillingen :(',
+    updateSquad: 'Fejl :( Kunne ikke opdater holdet',
+    moveSquadUp: 'Kunne ikke ændre sortering',
+    moveSquadDown: 'Kunne ikke ændre sortering',
+    deleteSquad: 'Kunne ikke slette holdet :(',
+    createScenario: 'Kunne ikke oprette scenariet.',
+    promoteScenario: 'Kunne ikke gøre scenariet officielt.',
+    renameScenario: 'Kunne ikke omdøbe scenariet.',
+    deleteScenario: 'Kunne ikke slette scenariet.'
+}
+
+// The session's onError has already shown the failure.
+const shownByOnError = () => {}
 
 export default {
     name: "TeamFight",
@@ -269,6 +291,11 @@ export default {
     inject: {
         clubhouseId: {
             default: 0
+        }
+    },
+    provide() {
+        return {
+            lineupSession: computed(() => this.session)
         }
     },
     computed: {
@@ -343,8 +370,8 @@ export default {
         },
         currentScenario() {
             const list = this.availableScenarios;
-            if (this.selectedScenarioId !== null && this.selectedScenarioId !== undefined) {
-                const found = list.find(s => String(s.id) === String(this.selectedScenarioId));
+            if (this.session.scenarioId !== null && this.session.scenarioId !== undefined) {
+                const found = list.find(s => String(s.id) === String(this.session.scenarioId));
                 if (found) {
                     return found;
                 }
@@ -378,9 +405,9 @@ export default {
             finalRoundValidation: createValidationState(),
             teamCount: 1,
             players: [],
-            saving: false,
+            // Created here, so the teamRound query below starts with its key.
+            session: this.createSession(),
             updating: false,
-            selectedScenarioId: null,
             gameDate: new Date(),
             version: null,
             round: null,
@@ -397,6 +424,11 @@ export default {
             errorValidatingLevel: false
         }
     },
+    watch: {
+        teamRoundId() {
+            this.session = this.createSession()
+        }
+    },
     apollo: {
         clubhouse: {
             query: clubhouse,
@@ -410,8 +442,8 @@ export default {
             query: TeamRoundQuery,
             variables() {
                 return {
-                    id: this.teamRoundId,
-                    scenarioId: this.selectedScenarioId
+                    id: this.session.teamRoundId,
+                    scenarioId: this.session.scenarioId
                 }
             },
             result({data, loading}) {
@@ -508,19 +540,24 @@ export default {
                 onConfirm: (name) => this.createScenario(name)
             })
         },
-        selectScenario(scenario) {
-            this.selectedScenarioId = scenario ? scenario.id : null;
+        createSession() {
+            return createLineupSession({
+                gateway: createApolloLineupGateway(this.$apollo.getClient()),
+                teamRoundId: this.teamRoundId,
+                onError: error => this.showLineupEditError(error)
+            })
         },
-        teamRoundRefetchQueries() {
-            return [
-                {
-                    query: TeamRoundQuery,
-                    variables: {
-                        id: this.teamRoundId,
-                        scenarioId: this.selectedScenarioId
-                    }
-                }
-            ];
+        showLineupEditError(error) {
+            const details = extractErrorMessages(error.cause?.graphQLErrors)
+            this.$buefy.snackbar.open({
+                duration: 5000,
+                type: 'is-danger',
+                queue: false,
+                message: [LINEUP_EDIT_MESSAGES[error.operation], ...details].join(' ')
+            })
+        },
+        selectScenario(scenario) {
+            this.session.switchScenario(scenario ? scenario.id : null);
         },
         async createScenario(name) {
             if (!name || !name.trim()) {
@@ -528,34 +565,13 @@ export default {
             }
             this.updating = true;
             try {
-                const sourceScenarioId = this.currentScenario?.id ? String(this.currentScenario.id) : null;
-                const response = await this.$apollo.mutate({
-                    mutation: gql`
-                        mutation CreateScenario($teamRoundId: ID!, $name: String!, $sourceScenarioId: ID) {
-                            createScenario(teamRoundId: $teamRoundId, name: $name, sourceScenarioId: $sourceScenarioId) {
-                                id
-                                name
-                                isOfficial
-                            }
-                        }
-                    `,
-                    variables: {
-                        teamRoundId: this.teamRoundId,
-                        name: name.trim(),
-                        sourceScenarioId: sourceScenarioId
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries()
-                });
-                this.selectedScenarioId = response.data.createScenario.id;
+                const scenario = await this.session.createScenario(name.trim());
                 this.$buefy.toast.open({
-                    message: `Scenariet "${response.data.createScenario.name}" blev oprettet.`,
+                    message: `Scenariet "${scenario.name}" blev oprettet.`,
                     type: 'is-success'
                 });
             } catch (e) {
-                this.$buefy.toast.open({
-                    message: 'Kunne ikke oprette scenariet: ' + (e.message || e),
-                    type: 'is-danger'
-                });
+                shownByOnError(e);
             } finally {
                 this.updating = false;
             }
@@ -580,41 +596,16 @@ export default {
             if (!this.currentScenario || !this.currentScenario.id) {
                 return;
             }
+            const name = this.currentScenario.name;
             this.updating = true;
             try {
-                const response = await this.$apollo.mutate({
-                    mutation: gql`
-                        mutation PromoteScenario($scenarioId: ID!) {
-                            promoteScenario(scenarioId: $scenarioId) {
-                                id
-                                name
-                                officialScenario {
-                                    id
-                                    name
-                                    isOfficial
-                                }
-                                scenarios {
-                                    id
-                                    name
-                                    isOfficial
-                                }
-                            }
-                        }
-                    `,
-                    variables: {
-                        scenarioId: String(this.currentScenario.id)
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries()
-                });
+                await this.session.promoteScenario();
                 this.$buefy.toast.open({
-                    message: `"${this.currentScenario.name}" er nu den officielle holdopstilling.`,
+                    message: `"${name}" er nu den officielle holdopstilling.`,
                     type: 'is-success'
                 });
             } catch (e) {
-                this.$buefy.toast.open({
-                    message: 'Kunne ikke gøre scenariet officielt: ' + (e.message || e),
-                    type: 'is-danger'
-                });
+                shownByOnError(e);
             } finally {
                 this.updating = false;
             }
@@ -634,40 +625,23 @@ export default {
                 trapFocus: true,
                 confirmText: 'Omdøb',
                 cancelText: 'Annuller',
-                onConfirm: (name) => this.renameScenario(scenario, name)
+                onConfirm: (name) => this.renameScenario(name)
             });
         },
-        async renameScenario(scenario, name) {
-            if (!scenario || !scenario.id || !name || !name.trim()) {
+        // Renames the open Scenario.
+        async renameScenario(name) {
+            if (!name || !name.trim()) {
                 return;
             }
             this.updating = true;
             try {
-                const response = await this.$apollo.mutate({
-                    mutation: gql`
-                        mutation RenameScenario($scenarioId: ID!, $name: String!) {
-                            renameScenario(scenarioId: $scenarioId, name: $name) {
-                                id
-                                name
-                                isOfficial
-                            }
-                        }
-                    `,
-                    variables: {
-                        scenarioId: String(scenario.id),
-                        name: name.trim()
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries()
-                });
+                await this.session.renameScenario(name.trim());
                 this.$buefy.toast.open({
-                    message: `Scenariet blev omdøbt til "${response.data.renameScenario.name}".`,
+                    message: `Scenariet blev omdøbt til "${name.trim()}".`,
                     type: 'is-success'
                 });
             } catch (e) {
-                this.$buefy.toast.open({
-                    message: 'Kunne ikke omdøbe scenariet: ' + (e.message || e),
-                    type: 'is-danger'
-                });
+                shownByOnError(e);
             } finally {
                 this.updating = false;
             }
@@ -688,35 +662,20 @@ export default {
                 onConfirm: () => this.deleteScenario(scenario)
             });
         },
+        // Deletes the open Scenario, which is the one passed in.
         async deleteScenario(scenario) {
             if (!scenario || !scenario.id) {
                 return;
             }
             this.updating = true;
             try {
-                if (String(this.selectedScenarioId) === String(scenario.id)) {
-                    this.selectedScenarioId = null;
-                }
-                await this.$apollo.mutate({
-                    mutation: gql`
-                        mutation DeleteScenario($scenarioId: ID!) {
-                            deleteScenario(scenarioId: $scenarioId)
-                        }
-                    `,
-                    variables: {
-                        scenarioId: String(scenario.id)
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries()
-                });
+                await this.session.deleteScenario();
                 this.$buefy.toast.open({
                     message: `Udkastet "${scenario.name}" blev slettet.`,
                     type: 'is-success'
                 });
             } catch (e) {
-                this.$buefy.toast.open({
-                    message: 'Kunne ikke slette scenariet: ' + (e.message || e),
-                    type: 'is-danger'
-                });
+                shownByOnError(e);
             } finally {
                 this.updating = false;
             }
@@ -733,29 +692,11 @@ export default {
             if (value) this.refreshTeam()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
-            this.deletePlayerFromCategory(sourceSquad, sourceCategory, player).then(() => {
-                this.addPlayerToCategory(targetSquad, targetCategory, player)
-            })
+            return this.session.move(player, this.seat(targetSquad, targetCategory)).catch(shownByOnError)
         },
-        updateSquad(squad) {
-            this.$apollo.mutate({
-                mutation: gql`
-                    mutation updateSquad($input: UpdateSquadInput!){
-                        updateSquad(input: $input){
-                            id
-                            playerLimit
-                            order
-                        }
-                    }
-                `,
-                variables: {
-                    input: {
-                        id: squad.id,
-                        playerLimit: squad.playerLimit,
-                        order: squad.order
-                    }
-                }
-            })
+        // Where a player is added: the Category, on the Squad's Ranking List or else the TeamRound's.
+        seat(squad, category) {
+            return {categoryId: category.id, version: squad.version ? squad.version : this.version}
         },
         exportToCSV(includeCategories = true) {
             this.$apollo.query({
@@ -796,95 +737,16 @@ export default {
             }
         },
         addPlayer(squad, category, player) {
-            this.addPlayerToCategory(squad, category, player)
-                .then(({data}) => {
+            return this.session.addPlayer({...this.seat(squad, category), refId: player.refId})
+                .then((member) => {
                     setTimeout(() => {
-                        this.focusNext(data.addSquadMemberByRefId)
+                        this.focusNext(member)
                     }, 100);
                 })
-        },
-        addPlayerToCategory(squad, category, player) {
-            this.saving = true
-            return this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation addSquadMemberByRefId($input: AddSquadMemberByRefIdInput!){
-                            addSquadMemberByRefId(input: $input){
-                                id
-                                refId
-                                name
-                                gender
-                                points {
-                                    id
-                                    category
-                                    points
-                                    position
-                                    vintage
-                                    version
-                                }
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: {
-                            categoryId: parseInt(category.id),
-                            refId: player.refId,
-                            version: squad.version
-                                ? squad.version
-                                : this.version
-                        }
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries(),
-                    awaitRefetchQueries: true
-                })
-                .then((data) => {
-                    emitAppEvent('player-added-to-category', data.data.addSquadMemberByRefId)
-                    return data
-                })
-                .catch(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            message: `Kunne ikke tilføje spiller til holdet :(`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+                .catch(shownByOnError)
         },
         deletePlayerFromCategory(squad, category, player) {
-            this.saving = true
-            return this.$apollo
-                .mutate({
-                    mutation: gql`
-                        mutation deleteSquadMember($id: ID!){
-                            deleteSquadMember(id: $id){
-                                id
-                            }
-                        }
-                    `,
-                    variables: {
-                        id: player.id
-                    },
-                    refetchQueries: this.teamRoundRefetchQueries(),
-                    awaitRefetchQueries: true
-                })
-                .then(({data}) => {
-                    emitAppEvent('player-deleted-from-category', data.deleteSquadMember)
-                })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Kunne ikke fjerne spilleren fra holdet :(`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+            return this.session.removePlayer(player).catch(shownByOnError)
         },
         validateSquads() {
             this.errorValidatingCategory = false;
@@ -951,7 +813,7 @@ export default {
                     // The server reads the lineup itself, with the points on the TeamRound's ranking (§38 stk. 4).
                     variables: {
                         teamRoundId: this.teamRoundId,
-                        scenarioId: this.selectedScenarioId
+                        scenarioId: this.session.scenarioId
                     }
                 })
                 .then(({data}) => {
@@ -1024,65 +886,10 @@ export default {
                 })
         },
         addReserve({squad, reserveRefId, replacedRefId}) {
-            this.saving = true
-            return this.$apollo.mutate({
-                mutation: gql`
-                    mutation addSquadReserve($squadId: ID!, $scenarioId: ID, $reserveRefId: String!, $replacedRefId: String!){
-                        addSquadReserve(squadId: $squadId, scenarioId: $scenarioId, reserveRefId: $reserveRefId, replacedRefId: $replacedRefId){
-                            id
-                        }
-                    }
-                `,
-                variables: {
-                    squadId: squad.id,
-                    scenarioId: this.selectedScenarioId,
-                    reserveRefId,
-                    replacedRefId
-                },
-                refetchQueries: this.teamRoundRefetchQueries(),
-                awaitRefetchQueries: true
-            })
-                .catch(({graphQLErrors}) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 5000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: 'Kunne ikke tilføje reserven. ' + extractErrorMessages(graphQLErrors).join(', ')
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+            return this.session.addReserve({squadId: squad.id, reserveRefId, replacedRefId}).catch(shownByOnError)
         },
         removeReserve(record) {
-            this.saving = true
-            return this.$apollo.mutate({
-                mutation: gql`
-                    mutation deleteSquadReserve($id: ID!){
-                        deleteSquadReserve(id: $id){
-                            id
-                        }
-                    }
-                `,
-                variables: {
-                    id: record.id
-                },
-                refetchQueries: this.teamRoundRefetchQueries(),
-                awaitRefetchQueries: true
-            })
-                .catch(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Kunne ikke fjerne reserven :(`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+            return this.session.removeReserve(record).catch(shownByOnError)
         },
         validatePaperSquads() {
             if (!this.hasPaperSquad) {
@@ -1161,7 +968,7 @@ export default {
                     mutation: ValidateFinalRoundEligibilityMutation,
                     variables: {
                         teamRoundId: this.teamRoundId,
-                        scenarioId: this.selectedScenarioId
+                        scenarioId: this.session.scenarioId
                     }
                 })
                 return data?.validateFinalRoundEligibility
@@ -1171,22 +978,7 @@ export default {
             this.$buefy.dialog.confirm(
                 {
                     message: 'Sikker på du vil slette hold ' + (this.teamRound.squads.indexOf(targetSquad) + 1) + '?',
-                    onConfirm: () => {
-                        this.$apollo.mutate(
-                            {
-                                mutation: gql`
-                                    mutation deleteSquad($id: ID!){
-                                        deleteSquad(id: $id){
-                                            id
-                                        }
-                                    }
-                                `,
-                                variables: {
-                                    id: targetSquad.id
-                                },
-                                refetchQueries: this.teamRoundRefetchQueries()
-                            })
-                    }
+                    onConfirm: () => this.session.deleteSquad(targetSquad).catch(shownByOnError)
                 })
         },
         addedPlayerNotification(squadIndex, category) {
@@ -1198,60 +990,41 @@ export default {
                     message: 'Tilføjet til Hold ' + (squadIndex + 1) + ' i ' + category
                 })
         },
-        addPlayerToNextCategory(player) {
-            let foundPlace = false;
-            let addPlayerPromise;
-            outside:
-                for (const [index, squad] of this.teamRound.squads.entries()) {
-                    for (const category of squad.categories) {
-                        if (isWomenDouble(category) && category.players.length < 2 && player.gender === 'WOMEN') {
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                this.addedPlayerNotification(index, category.name)
-                            })
-                            foundPlace = true;
-                            break outside;
-                        } else if (isMensDouble(category) && category.players.length < 2 && player.gender === 'MEN') {
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                this.addedPlayerNotification(index, category.name)
-                            })
-                            foundPlace = true;
-                            break outside;
-                        } else if (isMixDouble(category) && category.players.length < 2) {
-                            if (category.players.length === 0) {
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                    this.addedPlayerNotification(index, category.name)
-                                })
-                                foundPlace = true;
-                                break outside;
-                            } else if (containsWomen(category) && player.gender === 'MEN') {
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                    this.addedPlayerNotification(index, category.name)
-                                })
-                                foundPlace = true;
-                                break outside;
-                            } else if (containsMen(category) && player.gender === 'WOMEN') {
-                                addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                    this.addedPlayerNotification(index, category.name)
-                                })
-                                foundPlace = true;
-                                break outside;
-                            }
-                        } else if (isMensSingle(category) && category.players.length < 1 && player.gender === 'MEN') {
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                this.addedPlayerNotification(index, category.name)
-                            })
-                            foundPlace = true;
-                            break outside;
-                        } else if (isWomensSingle(category) && category.players.length < 1 && player.gender === 'WOMEN') {
-                            addPlayerPromise = this.addPlayerToCategory(squad, category, player).finally(() => {
-                                this.addedPlayerNotification(index, category.name)
-                            })
-                            foundPlace = true;
-                            break outside;
-                        }
+        // The first Category, Squad by Squad, with a free seat for the player's gender.
+        findFreeSeat(player) {
+            for (const [index, squad] of this.teamRound.squads.entries()) {
+                for (const category of squad.categories) {
+                    if (this.hasFreeSeat(category, player)) {
+                        return {index, squad, category}
                     }
                 }
-            if (foundPlace === false) {
+            }
+            return null
+        },
+        hasFreeSeat(category, player) {
+            const seats = category.players.length
+            if (isWomenDouble(category)) {
+                return seats < 2 && player.gender === 'WOMEN'
+            }
+            if (isMensDouble(category)) {
+                return seats < 2 && player.gender === 'MEN'
+            }
+            if (isMixDouble(category)) {
+                return seats === 0
+                    || (seats === 1 && containsWomen(category) && player.gender === 'MEN')
+                    || (seats === 1 && containsMen(category) && player.gender === 'WOMEN')
+            }
+            if (isMensSingle(category)) {
+                return seats < 1 && player.gender === 'MEN'
+            }
+            if (isWomensSingle(category)) {
+                return seats < 1 && player.gender === 'WOMEN'
+            }
+            return false
+        },
+        addPlayerToNextCategory(player) {
+            const seat = this.findFreeSeat(player)
+            if (seat === null) {
                 this.$buefy.snackbar.open(
                     {
                         duration: 3000,
@@ -1259,67 +1032,18 @@ export default {
                         queue: false,
                         message: `Kunne ikke finde en ledig plads på nogle hold`
                     })
-            } else {
-                return addPlayerPromise
+                return Promise.resolve()
             }
+            const {index, squad, category} = seat
+            return this.session.addPlayer({...this.seat(squad, category), refId: player.refId})
+                .then(() => this.addedPlayerNotification(index, category.name))
+                .catch(shownByOnError)
         },
         moveSquadOrderUp(squad) {
-            this.saving = true
-            this.$apollo.mutate({
-                mutation: gql`
-                    mutation moveSquadOrderUp($input: ID!){
-                        moveSquadOrderUp(id: $input){
-                            id
-                            order
-                        }
-                    }
-                `,
-                variables: {
-                    input: squad.id
-                },
-                refetchQueries: this.teamRoundRefetchQueries()
-            })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Kunne ikke ændre sortering`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+            return this.session.moveSquadUp(squad).catch(shownByOnError)
         },
         moveSquadOrderDown(squad) {
-            this.saving = true
-            this.$apollo.mutate({
-                mutation: gql`
-                    mutation moveSquadOrderDown($input: ID!){
-                        moveSquadOrderDown(id: $input){
-                            id
-                            order
-                        }
-                    }
-                `,
-                variables: {
-                    input: squad.id
-                },
-                refetchQueries: this.teamRoundRefetchQueries()
-            })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Kunne ikke ændre sortering`
-                        })
-                })
-                .finally(() => {
-                    this.saving = false
-                })
+            return this.session.moveSquadDown(squad).catch(shownByOnError)
         },
     }
 }
