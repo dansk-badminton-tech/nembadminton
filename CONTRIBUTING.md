@@ -66,6 +66,10 @@ A User reads and changes only their own Clubhouse's data. No global scope enforc
 
 The super-admin bypass (`Gate::before`) is outside these rules.
 
+## User interface
+
+Frontend changes follow [UI_GUIDELINES.md](UI_GUIDELINES.md). Review checks changes to pages, components and user-facing text against it.
+
 ## Testing
 
 Run PHP tests (excluding tests that use remote services):

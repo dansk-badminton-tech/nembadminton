@@ -18,6 +18,9 @@ A website for holding turnerings rules in badminton. https://badminton.dk/holdtu
   - Can be associated with a clubhouse for access control
   - Used for authentication and authorization
 
+### User interface
+When you change pages, components or user-facing text, follow `UI_GUIDELINES.md`.
+
 ### Clubhouse isolation
 When you change GraphQL schema, policies, models or resolvers, follow **Clubhouse isolation** in `CONTRIBUTING.md`: a User reads and changes only their own Clubhouse's data.
 
@@ -63,6 +66,7 @@ Browser tests are slow, so they skip draft PRs. They run when a PR is ready for 
 
 - Agents: open PRs as drafts, and mark the PR ready once its code and UI changes are done (`gh pr ready <number>`); that starts the browser tests. Don't use `gh workflow run`.
 - A newer push cancels the older in-progress run. A passing run is not required to merge.
+- The suite runs in 4 parallel jobs; `bin/dusk-shard` spreads the test classes over them using `tests/Browser/timings.json`. New test classes need no change there.
 - To rerun without pushing, convert the PR to draft and mark it ready again (`gh pr ready --undo <number>`, then `gh pr ready <number>`), or use Actions > "Browser testing" > "Run workflow".
 
 ## Agent skills

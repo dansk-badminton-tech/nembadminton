@@ -28,5 +28,8 @@ Route::view('/privacy-policy', 'privacy');
 // Help sitemap for search engines (ADR 0004). Must be declared before the SPA catch-all.
 Route::get('/sitemap.xml', [HelpSitemapController::class, 'index'])->name('sitemap');
 
-Route::get('/{any}', 'Spa2Controller@index')->where('any', '.*');
+// Standalone public experiment; keep before the SPA catch-all.
+Route::view('/eksperimenter/holdturnering', 'experiments.holdturnering')
+    ->name('experiments.holdturnering');
 
+Route::get('/{any}', 'Spa2Controller@index')->where('any', '.*');

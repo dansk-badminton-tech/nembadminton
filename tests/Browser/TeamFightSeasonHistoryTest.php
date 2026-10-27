@@ -15,8 +15,9 @@ use Tests\DuskTestCase;
  * The Season History modal on the seeded "Ungdom" holdrunder (see YouthTeamRoundSeeder), which follow
  * Aske Groth Jensen from Hold 2 · 1. HS in round 1 to Hold 1 · 3. HS in round 3.
  *
- * Rounds are indexed oldest first, with the seeded Season's rounds 1-3 (RealisticSeasonSeeder) in between:
- * 0 = "Ungdom - 1. runde", 1 = round 1, 2 = "Ungdom - 2. runde", 3 = round 2, 4 = round 3, 5 = the viewed round.
+ * Rounds are indexed by round number, with the seeded Season's rounds 1-2 (RealisticSeasonSeeder) in between;
+ * its round 3 is the viewed round's own round, so it isn't earlier:
+ * 0 = "Ungdom - 1. runde", 1 = round 1, 2 = "Ungdom - 2. runde", 3 = round 2, 4 = the viewed round.
  */
 class TeamFightSeasonHistoryTest extends DuskTestCase
 {
@@ -56,15 +57,15 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
 
             // Newest first, with the place in HS and every placement with its partner.
             $this->assertSame(
-                ['season-history-row-5', 'season-history-row-4', 'season-history-row-3', 'season-history-row-2', 'season-history-row-1', 'season-history-row-0'],
+                ['season-history-row-4', 'season-history-row-3', 'season-history-row-2', 'season-history-row-1', 'season-history-row-0'],
                 $browser->script("return Array.from(document.querySelectorAll(\"[dusk='season-history-table'] tbody tr\")).map(tr => tr.getAttribute('dusk'))")[0],
             );
             $browser->assertSeasonHistoryRow(0, 'Ungdom - 1. runde')
                 ->assertSeasonHistoryRow(0, 'nr. 5 · Hold 2 · 1. HS')
                 ->assertSeasonHistoryRow(0, 'HD nr. 5 · Hold 2 · 2. HD m. Magnus Venge-Jep')
                 ->assertSeasonHistoryRow(2, 'nr. 4 · Hold 1 · 4. HS')
-                ->assertSeasonHistoryRow(5, 'nr. 3 · Hold 1 · 3. HS')
-                ->assertSeasonHistoryRow(5, 'HD nr. 2 · Hold 1 · 2. HD m. Jesper Lauge Andersen');
+                ->assertSeasonHistoryRow(4, 'nr. 3 · Hold 1 · 3. HS')
+                ->assertSeasonHistoryRow(4, 'HD nr. 2 · Hold 1 · 2. HD m. Jesper Lauge Andersen');
 
             // The chart has the player and the players around them, labelled by place.
             $browser->assertSeeIn('@season-history-chart', 'Hold 2 · 1. HS')
@@ -81,6 +82,21 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
                     .".some(label => [...label.querySelectorAll('tspan')].map(name => name.textContent.trim()).join(' ') === 'Aske Groth Jensen / Jesper Lauge Andersen')",
                     true
                 );
+        });
+    }
+
+    public function test_opening_history_preselects_the_category_of_the_clicked_row(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $this->openRound($browser, YouthTeamRoundSeeder::CONFLICT_ROUND, 'Aske Groth Jensen');
+
+            $browser->openSeasonHistory(0, '2. HD', 'Aske Groth Jensen')
+                ->assertPresent("[dusk='season-history-category-HD'] label.is-selected")
+                ->assertSeeIn('@season-history-explanation', 'herredouble');
+
+            $browser->click('@season-history-close')->waitUntilMissing('@season-history-modal');
+            $browser->openSeasonHistory(0, '3. HS', 'Aske Groth Jensen')
+                ->assertPresent("[dusk='season-history-category-HS'] label.is-selected");
         });
     }
 
@@ -149,5 +165,4 @@ class TeamFightSeasonHistoryTest extends DuskTestCase
                 ->assertSeeIn('@season-history-empty', 'Ingen tidligere holdrunder i sæsonen')
                 ->assertMissing('@season-history-chart');
         });
-    }
-}
+    }}

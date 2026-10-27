@@ -15,7 +15,7 @@ A Member whose ranking places them in the U15, U17 or U19 age group. Under §38 
 _Avoid_: Young player, junior
 
 **Season History** (sæsonhistorik):
-Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
+Where a Member was placed (Team, tier, category and position) in the Official Lineups of a Clubhouse's earlier TeamRounds in the same Season. Earlier means a lower round number, not an earlier date (§45): a moved match keeps its round, and TeamRounds in the same round are not earlier than each other. A TeamRound without a round number has no earlier TeamRounds and is left out of the others' history. It shows lineups, not matches actually played. It helps the coach place a Member, especially a Youth Player, who is placed by current strength.
 _Avoid_: Placement history, match history
 
 **Category Rank** (kategoriplads):
@@ -39,8 +39,12 @@ The organisation a User works in, linked to one or more badminton clubs. Team ro
 _Avoid_: Tenant, organisation, club (a club is the badmintonplayer.dk club)
 
 **TeamRound**:
-A specific match round (holdrunde) across a club's teams on a given date.
+One round (holdrunde) across a club's Teams, identified by its round number (§45). Its Squads can be played on different dates, because Badmintonligaen has its own schedule and a holdkamp can be moved; each Squad keeps the date its match is played. Its Ranking List decides which Squad a Member may stand on.
 _Avoid_: Match, fight, team fight
+
+**Ranking List** (rangliste):
+A monthly publication of the Members' points on badmintonplayer.dk, identified by its date. A TeamRound has one Ranking List, and it decides which Squad each Member may stand on (§38 stk. 4), for every Squad of the TeamRound. A Squad can have its own Ranking List; it only decides the order of the Members on that Squad (§38 stk. 2–3) and the points shown there. When the club's Squads in a round play on both sides of the 9th/10th of a month, the earliest of their Ranking Lists is the TeamRound's (§38 stk. 1b): the coach enters the date of the club's first match in the round as the TeamRound's playing date, and the Ranking List is suggested from it. Nembadminton does not work it out from the Squads' dates.
+_Avoid_: Ranking version (the code name), rangliste-version
 
 **Team** (hold):
 A club's team entered in one season's tournament (e.g. "Højbjerg 1, 2. division, pulje 3"). It lasts the whole season and has a tier (række) and a group (pulje).

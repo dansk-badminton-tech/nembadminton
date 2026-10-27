@@ -445,7 +445,7 @@ export default {
                     </b-input>
                 </b-field>
                 <hr/>
-                <b-field dusk="edit-squad-ranking-field" label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis der indenfor samme spillerunde skal anvendes forskellige ranglister">
+                <b-field dusk="edit-squad-ranking-field" label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis holdet spiller efter den 10. og resten af klubbens hold før. Den gælder kun opstillingen (rækkefølgen) på holdet. Hvilke spillere der må stå på holdet, afgøres altid af holdrundens rangliste.">
                     <RankingVersionSelect @change="toggleRankingWarning" placeholder="Ingen rangliste valgt (bruger ranglisten fra holdrunden)" v-model="version" expanded></RankingVersionSelect>
                     <p class="control">
                         <b-button type="is-link" @click="version = null; toggleRankingWarning()">Nulstil</b-button>

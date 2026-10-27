@@ -3,6 +3,8 @@ extend type Mutation {
     validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
+    "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare. A TeamRound without a Ranking List compares the Squads' stored points."
+    validateTeamRoundCrossSquads(teamRoundId: ID!, scenarioId: ID) : [PlayingToHigh!]! @guard @canFind(ability: "view", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTeamRoundCrossSquads")
     "Validates categories for right streng order (category-ranking)"
     validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
     "Validates all spots is forfilled"

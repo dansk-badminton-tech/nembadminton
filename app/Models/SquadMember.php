@@ -28,6 +28,9 @@ class SquadMember extends Model
 
     protected $fillable = ['member_ref_id', 'squad_category_id', 'name', 'gender'];
 
+    /**
+     * @return HasMany<SquadPoint, $this>
+     */
     public function points(): HasMany
     {
         return $this->hasMany(SquadPoint::class, 'squad_member_id');

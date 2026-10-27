@@ -15,6 +15,7 @@ use App\Models\User;
 use Database\Seeders\RealisticSeasonSeeder;
 use Database\Seeders\TestingDataSeeder;
 use FlyCompany\TeamFight\GraphQL\Queries\ReserveQuarantineResolver;
+use FlyCompany\TeamFight\SquadManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
@@ -73,6 +74,7 @@ class RealisticSeasonSeedTest extends TestCase
             $this->assertNotContains(false, $this->spotsFulfilled($input), $label);
             $this->assertSame([], $this->mutate('validateSquads', $input, 'name category belowPlayer { name }'), $label);
             $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name belowPlayer { name category }'), $label);
+            $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'name belowPlayer { name category }'), $label);
             $this->assertSame([], $this->mutate('validateReserves', $input, 'type categoryName reserve { name } replaced { name }'), $label);
             $this->assertSame([], $this->graphQL(
                 'mutation ($input: [ValidateTeam!]!) { validateTooYoungPlayers(input: $input, seasonStartYear: 2025) { name } }',
@@ -108,6 +110,45 @@ class RealisticSeasonSeedTest extends TestCase
         $this->assertCount(2, $errors);
         $this->assertSame(['HD', 'HD'], array_column($errors, 'category'));
         $this->assertSame($errors[0]['belowPlayer'], $errors[1]['belowPlayer']);
+
+        // The editor checks the draft's lineup across Squads on the server, with the same result as from the client.
+        $fields = 'name belowPlayer { name category balance }';
+        $this->assertSame(
+            $this->mutate('validateCrossSquads', $this->validationInput($round, $scenario->id), $fields),
+            $this->teamRoundCrossSquads($round, $scenario->id, $fields)
+        );
+    }
+
+    public function test_a_stronger_player_moved_to_a_lower_squad_is_found_by_the_editors_check(): void
+    {
+        $round = $this->seasonRounds()->firstWhere('round', 1);
+        [$hold1, $hold2] = $round->squads->take(2)->map(fn (Squad $squad) => $squad->categories()
+            ->whereNull('team_round_scenario_id')
+            ->where('category', 'HS')
+            ->orderBy('id')
+            ->firstOrFail()
+            ->players()
+            ->firstOrFail())->all();
+        // Swap the first men's single of Hold 1 and Hold 2: the stronger player now stands on Hold 2.
+        [$hold1->squad_category_id, $hold2->squad_category_id] = [$hold2->squad_category_id, $hold1->squad_category_id];
+        $hold1->save();
+        $hold2->save();
+
+        $fields = 'name belowPlayer { name category balance }';
+        $findings = $this->teamRoundCrossSquads($round, null, $fields);
+
+        $this->assertContains($hold1->name, array_column($findings, 'name'));
+        $this->assertSame($this->mutate('validateCrossSquads', $this->validationInput($round, null), $fields), $findings);
+
+        // Hold 2 gets its own Ranking List, a later one. It only sets the order on Hold 2, so who may play where still
+        // follows the TeamRound's (§38 stk. 4) and the findings stay the same.
+        $ownRanking = $this->seasonRounds()->pluck('version')->first(fn ($version) => $version !== $round->version);
+        app(SquadManager::class)->updatePoints($round->squads[1]->id, $ownRanking);
+        $this->assertSame([$ownRanking], $hold1->points()->pluck('version')->map(fn ($version) => substr((string) $version, 0, 10))->unique()->values()->all());
+
+        $this->assertSame($findings, $this->teamRoundCrossSquads($round, null, $fields));
+        // Hold 2's own points give other balances, so the check above didn't compare them.
+        $this->assertNotSame($findings, $this->mutate('validateCrossSquads', $this->validationInput($round, null), $fields));
     }
 
     public function test_the_round_3_reserve_is_in_reserve_quarantine_in_round_4(): void
