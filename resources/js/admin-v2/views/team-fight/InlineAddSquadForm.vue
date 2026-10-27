@@ -103,7 +103,8 @@
                         open-on-focus
                         dusk="squad-tier-input"
                         @update:modelValue="onTierInput"
-                        @select="onTierSelect">
+                        @select="onTierSelect"
+                        @blur="$emit('commit-tier', selectedTierName)">
                     </b-autocomplete>
                     <p class="help has-text-grey mb-0">
                         Navn og niveau er valgfrie.
@@ -355,6 +356,7 @@ export default {
         onTierSelect(option) {
             if (option && typeof option.label === 'string') {
                 this.$emit('select-tier', option.label);
+                this.$emit('commit-tier', option.label);
             }
         },
         isSelectedTeam(option) {

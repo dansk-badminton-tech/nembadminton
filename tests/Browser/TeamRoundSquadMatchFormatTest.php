@@ -72,7 +72,14 @@ class TeamRoundSquadMatchFormatTest extends DuskTestCase
             $browser->click('@match-count-option-13')
                 ->waitFor($this->selectedMatchCount(13))
                 ->startManualSquadEntry()
+                // Typing passes "1. division", but only the full Niveau counts once the field is left.
+                ->type("[dusk='squad-tier-input']", '1. division (oversidder-runde)')
+                ->click("[dusk='squad-name-input']")
+                ->pause(300)
+                ->assertPresent($this->selectedMatchCount(13))
+                ->assertMissing('@match-format-hint')
                 ->type("[dusk='squad-tier-input']", 'Badmintonligaen')
+                ->click("[dusk='squad-name-input']")
                 ->waitFor($this->selectedMatchCount(9))
                 ->assertSeeIn('@match-format-hint', 'Valgt ud fra niveau (Badmintonligaen)');
         });

@@ -24,6 +24,7 @@
             @select-match-count="onMatchCountChange"
             @select-name="onNameChange"
             @select-tier="onTierChange"
+            @commit-tier="onTierCommit"
             @select-team="onTeamChange"
             @toggle-paper-squad="selectedIsPaperSquad = $event"
             @start-manual-entry="onStartManualEntry"
@@ -106,6 +107,8 @@ export default {
             selectedMatchCount: 13,
             // The tier the Match Format was preselected from; null once the coach picks another.
             suggestedTier: null,
+            // The last "Uden hold" Niveau applied to the Match Format, so a repeated blur doesn't reapply it.
+            committedTierName: '',
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
@@ -328,13 +331,16 @@ export default {
             this.selectedName = typeof name === 'string' ? name : '';
         },
         onTierChange(tierName) {
-            const nextTierName = typeof tierName === 'string' ? tierName : '';
-            if (nextTierName === this.selectedTierName) {
+            // Typing only stores the text; the format follows once the Niveau is committed.
+            this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+        },
+        onTierCommit(tierName) {
+            const committedTierName = typeof tierName === 'string' ? tierName.trim() : '';
+            if (committedTierName === this.committedTierName) {
                 return;
             }
-            this.selectedTierName = nextTierName;
-            // Partial text never equals a tier name, so typing doesn't change the format.
-            this.applyTier(nextTierName);
+            this.committedTierName = committedTierName;
+            this.applyTier(committedTierName);
         },
         onTeamChange(team) {
             if (team === null || team === undefined) {
@@ -344,6 +350,7 @@ export default {
                 this.selectedName = '';
                 this.selectedTierName = '';
                 this.suggestedTier = null;
+                this.committedTierName = '';
                 return;
             }
             this.selectedTeamId = team.id;
@@ -448,6 +455,7 @@ export default {
                 this.selectedTeamId = null;
                 this.selectedIsPaperSquad = false;
                 this.suggestedTier = null;
+                this.committedTierName = '';
             }).catch(() => {
                 // The editor shows the failure through the session's onError; the form keeps its input.
             })
