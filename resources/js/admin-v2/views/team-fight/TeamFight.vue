@@ -177,11 +177,8 @@
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
                     <TeamTable :confirm-delete="deleteTeam"
-                               @squad-updated="refreshTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
-                               :add-reserve="addReserve"
-                               :remove-reserve="removeReserve"
                                :move-squad-order-down="moveSquadOrderDown"
                                :move-squad-order-up="moveSquadOrderUp"
                                :player-move="playerMove"
@@ -200,7 +197,7 @@
                                :loading="session.saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-round-id="teamRoundId" :team-round-date="gameDate" :season-id="teamRound?.season?.id"
+                    <AddTeamsButtons :team-round-date="gameDate" :season-id="teamRound?.season?.id"
                                      :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length"
                                      :used-team-ids="usedTeamIds"/>
                 </div>
@@ -884,12 +881,6 @@ export default {
                             message: `Noget gik galt under valideringen af holdet (validateReserves)`
                         })
                 })
-        },
-        addReserve({squad, reserveRefId, replacedRefId}) {
-            return this.session.addReserve({squadId: squad.id, reserveRefId, replacedRefId}).catch(shownByOnError)
-        },
-        removeReserve(record) {
-            return this.session.removeReserve(record).catch(shownByOnError)
         },
         validatePaperSquads() {
             if (!this.hasPaperSquad) {

@@ -11,6 +11,7 @@ import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graph
 export default {
     name: "EditSquadModal",
     components: {RankingVersionSelect, BadmintonPlayerTeamFightSelector},
+    inject: ['lineupSession'],
     props: {
         squad: Object,
         clubhouseId: {
@@ -129,162 +130,43 @@ export default {
             // Only a squad with a team can be a paper squad.
             this.isPaperSquad = false;
         },
-        updateToRankingList(newVersion) {
-            return this.$apollo
-                       .mutate(
-                           {
-                               mutation: gql`
-                                    mutation updatePointsSquad($id: ID!, $version: String){
-                                      updatePointsSquad(id: $id, version: $version){
-                                        id
-                                        playerLimit
-                                        order
-                                        name
-                                          tier
-                                          effectiveTier
-                                        playingCity
-                                        playingZipCode
-                                        playingAddress
-                                        playingPlace
-                                        playingDatetime
-                                        externalTeamFightID
-                                        version
-                                          team {
-                                              id
-                                              name
-                                              groupName
-                                              customTierName
-                                              tier{
-                                                  id
-                                                  tierName
-                                              }
-                                          }
-                                        categories{
-                                            id
-                                            category
-                                            name
-                                            players{
-                                                id
-                                                gender
-                                                name
-                                                refId
-                                                points{
-                                                    id
-                                                    category
-                                                    points
-                                                    position
-                                                    vintage
-                                                    corrected_manually
-                                                    version
-                                                }
-                                            }
-                                        }
-                                      }
-                                    }
-                                `,
-                               variables: {
-                                   id: this.squad.id,
-                                   version: newVersion
-                               }
-                           })
-                       .then(({data}) => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-success',
-                                   queue: false,
-                                   message: `Points er nu ` + (newVersion !== null
-                                                               ? timeToMonth(newVersion) + ' ranglisten'
-                                                               : 'ændret')
-                               })
-                       })
-                       .catch((error) => {
-                           this.$buefy.snackbar.open(
-                               {
-                                   duration: 4000,
-                                   type: 'is-danger',
-                                   message: `Kunne ikke opdater points :(`
-                               })
-                       })
-        },
-        updateSquad() {
+        async updateSquad() {
+            const changeRankingList = this.oldVersion !== this.version
             this.loading = true
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation updateSquad($input: UpdateSquadInput!){
-                            updateSquad(input: $input){
-                                id
-                                name
-                                tier
-                                effectiveTier
-                                isPaperSquad
-                                team {
-                                    id
-                                    name
-                                    groupName
-                                    customTierName
-                                    tier{
-                                        id
-                                        tierName
-                                    }
-                                }
-                                playingDatetime
-                                playingPlace,
-                                playingAddress
-                                playingZipCode
-                                playingCity
-                                externalTeamFightID
-                                version
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: {
-                            id: this.squad.id,
-                            name: this.name,
-                            tier: this.tier,
-                            teamId: this.team?.id ?? null,
-                            isPaperSquad: this.isPaperSquad,
-                            externalTeamFightID: this.externalTeamFightID,
-                            playingDatetime: this.playingDatetime
-                                             ? formatDateTime(this.playingDatetime)
-                                             : null,
-                            playingPlace: this.playingPlace,
-                            playingAddress: this.playingAddress,
-                            playingZipCode: this.playingZipCode,
-                            playingCity: this.playingCity,
-                            version: this.version
-                        }
-                    }
-                })
-                .then(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 5000,
-                            type: 'is-success',
-                            queue: false,
-                            message: `Hold opdateret`,
-                        })
-                    if (this.oldVersion !== this.version) {
-                        return this.updateToRankingList(this.version)
-                    }
-                })
-                .then(() => {
-                    this.$emit('saved')
-                    this.$emit('close')
-                })
-                .catch(() => {
-                    this.$buefy.snackbar.open({
-                                               duration: 5000,
-                                               message: `Fejl :( Kunne ikke opdater holdet`,
-                                               type: 'is-danger'
-                                           })
-
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+            try {
+                await this.lineupSession.updateSquad({
+                    id: this.squad.id,
+                    name: this.name,
+                    tier: this.tier,
+                    teamId: this.team?.id ?? null,
+                    isPaperSquad: this.isPaperSquad,
+                    externalTeamFightID: this.externalTeamFightID,
+                    playingDatetime: this.playingDatetime
+                                     ? formatDateTime(this.playingDatetime)
+                                     : null,
+                    playingPlace: this.playingPlace,
+                    playingAddress: this.playingAddress,
+                    playingZipCode: this.playingZipCode,
+                    playingCity: this.playingCity,
+                    version: this.version
+                }, {changeRankingList})
+                this.$buefy.snackbar.open(
+                    {
+                        duration: 5000,
+                        type: 'is-success',
+                        queue: false,
+                        message: changeRankingList
+                                 ? `Hold opdateret. Points er nu ` + (this.version !== null
+                                                                       ? timeToMonth(this.version) + ' ranglisten'
+                                                                       : 'ændret')
+                                 : `Hold opdateret`,
+                    })
+                this.$emit('close')
+            } catch {
+                // The editor shows the failure through the session's onError; the modal stays open.
+            } finally {
+                this.loading = false
+            }
         },
         fillInformation(teamFight, playerTeam) {
             this.externalTeamFightID = teamFight.matchId
