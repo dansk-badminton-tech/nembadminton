@@ -694,6 +694,9 @@ export default {
             }
             this.updating = true;
             try {
+                if (String(this.selectedScenarioId) === String(scenario.id)) {
+                    this.selectedScenarioId = null;
+                }
                 await this.$apollo.mutate({
                     mutation: gql`
                         mutation DeleteScenario($scenarioId: ID!) {
@@ -702,15 +705,8 @@ export default {
                     `,
                     variables: {
                         scenarioId: String(scenario.id)
-                    }
-                });
-                if (String(this.selectedScenarioId) === String(scenario.id)) {
-                    this.selectedScenarioId = null;
-                }
-                // Do not let a pre-deletion Scenario switch satisfy the refresh via query deduplication.
-                await this.$apollo.queries.teamRound.refetch({
-                    id: this.teamRoundId,
-                    scenarioId: this.selectedScenarioId
+                    },
+                    refetchQueries: this.teamRoundRefetchQueries()
                 });
                 this.$buefy.toast.open({
                     message: `Udkastet "${scenario.name}" blev slettet.`,

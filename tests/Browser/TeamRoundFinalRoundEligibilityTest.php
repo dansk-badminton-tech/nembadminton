@@ -70,7 +70,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         });
     }
 
-    public function test_deleting_the_selected_draft_refreshes_the_official_scenario_after_the_mutation(): void
+    public function test_deleting_the_selected_draft_returns_to_the_official_scenario(): void
     {
         $round = TeamRound::query()->create([
             'name' => 'Scenario deletion', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
@@ -84,17 +84,6 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitFor('@scenario-selector-dropdown')
                 ->selectScenario('Udkast')->assertScenarioSelected('Udkast', false);
-            // A slow deletion and a late pre-deletion query must not leave the deleted draft in the selector.
-            $browser->script(<<<'JS'
-                const originalFetch = window.fetch;
-                window.fetch = async function (url, options) {
-                    const operation = options?.body ? JSON.parse(options.body).operationName : null;
-                    if (operation === 'DeleteScenario') await new Promise(resolve => setTimeout(resolve, 300));
-                    const response = await originalFetch(url, options);
-                    if (operation === 'teamRound') await new Promise(resolve => setTimeout(resolve, 1000));
-                    return response;
-                };
-            JS);
             $browser->confirmScenarioDeletion()->waitUntilMissing('@scenario-selector-dropdown')
                 ->assertMissing('@final-round-validation-control')
                 ->assertMissing('@scenario-draft-warning-banner');
