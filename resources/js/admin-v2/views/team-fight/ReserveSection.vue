@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <b-button size="is-small" title="Fjern reserve" icon-right="close" :disabled="loading"
-                          dusk="reserve-remove" @click="$emit('remove', record)"/>
+                          dusk="reserve-remove" @click="remove(record)"/>
             </div>
         </div>
         <div v-if="!adding" class="pt-2">
@@ -94,7 +94,7 @@ import {replaceableMembers, reserveCandidates, reserveOrigin, reserveWarnings} f
 
 export default {
     name: 'ReserveSection',
-    inject: ['clubhouseId'],
+    inject: ['clubhouseId', 'lineupSession'],
     props: {
         squads: {type: Array, required: true},
         squadIndex: {type: Number, required: true},
@@ -102,7 +102,6 @@ export default {
         scenarioId: [String, Number],
         loading: Boolean
     },
-    emits: ['add', 'remove'],
     data() {
         return {
             reserveSearch: '',
@@ -166,13 +165,17 @@ export default {
         warnings(record) {
             return reserveWarnings(this.squads, this.squadIndex, record)
         },
+        // A failure is shown by the editor through the session's onError.
         add() {
-            this.$emit('add', {
-                squad: this.squad,
+            this.lineupSession.addReserve({
+                squadId: this.squad.id,
                 reserveRefId: this.reserveCandidate.player.refId,
                 replacedRefId: this.replaced.refId
-            })
+            }).catch(() => {})
             this.cancel()
+        },
+        remove(record) {
+            this.lineupSession.removeReserve(record).catch(() => {})
         },
         cancel() {
             this.reserveCandidate = this.replaced = null

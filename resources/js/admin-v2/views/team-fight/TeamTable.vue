@@ -242,8 +242,7 @@
                 </tbody>
             </table>
             <ReserveSection :squads="squads" :squad-index="index" :loading="loading"
-                            :team-round-id="teamRoundId" :scenario-id="scenarioId"
-                            @add="addReserve" @remove="removeReserve"/>
+                            :team-round-id="teamRoundId" :scenario-id="scenarioId"/>
         </div>
         <b-modal
             v-model="showPlayerModal"
@@ -254,6 +253,19 @@
         >
             <template #default="props">
                 <edit-player-modal :version="version" :player="modalPlayer" @close="props.close" />
+            </template>
+        </b-modal>
+        <!-- In the template, not opened with $buefy.modal.open, so EditSquadModal can inject the LineupSession. -->
+        <b-modal
+            v-model="showEditSquadModal"
+            :width="1500"
+            :can-cancel="['x']"
+            has-modal-card
+            trap-focus
+        >
+            <template #default="props">
+                <EditSquadModal :squad="editSquad" :clubhouse-id="clubhouseId" :season-id="seasonId"
+                                :used-team-ids="usedTeamIds" @close="props.close"/>
             </template>
         </b-modal>
         <b-modal
@@ -299,18 +311,15 @@ import {quarantineLabel, quarantineTooltip, reserveOn, reserveOnHigherSquad} fro
 
 export default {
     name: 'TeamTable',
-    components: {EditPlayerModal, PlayerSearch, SeasonHistoryModal, ReserveSection},
+    components: {EditPlayerModal, EditSquadModal, PlayerSearch, SeasonHistoryModal, ReserveSection},
     props: {
         version: Date,
         confirmDelete: Function,
-        addReserve: Function,
-        removeReserve: Function,
         moveSquadOrderUp: Function,
         moveSquadOrderDown: Function,
         playerMove: Function,
         deletePlayer: Function,
         addPlayer: Function,
-        updateSquad: Function,
         playingToHigh: {
             type: Array,
             default: []
@@ -364,7 +373,9 @@ export default {
             seasonHistoryPlayer: null,
             seasonHistoryCategory: null,
             seasonHistoryFullScreen: false,
-            showSeasonHistory: false
+            showSeasonHistory: false,
+            editSquad: null,
+            showEditSquadModal: false
         }
     },
     methods: {
@@ -488,25 +499,8 @@ export default {
             this.showSeasonHistory = true
         },
         openEditSquadModal(squad) {
-            this.$buefy.modal.open(
-                {
-                    width: 1500,
-                    props: {
-                        squad: squad,
-                        clubhouseId: this.clubhouseId,
-                        seasonId: this.seasonId,
-                        usedTeamIds: this.usedTeamIds
-                    },
-                    events: {
-                        saved: () => this.$emit('squad-updated'),
-                        close() {
-                        }
-                    },
-                    canCancel: ["x"],
-                    component: EditSquadModal,
-                    hasModalCard: true,
-                    trapFocus: true
-                })
+            this.editSquad = squad
+            this.showEditSquadModal = true
         }
     }
 }

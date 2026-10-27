@@ -46,7 +46,6 @@
 <script>
 import gql from "graphql-tag";
 import {TeamFightHelper} from "./teams";
-import TeamRoundQuery from "../../../queries/teamRound.graphql";
 import TournamentTiersQuery from "../../../queries/tournamentTiers.graphql";
 import TeamsForSquadPickerQuery from "../../../queries/teamsForSquadPicker.graphql";
 import {formatDateTime} from "../../helpers";
@@ -75,8 +74,8 @@ const DEFAULT_CUSTOM_COUNTS = Object.freeze({
 export default {
     name: "AddTeamsButtons",
     components: {InlineAddSquadForm, TeamForm},
+    inject: ['lineupSession'],
     props: {
-        teamRoundId: String,
         teamRoundDate: Date,
         clubhouseId: {
             type: [String, Number],
@@ -401,47 +400,7 @@ export default {
         },
         addSquad(team, metadata = {}){
             this.loading = true
-            return this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation createSquad($input: CreateSquadInput!){
-                            createSquad(input: $input){
-                                id
-                                playerLimit
-                                order
-                                name
-                                categories {
-                                    id
-                                    category
-                                    name
-                                }
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: {
-                            ...{
-                                teamRound: {
-                                    connect: this.teamRoundId
-                                }
-                            },
-                            ...team,
-                            ...metadata
-                        }
-                    },
-                    refetchQueries: [
-                        {query: TeamRoundQuery, variables: {id: this.teamRoundId}}
-                    ],
-                }).then(() => {
-                this.$emit('team-added')
-            }).catch(() => {
-                this.$buefy.snackbar.open(
-                    {
-                        duration: 4000,
-                        type: 'is-danger',
-                        message: `Kunne ikke tilføje holdet til holdopstillingen :(`
-                    })
-            }).finally(() => {
+            return this.lineupSession.createSquad({...team, ...metadata}).finally(() => {
                 this.loading = false
             })
         },
@@ -456,6 +415,8 @@ export default {
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
                 this.selectedIsPaperSquad = false;
+            }).catch(() => {
+                // The editor shows the failure through the session's onError; the form keeps its input.
             })
         }
     }

@@ -156,6 +156,7 @@ import {BSidebar, BSwitch} from "buefy";
 export default {
     name: 'PlayersListSearch',
     components: {BSwitch, BSidebar},
+    inject: ['lineupSession'],
     props: {
         clubhouseId: Number,
         teamRoundId: String,
@@ -196,15 +197,15 @@ export default {
             return this.gameDate.toISOString().substring(0, 10)
         }
     },
-    mounted() {
-        const refresh = () => {
-            this.$apollo.queries.memberSearch.refresh()
-            this.$apollo.queries.memberSearchCancellation.refresh()
+    watch: {
+        // The Lineup was refetched, so who is placed and who has cancelled may have changed.
+        'lineupSession.revision'() {
+            this.refreshMembers()
         }
+    },
+    mounted() {
         this.eventUnsubscribers = [
-            onAppEvent('player-added-to-category', refresh),
-            onAppEvent('player-deleted-from-category', refresh),
-            onAppEvent('member-created', refresh)
+            onAppEvent('member-created', () => this.refreshMembers())
         ]
     },
     beforeUnmount() {
@@ -253,6 +254,10 @@ export default {
             this.$apollo.queries.memberSearch.refresh()
             this.$apollo.queries.memberSearchCancellation.refresh()
         },
+        // After a cancellation write: the editor shows the "Afbud" tag, and the revision watcher refreshes this list.
+        refreshLineup() {
+            this.lineupSession.refetch().catch(() => this.refreshMembers())
+        },
         openDetailedRow(obj) {
             if (this.showCancellation) {
                 const index = this.openedDetailed.indexOf(obj.id);
@@ -296,9 +301,8 @@ export default {
                 })
         },
         addPlayerCustom(player) {
-            this.addPlayer(player).then(() => {
-                this.$apollo.queries.memberSearch.refresh()
-            })
+            // The session's refetch bumps the revision, which refreshes this list.
+            this.addPlayer(player)
         },
         convertRankingToCategory,
         makeCancellationPermanent(player) {
@@ -320,7 +324,7 @@ export default {
                             }
                         })
                 .then(() => {
-                    this.refreshMembers()
+                    this.refreshLineup()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -354,7 +358,7 @@ export default {
                             }
                         })
                 .then(() => {
-                    this.refreshMembers()
+                    this.refreshLineup()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -399,7 +403,7 @@ export default {
                     }
                 )
                 .then(() => {
-                    this.refreshMembers()
+                    this.refreshLineup()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
@@ -429,7 +433,7 @@ export default {
                             }
                         })
                 .then(() => {
-                    this.refreshMembers()
+                    this.refreshLineup()
                     this.$buefy.snackbar.open({
                                                   duration: 4000,
                                                   type: 'is-success',
