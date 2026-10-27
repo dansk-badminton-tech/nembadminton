@@ -63,3 +63,7 @@ Season History, and the paper-team rule (§38 stk. 7) that counts earlier team m
 - Nembadminton supports only senior team tournaments, so a Season has one round sequence, and round order is enough. Tiers whose phases are numbered differently (Liga's group stage runs to round 9, the lower divisions' to round 7) need no special handling: a rule that cares about the phase still works it out per Squad from tier and round.
 - A TeamRound without a round number is never placed by its date: it has no earlier TeamRounds, and it is left out of every other TeamRound's history. The round number has been required since before the 2026/2027 Season, and earlier Seasons don't matter, so this is only a safe default and the UI doesn't flag such TeamRounds.
 - `game_date` stays on TeamRound for display and defaults; Season History only shows it.
+
+## Amendment: the 20 October deadline is a date
+
+The Playoff Participation Requirement (§32 stk. 1 c) asks for a match played no later than 20 October, which only a date can answer. Season History therefore gives each Squad a match date: the Squad's own playing date, or else its TeamRound's `game_date`. The date is used for this deadline only. Which TeamRounds are earlier, and which Season Phase they are in, still follows the round number. A Squad without a date can't prove the deadline, so the check says it can't be fully verified instead of guessing.

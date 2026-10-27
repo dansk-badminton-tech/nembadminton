@@ -432,7 +432,7 @@ export default {
             return this.playoffParticipationWarnings.length ? 'alert' : 'check-circle'
         },
         playoffParticipationTip() {
-            if (this.playoffParticipationStatus === 'failed') return 'Slutspilskravet kunne ikke kontrolleres. Prøv igen med opdateringsknappen.'
+            if (this.playoffParticipationStatus === 'failed') return 'Slutspilskravet kunne ikke kontrolleres, så prøv igen med opdateringsknappen.'
             return 'I slutspil og kvalifikation skal spilleren have spillet 4 kampe i Badmintonligaen eller 3 i 1. division i sæsonen, en af dem senest 20. oktober (§32 stk. 1).'
         },
         incompleteStatusClass() {

@@ -8,6 +8,7 @@ use App\Enums\CanonicalTournamentTier;
 use App\Enums\SeasonPhase;
 use App\Models\Squad;
 use App\Models\TeamRound;
+use App\SeasonHistory\PlayoffParticipation;
 use App\SeasonHistory\PlayoffParticipationRequirement;
 use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistoryLoader;
@@ -31,36 +32,27 @@ class ValidatePlayoffParticipation
         foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
             $context = $this->currentContext($squad, $round);
             foreach ($players as $player) {
-                $result = [
-                    'status' => $context['status'],
-                    'incompleteReasons' => $context['incompleteReasons'],
-                    'matchCount' => 0,
-                    'playedByDeadline' => null,
-                    'uncountedRounds' => [],
-                ];
                 if ($context['status'] === null) {
                     $earlier ??= $this->loader->before($round);
                     $participation = (new PlayoffParticipationRequirement($earlier, (int) $round->season_id, $context['requiredMatchCount']))
                         ->check($player->member_ref_id);
-                    $result = [
-                        'status' => $participation->status,
-                        'incompleteReasons' => $participation->incompleteReasons,
-                        'matchCount' => $participation->matchCount,
-                        'playedByDeadline' => $participation->playedByDeadline,
-                        'uncountedRounds' => $participation->uncountedRounds,
-                    ];
+                } else {
+                    $participation = new PlayoffParticipation($context['status'], $context['incompleteReasons'], 0, null, []);
                 }
                 $results[] = [
                     'squadIndex' => $index,
                     'refId' => $player->member_ref_id,
                     'name' => $player->name,
-                    ...$result,
+                    'status' => $participation->status,
+                    'incompleteReasons' => $participation->incompleteReasons,
+                    'matchCount' => $participation->matchCount,
                     'requiredMatchCount' => $context['requiredMatchCount'],
+                    'playedByDeadline' => $participation->playedByDeadline,
                     'uncountedRounds' => array_map(fn (RoundLineup $round) => [
                         'teamRoundId' => $round->teamRoundId,
                         'name' => $round->name,
                         'round' => $round->round,
-                    ], $result['uncountedRounds']),
+                    ], $participation->uncountedRounds),
                 ];
             }
         }

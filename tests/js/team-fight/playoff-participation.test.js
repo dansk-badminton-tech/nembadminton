@@ -33,7 +33,9 @@ test('the control shows in the playoffs and qualification of Liga and 1. divisio
 
 test('an unmet requirement names the missing matches, the missed deadline or both', () => {
     assert.equal(playoffParticipationMessage(player({})),
-        'Hold 1: Anders har 3 af 4 kampe i sæsonen (§32 stk. 1).')
+        'Hold 1: Anders har 3 af 4 kampe i sæsonen; 20. oktober-kravet er opfyldt (§32 stk. 1).')
+    assert.equal(playoffParticipationMessage(player({playedByDeadline: null})),
+        'Hold 1: Anders har 3 af 4 kampe i sæsonen; 20. oktober-kravet kan ikke afgøres (§32 stk. 1).')
     assert.equal(playoffParticipationMessage(player({squadIndex: 1, matchCount: 1, requiredMatchCount: 3, playedByDeadline: false})),
         'Hold 2: Anders har 1 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).')
     assert.equal(playoffParticipationMessage(player({matchCount: 5, playedByDeadline: false})),
@@ -42,7 +44,9 @@ test('an unmet requirement names the missing matches, the missed deadline or bot
 
 test('an unverifiable requirement says so, with the count when the tier is known', () => {
     assert.equal(playoffParticipationMessage(player({status: 'CANNOT_VERIFY', matchCount: 2, requiredMatchCount: 3})),
-        'Hold 1: Anders har 2 af 3 kampe – slutspilskravet kan ikke verificeres fuldt ud (§32 stk. 1).')
+        'Hold 1: Anders har 2 af 3 kampe; 20. oktober-kravet er opfyldt – slutspilskravet kan ikke verificeres fuldt ud (§32 stk. 1).')
+    assert.equal(playoffParticipationMessage(player({status: 'CANNOT_VERIFY', matchCount: 3, requiredMatchCount: 3, playedByDeadline: null})),
+        'Hold 1: Anders har 3 af 3 kampe – slutspilskravet kan ikke verificeres fuldt ud (§32 stk. 1).')
     assert.equal(playoffParticipationMessage(player({status: 'CANNOT_VERIFY', matchCount: 0, requiredMatchCount: 0})),
         'Hold 1: Anders – slutspilskravet kan ikke verificeres fuldt ud (§32 stk. 1).')
 })

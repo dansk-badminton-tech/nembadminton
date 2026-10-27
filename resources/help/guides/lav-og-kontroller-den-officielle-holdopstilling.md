@@ -157,9 +157,8 @@ Advarslen står under kontrollerne med holdets nummer og spillerens navn, fx **H
 
 | Besked | Sådan retter du den |
 | --- | --- |
-| **Udfyld Runde nr. i holdrundens indstillinger.** | Angiv rundenummeret; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer). |
-| **Angiv holdets række under Rediger holdet.** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
-| **Holdrunden mangler sæson.** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
+| **Angiv holdets række under Rediger holdet, …** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
+| **Holdrunden mangler sæson, …** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
 | **Angiv rækken på spillerens hold i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv rækken på holdet, spilleren står på. |
 | **Angiv spilledatoen i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv **Runde spilledato**. |
 
