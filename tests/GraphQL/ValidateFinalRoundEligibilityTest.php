@@ -85,6 +85,7 @@ class ValidateFinalRoundEligibilityTest extends TestCase
                 $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', $expected);
                 $squad->update(['is_paper_squad' => true]);
                 $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'NOT_APPLICABLE');
+                $squad->teamRound->delete();
             }
         }
     }
@@ -115,6 +116,7 @@ class ValidateFinalRoundEligibilityTest extends TestCase
                 $lower->update(['is_paper_squad' => true]);
                 $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
                 $earlier->delete();
+                $current->teamRound->delete();
             }
         }
     }
@@ -187,11 +189,11 @@ class ValidateFinalRoundEligibilityTest extends TestCase
     {
         $current = $this->squad($this->round());
         $this->place($current);
-        $earlier = $this->squad($this->round(['game_date' => '2026-09-20']));
+        $earlier = $this->squad($this->round(['round' => 1, 'game_date' => '2026-09-20']));
         $this->place($earlier);
         $earlier->update(['team_id' => null]);
         $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'CANNOT_VERIFY');
-        $this->place($this->squad($this->round(['game_date' => '2026-09-27'])));
+        $this->place($this->squad($this->round(['round' => 2, 'game_date' => '2026-09-27'])));
         $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'SATISFIED');
     }
 
@@ -209,7 +211,7 @@ class ValidateFinalRoundEligibilityTest extends TestCase
             $this->place($squad, ['category' => 'HD', 'name' => '1. HD']);
         }
         $foreign = $this->squad($this->round([
-            'name' => 'Other Clubhouse secret', 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id,
+            'name' => 'Other Clubhouse secret', 'round' => 1, 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id,
         ]));
         $foreign->update(['team_id' => null]);
         $this->place($foreign);
@@ -218,11 +220,10 @@ class ValidateFinalRoundEligibilityTest extends TestCase
             'incompleteReasons' => ['INCOMPARABLE_HISTORY'],
             'uncountedRounds' => [
                 ['teamRoundId' => $missing->id, 'name' => 'Efterår uden holdlink', 'round' => 2],
-                ['teamRoundId' => $unknownPhase->id, 'name' => 'Ekstra holdrunde', 'round' => null],
             ],
         ]);
 
-        $this->place($this->squad($this->round(['round' => null, 'game_date' => '2026-10-04'])));
+        $this->place($this->squad($this->round(['round' => 3, 'game_date' => '2026-10-04'])));
         $this->diagnostics($current)->assertJsonPath('data.validateFinalRoundEligibility.0', [
             'status' => 'SATISFIED', 'incompleteReasons' => [], 'uncountedRounds' => [],
         ]);
@@ -243,11 +244,11 @@ class ValidateFinalRoundEligibilityTest extends TestCase
         Season::query()->firstOrCreate(['id' => 2025], ['season_name' => '2025/2026']);
         $current = $this->squad($this->round());
         $this->place($current);
-        $this->place($this->squad($this->round(['game_date' => '2027-03-21'])));
+        $this->place($this->squad($this->round(['round' => 12, 'game_date' => '2026-09-01'])));
         $this->place($this->squad($this->round(['game_date' => '2027-03-20'])));
-        $this->place($this->squad($this->round(['game_date' => '2026-09-20', 'season_id' => 2025])));
-        $this->place($this->squad($this->round(['game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id])));
-        $earlier = $this->round(['game_date' => '2026-09-27']);
+        $this->place($this->squad($this->round(['round' => 1, 'game_date' => '2026-09-20', 'season_id' => 2025])));
+        $this->place($this->squad($this->round(['round' => 1, 'game_date' => '2026-09-20', 'clubhouse_id' => Clubhouse::factory()->create()->id])));
+        $earlier = $this->round(['round' => 1, 'game_date' => '2027-03-21']);
         $draft = $earlier->scenarios()->create(['name' => 'Kladde', 'is_official' => false]);
         $this->place($this->squad($earlier), ['team_round_scenario_id' => $draft->id]);
         $this->check($current)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
