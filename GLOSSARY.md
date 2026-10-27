@@ -51,7 +51,7 @@ A club's team entered in one season's tournament (e.g. "Højbjerg 1, 2. division
 _Avoid_: Squad
 
 **Squad** (holdopstilling):
-One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Conceptually a lineup; the name Squad is kept.
+One Team's match setup for a single TeamRound, and its part of each **Lineup** of that TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Its match setup is the same in every Scenario; its players can differ. The name Squad is kept.
 _Avoid_: Team, sub-team
 
 **Paper Squad** (papirhold):
@@ -67,6 +67,10 @@ The ban on a Reserve Player playing on any Team in the next round after the roun
 _Avoid_: Suspension, karantæneperiode
 
 ### Lineup Scenarios
+
+**Lineup** (opstilling):
+The Members placed in the category places of all Squads of a TeamRound, in one Scenario. A Squad's match setup (date, venue, tier, Paper Squad mark) is not part of it and is the same in every Lineup of the TeamRound.
+_Avoid_: Roster, team sheet
 
 **Scenario**:
 An internal, named alternative lineup (e.g. "Plan A", "Plan B") containing the category slots and player assignments across all squads of a TeamRound for drafting without affecting the official roster or notifying players.
