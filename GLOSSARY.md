@@ -47,7 +47,7 @@ A club's team entered in one season's tournament (e.g. "Højbjerg 1, 2. division
 _Avoid_: Squad
 
 **Squad** (holdopstilling):
-One Team's lineup and match setup for a single TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Its lineup is that Team's part of a **Lineup**; the name Squad is kept.
+One Team's match setup for a single TeamRound, and its part of each **Lineup** of that TeamRound. A Squad is normally created from a Team, but can be created without one for one-off matches. Its match setup is the same in every Scenario; its players can differ. The name Squad is kept.
 _Avoid_: Team, sub-team
 
 **Paper Squad** (papirhold):
