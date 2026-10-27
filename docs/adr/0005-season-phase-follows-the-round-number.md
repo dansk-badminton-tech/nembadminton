@@ -30,6 +30,13 @@ The broader classification work is deferred to [#293](https://github.com/dansk-b
 - Paper Squads do not require the choice and do not receive a missing-Match-Kind eligibility warning. Their paper-team checks apply independently. If a Squad is unmarked as paper, a choice is needed for complete validation when it is Liga in round 12.
 - The coach may correct a choice after entering lineups. A correction recalculates affected validation across every Scenario without changing player placements or the Team's original tier.
 
+### Follow-up triage clarification (#293)
+
+- Scope is Match Kind selection, correct Season Phase classification, and adapting existing consumers. Adding new eligibility rules is outside this follow-up.
+- The optional selection belongs in Squad settings and is shown only for non-Paper Liga Squads in round 12. Missing selection does not block saving; explain that the coach must choose Match Kind to determine Season Phase.
+- Without a choice, the ambiguous Squad's phase is unknown (`null`), not qualification by default. Ordinary player and unfiltered Season History display remain usable. A calculation that needs the distinction must explicitly say it cannot complete until the choice is supplied, identifying the affected Squad and TeamRound rather than guessing or returning a misleading result.
+- The TeamRound's summary phase still follows its highest Squad, including an unknown phase; an unknown highest-Squad phase must not trigger a fallback inferred from round number alone. Classification of other Squads remains independent of that summary.
+
 The 2025/2026 Liga/1. division qualification match displays the composite round label "11/12". A live comparison found plain round 12 for the corresponding 2024/2025 qualification match, alongside round 12 for that season's Liga gold and bronze matches. After also inspecting older seasons, the maintainer chose to treat 2025/2026 as an outlier and use round 12 for qualification, consistent with §27. This does not make Liga medal finals qualification or remove the explicit Liga round-12 choice. Interpreting/importing composite labels is outside #224's scope; their meaning remains unverified, and silent integer coercion must not be treated as authoritative classification evidence. Detailed observations and source links: [original findings](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6340885558) and [live season comparison](https://github.com/dansk-badminton-tech/nembadminton/issues/224#issuecomment-6360238451).
 
 ## Rule consequences of distinguishing the match kinds
