@@ -28,6 +28,7 @@ schema-directives.graphql
 .opencode
 .mcp.json
 .claude
+/.worktrees/
 
 **/caddy
 frankenphp
