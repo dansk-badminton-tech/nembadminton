@@ -94,3 +94,11 @@ test('an absent result is not a completed check', async () => {
     assert.equal(state.status, 'failed')
     assert.equal(state.findings, null)
 })
+
+test('a check created enabled runs without being switched on', async () => {
+    const state = createValidationState(true)
+    assert.equal(state.enabled, true)
+    assert.equal(state.status, 'pending')
+    await runValidation(state, async () => [])
+    assert.equal(state.status, 'complete')
+})
