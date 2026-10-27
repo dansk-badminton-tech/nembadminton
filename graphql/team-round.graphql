@@ -182,6 +182,8 @@ input UpdateSquadInput {
     teamId: ID @rename(attribute: "team_id") @rules(apply: ["App\\Rules\\TeamInClubhouse"])
     "Paper Squad (papirhold). Only a squad with a team can be one."
     isPaperSquad: Boolean @rename(attribute: "is_paper_squad")
+    "Explicit Match Kind; null clears the choice. Only relevant in Liga round 12."
+    matchKind: MatchKind @rename(attribute: "match_kind")
     "Ranking version"
     version: Date
 }
@@ -328,6 +330,11 @@ type ParallelTeamRoundAllocation {
     categoryName: String
 }
 
+enum MatchKind {
+    MEDAL_FINAL @enum(value: "medal_final")
+    QUALIFICATION @enum(value: "qualification")
+}
+
 type Squad {
     "ID"
     id: ID!
@@ -343,6 +350,8 @@ type Squad {
     team: Team @belongsTo
     "Paper Squad (papirhold): lined up as a regular squad, but the match is not played"
     isPaperSquad: Boolean! @rename(attribute: "is_paper_squad")
+    "The coach's explicit Match Kind; only readable in the User's own Clubhouse."
+    matchKind: MatchKind @guard @with(relation: "teamRound") @field(resolver: "App\\GraphQL\\Queries\\SquadMatchKind")
     "BadmintonPlayer match ID"
     externalTeamFightID: Int @rename(attribute: "external_team_fight_id")
     "Playing team"

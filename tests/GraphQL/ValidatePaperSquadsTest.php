@@ -198,6 +198,16 @@ class ValidatePaperSquadsTest extends TestCase
     }
 
     #[Test]
+    public function liga_paper_squads_need_two_earlier_matches_even_without_match_kind(): void
+    {
+        [$round, $paper] = $this->paperRound(round: 12);
+        $paper->team->update(['custom_tier_name' => 'Badmintonligaen', 'tier_id' => null]);
+        $this->assertSame([['Anders', ['HS'], 0, 2]], $this->players($round, [
+            $this->lineup($paper, [['HS', '1. HS', [self::ANDERS]]], isPaperSquad: true),
+        ]));
+    }
+
+    #[Test]
     public function a_team_round_without_a_round_number_asks_for_it_instead_of_checking(): void
     {
         [$round, $paper] = $this->paperRound(round: null);

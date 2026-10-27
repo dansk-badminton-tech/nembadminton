@@ -96,6 +96,18 @@ class ValidateFinalRoundEligibilityTest extends TestCase
     }
 
     #[Test]
+    public function liga_round_twelve_eligibility_runs_for_both_kinds_and_without_a_choice(): void
+    {
+        $team = Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $this->clubhouse->id]);
+        $squad = $this->squad($this->round(['round' => 12]), $team);
+        $this->place($squad);
+        foreach ([null, ...\App\Enums\MatchKind::cases()] as $kind) {
+            $squad->update(['match_kind' => $kind]);
+            $this->check($squad)->assertJsonPath('data.validateFinalRoundEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        }
+    }
+
+    #[Test]
     public function one_same_or_lower_team_appearance_proves_the_requirement_using_historical_squad_order(): void
     {
         foreach (['Badmintonligaen', '1. division', '2. division', '3. division', 'Danmarksserien'] as $tier) {

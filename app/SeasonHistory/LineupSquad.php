@@ -15,7 +15,7 @@ final readonly class LineupSquad
      * @param  int  $position  1-based place in the TeamRound's Squad order; 1 is the highest team.
      * @param  string|null  $teamName  The Team's name, or the Squad's own name when it has no Team.
      * @param  string|null  $tier  The Squad's effective tier (række).
-     * @param  SeasonPhase|null  $phase  Null when the TeamRound has no round number.
+     * @param  SeasonPhase|null  $phase  Null when the round or an ambiguous Liga Match Kind is missing.
      * @param  bool  $isPaperSquad  The Squad is a Paper Squad (papirhold). Its places count as played like any other.
      */
     public function __construct(

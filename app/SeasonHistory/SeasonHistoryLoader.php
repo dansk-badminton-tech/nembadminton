@@ -120,7 +120,7 @@ class SeasonHistoryLoader
                 teamId: $squad->team_id === null ? null : (int) $squad->team_id,
                 teamName: $squad->team === null ? $squad->name : $squad->team->name,
                 tier: $tier,
-                phase: SeasonPhase::fromRound($round, $tier),
+                phase: SeasonPhase::fromRound($round, $tier, $squad->match_kind),
                 isPaperSquad: $squad->is_paper_squad,
             );
             $squads[] = $lineupSquad;

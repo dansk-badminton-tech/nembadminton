@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\MatchKind;
 use App\Exceptions\PaperSquadWithoutTeamException;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +32,7 @@ use Spatie\EloquentSortable\SortableTrait;
  * @property string|null $tier
  * @property int|null $team_id
  * @property bool $is_paper_squad
+ * @property MatchKind|null $match_kind
  * @property Team|null $team
  */
 class Squad extends Model implements Sortable
@@ -46,6 +48,7 @@ class Squad extends Model implements Sortable
     protected $casts = [
         'playing_datetime' => 'datetime',
         'is_paper_squad' => 'boolean',
+        'match_kind' => MatchKind::class,
     ];
 
     protected $attributes = [
@@ -60,6 +63,7 @@ class Squad extends Model implements Sortable
         'name',
         'tier',
         'is_paper_squad',
+        'match_kind',
         'external_team_fight_id',
         'playing_datetime',
         'playing_place',

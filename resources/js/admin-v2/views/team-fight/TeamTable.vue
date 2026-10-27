@@ -325,6 +325,7 @@ export default {
         },
         scenarioId: [String, Number],
         teamRoundId: String,
+        round: Number,
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -493,6 +494,7 @@ export default {
                     width: 1500,
                     props: {
                         squad: squad,
+                        round: this.round,
                         clubhouseId: this.clubhouseId,
                         seasonId: this.seasonId,
                         usedTeamIds: this.usedTeamIds

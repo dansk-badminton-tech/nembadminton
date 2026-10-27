@@ -13,6 +13,7 @@ export default {
     components: {RankingVersionSelect, BadmintonPlayerTeamFightSelector},
     props: {
         squad: Object,
+        round: Number,
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -54,6 +55,7 @@ export default {
                 this.tier = newValue.tier
                 this.team = newValue.team
                 this.isPaperSquad = newValue.isPaperSquad ?? false
+                this.matchKind = newValue.matchKind ?? ''
                 this.playingDatetime = newValue.playingDatetime
                                        ? new Date(newValue.playingDatetime)
                                        : null
@@ -72,6 +74,16 @@ export default {
         getCurrentSeason,
         hasTeam() {
             return this.team !== null && this.team !== undefined;
+        },
+        showMatchKind() {
+            const tier = this.hasTeam ? teamTierLabel(this.team) : this.tier;
+            // Match CanonicalTournamentTier's Liga normalization, not arbitrary free-text prefixes.
+            const baseTier = (tier ?? '').replace(/\s+/gu, ' ').trim()
+                .replace(/\s*\(oversidder-runder?\)\s*$/iu, '')
+                .replace(/\s*-\s*(øverste|nederste)\s+slutspil\s*$/iu, '')
+                .replace(/\s*(-\s*)?slutspil(stider)?(\s*\d{4})?(\s*-\s*(oprykning|nedrykning|øverste\s+slutspil|nederste\s+slutspil))?\s*$/iu, '')
+                .trim();
+            return !this.isPaperSquad && this.round === 12 && baseTier.toLowerCase() === 'badmintonligaen';
         },
         teamChipLabel() {
             return teamLabel(this.team);
@@ -97,6 +109,7 @@ export default {
             tier: null,
             team: null,
             isPaperSquad: false,
+            matchKind: '',
             playingDatetime: null,
             playingPlace: null,
             playingAddress: null,
@@ -219,6 +232,7 @@ export default {
                                 tier
                                 effectiveTier
                                 isPaperSquad
+                                matchKind
                                 team {
                                     id
                                     name
@@ -246,6 +260,7 @@ export default {
                             tier: this.tier,
                             teamId: this.team?.id ?? null,
                             isPaperSquad: this.isPaperSquad,
+                            matchKind: this.matchKind || null,
                             externalTeamFightID: this.externalTeamFightID,
                             playingDatetime: this.playingDatetime
                                              ? formatDateTime(this.playingDatetime)
@@ -443,6 +458,14 @@ export default {
                         v-model="tier"
                         placeholder="fx 1. division">
                     </b-input>
+                </b-field>
+                <b-field v-if="showMatchKind" label="Kampart" dusk="edit-squad-match-kind"
+                         :message="!matchKind ? 'Vælg kampart for at fastslå sæsonfasen.' : null">
+                    <b-select v-model="matchKind" :disabled="loading" expanded>
+                        <option value="">Ingen kampart valgt</option>
+                        <option value="MEDAL_FINAL">Medaljekamp (guld/bronze)</option>
+                        <option value="QUALIFICATION">Kvalifikationskamp</option>
+                    </b-select>
                 </b-field>
                 <hr/>
                 <b-field dusk="edit-squad-ranking-field" label="Rangliste" message="Vælg en anden rangliste end holdrundens, hvis holdet spiller efter den 10. og resten af klubbens hold før. Den gælder kun opstillingen (rækkefølgen) på holdet. Hvilke spillere der må stå på holdet, afgøres altid af holdrundens rangliste.">

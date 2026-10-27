@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Enums;
 
 /**
- * The phase of the season a TeamRound belongs to, derived from its round number and the Squad's tier.
+ * A Squad's Season Phase, derived from round, tier and an explicit Match Kind where ambiguous.
  *
  * Not to be confused with TournamentPhaseType, which describes groups (puljer) from badmintonplayer.dk.
  */
@@ -24,15 +24,23 @@ enum SeasonPhase: string
     private const LAST_GROUP_STAGE_ROUND_BADMINTONLIGAEN = 9;
 
     /**
-     * The phase is decided by the round number, not the date (§45). A missing round gives an unknown phase (null).
+     * Never infer phase from the date (§45). Missing round or ambiguous Liga Match Kind gives null.
      */
-    public static function fromRound(?int $round, ?string $tier): ?self
+    public static function fromRound(?int $round, ?string $tier, ?MatchKind $matchKind = null): ?self
     {
         if ($round === null || $round < 1) {
             return null;
         }
         if ($round === self::QUALIFICATION_ROUND) {
-            return self::KVALIFIKATION;
+            if (CanonicalTournamentTier::tryFromRawName($tier) !== CanonicalTournamentTier::BADMINTONLIGAEN) {
+                return self::KVALIFIKATION;
+            }
+
+            return match ($matchKind) {
+                MatchKind::MEDAL_FINAL => self::SLUTSPIL,
+                MatchKind::QUALIFICATION => self::KVALIFIKATION,
+                null => null,
+            };
         }
 
         $lastGroupStageRound = CanonicalTournamentTier::tryFromRawName($tier) === CanonicalTournamentTier::BADMINTONLIGAEN

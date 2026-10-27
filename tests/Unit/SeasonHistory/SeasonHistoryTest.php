@@ -389,6 +389,46 @@ class SeasonHistoryTest extends TestCase
         }
     }
 
+    #[Test]
+    public function unresolved_liga_history_is_usable_without_a_phase_filter_and_reports_actionable_context_with_one(): void
+    {
+        $this->member('0101011111', 'Anders');
+        $round = $this->teamRound(round: 12);
+        $team = Team::factory()->withCustomTier('Badmintonligaen')->create(['clubhouse_id' => $this->clubhouse->id]);
+        $liga = $this->squad($round, 'Liga', order: 1, team: $team);
+        $this->category($liga, 'HS', '1. HS', ['0101011111']);
+        $this->squad($round, 'Division', order: 2, tier: '1. division');
+
+        $history = $this->load();
+        $this->assertNull($history->rounds()[0]->phase());
+        $this->assertSame([$round->id], array_map(fn (RoundLineup $lineup) => $lineup->teamRoundId, $history->roundsWithUnknownPhase()));
+        $this->assertSame(SeasonPhase::KVALIFIKATION, $history->rounds()[0]->squads[1]->phase);
+        $this->assertCount(1, $history->playedRounds('0101011111'));
+        $this->assertSame(['HS'], $history->playedCategories('0101011111'));
+        $this->assertSame(1, $history->teamMatchCount('0101011111', $team->id));
+        $this->assertSame(1, $history->matchCountOnSameOrLowerTeam('0101011111', $team->id));
+        $this->assertSame([], $history->playedRounds('not placed', SeasonPhase::SLUTSPIL));
+
+        foreach ([
+            fn () => $history->playedRounds('0101011111', SeasonPhase::SLUTSPIL),
+            fn () => $history->playedCategories('0101011111', SeasonPhase::SLUTSPIL),
+            fn () => $history->teamMatchCount('0101011111', $team->id, SeasonPhase::SLUTSPIL),
+            fn () => $history->matchCountOnSameOrLowerTeam('0101011111', $team->id, SeasonPhase::SLUTSPIL),
+        ] as $lookup) {
+            try {
+                $lookup();
+                $this->fail('An unresolved placement must not silently disappear.');
+            } catch (UnknownPhaseException $exception) {
+                $this->assertSame($round->id, $exception->teamRoundId);
+                $this->assertSame($liga->id, $exception->squadId);
+                $this->assertStringContainsString($team->name, $exception->getMessage());
+                $this->assertStringContainsString('Runde 12', $exception->getMessage());
+                $this->assertStringContainsString('kampart', $exception->getMessage());
+                $this->assertStringNotContainsString('mangler rundenummer', $exception->getMessage());
+            }
+        }
+    }
+
     private function countQueries(callable $callback): int
     {
         DB::flushQueryLog();

@@ -191,6 +191,7 @@
                                :squads="teamRound.squads"
                                :scenario-id="selectedScenarioId"
                                :team-round-id="teamRoundId"
+                               :round="teamRound.round"
                                :clubhouse-id="clubhouseId"
                                :season-id="teamRound?.season?.id"
                                :used-team-ids="usedTeamIds"

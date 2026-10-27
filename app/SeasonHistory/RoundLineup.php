@@ -26,11 +26,11 @@ final readonly class RoundLineup
 
     /**
      * The TeamRound's phase, taken from its highest Squad because the phase can depend on the tier. Null when the
-     * TeamRound has no round number.
+     * highest Squad has an unknown phase, including a missing Liga Match Kind.
      */
     public function phase(): ?SeasonPhase
     {
-        return $this->squads[0]->phase ?? SeasonPhase::fromRound($this->round, null);
+        return $this->squads !== [] ? $this->squads[0]->phase : SeasonPhase::fromRound($this->round, null);
     }
 
     /**

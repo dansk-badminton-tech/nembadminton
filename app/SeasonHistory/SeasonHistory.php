@@ -10,7 +10,7 @@ use App\Enums\SeasonPhase;
  * Season History of a Clubhouse: the Official Lineups of its TeamRounds in one Season.
  *
  * The lookups take an optional phase. Without one they count every TeamRound, also those whose phase is unknown;
- * with one they throw UnknownPhaseException as soon as one of the Member's TeamRounds has no round number.
+ * with one they throw UnknownPhaseException as soon as one of the Member's placements has unknown phase.
  */
 final readonly class SeasonHistory
 {
@@ -33,13 +33,14 @@ final readonly class SeasonHistory
     }
 
     /**
-     * The TeamRounds without a round number, whose phase is unknown, so the team manager can fill in the round.
+     * TeamRounds with missing round or Squad phase context, so the coach can correct it.
      *
      * @return list<RoundLineup>
      */
     public function roundsWithUnknownPhase(): array
     {
-        return array_values(array_filter($this->rounds, fn (RoundLineup $round) => $round->round === null));
+        return array_values(array_filter($this->rounds, fn (RoundLineup $round) => $round->round === null
+            || array_any($round->squads, fn (LineupSquad $squad) => $squad->phase === null)));
     }
 
     /**
@@ -74,7 +75,7 @@ final readonly class SeasonHistory
     /**
      * How many team matches the Member stands in on the Team.
      *
-     * @throws UnknownPhaseException When filtering by phase and one of the Member's TeamRounds has no round number.
+     * @throws UnknownPhaseException When filtering by phase and one of the Member's placements has unknown phase.
      */
     public function teamMatchCount(string $refId, int $teamId, ?SeasonPhase $phase = null): int
     {
@@ -88,7 +89,7 @@ final readonly class SeasonHistory
      * How many team matches the Member stands in on the Team or a lower one. Lower means a later position in that
      * TeamRound's Squad order. A TeamRound without a Squad for the Team can't be compared, so it doesn't count.
      *
-     * @throws UnknownPhaseException When filtering by phase and one of the Member's TeamRounds has no round number.
+     * @throws UnknownPhaseException When filtering by phase and one of the Member's placements has unknown phase.
      */
     public function matchCountOnSameOrLowerTeam(string $refId, int $teamId, ?SeasonPhase $phase = null): int
     {
@@ -121,7 +122,7 @@ final readonly class SeasonHistory
      *
      * @return list<RoundLineup>
      *
-     * @throws UnknownPhaseException When filtering by phase and one of the Member's TeamRounds has no round number.
+     * @throws UnknownPhaseException When filtering by phase and one of the Member's placements has unknown phase.
      */
     public function playedRounds(string $refId, ?SeasonPhase $phase = null): array
     {
@@ -138,7 +139,7 @@ final readonly class SeasonHistory
      *
      * @return list<string>
      *
-     * @throws UnknownPhaseException When filtering by phase and one of the Member's TeamRounds has no round number.
+     * @throws UnknownPhaseException When filtering by phase and one of the Member's placements has unknown phase.
      */
     public function playedCategories(string $refId, ?SeasonPhase $phase = null): array
     {
@@ -163,7 +164,12 @@ final readonly class SeasonHistory
         }
         foreach ($placements as $placement) {
             if ($placement->phase() === null) {
-                throw new UnknownPhaseException($placement->round->teamRoundId, $placement->round->name);
+                throw new UnknownPhaseException(
+                    $placement->round->teamRoundId,
+                    $placement->round->name,
+                    $placement->round->round === null ? null : $placement->squad->squadId,
+                    $placement->round->round === null ? null : $placement->squad->teamName,
+                );
             }
         }
 

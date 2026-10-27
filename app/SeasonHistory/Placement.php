@@ -22,7 +22,7 @@ final readonly class Placement
     ) {}
 
     /**
-     * Null when the TeamRound has no round number.
+     * Null when the round or an ambiguous Liga Match Kind is missing.
      */
     public function phase(): ?SeasonPhase
     {
