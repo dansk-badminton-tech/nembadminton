@@ -196,7 +196,7 @@
                 <p v-if="finalRoundWarnings.some(player => player.uncountedRounds.length)" class="mt-2">
                     <router-link :to="{name: 'help-guide', params: {slug: teamLinkGuide}}" target="_blank" dusk="final-round-team-link-guide">Sådan tilknytter du holdet i tidligere runder</router-link>
                 </p>
-                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen. Advarslen blokerer ikke redigering eller gemning.</p>
+                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen.</p>
             </div>
         </article>
 
@@ -218,7 +218,7 @@
                     </li>
                 </ul>
                 <p class="mt-2">
-                    Nembadminton kender ikke dispensationer og karantæne, og advarslen blokerer ikke gemning.
+                    Nembadminton kender ikke dispensationer og karantæne.
                     <router-link :to="{name: 'help-guide', params: {slug: playoffParticipationGuide.slug}, hash: playoffParticipationGuide.hash}" target="_blank" dusk="playoff-participation-guide">Læs mere</router-link>
                 </p>
             </div>
