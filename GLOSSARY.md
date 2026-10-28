@@ -27,12 +27,12 @@ The part of the season a TeamRound belongs to, decided by its round number in th
 _Avoid_: Tournament phase (a badmintonplayer.dk group type), stage
 
 **DH Tournament** (DH-turneringen):
-Badminton Danmark's national team tournament: Badmintonligaen, 1. division, 2. division, 3. division and Danmarksserien. The regional series below it, such as Københavnsserien or Serie 1, are not part of it.
-_Avoid_: National ladder, DH-rækker
+Badminton Danmark's national senior team tournament, the tiers from Badmintonligaen to Danmarksserien: Badmintonligaen, 1. division, 2. division, 3. division and Danmarksserien. The regional series below it are not part of it.
+_Avoid_: Holdturneringen (also used for the regional series), senior tournament
 
-**Playoff Participation Requirement** (slutspilskrav):
-What a Member needs to stand on a Badmintonligaen or 1. division Squad in the playoffs or qualification (§32 stk. 1). The tier is the Team's own, also in a qualification match against a higher tier (§27 stk. 3), and a Paper Squad is exempt. The Member's Season History must hold at least 4 (Badmintonligaen) or 3 (1. division) placements on Squads in the DH Tournament, on any of the club's Teams; a Paper Squad's placements count. One of them must be on a Squad that is not a Paper Squad, played no later than 20 October of the Season's start year: the Squad's own date, or else its TeamRound's. The tournament committee can grant exemptions and a club change can bring quarantine days, which Nembadminton doesn't know, so a breach is a warning.
-_Avoid_: Slutspilsberettigelse, final-round eligibility (that is §38 stk. 8)
+**Playoff Participation Requirement** (deltagelseskrav):
+The appearances a Member needs to play for a Badmintonligaen or 1. division Team in the playoffs or qualification (§32 stk. 1): at least 4 (Badmintonligaen) or 3 (1. division) earlier placements for the club on any Team in the DH Tournament, and at least one such placement played no later than 20 October. A Team's tier in the group stage decides which number applies, also in qualification (§27 stk. 3). Players on a Paper Squad are exempt. Placements on a Paper Squad count towards the number, but the placement by 20 October must be on a Squad that is not a Paper Squad; its date is the Squad's own, or else its TeamRound's. The tournament committee (Holdturneringsudvalget) can grant an exemption, so an unmet requirement is a warning.
+_Avoid_: Final round eligibility (§38 stk. 8), minimum matches
 
 **Match Kind** (kampart):
 The nature of a Squad's match, distinguishing a Liga medal final from a separate qualification match even when their round numbers coincide. It belongs to that Squad's match setup and is the same in every Scenario of the TeamRound.
