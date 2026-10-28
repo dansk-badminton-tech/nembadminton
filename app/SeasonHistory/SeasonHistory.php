@@ -115,6 +115,15 @@ final readonly class SeasonHistory
         ));
     }
 
+    /** Same-or-lower-Team appearances in an inclusive round-number range, never filtered by game date. */
+    public function matchCountOnSameOrLowerTeamInRounds(string $refId, int $teamId, int $firstRound, int $lastRound): int
+    {
+        $history = new self(array_values(array_filter($this->rounds, fn (RoundLineup $round) => $round->round !== null && $round->round >= $firstRound && $round->round <= $lastRound
+        )));
+
+        return $history->matchCountOnSameOrLowerTeam($refId, $teamId);
+    }
+
     /**
      * The TeamRounds the Member stands in that have no Squad for the Team, in round order, each once.
      * matchCountOnSameOrLowerTeam can't compare them, so the coach can link the Team to count them.

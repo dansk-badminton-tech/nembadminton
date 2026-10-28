@@ -372,6 +372,23 @@ class SeasonHistoryTest extends TestCase
         $this->assertSame($smallSeasonQueries, $bigSeasonQueries);
     }
 
+    #[Test]
+    public function same_or_lower_team_counts_can_be_limited_to_inclusive_round_numbers(): void
+    {
+        $this->member('0101011111', 'Anders');
+        $team = Team::factory()->withCustomTier('2. division')->create(['clubhouse_id' => $this->clubhouse->id]);
+        foreach ([6, 7, 11, 12] as $number) {
+            $round = $this->teamRound(round: $number);
+            $squad = $this->squad($round, 'Klub 1', order: 1, team: $team);
+            $this->category($squad, 'HS', '1. HS', ['0101011111']);
+            $this->category($squad, 'HD', '1. HD', ['0101011111']);
+        }
+
+        $history = $this->load();
+        $this->assertSame(2, $history->matchCountOnSameOrLowerTeamInRounds('0101011111', $team->id, 7, 11));
+        $this->assertSame(0, $history->matchCountOnSameOrLowerTeamInRounds('0101011111', $team->id, 8, 10));
+    }
+
     private function seasonOfRounds(int $count): void
     {
         for ($i = 0; $i < $count; $i++) {
