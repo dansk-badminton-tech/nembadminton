@@ -118,6 +118,7 @@
                         <b-button
                             v-for="matchCount in matchCountOptions"
                             :key="matchCount"
+                            :dusk="'match-count-option-' + matchCount"
                             size="is-small"
                             :disabled="loading"
                             :type="selectedMatchCount === matchCount ? 'is-link' : 'is-light'"
@@ -133,6 +134,9 @@
                             Tilpas
                         </b-button>
                     </div>
+                    <p v-if="matchCountFromTier" class="help has-text-grey mb-0" dusk="match-count-from-tier">
+                        Valgt ud fra niveau ({{ matchCountFromTier }})
+                    </p>
                 </div>
 
                 <div class="add-squad-form__section">
@@ -254,6 +258,10 @@ export default {
         },
         selectedMatchCount: {
             type: [Number, String],
+            default: null
+        },
+        matchCountFromTier: {
+            type: String,
             default: null
         },
         selectedName: {

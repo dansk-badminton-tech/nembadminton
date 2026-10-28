@@ -197,7 +197,7 @@
                                :loading="session.saving"
                     />
                     <hr>
-                    <AddTeamsButtons :team-round-date="gameDate" :season-id="teamRound?.season?.id"
+                    <AddTeamsButtons :team-round-date="gameDate" :team-round-number="round" :season-id="teamRound?.season?.id"
                                      :clubhouse-id="clubhouseId" :existing-squad-count="teamRound.squads.length"
                                      :used-team-ids="usedTeamIds"/>
                 </div>

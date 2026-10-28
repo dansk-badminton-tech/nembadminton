@@ -6,6 +6,7 @@
             :teams-loading="$apollo.queries.teams.loading"
             :teams-failed="teamsFailed"
             :selected-match-count="selectedMatchCount"
+            :match-count-from-tier="matchCountFromTier"
             :selected-name="selectedName"
             :selected-tier-name="selectedTierName"
             :selected-team-id="selectedTeamId"
@@ -55,6 +56,7 @@ import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions} from "./team-picker";
 import {teamTierLabel} from "./team-label";
+import {chooseTier, pickMatchFormat} from "./match-format";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -77,6 +79,10 @@ export default {
     inject: ['lineupSession'],
     props: {
         teamRoundDate: Date,
+        teamRoundNumber: {
+            type: Number,
+            default: null
+        },
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -98,6 +104,7 @@ export default {
         return {
             loading: false,
             selectedMatchCount: 13,
+            matchCountFromTier: null,
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
@@ -280,14 +287,25 @@ export default {
         },
         onMatchCountChange(matchCount) {
             if (matchCount === CUSTOM_MATCH_COUNT) {
-                this.selectedMatchCount = CUSTOM_MATCH_COUNT;
+                this.setMatchFormat(pickMatchFormat(this.matchFormat(), CUSTOM_MATCH_COUNT));
                 return;
             }
 
             const parsedMatchCount = Number.parseInt(matchCount, 10);
-            this.selectedMatchCount = Number.isNaN(parsedMatchCount)
-                ? null
-                : parsedMatchCount;
+            this.setMatchFormat(pickMatchFormat(
+                this.matchFormat(),
+                Number.isNaN(parsedMatchCount) ? null : parsedMatchCount
+            ));
+        },
+        matchFormat() {
+            return {matchCount: this.selectedMatchCount, fromTier: this.matchCountFromTier};
+        },
+        setMatchFormat({matchCount, fromTier}) {
+            this.selectedMatchCount = matchCount;
+            this.matchCountFromTier = fromTier;
+        },
+        applyTierToMatchFormat(tierName) {
+            this.setMatchFormat(chooseTier(this.matchFormat(), tierName, this.teamRoundNumber));
         },
         onCustomCategoryCountChange({field, value}) {
             if (!Object.prototype.hasOwnProperty.call(this.customCategoryCounts, field)) {
@@ -304,7 +322,13 @@ export default {
             this.selectedName = typeof name === 'string' ? name : '';
         },
         onTierChange(tierName) {
-            this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+            const nextTierName = typeof tierName === 'string' ? tierName : '';
+            // Typing and picking from the list both report the text, so react only when it changes.
+            const changed = nextTierName !== this.selectedTierName;
+            this.selectedTierName = nextTierName;
+            if (changed) {
+                this.applyTierToMatchFormat(nextTierName);
+            }
         },
         onTeamChange(team) {
             if (team === null || team === undefined) {
@@ -319,6 +343,7 @@ export default {
             this.selectedName = team.name || '';
             this.selectedTierName = teamTierLabel(team);
             this.manualEntry = false;
+            this.applyTierToMatchFormat(this.selectedTierName);
         },
         onTeamCreated(team) {
             this.teamFormOpen = false;
