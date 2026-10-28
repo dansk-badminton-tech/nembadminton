@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mt-3">
         <div class="field is-grouped is-grouped-multiline">
             <div class="control" dusk="qualification-validation-control">
                 <b-tooltip type="is-info" label="Kontrollerer tidligere officielle holdopstillinger efter rundenummer, ikke kalenderårsalternativet (§27 stk. 5)." multilined>

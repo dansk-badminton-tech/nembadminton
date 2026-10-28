@@ -31,7 +31,12 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-qualification-check')->click('@toggle-qualification-check')
+                ->waitFor('@toggle-qualification-check')
+                ->assertScript(<<<'JS'
+                    document.querySelector('[dusk="qualification-validation-control"]').getBoundingClientRect().top
+                        - document.querySelector('.validation-status-container').getBoundingClientRect().bottom >= 8
+                JS)
+                ->click('@toggle-qualification-check')
                 ->waitForTextIn('@qualification-warnings', $member->name)
                 ->assertSeeIn('@qualification-warnings', 'Hold 1')
                 ->assertSeeIn('@qualification-warnings', '§27 stk. 5')
