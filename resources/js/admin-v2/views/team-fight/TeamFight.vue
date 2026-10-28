@@ -176,6 +176,10 @@
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
+                    <QualificationEligibilityStatus v-if="showQualificationControl"
+                                                    :validation="qualificationValidation"
+                                                    @enabled-change="onQualificationValidationEnabledChange"
+                                                    @revalidate="refreshTeam" />
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -222,6 +226,8 @@ import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
+import ValidateQualificationEligibilityMutation from "../../../queries/validateQualificationEligibility.graphql"
+import QualificationEligibilityStatus from './QualificationEligibilityStatus.vue'
 import {hasPaperSquad} from "./paper-squads.js"
 import {createValidationState, resetValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
 import {
@@ -277,6 +283,7 @@ export default {
         ShareLinkModal,
         PlayersListSearch,
         ValidationStatus,
+        QualificationEligibilityStatus,
         RankingVersionSelect,
         TeamTable,
         TeamRoundSettingsModal,
@@ -340,6 +347,15 @@ export default {
         showFinalRoundControl() {
             return showFinalRoundControl(this.teamRound)
         },
+        showQualificationControl() {
+            if (this.teamRound?.round != null && Number(this.teamRound.round) !== 12) return false
+            return (this.teamRound?.squads ?? []).some(squad => {
+                if (squad.isPaperSquad) return false
+                const tier = (squad.effectiveTier ?? '').trim()
+                // Known excluded tiers stay hidden; unknown context is sent to the server for a cannot-verify result.
+                return !/^(?:badmintonligaen\b|1\.\s*division\b|(?:\d+\.\s*)?serie\b|(?:københavns|sjællands|kreds)serien\b|lf-serien\b)/i.test(tier)
+            })
+        },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
@@ -400,6 +416,7 @@ export default {
             reserveFindings: [],
             paperSquadValidation: null,
             finalRoundValidation: createValidationState(),
+            qualificationValidation: createValidationState(),
             teamCount: 1,
             players: [],
             // Created here, so the teamRound query below starts with its key.
@@ -688,6 +705,10 @@ export default {
             setValidationEnabled(this.finalRoundValidation, value)
             if (value) this.refreshTeam()
         },
+        onQualificationValidationEnabledChange(value) {
+            setValidationEnabled(this.qualificationValidation, value)
+            if (value) this.refreshTeam()
+        },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
             return this.session.move(player, this.place(targetSquad, targetCategory)).catch(shownByOnError)
         },
@@ -910,6 +931,7 @@ export default {
         },
         validate() {
             this.validateFinalRoundEligibility();
+            this.validateQualificationEligibility();
             this.validateTooYoungPlayers();
             this.validateReserves();
             this.validatePaperSquads();
@@ -963,6 +985,19 @@ export default {
                     }
                 })
                 return data?.validateFinalRoundEligibility
+            })
+        },
+        validateQualificationEligibility() {
+            if (!this.showQualificationControl) {
+                resetValidation(this.qualificationValidation)
+                return
+            }
+            return runValidation(this.qualificationValidation, async () => {
+                const {data} = await this.$apollo.mutate({
+                    mutation: ValidateQualificationEligibilityMutation,
+                    variables: {teamRoundId: this.teamRoundId, scenarioId: this.session.scenarioId}
+                })
+                return data?.validateQualificationEligibility
             })
         },
         deleteTeam(targetSquad) {

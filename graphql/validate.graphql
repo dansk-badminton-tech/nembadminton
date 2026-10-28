@@ -1,4 +1,6 @@
 extend type Mutation {
+    "§27 stk. 5 for qualification in 2. division–Danmarksserien, using round numbers only, not the calendar-year alternative. Advisory."
+    validateQualificationEligibility(teamRoundId: ID!, scenarioId: ID): [QualificationEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateQualificationEligibility")
     "§38 stk. 8, checked against earlier Official Lineups. Advisory; never blocks saving."
     validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
     "Validates players is playing on the right squad (category-ranking)"
@@ -15,6 +17,32 @@ extend type Mutation {
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
     "§38 stk. 7 findings for the TeamRound's Paper Squads, from the Season History before the TeamRound. A warning, not a hard rule. Which Squads are Paper Squads is read from the TeamRound, matched to the lineup by Squad id."
     validatePaperSquads(teamRoundId: ID!, input: [ValidateTeam!]!) : PaperSquadValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePaperSquads")
+}
+
+enum QualificationEligibilityStatus {
+    NOT_APPLICABLE
+    SATISFIED
+    REQUIREMENT_NOT_MET
+    CANNOT_VERIFY
+}
+
+enum QualificationEligibilityIncompleteReason {
+    INCOMPARABLE_HISTORY
+    MISSING_ROUND
+    UNKNOWN_TIER
+    MISSING_TEAM
+    MISSING_SEASON
+}
+
+type QualificationEligibilityPlayer {
+    squadIndex: Int!
+    refId: String!
+    name: String!
+    "Only the round-number alternatives of §27 stk. 5 are evaluated; REQUIREMENT_NOT_MET does not establish ineligibility under the full regulation."
+    status: QualificationEligibilityStatus!
+    incompleteReasons: [QualificationEligibilityIncompleteReason!]!
+    "Incomparable earlier TeamRounds, each once; empty when known appearances satisfy the requirement."
+    uncountedRounds: [PaperSquadUncountedRound!]!
 }
 
 enum FinalRoundEligibilityStatus {
