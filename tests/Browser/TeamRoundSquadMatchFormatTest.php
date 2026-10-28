@@ -47,27 +47,40 @@ class TeamRoundSquadMatchFormatTest extends DuskTestCase
             $teamRound = TeamRound::where('name', 'Match format journey')->sole();
 
             $browser->waitFor("[dusk='match-count-option-13'].is-link")
-                ->assertMissing('@match-count-from-tier')
+                ->assertMissing('@match-format-from-tier')
                 ->selectSquadTeam($team->id)
                 ->waitFor("[dusk='match-count-option-9'].is-link")
-                ->assertSeeIn('@match-count-from-tier', 'Valgt ud fra niveau (1. division)')
+                ->assertSeeIn('@match-format-from-tier', 'Valgt ud fra niveau (1. division)')
+                ->deselectSquadTeam($team->id)
+                ->assertPresent("[dusk='match-count-option-9'].is-link")
+                ->assertMissing('@match-format-from-tier')
+                ->selectSquadTeam($team->id)
                 ->click("[dusk='match-count-option-13']")
                 ->waitFor("[dusk='match-count-option-13'].is-link")
-                ->assertMissing('@match-count-from-tier')
+                ->assertMissing('@match-format-from-tier')
                 ->deselectSquadTeam($team->id)
-                ->assertPresent("[dusk='match-count-option-13'].is-link")
                 ->selectSquadTeam($team->id)
                 ->waitFor("[dusk='match-count-option-9'].is-link")
                 ->submitSquadForm()
-                ->waitForTextIn("[dusk='squad-0']", 'Højbjerg 1');
+                ->waitForTextIn("[dusk='squad-0']", 'Højbjerg 1')
+                ->assertPresent("[dusk='match-count-option-9'].is-link")
+                ->assertMissing('@match-format-from-tier');
             $this->assertSame(9, $teamRound->squads()->sole()->categories()->count());
 
-            // Round 12 is the qualification for 1. division, so 2. division plays 9 matches.
+            // A tier variant gets no suggestion, although it starts with "1. division".
             $browser->click("[dusk='match-count-option-13']")
                 ->startManualSquadEntry()
-                ->type("[dusk='squad-tier-input']", '2. division')
+                ->type("[dusk='squad-tier-input']", '1. division (oversidder-runde)')
+                ->click("[dusk='squad-name-input']")
+                ->pause(300)
+                ->assertPresent("[dusk='match-count-option-13'].is-link")
+                ->assertMissing('@match-format-from-tier');
+
+            // Round 12 is the qualification for 1. division, so 2. division plays 9 matches.
+            $browser->type("[dusk='squad-tier-input']", '2. division')
+                ->click("[dusk='squad-name-input']")
                 ->waitFor("[dusk='match-count-option-9'].is-link")
-                ->assertSeeIn('@match-count-from-tier', 'Valgt ud fra niveau (2. division)');
+                ->assertSeeIn('@match-format-from-tier', 'Valgt ud fra niveau (2. division)');
         });
     }
 }

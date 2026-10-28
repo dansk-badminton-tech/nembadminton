@@ -23,11 +23,11 @@ export function suggestMatchFormat(tierName, roundNumber) {
 }
 
 // The add-Squad form's Match Format: `fromTier` names the tier it was preselected from,
-// or is null when the coach picked it.
-export function chooseTier(current, tierName, roundNumber) {
+// or is null when the coach picked it or the tier is gone.
+export function applyTier(current, tierName, roundNumber) {
     const suggestion = suggestMatchFormat(tierName, roundNumber);
     if (suggestion === null) {
-        return current;
+        return {matchCount: current.matchCount, fromTier: null};
     }
     return {matchCount: suggestion, fromTier: tierName.trim()};
 }

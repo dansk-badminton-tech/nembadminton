@@ -6,7 +6,7 @@
             :teams-loading="$apollo.queries.teams.loading"
             :teams-failed="teamsFailed"
             :selected-match-count="selectedMatchCount"
-            :match-count-from-tier="matchCountFromTier"
+            :match-format-from-tier="matchFormatFromTier"
             :selected-name="selectedName"
             :selected-tier-name="selectedTierName"
             :selected-team-id="selectedTeamId"
@@ -24,6 +24,7 @@
             @select-match-count="onMatchCountChange"
             @select-name="onNameChange"
             @select-tier="onTierChange"
+            @commit-tier="onTierCommit"
             @select-team="onTeamChange"
             @toggle-paper-squad="selectedIsPaperSquad = $event"
             @start-manual-entry="onStartManualEntry"
@@ -56,7 +57,7 @@ import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions} from "./team-picker";
 import {teamTierLabel} from "./team-label";
-import {chooseTier, pickMatchFormat} from "./match-format";
+import {applyTier, pickMatchFormat} from "./match-format";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -104,7 +105,8 @@ export default {
         return {
             loading: false,
             selectedMatchCount: 13,
-            matchCountFromTier: null,
+            matchFormatFromTier: null,
+            committedTierName: '',
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
@@ -298,14 +300,15 @@ export default {
             ));
         },
         matchFormat() {
-            return {matchCount: this.selectedMatchCount, fromTier: this.matchCountFromTier};
+            return {matchCount: this.selectedMatchCount, fromTier: this.matchFormatFromTier};
         },
         setMatchFormat({matchCount, fromTier}) {
             this.selectedMatchCount = matchCount;
-            this.matchCountFromTier = fromTier;
+            this.matchFormatFromTier = fromTier;
         },
         applyTierToMatchFormat(tierName) {
-            this.setMatchFormat(chooseTier(this.matchFormat(), tierName, this.teamRoundNumber));
+            this.committedTierName = tierName.trim();
+            this.setMatchFormat(applyTier(this.matchFormat(), tierName, this.teamRoundNumber));
         },
         onCustomCategoryCountChange({field, value}) {
             if (!Object.prototype.hasOwnProperty.call(this.customCategoryCounts, field)) {
@@ -322,13 +325,18 @@ export default {
             this.selectedName = typeof name === 'string' ? name : '';
         },
         onTierChange(tierName) {
-            const nextTierName = typeof tierName === 'string' ? tierName : '';
-            // Typing and picking from the list both report the text, so react only when it changes.
-            const changed = nextTierName !== this.selectedTierName;
-            this.selectedTierName = nextTierName;
-            if (changed) {
-                this.applyTierToMatchFormat(nextTierName);
+            this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+            if (this.selectedTierName.trim() === '') {
+                this.applyTierToMatchFormat('');
             }
+        },
+        onTierCommit({tierName, picked}) {
+            const committed = typeof tierName === 'string' ? tierName : '';
+            // Leaving Niveau unchanged keeps a manual Antal kampe; picking from the list always applies.
+            if (!picked && committed.trim() === this.committedTierName) {
+                return;
+            }
+            this.applyTierToMatchFormat(committed);
         },
         onTeamChange(team) {
             if (team === null || team === undefined) {
@@ -337,6 +345,7 @@ export default {
                 this.selectedIsPaperSquad = false;
                 this.selectedName = '';
                 this.selectedTierName = '';
+                this.applyTierToMatchFormat('');
                 return;
             }
             this.selectedTeamId = team.id;
@@ -440,6 +449,7 @@ export default {
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
                 this.selectedIsPaperSquad = false;
+                this.applyTierToMatchFormat('');
             }).catch(() => {
                 // The editor shows the failure through the session's onError; the form keeps its input.
             })

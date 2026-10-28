@@ -1,7 +1,7 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {
-    chooseTier,
+    applyTier,
     pickMatchFormat,
     suggestMatchFormat
 } from '../../../resources/js/admin-v2/views/team-fight/match-format.js'
@@ -43,23 +43,24 @@ test('surrounding whitespace does not hide the tier', () => {
 
 test('choosing a DH tier sets the Match Format and remembers the tier', () => {
     assert.deepEqual(
-        chooseTier({matchCount: 13, fromTier: null}, '1. division', 3),
+        applyTier({matchCount: 13, fromTier: null}, '1. division', 3),
         {matchCount: 9, fromTier: '1. division'}
     )
 })
 
 test('choosing a DH tier overrides an earlier manual pick', () => {
     assert.deepEqual(
-        chooseTier({matchCount: 'custom', fromTier: null}, 'Danmarksserien', 3),
+        applyTier({matchCount: 'custom', fromTier: null}, 'Danmarksserien', 3),
         {matchCount: 13, fromTier: 'Danmarksserien'}
     )
 })
 
-test('a tier without a suggestion or no tier leaves the Match Format as it is', () => {
+test('a tier without a suggestion or no tier keeps the Match Format but drops the tier as its source', () => {
     const current = {matchCount: 9, fromTier: '1. division'}
-    assert.deepEqual(chooseTier(current, 'Serie 1', 3), current)
-    assert.deepEqual(chooseTier(current, '', 3), current)
-    assert.deepEqual(chooseTier(current, null, 3), current)
+    const kept = {matchCount: 9, fromTier: null}
+    assert.deepEqual(applyTier(current, 'Serie 1', 3), kept)
+    assert.deepEqual(applyTier(current, '', 3), kept)
+    assert.deepEqual(applyTier(current, null, 3), kept)
 })
 
 test('picking another Match Format drops the tier as its source', () => {
