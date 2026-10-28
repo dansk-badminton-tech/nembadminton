@@ -1,6 +1,8 @@
 extend type Mutation {
     "§38 stk. 8, checked against earlier Official Lineups. Advisory; never blocks saving."
     validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
+    "The Playoff Participation Requirement (§32 stk. 1 a–c), checked against earlier Official Lineups: the Scenario's players, or the Official Lineup's without one. Advisory; never blocks saving."
+    validatePlayoffParticipation(teamRoundId: ID!, scenarioId: ID): [PlayoffParticipationPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePlayoffParticipation")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare. A TeamRound without a Ranking List compares the Squads' stored points."
@@ -42,6 +44,38 @@ type FinalRoundEligibilityPlayer {
     "Explicit incomplete-validation markers for CANNOT_VERIFY; empty for every other status."
     incompleteReasons: [FinalRoundEligibilityIncompleteReason!]!
     "Earlier TeamRounds without a Squad linked to the target Team, each once. Empty when a qualifying appearance is proven."
+    uncountedRounds: [PaperSquadUncountedRound!]!
+}
+
+enum PlayoffParticipationIncompleteReason {
+    "The TeamRound has no round number, so its Season Phase is unknown"
+    MISSING_ROUND
+    "The Squad's tier is unknown"
+    UNKNOWN_TIER
+    "The TeamRound has no Season, so its earlier TeamRounds can't be found"
+    MISSING_SEASON
+    "An earlier Squad the player stands on has an unknown tier, so it may count"
+    UNKNOWN_HISTORY_TIER
+    "An earlier Squad the player stands on has no date, so it may meet the 20 October deadline"
+    MISSING_HISTORY_DATE
+}
+
+type PlayoffParticipationPlayer {
+    "0-based index of the Squad in the lineup"
+    squadIndex: Int!
+    refId: String!
+    name: String!
+    "NOT_APPLICABLE outside the playoffs and qualification of Badmintonligaen and 1. division, and on a Paper Squad"
+    status: FinalRoundEligibilityStatus!
+    "Explicit incomplete-validation markers for CANNOT_VERIFY; empty for every other status."
+    incompleteReasons: [PlayoffParticipationIncompleteReason!]!
+    "Earlier team matches this season on any Team in the DH Tournament, Paper Squads included; 0 when not checked"
+    matchCount: Int!
+    "Earlier team matches the requirement needs: 4 in Badmintonligaen, 3 in 1. division; 0 when not applicable or the tier is unknown"
+    requiredMatchCount: Int!
+    "Whether the player stood on a Squad in the DH Tournament, not a Paper Squad, played no later than 20 October of the Season's start year. Null when not checked or it can't be told."
+    playedByDeadline: Boolean
+    "Earlier TeamRounds whose unknown tier or missing date keeps the result CANNOT_VERIFY, in round order; empty for every other status"
     uncountedRounds: [PaperSquadUncountedRound!]!
 }
 

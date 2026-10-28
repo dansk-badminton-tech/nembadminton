@@ -83,6 +83,14 @@ enum CanonicalTournamentTier: string
     //    case HYGGEFJER_4_2_SINGLE_8 = 'DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)';
 
     /**
+     * True for the tiers of the DH Tournament (DH-turneringen), Badminton Danmark's national ladder.
+     */
+    public function inDhTournament(): bool
+    {
+        return in_array($this, [self::BADMINTONLIGAEN, self::DIVISION_1, self::DIVISION_2, self::DIVISION_3, self::DANMARKSSERIEN], true);
+    }
+
+    /**
      * Human-friendly Danish label used in autocompletes / dropdowns.
      */
     public function label(): string

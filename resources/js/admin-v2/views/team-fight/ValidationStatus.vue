@@ -131,6 +131,34 @@
                     </div>
                 </b-tooltip>
             </div>
+            <div class="control" v-if="playoffParticipationStatus" dusk="playoff-participation-control">
+                <b-tooltip
+                    type="is-info"
+                    :label="playoffParticipationTip"
+                    multilined>
+                    <div class="tags has-addons">
+                        <span class="tag is-dark is-medium">Slutspilskrav (§32)</span>
+                        <span
+                            dusk="validation-playoff-participation"
+                            :class="playoffParticipationStatusClass"
+                            class="tag is-medium"
+                            aria-live="polite">
+                            <b-icon :icon="playoffParticipationStatusIcon" size="is-small" class="mr-1"></b-icon>
+                            {{ playoffParticipationStatusText }}
+                        </span>
+                        <span class="tag is-medium is-white">
+                            <b-button
+                                size="is-small"
+                                icon-left="refresh"
+                                aria-label="Kontrollér slutspilskravet igen"
+                                title="Kontrollér slutspilskravet igen"
+                                :loading="playoffParticipationStatus === 'pending'"
+                                dusk="revalidate-playoff-participation"
+                                @click="$emit('revalidate')" />
+                        </span>
+                    </div>
+                </b-tooltip>
+            </div>
         </div>
 
         <article v-if="reserveMessages.length" class="message is-warning is-small mt-3" dusk="reserve-warnings">
@@ -168,7 +196,31 @@
                 <p v-if="finalRoundWarnings.some(player => player.uncountedRounds.length)" class="mt-2">
                     <router-link :to="{name: 'help-guide', params: {slug: teamLinkGuide}}" target="_blank" dusk="final-round-team-link-guide">Sådan tilknytter du holdet i tidligere runder</router-link>
                 </p>
-                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen. Advarslen blokerer ikke redigering eller gemning.</p>
+                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen.</p>
+            </div>
+        </article>
+
+        <article v-if="playoffParticipationWarnings.length" class="message is-warning is-small mt-3" dusk="playoff-participation-warnings">
+            <div class="message-body">
+                <ul>
+                    <li v-for="player in playoffParticipationWarnings" :key="`${player.squadIndex}-${player.refId}`"
+                        :dusk="`playoff-participation-finding-${player.squadIndex}-${player.refId}`">
+                        {{ playoffParticipationMessage(player) }}
+                        <ul v-if="playoffParticipationGuidance(player).length">
+                            <li v-for="guidance in playoffParticipationGuidance(player)" :key="guidance">{{ guidance }}</li>
+                        </ul>
+                        <ul v-if="player.uncountedRounds.length">
+                            <li v-for="round in player.uncountedRounds" :key="round.teamRoundId">
+                                <router-link :to="{name: 'team-fight-edit', params: {clubhouseId: $route.params.clubhouseId, teamUUID: round.teamRoundId}}"
+                                             target="_blank" rel="noopener" :dusk="`playoff-participation-correction-${round.teamRoundId}`">{{ round.name }}<template v-if="round.round !== null"> (runde {{ round.round }})</template></router-link>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <p class="mt-2">
+                    Nembadminton kender ikke dispensationer og karantæne.
+                    <router-link :to="{name: 'help-guide', params: {slug: playoffParticipationGuide.slug}, hash: playoffParticipationGuide.hash}" target="_blank" dusk="playoff-participation-guide">Læs mere</router-link>
+                </p>
             </div>
         </article>
 
@@ -222,6 +274,7 @@
 import {buildValidationErrors, invalidLevelTip} from './validation-status.js'
 import {reserveFindingMessages} from './reserves.js'
 import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, paperSquadMessages, showsTeamLinkGuide} from './paper-squads.js'
+import {PLAYOFF_PARTICIPATION_GUIDE, playoffParticipationGuidance, playoffParticipationMessage} from './playoff-participation.js'
 
 export default {
     name: 'ValidationStatus',
@@ -236,6 +289,16 @@ export default {
         },
         finalRoundEligibility: {
             type: Array,
+            default: null
+        },
+        // §32 stk. 1 findings from validatePlayoffParticipation; null until it has run
+        playoffParticipation: {
+            type: Array,
+            default: null
+        },
+        // pending, complete or failed; null hides the status, when the requirement can't apply
+        playoffParticipationStatus: {
+            type: String,
             default: null
         },
         incompleteTeam: Boolean,
@@ -286,10 +349,13 @@ export default {
         return {
             isOpen: false,
             paperSquadAggravation: PAPER_SQUAD_AGGRAVATION,
-            teamLinkGuide: TEAM_LINK_GUIDE
+            teamLinkGuide: TEAM_LINK_GUIDE,
+            playoffParticipationGuide: PLAYOFF_PARTICIPATION_GUIDE
         }
     },
     methods: {
+        playoffParticipationMessage,
+        playoffParticipationGuidance,
         finalRoundContextGuidance(player) {
             const guidance = {
                 MISSING_ROUND: 'Udfyld Runde nr. i holdrundens indstillinger.',
@@ -344,6 +410,30 @@ export default {
             if (!this.finalRoundValidationStatus || !this.finalRoundValidationEnabled) return []
             return (this.finalRoundEligibility ?? []).filter(player =>
                 ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
+        },
+        playoffParticipationWarnings() {
+            if (this.playoffParticipationStatus !== 'complete') return []
+            return (this.playoffParticipation ?? []).filter(player =>
+                ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
+        },
+        playoffParticipationStatusText() {
+            if (this.playoffParticipationStatus === 'failed') return 'Fejlet'
+            if (this.playoffParticipationStatus !== 'complete') return 'Afventer'
+            return this.playoffParticipationWarnings.length ? 'Advarsel' : 'OK'
+        },
+        playoffParticipationStatusClass() {
+            if (this.playoffParticipationStatus === 'failed') return 'is-warning'
+            if (this.playoffParticipationStatus !== 'complete') return 'is-light'
+            return this.playoffParticipationWarnings.length ? 'is-warning' : 'is-success'
+        },
+        playoffParticipationStatusIcon() {
+            if (this.playoffParticipationStatus === 'failed') return 'alert'
+            if (this.playoffParticipationStatus !== 'complete') return 'minus-circle-outline'
+            return this.playoffParticipationWarnings.length ? 'alert' : 'check-circle'
+        },
+        playoffParticipationTip() {
+            if (this.playoffParticipationStatus === 'failed') return 'Slutspilskravet kunne ikke kontrolleres, så prøv igen med opdateringsknappen.'
+            return 'I slutspil og kvalifikation skal spilleren have spillet 4 kampe i Badmintonligaen eller 3 i 1. division i sæsonen, en af dem senest 20. oktober (§32 stk. 1).'
         },
         incompleteStatusClass() {
             if (this.ignoreIncompleteTeam) return 'is-warning'

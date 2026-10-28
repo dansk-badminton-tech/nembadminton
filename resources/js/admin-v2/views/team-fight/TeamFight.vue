@@ -172,6 +172,8 @@
                                       :final-round-validation-status="showFinalRoundControl ? finalRoundValidation.status : null"
                                       :final-round-validation-enabled="finalRoundValidation.enabled"
                                       @update:finalRoundValidationEnabled="onFinalRoundValidationEnabledChange"
+                                      :playoff-participation="playoffParticipationValidation.findings"
+                                      :playoff-participation-status="showPlayoffParticipationControl ? playoffParticipationValidation.status : null"
                                       @revalidate="refreshTeam"
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
@@ -222,7 +224,9 @@ import TeamRoundQuery from "../../../queries/teamRound.graphql"
 import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
+import ValidatePlayoffParticipationMutation from "../../../queries/validatePlayoffParticipation.graphql"
 import {hasPaperSquad} from "./paper-squads.js"
+import {showPlayoffParticipationControl} from "./playoff-participation.js"
 import {createValidationState, resetValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
 import {
     hasInvalidCategory,
@@ -340,6 +344,9 @@ export default {
         showFinalRoundControl() {
             return showFinalRoundControl(this.teamRound)
         },
+        showPlayoffParticipationControl() {
+            return showPlayoffParticipationControl(this.teamRound)
+        },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
                 .map((squad) => squad?.team?.id)
@@ -400,6 +407,8 @@ export default {
             reserveFindings: [],
             paperSquadValidation: null,
             finalRoundValidation: createValidationState(),
+            // Unlike the final-round check it needs no Team links, so it runs without being switched on.
+            playoffParticipationValidation: createValidationState(true),
             teamCount: 1,
             players: [],
             // Created here, so the teamRound query below starts with its key.
@@ -910,6 +919,7 @@ export default {
         },
         validate() {
             this.validateFinalRoundEligibility();
+            this.validatePlayoffParticipation();
             this.validateTooYoungPlayers();
             this.validateReserves();
             this.validatePaperSquads();
@@ -963,6 +973,22 @@ export default {
                     }
                 })
                 return data?.validateFinalRoundEligibility
+            })
+        },
+        validatePlayoffParticipation() {
+            if (!this.showPlayoffParticipationControl) {
+                resetValidation(this.playoffParticipationValidation)
+                return
+            }
+            return runValidation(this.playoffParticipationValidation, async () => {
+                const {data} = await this.$apollo.mutate({
+                    mutation: ValidatePlayoffParticipationMutation,
+                    variables: {
+                        teamRoundId: this.teamRoundId,
+                        scenarioId: this.session.scenarioId
+                    }
+                })
+                return data?.validatePlayoffParticipation
             })
         },
         deleteTeam(targetSquad) {

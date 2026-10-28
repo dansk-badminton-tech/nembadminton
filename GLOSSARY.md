@@ -31,7 +31,7 @@ Badminton Danmark's national senior team tournament, the tiers from Badmintonlig
 _Avoid_: Holdturneringen (also used for the regional series), senior tournament
 
 **Playoff Participation Requirement** (deltagelseskrav):
-The appearances a Member needs to play for a Badmintonligaen or 1. division Team in the playoffs or qualification (§32 stk. 1): at least 4 (Badmintonligaen) or 3 (1. division) earlier placements for the club on any Team in the DH Tournament, and at least one such placement played no later than 20 October. A Team's tier in the group stage decides which number applies, also in qualification (§27 stk. 3). Players on a Paper Squad are exempt. The tournament committee (Holdturneringsudvalget) can grant an exemption, so an unmet requirement is a warning.
+The appearances a Member needs to play for a Badmintonligaen or 1. division Team in the playoffs or qualification (§32 stk. 1): at least 4 (Badmintonligaen) or 3 (1. division) earlier placements for the club on any Team in the DH Tournament, and at least one such placement played no later than 20 October. A Team's tier in the group stage decides which number applies, also in qualification (§27 stk. 3). Players on a Paper Squad are exempt. Placements on a Paper Squad count towards the number, but the placement by 20 October must be on a Squad that is not a Paper Squad; its date is the Squad's own, or else its TeamRound's. The tournament committee (Holdturneringsudvalget) can grant an exemption, so an unmet requirement is a warning.
 _Avoid_: Final round eligibility (§38 stk. 8), minimum matches
 
 **Match Kind** (kampart):

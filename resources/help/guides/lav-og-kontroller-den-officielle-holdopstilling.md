@@ -141,6 +141,29 @@ Kan spillerens tidligere opstillinger ikke sammenlignes, fordi holdet ikke er ti
 
 Kontrollen bruger kun tidligere officielle holdopstillinger i sæsonen. Advarslerne forhindrer ikke, at du redigerer, gemmer og deler, så du skal selv vurdere, om spilleren må spille.
 
+### Kontrol af slutspilskravet
+
+For at spille slutspil eller kvalifikation i Badmintonligaen eller 1. division skal en spiller have deltaget i nok holdkampe for klubben i sæsonen (§ 32, stk. 1):
+
+- **Badmintonligaen:** mindst 4 holdkampe før runde 10, 11 eller 12.
+- **1. division:** mindst 3 holdkampe før runde 8 til 12.
+- **Senest 20. oktober** skal spilleren have spillet mindst én af kampene.
+
+Nembadminton tæller spillerens pladser i de tidligere runders officielle holdopstillinger på alle klubbens hold i Badmintonligaen, 1.–3. division og Danmarksserien. Hold i kredsenes rækker, fx Serie 1, tæller ikke. Pladser på et papirhold tæller med i antallet af kampe, men ikke som spillet senest 20. oktober. Som dato bruges holdets egen spilledato eller ellers holdrundens. Holdets egen række afgør kravet, også i en kvalifikationskamp mod en højere række, og spillere på et papirhold kontrolleres ikke.
+
+I de relevante runder viser Nembadminton **Slutspilskrav (§32)** med **Afventer**, **OK**, **Advarsel** eller **Fejlet**. Kontrollen er altid slået til og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Brug opdateringsknappen, når du har rettet noget i tidligere holdrunder.
+
+Advarslen står under kontrollerne med holdets nummer og spillerens navn, fx **Hold 1: Anders har 2 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).** Mangler Nembadminton oplysninger for at afgøre det, står der **slutspilskravet kan ikke verificeres fuldt ud**, og under advarslen står, hvad du skal rette:
+
+| Besked | Sådan retter du den |
+| --- | --- |
+| **Angiv holdets række under Rediger holdet, …** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
+| **Holdrunden mangler sæson, …** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
+| **Angiv rækken på spillerens hold i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv rækken på holdet, spilleren står på. |
+| **Angiv spilledatoen i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv **Runde spilledato**. |
+
+Kun holdrunder med et lavere rundenummer tæller som tidligere, også når en kamp er flyttet. Holdturneringsudvalget kan give dispensation, og karantænedage efter et klubskifte tæller som spillede runder. Det kender Nembadminton ikke, så advarslen forhindrer ikke, at du gemmer og deler. Vurdér selv, om spilleren må spille.
+
 ## Hvis en spiller mangler eller har forkerte point
 
 **Spilleren findes ikke på listen:** Listen skjuler spillere, der allerede står på et hold i den valgte opstilling, og spillere med [afbud til holdrunden](/app/help/guides/haandter-afbud-foer-og-under-en-holdrunde). Kontrollér også, at du har valgt en kategori, hvor spilleren har point. Er spilleren markeret som inaktiv, kan du slå **Vis inaktive** til. Findes spilleren stadig ikke, så se [Der mangler en spiller i min klub](/app/help/faq) i FAQ.
