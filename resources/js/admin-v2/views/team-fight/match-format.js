@@ -32,6 +32,17 @@ export function applyTier(current, tierName, roundNumber) {
     return {matchCount: suggestion, fromTier: tierName.trim()};
 }
 
+// The add-Squad form opens on 13 matches.
+export const DEFAULT_MATCH_FORMAT = 13;
+
+// Starting "Uden hold" starts afresh: a format from the tier goes back to the default.
+export function resetTierFormat(current) {
+    if (current.fromTier === null) {
+        return current;
+    }
+    return {matchCount: DEFAULT_MATCH_FORMAT, fromTier: null};
+}
+
 export function pickMatchFormat(current, matchCount) {
     return {
         matchCount,

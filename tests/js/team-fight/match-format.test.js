@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
     applyTier,
     pickMatchFormat,
+    resetTierFormat,
     suggestMatchFormat
 } from '../../../resources/js/admin-v2/views/team-fight/match-format.js'
 
@@ -79,4 +80,16 @@ test('picking the suggested Match Format again keeps the tier as its source', ()
         pickMatchFormat({matchCount: 9, fromTier: '1. division'}, 9),
         {matchCount: 9, fromTier: '1. division'}
     )
+})
+
+test('starting without a Team resets a format from the tier to 13', () => {
+    assert.deepEqual(
+        resetTierFormat({matchCount: 9, fromTier: '1. division'}),
+        {matchCount: 13, fromTier: null}
+    )
+})
+
+test('starting without a Team keeps a format the coach picked', () => {
+    assert.deepEqual(resetTierFormat({matchCount: 9, fromTier: null}), {matchCount: 9, fromTier: null})
+    assert.deepEqual(resetTierFormat({matchCount: 'custom', fromTier: null}), {matchCount: 'custom', fromTier: null})
 })

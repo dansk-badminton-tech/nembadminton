@@ -57,7 +57,7 @@ import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions} from "./team-picker";
 import {teamTierLabel} from "./team-label";
-import {applyTier, pickMatchFormat} from "./match-format";
+import {applyTier, DEFAULT_MATCH_FORMAT, pickMatchFormat, resetTierFormat} from "./match-format";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -104,7 +104,7 @@ export default {
     data() {
         return {
             loading: false,
-            selectedMatchCount: 13,
+            selectedMatchCount: DEFAULT_MATCH_FORMAT,
             matchFormatFromTier: null,
             committedTierName: '',
             selectedName: '',
@@ -363,7 +363,9 @@ export default {
             }
         },
         onStartManualEntry() {
+            const matchFormat = resetTierFormat(this.matchFormat());
             this.onTeamChange(null);
+            this.setMatchFormat(matchFormat);
             this.manualEntry = true;
         },
         onCancelManualEntry() {
