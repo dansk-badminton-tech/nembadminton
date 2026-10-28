@@ -1,0 +1,357 @@
+{
+ "leagueMatchID": "505619",
+ "listRow": {
+  "club": 42,
+  "team": "Værløse",
+  "tier": "Badmintonligaen",
+  "pulje": "Kvartfinaler",
+  "group": 17884,
+  "round": "10",
+  "roundDate": "24-03-2026",
+  "time": "ti 24-03-2026 18:30",
+  "match": "505619",
+  "side": "away",
+  "opponent": "Højbjerg",
+  "venue": "NES Arena",
+  "score": "3-5",
+  "wo": ""
+ },
+ "info": {
+  "Kampnr": "505619",
+  "Runde": "10 24-03-2026",
+  "Tid": "ti 24-03-2026 18:30",
+  "Spillested": "NES Arena / Hjulbjergvej 7A / 8270 Højbjerg / Telefon [redacted]",
+  "Hjemmehold": "Højbjerg",
+  "Udehold": "Værløse",
+  "Resultat": "3-5",
+  "Point": "3-5"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      86982,
+      "Jesper Toft"
+     ],
+     [
+      869,
+      "Amalie Magelund Krogh"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      253588,
+      "Alex Green (udl.)"
+     ],
+     [
+      2533,
+      "Signe Schulz Terp-Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 10",
+    "21 - 19"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      3019,
+      "Mads Vestergaard"
+     ],
+     [
+      230791,
+      "Sophia Lemming"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      84100,
+      "Andreas Søndergaard"
+     ],
+     [
+      132196,
+      "Amalie Cecilie Kudsk"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "23 - 25",
+    "21 - 15",
+    "21 - 15"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      2532,
+      "Amalie Schulz Terp-Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      83614,
+      "Julie Dawall Jakobsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "17 - 21",
+    "15 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      223597,
+      "Sofie Amalie Lausen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      93538,
+      "Laura Fløj Thomsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "11 - 21",
+    "15 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      236101,
+      "Mads Emil Monke"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      80361,
+      "Ditlev Jæger Holm"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "15 - 21",
+    "14 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      260328,
+      "Søren Møller"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      236652,
+      "Niklas Lynge Olesen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "19 - 21",
+    "13 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      869,
+      "Amalie Magelund Krogh"
+     ],
+     [
+      2532,
+      "Amalie Schulz Terp-Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      132196,
+      "Amalie Cecilie Kudsk"
+     ],
+     [
+      83614,
+      "Julie Dawall Jakobsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 17",
+    "21 - 11"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      3019,
+      "Mads Vestergaard"
+     ],
+     [
+      246172,
+      "Jakob Clausen Jessen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      84100,
+      "Andreas Søndergaard"
+     ],
+     [
+      253588,
+      "Alex Green (udl.)"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "20 - 22",
+    "22 - 20",
+    "15 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      86982,
+      "Jesper Toft"
+     ],
+     [
+      236101,
+      "Mads Emil Monke"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      80361,
+      "Ditlev Jæger Holm"
+     ],
+     [
+      243246,
+      "Robert Nebel"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  }
+ ],
+ "reserves": [
+  {
+   "side": "home",
+   "reserve": [
+    223597,
+    "Sofie Amalie Lausen"
+   ],
+   "for": [
+    61094,
+    "Line Kjærsfeldt"
+   ]
+  },
+  {
+   "side": "home",
+   "reserve": [
+    260328,
+    "Søren Møller"
+   ],
+   "for": [
+    156109,
+    "Jakob Houe Andersen"
+   ]
+  },
+  {
+   "side": "home",
+   "reserve": [
+    246172,
+    "Jakob Clausen Jessen"
+   ],
+   "for": [
+    59550,
+    "Frederik Aalestrup"
+   ]
+  }
+ ]
+}

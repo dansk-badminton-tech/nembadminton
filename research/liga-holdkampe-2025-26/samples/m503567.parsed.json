@@ -1,0 +1,338 @@
+{
+ "leagueMatchID": "503567",
+ "listRow": {
+  "club": 1092,
+  "team": "Gentofte",
+  "tier": "Badmintonligaen",
+  "pulje": "Grundspil",
+  "group": 17880,
+  "round": "8",
+  "roundDate": "17-02-2026",
+  "time": "ti 17-02-2026 18:30",
+  "match": "503567",
+  "side": "away",
+  "opponent": "Hvidovre",
+  "venue": "HBC-Hallen",
+  "score": "7-2",
+  "wo": ""
+ },
+ "info": {
+  "Kampnr": "503567",
+  "Runde": "8 17-02-2026",
+  "Tid": "ti 17-02-2026 18:30",
+  "Spillested": "HBC-Hallen / Bibliotekvej 62 / 2650 Hvidovre / Telefon [redacted]",
+  "Hjemmehold": "Hvidovre",
+  "Udehold": "Gentofte",
+  "Resultat": "7-2",
+  "Point": "10-2"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      352371,
+      "Marvin Emil Seidel (EU)"
+     ],
+     [
+      266748,
+      "Estelle Van Leeuwen (udl.)"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      83801,
+      "Rasmus Kjær Pedersen"
+     ],
+     [
+      2241,
+      "Christine Busch Andreasen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 14",
+    "19 - 21",
+    "12 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      156224,
+      "Kristoffer Kolding"
+     ],
+     [
+      115862,
+      "Mette Werge"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      233179,
+      "Otto Reiler"
+     ],
+     [
+      40011,
+      "Sara Thygesen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 12",
+    "21 - 15"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      3300,
+      "Anna Siess Ryberg"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      257851,
+      "Clara Azurmendi (EU)"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 10",
+    "21 - 17"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      2454,
+      "Ann-Sofie Husher Ruus"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      234461,
+      "Sofie Karmann"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 18",
+    "21 - 16"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      77864,
+      "Rasmus Gemke"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      91606,
+      "Victor Ørding Kauffmann"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 9",
+    "21 - 15"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      213539,
+      "Julien Carraggi (EU)"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      250116,
+      "Simon Rasmussen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "12 - 21",
+    "21 - 15",
+    "21 - 5"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      115862,
+      "Mette Werge"
+     ],
+     [
+      266748,
+      "Estelle Van Leeuwen (udl.)"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      2241,
+      "Christine Busch Andreasen"
+     ],
+     [
+      40011,
+      "Sara Thygesen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "11 - 21",
+    "17 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      352371,
+      "Marvin Emil Seidel (EU)"
+     ],
+     [
+      163381,
+      "Callum Hemming (udl.)"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      78661,
+      "Jeppe Bay Madsen"
+     ],
+     [
+      233179,
+      "Otto Reiler"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 14",
+    "21 - 14"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      156224,
+      "Kristoffer Kolding"
+     ],
+     [
+      359730,
+      "Bjarne Geiss (EU)"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      83801,
+      "Rasmus Kjær Pedersen"
+     ],
+     [
+      91606,
+      "Victor Ørding Kauffmann"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 12",
+    "21 - 16"
+   ],
+   "wo": ""
+  }
+ ],
+ "reserves": [
+  {
+   "side": "away",
+   "reserve": [
+    233179,
+    "Otto Reiler"
+   ],
+   "for": [
+    2346,
+    "Rasmus Prasz Espersen"
+   ]
+  }
+ ]
+}

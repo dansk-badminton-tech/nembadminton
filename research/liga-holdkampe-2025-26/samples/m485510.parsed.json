@@ -1,0 +1,418 @@
+{
+ "leagueMatchID": "485510",
+ "listRow": {
+  "club": 25,
+  "team": "Højbjerg 5",
+  "tier": "Danmarksserien",
+  "pulje": "Pulje 2",
+  "group": 17917,
+  "round": "2",
+  "roundDate": "20-09-2025",
+  "time": "lø 20-09-2025 16:00",
+  "match": "485510",
+  "side": "home",
+  "opponent": "Ikast 3",
+  "venue": "NES Arena 4-6",
+  "score": "8-5",
+  "wo": ""
+ },
+ "info": {
+  "Kampnr": "485510",
+  "Runde": "2 20-09-2025",
+  "Tid": "lø 20-09-2025 16:00",
+  "Spillested": "NES Arena / Hjulbjergvej 7A / 8270 Højbjerg / Telefon [redacted]",
+  "Hjemmehold": "Højbjerg 5",
+  "Udehold": "Ikast 3",
+  "Resultat": "8-5",
+  "Point": "11-5"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      240177,
+      "Oskar Hove Abraham"
+     ],
+     [
+      296539,
+      "Caroline Sommer Olander"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      282607,
+      "Thomas Moos"
+     ],
+     [
+      328335,
+      "Anna Grenaa Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "17 - 21",
+    "14 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      286477,
+      "Rasmus Meldgaard Schrøder"
+     ],
+     [
+      320508,
+      "Ida Villalba Wermuth"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      302291,
+      "Lauge Bie"
+     ],
+     [
+      294290,
+      "Celine Fly Sevelsted"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "9 - 21",
+    "14 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      326279,
+      "Isolde Søndergaard"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": "H"
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": true,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": "H"
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      1697,
+      "Mikkel Holmslykke Engelbæk"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      284904,
+      "Thor Svanekjær Jensen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "19 - 21",
+    "21 - 17",
+    "21 - 18"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      292949,
+      "Lasse Obel Schmidt"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      338341,
+      "Juraj Marek (EU)"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 14",
+    "12 - 21",
+    "21 - 18"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "3. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      265601,
+      "Elias Rydahl Overgaard"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      311557,
+      "Felix Thomsen Riisager"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 17",
+    "15 - 21",
+    "21 - 15"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "4. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      252021,
+      "Oliver Blittrup"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      289631,
+      "Villum Holst-Salomonsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "22 - 20",
+    "21 - 17"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      326279,
+      "Isolde Søndergaard"
+     ],
+     [
+      296539,
+      "Caroline Sommer Olander"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      294290,
+      "Celine Fly Sevelsted"
+     ],
+     [
+      328335,
+      "Anna Grenaa Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "5 - 21",
+    "8 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      320508,
+      "Ida Villalba Wermuth"
+     ]
+    ],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "away": {
+    "winner": true,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": "I"
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      265601,
+      "Elias Rydahl Overgaard"
+     ],
+     [
+      240177,
+      "Oskar Hove Abraham"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      302291,
+      "Lauge Bie"
+     ],
+     [
+      282607,
+      "Thomas Moos"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 12",
+    "21 - 10"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      252021,
+      "Oliver Blittrup"
+     ],
+     [
+      286477,
+      "Rasmus Meldgaard Schrøder"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      284904,
+      "Thor Svanekjær Jensen"
+     ],
+     [
+      289631,
+      "Villum Holst-Salomonsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "26 - 24",
+    "21 - 15"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "3. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      1697,
+      "Mikkel Holmslykke Engelbæk"
+     ],
+     [
+      292949,
+      "Lasse Obel Schmidt"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      338341,
+      "Juraj Marek (EU)"
+     ],
+     [
+      311557,
+      "Felix Thomsen Riisager"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "16 - 21",
+    "16 - 21"
+   ],
+   "wo": ""
+  }
+ ],
+ "reserves": []
+}

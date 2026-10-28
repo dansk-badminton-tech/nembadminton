@@ -1,0 +1,317 @@
+{
+ "leagueMatchID": "505733",
+ "listRow": {
+  "club": 1392,
+  "team": "Odense OBK",
+  "tier": "Badmintonligaen",
+  "pulje": "Kvalifikationskamp liga/1. division",
+  "group": 17886,
+  "round": "11/12",
+  "roundDate": "18-04-2026",
+  "time": "lø 18-04-2026 14:00",
+  "match": "505733",
+  "side": "home",
+  "opponent": "Lillerød",
+  "venue": "OBK-­hallen",
+  "score": "5-1",
+  "wo": ""
+ },
+ "info": {
+  "Kampnr": "505733",
+  "Runde": "11/12 18-04-2026",
+  "Tid": "lø 18-04-2026 14:00",
+  "Spillested": "OBK-hallen / Godthåbsgade 2-4 / 5000 Odense C / Telefon [redacted]",
+  "Hjemmehold": "Odense OBK",
+  "Udehold": "Lillerød",
+  "Resultat": "5-1",
+  "Point": "5-1"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      238522,
+      "Alexander Dunn (udl.)"
+     ],
+     [
+      240212,
+      "Amanda Aarrebo Petersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      164718,
+      "Oliver Skovbo Larsen"
+     ],
+     [
+      231715,
+      "Anna-Sofie Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 9",
+    "18 - 21",
+    "21 - 19"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      92043,
+      "Christian Faust Kjær"
+     ],
+     [
+      68036,
+      "Maiken Fruergaard Sørensen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      164952,
+      "Alexander Pedersen"
+     ],
+     [
+      78699,
+      "Maria Thaysen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 14",
+    "21 - 11"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      250799,
+      "Caroline Mouritsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": true,
+    "players": [
+     [
+      85967,
+      "Irina Amalie Andersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "12 - 21",
+    "12 - 21"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      32869,
+      "Camilla Martens"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      212929,
+      "Frederikke Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      86129,
+      "Søren Hald"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      693,
+      "Jonas Jæger"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 15",
+    "14 - 21",
+    "21 - 18"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      272027,
+      "Frederik Hinding"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      132254,
+      "Simon Bay"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 14",
+    "21 - 8"
+   ],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      240212,
+      "Amanda Aarrebo Petersen"
+     ],
+     [
+      68036,
+      "Maiken Fruergaard Sørensen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      231715,
+      "Anna-Sofie Nielsen"
+     ],
+     [
+      85967,
+      "Irina Amalie Andersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      93939,
+      "William Kryger Boe"
+     ],
+     [
+      92043,
+      "Christian Faust Kjær"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      70528,
+      "Nicolai Worm Carlsen"
+     ],
+     [
+      693,
+      "Jonas Jæger"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      238522,
+      "Alexander Dunn (udl.)"
+     ],
+     [
+      159471,
+      "Tobias Kej"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [
+     [
+      164718,
+      "Oliver Skovbo Larsen"
+     ],
+     [
+      164952,
+      "Alexander Pedersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "sets": [
+    "21 - 15",
+    "21 - 15"
+   ],
+   "wo": ""
+  }
+ ],
+ "reserves": []
+}

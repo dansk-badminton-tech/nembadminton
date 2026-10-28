@@ -1,0 +1,320 @@
+{
+ "leagueMatchID": "504014",
+ "listRow": {
+  "club": 25,
+  "team": "Højbjerg 5",
+  "tier": "Danmarksserien",
+  "pulje": "Nedrykning fra Danmarksserien pulje A",
+  "group": 17928,
+  "round": "8",
+  "roundDate": "31-01-2026",
+  "time": "lø 31-01-2026 14:00",
+  "match": "504014",
+  "side": "away",
+  "opponent": "Langhøj 2",
+  "venue": "Langhøj Hallen",
+  "score": "13-0",
+  "wo": "Afb."
+ },
+ "info": {
+  "Kampnr": "504014",
+  "Runde": "8 31-01-2026",
+  "Tid": "lø 31-01-2026 14:00",
+  "Spillested": "Langhøj Hallen / Bækvej 2 / 7600 Struer / Telefon [redacted]",
+  "Hjemmehold": "Langhøj 2",
+  "Udehold": "Højbjerg 5",
+  "Resultat": "13-0",
+  "Point": "16-0"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      159461,
+      "Benjamin Hestbæk Jakobsen"
+     ],
+     [
+      265055,
+      "Anne-Mette Stephansen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      165163,
+      "Mathias Andersen"
+     ],
+     [
+      336922,
+      "Lykke Møllegaard Andersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      335764,
+      "Sarah Lind"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      81151,
+      "Camilla Laursen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      75619,
+      "Mads Kjærgaard Mathiasen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      159138,
+      "Victor Wang"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "3. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      292075,
+      "Kalle Lohmann Østergaard"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "4. HS",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      83371,
+      "Benjamin pilgård"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      265055,
+      "Anne-Mette Stephansen"
+     ],
+     [
+      335764,
+      "Sarah Lind"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      336922,
+      "Lykke Møllegaard Andersen"
+     ],
+     [
+      81151,
+      "Camilla Laursen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      75619,
+      "Mads Kjærgaard Mathiasen"
+     ],
+     [
+      159138,
+      "Victor Wang"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      159461,
+      "Benjamin Hestbæk Jakobsen"
+     ],
+     [
+      63871,
+      "Ronnie Arnskov Holmberg"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "3. HD",
+   "home": {
+    "winner": true,
+    "players": [
+     [
+      165163,
+      "Mathias Andersen"
+     ],
+     [
+      83371,
+      "Benjamin pilgård"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": "(Ikke fremmødt) (Ikke fremmødt)"
+   },
+   "sets": [],
+   "wo": ""
+  }
+ ],
+ "reserves": []
+}

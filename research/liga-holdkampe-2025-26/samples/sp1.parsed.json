@@ -1,0 +1,282 @@
+[
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17882,
+  "name": "Bronzekamp"
+ },
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17880,
+  "name": "Grundspil"
+ },
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17881,
+  "name": "Guldkamp"
+ },
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17886,
+  "name": "Kvalifikationskamp liga/1. division"
+ },
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17884,
+  "name": "Kvartfinaler"
+ },
+ {
+  "tier": "Badmintonligaen",
+  "leagueGroupID": 17883,
+  "name": "Semifinaler"
+ },
+ {
+  "tier": "Badmintonligaen (oversidder-runder)",
+  "leagueGroupID": 18801,
+  "name": "Oversidder-runder/papirhold"
+ },
+ {
+  "tier": "1. division",
+  "leagueGroupID": 17889,
+  "name": "Kvalifikation til Badmintonligaen"
+ },
+ {
+  "tier": "1. division",
+  "leagueGroupID": 17891,
+  "name": "Kvalifikationskampe til 1. division"
+ },
+ {
+  "tier": "1. division",
+  "leagueGroupID": 17890,
+  "name": "Nedrykning fra 1. division"
+ },
+ {
+  "tier": "1. division",
+  "leagueGroupID": 17887,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "1. division",
+  "leagueGroupID": 17888,
+  "name": "Pulje 2"
+ },
+ {
+  "tier": "1. division (oversidder-runder)",
+  "leagueGroupID": 18802,
+  "name": "Oversidder-runder/papirhold"
+ },
+ {
+  "tier": "2. division",
+  "leagueGroupID": 17894,
+  "name": "Kvalifikation til 1. division"
+ },
+ {
+  "tier": "2. division",
+  "leagueGroupID": 17895,
+  "name": "Nedrykning fra 2. division"
+ },
+ {
+  "tier": "2. division",
+  "leagueGroupID": 17892,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "2. division",
+  "leagueGroupID": 17893,
+  "name": "Pulje 2"
+ },
+ {
+  "tier": "2. division (oversidder-runder)",
+  "leagueGroupID": 18803,
+  "name": "Oversidder-runder/papirhold"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17910,
+  "name": "Kvalifikation til 2.division pulje A"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17911,
+  "name": "Kvalifikation til 2.division pulje B"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17915,
+  "name": "Kvalkampe: Nedrykning til DS"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17914,
+  "name": "Kvalkampe: Oprykning til 2. division"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17912,
+  "name": "Nedrykning fra 3. division pulje A"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17913,
+  "name": "Nedrykning fra 3. division pulje B"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17906,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17907,
+  "name": "Pulje 2"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17908,
+  "name": "Pulje 3"
+ },
+ {
+  "tier": "3. division",
+  "leagueGroupID": 17909,
+  "name": "Pulje 4"
+ },
+ {
+  "tier": "3. division (oversidder-runde)",
+  "leagueGroupID": 18804,
+  "name": "Oversidder-runder/papirhold"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17924,
+  "name": "Kvalifikation til 3. division pulje A"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17925,
+  "name": "Kvalifikation til 3. division pulje B"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17926,
+  "name": "Kvalifikation til 3. division pulje C"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17927,
+  "name": "Kvalifikation til 3. division pulje D"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17933,
+  "name": "Kvalkampe: Nedrykning til KS"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17932,
+  "name": "Kvalkampe: Oprykning til 3. division"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17928,
+  "name": "Nedrykning fra Danmarksserien pulje A"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17929,
+  "name": "Nedrykning fra Danmarksserien pulje B"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17930,
+  "name": "Nedrykning fra Danmarksserien pulje C"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17931,
+  "name": "Nedrykning fra Danmarksserien pulje D"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17916,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17917,
+  "name": "Pulje 2"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17918,
+  "name": "Pulje 3"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17919,
+  "name": "Pulje 4"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17920,
+  "name": "Pulje 5"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17921,
+  "name": "Pulje 6"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17922,
+  "name": "Pulje 7"
+ },
+ {
+  "tier": "Danmarksserien",
+  "leagueGroupID": 17923,
+  "name": "Pulje 8"
+ },
+ {
+  "tier": "Danmarksserien (oversidder-runde)",
+  "leagueGroupID": 18805,
+  "name": "Oversidder-runder/papirhold"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 DOUBLE-6 kampe)",
+  "leagueGroupID": 18825,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4 Sp. DOUBLE-4 kampe)/SEN+ (2+2)",
+  "leagueGroupID": 18826,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4 spillere SINGLE/DOUBLE-5 kampe)",
+  "leagueGroupID": 18827,
+  "name": "Pulje 1"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)",
+  "leagueGroupID": 18797,
+  "name": "SEN 1 (4+2) Finaleslutspil (1. - 4. plads)"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)",
+  "leagueGroupID": 18795,
+  "name": "SEN 1 (4+2) Pulje 1"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)",
+  "leagueGroupID": 18796,
+  "name": "SEN 1 (4+2) Pulje 2"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)",
+  "leagueGroupID": 18799,
+  "name": "SEN 2 (4+2 single/double/mix)"
+ },
+ {
+  "tier": "DM I HYGGEFJER (4+2 m/SINGLE-8 kampe)",
+  "leagueGroupID": 18800,
+  "name": "SEN 3 (4+2 single/double/mix)"
+ }
+]

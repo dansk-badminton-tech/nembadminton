@@ -1,0 +1,232 @@
+{
+ "leagueMatchID": "506868",
+ "listRow": {
+  "club": 25,
+  "team": "Højbjerg",
+  "tier": "Badmintonligaen (oversidder-runder)",
+  "pulje": "Oversidder-runder/papirhold",
+  "group": 18801,
+  "round": "12",
+  "roundDate": "18-04-2026",
+  "time": "lø 18-04-2026 08:00",
+  "match": "506868",
+  "side": "home",
+  "opponent": "Ukendt modstander",
+  "venue": "Randers eller Værløse",
+  "score": "13-0",
+  "wo": "Afb."
+ },
+ "info": {
+  "Kampnr": "506868",
+  "Runde": "12 18-04-2026",
+  "Tid": "lø 18-04-2026 08:00",
+  "Spillested": "Randers eller Værløse",
+  "Hjemmehold": "Højbjerg",
+  "Udehold": "Ukendt modstander",
+  "Resultat": "13-0",
+  "Point": "0-0"
+ },
+ "games": [
+  {
+   "discipline": "1. MD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      86982,
+      "Jesper Toft"
+     ],
+     [
+      869,
+      "Amalie Magelund Krogh"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. MD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      3019,
+      "Mads Vestergaard"
+     ],
+     [
+      230791,
+      "Sophia Lemming"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      61094,
+      "Line Kjærsfeldt"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. DS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      2532,
+      "Amalie Schulz Terp-Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      156109,
+      "Jakob Houe Andersen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HS",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      236101,
+      "Mads Emil Monke"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. DD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      869,
+      "Amalie Magelund Krogh"
+     ],
+     [
+      2532,
+      "Amalie Schulz Terp-Nielsen"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "1. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      86982,
+      "Jesper Toft"
+     ],
+     [
+      3019,
+      "Mads Vestergaard"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  },
+  {
+   "discipline": "2. HD",
+   "home": {
+    "winner": false,
+    "players": [
+     [
+      156109,
+      "Jakob Houe Andersen"
+     ],
+     [
+      59550,
+      "Frederik Aalestrup"
+     ]
+    ],
+    "other_text": null
+   },
+   "away": {
+    "winner": false,
+    "players": [],
+    "other_text": null
+   },
+   "sets": [],
+   "wo": ""
+  }
+ ],
+ "reserves": []
+}
