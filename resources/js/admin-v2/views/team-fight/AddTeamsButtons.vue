@@ -6,6 +6,7 @@
             :teams-loading="$apollo.queries.teams.loading"
             :teams-failed="teamsFailed"
             :selected-match-count="selectedMatchCount"
+            :match-format-from-tier="matchFormatFromTier"
             :selected-name="selectedName"
             :selected-tier-name="selectedTierName"
             :selected-team-id="selectedTeamId"
@@ -23,6 +24,7 @@
             @select-match-count="onMatchCountChange"
             @select-name="onNameChange"
             @select-tier="onTierChange"
+            @commit-tier="onTierCommit"
             @select-team="onTeamChange"
             @toggle-paper-squad="selectedIsPaperSquad = $event"
             @start-manual-entry="onStartManualEntry"
@@ -55,6 +57,7 @@ import InlineAddSquadForm from "./InlineAddSquadForm.vue";
 import TeamForm from "../team/TeamForm.vue";
 import {buildTeamPickerOptions} from "./team-picker";
 import {teamTierLabel} from "./team-label";
+import {applyTier, DEFAULT_MATCH_FORMAT, pickMatchFormat, resetTierFormat} from "./match-format";
 import {
     isSameDay,
     normalizeDateToDay,
@@ -77,6 +80,10 @@ export default {
     inject: ['lineupSession'],
     props: {
         teamRoundDate: Date,
+        teamRoundNumber: {
+            type: Number,
+            default: null
+        },
         clubhouseId: {
             type: [String, Number],
             default: null
@@ -97,7 +104,9 @@ export default {
     data() {
         return {
             loading: false,
-            selectedMatchCount: 13,
+            selectedMatchCount: DEFAULT_MATCH_FORMAT,
+            matchFormatFromTier: null,
+            committedTierName: '',
             selectedName: '',
             selectedTierName: '',
             selectedTeamId: null,
@@ -280,14 +289,26 @@ export default {
         },
         onMatchCountChange(matchCount) {
             if (matchCount === CUSTOM_MATCH_COUNT) {
-                this.selectedMatchCount = CUSTOM_MATCH_COUNT;
+                this.setMatchFormat(pickMatchFormat(this.matchFormat(), CUSTOM_MATCH_COUNT));
                 return;
             }
 
             const parsedMatchCount = Number.parseInt(matchCount, 10);
-            this.selectedMatchCount = Number.isNaN(parsedMatchCount)
-                ? null
-                : parsedMatchCount;
+            this.setMatchFormat(pickMatchFormat(
+                this.matchFormat(),
+                Number.isNaN(parsedMatchCount) ? null : parsedMatchCount
+            ));
+        },
+        matchFormat() {
+            return {matchCount: this.selectedMatchCount, fromTier: this.matchFormatFromTier};
+        },
+        setMatchFormat({matchCount, fromTier}) {
+            this.selectedMatchCount = matchCount;
+            this.matchFormatFromTier = fromTier;
+        },
+        applyTierToMatchFormat(tierName) {
+            this.committedTierName = tierName.trim();
+            this.setMatchFormat(applyTier(this.matchFormat(), tierName, this.teamRoundNumber));
         },
         onCustomCategoryCountChange({field, value}) {
             if (!Object.prototype.hasOwnProperty.call(this.customCategoryCounts, field)) {
@@ -305,6 +326,17 @@ export default {
         },
         onTierChange(tierName) {
             this.selectedTierName = typeof tierName === 'string' ? tierName : '';
+            if (this.selectedTierName.trim() === '') {
+                this.applyTierToMatchFormat('');
+            }
+        },
+        onTierCommit({tierName, picked}) {
+            const committed = typeof tierName === 'string' ? tierName : '';
+            // Leaving Niveau unchanged keeps a manual Antal kampe; picking from the list always applies.
+            if (!picked && committed.trim() === this.committedTierName) {
+                return;
+            }
+            this.applyTierToMatchFormat(committed);
         },
         onTeamChange(team) {
             if (team === null || team === undefined) {
@@ -313,12 +345,14 @@ export default {
                 this.selectedIsPaperSquad = false;
                 this.selectedName = '';
                 this.selectedTierName = '';
+                this.applyTierToMatchFormat('');
                 return;
             }
             this.selectedTeamId = team.id;
             this.selectedName = team.name || '';
             this.selectedTierName = teamTierLabel(team);
             this.manualEntry = false;
+            this.applyTierToMatchFormat(this.selectedTierName);
         },
         onTeamCreated(team) {
             this.teamFormOpen = false;
@@ -329,7 +363,9 @@ export default {
             }
         },
         onStartManualEntry() {
+            const matchFormat = resetTierFormat(this.matchFormat());
             this.onTeamChange(null);
+            this.setMatchFormat(matchFormat);
             this.manualEntry = true;
         },
         onCancelManualEntry() {
@@ -415,6 +451,7 @@ export default {
                 this.selectedTierName = '';
                 this.selectedTeamId = null;
                 this.selectedIsPaperSquad = false;
+                this.applyTierToMatchFormat('');
             }).catch(() => {
                 // The editor shows the failure through the session's onError; the form keeps its input.
             })

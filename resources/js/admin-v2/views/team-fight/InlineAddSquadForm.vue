@@ -103,7 +103,8 @@
                         open-on-focus
                         dusk="squad-tier-input"
                         @update:modelValue="onTierInput"
-                        @select="onTierSelect">
+                        @select="onTierSelect"
+                        @blur="onTierBlur">
                     </b-autocomplete>
                     <p class="help has-text-grey mb-0">
                         Navn og niveau er valgfrie.
@@ -118,6 +119,7 @@
                         <b-button
                             v-for="matchCount in matchCountOptions"
                             :key="matchCount"
+                            :dusk="'match-count-option-' + matchCount"
                             size="is-small"
                             :disabled="loading"
                             :type="selectedMatchCount === matchCount ? 'is-link' : 'is-light'"
@@ -133,6 +135,9 @@
                             Tilpas
                         </b-button>
                     </div>
+                    <p v-if="matchFormatFromTier" class="help has-text-grey mb-0" dusk="match-format-from-tier">
+                        Valgt ud fra niveau ({{ matchFormatFromTier }})
+                    </p>
                 </div>
 
                 <div class="add-squad-form__section">
@@ -256,6 +261,10 @@ export default {
             type: [Number, String],
             default: null
         },
+        matchFormatFromTier: {
+            type: String,
+            default: null
+        },
         selectedName: {
             type: String,
             default: ''
@@ -344,7 +353,12 @@ export default {
         onTierSelect(option) {
             if (option && typeof option.label === 'string') {
                 this.$emit('select-tier', option.label);
+                this.$emit('commit-tier', {tierName: option.label, picked: true});
             }
+        },
+        // Leaving Niveau commits the typed text, so partial text never sets Antal kampe.
+        onTierBlur() {
+            this.$emit('commit-tier', {tierName: this.selectedTierName, picked: false});
         },
         isSelectedTeam(option) {
             return this.selectedTeamId !== null && String(option.id) === String(this.selectedTeamId);
