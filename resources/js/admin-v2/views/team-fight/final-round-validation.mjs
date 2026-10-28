@@ -12,8 +12,9 @@ export function showFinalRoundControl(teamRound) {
 }
 
 // The state may be reactive; always mutate the caller's state rather than a captured raw object.
-export function createValidationState() {
-    return {enabled: false, status: 'disabled', findings: null}
+// A check that needs no setup from the coach is created enabled; the others start disabled.
+export function createValidationState(enabled = false) {
+    return {enabled, status: enabled ? 'pending' : 'disabled', findings: null}
 }
 
 export function resetValidation(state) {

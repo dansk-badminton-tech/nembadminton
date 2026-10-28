@@ -7,18 +7,15 @@ namespace App\GraphQL\Mutations;
 use App\Enums\CanonicalTournamentTier;
 use App\Models\Squad;
 use App\Models\TeamRound;
-use App\Models\TeamRoundScenario;
 use App\SeasonHistory\RoundLineup;
 use App\SeasonHistory\SeasonHistoryLoader;
-use FlyCompany\TeamFight\ScenarioManager;
-use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * §38 stk. 8 for a saved Scenario's placements and shared persisted Squad context.
  */
 class ValidateFinalRoundEligibility
 {
-    public function __construct(private readonly SeasonHistoryLoader $loader, private readonly ScenarioManager $scenarios) {}
+    public function __construct(private readonly SeasonHistoryLoader $loader, private readonly TeamRoundLineup $lineup) {}
 
     /**
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
@@ -26,27 +23,10 @@ class ValidateFinalRoundEligibility
      */
     public function __invoke(mixed $root, array $args): array
     {
-        $round = TeamRound::query()->with('squads.team.tier', 'officialScenario')->findOrFail($args['teamRoundId']);
-        // Resolve through the authorized TeamRound, never through an unchecked client Scenario id.
-        $scenarioId = null;
-        if (isset($args['scenarioId'])) {
-            /** @var TeamRoundScenario|null $scenario */
-            $scenario = $round->scenarios()->find($args['scenarioId']);
-            if ($scenario === null) {
-                throw new AuthorizationException;
-            }
-            $scenarioId = $scenario->id;
-        }
+        $round = $this->lineup->teamRound($args['teamRoundId']);
         $earlier = null;
         $results = [];
-        foreach ($round->squads->values() as $index => $squad) {
-            $squad->setRelation('teamRound', $round);
-            $players = [];
-            foreach ($this->scenarios->getCategories($squad, $scenarioId) as $category) {
-                foreach ($category->players as $player) {
-                    $players[$player->member_ref_id] = $player;
-                }
-            }
+        foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
             $context = $this->currentContext($squad, $round);
             foreach ($players as $player) {
                 $status = $context['status'];

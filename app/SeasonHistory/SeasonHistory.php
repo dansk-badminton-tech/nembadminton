@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\SeasonHistory;
 
+use App\Enums\CanonicalTournamentTier;
 use App\Enums\SeasonPhase;
 
 /**
@@ -81,6 +82,18 @@ final readonly class SeasonHistory
         return count(array_filter(
             $this->placementsIn($refId, $phase),
             fn (Placement $placement) => $placement->squad->teamId === $teamId,
+        ));
+    }
+
+    /**
+     * How many team matches the Member stands in on any Team in the DH Tournament, Paper Squads included. A Squad whose
+     * tier is unknown doesn't count.
+     */
+    public function dhTournamentMatchCount(string $refId): int
+    {
+        return count(array_filter(
+            $this->placementsFor($refId),
+            fn (Placement $placement) => CanonicalTournamentTier::tryFromRawName($placement->squad->tier)?->inDhTournament() === true,
         ));
     }
 
