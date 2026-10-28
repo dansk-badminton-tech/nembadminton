@@ -30,4 +30,9 @@ Kun holdrunder med lavere rundenummer tæller, og flere kategorier på samme hol
 
 Mangler sæson, rundenummer, holdtilknytning eller en kendt række, vises en særskilt advarsel om manglende kontekst. Mangler et historisk holdlink, vises de berørte holdrunder: [tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder), og kør kontrollen igen. Kan de kendte opstillinger allerede opfylde kravet, giver øvrige manglende holdlinks ikke en advarsel.
 
+- **Manglende rundenummer:** udfyld **Runde nr.** i holdrundens indstillinger.
+- **Ukendt oprindelig række:** ret rækken på sæsonens hold.
+- **Manglende holdtilknytning:** vælg **Rediger holdet → Tilknyt hold** på den aktuelle holdopstilling.
+- **Manglende sæson:** kontakt support for at få holdrundens sæson rettet.
+
 Advarsler blokerer hverken redigering eller gemning, og kontrollen erstatter ikke klubbens vurdering af det fulde reglement.
