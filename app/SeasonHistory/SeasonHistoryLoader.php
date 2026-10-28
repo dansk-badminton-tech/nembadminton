@@ -107,6 +107,7 @@ class SeasonHistoryLoader
     private function roundLineup(TeamRound $teamRound): RoundLineup
     {
         $round = $teamRound->round === null ? null : (int) $teamRound->round;
+        $gameDate = $teamRound->game_date === null ? null : Carbon::parse($teamRound->game_date)->toDateString();
         $official = $this->officialCategories($teamRound);
 
         $squads = [];
@@ -122,6 +123,7 @@ class SeasonHistoryLoader
                 tier: $tier,
                 phase: SeasonPhase::fromRound($round, $tier),
                 isPaperSquad: $squad->is_paper_squad,
+                matchDate: $squad->playing_datetime?->toDateString() ?? $gameDate,
             );
             $squads[] = $lineupSquad;
 
@@ -146,7 +148,7 @@ class SeasonHistoryLoader
             teamRoundId: $teamRound->id,
             name: $teamRound->resolveName(),
             round: $round,
-            gameDate: $teamRound->game_date === null ? null : Carbon::parse($teamRound->game_date)->toDateString(),
+            gameDate: $gameDate,
             squads: $squads,
             ladders: $ladders,
         );
