@@ -104,6 +104,10 @@ _Avoid_: Midlertidigt utilgængelig, unplayable, unavailable
 A Member who is not assigned to any Squad in the Scenario currently being edited.
 _Avoid_: Unused player, unassigned player
 
+**Check** (tjek):
+One test of a Lineup against a rule of the holdturneringsregler, such as the level order across Squads (§38 stk. 4) or the Paper Squad rule (§38 stk. 7). The rule is the §-paragraph; the Check is how Nembadminton tests a Lineup against it.
+_Avoid_: Validation, requirement, rule
+
 ### User Documentation
 
 **User Guide**:
