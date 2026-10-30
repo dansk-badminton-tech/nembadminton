@@ -159,7 +159,10 @@
                         </div>
                     </b-message>
 
-                    <ValidationStatus :incomplete-team="resolveIncompleteTeam"
+                    <!-- PROTOTYPE (#332): ?variant=A|B|C swaps the check panel for the prototype variants. -->
+                    <PrototypeCheckPanel v-if="$route.query.variant" :live="prototypeLiveScenario"/>
+                    <ValidationStatus v-if="!$route.query.variant"
+                                      :incomplete-team="resolveIncompleteTeam"
                                       :invalid-category="resolveInvalidCategory"
                                       :invalid-level="resolveInvalidLevel"
                                       :basic-squads="validateBasicSquads"
@@ -178,7 +181,7 @@
                                       :show-paper-squads="hasPaperSquad"
                                       :ignore-incomplete-team="ignoreIncompleteTeam"
                                       @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
-                    <QualificationEligibilityStatus v-if="showQualificationControl"
+                    <QualificationEligibilityStatus v-if="!$route.query.variant && showQualificationControl"
                                                     :validation="qualificationValidation"
                                                     @enabled-change="onQualificationValidationEnabledChange"
                                                     @revalidate="refreshTeam" />
@@ -245,6 +248,8 @@ import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
 import ValidationStatus from "./ValidationStatus.vue";
+import PrototypeCheckPanel from "./prototype-check-panel/PrototypeCheckPanel.vue";
+import {liveScenario} from "./prototype-check-panel/scenarios.js";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
 import {createLineupSession} from "./lineup-session.js";
@@ -287,6 +292,7 @@ export default {
         ShareLinkModal,
         PlayersListSearch,
         ValidationStatus,
+        PrototypeCheckPanel,
         QualificationEligibilityStatus,
         RankingVersionSelect,
         TeamTable,
@@ -362,6 +368,9 @@ export default {
         },
         showPlayoffParticipationControl() {
             return showPlayoffParticipationControl(this.teamRound)
+        },
+        prototypeLiveScenario() {
+            return liveScenario(this)
         },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
