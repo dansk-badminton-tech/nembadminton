@@ -108,6 +108,38 @@ _Avoid_: Unused player, unassigned player
 One test of a Lineup against a rule of the holdturneringsregler, such as the level order across Squads (§38 stk. 4) or the Paper Squad rule (§38 stk. 7). The rule is the §-paragraph; the Check is how Nembadminton tests a Lineup against it.
 _Avoid_: Validation, requirement, rule
 
+**Check Status** (tjekstatus):
+The outcome of one Check for one Lineup: Passed, Failed, Warning, Cannot Verify, Waiting, Switched Off or Not Applicable. When several fit, Not Applicable wins over Switched Off, then Waiting; a Check that ran takes its worst outcome: Failed, then Warning, then Cannot Verify, then Passed.
+_Avoid_: Validation status, result state
+
+**Passed** (OK):
+The Check ran and the Lineup keeps the rule.
+_Avoid_: Satisfied, met, valid
+
+**Failed** (fejl):
+The Check is sure the Lineup breaks the rule, with at least one finding saying where.
+_Avoid_: Requirement not met, invalid, error
+
+**Warning** (advarsel):
+The Lineup may break the rule, but the rule leaves room the Check can't judge, such as the club's judgement (§43 stk. 3) or alternatives it doesn't test (§27 stk. 5). It says what the Check can know, not how serious breaking the rule is.
+_Avoid_: Soft error, notice
+
+**Cannot Verify** (kan ikke kontrolleres):
+The Check can't reach a result because a fact it needs is missing, such as the round number, the Squad's tier, the game date, a player's points in a category, or a linked Squad in an earlier TeamRound. Its reason says what to fill in. A missing fact that decides whether the Check applies also gives Cannot Verify, never Not Applicable.
+_Avoid_: Incomplete, unknown, failed
+
+**Waiting** (venter):
+The Lineup isn't far enough along for the Check to test it yet, such as the level order before every Squad is full. A normal step while building a Lineup, not something to act on.
+_Avoid_: Pending, afventer, blocked
+
+**Switched Off** (slået fra):
+The coach has turned the Check off for this Lineup, so it doesn't run.
+_Avoid_: Disabled, deaktiveret, ignored
+
+**Not Applicable** (gælder ikke):
+Known facts about the Lineup put it outside the rule, such as the Paper Squad rule on a Lineup without a Paper Squad. Its reason says why.
+_Avoid_: Hidden, skipped, inactive
+
 ### User Documentation
 
 **User Guide**:
