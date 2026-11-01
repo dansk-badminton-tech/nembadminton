@@ -55,10 +55,17 @@ export const SCENARIOS = [
         checks: build({
             complete: {status: 'ok'},
             level: {status: 'ok'},
-            category: {status: 'error', details: ['Hold 1: Mads Holm spiller for højt i HS.']},
+            category: {status: 'error', details: [
+                'Hold 1: Mads Holm spiller for højt i HS.',
+                'Hold 1: Anna Friis spiller for højt i DS.',
+                'Hold 2: Peter Lind spiller for højt i 1. HD.',
+            ]},
             reserves: {status: 'warning', details: ['Hold 2: Reserven Emil Berg har flere point end Jonas Krog, som han erstatter.']},
             paper: {status: 'not-applicable', reason: NOT_APPLICABLE.paper},
-            finalRound: {status: 'warning', details: ['Hold 1: Karl Dam har ikke stået på samme eller et lavere hold tidligere i sæsonen.']},
+            finalRound: {status: 'warning', details: [
+                'Hold 1: Karl Dam har ikke stået på samme eller et lavere hold tidligere i sæsonen.',
+                'Hold 1: Line Bech har ikke stået på samme eller et lavere hold tidligere i sæsonen.',
+            ]},
             qualification: {status: 'not-applicable', reason: NOT_APPLICABLE.qualification},
             playoff: {status: 'not-applicable', reason: NOT_APPLICABLE.playoff},
             tooYoung: {status: 'error', details: ['Hold 3: Ida Møller er ikke fyldt 15 år senest 31.12.2026.']},

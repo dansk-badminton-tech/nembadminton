@@ -13,26 +13,33 @@
     <PrototypeSwitcher :variants="variantList"/>
 </template>
 <script>
-import VariantB from './VariantB.vue'
-import VariantB1 from './VariantB1.vue'
 import VariantB2 from './VariantB2.vue'
 import VariantB3 from './VariantB3.vue'
+import VariantFold from './VariantFold.vue'
 import PrototypeSwitcher from '../../../components/PrototypeSwitcher.vue'
 import {SCENARIOS, applySwitches} from './scenarios.js'
 
-// Round 2: A and C dropped after the coach picked B; B stays as the baseline for B1–B3.
-const VARIANTS = {B: VariantB, B1: VariantB1, B2: VariantB2, B3: VariantB3}
+const fold = (variantName, affordance) => ({extends: VariantFold, variantName, hasSwitches: false, props: {affordance: {type: String, default: affordance}}})
+
+// Round 3: B2's sections with B3's fold-out, three cues for "this row folds". B2 and B3 stay as references.
+const VARIANTS = {
+    F1: fold('B2 + fold-ud: pil foran rækken', 'chevron'),
+    F2: fold('B2 + fold-ud: "Vis alle"-link', 'link'),
+    F3: fold('B2 + fold-ud: knap med antal', 'button'),
+    B2: VariantB2,
+    B3: VariantB3,
+}
 
 export default {
     name: 'PrototypeCheckPanel',
     components: {PrototypeSwitcher},
     props: {live: Object},
     data() {
-        return {scenarioKey: 'basic', switchState: {}}
+        return {scenarioKey: 'final', switchState: {}}
     },
     computed: {
         variantKey() {
-            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'B'
+            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'F1'
         },
         variant() {
             return VARIANTS[this.variantKey]
