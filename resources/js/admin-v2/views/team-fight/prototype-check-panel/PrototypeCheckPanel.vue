@@ -13,21 +13,20 @@
     <PrototypeSwitcher :variants="variantList"/>
 </template>
 <script>
-import VariantB2 from './VariantB2.vue'
-import VariantB3 from './VariantB3.vue'
 import VariantFold from './VariantFold.vue'
+import VariantHint from './VariantHint.vue'
 import PrototypeSwitcher from '../../../components/PrototypeSwitcher.vue'
 import {SCENARIOS, applySwitches} from './scenarios.js'
 
 const fold = (variantName, affordance) => ({extends: VariantFold, variantName, hasSwitches: false, props: {affordance: {type: String, default: affordance}}})
+const hint = (variantName, kind) => ({extends: VariantHint, variantName, hasSwitches: false, props: {hint: {type: String, default: kind}}})
 
-// Round 3: B2's sections with B3's fold-out, three cues for "this row folds". B2 and B3 stay as references.
+// Round 4: the coach picked F1; every row folds and starts folded. H1–H3 try hints that a row can be clicked. F1 stays as reference.
 const VARIANTS = {
+    H1: hint('Alle rækker foldes: hjælpetekst øverst', 'caption'),
+    H2: hint('Alle rækker foldes: "Detaljer" i højre side', 'label'),
+    H3: hint('Alle rækker foldes: "Vis detaljer" ved hover', 'hover'),
     F1: fold('B2 + fold-ud: pil foran rækken', 'chevron'),
-    F2: fold('B2 + fold-ud: "Vis alle"-link', 'link'),
-    F3: fold('B2 + fold-ud: knap med antal', 'button'),
-    B2: VariantB2,
-    B3: VariantB3,
 }
 
 export default {
@@ -39,7 +38,7 @@ export default {
     },
     computed: {
         variantKey() {
-            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'F1'
+            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'H1'
         },
         variant() {
             return VARIANTS[this.variantKey]

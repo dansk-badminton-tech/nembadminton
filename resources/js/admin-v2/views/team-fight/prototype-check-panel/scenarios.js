@@ -5,17 +5,28 @@
 // status: ok | error | warning | not-applicable | off | waiting | cannot-verify | pending
 // The four "no result" statuses are not-applicable, off, waiting and cannot-verify.
 
+// description: one sentence on what the Check tests; round 4 shows it when a row is unfolded.
 const CHECKS = {
-    complete: {name: 'Hold fuldendt', rule: '', switchable: true, defaultOn: true},
-    level: {name: 'Niveau', rule: '§38 stk. 2–3'},
-    category: {name: 'Kategori', rule: '§38 stk. 2–3'},
-    reserves: {name: 'Reserver', rule: '§43'},
-    paper: {name: 'Papirhold', rule: '§38 stk. 7'},
-    finalRound: {name: 'Tidligere hold', rule: '§38 stk. 8', switchable: true, defaultOn: false},
-    qualification: {name: 'Kvalifikation', rule: '§27 stk. 5', switchable: true, defaultOn: false},
-    playoff: {name: 'Slutspilskrav', rule: '§32 stk. 1'},
-    tooYoung: {name: 'For ung', rule: '§31 stk. 1', perPlayer: true},
-    noPoints: {name: 'Ingen point i kategorien', rule: '', perPlayer: true},
+    complete: {name: 'Hold fuldendt', rule: '', switchable: true, defaultOn: true,
+        description: 'Alle hold har en spiller på hver plads.'},
+    level: {name: 'Niveau', rule: '§38 stk. 2–3',
+        description: 'Ingen spiller står på et lavere hold end en spiller med færre point.'},
+    category: {name: 'Kategori', rule: '§38 stk. 2–3',
+        description: 'Ingen spiller spiller for højt i sin kategori på holdet.'},
+    reserves: {name: 'Reserver', rule: '§43',
+        description: 'En reserve har ikke flere point end spilleren, vedkommende erstatter.'},
+    paper: {name: 'Papirhold', rule: '§38 stk. 7',
+        description: 'Spillerne på papirholdet har spillet i kategorien og på samme eller et lavere hold før.'},
+    finalRound: {name: 'Tidligere hold', rule: '§38 stk. 8', switchable: true, defaultOn: false,
+        description: 'Spillerne har stået på samme eller et lavere hold tidligere i sæsonen.'},
+    qualification: {name: 'Kvalifikation', rule: '§27 stk. 5', switchable: true, defaultOn: false,
+        description: 'Spillerne opfylder rundenummerkravene til kvalifikationen.'},
+    playoff: {name: 'Slutspilskrav', rule: '§32 stk. 1',
+        description: 'Spillerne har spillet nok kampe for klubben til at spille slutspil.'},
+    tooYoung: {name: 'For ung', rule: '§31 stk. 1', perPlayer: true,
+        description: 'Spillerne fylder 15 år senest 31.12. i det år, sæsonen starter.'},
+    noPoints: {name: 'Ingen point i kategorien', rule: '', perPlayer: true,
+        description: 'Spillerne har point på ranglisten i den kategori, de står i.'},
 }
 
 export const NOT_APPLICABLE = {
