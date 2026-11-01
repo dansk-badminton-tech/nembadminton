@@ -1,5 +1,5 @@
 <template>
-    <!-- PROTOTYPE (map #331 / ticket #332): three check panel variants on the team-round editor, switched by ?variant=A|B|C.
+    <!-- PROTOTYPE (map #331 / ticket #332): check panel variants on the team-round editor, switched by ?variant=B|B1|B2|B3.
          Scenarios are fixture Lineups (one real Lineup can't show all four "no result" reasons); "Denne holdrunde" uses live data.
          Throwaway: lives on a prototype branch, never merged. -->
     <div class="prototype-frame mb-4">
@@ -13,13 +13,15 @@
     <PrototypeSwitcher :variants="variantList"/>
 </template>
 <script>
-import VariantA from './VariantA.vue'
 import VariantB from './VariantB.vue'
-import VariantC from './VariantC.vue'
+import VariantB1 from './VariantB1.vue'
+import VariantB2 from './VariantB2.vue'
+import VariantB3 from './VariantB3.vue'
 import PrototypeSwitcher from '../../../components/PrototypeSwitcher.vue'
 import {SCENARIOS, applySwitches} from './scenarios.js'
 
-const VARIANTS = {A: VariantA, B: VariantB, C: VariantC}
+// Round 2: A and C dropped after the coach picked B; B stays as the baseline for B1–B3.
+const VARIANTS = {B: VariantB, B1: VariantB1, B2: VariantB2, B3: VariantB3}
 
 export default {
     name: 'PrototypeCheckPanel',
@@ -30,7 +32,7 @@ export default {
     },
     computed: {
         variantKey() {
-            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'A'
+            return VARIANTS[this.$route.query.variant] ? this.$route.query.variant : 'B'
         },
         variant() {
             return VARIANTS[this.variantKey]
