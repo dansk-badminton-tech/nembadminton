@@ -255,7 +255,8 @@ class TeamValidator
 
     /**
      * Players without points in a category they play, on a non-Paper Squad with more than one of that category (with
-     * one, there is nothing to compare).
+     * one, there is nothing to compare). Youth Players are left out: Kategori leaves them out of its findings (§38 stk.
+     * 5), and validateSquad skips a comparison with a Youth Player without points.
      *
      * @param  Squad[]  $squads
      * @return list<array{squadIndex: int, refId: string|null, name: string, category: string}>
@@ -274,7 +275,7 @@ class TeamValidator
                 }
                 foreach ($categories->pluck('players')->flatten(1) as $player) {
                     /** @var Player $player */
-                    if ($this->findPlayerCategoryPoint($player, (string) $categoryName) === null) {
+                    if (! $this->isYoungPlayer($player) && $this->findPlayerCategoryPoint($player, (string) $categoryName) === null) {
                         $missing[$squadIndex.'|'.($player->refId ?? $player->name).'|'.$categoryName] = [
                             'squadIndex' => $squadIndex,
                             'refId' => $player->refId,
@@ -320,11 +321,23 @@ class TeamValidator
         return $playingToHigh;
     }
 
-    private function getPairPoints(array $pair, string $category): int
+    /**
+     * The pair's points in the category, or null when a player has none.
+     *
+     * @param  Player[]  $pair
+     */
+    private function findPairPoints(array $pair, string $category): ?int
     {
-        return array_reduce($pair, function ($points, Player $player) use ($category) {
-            return $points + $this->getPlayerCategoryPoint($player, $category);
-        });
+        $points = 0;
+        foreach ($pair as $player) {
+            $playerPoints = $this->findPlayerCategoryPoint($player, $category);
+            if ($playerPoints === null) {
+                return null;
+            }
+            $points += $playerPoints;
+        }
+
+        return $points;
     }
 
     private function isDoubles(string $category): bool
@@ -477,9 +490,13 @@ class TeamValidator
             if (count($belowPair) !== 2) {
                 continue;
             }
-            $belowPairsPoints = $this->getPairPoints($belowPair, $category);
+            $belowPairsPoints = $this->findPairPoints($belowPair, $category);
             foreach ($pairsInCategory as $abovePair) {
-                $abovePairsPoints = $this->getPairPoints($abovePair, $category);
+                $abovePairsPoints = $this->findPairPoints($abovePair, $category);
+                // Only a pair with a Youth Player gets here without points (see playersWithoutPoints); it is skipped.
+                if ($belowPairsPoints === null || $abovePairsPoints === null) {
+                    continue;
+                }
                 [$player1, $player2] = $abovePair;
                 if (($belowPairsPoints > $abovePairsPoints + $limitDouble)
                     && (! $this->hasYoungPlayer([
@@ -551,36 +568,36 @@ class TeamValidator
     {
         $playersInCategory = $this->getPlayersByCategory($squad->categories, $category);
         while ($playersInCategory->count() > 1) {
+            /** @var Player $belowPlayer */
             $belowPlayer = $playersInCategory->pop();
-            try {
-                $belowPlayerPoints = $this->getPlayerCategoryPoint($belowPlayer, $category);
-                /** @var Player $belowPlayer */
-                foreach ($playersInCategory as $abovePlayer) {
-                    $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
-                    if ($belowPlayerPoints > $abovePlayerPoints + $limit && (! $this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
-                        $playingToHigh = $this->addOrAppend($playingToHigh, [
-                            'id' => $abovePlayer->id ?? 0,
-                            'refId' => $abovePlayer->refId,
-                            'name' => $abovePlayer->name,
-                            'category' => $category,
-                            'gender' => $abovePlayer->gender,
-                            'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
-                            'hasYouthPlayerPartner' => false,
-                            // Always false because its single and you don't have a partner in singles
-                            'belowPlayer' => [
-                                [
-                                    'id' => $belowPlayer->id ?? 0,
-                                    'refId' => $belowPlayer->refId,
-                                    'name' => $belowPlayer->name,
-                                    'category' => $category,
-                                    'gender' => $belowPlayer->gender,
-                                ],
-                            ],
-                        ]);
-                    }
+            $belowPlayerPoints = $this->findPlayerCategoryPoint($belowPlayer, $category);
+            foreach ($playersInCategory as $abovePlayer) {
+                $abovePlayerPoints = $this->findPlayerCategoryPoint($abovePlayer, $category);
+                // Only a Youth Player gets here without points (see playersWithoutPoints); the comparison is skipped.
+                if ($belowPlayerPoints === null || $abovePlayerPoints === null) {
+                    continue;
                 }
-            } catch (PointNotFoundInCategoryException $exception) {
-                continue;
+                if ($belowPlayerPoints > $abovePlayerPoints + $limit && (! $this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
+                    $playingToHigh = $this->addOrAppend($playingToHigh, [
+                        'id' => $abovePlayer->id ?? 0,
+                        'refId' => $abovePlayer->refId,
+                        'name' => $abovePlayer->name,
+                        'category' => $category,
+                        'gender' => $abovePlayer->gender,
+                        'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
+                        'hasYouthPlayerPartner' => false,
+                        // Always false because its single and you don't have a partner in singles
+                        'belowPlayer' => [
+                            [
+                                'id' => $belowPlayer->id ?? 0,
+                                'refId' => $belowPlayer->refId,
+                                'name' => $belowPlayer->name,
+                                'category' => $category,
+                                'gender' => $belowPlayer->gender,
+                            ],
+                        ],
+                    ]);
+                }
             }
         }
 

@@ -641,6 +641,48 @@ class ValidateSquadTest extends TestCase
     }
 
     #[Test]
+    public function aYouthPlayerWithoutPointsDoesntStopTheComparison(): void
+    {
+        // Kategori leaves Youth Players out of its findings (§38 stk. 5), so their missing points decide nothing.
+        $youth = CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-1');
+        $youth->points[0]->vintage = 'U17';
+        $men2 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-2');
+        $men3 = CategoryFactory::makeMen('HS', 200, 'HD', 0, 0, '101010-3');
+        $squad = $this->squad([
+            CategoryFactory::makeCategory('HS. 1', 'HS', $youth),
+            CategoryFactory::makeCategory('HS. 2', 'HS', $men2),
+            CategoryFactory::makeCategory('HS. 3', 'HS', $men3),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$squad]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [],
+                'findings' => [['refId' => '101010-2', 'category' => 'HS']],
+            ]);
+    }
+
+    #[Test]
+    public function aYouthDoublesPlayerWithoutPointsDoesntStopTheComparison(): void
+    {
+        $youth = CategoryFactory::makeMen('HS', 0, 'MxH', 0, 0, '101010-1');
+        $youth->points[0]->vintage = 'U17';
+        $squad = $this->squad([
+            CategoryFactory::makeCategory('HD. 1', 'HD', CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-2'), CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-3')),
+            CategoryFactory::makeCategory('HD. 2', 'HD', CategoryFactory::makeMen('HS', 0, 'HD', 300, 0, '101010-4'), CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-5')),
+            CategoryFactory::makeCategory('HD. 3', 'HD', $youth, CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-6')),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$squad]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [],
+                'findings' => [
+                    ['refId' => '101010-2', 'category' => 'HD'],
+                    ['refId' => '101010-3', 'category' => 'HD'],
+                ],
+            ]);
+    }
+
+    #[Test]
     public function completePointsGiveTheFindings(): void
     {
         $men1 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-1');
