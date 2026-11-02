@@ -58,7 +58,7 @@ class PreviewSeasonSeedTest extends TestCase
             $input = $this->validationInput($round, null);
             $label = 'Round '.$round->round;
             $this->assertNotContains(false, $this->spotsFulfilled($input), $label);
-            $this->assertSame([], $this->mutate('validateSquads', $input, 'category'), $label);
+            $this->assertSame(['playersWithoutPoints' => [], 'findings' => []], $this->mutate('validateSquads', $input, 'playersWithoutPoints { name } findings { category }'), $label);
             $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'category'), $label);
             $this->assertSame([], $this->mutate('validateReserves', $input, 'category'), $label);
             $this->assertSame([], $this->graphQL(
@@ -67,9 +67,9 @@ class PreviewSeasonSeedTest extends TestCase
             )->assertJsonMissingPath('errors')->json('data.validateTooYoungPlayers'), $label);
             foreach (['validateFinalRoundEligibility', 'validatePlayoffParticipation', 'validateQualificationEligibility'] as $check) {
                 $statuses = $this->graphQL(
-                    'mutation ($id: ID!) { '.$check.'(teamRoundId: $id) { status } }',
+                    'mutation ($id: ID!) { '.$check.'(teamRoundId: $id) { players { status } } }',
                     ['id' => $round->id]
-                )->assertJsonMissingPath('errors')->json('data.'.$check);
+                )->assertJsonMissingPath('errors')->json('data.'.$check.'.players');
                 $this->assertNotContains('REQUIREMENT_NOT_MET', array_column($statuses, 'status'), $label.' '.$check);
                 $this->assertNotContains('CANNOT_VERIFY', array_column($statuses, 'status'), $label.' '.$check);
             }
@@ -139,8 +139,10 @@ class PreviewSeasonSeedTest extends TestCase
         $round = TeamRound::query()->findOrFail(PreviewSeasonSeeder::roundId(11));
         $scenario = DB::table('team_round_scenarios')->where('team_round_id', $round->id)->sole();
         $this->assertSame(0, $scenario->is_official);
-        $this->assertSame([], $this->mutate('validateSquads', $this->validationInput($round, null), 'category'));
-        $findings = $this->mutate('validateSquads', $this->validationInput($round, $scenario->id), 'category');
+        $this->assertSame(['playersWithoutPoints' => [], 'findings' => []], $this->mutate('validateSquads', $this->validationInput($round, null), 'playersWithoutPoints { name } findings { category }'));
+        $result = $this->mutate('validateSquads', $this->validationInput($round, $scenario->id), 'playersWithoutPoints { name } findings { category }');
+        $this->assertSame([], $result['playersWithoutPoints']);
+        $findings = $result['findings'];
         $this->assertCount(2, $findings);
         $this->assertSame(['HD'], array_values(array_unique(array_column($findings, 'category'))));
     }
