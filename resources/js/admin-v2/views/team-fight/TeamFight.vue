@@ -770,7 +770,8 @@ export default {
         validate() {
             const squads = this.teamRound.squads
             const lineup = {teamRoundId: this.teamRoundId, scenarioId: this.session.scenarioId}
-            const optional = {
+            // The requests of the Checks that may not apply to this Lineup.
+            const mayNotApply = {
                 reserves: () => this.mutationData(ValidateReservesMutation, {input: wrapInTeamAndSquads(squads)}, 'validateReserves'),
                 paperSquads: () => this.mutationData(ValidatePaperSquadsMutation, {teamRoundId: this.teamRoundId, input: wrapInTeamAndSquads(squads)}, 'validatePaperSquads'),
                 finalRound: () => this.mutationData(ValidateFinalRoundEligibilityMutation, lineup, 'validateFinalRoundEligibility'),
@@ -779,7 +780,7 @@ export default {
             }
             // Only Reserver and Papirhold are known to be Gælder ikke without asking. The history Checks are asked even
             // when switched off: the server decides whether they apply, and Gælder ikke wins over Slået fra.
-            for (const [name, fetch] of Object.entries(optional)) {
+            for (const [name, fetch] of Object.entries(mayNotApply)) {
                 if (this.knownStatus(name) === 'not-applicable') this.skipCheckRequest(name)
                 else this.runCheckRequest(name, fetch)
             }
