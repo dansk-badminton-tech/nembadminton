@@ -8,7 +8,8 @@ use App\Models\Squad;
 use App\Models\Team;
 use App\Models\TeamRound;
 use App\Models\User;
-use Database\Seeders\PreviewDataSeeder;
+use Database\Seeders\PaperSquadSeasonSeeder;
+use Database\Seeders\TestingDataSeeder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Nuwave\Lighthouse\Testing\MakesGraphQLRequests;
@@ -27,9 +28,10 @@ class PaperSquadSeasonSeedTest extends TestCase
     {
         parent::setUp();
 
-        // PreviewDataSeeder needs fresh auto-increment ids (Clubhouse 1, User 1), which
+        // The seeders need fresh auto-increment ids (Clubhouse 1, User 1), which
         // RefreshDatabase and DatabaseTruncation don't give after other tests have run.
-        $this->artisan('migrate:fresh', ['--seed' => true, '--seeder' => PreviewDataSeeder::class]);
+        $this->artisan('migrate:fresh', ['--seed' => true, '--seeder' => TestingDataSeeder::class]);
+        $this->seed(PaperSquadSeasonSeeder::class);
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:fresh');
             // The next RefreshDatabase test must migrate and seed again: this test emptied its seeded tables.
