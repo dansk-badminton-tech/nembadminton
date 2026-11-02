@@ -5,75 +5,44 @@ declare(strict_types=1);
 namespace App\GraphQL\Mutations;
 
 use App\Enums\CanonicalTournamentTier;
+use App\Enums\SquadCoverage;
 use App\Models\Squad;
+use App\Models\SquadMember;
 use App\Models\TeamRound;
-use App\SeasonHistory\RoundLineup;
-use App\SeasonHistory\SeasonHistoryLoader;
+use Closure;
 
 /**
  * §38 stk. 8 for a saved Scenario's placements and shared persisted Squad context.
  */
-class ValidateFinalRoundEligibility
+class ValidateFinalRoundEligibility extends ValidateHistoryCheck
 {
-    public function __construct(private readonly SeasonHistoryLoader $loader, private readonly TeamRoundLineup $lineup) {}
-
-    /**
-     * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return array{notApplicableReason: ?string, players: list<array<string, mixed>>}
-     */
-    public function __invoke(mixed $root, array $args): array
+    protected function playerResult(SquadMember $player, Squad $squad, TeamRound $round, array $squadCheck, Closure $earlier): array
     {
-        $round = $this->lineup->teamRound($args['teamRoundId']);
-        $earlier = null;
-        $results = [];
-        $coverage = [];
-        foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
-            $context = $this->currentContext($squad, $round);
-            $coverage[] = $context['coverage'];
-            foreach ($players as $player) {
-                $status = $context['status'];
-                $incompleteReasons = $context['incompleteReasons'];
-                $uncountedRounds = [];
-                if ($status === null) {
-                    $earlier ??= $this->loader->before($round);
-                    if ($earlier->matchCountOnSameOrLowerTeam($player->member_ref_id, (int) $squad->team_id) > 0) {
-                        $status = 'SATISFIED';
-                    } elseif (($uncountedRounds = $earlier->roundsWithoutTeam($player->member_ref_id, (int) $squad->team_id)) !== []) {
-                        $status = 'CANNOT_VERIFY';
-                        $incompleteReasons = ['INCOMPARABLE_HISTORY'];
-                    } else {
-                        $status = 'REQUIREMENT_NOT_MET';
-                    }
-                }
-                $results[] = [
-                    'squadIndex' => $index,
-                    'refId' => $player->member_ref_id,
-                    'name' => $player->name,
-                    'status' => $status,
-                    'incompleteReasons' => $incompleteReasons,
-                    'uncountedRounds' => array_map(fn (RoundLineup $round) => [
-                        'teamRoundId' => $round->teamRoundId,
-                        'name' => $round->name,
-                        'round' => $round->round,
-                    ], $uncountedRounds),
-                ];
+        $status = $squadCheck['status'];
+        $incompleteReasons = $squadCheck['incompleteReasons'];
+        $uncountedRounds = [];
+        if ($status === null) {
+            if ($earlier()->matchCountOnSameOrLowerTeam($player->member_ref_id, (int) $squad->team_id) > 0) {
+                $status = 'SATISFIED';
+            } elseif (($uncountedRounds = $earlier()->roundsWithoutTeam($player->member_ref_id, (int) $squad->team_id)) !== []) {
+                $status = 'CANNOT_VERIFY';
+                $incompleteReasons = ['INCOMPARABLE_HISTORY'];
+            } else {
+                $status = 'REQUIREMENT_NOT_MET';
             }
         }
 
-        return ['notApplicableReason' => SquadCoverage::notApplicableReason($coverage), 'players' => $results];
+        return [
+            'status' => $status,
+            'incompleteReasons' => $incompleteReasons,
+            'uncountedRounds' => self::uncountedRounds($uncountedRounds),
+        ];
     }
 
-    /**
-     * A null status means the requirement applies and history must be checked. coverage: why the Squad is left out,
-     * a SquadCoverage constant.
-     *
-     * @return array{status: ?string, incompleteReasons: list<string>, coverage: ?string}
-     */
-    private function currentContext(Squad $squad, TeamRound $round): array
+    protected function squadCheck(Squad $squad, TeamRound $round): array
     {
-        $notApplicable = fn (string $coverage) => ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'coverage' => $coverage];
         if ($squad->is_paper_squad) {
-            return $notApplicable(SquadCoverage::PAPER_SQUAD);
+            return self::notCovered(SquadCoverage::PAPER_SQUAD);
         }
         $tier = CanonicalTournamentTier::tryFromRawName($squad->effectiveTier());
         // Rounds 11–12 in 1.–3. division and Danmarksserien, round 12 in Badmintonligaen; an unknown tier may be either.
@@ -84,19 +53,18 @@ class ValidateFinalRoundEligibility
             default => [],
         };
         if ($rounds === []) {
-            return $notApplicable(SquadCoverage::TIER_NOT_COVERED);
+            return self::notCovered(SquadCoverage::TIER_NOT_COVERED);
         }
         if ($round->round !== null && ! in_array((int) $round->round, $rounds, true)) {
-            return $notApplicable(SquadCoverage::ROUND_NOT_COVERED);
+            return self::notCovered(SquadCoverage::ROUND_NOT_COVERED);
         }
-        $missing = array_keys(array_filter([
+
+        return self::covered([
             'MISSING_ROUND' => $round->round === null,
             'UNKNOWN_TIER' => $tier === null,
             'MISSING_TEAM' => $squad->team_id === null,
             'MISSING_SEASON' => $round->season_id === null,
             'MISSING_GAME_DATE' => $round->game_date === null,
-        ]));
-
-        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => $missing, 'coverage' => SquadCoverage::COVERED];
+        ]);
     }
 }
