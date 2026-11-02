@@ -54,10 +54,14 @@ const RULES = [
         waitsForFullSquads: true,
         response: 'crossSquads',
         // Youth Players are not validated on points (§38 stk. 5); the team table marks them green instead.
-        run: players => ({
-            findings: players.filter(player => !player.isYouthPlayer).map(player => playerFinding(player, 'broken',
+        // A pair is unknown only when the higher player's missing points decide it; the server finds those pairs.
+        run: ({findings, unknownPairs}) => {
+            const broken = findings.filter(player => !player.isYouthPlayer).map(player => playerFinding(player, 'broken',
                 `${player.name} spiller på et for lavt rangeret hold i forhold til ${belowNames(player)}.`))
-        })
+            const unknown = groupPairs(unknownPairs).map(({player, higherPlayer, categories}) => playerFinding(player, 'unknown',
+                `${higherPlayer.name} på hold ${higherPlayer.squadIndex + 1} har ingen point i ${categories.join(', ')}, så det kan ikke afgøres, om ${player.name} må stå på hold ${player.squadIndex + 1}.`))
+            return {findings: [...broken, ...unknown], reason: unknown.length ? HIGHER_PLAYER_WITHOUT_POINTS : null}
+        }
     },
     {
         key: 'category',
@@ -170,7 +174,20 @@ const GUIDANCE = {
     MISSING_HISTORY_DATE: 'Angiv spilledatoen i de tidligere holdrunder herunder.'
 }
 
-const CANNOT_DECIDE_FROM_HISTORY = 'Spillernes tidligere holdrunder er ikke nok til at afgøre kravet.'
+const HIGHER_PLAYER_WITHOUT_POINTS = 'En spiller på et højere hold har ingen point på holdrundens rangliste i en kategori, vedkommende spiller.'
+
+// Niveau's unknown pairs come one per category; each pair is listed once with its categories.
+function groupPairs(unknownPairs) {
+    const pairs = new Map()
+    for (const {player, higherPlayer, category} of unknownPairs) {
+        const key = `${player.refId}:${higherPlayer.refId}`
+        if (!pairs.has(key)) pairs.set(key, {player, higherPlayer, categories: []})
+        pairs.get(key).categories.push(category)
+    }
+    return [...pairs.values()]
+}
+
+const CANNOT_DECIDE_FROM_HISTORY ='Spillernes tidligere holdrunder er ikke nok til at afgøre kravet.'
 
 // Per-player outcomes of the history Checks: any REQUIREMENT_NOT_MET breaks the rule, otherwise any CANNOT_VERIFY makes
 // the Check Kan ikke kontrolleres. Other outcomes (SATISFIED, NOT_APPLICABLE) are no finding.
