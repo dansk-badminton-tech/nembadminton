@@ -6,10 +6,40 @@ function statusOf(key, input) {
     return checkStatuses(input).find(check => check.key === key)
 }
 
+test('every Check waits for the first Squad, before and after empty responses arrive', () => {
+    const teamRound = {round: 9, seasonStartYear: 2026, squads: []}
+    const emptyResponses = {
+        basicSquads: [], crossSquads: {findings: [], unknownPairs: []},
+        squads: {playersWithoutPoints: [], findings: []}, reserves: [],
+        paperSquads: {missingRound: false, players: []}, tooYoung: [],
+        finalRound: {notApplicableReason: 'ROUND_NOT_COVERED', players: []},
+        qualification: {notApplicableReason: 'ROUND_NOT_COVERED', players: []},
+        playoff: {notApplicableReason: 'TIER_NOT_COVERED', players: []}
+    }
+    for (const responses of [{}, emptyResponses]) {
+        for (const switches of [{}, {complete: false, finalRound: false, qualification: false}]) {
+            assert.deepEqual(checkStatuses({teamRound, responses, switches}), CHECKS.map(({key}) => ({
+                key, status: 'waiting', reason: 'Tilføj et hold til holdrunden for at starte tjekkene.', findings: []
+            })))
+        }
+    }
+})
+
 test('Hold fuldendt fails with one finding per Squad that lacks players', () => {
     const check = statusOf('complete', {responses: {basicSquads: [{index: 0, spotsFulfilled: true}, {index: 1, spotsFulfilled: false}]}})
     assert.equal(check.status, 'failed')
     assert.deepEqual(check.findings.map(finding => finding.message), ['Hold 2 mangler spillere.'])
+})
+
+test('adding the first Squad resumes the usual Check Statuses and removing it waits again', () => {
+    const teamRound = {squads: [{}]}
+    const responses = {basicSquads: [{index: 0, spotsFulfilled: false}]}
+    assert.equal(statusOf('complete', {teamRound, responses}).status, 'failed')
+    assert.equal(statusOf('level', {teamRound, responses}).status, 'waiting')
+    assert.equal(statusOf('reserves', {teamRound, responses}).status, 'not-applicable')
+    assert.equal(statusOf('complete', {teamRound, responses, switches: {complete: false}}).status, 'switched-off')
+    teamRound.squads = []
+    assert.ok(checkStatuses({teamRound, responses}).every(check => check.status === 'waiting' && check.findings.length === 0))
 })
 
 test('Hold fuldendt passes when every Squad is full and is Switched Off by its switch', () => {

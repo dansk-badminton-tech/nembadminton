@@ -1,10 +1,23 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {checkPanel} from '../../../resources/js/admin-v2/views/team-fight/checks/check-panel.mjs'
+import {CHECKS, checkStatuses} from '../../../resources/js/admin-v2/views/team-fight/checks/check-status.mjs'
 
 const ran = (key, status, extra = {}) => ({key, status, reason: null, findings: [], ...extra})
 
 const keysOf = panel => Object.fromEntries(panel.sections.map(section => [section.key, section.rows.map(row => row.key)]))
+
+test('an empty TeamRound puts every Check in Venter, even after a request failure', () => {
+    const panel = checkPanel({
+        statuses: checkStatuses({teamRound: {squads: []}}),
+        requests: {basicSquads: 'failed', crossSquads: 'failed', playoff: 'failed'}
+    })
+    assert.deepEqual(keysOf(panel), {
+        pending: [], action: [], waiting: CHECKS.map(check => check.key), off: [], ok: []
+    })
+    assert.deepEqual(panel.notApplicable, [])
+    assert.ok(panel.sections.find(section => section.key === 'waiting').rows.every(row => row.label === 'Venter' && row.state === null))
+})
 
 test('the panel lists Checks under Kræver handling (Fejl, Advarsel, Kan ikke kontrolleres), Venter, Slået fra and OK', () => {
     const panel = checkPanel({statuses: [

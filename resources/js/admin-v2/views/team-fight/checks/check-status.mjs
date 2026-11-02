@@ -2,7 +2,8 @@
 // server's per-player outcomes (SATISFIED, REQUIREMENT_NOT_MET, NOT_APPLICABLE, CANNOT_VERIFY, *IncompleteReason) become
 // Check Statuses. It owns Not Applicable from the Lineup (Reserver, Papirhold) and the text for the server's
 // notApplicableReason (Tidligere hold, Kvalifikation, Slutspilskrav), Switched Off, Waiting, each Check's severity and
-// the precedence: Not Applicable > Switched Off > Waiting, then a Check that ran takes its worst outcome (Fejl > Advarsel >
+// Before the first Squad, every Check waits. Otherwise the precedence is Not Applicable > Switched Off > Waiting,
+// then a Check that ran takes its worst outcome (Fejl > Advarsel >
 // Kan ikke kontrolleres > OK). Framework-free, so node:test can load it.
 
 import {reserveFindingMessages} from '../reserves.js'
@@ -308,6 +309,10 @@ function ranResult(rule, {findings, reason = null}) {
 }
 
 function statusOf(rule, context) {
+    // No lineup exists yet, regardless of switches or responses from a previous lineup.
+    if (context.teamRound?.squads?.length === 0) {
+        return result(CHECK_STATUS.WAITING, 'Tilføj et hold til holdrunden for at starte tjekkene.')
+    }
     const notApplicable = rule.notApplicable?.(context) ?? serverNotApplicable(rule, context.responses[rule.response])
     if (notApplicable) return result(CHECK_STATUS.NOT_APPLICABLE, notApplicable)
     if (rule.switchable && context.switches[rule.key] === false) return result(CHECK_STATUS.SWITCHED_OFF)
