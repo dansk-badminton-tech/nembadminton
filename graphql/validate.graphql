@@ -7,8 +7,8 @@ extend type Mutation {
     validatePlayoffParticipation(teamRoundId: ID!, scenarioId: ID): [PlayoffParticipationPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePlayoffParticipation")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
-    "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare. A TeamRound without a Ranking List compares the Squads' stored points."
-    validateTeamRoundCrossSquads(teamRoundId: ID!, scenarioId: ID) : [PlayingToHigh!]! @guard @canFind(ability: "view", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTeamRoundCrossSquads")
+    "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare: on a lower Squad they count as 0 points, and on a higher Squad they are listed in unknownPairs when that decides the result. A TeamRound without a Ranking List compares the Squads' stored points."
+    validateTeamRoundCrossSquads(teamRoundId: ID!, scenarioId: ID) : CrossSquadsValidation! @guard @canFind(ability: "view", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTeamRoundCrossSquads")
     "§38 stk. 2–3: each Squad's order within a category (category-ranking). A player without points in a category they play stops the comparison: the result lists those players and no findings."
     validateSquads(input: [ValidateTeam!]!) : SquadOrderValidation! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
     "Validates all spots is forfilled"
@@ -241,6 +241,29 @@ type PlayerWithoutPoints {
     name: String!
     "HS, DS, HD, DD or MD"
     category: String!
+}
+
+type CrossSquadsValidation {
+    "Players on a too low Squad (§38 stk. 4), each with the players on higher Squads they are too strong for"
+    findings: [PlayingToHigh!]!
+    "Pairs whose result the higher player's missing points decide: every category the higher player plays is either over the limit or one where the higher player has no points, and at least one is the latter. One entry per such category. A lower player without points counts as 0 points and is never listed."
+    unknownPairs: [CrossSquadsUnknownPair!]!
+}
+
+type CrossSquadsUnknownPair {
+    "The player on the lower Squad"
+    player: CrossSquadsPairPlayer!
+    "The player on the higher Squad, without points in category"
+    higherPlayer: CrossSquadsPairPlayer!
+    "The category the higher player plays without points: HS, DS, HD, DD or MD"
+    category: String!
+}
+
+type CrossSquadsPairPlayer {
+    refId: String!
+    name: String!
+    "0-based index of the player's Squad in the lineup"
+    squadIndex: Int!
 }
 
 type PlayingToHigh{

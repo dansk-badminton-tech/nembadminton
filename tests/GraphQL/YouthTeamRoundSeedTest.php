@@ -170,8 +170,8 @@ class YouthTeamRoundSeedTest extends TestCase
         $this->actingAs(User::query()->findOrFail(1), 'api');
 
         return $this->graphQL(
-            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { {$fields} } }",
+            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { findings { {$fields} } } }",
             ['id' => $round->id, 'scenarioId' => $scenarioId]
-        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads');
+        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads.findings');
     }
 }

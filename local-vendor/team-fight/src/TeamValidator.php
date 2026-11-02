@@ -22,21 +22,64 @@ class TeamValidator
 
     public function validateCrossSquadsLeagueV3(array $squads): Collection
     {
-        $count = count($squads);
-        if (empty($squads) || $count === 1) {
-            return new Collection;
+        return $this->validateCrossSquadsWithUnknownPairs($squads)['findings'];
+    }
+
+    /**
+     * §38 stk. 4 across the Squads, highest first: the players on a too low Squad, and the pairs whose result the
+     * higher player's missing points decide (one entry per such category, lowest Squad first).
+     *
+     * @param  array|Squad[]  $squads
+     * @return array{findings: Collection<int, mixed>, unknownPairs: list<array{player: array{refId: string, name: string, squadIndex: int}, higherPlayer: array{refId: string, name: string, squadIndex: int}, category: string}>}
+     */
+    public function validateCrossSquadsWithUnknownPairs(array $squads): array
+    {
+        $squads = array_values($squads);
+        if (count($squads) < 2) {
+            return ['findings' => new Collection, 'unknownPairs' => []];
+        }
+
+        $squadIndexOf = [];
+        foreach ($squads as $index => $squad) {
+            foreach ($squad->categories as $category) {
+                foreach ($category->players as $player) {
+                    $squadIndexOf[$player->refId] ??= $index;
+                }
+            }
         }
 
         $listOfInvalidPlayers = [];
+        $unknownPairs = [];
 
         while ($lastTeam = array_pop($squads)) {
             // §38 stk. 7: only the paper-team rule holds for a Paper Squad's players, so it isn't compared against the
             // Squads above it. The Squads below it are still compared against it.
             if (! $lastTeam->isPaperSquad) {
-                $listOfInvalidPlayers[] = $this->compare($lastTeam, $squads);
+                $comparison = $this->compare($lastTeam, $squads);
+                $listOfInvalidPlayers[] = $comparison['invalid'];
+                foreach ($comparison['unknown'] as $unknown) {
+                    $unknownPairs[] = [
+                        'player' => $this->pairPlayer($unknown['player'], count($squads)),
+                        'higherPlayer' => $this->pairPlayer($unknown['higherPlayer'], $squadIndexOf[$unknown['higherPlayer']->refId]),
+                        'category' => $unknown['category'],
+                    ];
+                }
             }
         }
 
+        return ['findings' => $this->playingToHigh($listOfInvalidPlayers), 'unknownPairs' => $unknownPairs];
+    }
+
+    /**
+     * @return array{refId: string, name: string, squadIndex: int}
+     */
+    private function pairPlayer(Player $player, int $squadIndex): array
+    {
+        return ['refId' => $player->refId, 'name' => $player->name, 'squadIndex' => $squadIndex];
+    }
+
+    private function playingToHigh(array $listOfInvalidPlayers): Collection
+    {
         return collect($listOfInvalidPlayers)->flatten(1)->map(function ($data) {
             /** @var Player $player */
             $player = $data['player'];
@@ -99,6 +142,7 @@ class TeamValidator
 
     /**
      * @param  array|Squad[]  $squads
+     * @return array{invalid: array, unknown: list<array{player: Player, higherPlayer: Player, category: string}>}
      */
     private function compare(Squad $squad, array $squads): array
     {
@@ -113,14 +157,17 @@ class TeamValidator
 
         $limit = 50;
         $summeryInvalid = [];
+        $unknown = [];
         /** @var Player $player */
         foreach ($players as $player) {
             foreach ($playersFromHighSquads as $playerHigh) {
                 $invalid = [];
+                // Categories where only the higher player lacks points: a lower player without points counts as 0.
+                $missing = [];
                 // A comparison should only be made in the category or categories in which the players on the higher-ranked team participate.
                 $categories = $playerToCategoriesLookupMap[$playerHigh->refId] ?? [];
-                foreach ($categories as $category) {
-                    $category = $this->translateCategory($category, $playerHigh->gender);
+                foreach ($categories as $lineupCategory) {
+                    $category = $this->translateCategory($lineupCategory, $playerHigh->gender);
                     if ($player->gender !== $playerHigh->gender || $this->isYoungPlayer($playerHigh) || $this->isYoungPlayer($player)) {
                         continue;
                     }
@@ -150,6 +197,15 @@ class TeamValidator
                             'player' => $playerHigh,
                         ];
                     }
+                    if ($belowPlayerCategoryPoint !== null && $abovePlayerCategoryPoint === null) {
+                        $missing[] = $lineupCategory;
+                    }
+                }
+                // The higher player's missing points decide the result when no category settles it as legal.
+                if ($missing !== [] && count($invalid) + count($missing) === count($categories)) {
+                    foreach ($missing as $missingCategory) {
+                        $unknown[] = ['player' => $player, 'higherPlayer' => $playerHigh, 'category' => $missingCategory];
+                    }
                 }
                 // Only include if conflicting in all categories
                 if (count($invalid) === count($categories)) {
@@ -168,7 +224,7 @@ class TeamValidator
             }
         }
 
-        return $summeryInvalid;
+        return ['invalid' => $summeryInvalid, 'unknown' => $unknown];
     }
 
     /**
