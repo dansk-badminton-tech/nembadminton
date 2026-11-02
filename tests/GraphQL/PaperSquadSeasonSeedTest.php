@@ -37,6 +37,12 @@ class PaperSquadSeasonSeedTest extends TestCase
         });
     }
 
+    public function test_preview_data_does_not_include_youth_team_rounds(): void
+    {
+        $this->assertFalse(TeamRound::query()->where('name', 'like', 'Ungdom - %')->exists());
+        $this->assertTrue(TeamRound::query()->exists());
+    }
+
     public function test_the_club_has_four_teams_with_the_official_match_counts(): void
     {
         $teams = Team::query()->where('clubhouse_id', 1)->where('season_id', 2026)->orderBy('id')->get();

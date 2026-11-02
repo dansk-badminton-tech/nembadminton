@@ -9,7 +9,7 @@ class TestingDataSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(bool $includeYouthTeamRounds = true): void
     {
         $this->call(ClubSeeder::class);
 
@@ -31,7 +31,9 @@ class TestingDataSeeder extends Seeder
 
         $this->call(TeamFightSeeder::class);
 
-        $this->call(YouthTeamRoundSeeder::class);
+        if ($includeYouthTeamRounds) {
+            $this->call(YouthTeamRoundSeeder::class);
+        }
 
         $this->call(TournamentTierSeeder::class);
 
