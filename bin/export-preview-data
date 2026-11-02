@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Export allowlisted BC37 fixtures from an isolated production import.
+
+Usage: bin/export-preview-data CONTAINER OUTPUT.json
+The container must contain holdkamp_prod and expose MYSQL_ROOT_PASSWORD.
+No accounts, contact details, free text, production IDs or sharing keys are exported.
+"""
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+
+def query(sql):
+    result = subprocess.run(
+        ["docker", "exec", "-i", sys.argv[1], "sh", "-c",
+         'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysql --default-character-set=utf8mb4 '
+         '-uroot --batch --raw --skip-column-names holdkamp_prod', "--"],
+        input=sql, text=True, capture_output=True, check=True,
+    )
+    return [json.loads(line) for line in result.stdout.splitlines() if line]
+
+
+if len(sys.argv) != 3:
+    sys.exit(__doc__)
+
+rounds_filter = """tr.clubhouse_id = 126 AND tr.round BETWEEN 1 AND 11
+    AND tr.game_date BETWEEN '2025-07-01' AND '2026-06-30'"""
+participants = f"""SELECT DISTINCT sm.member_ref_id
+    FROM team_rounds tr JOIN squads s ON s.team_round_id = tr.id
+    JOIN squad_categories sc ON sc.squad_id = s.id
+    JOIN squad_members sm ON sm.squad_category_id = sc.id
+    WHERE {rounds_filter}"""
+versions = f"SELECT DISTINCT tr.version FROM team_rounds tr WHERE {rounds_filter}"
+selected = participants
+for gender, count in [("M", 6), ("K", 2)]:
+    selected += f""" UNION SELECT refId FROM (
+        SELECT m.refId FROM members m JOIN club_member cm ON cm.member_id = m.id
+        JOIN points p ON p.member_id = m.id
+        WHERE cm.club_id = 1087 AND m.gender = '{gender}'
+        AND m.refId NOT IN ({participants}) AND p.version IN ({versions})
+        AND p.vintage = 'SEN'
+        GROUP BY m.id HAVING COUNT(*) = 3 * (SELECT COUNT(*) FROM ({versions}) lists)
+        ORDER BY SUM(p.points) DESC, m.refId LIMIT {count}
+    ) reserves_{gender}"""
+
+data = {
+    "club": query("""SELECT JSON_OBJECT('id', id, 'name1', name1,
+        'badmintonPlayerId', badmintonPlayerId, 'initialized', 1)
+        FROM clubs WHERE id = 1087;""")[0],
+    "members": query(f"""SELECT JSON_OBJECT('refId', refId, 'name', name,
+        'gender', gender)
+        FROM members WHERE refId IN ({selected}) ORDER BY refId;"""),
+    "points": query(f"""SELECT JSON_OBJECT('refId', m.refId, 'points', p.points,
+        'position', p.position, 'category', p.category, 'vintage', p.vintage,
+        'version', p.version)
+        FROM points p JOIN members m ON m.id = p.member_id
+        WHERE m.refId IN ({selected}) AND p.version IN ({versions})
+        ORDER BY m.refId, p.version, p.category;"""),
+    "rounds": [],
+}
+
+for source in query(f"""SELECT JSON_OBJECT('round', tr.round,
+        'game_date', tr.game_date, 'version', tr.version)
+        FROM team_rounds tr WHERE {rounds_filter} ORDER BY tr.round;"""):
+    number = source["round"]
+    source["squads"] = []
+    orders = query(f"""SELECT JSON_OBJECT('order', s.`order`)
+        FROM team_rounds tr JOIN squads s ON s.team_round_id = tr.id
+        WHERE {rounds_filter} AND tr.round = {number} ORDER BY s.`order`;""")
+    for squad in orders:
+        order = squad["order"]
+        members = query(f"""SELECT DISTINCT JSON_OBJECT('refId', sm.member_ref_id)
+            FROM team_rounds tr JOIN squads s ON s.team_round_id = tr.id
+            JOIN squad_categories sc ON sc.squad_id = s.id
+            JOIN squad_members sm ON sm.squad_category_id = sc.id
+            WHERE {rounds_filter} AND tr.round = {number} AND s.`order` = {order};""")
+        squad["members"] = sorted(member["refId"] for member in members)
+        source["squads"].append(squad)
+    data["rounds"].append(source)
+
+def compact_rows(rows):
+    return "[\n" + ",\n".join("    " + json.dumps(row, ensure_ascii=False) for row in rows) + "\n  ]"
+
+
+Path(sys.argv[2]).write_text(
+    '{\n  "club": ' + json.dumps(data["club"], ensure_ascii=False)
+    + ',\n  "members": ' + compact_rows(data["members"])
+    + ',\n  "points": ' + compact_rows(data["points"])
+    + ',\n  "rounds": ' + json.dumps(data["rounds"], ensure_ascii=False, indent=2)
+    + "\n}\n"
+)
+print(f"Exported {len(data['members'])} Members, {len(data['points'])} point rows, "
+      f"{len(data['rounds'])} TeamRounds; no production accounts or contacts.")
