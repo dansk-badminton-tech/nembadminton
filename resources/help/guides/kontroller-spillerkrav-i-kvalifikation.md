@@ -9,7 +9,7 @@ journey:
 
 ## Slå kontrollen til
 
-I runde 12 vises **Kvalifikation (§27 stk. 5)** for hold fra 2. division, 3. division og Danmarksserien. Slå kontrollen til med kontakten, og brug opdateringsknappen efter rettelser i tidligere holdrunder. Den valgte kladdes spillere kontrolleres også, men historikken kommer kun fra officielle holdopstillinger.
+I runde 12 vises **Kvalifikation (§27 stk. 5)** for hold fra 2. division, 3. division og Danmarksserien. Åbn tjekket, slå **Kontrollér dette tjek** til, og vælg **Kontrollér igen** efter rettelser i tidligere holdrunder. Den valgte kladdes spillere kontrolleres også, men historikken kommer kun fra officielle holdopstillinger.
 
 Holdets række fra grundspillet bestemmer spillerreglerne, også når et 2. divisionshold spiller kvalifikation til 1. division. Liga, 1. division og papirhold har andre regler og er ikke omfattet af denne kontrol.
 
@@ -28,7 +28,7 @@ Kun holdrunder med lavere rundenummer tæller, og flere kategorier på samme hol
 
 ## Når kontrollen ikke kan verificeres
 
-Mangler sæson, rundenummer, holdtilknytning eller en kendt række, vises en særskilt advarsel om manglende kontekst. Mangler et historisk holdlink, vises de berørte holdrunder: [tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder), og kør kontrollen igen. Kan de kendte opstillinger allerede opfylde kravet, giver øvrige manglende holdlinks ikke en advarsel.
+Mangler sæson, rundenummer, holdtilknytning eller en kendt række, viser tjekket **Kan ikke kontrolleres** og hvad du skal udfylde. Mangler et historisk holdlink, vises de berørte holdrunder: [tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder), og vælg **Kontrollér igen**. Kan de kendte opstillinger allerede opfylde kravet, giver øvrige manglende holdlinks ikke en advarsel.
 
 - **Manglende rundenummer:** udfyld **Runde nr.** i holdrundens indstillinger.
 - **Ukendt oprindelig række:** ret rækken på sæsonens hold.

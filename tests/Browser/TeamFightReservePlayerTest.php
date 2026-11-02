@@ -64,7 +64,7 @@ class TeamFightReservePlayerTest extends DuskTestCase
                 ->assertSeeIn("[dusk='squad-0'] [dusk='reserve-for-tag']", 'Reserve for Nanna Reese')
                 ->assertSeeIn("[dusk='squad-1'] [dusk='reserve-tag']", 'Reserve på Hold 1 for Nanna Reese')
                 ->assertMissing("[dusk='reserve-row-warning']")
-                ->waitFor('[dusk="validation-reserves"]');
+                ->waitFor('[dusk="check-row-reserves"]');
             // Cecillie took Nanna's 2. DS and 2. DD; both slots get the tag.
             $this->assertCount(2, $browser->elements("[dusk='squad-0'] [dusk='reserve-for-tag']"));
             $this->assertSame(0, $this->slotsOf($browser, 0, 'Nanna Reese'));
@@ -106,7 +106,7 @@ class TeamFightReservePlayerTest extends DuskTestCase
                 ->assertSeeIn("[dusk='squad-0']", $available->name)
                 ->assertMissing("[dusk='reserve-tag']")
                 ->assertMissing("[dusk='reserve-row-warning']")
-                ->waitFor('[dusk="validation-reserves"]');
+                ->waitFor('[dusk="check-row-reserves"]');
         });
     }
 

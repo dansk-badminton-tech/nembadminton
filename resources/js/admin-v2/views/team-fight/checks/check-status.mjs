@@ -6,8 +6,7 @@
 
 import {reserveFindingMessages} from '../reserves.js'
 import {hasPaperSquad, paperSquadPlayerMessage} from '../paper-squads.js'
-import {showFinalRoundControl} from '../final-round-validation.mjs'
-import {playoffParticipationMessage, showPlayoffParticipationControl} from '../playoff-participation.js'
+import {playoffParticipationMessage} from '../playoff-participation.js'
 
 export const CHECK_STATUS = {
     PASSED: 'passed',
@@ -53,8 +52,9 @@ const RULES = [
         description: 'Ingen spiller står på et lavere hold end en spiller med for få point i forhold til vedkommende.',
         waitsForFullSquads: true,
         response: 'crossSquads',
+        // Youth Players are not validated on points (§38 stk. 5); the team table marks them green instead.
         run: players => ({
-            findings: players.map(player => playerFinding(player, 'broken',
+            findings: players.filter(player => !player.isYouthPlayer).map(player => playerFinding(player, 'broken',
                 `${player.name} spiller på et for lavt rangeret hold i forhold til ${belowNames(player)}.`))
         })
     },
@@ -65,8 +65,9 @@ const RULES = [
         description: 'Ingen spiller spiller for højt i sin kategori på holdet.',
         waitsForFullSquads: true,
         response: 'squads',
+        // As Niveau, and a player with a youth partner is left out too.
         run: players => ({
-            findings: players.map(player => playerFinding(player, 'broken',
+            findings: players.filter(player => !player.isYouthPlayer && !player.hasYouthPlayerPartner).map(player => playerFinding(player, 'broken',
                 `${player.name} spiller for højt i sin kategori (${player.category}) i forhold til ${belowNames(player)}.`))
         })
     },
@@ -105,7 +106,7 @@ const RULES = [
         rule: '§38 stk. 8',
         description: 'Spillerne har stået på samme eller et lavere hold tidligere i sæsonen.',
         switchable: true,
-        notApplicable: ({teamRound}) => notCovered(teamRound, showFinalRoundControl,
+        notApplicable: ({teamRound}) => notCovered(teamRound, coversFinalRound,
             'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.'),
         response: 'finalRound',
         run: players => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
@@ -131,7 +132,7 @@ const RULES = [
         name: 'Slutspilskrav',
         rule: '§32 stk. 1',
         description: 'Spillerne har spillet nok kampe for klubben til at spille slutspil.',
-        notApplicable: ({teamRound}) => notCovered(teamRound, showPlayoffParticipationControl,
+        notApplicable: ({teamRound}) => notCovered(teamRound, coversPlayoff,
             'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).'),
         response: 'playoff',
         run: players => historyResult(players, playoffParticipationMessage)
@@ -200,6 +201,38 @@ function notCovered(teamRound, covers, reason) {
     return covered ? null : reason
 }
 
+// Round 11–12 in 1.–3. division and Danmarksserien, round 12 in Badmintonligaen, on a non-Paper Squad (§38 stk. 8). An
+// unknown tier is covered, so the server can answer Kan ikke kontrolleres.
+function coversFinalRound(teamRound) {
+    const round = Number(teamRound.round)
+    if (round !== 11 && round !== 12) return false
+    return squadsOf(teamRound).some(squad => {
+        if (squad.isPaperSquad) return false
+        const tier = (squad.effectiveTier ?? '').trim()
+        if (!tier) return true
+        if (/^badmintonligaen\b/i.test(tier)) return round === 12
+        return /^(?:[1-3]\.\s*division|danmarksserien)\b/i.test(tier)
+    })
+}
+
+// The first playoff round of each tier §32 stk. 1 covers (§9 stk. 1).
+const FIRST_PLAYOFF_ROUND = {liga: 10, division1: 8}
+
+// From the first playoff round in Badmintonligaen and 1. division, on a non-Paper Squad. An unknown tier is covered
+// from the earliest of them.
+function coversPlayoff(teamRound) {
+    const round = Number(teamRound.round)
+    if (!Number.isInteger(round)) return false
+    return squadsOf(teamRound).some(squad => {
+        if (squad.isPaperSquad) return false
+        const tier = (squad.effectiveTier ?? '').trim()
+        if (!tier) return round >= FIRST_PLAYOFF_ROUND.division1
+        if (/^badmintonligaen\b/i.test(tier)) return round >= FIRST_PLAYOFF_ROUND.liga
+        if (/^1\.\s*division\b/i.test(tier)) return round >= FIRST_PLAYOFF_ROUND.division1
+        return false
+    })
+}
+
 // Round 12 (or no round) on a non-Paper Squad outside the tiers §27 stk. 5 leaves out. An unknown tier is covered, so
 // the server can answer Kan ikke kontrolleres.
 function coversQualification(teamRound) {
@@ -223,11 +256,13 @@ function paperSquadCountMayBeMet({unplayedCategories, matchCount, requiredMatchC
 }
 
 // What the panel shows about each Check, in the panel's order. severity: the status a broken rule gives (Fejl or Advarsel).
-export const CHECKS = RULES.map(({key, name, rule, description, severity, switchable, perPlayer}) => ({
+// requests: the responses its status waits on, so the panel can tell loading from a failed request while status is null.
+export const CHECKS = RULES.map(({key, name, rule, description, severity, switchable, perPlayer, waitsForFullSquads, response}) => ({
     key, name, rule, description,
     severity: severity ?? CHECK_STATUS.FAILED,
     switchable: switchable === true,
-    perPlayer: perPlayer === true
+    perPlayer: perPlayer === true,
+    requests: [...new Set([...(waitsForFullSquads ? ['basicSquads'] : []), response])]
 }))
 
 const WAITING_FOR_FULL_SQUADS = 'Venter på, at alle hold er fuldt besat.'

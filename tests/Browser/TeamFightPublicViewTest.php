@@ -42,7 +42,7 @@ class TeamFightPublicViewTest extends DuskTestCase
                 ->fillCategorySlot(0, '1. DS', 'Spela Silvester Laumand')
                 ->waitForTextIn('@team-table-section', 'Spela Silvester Laumand');
             $editorUrl = $admin->driver->getCurrentURL();
-            $admin->click('@share-button')
+            $admin->openShareMenu()
                 ->click('@share-link-option')
                 ->waitFor('@share-modal')
                 ->assertSeeIn('@share-modal', 'Du behøver ikke at være logget ind');

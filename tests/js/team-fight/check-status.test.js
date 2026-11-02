@@ -53,6 +53,14 @@ test('Kategori fails with each player too high in their category', () => {
     assert.equal(statusOf('category', {responses: {basicSquads: FULL, squads: []}}).status, 'passed')
 })
 
+test('Niveau and Kategori leave out Youth Players and players with a youth partner, as today', () => {
+    const youth = {...LEVEL_FINDING, isYouthPlayer: true}
+    assert.equal(statusOf('level', {responses: {basicSquads: FULL, crossSquads: [youth]}}).status, 'passed')
+    for (const extra of [{isYouthPlayer: true}, {hasYouthPlayerPartner: true}]) {
+        assert.equal(statusOf('category', {responses: {basicSquads: FULL, squads: [{...CATEGORY_FINDING, ...extra}]}}).status, 'passed')
+    }
+})
+
 const RESERVE = {id: 'r1', reserve: {refId: 'e1', name: 'Emil Berg'}, replaced: {refId: 'j1', name: 'Jonas Krog'}}
 const RESERVE_FINDING = {squadIndex: 1, categoryName: '1. HD', reserve: {refId: 'e1', name: 'Emil Berg', points: 2100}, replaced: {refId: 'j1', name: 'Jonas Krog', points: 1900}}
 
@@ -236,6 +244,48 @@ test('the panel gets each Check\'s name, paragraph, severity and switch, and eac
     assert.deepEqual(STATUS_LABEL, {
         'passed': 'OK', 'failed': 'Fejl', 'warning': 'Advarsel', 'cannot-verify': 'Kan ikke kontrolleres',
         'waiting': 'Venter', 'switched-off': 'Slået fra', 'not-applicable': 'Gælder ikke'
+    })
+})
+
+test('Tidligere hold covers round 11–12 in 1.–3. division and Danmarksserien and round 12 in Badmintonligaen', () => {
+    const applies = teamRound => statusOf('finalRound', {teamRound, switches: {finalRound: false}}).status !== 'not-applicable'
+    for (const tier of ['1. division', '2. division', '3. division', 'Danmarksserien', 'Badmintonligaen']) {
+        for (const number of [1, 7, 8, 9, 10, 11, 12, 13]) {
+            const expected = number === 12 || (number === 11 && tier !== 'Badmintonligaen')
+            assert.equal(applies(round(number, tier)), expected, `${tier} round ${number}`)
+        }
+    }
+    assert.equal(applies({round: '11', squads: [{effectiveTier: '2. division - slutspil 2026'}]}), true)
+    assert.equal(applies({round: 11, squads: [{effectiveTier: 'Badmintonligaen'}, {effectiveTier: '2. division'}]}), true)
+    assert.equal(applies(round(10, null)), false)
+})
+
+test('Slutspilskrav covers the playoffs and qualification of Badmintonligaen and 1. division', () => {
+    const applies = teamRound => statusOf('playoff', {teamRound}).status !== 'not-applicable'
+    assert.equal(applies(round(9, 'Badmintonligaen')), false)
+    assert.equal(applies(round(10, 'Badmintonligaen')), true)
+    assert.equal(applies(round(12, 'Badmintonligaen')), true)
+    assert.equal(applies(round(7, '1. division')), false)
+    assert.equal(applies(round(8, '1. division')), true)
+    assert.equal(applies(round('12', '1. division - slutspil 2026')), true)
+    assert.equal(applies(round(12, '2. division')), false)
+    assert.equal(applies(round(12, 'Serie 1')), false)
+    assert.equal(applies(round(8, null)), true)
+    assert.equal(applies(round(7, null)), false)
+    assert.equal(applies({round: 10, squads: [{effectiveTier: '2. division'}, {effectiveTier: 'Badmintonligaen'}]}), true)
+})
+
+test('each Check names the requests its status waits on', () => {
+    assert.deepEqual(Object.fromEntries(CHECKS.map(check => [check.key, check.requests])), {
+        complete: ['basicSquads'],
+        level: ['basicSquads', 'crossSquads'],
+        category: ['basicSquads', 'squads'],
+        reserves: ['reserves'],
+        paperSquads: ['paperSquads'],
+        finalRound: ['finalRound'],
+        qualification: ['qualification'],
+        playoff: ['playoff'],
+        tooYoung: ['tooYoung']
     })
 })
 

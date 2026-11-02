@@ -22,7 +22,7 @@ class TeamRoundPaperSquadRuleTest extends DuskTestCase
 
     private const MEMBER = ['refId' => '870114-15', 'name' => 'Spela Silvester Laumand'];
 
-    public function test_the_paper_squad_rule_warns_on_a_paper_squad_and_not_on_a_regular_squad(): void
+    public function test_the_paper_squad_rule_fails_on_a_paper_squad_and_does_not_apply_to_a_regular_squad(): void
     {
         $squad = $this->roundTwoSquadWithAPlayerWhoHasNotPlayedThisSeason();
 
@@ -30,16 +30,15 @@ class TeamRoundPaperSquadRuleTest extends DuskTestCase
             $browser->visit(new LoginPage)
                 ->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($squad->teamRound->clubhouse_id, $squad->team_round_id))
-                ->waitForTextIn("[dusk='validation-paper-squads']", 'Advarsel')
-                ->assertSeeIn("[dusk='paper-squad-warnings']", 'Hold 1 (papirhold): '.self::MEMBER['name'].' har ikke spillet DS tidligere i sæsonen')
-                ->assertSeeIn("[dusk='paper-squad-warnings']", '§54 stk. 7');
+                ->waitForCheckStatus('paperSquads', 'Fejl')
+                ->waitForCheckDetails('paperSquads', 'Hold 1 (papirhold): '.self::MEMBER['name'].' har ikke spillet DS tidligere i sæsonen')
+                ->assertSeeIn('@check-details-paperSquads', '§54 stk. 7');
 
             $squad->update(['is_paper_squad' => false]);
 
             $browser->refresh()->on(new TeamFightEditPage)
                 ->waitForTextIn('@team-table-section', self::MEMBER['name'])
-                ->assertMissing("[dusk='validation-paper-squads']")
-                ->assertMissing("[dusk='paper-squad-warnings']");
+                ->assertCheckNotApplicable('paperSquads', 'Opstillingen har intet papirhold.');
         });
     }
 
