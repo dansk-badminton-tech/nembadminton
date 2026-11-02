@@ -94,43 +94,6 @@
                     </div>
                 </b-tooltip>
             </div>
-            <div class="control" v-if="finalRoundValidationStatus" dusk="final-round-validation-control">
-                <b-tooltip
-                    type="is-info"
-                    :label="finalRoundTip"
-                    multilined>
-                    <div class="tags has-addons">
-                        <span class="tag is-dark is-medium">Tidligere hold (§38 stk. 8)</span>
-                        <span
-                            dusk="validation-final-round"
-                            :class="finalRoundStatusClass"
-                            class="tag is-medium"
-                            aria-live="polite">
-                            <b-icon :icon="finalRoundStatusIcon" size="is-small" class="mr-1"></b-icon>
-                            {{ finalRoundStatusText }}
-                        </span>
-                        <span class="tag is-medium is-white">
-                            <b-button
-                                size="is-small"
-                                icon-left="refresh"
-                                aria-label="Kontrollér tidligere hold igen"
-                                title="Kontrollér tidligere hold igen"
-                                :disabled="!finalRoundValidationEnabled"
-                                :loading="finalRoundValidationStatus === 'pending'"
-                                dusk="revalidate-final-round"
-                                @click="$emit('revalidate')" />
-                            <b-switch
-                                dusk="toggle-final-round-check"
-                                size="is-small"
-                                class="ml-2"
-                                aria-label="Kontrollér tidligere hold"
-                                :model-value="finalRoundValidationEnabled"
-                                @update:modelValue="$emit('update:finalRoundValidationEnabled', $event)">
-                            </b-switch>
-                        </span>
-                    </div>
-                </b-tooltip>
-            </div>
             <div class="control" v-if="playoffParticipationStatus" dusk="playoff-participation-control">
                 <b-tooltip
                     type="is-info"
@@ -166,37 +129,6 @@
                 <ul>
                     <li v-for="message in reserveMessages" :key="message">{{ message }}</li>
                 </ul>
-            </div>
-        </article>
-
-        <article v-if="finalRoundWarnings.length" class="message is-warning is-small mt-3" dusk="final-round-warnings">
-            <div class="message-body">
-                <ul>
-                    <li v-for="player in finalRoundWarnings" :key="`${player.squadIndex}-${player.refId}`"
-                        :dusk="`final-round-finding-${player.squadIndex}-${player.refId}`">
-                        Hold {{ player.squadIndex + 1 }}: {{ player.name }}
-                        <template v-if="player.status === 'REQUIREMENT_NOT_MET'">har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).</template>
-                        <template v-else>
-                            — spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).
-                            <ul v-if="finalRoundContextGuidance(player).length">
-                                <li v-for="guidance in finalRoundContextGuidance(player)" :key="guidance">{{ guidance }}</li>
-                            </ul>
-                            <template v-if="player.uncountedRounds.length">
-                                Tidligere opstillinger kan ikke sammenlignes. Tilknyt det aktuelle hold til den tilsvarende holdopstilling i hver af disse holdrunder via <strong>Rediger holdet → Tilknyt hold</strong>:
-                                <ul>
-                                    <li v-for="round in player.uncountedRounds" :key="round.teamRoundId">
-                                        <router-link :to="{name: 'team-fight-edit', params: {clubhouseId: $route.params.clubhouseId, teamUUID: round.teamRoundId}}"
-                                                     target="_blank" rel="noopener" :dusk="`final-round-correction-${round.teamRoundId}`">{{ round.name }}<template v-if="round.round !== null"> (runde {{ round.round }})</template></router-link>
-                                    </li>
-                                </ul>
-                            </template>
-                        </template>
-                    </li>
-                </ul>
-                <p v-if="finalRoundWarnings.some(player => player.uncountedRounds.length)" class="mt-2">
-                    <router-link :to="{name: 'help-guide', params: {slug: teamLinkGuide}}" target="_blank" dusk="final-round-team-link-guide">Sådan tilknytter du holdet i tidligere runder</router-link>
-                </p>
-                <p class="mt-2">Kontrollen bygger på tidligere officielle holdopstillinger i sæsonen.</p>
             </div>
         </article>
 
@@ -279,18 +211,6 @@ import {PLAYOFF_PARTICIPATION_GUIDE, playoffParticipationGuidance, playoffPartic
 export default {
     name: 'ValidationStatus',
     props: {
-        finalRoundValidationEnabled: {
-            type: Boolean,
-            default: false
-        },
-        finalRoundValidationStatus: {
-            type: String,
-            default: null
-        },
-        finalRoundEligibility: {
-            type: Array,
-            default: null
-        },
         // §32 stk. 1 findings from validatePlayoffParticipation; null until it has run
         playoffParticipation: {
             type: Array,
@@ -356,16 +276,6 @@ export default {
     methods: {
         playoffParticipationMessage,
         playoffParticipationGuidance,
-        finalRoundContextGuidance(player) {
-            const guidance = {
-                MISSING_ROUND: 'Udfyld Runde nr. i holdrundens indstillinger.',
-                UNKNOWN_TIER: 'Angiv holdets række under Rediger holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold.',
-                MISSING_TEAM: 'Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.',
-                MISSING_SEASON: 'Holdrunden mangler sæson. Kontakt support for at få holdrundens sæson rettet; sæsonen kan ikke ændres i indstillingerne.',
-                MISSING_GAME_DATE: 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.'
-            }
-            return (player.incompleteReasons ?? []).map(reason => guidance[reason]).filter(Boolean)
-        },
         statusClass(status) {
             return {
                 'is-light': status === null,
@@ -383,34 +293,6 @@ export default {
         }
     },
     computed: {
-        finalRoundStatusText() {
-            if (!this.finalRoundValidationEnabled) return 'Deaktiveret'
-            if (this.finalRoundValidationStatus === 'failed') return 'Fejlet'
-            if (this.finalRoundValidationStatus !== 'complete') return 'Afventer'
-            return this.finalRoundWarnings.length ? 'Advarsel' : 'OK'
-        },
-        finalRoundStatusClass() {
-            if (!this.finalRoundValidationEnabled) return 'is-warning'
-            if (this.finalRoundValidationStatus === 'failed') return 'is-warning'
-            if (this.finalRoundValidationStatus !== 'complete') return 'is-light'
-            return this.finalRoundWarnings.length ? 'is-warning' : 'is-success'
-        },
-        finalRoundStatusIcon() {
-            if (!this.finalRoundValidationEnabled) return 'cancel'
-            if (this.finalRoundValidationStatus === 'failed') return 'alert'
-            if (this.finalRoundValidationStatus !== 'complete') return 'minus-circle-outline'
-            return this.finalRoundWarnings.length ? 'alert' : 'check-circle'
-        },
-        finalRoundTip() {
-            if (!this.finalRoundValidationEnabled) return 'Kontrollen af tidligere hold er slået fra i denne visning. Slå til igen via kontakten.'
-            if (this.finalRoundValidationStatus === 'failed') return 'Tidligere hold kunne ikke kontrolleres. Prøv igen med opdateringsknappen.'
-            return 'I sidste slutspilsrunde og kvalifikation skal spilleren have stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8). Opdatér kontrollen efter rettelser i tidligere holdrunder.'
-        },
-        finalRoundWarnings() {
-            if (!this.finalRoundValidationStatus || !this.finalRoundValidationEnabled) return []
-            return (this.finalRoundEligibility ?? []).filter(player =>
-                ['REQUIREMENT_NOT_MET', 'CANNOT_VERIFY'].includes(player.status))
-        },
         playoffParticipationWarnings() {
             if (this.playoffParticipationStatus !== 'complete') return []
             return (this.playoffParticipation ?? []).filter(player =>
