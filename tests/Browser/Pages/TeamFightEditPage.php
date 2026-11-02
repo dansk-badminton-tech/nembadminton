@@ -1002,6 +1002,7 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor("@check-row-{$key}", 10);
         if (! $browser->element("[dusk='check-details-{$key}']")) {
+            $this->scrollToCenter($browser, "@check-row-{$key}");
             $browser->click("@check-row-{$key}");
         }
         $browser->waitFor("@check-details-{$key}");
@@ -1032,6 +1033,7 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor('@check-not-applicable', 10);
         if (! $browser->element("[dusk='check-not-applicable-{$key}']")) {
+            $this->scrollToCenter($browser, '@check-not-applicable');
             $browser->click('@check-not-applicable');
         }
         $browser->waitForTextIn("@check-not-applicable-{$key}", $reason, 10)

@@ -31,8 +31,6 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitForCheckStatus('qualification', 'Slået fra')
-                ->switchCheck('qualification')
                 ->waitForCheckDetails('qualification', $member->name)
                 ->assertSeeIn('@check-details-qualification', 'Hold 1')
                 ->assertSeeIn('@check-details-qualification', '§27 stk. 5')
@@ -42,8 +40,6 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
                 ->type('@settings-name', 'Gemt med kvalifikationsadvarsel')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Gemt med kvalifikationsadvarsel')
-                ->waitForCheckStatus('qualification', 'Slået fra')
-                ->switchCheck('qualification')
                 ->waitForCheckDetails('qualification', $member->name)
                 ->createScenarioFromOfficial('Uden spilleren')
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
@@ -66,8 +62,6 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $team, $member, $squad, $earlier) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitForCheckStatus('qualification', 'Slået fra')
-                ->switchCheck('qualification')
                 ->waitForCheckDetails('qualification', 'kan ikke verificeres fuldt ud')
                 ->assertSeeIn('@check-status-qualification', 'Kan ikke kontrolleres')
                 ->assertSeeIn('@check-details-qualification', 'Forår uden holdlink (runde 7)')

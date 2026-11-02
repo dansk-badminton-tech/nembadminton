@@ -82,7 +82,7 @@ Over holdene viser Nembadminton en liste med alle tjek. Den opdateres, hver gang
 | --- | --- |
 | **Kræver handling** | Tjek med **Fejl**, **Advarsel** eller **Kan ikke kontrolleres**. Ret holdopstillingen, eller udfyld det, der mangler. |
 | **Venter** | Tjekket kan først køre, når holdopstillingen er længere, fx når alle hold er fuldt besat. |
-| **Slået fra** | Du har slået tjekket fra med kontakten **Kontrollér dette tjek**. |
+| **Slået fra** | Du har slået tjekket fra med kontakten **Kontrollér dette tjek**. Valget huskes i denne browser for holdrunden og alle dens kladder. |
 | **OK** | Holdopstillingen overholder reglen. |
 
 Tjek, der ikke gælder for holdopstillingen, står samlet nederst under **N tjek gælder ikke for denne opstilling**. Klik på linjen for at se hvorfor.
@@ -133,7 +133,7 @@ I de sidste runder af sæsonen skal en spiller tidligere i sæsonen have stået 
 
 I andre runder og rækker står **Tidligere hold (§38 stk. 8)** under de tjek, der ikke gælder.
 
-I de relevante runder er tjekket som udgangspunkt **Slået fra**. Åbn det, og slå **Kontrollér dette tjek** til, når du vil kontrollere tidligere hold; tjekket kræver, at holdene er tilknyttet. Når det er slået til, viser det **OK**, **Fejl** eller **Kan ikke kontrolleres** og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Vælg **Kontrollér igen** for at køre det med det samme. Genindlæser du siden, er tjekket slået fra igen.
+I de relevante runder viser tjekket **OK**, **Fejl** eller **Kan ikke kontrolleres**. Det kræver, at holdene er [tilknyttet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Tjekket køres igen, når du ændrer holdopstillingen eller skifter scenarie. Vælg **Kontrollér igen** for at køre det med det samme. Vil du ikke have tjekket med, så åbn det, og slå **Kontrollér dette tjek** fra.
 
 Der er to slags fund, hver med holdets nummer og spillerens navn:
 
@@ -200,7 +200,7 @@ Kontrollen er en hjælp, men den dækker ikke alle regler. I disse situationer s
 - **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Hvis en ungdomsspiller ellers ville udløse en niveau- eller kategorifejl, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategori** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
 - **Spillere under 15 år:** En spiller, der ikke er fyldt 15 år senest 31.12. i det kalenderår, sæsonen starter, er markeret med **Under 15 år** ved navnet på holdopstillingen (§ 31, stk. 1). Hold markøren over mærket for at se begrundelsen. Sæsonen er holdrundens sæson, og har holdrunden ingen sæson, bruges sæsonen for spilledatoen. Mangler begge dele, vises mærket ikke. Mærket er en advarsel: Du kan stadig gemme, dele og give besked, så du skal selv vurdere, om spilleren må spille på holdet.
 - **Spillere i andre holdrunder:** Spillere markeret med **Optaget på:** er ikke en del af kontrollen.
-- **Et hold, der bevidst ikke er fuldt besat:** Åbn **Hold fuldendt**, og slå **Kontrollér dette tjek** fra. Tjekket viser **Slået fra**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene. Valget gemmes ikke, så kontakten er slået til igen, næste gang du åbner holdrunden.
+- **Et hold, der bevidst ikke er fuldt besat:** Åbn **Hold fuldendt**, og slå **Kontrollér dette tjek** fra. Tjekket viser **Slået fra**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene.
 
 Det er altid klubbens og trænerens ansvar at kontrollere, at holdopstillingen er korrekt. Mener du, at kontrollen tager fejl, så se [Der vises en valideringsfejl, selv om holdet er korrekt](/app/help/faq) i FAQ.
 
