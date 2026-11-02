@@ -193,7 +193,7 @@
 
 <script>
 import gql from "graphql-tag"
-import {computed} from "vue"
+import {computed, markRaw} from "vue"
 import {
     containsMen,
     containsWomen, extractErrorMessages,
@@ -371,6 +371,9 @@ export default {
             checkResponses: {},
             // Each Check request's state: 'loading', 'failed' or 'done'.
             checkRequests: {},
+            // Apollo's created hook can deliver cached results before our own created hook.
+            // Initialize the non-reactive run counters before any query can start validation.
+            checkRuns: markRaw({}),
             // The "Kontrollér dette tjek" switches, remembered in this browser; on unless switched off.
             checkSwitches: readCheckSwitches(browserStorage(), {userId: currentUser.userId, teamRoundId: this.teamRoundId}),
             teamCount: 1,
@@ -406,10 +409,6 @@ export default {
             this.checkResponses = {}
             this.checkRequests = {}
         }
-    },
-    created() {
-        // The latest run of each Check request, so an answer a newer run has replaced is dropped. Not reactive.
-        this.checkRuns = {}
     },
     apollo: {
         clubhouse: {

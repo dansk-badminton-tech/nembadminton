@@ -20,6 +20,36 @@ class TeamRoundCheckPanelTest extends DuskTestCase
 
     protected $seeder = 'TestingDataSeeder';
 
+    public function test_checks_run_when_returning_to_an_editor_with_a_cached_query_result(): void
+    {
+        $round = $this->roundElevenWithOnePlayer();
+        $path = "/c-{$round->clubhouse_id}/team-fight/{$round->id}/edit";
+
+        $this->browse(function (Browser $browser) use ($round, $path) {
+            $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitForCheckStatus('complete', 'Fejl');
+            $browser->script(<<<'JS'
+                const app = document.querySelector('#app').__vue_app__;
+                const original = app.config.errorHandler;
+                window.checkStartupErrors = [];
+                app.config.errorHandler = (error, ...args) => {
+                    window.checkStartupErrors.push(error.message);
+                    original?.(error, ...args);
+                };
+            JS);
+            $browser->script('document.querySelector("#app").__vue_app__.config.globalProperties.$router.push('.json_encode("/c-{$round->clubhouse_id}/team-fight").')');
+            $browser->waitUntilMissing('@check-panel');
+            // SPA navigation preserves Apollo's cache; a page reload would hide the bug.
+            $browser->script('document.querySelector("#app").__vue_app__.config.globalProperties.$router.push('.json_encode($path).')');
+            $browser->waitFor('@check-panel')
+                ->assertScript('JSON.stringify(window.checkStartupErrors)', '[]')
+                ->waitForCheckStatus('complete', 'Fejl')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->assertMissing('@check-section-pending');
+        });
+    }
+
     public function test_the_check_panel_lists_every_check_in_sections_with_the_checks_that_dont_apply_folded(): void
     {
         $round = $this->roundElevenWithOnePlayer();
