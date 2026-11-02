@@ -7,9 +7,11 @@ journey:
   role: troubleshooting
 ---
 
-## Slå kontrollen til
+## Hvor finder jeg kontrollen?
 
-I runde 12 vises **Kvalifikation (§27 stk. 5)** for hold fra 2. division, 3. division og Danmarksserien. Åbn tjekket, slå **Kontrollér dette tjek** til, og vælg **Kontrollér igen** efter rettelser i tidligere holdrunder. Den valgte kladdes spillere kontrolleres også, men historikken kommer kun fra officielle holdopstillinger.
+I runde 12 kontrollerer **Kvalifikation (§27 stk. 5)** hold fra 2. division, 3. division og Danmarksserien. Tjekket kører af sig selv; vælg **Kontrollér igen** efter rettelser i tidligere holdrunder. Den valgte kladdes spillere kontrolleres også, men historikken kommer kun fra officielle holdopstillinger.
+
+Vil du ikke have tjekket med, så åbn det, og slå **Kontrollér dette tjek** fra. Valget huskes i denne browser for holdrunden og alle dens kladder.
 
 Holdets række fra grundspillet bestemmer spillerreglerne, også når et 2. divisionshold spiller kvalifikation til 1. division. Liga, 1. division og papirhold har andre regler og er ikke omfattet af denne kontrol.
 

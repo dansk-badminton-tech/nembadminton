@@ -28,14 +28,15 @@ class TeamRoundCheckPanelTest extends DuskTestCase
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitForCheckStatus('complete', 'Fejl')
-                ->assertSeeIn('@check-section-action', 'Kræver handling (1)')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->assertSeeIn('@check-section-action', 'Kræver handling (2)')
                 ->assertSeeIn('@check-section-action', 'Hold fuldendt')
+                ->assertSeeIn('@check-section-action', 'Tidligere hold')
                 ->assertSeeIn('@check-row-complete', '1 fund')
                 ->waitForCheckStatus('level', 'Venter')
                 ->assertSeeIn('@check-section-waiting', 'Niveau')
                 ->assertSeeIn('@check-section-waiting', 'Kategori')
-                ->waitForCheckStatus('finalRound', 'Slået fra')
-                ->assertSeeIn('@check-section-off', 'Tidligere hold')
+                ->assertMissing('@check-section-off')
                 ->waitForCheckStatus('tooYoung', 'OK')
                 ->assertSeeIn('@check-section-ok', 'For ung')
                 ->assertSeeIn('@check-row-tooYoung', 'pr. spiller')
@@ -76,16 +77,19 @@ class TeamRoundCheckPanelTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitForCheckStatus('finalRound', 'Slået fra')
-                ->openCheck('finalRound')
-                ->assertSeeIn('@check-details-finalRound', 'Slået fra. Slå til herunder.')
-                ->switchCheck('finalRound')
                 ->waitForCheckStatus('finalRound', 'Fejl')
+                ->openCheck('finalRound')
                 ->assertSeeIn('@check-section-action', 'Tidligere hold')
                 ->assertSeeIn('@check-details-finalRound', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8)')
                 ->switchCheck('finalRound')
                 ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->assertSeeIn('@check-section-off', 'Tidligere hold')
+                ->assertSeeIn('@check-details-finalRound', 'Slået fra. Slå til herunder.')
                 ->assertDontSeeIn('@check-details-finalRound', 'har ikke stået på samme eller et lavere hold')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
                 // With Hold fuldendt switched off, Niveau and Kategori run on what's there.
                 ->switchCheck('complete')
                 ->waitForCheckStatus('complete', 'Slået fra')
@@ -94,6 +98,29 @@ class TeamRoundCheckPanelTest extends DuskTestCase
                 ->switchCheck('complete')
                 ->waitForCheckStatus('complete', 'Fejl')
                 ->waitForCheckStatus('level', 'Venter');
+        });
+    }
+
+    public function test_a_switched_off_check_stays_off_after_a_reload_and_in_a_scenario_of_the_same_round(): void
+    {
+        $round = $this->roundElevenWithOnePlayer();
+
+        $this->browse(function (Browser $browser) use ($round) {
+            $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                // Tidligere hold starts on.
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->refresh()->on(new TeamFightEditPage)
+                ->waitForCheckStatus('complete', 'Fejl')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->createScenarioFromOfficial('Udkast med fravalg')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->selectScenario('Officiel opstilling')
+                ->waitForCheckStatus('finalRound', 'Fejl');
         });
     }
 
