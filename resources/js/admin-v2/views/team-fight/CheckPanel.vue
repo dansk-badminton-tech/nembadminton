@@ -13,31 +13,31 @@
                 <template v-for="row in section.rows" :key="row.key">
                     <tr class="is-clickable" role="button" :aria-expanded="isOpen(row)" :dusk="`check-row-${row.key}`"
                         :class="{'has-text-grey': row.status === 'switched-off'}" @click="toggle(row)">
-                        <td style="width: 2rem">
-                            <b-icon :icon="look(row).icon" :type="look(row).type" size="is-small"
+                        <td class="is-narrow">
+                            <b-icon :icon="appearanceOf(row).icon" :type="appearanceOf(row).type" size="is-small"
                                     :custom-class="row.state === 'loading' || row.refreshing ? 'mdi-spin' : ''"></b-icon>
                         </td>
                         <td>
                             <strong v-if="section.key === 'action'">{{ row.name }}</strong>
                             <span v-else>{{ row.name }}</span>
                             <span v-if="row.rule" class="has-text-grey is-size-7 ml-1">{{ row.rule }}</span>
-                            <span v-if="row.perPlayer" class="tag is-white is-small ml-1">pr. spiller</span>
+                            <b-tag v-if="row.perPlayer" type="is-white" class="ml-1">pr. spiller</b-tag>
                         </td>
-                        <td class="is-size-7" style="white-space: nowrap">
+                        <td class="is-size-7 is-narrow">
                             <template v-if="row.state === 'loading'">
                                 <span class="has-text-grey" :dusk="`check-status-${row.key}`">Kontrollerer …</span>
                             </template>
                             <template v-else-if="row.state === 'failed'">
-                                <span class="has-text-danger mr-2" :dusk="`check-status-${row.key}`">Kontrollen fejlede</span>
+                                <span class="has-text-danger mr-2" :dusk="`check-status-${row.key}`">Tjekket kunne ikke køre</span>
                                 <b-button size="is-small" icon-left="refresh" :dusk="`check-retry-${row.key}`"
                                           @click.stop="$emit('retry', row.key)">Prøv igen</b-button>
                             </template>
                             <template v-else>
-                                <span class="tag is-small mr-2" :class="look(row).tag" :dusk="`check-status-${row.key}`">{{ row.label }}</span>
+                                <b-tag :type="appearanceOf(row).tag" class="mr-2" :dusk="`check-status-${row.key}`">{{ row.label }}</b-tag>
                                 <span v-if="row.findings.length" class="has-text-grey">{{ row.findings.length }} fund</span>
                             </template>
                         </td>
-                        <td class="has-text-right has-text-grey is-size-7" style="white-space: nowrap">
+                        <td class="has-text-right has-text-grey is-size-7 is-narrow">
                             Detaljer <b-icon :icon="isOpen(row) ? 'chevron-up' : 'chevron-down'" size="is-small"></b-icon>
                         </td>
                     </tr>
@@ -45,13 +45,12 @@
                         <td></td>
                         <td colspan="3" class="is-size-7 pt-0">
                             <p class="has-text-grey">{{ row.description }}</p>
-                            <p v-if="row.status === 'switched-off'" class="mt-1">Slået fra. Slå til herunder.</p>
-                            <p v-else-if="row.state === 'failed'" class="mt-1">Tjekket kunne ikke køre. Prøv igen.</p>
+                            <p v-if="row.status === 'switched-off'" class="mt-1">Slå tjekket til herunder.</p>
                             <p v-else-if="row.reason" class="mt-1">{{ row.reason }}</p>
                             <ul v-if="row.findings.length" class="mt-1">
                                 <li v-for="finding in row.findings" :key="`${finding.squadIndex}-${finding.refId}-${finding.message}`"
                                     :dusk="finding.refId ? `check-finding-${row.key}-${finding.squadIndex ?? 'x'}-${finding.refId}` : null"
-                                    :class="finding.status === 'cannot-verify' ? '' : look({status: finding.status}).text">
+                                    :class="finding.status === 'cannot-verify' ? '' : appearanceOf({status: finding.status}).text">
                                     {{ finding.message }}
                                     <ul v-if="finding.uncountedRounds?.length">
                                         <li v-for="round in finding.uncountedRounds" :key="round.teamRoundId">
@@ -61,13 +60,13 @@
                                     </ul>
                                 </li>
                             </ul>
-                            <p v-if="NOTES[row.key] && row.findings.length" class="mt-1">{{ NOTES[row.key] }}</p>
-                            <p v-if="GUIDES[row.key] && row.status !== 'switched-off'" class="mt-1">
-                                <router-link :to="{name: 'help-guide', params: {slug: GUIDES[row.key].slug}, hash: GUIDES[row.key].hash}"
+                            <p v-if="row.note && row.findings.length" class="mt-1">{{ row.note }}</p>
+                            <p v-if="row.guide && row.status !== 'switched-off'" class="mt-1">
+                                <router-link :to="{name: 'help-guide', params: {slug: row.guide.slug}, hash: row.guide.hash}"
                                              target="_blank" rel="noopener" :dusk="`check-guide-${row.key}`">Læs mere</router-link>
                             </p>
-                            <div class="is-flex is-align-items-center mt-2" style="gap: 1rem;">
-                                <b-button v-if="READS_EARLIER_ROUNDS.includes(row.key) && row.status !== 'switched-off'"
+                            <div class="is-flex is-align-items-center is-gap-2 mt-2">
+                                <b-button v-if="row.readsEarlierRounds && row.status !== 'switched-off'"
                                           size="is-small" icon-left="refresh" :loading="row.refreshing"
                                           :dusk="`check-revalidate-${row.key}`" @click="$emit('revalidate')">
                                     Kontrollér igen
@@ -106,8 +105,6 @@
 
 <script>
 import {checkPanel} from './checks/check-panel.mjs'
-import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE} from './paper-squads.js'
-import {PLAYOFF_PARTICIPATION_GUIDE} from './playoff-participation.js'
 
 const LOOK = {
     passed: {icon: 'check-circle', type: 'is-success', tag: 'is-success', text: ''},
@@ -131,16 +128,7 @@ export default {
         return {
             open: {},
             showNotApplicable: false,
-            SECTION_CLASS: {action: 'has-text-danger', waiting: 'has-text-grey-dark', off: 'has-text-grey-dark', ok: 'has-text-success'},
-            // The Checks that read earlier TeamRounds; "Kontrollér igen" picks up corrections made there.
-            READS_EARLIER_ROUNDS: ['paperSquads', 'finalRound', 'qualification', 'playoff'],
-            NOTES: {paperSquads: PAPER_SQUAD_AGGRAVATION},
-            GUIDES: {
-                paperSquads: {slug: TEAM_LINK_GUIDE},
-                finalRound: {slug: TEAM_LINK_GUIDE},
-                qualification: {slug: 'kontroller-spillerkrav-i-kvalifikation'},
-                playoff: PLAYOFF_PARTICIPATION_GUIDE
-            }
+            SECTION_CLASS: {action: 'has-text-danger', waiting: 'has-text-grey-dark', off: 'has-text-grey-dark', ok: 'has-text-success'}
         }
     },
     computed: {
@@ -149,7 +137,8 @@ export default {
         }
     },
     methods: {
-        look(row) {
+        // The row's icon, icon colour, tag type and finding text colour for its Check Status or panel state.
+        appearanceOf(row) {
             if (row.state === 'loading' || row.refreshing) return {...(LOOK[row.status] ?? {}), icon: 'loading', type: 'is-grey'}
             if (row.state === 'failed') return {icon: 'alert-circle-outline', type: 'is-danger'}
             return LOOK[row.status] ?? LOOK.waiting

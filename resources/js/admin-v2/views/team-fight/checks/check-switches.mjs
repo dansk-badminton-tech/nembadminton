@@ -3,7 +3,10 @@
 // A switch that isn't stored, storage that is missing or throws (private window, cleared data), or a user that isn't
 // known yet all mean on. Nothing here throws.
 
-const SWITCHES = ['complete', 'finalRound', 'qualification']
+import {CHECKS} from './check-status.mjs'
+
+// The keys of the Checks with a "Kontrollér dette tjek" switch.
+const SWITCHES = CHECKS.filter(check => check.switchable).map(check => check.key)
 
 function storageKey({userId, teamRoundId}) {
     if (userId === null || userId === undefined || !teamRoundId) return null

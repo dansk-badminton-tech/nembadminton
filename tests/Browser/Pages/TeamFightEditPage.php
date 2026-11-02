@@ -988,7 +988,7 @@ class TeamFightEditPage extends Page
 
     /**
      * Wait until a Check in the check panel shows a status label (OK, Fejl, Advarsel, Kan ikke kontrolleres, Venter,
-     * Slået fra) or a panel state (Kontrollerer …, Kontrollen fejlede). $key is the Check's key in check-status.mjs.
+     * Slået fra) or a panel state (Kontrollerer …, Tjekket kunne ikke køre). $key is the Check's key in check-status.mjs.
      */
     public function waitForCheckStatus(Browser $browser, string $key, string $label): void
     {

@@ -6,8 +6,8 @@
 // Kan ikke kontrolleres > OK). Framework-free, so node:test can load it.
 
 import {reserveFindingMessages} from '../reserves.js'
-import {hasPaperSquad, paperSquadPlayerMessage} from '../paper-squads.js'
-import {playoffParticipationMessage} from '../playoff-participation.js'
+import {PAPER_SQUAD_AGGRAVATION, TEAM_LINK_GUIDE, hasPaperSquad, paperSquadPlayerMessage} from '../paper-squads.js'
+import {PLAYOFF_PARTICIPATION_GUIDE, playoffParticipationMessage} from '../playoff-participation.js'
 
 export const CHECK_STATUS = {
     PASSED: 'passed',
@@ -74,7 +74,7 @@ const RULES = [
         // As Niveau, Youth Players are left out of the findings, and so is a player with a youth partner.
         run: ({playersWithoutPoints, findings}) => playersWithoutPoints.length ? {
             findings: playersWithoutPoints.map(player => playerFinding(player, 'unknown',
-                `${player.name} har ingen point i ${player.category}. Ret pointene eller vælg en anden spiller.`)),
+                `${player.name} har ingen point i ${player.category}.`)),
             reason: 'Kategori kan først kontrolleres, når alle spillere har point i de kategorier, de spiller.'
         } : {
             findings: findings.filter(player => !player.isYouthPlayer && !player.hasYouthPlayerPartner).map(player => playerFinding(player, 'broken',
@@ -100,6 +100,9 @@ const RULES = [
         rule: '§38 stk. 7',
         description: 'Spillerne på papirholdet har spillet i kategorien og på samme eller et lavere hold før.',
         notApplicable: ({teamRound}) => hasPaperSquad(squadsOf(teamRound)) ? null : 'Opstillingen har intet papirhold.',
+        guide: {slug: TEAM_LINK_GUIDE},
+        note: PAPER_SQUAD_AGGRAVATION,
+        readsEarlierRounds: true,
         response: 'paperSquads',
         run: ({missingRound, players}) => {
             if (missingRound) return {findings: [], reason: GUIDANCE.MISSING_ROUND}
@@ -120,6 +123,8 @@ const RULES = [
             ROUND_NOT_COVERED: 'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.',
             TIER_NOT_COVERED: 'Gælder kun 1.–3. division, Danmarksserien og Badmintonligaen.'
         },
+        guide: {slug: TEAM_LINK_GUIDE},
+        readsEarlierRounds: true,
         response: 'finalRound',
         run: ({players}) => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
             ? `Hold ${player.squadIndex + 1}: ${player.name} har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).`
@@ -136,6 +141,8 @@ const RULES = [
             ROUND_NOT_COVERED: 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.',
             TIER_NOT_COVERED: 'Gælder kun 2.–3. division og Danmarksserien.'
         },
+        guide: {slug: 'kontroller-spillerkrav-i-kvalifikation'},
+        readsEarlierRounds: true,
         response: 'qualification',
         run: ({players}) => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
             ? `Hold ${player.squadIndex + 1}: ${player.name} opfylder ikke de kontrollerede rundenummerkrav (§27 stk. 5); Nembadminton vurderer ikke kalenderårsalternativet.`
@@ -150,6 +157,8 @@ const RULES = [
             ROUND_NOT_COVERED: 'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).',
             TIER_NOT_COVERED: 'Gælder kun 1. division og Badmintonligaen.'
         },
+        guide: PLAYOFF_PARTICIPATION_GUIDE,
+        readsEarlierRounds: true,
         response: 'playoff',
         run: ({players}) => historyResult(players, playoffParticipationMessage)
     },
@@ -168,12 +177,12 @@ const RULES = [
     }
 ]
 
-// What to fill in for each *IncompleteReason of the server's per-player outcomes.
+// What to fill in for each *IncompleteReason of the server's per-player outcomes, in the order to fill them in.
 const GUIDANCE = {
     MISSING_ROUND: 'Udfyld Runde nr. i holdrundens indstillinger.',
-    UNKNOWN_TIER: 'Angiv holdets række under Rediger holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold.',
+    UNKNOWN_TIER: 'Angiv holdets række under Rediger holdet, eller på sæsonens hold, hvis et hold er tilknyttet.',
     MISSING_TEAM: 'Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.',
-    MISSING_SEASON: 'Holdrunden mangler sæson. Kontakt support for at få den rettet.',
+    MISSING_SEASON: 'Holdrunden mangler sæson, så kontakt support for at få den rettet.',
     MISSING_GAME_DATE: 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.',
     UNKNOWN_HISTORY_TIER: 'Angiv rækken på spillerens hold i de tidligere holdrunder herunder.',
     MISSING_HISTORY_DATE: 'Angiv spilledatoen i de tidligere holdrunder herunder.'
@@ -195,7 +204,8 @@ function groupPairs(unknownPairs) {
 const CANNOT_DECIDE_FROM_HISTORY ='Spillernes tidligere holdrunder er ikke nok til at afgøre kravet.'
 
 // Per-player outcomes of the history Checks: any REQUIREMENT_NOT_MET breaks the rule, otherwise any CANNOT_VERIFY makes
-// the Check Kan ikke kontrolleres. Other outcomes (SATISFIED, NOT_APPLICABLE) are no finding.
+// the Check Kan ikke kontrolleres. Other outcomes (SATISFIED, NOT_APPLICABLE) are no finding. The reason is one help
+// text: the first thing to fill in; the next shows once it is filled in.
 function historyResult(players, message) {
     const findings = players
         .filter(player => player.status === 'REQUIREMENT_NOT_MET' || player.status === 'CANNOT_VERIFY')
@@ -205,8 +215,8 @@ function historyResult(players, message) {
         }))
     const unknown = findings.filter(finding => finding.outcome === 'unknown')
     if (!unknown.length) return {findings}
-    const guidance = [...new Set(unknown.flatMap(finding => finding.guidance))]
-    return {findings, reason: guidance.join(' ') || CANNOT_DECIDE_FROM_HISTORY}
+    const guidance = unknown.flatMap(finding => finding.guidance)
+    return {findings, reason: GUIDANCE_ORDER.find(text => guidance.includes(text)) ?? CANNOT_DECIDE_FROM_HISTORY}
 }
 
 function playerGuidance(player) {
@@ -227,6 +237,8 @@ function serverNotApplicable(rule, response) {
 
 const LINK_EARLIER_ROUNDS = 'Tilknyt holdet i de tidligere holdrunder, der står under spillerne.'
 
+const GUIDANCE_ORDER = [...Object.values(GUIDANCE), LINK_EARLIER_ROUNDS]
+
 function squadsOf(teamRound) {
     return teamRound?.squads ?? []
 }
@@ -237,12 +249,17 @@ function paperSquadCountMayBeMet({unplayedCategories, matchCount, requiredMatchC
 }
 
 // What the panel shows about each Check, in the panel's order. severity: the status a broken rule gives (Fejl or Advarsel).
+// guide: the User Guide behind Læs mere ({slug, hash?}), note: shown with the findings, readsEarlierRounds: earlier
+// TeamRounds decide it, so Kontrollér igen picks up corrections made there.
 // requests: the responses its status waits on, so the panel can tell loading from a failed request while status is null.
-export const CHECKS = RULES.map(({key, name, rule, description, severity, switchable, perPlayer, waitsForFullSquads, response}) => ({
+export const CHECKS = RULES.map(({key, name, rule, description, severity, switchable, perPlayer, guide, note, readsEarlierRounds, waitsForFullSquads, response}) => ({
     key, name, rule, description,
     severity: severity ?? CHECK_STATUS.FAILED,
     switchable: switchable === true,
     perPlayer: perPlayer === true,
+    guide: guide ?? null,
+    note: note ?? null,
+    readsEarlierRounds: readsEarlierRounds === true,
     requests: [...new Set([...(waitsForFullSquads ? ['basicSquads'] : []), response])]
 }))
 

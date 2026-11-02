@@ -98,7 +98,7 @@ De almindelige tjek er:
 1. Kontrollér **Hold fuldendt**. Viser den **Fejl**, mangler der spillere, og **Niveau** og **Kategori** viser **Venter**, indtil alle hold er fuldt besat.
 2. Klik på et tjek eller **Detaljer** for at se, hvad det kontrollerer, og hvilke spillere det drejer sig om. Spillerne er også markeret med rødt på holdene. Hold markøren over en markeret spiller for at se, hvilke spillere den sammenlignes med.
 3. Ret holdopstillingen, og kontrollér, at ingen tjek står under **Kræver handling**.
-4. Kan et tjek ikke køre, fordi forbindelsen fejler, står der **Kontrollen fejlede**. Vælg **Prøv igen**.
+4. Fejler forbindelsen, står der **Tjekket kunne ikke køre**. Vælg **Prøv igen**.
 
 Sådan retter du de almindelige fejl:
 
@@ -119,7 +119,7 @@ Nembadminton tæller kun holdrunder med en tidligere spilledato i klubben, så e
 
 Bryder en spiller reglen, viser tjekket **Fejl**, og under **Detaljer** står et fund for hver spiller, fx **Hold 2 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.** Under fundene står det, at en ulovlig spiller på et papirhold er en skærpende omstændighed, fordi klubbens underliggende hold kan blive taberdømt (§54 stk. 7).
 
-Fejlen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om spilleren kan stå på papirholdet. Mangler holdrunden et rundenummer, viser tjekket **Kan ikke kontrolleres**; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
+**Fejl** betyder, at spilleren ikke må stå på papirholdet. Du kan stadig gemme og dele, men ret holdopstillingen, før holdkampen spilles. Mangler holdrunden et rundenummer, viser tjekket **Kan ikke kontrolleres**; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
 
 Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner fundet runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
 Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
@@ -143,10 +143,10 @@ Der er to slags fund, hver med holdets nummer og spillerens navn:
 | Besked | Sådan retter du den |
 | --- | --- |
 | **Udfyld Runde nr. i holdrundens indstillinger.** | Angiv rundenummeret; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer). |
-| **Angiv holdets række under Rediger holdet.** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
+| **Angiv holdets række under Rediger holdet, …** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
 | **Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.** | Tilknyt holdet; se [Tilknyt et hold bagefter](/app/help/guides/opret-og-klargoer-en-holdrunde). |
 | **Angiv datoen i holdrundens indstillinger.** | Angiv **Runde spilledato**, så tidligere holdrunder kan findes. |
-| **Holdrunden mangler sæson.** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
+| **Holdrunden mangler sæson, …** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
 
 Kan spillerens tidligere opstillinger ikke sammenlignes, fordi holdet ikke er tilknyttet i de runder, står holdrunderne som links under fundet. Åbn hver holdrunde, og tilknyt holdet som beskrevet i [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Vælg derefter **Kontrollér igen**.
 

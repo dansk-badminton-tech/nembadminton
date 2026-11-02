@@ -84,7 +84,7 @@ class TeamRoundCheckPanelTest extends DuskTestCase
                 ->switchCheck('finalRound')
                 ->waitForCheckStatus('finalRound', 'Slået fra')
                 ->assertSeeIn('@check-section-off', 'Tidligere hold')
-                ->assertSeeIn('@check-details-finalRound', 'Slået fra. Slå til herunder.')
+                ->assertSeeIn('@check-details-finalRound', 'Slå tjekket til herunder.')
                 ->assertDontSeeIn('@check-details-finalRound', 'har ikke stået på samme eller et lavere hold')
                 ->switchCheck('finalRound')
                 ->waitForCheckStatus('finalRound', 'Fejl')
@@ -146,7 +146,7 @@ class TeamRoundCheckPanelTest extends DuskTestCase
             JS);
             // Switching Hold fuldendt off runs the Checks again; For ung's request fails once.
             $browser->switchCheck('complete')
-                ->waitForCheckStatus('tooYoung', 'Kontrollen fejlede')
+                ->waitForCheckStatus('tooYoung', 'Tjekket kunne ikke køre')
                 ->assertSeeIn('@check-section-pending', 'For ung')
                 ->click('@check-retry-tooYoung')
                 ->waitForCheckStatus('tooYoung', 'OK')
@@ -183,7 +183,7 @@ class TeamRoundCheckPanelTest extends DuskTestCase
                 ->openCheck('category')
                 ->assertSeeIn('@check-details-category', 'Kategori kan først kontrolleres, når alle spillere har point i de kategorier, de spiller.')
                 ->assertSeeIn("@check-finding-category-0-{$withoutPoints->refId}",
-                    "{$withoutPoints->name} har ingen point i DS. Ret pointene eller vælg en anden spiller.");
+                    "{$withoutPoints->name} har ingen point i DS.");
         });
     }
 

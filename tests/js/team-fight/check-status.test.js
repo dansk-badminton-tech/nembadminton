@@ -94,9 +94,9 @@ test('Kategori is Kan ikke kontrolleres with every player without points in thei
         reason: 'Kategori kan først kontrolleres, når alle spillere har point i de kategorier, de spiller.',
         findings: [
             {squadIndex: 0, refId: 's1', name: 'Sofie Lund', status: 'cannot-verify',
-                message: 'Sofie Lund har ingen point i DS. Ret pointene eller vælg en anden spiller.'},
+                message: 'Sofie Lund har ingen point i DS.'},
             {squadIndex: 1, refId: 'p1', name: 'Peter Mø', status: 'cannot-verify',
-                message: 'Peter Mø har ingen point i MD. Ret pointene eller vælg en anden spiller.'}
+                message: 'Peter Mø har ingen point i MD.'}
         ]
     })
 })
@@ -219,12 +219,12 @@ test('Tidligere hold fails for a player who has not played on the same or a lowe
     assert.equal(check.findings[0].message, 'Hold 1: Karl Dam har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).')
 })
 
-test('Tidligere hold cannot be verified with what to fill in, and passes when every player meets it', () => {
+test('Tidligere hold cannot be verified with the first thing to fill in, and passes when every player meets it', () => {
     const teamRound = round(12, '2. division')
     const linked = historyPlayer({refId: 'u1', status: 'CANNOT_VERIFY', uncountedRounds: UNCOUNTED})
     const check = statusOf('finalRound', {teamRound, switches: {finalRound: true}, responses: {finalRound: answer(UNKNOWN_DATE, linked, {...UNKNOWN_DATE, refId: 'l2'})}})
     assert.equal(check.status, 'cannot-verify')
-    assert.equal(check.reason, 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes. Tilknyt holdet i de tidligere holdrunder, der står under spillerne.')
+    assert.equal(check.reason, 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.')
     assert.deepEqual(check.findings[0].guidance, ['Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.'])
     assert.equal(check.findings[0].message, 'Hold 1: Line Bech – spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).')
     assert.deepEqual(check.findings[1].uncountedRounds, UNCOUNTED)
@@ -232,16 +232,20 @@ test('Tidligere hold cannot be verified with what to fill in, and passes when ev
     assert.deepEqual(passed, {key: 'finalRound', status: 'passed', reason: null, findings: []})
 })
 
-test('a missing round, tier, team or season gives Kan ikke kontrolleres with what to fill in', () => {
+test('a missing round, tier, team or season gives Kan ikke kontrolleres with one thing to fill in at a time', () => {
     const missing = historyPlayer({status: 'CANNOT_VERIFY', incompleteReasons: ['MISSING_ROUND', 'UNKNOWN_TIER', 'MISSING_TEAM', 'MISSING_SEASON']})
     const check = statusOf('qualification', {teamRound: round(null, null), switches: {qualification: true}, responses: {qualification: answer(missing)}})
     assert.equal(check.status, 'cannot-verify')
-    assert.equal(check.reason, [
+    assert.equal(check.reason, 'Udfyld Runde nr. i holdrundens indstillinger.')
+    assert.deepEqual(check.findings[0].guidance, [
         'Udfyld Runde nr. i holdrundens indstillinger.',
-        'Angiv holdets række under Rediger holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold.',
+        'Angiv holdets række under Rediger holdet, eller på sæsonens hold, hvis et hold er tilknyttet.',
         'Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.',
-        'Holdrunden mangler sæson. Kontakt support for at få den rettet.'
-    ].join(' '))
+        'Holdrunden mangler sæson, så kontakt support for at få den rettet.'
+    ])
+    const tierOnly = historyPlayer({status: 'CANNOT_VERIFY', incompleteReasons: ['UNKNOWN_TIER'], uncountedRounds: UNCOUNTED})
+    assert.equal(statusOf('qualification', {teamRound: round(12, null), switches: {qualification: true}, responses: {qualification: answer(tierOnly)}}).reason,
+        'Angiv holdets række under Rediger holdet, eller på sæsonens hold, hvis et hold er tilknyttet.')
 })
 
 test('Kvalifikation warns rather than fails', () => {
@@ -297,6 +301,21 @@ test('the panel gets each Check\'s name, paragraph, severity and switch, and eac
     assert.deepEqual(STATUS_LABEL, {
         'passed': 'OK', 'failed': 'Fejl', 'warning': 'Advarsel', 'cannot-verify': 'Kan ikke kontrolleres',
         'waiting': 'Venter', 'switched-off': 'Slået fra', 'not-applicable': 'Gælder ikke'
+    })
+})
+
+test('the panel gets each Check\'s User Guide, note and whether it reads earlier Team Rounds', () => {
+    assert.deepEqual(Object.fromEntries(CHECKS.map(check => [check.key, [check.guide, check.note, check.readsEarlierRounds]])), {
+        complete: [null, null, false],
+        level: [null, null, false],
+        category: [null, null, false],
+        reserves: [null, null, false],
+        paperSquads: [{slug: 'tilknyt-holdet-i-tidligere-runder'},
+            'En ulovlig spiller på et papirhold er en skærpende omstændighed: klubbens underliggende hold kan blive taberdømt (§54 stk. 7).', true],
+        finalRound: [{slug: 'tilknyt-holdet-i-tidligere-runder'}, null, true],
+        qualification: [{slug: 'kontroller-spillerkrav-i-kvalifikation'}, null, true],
+        playoff: [{slug: 'lav-og-kontroller-den-officielle-holdopstilling', hash: '#kontrol-af-slutspilskravet'}, null, true],
+        tooYoung: [null, null, false]
     })
 })
 

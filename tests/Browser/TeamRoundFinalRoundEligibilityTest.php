@@ -52,7 +52,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->waitForCheckStatus('finalRound', 'Fejl')
                 ->switchCheck('finalRound')
                 ->waitForCheckStatus('finalRound', 'Slået fra')
-                ->assertSeeIn('@check-details-finalRound', 'Slået fra. Slå til herunder.')
+                ->assertSeeIn('@check-details-finalRound', 'Slå tjekket til herunder.')
                 ->assertDontSeeIn('@check-details-finalRound', $member->name)
                 ->assertMissing('@check-revalidate-finalRound')
                 // The choice belongs to the Team Round, not to its round number.
@@ -137,7 +137,7 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->assertSeeIn('@check-details-finalRound', $member->name);
             $browser->script('window.eligibilityNetwork.failNext = true');
             $browser->click('@check-revalidate-finalRound')
-                ->waitForCheckStatus('finalRound', 'Kontrollen fejlede')
+                ->waitForCheckStatus('finalRound', 'Tjekket kunne ikke køre')
                 ->assertDontSeeIn('@check-details-finalRound', $member->name)
                 ->click('@check-retry-finalRound')
                 ->waitForCheckStatus('finalRound', 'Fejl')
