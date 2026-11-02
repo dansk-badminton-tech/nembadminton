@@ -257,7 +257,7 @@ type BelowPlayer {
 }
 
 type SquadOrderValidation {
-    "Players without points in a category they play on a Squad that has more than one of that category. When any are listed, nothing is compared and findings is empty."
+    "Players without points in a category they play on a Squad that has more than one of that category; Youth Players are not listed. When any are listed, nothing is compared and findings is empty."
     playersWithoutPoints: [PlayerWithoutPoints!]!
     findings: [PlayingToHigh!]!
 }

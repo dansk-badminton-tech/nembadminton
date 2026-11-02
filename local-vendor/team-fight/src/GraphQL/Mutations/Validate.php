@@ -43,9 +43,7 @@ class Validate
 
         $squads = $teams->pluck('squad');
         $squads = $this->deserializeSquads($squads);
-        $playingToHigh = $this->teamValidator->validateCrossSquadsLeagueV3($squads);
-
-        return $playingToHigh;
+        return $this->teamValidator->validateCrossSquadsWithUnknownPairs($squads)['findings'];
     }
 
     /**

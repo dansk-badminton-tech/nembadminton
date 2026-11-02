@@ -20,11 +20,6 @@ class TeamValidator
         'HD',
     ];
 
-    public function validateCrossSquadsLeagueV3(array $squads): Collection
-    {
-        return $this->validateCrossSquadsWithUnknownPairs($squads)['findings'];
-    }
-
     /**
      * §38 stk. 4 across the Squads, highest first: the players on a too low Squad, and the pairs whose result the
      * higher player's missing points decide (one entry per such category, lowest Squad first).
@@ -261,7 +256,7 @@ class TeamValidator
      * @param  Squad[]  $squads
      * @return list<array{squadIndex: int, refId: string|null, name: string, category: string}>
      */
-    public function playersWithoutPoints(array $squads): array
+    private function playersWithoutPoints(array $squads): array
     {
         $missing = [];
         foreach (array_values($squads) as $squadIndex => $squad) {
@@ -392,7 +387,7 @@ class TeamValidator
     /**
      * The player's points in the category on the ranking, or null without any.
      */
-    public function findPlayerCategoryPoint(Player $player, string $category): ?int
+    private function findPlayerCategoryPoint(Player $player, string $category): ?int
     {
         $rankingCategory = $this->getRankingCategory($category, $player->gender);
         foreach ($player->points as $point) {
