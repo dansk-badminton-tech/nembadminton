@@ -2881,24 +2881,6 @@ parameters:
 			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
 
 		-
-			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) has parameter \$args with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
-
-		-
-			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) has parameter \$rootValue with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
-
-		-
-			message: '#^Method FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate\:\:validateSquads\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: local-vendor/team-fight/src/GraphQL/Mutations/Validate.php
-
-		-
 			message: '#^PHPDoc tag @return with type array is incompatible with native type Illuminate\\Support\\Collection\.$#'
 			identifier: return.phpDocType
 			count: 1

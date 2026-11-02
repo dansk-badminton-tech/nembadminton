@@ -65,7 +65,7 @@ class PaperSquadSeasonSeedTest extends TestCase
             $label = 'Round '.$round->round;
 
             $this->assertNotContains(false, $this->spotsFulfilled($input), $label);
-            $this->assertSame([], $this->mutate('validateSquads', $input, 'name category belowPlayer { name }'), $label);
+            $this->assertSame(['playersWithoutPoints' => [], 'findings' => []], $this->mutate('validateSquads', $input, 'playersWithoutPoints { name } findings { name category belowPlayer { name } }'), $label);
             $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name belowPlayer { name category }'), $label);
             $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'name belowPlayer { name category }'), $label);
         }

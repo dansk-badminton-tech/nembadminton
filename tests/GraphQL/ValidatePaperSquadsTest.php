@@ -244,11 +244,11 @@ class ValidatePaperSquadsTest extends TestCase
         // Bo has far more HS points than Anders, but stands below him.
         $lineup = $this->lineup(null, [['HS', '1. HS', [self::ANDERS]], ['HS', '2. HS', [self::BO]]], points: [self::ANDERS => 100, self::BO => 3000]);
 
-        $query = 'mutation($input: [ValidateTeam!]!) { validateSquads(input: $input) { refId } }';
-        $this->assertNotEmpty($this->graphQL($query, ['input' => [$lineup]])->json('data.validateSquads'));
+        $query = 'mutation($input: [ValidateTeam!]!) { validateSquads(input: $input) { findings { refId } } }';
+        $this->assertNotEmpty($this->graphQL($query, ['input' => [$lineup]])->json('data.validateSquads.findings'));
 
         $lineup['squad']['isPaperSquad'] = true;
-        $this->graphQL($query, ['input' => [$lineup]])->assertJsonPath('data.validateSquads', []);
+        $this->graphQL($query, ['input' => [$lineup]])->assertJsonPath('data.validateSquads.findings', []);
     }
 
     #[Test]

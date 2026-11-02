@@ -37,21 +37,24 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
             $data
         )->assertExactJson([
             'data' => [
-                'validateSquads' => [
+                'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                     ["category"=>"HD","gender"=>"MEN","refId"=>"020202-1011"],
                     ["category"=>"HD","gender"=>"MEN","refId"=>"030610-05"],
                     ["category"=>"DD","gender"=>"WOMEN","refId"=>"040201-01"],
                     ["category"=>"DD","gender"=>"WOMEN","refId"=>"970512-21"]
-                ]
+                ]]
             ],
             'extensions' => [
                 'lighthouse_subscriptions' => [
@@ -107,9 +110,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -117,7 +123,7 @@ class ValidateSquadTest extends TestCase
         )
             ->assertExactJson([
                 'data' => [
-                    'validateSquads' => [
+                    'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                         [
                             'refId' => $women1->refId,
                             'category' => 'MD',
@@ -128,7 +134,7 @@ class ValidateSquadTest extends TestCase
                             'category' => 'MD',
                             'gender' => 'MEN'
                         ]
-                    ]
+                    ]]
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
@@ -184,9 +190,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -194,7 +203,7 @@ class ValidateSquadTest extends TestCase
         )
             ->assertExactJson([
                 'data' => [
-                    'validateSquads' => [
+                    'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                         [
                             'refId' => $men3->refId,
                             'category' => 'HS',
@@ -210,7 +219,7 @@ class ValidateSquadTest extends TestCase
                             'category' => 'HS',
                             'gender' => 'MEN'
                         ],
-                    ]
+                    ]]
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
@@ -266,9 +275,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -276,7 +288,7 @@ class ValidateSquadTest extends TestCase
         )
             ->assertExactJson([
                 'data' => [
-                    'validateSquads' => [
+                    'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                         [
                             'refId' => $men1->refId,
                             'category' => 'HD',
@@ -297,7 +309,7 @@ class ValidateSquadTest extends TestCase
                             'category' => 'HD',
                             'gender' => 'MEN'
                         ],
-                    ]
+                    ]]
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
@@ -353,9 +365,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -363,7 +378,7 @@ class ValidateSquadTest extends TestCase
         )
             ->assertExactJson([
                 'data' => [
-                    'validateSquads' => [
+                    'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                         [
                             'refId' => $women1->refId,
                             'category' => 'MD',
@@ -394,7 +409,7 @@ class ValidateSquadTest extends TestCase
                             'category' => 'HD',
                             'gender' => 'MEN'
                         ],
-                    ]
+                    ]]
                 ],
                 'extensions' => [
                     'lighthouse_subscriptions' => [
@@ -439,9 +454,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -449,7 +467,7 @@ class ValidateSquadTest extends TestCase
         )
              ->assertExactJson([
                  'data' => [
-                     'validateSquads' => []
+                     'validateSquads' => ['playersWithoutPoints' => [], 'findings' => []]
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
@@ -494,9 +512,12 @@ class ValidateSquadTest extends TestCase
         /** @lang GraphQL */ '
             mutation ($input: [ValidateTeam!]!) {
               validateSquads(input: $input) {
-                refId
-                category
-                gender
+                playersWithoutPoints { refId }
+                findings {
+                    refId
+                    category
+                    gender
+                }
               }
             }
         ',
@@ -504,13 +525,13 @@ class ValidateSquadTest extends TestCase
         )
              ->assertExactJson([
                  'data' => [
-                     'validateSquads' => [
+                     'validateSquads' => ['playersWithoutPoints' => [], 'findings' => [
                          [
                              'refId' => $men3->refId,
                              'category' => 'HS',
                              'gender' => 'MEN'
                          ]
-                     ]
+                     ]]
                  ],
                  'extensions' => [
                      'lighthouse_subscriptions' => [
@@ -520,4 +541,124 @@ class ValidateSquadTest extends TestCase
              ]);
     }
 
+    private const SQUAD_ORDER_QUERY = /** @lang GraphQL */ '
+        mutation ($input: [ValidateTeam!]!) {
+          validateSquads(input: $input) {
+            playersWithoutPoints { squadIndex refId name category }
+            findings { refId category }
+          }
+        }
+    ';
+
+    /**
+     * @param  Squad[]  $squads
+     * @return array<string, mixed>
+     */
+    private function lineup(array $squads): array
+    {
+        $teams = array_map(static fn (Squad $squad, int $index) => ['name' => 'Team '.($index + 1), 'squad' => $squad], $squads, array_keys($squads));
+
+        return ['input' => json_decode(SerializerHelper::getSerializer()->encode($teams, 'json'), true, 512, JSON_THROW_ON_ERROR)];
+    }
+
+    private function squad(array $categories): Squad
+    {
+        $squad = new Squad();
+        $squad->playerLimit = 10;
+        $squad->categories = $categories;
+
+        return $squad;
+    }
+
+    #[Test]
+    public function aSinglesPlayerWithoutPointsInTheirCategoryStopsTheComparison(): void
+    {
+        // With Sofie's DS points, Hanne's 200 under Mette's 50 would be a finding; nothing is compared without them.
+        $mette = CategoryFactory::makeWomen('DS', 50, 'DD', 0, 0, '101010-1');
+        $hanne = CategoryFactory::makeWomen('DS', 200, 'DD', 0, 0, '101010-2');
+        $sofie = CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-3');
+        $sofie->name = 'Sofie Lund';
+        $first = $this->squad([
+            CategoryFactory::makeCategory('DS. 1', 'DS', CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-4')),
+            CategoryFactory::makeCategory('DS. 2', 'DS', CategoryFactory::makeWomen('DS', 0, 'DD', 0, 0, '101010-5')),
+        ]);
+        $second = $this->squad([
+            CategoryFactory::makeCategory('DS. 1', 'DS', $mette),
+            CategoryFactory::makeCategory('DS. 2', 'DS', $hanne),
+            CategoryFactory::makeCategory('DS. 3', 'DS', $sofie),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$first, $second]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [
+                    ['squadIndex' => 1, 'refId' => '101010-3', 'name' => 'Sofie Lund', 'category' => 'DS'],
+                ],
+                'findings' => [],
+            ]);
+    }
+
+    #[Test]
+    public function aDoublesPlayerWithoutPointsInTheirCategoryStopsTheComparisonWithoutCrashing(): void
+    {
+        $men1 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-1');
+        $men2 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-2');
+        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 300, 0, '101010-3');
+        $men4 = CategoryFactory::makeMen('HS', 0, 'MxH', 0, 0, '101010-4');
+        $squad = $this->squad([
+            CategoryFactory::makeCategory('HD. 1', 'HD', $men1, $men2),
+            CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$squad]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [
+                    ['squadIndex' => 0, 'refId' => '101010-4', 'name' => 'Player-HS-MxH', 'category' => 'HD'],
+                ],
+                'findings' => [],
+            ]);
+    }
+
+    #[Test]
+    public function missingPointsOnAPaperSquadOrInACategoryWithNothingToCompareDontStopTheComparison(): void
+    {
+        $paper = $this->squad([
+            CategoryFactory::makeCategory('HS. 1', 'HS', CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-1')),
+            CategoryFactory::makeCategory('HS. 2', 'HS', CategoryFactory::makeMen('MxH', 0, 'HD', 0, 0, '101010-2')),
+        ]);
+        $paper->isPaperSquad = true;
+        // One DS on the Squad, so the DS player isn't compared with anyone.
+        $squad = $this->squad([
+            CategoryFactory::makeCategory('DS. 1', 'DS', CategoryFactory::makeWomen('MxD', 0, 'DD', 0, 0, '101010-3')),
+            CategoryFactory::makeCategory('HS. 1', 'HS', CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-4')),
+            CategoryFactory::makeCategory('HS. 2', 'HS', CategoryFactory::makeMen('HS', 100, 'HD', 0, 0, '101010-5')),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$squad, $paper]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [],
+                'findings' => [['refId' => '101010-4', 'category' => 'HS']],
+            ]);
+    }
+
+    #[Test]
+    public function completePointsGiveTheFindings(): void
+    {
+        $men1 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-1');
+        $men2 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-2');
+        $men3 = CategoryFactory::makeMen('HS', 0, 'HD', 300, 0, '101010-3');
+        $men4 = CategoryFactory::makeMen('HS', 0, 'HD', 0, 0, '101010-4');
+        $squad = $this->squad([
+            CategoryFactory::makeCategory('HD. 1', 'HD', $men1, $men2),
+            CategoryFactory::makeCategory('HD. 2', 'HD', $men3, $men4),
+        ]);
+
+        $this->graphQL(self::SQUAD_ORDER_QUERY, $this->lineup([$squad]))
+            ->assertJsonPath('data.validateSquads', [
+                'playersWithoutPoints' => [],
+                'findings' => [
+                    ['refId' => '101010-1', 'category' => 'HD'],
+                    ['refId' => '101010-2', 'category' => 'HD'],
+                ],
+            ]);
+    }
 }

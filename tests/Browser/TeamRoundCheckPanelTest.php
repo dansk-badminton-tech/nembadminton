@@ -127,6 +127,39 @@ class TeamRoundCheckPanelTest extends DuskTestCase
         });
     }
 
+    public function test_kategori_cannot_be_verified_while_a_player_has_no_points_in_their_category(): void
+    {
+        $clubhouse = Clubhouse::firstOrFail();
+        $team = Team::factory()->withCustomTier('2. division')->create([
+            'name' => 'Højbjerg 1', 'clubhouse_id' => $clubhouse->id, 'season_id' => 2026,
+        ]);
+        $round = TeamRound::query()->create([
+            'name' => 'Ingen point', 'game_date' => '2026-10-11', 'version' => '2025-07-02',
+            'season_id' => 2026, 'round' => 4, 'clubhouse_id' => $clubhouse->id,
+            'user_id' => User::query()->where('email', 'testing@gmail.com')->value('id'),
+        ]);
+        $squad = Squad::query()->create(['team_round_id' => $round->id, 'team_id' => $team->id, 'playerLimit' => 10]);
+        $withPoints = Member::query()->where('refId', '870114-15')->firstOrFail();
+        $withoutPoints = Member::query()->where('refId', '010204-01')->firstOrFail();
+        $squad->categories()->create(['name' => '1. DS', 'category' => 'DS'])->players()->create([
+            'member_ref_id' => $withPoints->refId, 'name' => $withPoints->name, 'gender' => $withPoints->gender,
+        ])->points()->create(['category' => 'DS', 'points' => 2000, 'position' => 1, 'version' => '2025-07-02']);
+        $squad->categories()->create(['name' => '2. DS', 'category' => 'DS'])->players()->create([
+            'member_ref_id' => $withoutPoints->refId, 'name' => $withoutPoints->name, 'gender' => $withoutPoints->gender,
+        ]);
+
+        $this->browse(function (Browser $browser) use ($round, $withoutPoints) {
+            $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
+                ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
+                ->waitForCheckStatus('category', 'Kan ikke kontrolleres')
+                ->assertSeeIn('@check-section-action', 'Kategori')
+                ->openCheck('category')
+                ->assertSeeIn('@check-details-category', 'Kategori kan først kontrolleres, når alle spillere har point i de kategorier, de spiller.')
+                ->assertSeeIn("@check-finding-category-0-{$withoutPoints->refId}",
+                    "{$withoutPoints->name} har ingen point i DS. Ret pointene eller vælg en anden spiller.");
+        });
+    }
+
     private function roundElevenWithOnePlayer(): TeamRound
     {
         $clubhouse = Clubhouse::firstOrFail();

@@ -9,8 +9,8 @@ extend type Mutation {
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare. A TeamRound without a Ranking List compares the Squads' stored points."
     validateTeamRoundCrossSquads(teamRoundId: ID!, scenarioId: ID) : [PlayingToHigh!]! @guard @canFind(ability: "view", find: "teamRoundId", model: "TeamRound") @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateTeamRoundCrossSquads")
-    "Validates categories for right streng order (category-ranking)"
-    validateSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
+    "§38 stk. 2–3: each Squad's order within a category (category-ranking). A player without points in a category they play stops the comparison: the result lists those players and no findings."
+    validateSquads(input: [ValidateTeam!]!) : SquadOrderValidation! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateSquads")
     "Validates all spots is forfilled"
     validateBasicSquads(input: [ValidateTeam!]!) : [BaseValidation!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateBasicSquads")
     "Players who have not turned 15 by 31.12. in the calendar year the season starts (§31 stk. 1). A warning, not a hard rule."
@@ -226,6 +226,21 @@ type BelowPlayer {
     isYouthPlayer: Boolean!
     category: String!
     balance: Int!
+}
+
+type SquadOrderValidation {
+    "Players without points in a category they play on a Squad that has more than one of that category. When any are listed, nothing is compared and findings is empty."
+    playersWithoutPoints: [PlayerWithoutPoints!]!
+    findings: [PlayingToHigh!]!
+}
+
+type PlayerWithoutPoints {
+    "0-based index of the Squad in the input"
+    squadIndex: Int!
+    refId: String
+    name: String!
+    "HS, DS, HD, DD or MD"
+    category: String!
 }
 
 type PlayingToHigh{
