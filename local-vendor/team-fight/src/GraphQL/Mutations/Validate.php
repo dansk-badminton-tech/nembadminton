@@ -43,6 +43,7 @@ class Validate
 
         $squads = $teams->pluck('squad');
         $squads = $this->deserializeSquads($squads);
+
         return $this->teamValidator->validateCrossSquadsWithUnknownPairs($squads)['findings'];
     }
 
