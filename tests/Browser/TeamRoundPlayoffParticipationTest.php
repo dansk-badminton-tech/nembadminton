@@ -51,7 +51,7 @@ class TeamRoundPlayoffParticipationTest extends DuskTestCase
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitFor('@team-table-section')
-                ->assertCheckNotApplicable('playoff', 'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).');
+                ->assertCheckNotApplicable('playoff', 'Gælder kun 1. division og Badmintonligaen.');
         });
     }
 

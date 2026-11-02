@@ -39,12 +39,12 @@ class TeamRoundCheckPanelTest extends DuskTestCase
                 ->waitForCheckStatus('tooYoung', 'OK')
                 ->assertSeeIn('@check-section-ok', 'For ung')
                 ->assertSeeIn('@check-row-tooYoung', 'pr. spiller')
-                ->assertSeeIn('@check-not-applicable', '4 tjek gælder ikke for denne opstilling')
+                ->waitForTextIn('@check-not-applicable', '4 tjek gælder ikke for denne opstilling')
                 ->assertMissing('@check-not-applicable-reserves')
                 ->assertCheckNotApplicable('qualification', 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.')
                 ->assertCheckNotApplicable('reserves', 'Opstillingen har ingen reserver.')
                 ->assertCheckNotApplicable('paperSquads', 'Opstillingen har intet papirhold.')
-                ->assertCheckNotApplicable('playoff', 'Gælder kun slutspillet i 1. division');
+                ->assertCheckNotApplicable('playoff', 'Gælder kun 1. division og Badmintonligaen.');
         });
     }
 

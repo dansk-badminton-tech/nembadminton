@@ -19,15 +19,17 @@ class ValidateFinalRoundEligibility
 
     /**
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return list<array<string, mixed>>
+     * @return array{notApplicableReason: ?string, players: list<array<string, mixed>>}
      */
     public function __invoke(mixed $root, array $args): array
     {
         $round = $this->lineup->teamRound($args['teamRoundId']);
         $earlier = null;
         $results = [];
+        $coverage = [];
         foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
             $context = $this->currentContext($squad, $round);
+            $coverage[] = $context['coverage'];
             foreach ($players as $player) {
                 $status = $context['status'];
                 $incompleteReasons = $context['incompleteReasons'];
@@ -58,41 +60,43 @@ class ValidateFinalRoundEligibility
             }
         }
 
-        return $results;
+        return ['notApplicableReason' => SquadCoverage::notApplicableReason($coverage), 'players' => $results];
     }
 
     /**
-     * A null status means the requirement applies and history must be checked.
+     * A null status means the requirement applies and history must be checked. coverage: why the Squad is left out,
+     * a SquadCoverage constant.
      *
-     * @return array{status: ?string, incompleteReasons: list<string>}
+     * @return array{status: ?string, incompleteReasons: list<string>, coverage: ?string}
      */
     private function currentContext(Squad $squad, TeamRound $round): array
     {
+        $notApplicable = fn (string $coverage) => ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'coverage' => $coverage];
         if ($squad->is_paper_squad) {
-            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
+            return $notApplicable(SquadCoverage::PAPER_SQUAD);
         }
         $tier = CanonicalTournamentTier::tryFromRawName($squad->effectiveTier());
-        $missing = array_filter([
+        // Rounds 11–12 in 1.–3. division and Danmarksserien, round 12 in Badmintonligaen; an unknown tier may be either.
+        $rounds = match ($tier) {
+            CanonicalTournamentTier::BADMINTONLIGAEN => [12],
+            CanonicalTournamentTier::DIVISION_1, CanonicalTournamentTier::DIVISION_2,
+            CanonicalTournamentTier::DIVISION_3, CanonicalTournamentTier::DANMARKSSERIEN, null => [11, 12],
+            default => [],
+        };
+        if ($rounds === []) {
+            return $notApplicable(SquadCoverage::TIER_NOT_COVERED);
+        }
+        if ($round->round !== null && ! in_array((int) $round->round, $rounds, true)) {
+            return $notApplicable(SquadCoverage::ROUND_NOT_COVERED);
+        }
+        $missing = array_keys(array_filter([
             'MISSING_ROUND' => $round->round === null,
             'UNKNOWN_TIER' => $tier === null,
             'MISSING_TEAM' => $squad->team_id === null,
             'MISSING_SEASON' => $round->season_id === null,
             'MISSING_GAME_DATE' => $round->game_date === null,
-        ]);
-        if (isset($missing['UNKNOWN_TIER']) || isset($missing['MISSING_ROUND'])) {
-            return ['status' => 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing)];
-        }
-        $applicable = match ($tier) {
-            CanonicalTournamentTier::BADMINTONLIGAEN => (int) $round->round === 12,
-            CanonicalTournamentTier::DIVISION_1, CanonicalTournamentTier::DIVISION_2,
-            CanonicalTournamentTier::DIVISION_3, CanonicalTournamentTier::DANMARKSSERIEN => in_array((int) $round->round, [11, 12], true),
-            default => false,
-        };
+        ]));
 
-        if (! $applicable) {
-            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
-        }
-
-        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing)];
+        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => $missing, 'coverage' => SquadCoverage::COVERED];
     }
 }

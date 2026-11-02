@@ -736,7 +736,7 @@ export default {
                     this.checkRequests = {...this.checkRequests, [name]: 'failed'}
                 })
         },
-        // A request the panel doesn't need: its Check doesn't apply, is switched off or is waiting.
+        // A request the panel doesn't need: its Check doesn't apply or is waiting.
         skipCheckRequest(name) {
             this.checkRuns[name] = (this.checkRuns[name] ?? 0) + 1
             this.checkResponses = {...this.checkResponses, [name]: null}
@@ -763,8 +763,10 @@ export default {
                 qualification: () => this.mutationData(ValidateQualificationEligibilityMutation, lineup, 'validateQualificationEligibility'),
                 playoff: () => this.mutationData(ValidatePlayoffParticipationMutation, lineup, 'validatePlayoffParticipation')
             }
+            // Only Reserver and Papirhold are known to be Gælder ikke without asking. The history Checks are asked even
+            // when switched off: the server decides whether they apply, and Gælder ikke wins over Slået fra.
             for (const [name, fetch] of Object.entries(optional)) {
-                if (['not-applicable', 'switched-off'].includes(this.knownStatus(name))) this.skipCheckRequest(name)
+                if (this.knownStatus(name) === 'not-applicable') this.skipCheckRequest(name)
                 else this.runCheckRequest(name, fetch)
             }
             this.validateTooYoungPlayers()

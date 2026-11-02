@@ -121,39 +121,50 @@ const NOT_MET = historyPlayer({status: 'REQUIREMENT_NOT_MET'})
 const UNKNOWN_DATE = historyPlayer({refId: 'l1', name: 'Line Bech', status: 'CANNOT_VERIFY', incompleteReasons: ['MISSING_GAME_DATE']})
 const round = (number, tier, extra = {}) => ({round: number, squads: [{isPaperSquad: false, effectiveTier: tier, ...extra}]})
 
-test('Tidligere hold applies only in the rounds and tiers it covers, as today', () => {
-    const outside = statusOf('finalRound', {teamRound: round(5, '2. division'), switches: {finalRound: true}, responses: {finalRound: [NOT_MET]}})
-    assert.deepEqual(outside, {key: 'finalRound', status: 'not-applicable', findings: [],
-        reason: 'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.'})
-    assert.equal(statusOf('finalRound', {teamRound: round(11, 'Badmintonligaen'), switches: {finalRound: true}}).status, 'not-applicable')
-    assert.equal(statusOf('finalRound', {teamRound: round(12, 'Serie 1'), switches: {finalRound: true}}).status, 'not-applicable')
-    assert.equal(statusOf('finalRound', {teamRound: round(11, null), switches: {finalRound: true}}).status, null, 'an unknown tier runs')
-})
+const answer = (...players) => ({notApplicableReason: null, players})
+const notApplicable = notApplicableReason => ({notApplicableReason, players: []})
 
-test('a Check on Paper Squads only does not apply', () => {
-    const teamRound = round(12, '2. division', {isPaperSquad: true})
-    for (const key of ['finalRound', 'qualification', 'playoff']) {
-        const check = statusOf(key, {teamRound: {...teamRound, round: key === 'playoff' ? 10 : 12}, switches: {[key]: true}})
-        assert.deepEqual([check.status, check.reason], ['not-applicable', 'Opstillingen har kun papirhold.'], key)
+test('a history Check does not apply when the server says no Squad is covered, and says why', () => {
+    const reasons = {
+        finalRound: {
+            ROUND_NOT_COVERED: 'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.',
+            TIER_NOT_COVERED: 'Gælder kun 1.–3. division, Danmarksserien og Badmintonligaen.'
+        },
+        qualification: {
+            ROUND_NOT_COVERED: 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.',
+            TIER_NOT_COVERED: 'Gælder kun 2.–3. division og Danmarksserien.'
+        },
+        playoff: {
+            ROUND_NOT_COVERED: 'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).',
+            TIER_NOT_COVERED: 'Gælder kun 1. division og Badmintonligaen.'
+        }
+    }
+    for (const [key, texts] of Object.entries(reasons)) {
+        for (const [reason, text] of Object.entries({...texts, PAPER_SQUADS_ONLY: 'Opstillingen har kun papirhold.'})) {
+            assert.deepEqual(statusOf(key, {teamRound: round(12, '2. division'), responses: {[key]: notApplicable(reason)}}),
+                {key, status: 'not-applicable', reason: text, findings: []}, `${key} ${reason}`)
+        }
     }
 })
 
-test('a missing round number does not make a Check Not Applicable when a Squad\'s tier could be covered', () => {
-    assert.equal(statusOf('finalRound', {teamRound: round(null, '2. division'), switches: {finalRound: true}}).status, null)
-    assert.equal(statusOf('qualification', {teamRound: round(null, '2. division'), switches: {qualification: true}}).status, null)
-    assert.equal(statusOf('playoff', {teamRound: round(null, '1. division')}).status, null)
-    assert.equal(statusOf('playoff', {teamRound: round(null, '2. division')}).status, 'not-applicable', 'no round of 2. division is covered')
+test('a history Check decides nothing about applicability from the round and tier itself', () => {
+    for (const key of ['finalRound', 'qualification', 'playoff']) {
+        assert.equal(statusOf(key, {teamRound: round(5, 'Serie 1')}).status, null, key)
+        assert.equal(statusOf(key, {teamRound: round(5, 'Serie 1', {isPaperSquad: true})}).status, null, key)
+        assert.equal(statusOf(key, {teamRound: round(5, 'Serie 1'), responses: {[key]: answer()}}).status, 'passed', key)
+    }
 })
 
 test('Not Applicable wins over Switched Off, which wins over running', () => {
-    assert.equal(statusOf('finalRound', {teamRound: round(5, '2. division'), switches: {finalRound: false}}).status, 'not-applicable')
-    const off = statusOf('finalRound', {teamRound: round(12, '2. division'), switches: {finalRound: false}, responses: {finalRound: [NOT_MET]}})
+    const teamRound = round(12, '2. division')
+    assert.equal(statusOf('finalRound', {teamRound, switches: {finalRound: false}, responses: {finalRound: notApplicable('ROUND_NOT_COVERED')}}).status, 'not-applicable')
+    const off = statusOf('finalRound', {teamRound, switches: {finalRound: false}, responses: {finalRound: answer(NOT_MET)}})
     assert.deepEqual(off, {key: 'finalRound', status: 'switched-off', reason: null, findings: []})
-    assert.equal(statusOf('qualification', {teamRound: round(12, '2. division'), switches: {qualification: false}}).status, 'switched-off')
+    assert.equal(statusOf('qualification', {teamRound, switches: {qualification: false}}).status, 'switched-off', 'before the server answers')
 })
 
 test('Tidligere hold fails for a player who has not played on the same or a lower Squad, even when another cannot be verified', () => {
-    const check = statusOf('finalRound', {teamRound: round(12, '2. division'), switches: {finalRound: true}, responses: {finalRound: [UNKNOWN_DATE, NOT_MET, historyPlayer({refId: 'x'})]}})
+    const check = statusOf('finalRound', {teamRound: round(12, '2. division'), switches: {finalRound: true}, responses: {finalRound: answer(UNKNOWN_DATE, NOT_MET, historyPlayer({refId: 'x'}))}})
     assert.equal(check.status, 'failed')
     assert.equal(check.reason, null)
     assert.deepEqual(check.findings.map(finding => [finding.refId, finding.status]), [['k1', 'failed'], ['l1', 'cannot-verify']])
@@ -163,19 +174,19 @@ test('Tidligere hold fails for a player who has not played on the same or a lowe
 test('Tidligere hold cannot be verified with what to fill in, and passes when every player meets it', () => {
     const teamRound = round(12, '2. division')
     const linked = historyPlayer({refId: 'u1', status: 'CANNOT_VERIFY', uncountedRounds: UNCOUNTED})
-    const check = statusOf('finalRound', {teamRound, switches: {finalRound: true}, responses: {finalRound: [UNKNOWN_DATE, linked, {...UNKNOWN_DATE, refId: 'l2'}]}})
+    const check = statusOf('finalRound', {teamRound, switches: {finalRound: true}, responses: {finalRound: answer(UNKNOWN_DATE, linked, {...UNKNOWN_DATE, refId: 'l2'})}})
     assert.equal(check.status, 'cannot-verify')
     assert.equal(check.reason, 'Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes. Tilknyt holdet i de tidligere holdrunder, der står under spillerne.')
     assert.deepEqual(check.findings[0].guidance, ['Angiv datoen i holdrundens indstillinger, så tidligere holdrunder kan findes.'])
     assert.equal(check.findings[0].message, 'Hold 1: Line Bech – spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).')
     assert.deepEqual(check.findings[1].uncountedRounds, UNCOUNTED)
-    const passed = statusOf('finalRound', {teamRound, switches: {finalRound: true}, responses: {finalRound: [historyPlayer({}), historyPlayer({status: 'NOT_APPLICABLE'})]}})
+    const passed = statusOf('finalRound', {teamRound, switches: {finalRound: true}, responses: {finalRound: answer(historyPlayer({}), historyPlayer({status: 'NOT_APPLICABLE'}))}})
     assert.deepEqual(passed, {key: 'finalRound', status: 'passed', reason: null, findings: []})
 })
 
 test('a missing round, tier, team or season gives Kan ikke kontrolleres with what to fill in', () => {
     const missing = historyPlayer({status: 'CANNOT_VERIFY', incompleteReasons: ['MISSING_ROUND', 'UNKNOWN_TIER', 'MISSING_TEAM', 'MISSING_SEASON']})
-    const check = statusOf('qualification', {teamRound: round(null, null), switches: {qualification: true}, responses: {qualification: [missing]}})
+    const check = statusOf('qualification', {teamRound: round(null, null), switches: {qualification: true}, responses: {qualification: answer(missing)}})
     assert.equal(check.status, 'cannot-verify')
     assert.equal(check.reason, [
         'Udfyld Runde nr. i holdrundens indstillinger.',
@@ -185,31 +196,25 @@ test('a missing round, tier, team or season gives Kan ikke kontrolleres with wha
     ].join(' '))
 })
 
-test('Kvalifikation applies to round 12 outside the tiers it leaves out, and warns rather than fails', () => {
-    assert.deepEqual(statusOf('qualification', {teamRound: round(11, '2. division'), switches: {qualification: true}}),
-        {key: 'qualification', status: 'not-applicable', reason: 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.', findings: []})
-    assert.equal(statusOf('qualification', {teamRound: round(12, '1. division'), switches: {qualification: true}}).status, 'not-applicable')
-    const check = statusOf('qualification', {teamRound: round(12, 'Danmarksserien'), switches: {qualification: true}, responses: {qualification: [UNKNOWN_DATE, NOT_MET]}})
+test('Kvalifikation warns rather than fails', () => {
+    const check = statusOf('qualification', {teamRound: round(12, 'Danmarksserien'), switches: {qualification: true}, responses: {qualification: answer(UNKNOWN_DATE, NOT_MET)}})
     assert.equal(check.status, 'warning', 'Advarsel wins over Kan ikke kontrolleres')
     assert.deepEqual(check.findings.map(finding => finding.status), ['warning', 'cannot-verify'])
     assert.equal(check.findings[0].message, 'Hold 1: Karl Dam opfylder ikke de kontrollerede rundenummerkrav (§27 stk. 5); Nembadminton vurderer ikke kalenderårsalternativet.')
-    assert.equal(statusOf('qualification', {teamRound: round(12, 'Danmarksserien'), switches: {qualification: true}, responses: {qualification: []}}).status, 'passed')
+    assert.equal(statusOf('qualification', {teamRound: round(12, 'Danmarksserien'), switches: {qualification: true}, responses: {qualification: answer()}}).status, 'passed')
 })
 
-test('Slutspilskrav applies to the playoffs of 1. division and Badmintonligaen and fails for sure breaches', () => {
-    assert.deepEqual(statusOf('playoff', {teamRound: round(7, '1. division')}),
-        {key: 'playoff', status: 'not-applicable', reason: 'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).', findings: []})
-    assert.equal(statusOf('playoff', {teamRound: round(9, 'Badmintonligaen')}).status, 'not-applicable')
+test('Slutspilskrav fails for sure breaches', () => {
     const notMet = {...NOT_MET, matchCount: 1, requiredMatchCount: 3, playedByDeadline: true}
-    const check = statusOf('playoff', {teamRound: round(8, '1. division'), responses: {playoff: [notMet]}})
+    const check = statusOf('playoff', {teamRound: round(8, '1. division'), responses: {playoff: answer(notMet)}})
     assert.equal(check.status, 'failed')
     assert.equal(check.findings[0].message, 'Hold 1: Karl Dam har 1 af 3 kampe i sæsonen; 20. oktober-kravet er opfyldt (§32 stk. 1).')
-    assert.equal(statusOf('playoff', {teamRound: round(8, '1. division'), responses: {playoff: [historyPlayer({})]}}).status, 'passed')
+    assert.equal(statusOf('playoff', {teamRound: round(8, '1. division'), responses: {playoff: answer(historyPlayer({}))}}).status, 'passed')
 })
 
 test('Slutspilskrav cannot be verified with what to fill in for earlier rounds', () => {
     const unknown = {...historyPlayer({status: 'CANNOT_VERIFY', incompleteReasons: ['MISSING_HISTORY_DATE']}), matchCount: 2, requiredMatchCount: 3, playedByDeadline: null}
-    const check = statusOf('playoff', {teamRound: round(10, 'Badmintonligaen'), responses: {playoff: [unknown]}})
+    const check = statusOf('playoff', {teamRound: round(10, 'Badmintonligaen'), responses: {playoff: answer(unknown)}})
     assert.equal(check.status, 'cannot-verify')
     assert.equal(check.reason, 'Angiv spilledatoen i de tidligere holdrunder herunder.')
     assert.equal(check.findings[0].message, 'Hold 1: Karl Dam har 2 af 3 kampe – slutspilskravet kan ikke verificeres fuldt ud (§32 stk. 1).')
@@ -245,34 +250,6 @@ test('the panel gets each Check\'s name, paragraph, severity and switch, and eac
         'passed': 'OK', 'failed': 'Fejl', 'warning': 'Advarsel', 'cannot-verify': 'Kan ikke kontrolleres',
         'waiting': 'Venter', 'switched-off': 'Slået fra', 'not-applicable': 'Gælder ikke'
     })
-})
-
-test('Tidligere hold covers round 11–12 in 1.–3. division and Danmarksserien and round 12 in Badmintonligaen', () => {
-    const applies = teamRound => statusOf('finalRound', {teamRound, switches: {finalRound: false}}).status !== 'not-applicable'
-    for (const tier of ['1. division', '2. division', '3. division', 'Danmarksserien', 'Badmintonligaen']) {
-        for (const number of [1, 7, 8, 9, 10, 11, 12, 13]) {
-            const expected = number === 12 || (number === 11 && tier !== 'Badmintonligaen')
-            assert.equal(applies(round(number, tier)), expected, `${tier} round ${number}`)
-        }
-    }
-    assert.equal(applies({round: '11', squads: [{effectiveTier: '2. division - slutspil 2026'}]}), true)
-    assert.equal(applies({round: 11, squads: [{effectiveTier: 'Badmintonligaen'}, {effectiveTier: '2. division'}]}), true)
-    assert.equal(applies(round(10, null)), false)
-})
-
-test('Slutspilskrav covers the playoffs and qualification of Badmintonligaen and 1. division', () => {
-    const applies = teamRound => statusOf('playoff', {teamRound}).status !== 'not-applicable'
-    assert.equal(applies(round(9, 'Badmintonligaen')), false)
-    assert.equal(applies(round(10, 'Badmintonligaen')), true)
-    assert.equal(applies(round(12, 'Badmintonligaen')), true)
-    assert.equal(applies(round(7, '1. division')), false)
-    assert.equal(applies(round(8, '1. division')), true)
-    assert.equal(applies(round('12', '1. division - slutspil 2026')), true)
-    assert.equal(applies(round(12, '2. division')), false)
-    assert.equal(applies(round(12, 'Serie 1')), false)
-    assert.equal(applies(round(8, null)), true)
-    assert.equal(applies(round(7, null)), false)
-    assert.equal(applies({round: 10, squads: [{effectiveTier: '2. division'}, {effectiveTier: 'Badmintonligaen'}]}), true)
 })
 
 test('each Check names the requests its status waits on', () => {

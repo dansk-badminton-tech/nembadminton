@@ -22,15 +22,17 @@ class ValidatePlayoffParticipation
 
     /**
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return list<array<string, mixed>>
+     * @return array{notApplicableReason: ?string, players: list<array<string, mixed>>}
      */
     public function __invoke(mixed $root, array $args): array
     {
         $round = $this->lineup->teamRound($args['teamRoundId']);
         $earlier = null;
         $results = [];
+        $coverage = [];
         foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
             $context = $this->currentContext($squad, $round);
+            $coverage[] = $context['coverage'];
             foreach ($players as $player) {
                 if ($context['status'] === null) {
                     $earlier ??= $this->loader->before($round);
@@ -57,30 +59,31 @@ class ValidatePlayoffParticipation
             }
         }
 
-        return $results;
+        return ['notApplicableReason' => SquadCoverage::notApplicableReason($coverage), 'players' => $results];
     }
 
     /**
-     * A null status means the requirement applies and history must be checked.
+     * A null status means the requirement applies and history must be checked. coverage: why the Squad is left out,
+     * a SquadCoverage constant.
      *
-     * @return array{status: ?string, incompleteReasons: list<string>, requiredMatchCount: int}
+     * @return array{status: ?string, incompleteReasons: list<string>, requiredMatchCount: int, coverage: ?string}
      */
     private function currentContext(Squad $squad, TeamRound $round): array
     {
-        $notApplicable = ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'requiredMatchCount' => 0];
+        $notApplicable = fn (string $coverage) => ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'requiredMatchCount' => 0, 'coverage' => $coverage];
         if ($squad->is_paper_squad) {
-            return $notApplicable;
+            return $notApplicable(SquadCoverage::PAPER_SQUAD);
         }
         // The Team's own tier, also in a qualification match against a higher tier (§27 stk. 3).
         $tier = CanonicalTournamentTier::tryFromRawName($squad->effectiveTier());
         $requiredMatchCount = $tier === null ? 0 : PlayoffParticipationRequirement::requiredMatchCount($tier);
         if ($tier !== null && $requiredMatchCount === 0) {
-            return $notApplicable;
+            return $notApplicable(SquadCoverage::TIER_NOT_COVERED);
         }
         // Without a tier, 1. division's playoffs are the earliest the requirement can apply.
         $phaseTier = $tier ?? CanonicalTournamentTier::DIVISION_1;
         if ($round->round !== null && SeasonPhase::fromRound((int) $round->round, $phaseTier->value) === SeasonPhase::GRUNDSPIL) {
-            return $notApplicable;
+            return $notApplicable(SquadCoverage::ROUND_NOT_COVERED);
         }
         $missing = array_keys(array_filter([
             'MISSING_ROUND' => $round->round === null,
@@ -88,6 +91,6 @@ class ValidatePlayoffParticipation
             'MISSING_SEASON' => $round->season_id === null,
         ]));
 
-        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => $missing, 'requiredMatchCount' => $requiredMatchCount];
+        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => $missing, 'requiredMatchCount' => $requiredMatchCount, 'coverage' => SquadCoverage::COVERED];
     }
 }

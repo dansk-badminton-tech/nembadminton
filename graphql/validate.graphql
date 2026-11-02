@@ -1,10 +1,10 @@
 extend type Mutation {
     "§27 stk. 5 for qualification in 2. division–Danmarksserien, using round numbers only, not the calendar-year alternative. Advisory."
-    validateQualificationEligibility(teamRoundId: ID!, scenarioId: ID): [QualificationEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateQualificationEligibility")
+    validateQualificationEligibility(teamRoundId: ID!, scenarioId: ID): QualificationEligibilityValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateQualificationEligibility")
     "§38 stk. 8, checked against earlier Official Lineups. Advisory; never blocks saving."
-    validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): [FinalRoundEligibilityPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
+    validateFinalRoundEligibility(teamRoundId: ID!, scenarioId: ID): FinalRoundEligibilityValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidateFinalRoundEligibility")
     "The Playoff Participation Requirement (§32 stk. 1 a–c), checked against earlier Official Lineups: the Scenario's players, or the Official Lineup's without one. Advisory; never blocks saving."
-    validatePlayoffParticipation(teamRoundId: ID!, scenarioId: ID): [PlayoffParticipationPlayer!]! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePlayoffParticipation")
+    validatePlayoffParticipation(teamRoundId: ID!, scenarioId: ID): PlayoffParticipationValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePlayoffParticipation")
     "Validates players is playing on the right squad (category-ranking)"
     validateCrossSquads(input: [ValidateTeam!]!) : [PlayingToHigh!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateCrossSquads")
     "Validates the TeamRound's lineup across its Squads (§38 stk. 4): the Scenario's, or the official lineup without one. The server reads the lineup and the Members' points on the TeamRound's Ranking List, which decides who may play where, also for a Squad with its own. A coach's corrections only count for the order on a Squad; a player without points on the Ranking List has nothing to compare. A TeamRound without a Ranking List compares the Squads' stored points."
@@ -19,6 +19,34 @@ extend type Mutation {
     validateReserves(input: [ValidateTeam!]!) : [ReserveFinding!]! @field(resolver: "FlyCompany\\TeamFight\\GraphQL\\Mutations\\Validate@validateReserves")
     "§38 stk. 7 findings for the TeamRound's Paper Squads, from the Season History before the TeamRound. A warning, not a hard rule. Which Squads are Paper Squads is read from the TeamRound, matched to the lineup by Squad id."
     validatePaperSquads(teamRoundId: ID!, input: [ValidateTeam!]!) : PaperSquadValidation! @guard @canFind(ability: "viewSeasonHistory", find: "teamRoundId", model: "TeamRound") @field(resolver: "App\\GraphQL\\Mutations\\ValidatePaperSquads")
+}
+
+"Why a history Check (§38 stk. 8, §27 stk. 5, §32 stk. 1) doesn't apply to the Lineup: none of its Squads is covered. A missing round or tier that decides it never gives a reason; those players are CANNOT_VERIFY."
+enum CheckNotApplicableReason {
+    "Every Squad is a Paper Squad"
+    PAPER_SQUADS_ONLY
+    "A Squad's tier is covered in other rounds, or its tier is unknown, but not in this round"
+    ROUND_NOT_COVERED
+    "No Squad's tier is covered in any round"
+    TIER_NOT_COVERED
+}
+
+type QualificationEligibilityValidation {
+    "Null when a Squad is covered or the Lineup has no Squads"
+    notApplicableReason: CheckNotApplicableReason
+    players: [QualificationEligibilityPlayer!]!
+}
+
+type FinalRoundEligibilityValidation {
+    "Null when a Squad is covered or the Lineup has no Squads"
+    notApplicableReason: CheckNotApplicableReason
+    players: [FinalRoundEligibilityPlayer!]!
+}
+
+type PlayoffParticipationValidation {
+    "Null when a Squad is covered or the Lineup has no Squads"
+    notApplicableReason: CheckNotApplicableReason
+    players: [PlayoffParticipationPlayer!]!
 }
 
 enum QualificationEligibilityStatus {

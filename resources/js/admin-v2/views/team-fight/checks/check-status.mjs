@@ -1,7 +1,8 @@
 // The Check Status of every Check in the team-round editor (GLOSSARY.md: Check, Check Status). The only place where the
 // server's per-player outcomes (SATISFIED, REQUIREMENT_NOT_MET, NOT_APPLICABLE, CANNOT_VERIFY, *IncompleteReason) become
-// Check Statuses. It owns Not Applicable from the Lineup, Switched Off, Waiting, each Check's severity and the precedence:
-// Not Applicable > Switched Off > Waiting, then a Check that ran takes its worst outcome (Fejl > Advarsel >
+// Check Statuses. It owns Not Applicable from the Lineup (Reserver, Papirhold) and the text for the server's
+// notApplicableReason (Tidligere hold, Kvalifikation, Slutspilskrav), Switched Off, Waiting, each Check's severity and
+// the precedence: Not Applicable > Switched Off > Waiting, then a Check that ran takes its worst outcome (Fejl > Advarsel >
 // Kan ikke kontrolleres > OK). Framework-free, so node:test can load it.
 
 import {reserveFindingMessages} from '../reserves.js'
@@ -106,10 +107,12 @@ const RULES = [
         rule: '§38 stk. 8',
         description: 'Spillerne har stået på samme eller et lavere hold tidligere i sæsonen.',
         switchable: true,
-        notApplicable: ({teamRound}) => notCovered(teamRound, coversFinalRound,
-            'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.'),
+        notCovered: {
+            ROUND_NOT_COVERED: 'Gælder kun runde 11–12 i 1.–3. division og Danmarksserien og runde 12 i Badmintonligaen.',
+            TIER_NOT_COVERED: 'Gælder kun 1.–3. division, Danmarksserien og Badmintonligaen.'
+        },
         response: 'finalRound',
-        run: players => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
+        run: ({players}) => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
             ? `Hold ${player.squadIndex + 1}: ${player.name} har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).`
             : `Hold ${player.squadIndex + 1}: ${player.name} – spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).`)
     },
@@ -120,10 +123,12 @@ const RULES = [
         description: 'Spillerne opfylder rundenummerkravene til kvalifikationen.',
         switchable: true,
         severity: CHECK_STATUS.WARNING,
-        notApplicable: ({teamRound}) => notCovered(teamRound, coversQualification,
-            'Gælder kun runde 12 i 2.–3. division og Danmarksserien.'),
+        notCovered: {
+            ROUND_NOT_COVERED: 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.',
+            TIER_NOT_COVERED: 'Gælder kun 2.–3. division og Danmarksserien.'
+        },
         response: 'qualification',
-        run: players => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
+        run: ({players}) => historyResult(players, player => player.status === 'REQUIREMENT_NOT_MET'
             ? `Hold ${player.squadIndex + 1}: ${player.name} opfylder ikke de kontrollerede rundenummerkrav (§27 stk. 5); Nembadminton vurderer ikke kalenderårsalternativet.`
             : `Hold ${player.squadIndex + 1}: ${player.name} – kvalifikationskravet kan ikke verificeres fuldt ud (§27 stk. 5).`)
     },
@@ -132,10 +137,12 @@ const RULES = [
         name: 'Slutspilskrav',
         rule: '§32 stk. 1',
         description: 'Spillerne har spillet nok kampe for klubben til at spille slutspil.',
-        notApplicable: ({teamRound}) => notCovered(teamRound, coversPlayoff,
-            'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).'),
+        notCovered: {
+            ROUND_NOT_COVERED: 'Gælder kun slutspillet i 1. division (fra runde 8) og Badmintonligaen (fra runde 10).',
+            TIER_NOT_COVERED: 'Gælder kun 1. division og Badmintonligaen.'
+        },
         response: 'playoff',
-        run: players => historyResult(players, playoffParticipationMessage)
+        run: ({players}) => historyResult(players, playoffParticipationMessage)
     },
     {
         key: 'tooYoung',
@@ -188,60 +195,12 @@ function playerGuidance(player) {
     return [...new Set(guidance)]
 }
 
-function roundMissing(teamRound) {
-    return teamRound?.round === null || teamRound?.round === undefined || teamRound?.round === ''
-}
-
-// Today's round and tier rules decide Not Applicable. A missing round decides nothing: the Check applies when it would
-// cover the Lineup in some round, and the server answers Kan ikke kontrolleres.
-function notCovered(teamRound, covers, reason) {
-    const squads = squadsOf(teamRound)
-    if (squads.length && squads.every(squad => squad.isPaperSquad)) return 'Opstillingen har kun papirhold.'
-    const covered = roundMissing(teamRound) ? covers({...teamRound, round: 12}) : covers(teamRound)
-    return covered ? null : reason
-}
-
-// Round 11–12 in 1.–3. division and Danmarksserien, round 12 in Badmintonligaen, on a non-Paper Squad (§38 stk. 8). An
-// unknown tier is covered, so the server can answer Kan ikke kontrolleres.
-function coversFinalRound(teamRound) {
-    const round = Number(teamRound.round)
-    if (round !== 11 && round !== 12) return false
-    return squadsOf(teamRound).some(squad => {
-        if (squad.isPaperSquad) return false
-        const tier = (squad.effectiveTier ?? '').trim()
-        if (!tier) return true
-        if (/^badmintonligaen\b/i.test(tier)) return round === 12
-        return /^(?:[1-3]\.\s*division|danmarksserien)\b/i.test(tier)
-    })
-}
-
-// The first playoff round of each tier §32 stk. 1 covers (§9 stk. 1).
-const FIRST_PLAYOFF_ROUND = {liga: 10, division1: 8}
-
-// From the first playoff round in Badmintonligaen and 1. division, on a non-Paper Squad. An unknown tier is covered
-// from the earliest of them.
-function coversPlayoff(teamRound) {
-    const round = Number(teamRound.round)
-    if (!Number.isInteger(round)) return false
-    return squadsOf(teamRound).some(squad => {
-        if (squad.isPaperSquad) return false
-        const tier = (squad.effectiveTier ?? '').trim()
-        if (!tier) return round >= FIRST_PLAYOFF_ROUND.division1
-        if (/^badmintonligaen\b/i.test(tier)) return round >= FIRST_PLAYOFF_ROUND.liga
-        if (/^1\.\s*division\b/i.test(tier)) return round >= FIRST_PLAYOFF_ROUND.division1
-        return false
-    })
-}
-
-// Round 12 (or no round) on a non-Paper Squad outside the tiers §27 stk. 5 leaves out. An unknown tier is covered, so
-// the server can answer Kan ikke kontrolleres.
-function coversQualification(teamRound) {
-    if (Number(teamRound.round) !== 12) return false
-    return squadsOf(teamRound).some(squad => {
-        if (squad.isPaperSquad) return false
-        const tier = (squad.effectiveTier ?? '').trim()
-        return !/^(?:badmintonligaen\b|1\.\s*division\b|(?:\d+\.\s*)?serie\b|(?:københavns|sjællands|kreds)serien\b|lf-serien\b)/i.test(tier)
-    })
+// The text for the server's notApplicableReason of a history Check: no Squad is covered. The server decides it, since it
+// knows each Squad's tier; a missing round or tier that decides it is Kan ikke kontrolleres there, never a reason.
+function serverNotApplicable(rule, response) {
+    const reason = response?.notApplicableReason
+    if (!rule.notCovered || !reason) return null
+    return reason === 'PAPER_SQUADS_ONLY' ? 'Opstillingen har kun papirhold.' : rule.notCovered[reason] ?? null
 }
 
 const LINK_EARLIER_ROUNDS = 'Tilknyt holdet i de tidligere holdrunder, der står under spillerne.'
@@ -310,7 +269,7 @@ function ranResult(rule, {findings, reason = null}) {
 }
 
 function statusOf(rule, context) {
-    const notApplicable = rule.notApplicable?.(context)
+    const notApplicable = rule.notApplicable?.(context) ?? serverNotApplicable(rule, context.responses[rule.response])
     if (notApplicable) return result(CHECK_STATUS.NOT_APPLICABLE, notApplicable)
     if (rule.switchable && context.switches[rule.key] === false) return result(CHECK_STATUS.SWITCHED_OFF)
     // With Hold fuldendt switched off, Niveau and Kategori run on what's there.
@@ -331,7 +290,8 @@ function statusOf(rule, context) {
 //     basicSquads (validateBasicSquads), crossSquads (validateTeamRoundCrossSquads), squads (validateSquads),
 //     reserves (validateReserves), paperSquads (validatePaperSquads), finalRound (validateFinalRoundEligibility),
 //     qualification (validateQualificationEligibility), playoff (validatePlayoffParticipation),
-//     tooYoung (validateTooYoungPlayers)
+//     tooYoung (validateTooYoungPlayers). The three history Checks answer {notApplicableReason, players}; until they
+//     answer, their Not Applicable is unknown.
 // Returns [{key, status, reason, findings}] in CHECKS order. reason: Danish text for Kan ikke kontrolleres, Venter and
 // Gælder ikke, else null. findings: [{squadIndex?, refId?, name?, status, message, guidance?, uncountedRounds?}], the
 // broken ones first; each finding's status is the Check's severity or cannot-verify.

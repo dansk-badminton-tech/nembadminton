@@ -1,14 +1,17 @@
 mutation validateFinalRoundEligibility($teamRoundId: ID!, $scenarioId: ID) {
     validateFinalRoundEligibility(teamRoundId: $teamRoundId, scenarioId: $scenarioId) {
-        squadIndex
-        refId
-        name
-        status
-        incompleteReasons
-        uncountedRounds {
-            teamRoundId
+        notApplicableReason
+        players {
+            squadIndex
+            refId
             name
-            round
+            status
+            incompleteReasons
+            uncountedRounds {
+                teamRoundId
+                name
+                round
+            }
         }
     }
 }

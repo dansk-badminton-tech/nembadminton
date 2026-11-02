@@ -17,15 +17,17 @@ class ValidateQualificationEligibility
 
     /**
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return list<array<string, mixed>>
+     * @return array{notApplicableReason: ?string, players: list<array<string, mixed>>}
      */
     public function __invoke(mixed $root, array $args): array
     {
         $round = $this->lineup->teamRound($args['teamRoundId']);
         $earlier = null;
         $results = [];
+        $coverage = [];
         foreach ($this->lineup->squads($round, $args['scenarioId'] ?? null) as ['index' => $index, 'squad' => $squad, 'players' => $players]) {
             $context = $this->currentContext($squad, $round);
+            $coverage[] = $context['coverage'];
             foreach ($players as $player) {
                 $status = $context['status'];
                 $incompleteReasons = $context['incompleteReasons'];
@@ -57,27 +59,35 @@ class ValidateQualificationEligibility
             }
         }
 
-        return $results;
+        return ['notApplicableReason' => SquadCoverage::notApplicableReason($coverage), 'players' => $results];
     }
 
-    /** @return array{status: ?string, incompleteReasons: list<string>} */
+    /**
+     * A null status means the requirement applies and history must be checked. coverage: why the Squad is left out,
+     * a SquadCoverage constant.
+     *
+     * @return array{status: ?string, incompleteReasons: list<string>, coverage: ?string}
+     */
     private function currentContext(Squad $squad, TeamRound $round): array
     {
+        $notApplicable = fn (string $coverage) => ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => [], 'coverage' => $coverage];
         if ($squad->is_paper_squad) {
-            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
+            return $notApplicable(SquadCoverage::PAPER_SQUAD);
         }
         $tier = CanonicalTournamentTier::tryFromRawName($squad->effectiveTier());
+        if ($tier !== null && ! in_array($tier, [CanonicalTournamentTier::DIVISION_2, CanonicalTournamentTier::DIVISION_3, CanonicalTournamentTier::DANMARKSSERIEN], true)) {
+            return $notApplicable(SquadCoverage::TIER_NOT_COVERED);
+        }
+        if ($round->round !== null && (int) $round->round !== 12) {
+            return $notApplicable(SquadCoverage::ROUND_NOT_COVERED);
+        }
         $missing = array_filter([
             'MISSING_ROUND' => $round->round === null,
             'UNKNOWN_TIER' => $tier === null,
             'MISSING_TEAM' => $squad->team_id === null,
             'MISSING_SEASON' => $round->season_id === null,
         ]);
-        if (($round->round !== null && (int) $round->round !== 12)
-            || ($tier !== null && ! in_array($tier, [CanonicalTournamentTier::DIVISION_2, CanonicalTournamentTier::DIVISION_3, CanonicalTournamentTier::DANMARKSSERIEN], true))) {
-            return ['status' => 'NOT_APPLICABLE', 'incompleteReasons' => []];
-        }
 
-        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing)];
+        return ['status' => $missing === [] ? null : 'CANNOT_VERIFY', 'incompleteReasons' => array_keys($missing), 'coverage' => SquadCoverage::COVERED];
     }
 }
