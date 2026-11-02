@@ -227,26 +227,66 @@ class TeamValidator
         return ['invalid' => $summeryInvalid, 'unknown' => $unknown];
     }
 
+    /**
+     * §38 stk. 2–3 for each Squad's order within a category. The rule doesn't cover a player without points, so while
+     * anyone is missing points in a category they play, nothing is compared and only they are returned.
+     * §38 stk. 7: a Paper Squad's own lineup is left out, see validatePaperSquads.
+     *
+     * @param  Squad[]  $squads
+     * @return array{playersWithoutPoints: list<array{squadIndex: int, refId: string|null, name: string, category: string}>, findings: array<int, mixed>}
+     */
     public function validateSquads(array $squads): array
     {
-        collect($squads);
+        $playersWithoutPoints = $this->playersWithoutPoints($squads);
+        if ($playersWithoutPoints !== []) {
+            return ['playersWithoutPoints' => $playersWithoutPoints, 'findings' => []];
+        }
+
+        $findings = [];
         foreach ($squads as $squad) {
-            $categoriesGroups = collect(collect($squad)->get('categories'))->groupBy('category');
-            foreach ($categoriesGroups as $categoryName => $categoryGroup) {
-                foreach ($categoryGroup as $category) {
+            if ($squad->isPaperSquad) {
+                continue;
+            }
+            $findings = array_merge($this->validateSquad($squad), $findings);
+        }
 
+        return ['playersWithoutPoints' => [], 'findings' => $findings];
+    }
+
+    /**
+     * Players without points in a category they play, on a non-Paper Squad with more than one of that category (with
+     * one, there is nothing to compare).
+     *
+     * @param  Squad[]  $squads
+     * @return list<array{squadIndex: int, refId: string|null, name: string, category: string}>
+     */
+    public function playersWithoutPoints(array $squads): array
+    {
+        $missing = [];
+        foreach (array_values($squads) as $squadIndex => $squad) {
+            if ($squad->isPaperSquad) {
+                continue;
+            }
+            $categoriesByName = (new Collection($squad->categories))->groupBy('category');
+            foreach ($categoriesByName as $categoryName => $categories) {
+                if ($categories->count() < 2) {
+                    continue;
                 }
-                $categoryGroup->map(function (Category $category) use ($categoryName) {
-                    if ($this->isDoubles($categoryName)) {
-                        return $this->getPairPoints($category->players, $categoryName);
-                    } else {
-                        $player = collect($category->players)->first();
-
-                        return $this->getPlayerCategoryPoint($player, $categoryName);
+                foreach ($categories->pluck('players')->flatten(1) as $player) {
+                    /** @var Player $player */
+                    if ($this->findPlayerCategoryPoint($player, (string) $categoryName) === null) {
+                        $missing[$squadIndex.'|'.($player->refId ?? $player->name).'|'.$categoryName] = [
+                            'squadIndex' => $squadIndex,
+                            'refId' => $player->refId,
+                            'name' => $player->name,
+                            'category' => (string) $categoryName,
+                        ];
                     }
-                });
+                }
             }
         }
+
+        return array_values($missing);
     }
 
     public function validateSquad(Squad $squad): array
@@ -329,18 +369,26 @@ class TeamValidator
         return new Collection($pairs);
     }
 
-    private function getPlayerCategoryPoint(Player $player, string $category)
+    private function getPlayerCategoryPoint(Player $player, string $category): int
     {
-        $points = $player->points;
-        foreach ($points as $point) {
-            $category = $this->getRankingCategory($category, $player->gender);
-            if ($point->category === $category) {
+        return $this->findPlayerCategoryPoint($player, $category) ?? throw new PointNotFoundInCategoryException(
+            "Could not find points in '{$category}' for player '{$player->name}'"
+        );
+    }
+
+    /**
+     * The player's points in the category on the ranking, or null without any.
+     */
+    public function findPlayerCategoryPoint(Player $player, string $category): ?int
+    {
+        $rankingCategory = $this->getRankingCategory($category, $player->gender);
+        foreach ($player->points as $point) {
+            if ($point->category === $rankingCategory) {
                 return (int) $point->points;
             }
         }
-        throw new PointNotFoundInCategoryException(
-            "Could not find points in '{$category}' for player '{$player->name}'"
-        );
+
+        return null;
     }
 
     private function getRankingCategory(string $category, string $gender)

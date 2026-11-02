@@ -70,11 +70,16 @@ const RULES = [
         description: 'Ingen spiller spiller for højt i sin kategori på holdet.',
         waitsForFullSquads: true,
         response: 'squads',
-        // As Niveau, and a player with a youth partner is left out too.
-        run: players => ({
-            findings: players.filter(player => !player.isYouthPlayer && !player.hasYouthPlayerPartner).map(player => playerFinding(player, 'broken',
+        // The rule doesn't cover a player without points, so the server compares nothing while anyone lacks them.
+        // As Niveau, Youth Players are left out of the findings, and so is a player with a youth partner.
+        run: ({playersWithoutPoints, findings}) => playersWithoutPoints.length ? {
+            findings: playersWithoutPoints.map(player => playerFinding(player, 'unknown',
+                `${player.name} har ingen point i ${player.category}. Ret pointene eller vælg en anden spiller.`)),
+            reason: 'Kategori kan først kontrolleres, når alle spillere har point i de kategorier, de spiller.'
+        } : {
+            findings: findings.filter(player => !player.isYouthPlayer && !player.hasYouthPlayerPartner).map(player => playerFinding(player, 'broken',
                 `${player.name} spiller for højt i sin kategori (${player.category}) i forhold til ${belowNames(player)}.`))
-        })
+        }
     },
     {
         key: 'reserves',
@@ -304,7 +309,8 @@ function statusOf(rule, context) {
 //   teamRound: {round, seasonStartYear, squads: [{isPaperSquad, effectiveTier, reserves}]}
 //   switches: {complete, finalRound, qualification}; false switches the Check off, anything else leaves it on
 //   responses: each Check's server response as the editor has it, null or missing until it answers:
-//     basicSquads (validateBasicSquads), crossSquads (validateTeamRoundCrossSquads), squads (validateSquads),
+//     basicSquads (validateBasicSquads), crossSquads (validateTeamRoundCrossSquads),
+//     squads (validateSquads: {playersWithoutPoints, findings}),
 //     reserves (validateReserves), paperSquads (validatePaperSquads), finalRound (validateFinalRoundEligibility),
 //     qualification (validateQualificationEligibility), playoff (validatePlayoffParticipation),
 //     tooYoung (validateTooYoungPlayers). The three history Checks answer {notApplicableReason, players}; until they

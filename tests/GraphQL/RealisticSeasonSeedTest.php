@@ -72,7 +72,7 @@ class RealisticSeasonSeedTest extends TestCase
             $label = 'Round '.$round->round;
 
             $this->assertNotContains(false, $this->spotsFulfilled($input), $label);
-            $this->assertSame([], $this->mutate('validateSquads', $input, 'name category belowPlayer { name }'), $label);
+            $this->assertSame(['playersWithoutPoints' => [], 'findings' => []], $this->mutate('validateSquads', $input, 'playersWithoutPoints { name } findings { name category belowPlayer { name } }'), $label);
             $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name belowPlayer { name category }'), $label);
             $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'name belowPlayer { name category }'), $label);
             $this->assertSame([], $this->mutate('validateReserves', $input, 'type categoryName reserve { name } replaced { name }'), $label);
@@ -106,7 +106,7 @@ class RealisticSeasonSeedTest extends TestCase
         $this->assertSame([], $this->validationInput($round, null)[0]['squad']['categories']);
 
         // A weaker men's doubles pair placed above a stronger one: reported for both players of the pair.
-        $errors = $this->mutate('validateSquads', $this->validationInput($round, $scenario->id), 'category belowPlayer { name }');
+        $errors = $this->mutate('validateSquads', $this->validationInput($round, $scenario->id), 'findings { category belowPlayer { name } }')['findings'];
         $this->assertCount(2, $errors);
         $this->assertSame(['HD', 'HD'], array_column($errors, 'category'));
         $this->assertSame($errors[0]['belowPlayer'], $errors[1]['belowPlayer']);

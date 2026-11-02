@@ -68,25 +68,16 @@ class Validate
     }
 
     /**
-     * @throws ExceptionInterface
+     * §38 stk. 2–3 for the lineup the client sent. It returns only names from that lineup.
+     *
+     * @param  array{input: array<int, array<string, mixed>>}  $args
+     * @return array{playersWithoutPoints: list<array<string, mixed>>, findings: array<int, mixed>}
      */
-    public function validateSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
+    public function validateSquads(mixed $rootValue, array $args): array
     {
-        $squads = new Collection($args['input']);
-        $squads = $squads->pluck('squad');
-        $squads = $this->deserializeSquads($squads);
-        //        $this->teamValidator->validateSquads($squads);
+        $squads = (new Collection($args['input']))->pluck('squad');
 
-        $playingToHigh = [];
-        foreach ($squads as $squad) {
-            // §38 stk. 7: only the paper-team rule holds for a Paper Squad's own lineup, see validatePaperSquads.
-            if ($squad->isPaperSquad) {
-                continue;
-            }
-            $playingToHigh = array_merge($this->teamValidator->validateSquad($squad), $playingToHigh);
-        }
-
-        return $playingToHigh;
+        return $this->teamValidator->validateSquads($this->deserializeSquads($squads));
     }
 
     public function validateBasicSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Collection

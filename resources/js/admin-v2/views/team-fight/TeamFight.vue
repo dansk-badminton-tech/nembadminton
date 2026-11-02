@@ -308,7 +308,7 @@ export default {
             return this.checkResponses.crossSquads?.findings ?? []
         },
         playingToHighSquadList() {
-            return this.checkResponses.squads ?? []
+            return this.checkResponses.squads?.findings ?? []
         },
         tooYoungPlayers() {
             return this.checkResponses.tooYoung ?? []
@@ -811,17 +811,25 @@ export default {
             this.runCheckRequest('squads', () => this.mutationData(gql`
                 mutation validateSquads($input: [ValidateTeam!]!){
                     validateSquads(input: $input){
-                        name
-                        id
-                        refId
-                        category
-                        gender
-                        isYouthPlayer
-                        hasYouthPlayerPartner
-                        belowPlayer {
+                        playersWithoutPoints {
+                            squadIndex
+                            refId
+                            name
+                            category
+                        }
+                        findings {
                             name
                             id
                             refId
+                            category
+                            gender
+                            isYouthPlayer
+                            hasYouthPlayerPartner
+                            belowPlayer {
+                                name
+                                id
+                                refId
+                            }
                         }
                     }
                 }
