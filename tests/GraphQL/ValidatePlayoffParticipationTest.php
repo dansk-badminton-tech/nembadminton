@@ -50,14 +50,14 @@ class ValidatePlayoffParticipationTest extends TestCase
         foreach ([1, 2, 3] as $number) {
             $this->place($this->squad($this->round($number, '2026-10-0'.$number), '2. division'));
         }
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation', [[
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players', [[
             'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'REQUIREMENT_NOT_MET',
             'incompleteReasons' => [], 'matchCount' => 3, 'requiredMatchCount' => 4, 'playedByDeadline' => true,
             'uncountedRounds' => [],
         ]]);
         $this->place($this->squad($this->round(4, '2026-11-01'), 'Badmintonligaen'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'SATISFIED')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 4);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'SATISFIED')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 4);
     }
 
     #[Test]
@@ -74,8 +74,8 @@ class ValidatePlayoffParticipationTest extends TestCase
                 $squad = $this->squad($this->round($number), $tier);
                 $this->place($squad);
                 $this->check($squad)
-                    ->assertJsonPath('data.validatePlayoffParticipation.0.status', $status, "$tier round $number")
-                    ->assertJsonPath('data.validatePlayoffParticipation.0.requiredMatchCount', $required);
+                    ->assertJsonPath('data.validatePlayoffParticipation.players.0.status', $status, "$tier round $number")
+                    ->assertJsonPath('data.validatePlayoffParticipation.players.0.requiredMatchCount', $required);
                 $squad->teamRound->delete();
             }
         }
@@ -86,7 +86,7 @@ class ValidatePlayoffParticipationTest extends TestCase
     {
         $squad = $this->squad($this->round(10), 'Badmintonligaen', ['is_paper_squad' => true]);
         $this->place($squad);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0', [
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0', [
             'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'NOT_APPLICABLE',
             'incompleteReasons' => [], 'matchCount' => 0, 'requiredMatchCount' => 0, 'playedByDeadline' => null,
             'uncountedRounds' => [],
@@ -102,12 +102,12 @@ class ValidatePlayoffParticipationTest extends TestCase
         $this->place($this->squad($this->round(2), 'Danmarksserien'));
         $this->place($this->squad($this->round(3), 'Serie 1'));
         $this->place($this->squad($this->round(4), 'Københavnsserien'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 2);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 2);
         $this->place($this->squad($this->round(5), 'Badmintonligaen'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'SATISFIED')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 3)
-            ->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', true);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'SATISFIED')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 3)
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', true);
     }
 
     #[Test]
@@ -119,12 +119,12 @@ class ValidatePlayoffParticipationTest extends TestCase
         $this->place($paper);
         $this->place($this->squad($this->round(5, '2026-11-20'), '1. division'));
         $this->place($this->squad($this->round(6, '2026-12-20'), '1. division'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 3)
-            ->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', false);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 3)
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', false);
         $paper->update(['is_paper_squad' => false]);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'SATISFIED')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', true);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'SATISFIED')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', true);
     }
 
     #[Test]
@@ -137,13 +137,13 @@ class ValidatePlayoffParticipationTest extends TestCase
         $earliest = $this->round(7, '2025-10-01');
         $this->place($this->squad($earliest, '2. division'));
         // A date in the year before the Season's start year still meets it; the deadline is a date, not a window.
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', true);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', true);
         $earliest->update(['game_date' => '2026-10-21']);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 3)
-            ->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', false);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 3)
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', false);
         $earliest->update(['game_date' => '2026-10-20']);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'SATISFIED');
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'SATISFIED');
     }
 
     #[Test]
@@ -155,9 +155,9 @@ class ValidatePlayoffParticipationTest extends TestCase
         $this->place($moved);
         $this->place($this->squad($this->round(5, '2026-11-20'), '1. division'));
         $this->place($this->squad($this->round(6, '2026-12-20'), '1. division'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', false);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', false);
         $moved->update(['playing_datetime' => '2026-10-20 19:00:00']);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', true);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', true);
     }
 
     #[Test]
@@ -174,9 +174,9 @@ class ValidatePlayoffParticipationTest extends TestCase
         $this->place($this->squad($this->round(3, '2025-10-01', ['season_id' => 2025]), '1. division'));
         $foreign = Clubhouse::factory()->create();
         $this->place($this->squad($this->round(3, '2026-10-01', ['clubhouse_id' => $foreign->id]), '1. division'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 2)
-            ->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.1.status', 'NOT_APPLICABLE');
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 2)
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.1.status', 'NOT_APPLICABLE');
     }
 
     #[Test]
@@ -186,24 +186,24 @@ class ValidatePlayoffParticipationTest extends TestCase
         $squad = $this->squad($round, 'Badmintonligaen');
         $this->place($squad);
         $round->update(['round' => null]);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'CANNOT_VERIFY')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', ['MISSING_ROUND'])
-            ->assertJsonPath('data.validatePlayoffParticipation.0.requiredMatchCount', 4);
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'CANNOT_VERIFY')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', ['MISSING_ROUND'])
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.requiredMatchCount', 4);
         $round->update(['round' => 10, 'season_id' => null]);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', ['MISSING_SEASON']);
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', ['MISSING_SEASON']);
         $round->update(['season_id' => 2026]);
         $squad->update(['team_id' => null, 'tier' => 'Ukendt række']);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'CANNOT_VERIFY')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', ['UNKNOWN_TIER'])
-            ->assertJsonPath('data.validatePlayoffParticipation.0.requiredMatchCount', 0);
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'CANNOT_VERIFY')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', ['UNKNOWN_TIER'])
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.requiredMatchCount', 0);
         // Every tier the requirement covers is still in the group stage.
         $round->update(['round' => 7]);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'NOT_APPLICABLE');
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'NOT_APPLICABLE');
         $round->update(['round' => null]);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', ['MISSING_ROUND', 'UNKNOWN_TIER']);
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', ['MISSING_ROUND', 'UNKNOWN_TIER']);
         // A known tier the requirement doesn't cover needs no round number.
         $squad->update(['tier' => '2. division']);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'NOT_APPLICABLE');
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'NOT_APPLICABLE');
     }
 
     #[Test]
@@ -216,17 +216,17 @@ class ValidatePlayoffParticipationTest extends TestCase
         $unknownSquad = $this->squad($unknown, 'Ukendt række');
         $this->place($unknownSquad);
         // Even counted, 2 of 3.
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.matchCount', 1);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.matchCount', 1);
         $this->place($this->squad($this->round(3, '2026-11-08'), '1. division'));
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0', [
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0', [
             'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'CANNOT_VERIFY',
             'incompleteReasons' => ['UNKNOWN_HISTORY_TIER'], 'matchCount' => 2, 'requiredMatchCount' => 3,
             'playedByDeadline' => true,
             'uncountedRounds' => [['teamRoundId' => $unknown->id, 'name' => 'Ukendt række runde', 'round' => 2]],
         ]);
         $unknownSquad->team->update(['custom_tier_name' => 'Serie 1']);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET');
     }
 
     #[Test]
@@ -239,16 +239,16 @@ class ValidatePlayoffParticipationTest extends TestCase
         $this->place($this->squad($this->round(2, '2026-11-01'), '1. division'));
         $this->place($this->squad($this->round(3, '2026-11-08'), '1. division'));
         $undated->update(['game_date' => null]);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'CANNOT_VERIFY')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', ['MISSING_HISTORY_DATE'])
-            ->assertJsonPath('data.validatePlayoffParticipation.0.playedByDeadline', null)
-            ->assertJsonPath('data.validatePlayoffParticipation.0.uncountedRounds.*.teamRoundId', [$undated->id]);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'CANNOT_VERIFY')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', ['MISSING_HISTORY_DATE'])
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.playedByDeadline', null)
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.uncountedRounds.*.teamRoundId', [$undated->id]);
         // Too few matches is unmet whatever the date.
         $current->teamRound->update(['round' => 10]);
         $current->team->update(['custom_tier_name' => 'Badmintonligaen']);
-        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET')
-            ->assertJsonPath('data.validatePlayoffParticipation.0.incompleteReasons', [])
-            ->assertJsonPath('data.validatePlayoffParticipation.0.uncountedRounds', []);
+        $this->check($current)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET')
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.incompleteReasons', [])
+            ->assertJsonPath('data.validatePlayoffParticipation.players.0.uncountedRounds', []);
     }
 
     #[Test]
@@ -258,10 +258,10 @@ class ValidatePlayoffParticipationTest extends TestCase
         $squad = $this->squad($round, 'Badmintonligaen');
         $draft = $round->scenarios()->create(['name' => 'Plan B', 'is_official' => false]);
         $this->place($squad, ['team_round_scenario_id' => $draft->id]);
-        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation', []);
-        $this->check($squad, $draft->id)->assertJsonPath('data.validatePlayoffParticipation.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($squad)->assertJsonPath('data.validatePlayoffParticipation.players', []);
+        $this->check($squad, $draft->id)->assertJsonPath('data.validatePlayoffParticipation.players.0.status', 'REQUIREMENT_NOT_MET');
 
-        $query = 'mutation($id: ID!, $scenario: ID) { validatePlayoffParticipation(teamRoundId: $id, scenarioId: $scenario) { refId } }';
+        $query = 'mutation($id: ID!, $scenario: ID) { validatePlayoffParticipation(teamRoundId: $id, scenarioId: $scenario) { players { refId } } }';
         $foreignRound = $this->round(10, '2027-03-20', ['clubhouse_id' => Clubhouse::factory()->create()->id]);
         $foreignDraft = $foreignRound->scenarios()->create(['name' => 'Hemmelig', 'is_official' => false]);
         $this->graphQL($query, ['id' => $round->id, 'scenario' => $foreignDraft->id])
@@ -275,6 +275,34 @@ class ValidatePlayoffParticipationTest extends TestCase
             ->assertGraphQLErrorMessage('This action is unauthorized.')->assertDontSee('Anders');
         auth('api')->forgetUser();
         $this->graphQL($query, ['id' => $round->id])->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+
+    #[Test]
+    public function the_check_does_not_apply_when_no_squad_is_covered_and_says_why(): void
+    {
+        foreach ([
+            'a covered Squad' => [10, [['Badmintonligaen', false]], null],
+            'a covered Squad next to a Paper Squad' => [8, [['Badmintonligaen', true], ['1. division', false]], null],
+            'only Paper Squads' => [10, [['Badmintonligaen', true]], 'PAPER_SQUADS_ONLY'],
+            'the group stage' => [7, [['1. division', false]], 'ROUND_NOT_COVERED'],
+            'the group stage of Badmintonligaen' => [9, [['Badmintonligaen', false], ['1. division', true]], 'ROUND_NOT_COVERED'],
+            'an unknown tier before any playoffs' => [7, [['Ukendt række', false]], 'ROUND_NOT_COVERED'],
+            'a tier outside the rule' => [10, [['2. division', false], ['Badmintonligaen', true]], 'TIER_NOT_COVERED'],
+            'a tier outside the rule without a round' => [null, [['Serie 1', false]], 'TIER_NOT_COVERED'],
+            'a covered tier in its group stage next to one outside' => [9, [['Badmintonligaen', false], ['2. division', false]], 'ROUND_NOT_COVERED'],
+            // A missing fact that decides applicability is Kan ikke kontrolleres, not Gælder ikke.
+            'a covered tier without a round' => [null, [['1. division', false]], null],
+            'an unknown tier in the playoffs' => [8, [['Ukendt række', false]], null],
+        ] as $case => [$number, $squads, $expected]) {
+            $round = $this->round(0, attributes: ['round' => $number]);
+            foreach ($squads as [$tier, $paper]) {
+                $this->place($this->squad($round, $tier, ['is_paper_squad' => $paper]));
+            }
+            $this->graphQL('mutation($id: ID!) { validatePlayoffParticipation(teamRoundId: $id) { notApplicableReason } }', ['id' => $round->id])
+                ->assertGraphQLErrorFree()
+                ->assertJsonPath('data.validatePlayoffParticipation.notApplicableReason', $expected, $case);
+            $round->delete();
+        }
     }
 
     private function round(int $number, string $gameDate = '2027-03-20', array $attributes = []): TeamRound
@@ -303,10 +331,10 @@ class ValidatePlayoffParticipationTest extends TestCase
     private function check(Squad $squad, ?int $scenarioId = null): TestResponse
     {
         return $this->graphQL('mutation($id: ID!, $scenario: ID) {
-            validatePlayoffParticipation(teamRoundId: $id, scenarioId: $scenario) {
+            validatePlayoffParticipation(teamRoundId: $id, scenarioId: $scenario) { players {
                 squadIndex refId name status incompleteReasons matchCount requiredMatchCount playedByDeadline
                 uncountedRounds { teamRoundId name round }
-            }
+            } }
         }', ['id' => $squad->team_round_id, 'scenario' => $scenarioId])->assertGraphQLErrorFree();
     }
 }

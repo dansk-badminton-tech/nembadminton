@@ -34,7 +34,7 @@ class YouthTeamRoundSeedTest extends TestCase
 
         $this->assertSame([true, true], $this->spotsFulfilled($input));
 
-        $conflicts = collect($this->mutate('validateSquads', $input, 'name category isYouthPlayer hasYouthPlayerPartner belowPlayer { name }'))
+        $conflicts = collect($this->mutate('validateSquads', $input, 'findings { name category isYouthPlayer hasYouthPlayerPartner belowPlayer { name } }')['findings'])
             ->map(fn (array $conflict) => [
                 $conflict['name'],
                 $conflict['category'],
@@ -78,7 +78,7 @@ class YouthTeamRoundSeedTest extends TestCase
         foreach ($rounds->take(2) as $round) {
             $input = $this->validationInput($round);
             $this->assertSame([true, true], $this->spotsFulfilled($input), $round->name);
-            $this->assertSame([], $this->mutate('validateSquads', $input, 'name'), $round->name);
+            $this->assertSame(['playersWithoutPoints' => [], 'findings' => []], $this->mutate('validateSquads', $input, 'playersWithoutPoints { name } findings { name }'), $round->name);
             $this->assertSame([], $this->mutate('validateCrossSquads', $input, 'name'), $round->name);
             $this->assertSame([], $this->teamRoundCrossSquads($round, null, 'name'), $round->name);
         }
@@ -170,8 +170,8 @@ class YouthTeamRoundSeedTest extends TestCase
         $this->actingAs(User::query()->findOrFail(1), 'api');
 
         return $this->graphQL(
-            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { {$fields} } }",
+            "mutation (\$id: ID!, \$scenarioId: ID) { validateTeamRoundCrossSquads(teamRoundId: \$id, scenarioId: \$scenarioId) { findings { {$fields} } } }",
             ['id' => $round->id, 'scenarioId' => $scenarioId]
-        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads');
+        )->assertJsonMissingPath('errors')->json('data.validateTeamRoundCrossSquads.findings');
     }
 }

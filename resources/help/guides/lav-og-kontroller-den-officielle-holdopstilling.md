@@ -76,20 +76,31 @@ En spiller, der har været reserve, må ikke spille på noget hold i næste spil
 
 ## Kontrollér holdopstillingen
 
-Over holdene viser Nembadminton tre kontroller, som opdateres, hver gang du ændrer holdopstillingen:
+Over holdene viser Nembadminton en liste med alle tjek. Den opdateres, hver gang du ændrer holdopstillingen. Tjekkene står i grupper:
 
-| Kontrol | Hvad kontrolleres |
+| Gruppe | Betydning |
+| --- | --- |
+| **Kræver handling** | Tjek med **Fejl**, **Advarsel** eller **Kan ikke kontrolleres**. Ret holdopstillingen, eller udfyld det, der mangler. |
+| **Venter** | Tjekket kan først køre, når holdopstillingen er længere, fx når alle hold er fuldt besat. |
+| **Slået fra** | Du har slået tjekket fra med kontakten **Kontrollér dette tjek**. Valget huskes i denne browser for holdrunden og alle dens kladder. |
+| **OK** | Holdopstillingen overholder reglen. |
+
+Tjek, der ikke gælder for holdopstillingen, står samlet nederst under **N tjek gælder ikke for denne opstilling**. Klik på linjen for at se hvorfor.
+
+De almindelige tjek er:
+
+| Tjek | Hvad kontrolleres |
 | --- | --- |
 | **Hold fuldendt** | At alle pladser på alle hold er udfyldt. |
-| **Niveauvalidering** | At ingen spiller på et lavere hold er bedre placeret på niveauranglisten end en spiller på et højere hold, ud over den tilladte buffer (§ 38, stk. 4). |
-| **Kategorivalidering** | At spillerne på hvert hold står i den rigtige rækkefølge i hver kategori (§ 38, stk. 2 og 3). |
+| **Niveau (§38 stk. 4)** | At ingen spiller på et lavere hold er bedre placeret på niveauranglisten end en spiller på et højere hold, ud over den tilladte buffer. |
+| **Kategori (§38 stk. 2–3)** | At spillerne på hvert hold står i den rigtige rækkefølge i hver kategori. |
 
-1. Kontrollér **Hold fuldendt**. Viser den **Fejl**, mangler der spillere, og de to andre kontroller viser **Afventer**, indtil alle hold er fuldt besat.
-2. Når alle hold er fuldt besat, kontrollerer du **Niveauvalidering** og **Kategorivalidering**.
-3. Viser en kontrol **Fejl**, åbner du **Detaljer om fejl** for at se, hvilke spillere det drejer sig om. Spillerne er også markeret med rødt på holdene. Hold markøren over en markeret spiller for at se, hvilke spillere den sammenlignes med.
-4. Ret holdopstillingen, og kontrollér, at alle tre kontroller viser **OK**.
+1. Kontrollér **Hold fuldendt**. Viser den **Fejl**, mangler der spillere, og **Niveau** og **Kategori** viser **Venter**, indtil alle hold er fuldt besat.
+2. Klik på et tjek eller **Detaljer** for at se, hvad det kontrollerer, og hvilke spillere det drejer sig om. Spillerne er også markeret med rødt på holdene. Hold markøren over en markeret spiller for at se, hvilke spillere den sammenlignes med.
+3. Ret holdopstillingen, og kontrollér, at ingen tjek står under **Kræver handling**.
+4. Fejler forbindelsen, står der **Tjekket kunne ikke køre**. Vælg **Prøv igen**.
 
-Sådan retter du de almindelige fejl i **Detaljer om fejl**:
+Sådan retter du de almindelige fejl:
 
 | Fejl | Sådan retter du den |
 | --- | --- |
@@ -99,18 +110,18 @@ Sådan retter du de almindelige fejl i **Detaljer om fejl**:
 
 ### Kontrol af papirhold
 
-Har holdopstillingen et [papirhold](/app/help/guides/opret-og-klargoer-en-holdrunde), viser kontrollerne også **Papirhold (§38 stk. 7)**. Den viser **Afventer**, indtil kontrollen er kørt, og derefter **OK** eller **Advarsel**. Spillerne på papirholdet skal opfylde reglen om papirhold:
+Har holdopstillingen et [papirhold](/app/help/guides/opret-og-klargoer-en-holdrunde), viser listen også **Papirhold (§38 stk. 7)** med **OK**, **Fejl** eller **Kan ikke kontrolleres**. Spillerne på papirholdet skal opfylde reglen om papirhold:
 
 - De må kun stå i kategorier, de har spillet tidligere i sæsonen.
 - De skal tidligere i sæsonen have stået på papirholdets hold eller et lavere hold: mindst 1 gang i grundspillet fra runde 2 og mindst 2 gange i slutspillet og kvalifikationen. Runde 1 kontrolleres ikke.
 
 Nembadminton tæller kun holdrunder med en tidligere spilledato i klubben, så en holdrunde på samme dato tæller ikke med.
 
-Bryder en spiller reglen, står der en advarsel under kontrollerne for hver spiller, fx **Hold 2 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.** Under advarslerne står det, at en ulovlig spiller på et papirhold er en skærpende omstændighed, fordi klubbens underliggende hold kan blive taberdømt (§54 stk. 7).
+Bryder en spiller reglen, viser tjekket **Fejl**, og under **Detaljer** står et fund for hver spiller, fx **Hold 2 (papirhold): Bo har stået på samme eller et lavere hold 0 gange tidligere i sæsonen, men skal have stået der mindst 1 gang.** Under fundene står det, at en ulovlig spiller på et papirhold er en skærpende omstændighed, fordi klubbens underliggende hold kan blive taberdømt (§54 stk. 7).
 
-Advarslen forhindrer ikke, at du gemmer og deler, så du skal selv vurdere, om spilleren kan stå på papirholdet. Mangler holdrunden et rundenummer, står der i stedet **Udfyld rundenummeret**, fordi reglen ikke kan kontrolleres; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
+**Fejl** betyder, at spilleren ikke må stå på papirholdet. Du kan stadig gemme og dele, men ret holdopstillingen, før holdkampen spilles. Mangler holdrunden et rundenummer, viser tjekket **Kan ikke kontrolleres**; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer).
 
-Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner advarslen runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
+Kan nogle af spillerens tidligere holdkampe ikke tælles med, fordi holdet ikke er tilknyttet i de runder, nævner fundet runderne. Se [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder).
 Kontrollen af rækkefølgen på papirholdet og af styrkeordenen mellem papirholdet og højere hold springes over. De lavere hold sammenlignes stadig med papirholdet.
 
 ### Kontrol af tidligere hold i de sidste runder
@@ -120,26 +131,26 @@ I de sidste runder af sæsonen skal en spiller tidligere i sæsonen have stået 
 - **Badmintonligaen:** runde 12.
 - **1. division, 2. division, 3. division og Danmarksserien:** runde 11 og 12.
 
-I andre runder og rækker er reglen ikke relevant, og kontrollen viser ingen advarsler.
+I andre runder og rækker står **Tidligere hold (§38 stk. 8)** under de tjek, der ikke gælder.
 
-I de relevante runder viser Nembadminton **Tidligere hold (§38 stk. 8)**. Kontrollen er som udgangspunkt **Deaktiveret**. Slå den til med kontakten, når du vil kontrollere tidligere hold; kontrollen kræver, at holdene er tilknyttet. Når kontrollen er slået til, viser den **Afventer**, **OK**, **Advarsel** eller **Fejlet** og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Brug opdateringsknappen for at køre den med det samme. Genindlæser du siden, er kontrollen slået fra igen.
+I de relevante runder viser tjekket **OK**, **Fejl** eller **Kan ikke kontrolleres**. Det kræver, at holdene er [tilknyttet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Tjekket køres igen, når du ændrer holdopstillingen eller skifter scenarie. Vælg **Kontrollér igen** for at køre det med det samme. Vil du ikke have tjekket med, så åbn det, og slå **Kontrollér dette tjek** fra.
 
-Der er to slags advarsler under kontrollerne, hver med holdets nummer og spillerens navn:
+Der er to slags fund, hver med holdets nummer og spillerens navn:
 
 - **… har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8).** Nembadminton har fundet spillerens tidligere holdopstillinger i sæsonen, men spilleren har ikke stået på holdet eller et lavere hold. Vurdér, om spilleren må stå på holdet.
-- **… spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).** Nembadminton mangler oplysninger. Under advarslen står, hvad du skal rette:
+- **… spilleberettigelse kan ikke verificeres fuldt ud (§38 stk. 8).** Nembadminton mangler oplysninger, og tjekket viser **Kan ikke kontrolleres**. Under **Detaljer** står, hvad du skal rette:
 
 | Besked | Sådan retter du den |
 | --- | --- |
 | **Udfyld Runde nr. i holdrundens indstillinger.** | Angiv rundenummeret; se [Angiv det rigtige rundenummer](/app/help/guides/angiv-det-rigtige-rundenummer). |
-| **Angiv holdets række under Rediger holdet.** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
+| **Angiv holdets række under Rediger holdet, …** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
 | **Tilknyt sæsonens hold via Rediger holdet → Tilknyt hold i denne holdrunde.** | Tilknyt holdet; se [Tilknyt et hold bagefter](/app/help/guides/opret-og-klargoer-en-holdrunde). |
 | **Angiv datoen i holdrundens indstillinger.** | Angiv **Runde spilledato**, så tidligere holdrunder kan findes. |
-| **Holdrunden mangler sæson.** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
+| **Holdrunden mangler sæson, …** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
 
-Kan spillerens tidligere opstillinger ikke sammenlignes, fordi holdet ikke er tilknyttet i de runder, står holdrunderne som links under advarslen. Åbn hver holdrunde, og tilknyt holdet som beskrevet i [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Kør derefter kontrollen igen.
+Kan spillerens tidligere opstillinger ikke sammenlignes, fordi holdet ikke er tilknyttet i de runder, står holdrunderne som links under fundet. Åbn hver holdrunde, og tilknyt holdet som beskrevet i [Tilknyt holdet i tidligere runder](/app/help/guides/tilknyt-holdet-i-tidligere-runder). Vælg derefter **Kontrollér igen**.
 
-Kontrollen bruger kun tidligere officielle holdopstillinger i sæsonen. Advarslerne forhindrer ikke, at du redigerer, gemmer og deler, så du skal selv vurdere, om spilleren må spille.
+Tjekket bruger kun tidligere officielle holdopstillinger i sæsonen. Fundene forhindrer ikke, at du redigerer, gemmer og deler, så du skal selv vurdere, om spilleren må spille.
 
 ### Kontrol af slutspilskravet
 
@@ -151,18 +162,18 @@ For at spille slutspil eller kvalifikation i Badmintonligaen eller 1. division s
 
 Nembadminton tæller spillerens pladser i de tidligere runders officielle holdopstillinger på alle klubbens hold i Badmintonligaen, 1.–3. division og Danmarksserien. Hold i kredsenes rækker, fx Serie 1, tæller ikke. Pladser på et papirhold tæller med i antallet af kampe, men ikke som spillet senest 20. oktober. Som dato bruges holdets egen spilledato eller ellers holdrundens. Holdets egen række afgør kravet, også i en kvalifikationskamp mod en højere række, og spillere på et papirhold kontrolleres ikke.
 
-I de relevante runder viser Nembadminton **Slutspilskrav (§32)** med **Afventer**, **OK**, **Advarsel** eller **Fejlet**. Kontrollen er altid slået til og køres igen, når du ændrer holdopstillingen eller skifter scenarie. Brug opdateringsknappen, når du har rettet noget i tidligere holdrunder.
+I de relevante runder viser Nembadminton **Slutspilskrav (§32 stk. 1)** med **OK**, **Fejl** eller **Kan ikke kontrolleres**. I andre runder og rækker står det under de tjek, der ikke gælder. Tjekket køres igen, når du ændrer holdopstillingen eller skifter scenarie. Vælg **Kontrollér igen**, når du har rettet noget i tidligere holdrunder.
 
-Advarslen står under kontrollerne med holdets nummer og spillerens navn, fx **Hold 1: Anders har 2 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).** Mangler Nembadminton oplysninger for at afgøre det, står der **slutspilskravet kan ikke verificeres fuldt ud**, og under advarslen står, hvad du skal rette:
+Fundet står under **Detaljer** med holdets nummer og spillerens navn, fx **Hold 1: Anders har 2 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).** Mangler Nembadminton oplysninger for at afgøre det, står der **slutspilskravet kan ikke verificeres fuldt ud**, og tjekket viser, hvad du skal rette:
 
 | Besked | Sådan retter du den |
 | --- | --- |
 | **Angiv holdets række under Rediger holdet, …** | Angiv rækken ved holdet. Er et hold tilknyttet, skal rækken rettes på sæsonens hold. |
 | **Holdrunden mangler sæson, …** | Kontakt support. Sæsonen kan ikke ændres i indstillingerne. |
-| **Angiv rækken på spillerens hold i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv rækken på holdet, spilleren står på. |
-| **Angiv spilledatoen i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under advarslen, og angiv **Runde spilledato**. |
+| **Angiv rækken på spillerens hold i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under fundet, og angiv rækken på holdet, spilleren står på. |
+| **Angiv spilledatoen i de tidligere holdrunder herunder.** | Åbn holdrunderne, der står som links under fundet, og angiv **Runde spilledato**. |
 
-Kun holdrunder med et lavere rundenummer tæller som tidligere, også når en kamp er flyttet. Holdturneringsudvalget kan give dispensation, og karantænedage efter et klubskifte tæller som spillede runder. Det kender Nembadminton ikke, så advarslen forhindrer ikke, at du gemmer og deler. Vurdér selv, om spilleren må spille.
+Kun holdrunder med et lavere rundenummer tæller som tidligere, også når en kamp er flyttet. Holdturneringsudvalget kan give dispensation, og karantænedage efter et klubskifte tæller som spillede runder. Det kender Nembadminton ikke, så fejlen forhindrer ikke, at du gemmer og deler. Vurdér selv, om spilleren må spille.
 
 ## Hvis en spiller mangler eller har forkerte point
 
@@ -186,10 +197,10 @@ Rettelsen gælder kun spilleren på denne plads i denne holdrunde. Står spiller
 
 Kontrollen er en hjælp, men den dækker ikke alle regler. I disse situationer skal du selv tage stilling:
 
-- **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Hvis en ungdomsspiller ellers ville udløse en niveau- eller kategorifejl, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategorivalidering** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
+- **Ungdomsspillere:** U15-, U17- og U19-spillere er markeret ved navnet. Hvis en ungdomsspiller ellers ville udløse en niveau- eller kategorifejl, markeres spilleren med grønt i stedet for rødt, og kontrollen viser ikke **Fejl**. Det samme gælder i **Kategori** for en spiller med en ungdomsmakker. Kontrollér selv, at placeringen er tilladt.
 - **Spillere under 15 år:** En spiller, der ikke er fyldt 15 år senest 31.12. i det kalenderår, sæsonen starter, er markeret med **Under 15 år** ved navnet på holdopstillingen (§ 31, stk. 1). Hold markøren over mærket for at se begrundelsen. Sæsonen er holdrundens sæson, og har holdrunden ingen sæson, bruges sæsonen for spilledatoen. Mangler begge dele, vises mærket ikke. Mærket er en advarsel: Du kan stadig gemme, dele og give besked, så du skal selv vurdere, om spilleren må spille på holdet.
 - **Spillere i andre holdrunder:** Spillere markeret med **Optaget på:** er ikke en del af kontrollen.
-- **Et hold, der bevidst ikke er fuldt besat:** Slå kontakten ved **Hold fuldendt** fra. Kontrollen viser **Deaktiveret**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene. Valget gemmes ikke, så kontakten er slået til igen, næste gang du åbner holdrunden.
+- **Et hold, der bevidst ikke er fuldt besat:** Åbn **Hold fuldendt**, og slå **Kontrollér dette tjek** fra. Tjekket viser **Slået fra**, og niveau og kategori kontrolleres for de spillere, der er sat på holdene.
 
 Det er altid klubbens og trænerens ansvar at kontrollere, at holdopstillingen er korrekt. Mener du, at kontrollen tager fejl, så se [Der vises en valideringsfejl, selv om holdet er korrekt](/app/help/faq) i FAQ.
 

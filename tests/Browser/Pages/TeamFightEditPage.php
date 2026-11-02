@@ -68,10 +68,10 @@ class TeamFightEditPage extends Page
             '@squad-team-empty' => "[dusk='squad-team-empty']",
             '@squad-create-team-option' => "[dusk='squad-create-team-option']",
             '@squad-manual-entry-option' => "[dusk='squad-manual-entry-option']",
-            '@validation-incomplete-team' => "[dusk='validation-incomplete-team']",
-            '@validation-invalid-level' => "[dusk='validation-invalid-level']",
-            '@validation-invalid-category' => "[dusk='validation-invalid-category']",
-            '@final-round-warnings' => "[dusk='final-round-warnings']",
+            '@check-panel' => "[dusk='check-panel']",
+            '@validation-incomplete-team' => "[dusk='check-status-complete']",
+            '@validation-invalid-level' => "[dusk='check-status-level']",
+            '@validation-invalid-category' => "[dusk='check-status-category']",
             '@scenario-guide-link' => "[dusk='scenario-guide-link']",
             '@scenario-selector-dropdown' => "[dusk='scenario-selector-dropdown']",
             '@create-scenario-button' => "[dusk='create-scenario-button']",
@@ -295,6 +295,7 @@ class TeamFightEditPage extends Page
     {
         $input = "[dusk='edit-player-points-{$category}']";
 
+        $this->scrollToCenter($browser, "[dusk='squad-{$squadIndex}'] [dusk='edit-squad-member-button']");
         $browser->click("[dusk='squad-{$squadIndex}'] @edit-squad-member-button")
             ->waitFor($input);
         $this->replaceInputValue($browser, $input, (string) $points);
@@ -465,6 +466,7 @@ class TeamFightEditPage extends Page
 
     public function openSquadAction(Browser $browser, int $index, string $action): void
     {
+        $this->scrollToCenter($browser, "[dusk='squad-actions-{$index}']");
         $browser->mouseover("[dusk='squad-actions-{$index}']")
             ->click("[dusk='{$action}-{$index}']");
     }
@@ -699,8 +701,15 @@ class TeamFightEditPage extends Page
             ->waitUntilMissing('.dialog');
     }
 
+    public function openShareMenu(Browser $browser): void
+    {
+        $this->scrollToCenter($browser, '@share-button');
+        $browser->click('@share-button');
+    }
+
     public function confirmScenarioPromotion(Browser $browser): void
     {
+        $this->scrollToCenter($browser, '@promote-scenario-button');
         $browser->click('@promote-scenario-button')
             ->waitFor('.dialog')
             ->click('.dialog .modal-card-foot .button:last-child')
@@ -827,7 +836,7 @@ class TeamFightEditPage extends Page
         // (Dusk's scrollTo throws if the element isn't rendered yet)
         $browser->waitFor('@validation-incomplete-team', 10);
         $browser->script("
-            var el = document.querySelector(\"[dusk='validation-incomplete-team']\");
+            var el = document.querySelector(\"[dusk='check-status-complete']\");
             if (el) el.scrollIntoView({block: 'center'});
         ");
         $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
@@ -934,7 +943,7 @@ class TeamFightEditPage extends Page
     {
         $browser->waitFor('@validation-incomplete-team', 10);
         $browser->script("
-            var el = document.querySelector(\"[dusk='validation-incomplete-team']\");
+            var el = document.querySelector(\"[dusk='check-status-complete']\");
             if (el) el.scrollIntoView({block: 'center'});
         ");
         $browser->pause(500);
@@ -943,14 +952,14 @@ class TeamFightEditPage extends Page
     /**
      * Assert "Fuldendt hold" shows "Fejl" (incomplete team detected).
      *
-     * When basic validation fails, the other two checks are gated and show "-".
+     * When basic validation fails, the other two checks wait for full squads (Venter).
      */
     public function assertIncompleteTeamFailing(Browser $browser): void
     {
         $this->scrollToValidation($browser);
         $browser->waitForTextIn('@validation-incomplete-team', 'Fejl', 10)
-            ->waitForTextIn('@validation-invalid-level', 'Afventer', 10)
-            ->waitForTextIn('@validation-invalid-category', 'Afventer', 10);
+            ->waitForTextIn('@validation-invalid-level', 'Venter', 10)
+            ->waitForTextIn('@validation-invalid-category', 'Venter', 10);
     }
 
     /**
@@ -975,5 +984,59 @@ class TeamFightEditPage extends Page
         $this->scrollToValidation($browser);
         $browser->waitForTextIn('@validation-incomplete-team', 'OK', 10)
             ->waitForTextIn('@validation-invalid-level', 'Fejl', 10);
+    }
+
+    /**
+     * Wait until a Check in the check panel shows a status label (OK, Fejl, Advarsel, Kan ikke kontrolleres, Venter,
+     * Slået fra) or a panel state (Kontrollerer …, Tjekket kunne ikke køre). $key is the Check's key in check-status.mjs.
+     */
+    public function waitForCheckStatus(Browser $browser, string $key, string $label): void
+    {
+        $browser->waitForTextIn("@check-status-{$key}", $label, 10);
+    }
+
+    /**
+     * Unfold a Check's row, unless it is unfolded already.
+     */
+    public function openCheck(Browser $browser, string $key): void
+    {
+        $browser->waitFor("@check-row-{$key}", 10);
+        if (! $browser->element("[dusk='check-details-{$key}']")) {
+            $this->scrollToCenter($browser, "@check-row-{$key}");
+            $browser->click("@check-row-{$key}");
+        }
+        $browser->waitFor("@check-details-{$key}");
+    }
+
+    /**
+     * Flip a Check's "Kontrollér dette tjek" switch inside its unfolded row.
+     */
+    public function switchCheck(Browser $browser, string $key): void
+    {
+        $this->openCheck($browser, $key);
+        $browser->click("@check-switch-{$key}");
+    }
+
+    /**
+     * Unfold a Check's row and wait for a text among its reason and findings.
+     */
+    public function waitForCheckDetails(Browser $browser, string $key, string $text): void
+    {
+        $this->openCheck($browser, $key);
+        $browser->waitForTextIn("@check-details-{$key}", $text, 10);
+    }
+
+    /**
+     * Assert the Check sits in the "N tjek gælder ikke for denne opstilling" group with this reason.
+     */
+    public function assertCheckNotApplicable(Browser $browser, string $key, string $reason): void
+    {
+        $browser->waitFor('@check-not-applicable', 10);
+        if (! $browser->element("[dusk='check-not-applicable-{$key}']")) {
+            $this->scrollToCenter($browser, '@check-not-applicable');
+            $browser->click('@check-not-applicable');
+        }
+        $browser->waitForTextIn("@check-not-applicable-{$key}", $reason, 10)
+            ->assertMissing("@check-row-{$key}");
     }
 }

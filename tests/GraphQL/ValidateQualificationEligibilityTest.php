@@ -49,22 +49,22 @@ class ValidateQualificationEligibilityTest extends TestCase
     {
         $current = $this->squad($this->round());
         $this->place($current);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
         $this->place($this->squad($this->round(['round' => 1])));
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
         $second = $this->round(['round' => 6]);
         $squad = $this->squad($second);
         $this->place($squad);
         $this->place($squad, ['category' => 'HD', 'name' => '1. HD']);
         // Dates in the qualification match's calendar year do not establish the omitted alternative.
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
         foreach ([7, 8, 9, 10, 11] as $number) {
             $second->update(['round' => $number]);
-            $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'SATISFIED');
+            $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'SATISFIED');
         }
         $second->update(['round' => 6]);
         $this->place($this->squad($this->round(['round' => 2])));
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'SATISFIED');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'SATISFIED');
     }
 
     #[Test]
@@ -79,9 +79,9 @@ class ValidateQualificationEligibilityTest extends TestCase
                 $this->place($current);
                 $expected = $number === 12 && in_array($tier, ['2. division', '3. division', 'Danmarksserien'], true)
                     ? 'REQUIREMENT_NOT_MET' : 'NOT_APPLICABLE';
-                $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', $expected);
+                $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', $expected);
                 $current->update(['is_paper_squad' => true]);
-                $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'NOT_APPLICABLE');
+                $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'NOT_APPLICABLE');
                 $round->delete();
             }
         }
@@ -93,16 +93,16 @@ class ValidateQualificationEligibilityTest extends TestCase
         foreach (['round' => 'MISSING_ROUND', 'season_id' => 'MISSING_SEASON'] as $field => $reason) {
             $current = $this->squad($this->round([$field => null]));
             $this->place($current);
-            $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'CANNOT_VERIFY')
-                ->assertJsonPath('data.validateQualificationEligibility.0.incompleteReasons', [$reason]);
+            $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'CANNOT_VERIFY')
+                ->assertJsonPath('data.validateQualificationEligibility.players.0.incompleteReasons', [$reason]);
         }
         $current = $this->squad($this->round(['game_date' => null]));
         $this->place($current);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
         $current->update(['team_id' => null, 'tier' => '2. division']);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.incompleteReasons', ['MISSING_TEAM']);
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.incompleteReasons', ['MISSING_TEAM']);
         $current->update(['tier' => 'Ukendt']);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.incompleteReasons', ['UNKNOWN_TIER', 'MISSING_TEAM']);
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.incompleteReasons', ['UNKNOWN_TIER', 'MISSING_TEAM']);
     }
 
     #[Test]
@@ -115,7 +115,7 @@ class ValidateQualificationEligibilityTest extends TestCase
         $unlinked->update(['team_id' => null]);
         $this->place($unlinked);
         $this->place($unlinked, ['category' => 'HD']);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0', [
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0', [
             'squadIndex' => 0, 'refId' => '0101011111', 'name' => 'Anders', 'status' => 'CANNOT_VERIFY',
             'incompleteReasons' => ['INCOMPARABLE_HISTORY'],
             'uncountedRounds' => [['teamRoundId' => $historical->id, 'name' => 'Uden holdlink', 'round' => 2]],
@@ -123,9 +123,9 @@ class ValidateQualificationEligibilityTest extends TestCase
         foreach ([1, 7] as $number) {
             $this->place($this->squad($this->round(['round' => $number])));
         }
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'SATISFIED')
-            ->assertJsonPath('data.validateQualificationEligibility.0.incompleteReasons', [])
-            ->assertJsonPath('data.validateQualificationEligibility.0.uncountedRounds', []);
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'SATISFIED')
+            ->assertJsonPath('data.validateQualificationEligibility.players.0.incompleteReasons', [])
+            ->assertJsonPath('data.validateQualificationEligibility.players.0.uncountedRounds', []);
     }
 
     #[Test]
@@ -149,13 +149,13 @@ class ValidateQualificationEligibilityTest extends TestCase
         $draft = $earlier->scenarios()->create(['name' => 'Kladde', 'is_official' => false]);
         $this->place($same, ['team_round_scenario_id' => $draft->id]);
         $this->place($this->squad($this->round(['round' => 1])));
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
         $draft->update(['is_official' => true]);
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'SATISFIED');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'SATISFIED');
         $same->update(['order' => 0]);
         $higher->categories()->update(['team_round_scenario_id' => $draft->id]);
         $same->categories()->delete();
-        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.0.status', 'SATISFIED');
+        $this->check($current)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'SATISFIED');
     }
 
     #[Test]
@@ -167,10 +167,10 @@ class ValidateQualificationEligibilityTest extends TestCase
         $draft = $round->scenarios()->create(['name' => 'Tom kladde', 'is_official' => false]);
         $this->place($current, ['team_round_scenario_id' => $official->id]);
         $this->place($current, ['team_round_scenario_id' => $official->id, 'category' => 'HD']);
-        $this->check($current)->assertJsonCount(1, 'data.validateQualificationEligibility');
-        $this->check($current, $draft->id)->assertJsonPath('data.validateQualificationEligibility', []);
+        $this->check($current)->assertJsonCount(1, 'data.validateQualificationEligibility.players');
+        $this->check($current, $draft->id)->assertJsonPath('data.validateQualificationEligibility.players', []);
         $this->place($current, ['team_round_scenario_id' => $draft->id]);
-        $this->check($current, $draft->id)->assertJsonPath('data.validateQualificationEligibility.0.status', 'REQUIREMENT_NOT_MET');
+        $this->check($current, $draft->id)->assertJsonPath('data.validateQualificationEligibility.players.0.status', 'REQUIREMENT_NOT_MET');
     }
 
     #[Test]
@@ -179,7 +179,7 @@ class ValidateQualificationEligibilityTest extends TestCase
         $current = $this->squad($this->round());
         $this->place($current);
         $query = 'mutation($id: ID!, $scenario: ID) {
-            validateQualificationEligibility(teamRoundId: $id, scenarioId: $scenario) { name status uncountedRounds { name } }
+            validateQualificationEligibility(teamRoundId: $id, scenarioId: $scenario) { players { name status uncountedRounds { name } } }
         }';
         foreach ([$this->round(), $this->round(['clubhouse_id' => Clubhouse::factory()->create()->id])] as $other) {
             $scenario = $other->scenarios()->create(['name' => 'Private kladde', 'is_official' => false]);
@@ -196,6 +196,35 @@ class ValidateQualificationEligibilityTest extends TestCase
             ->assertGraphQLErrorMessage('This action is unauthorized.')->assertDontSee('Anders');
         auth('api')->forgetUser();
         $this->graphQL($query, ['id' => $current->team_round_id])->assertGraphQLErrorMessage('Unauthenticated.');
+    }
+
+    #[Test]
+    public function the_check_does_not_apply_when_no_squad_is_covered_and_says_why(): void
+    {
+        foreach ([
+            'a covered Squad' => [12, [['2. division', false]], null],
+            'a covered Squad next to a Paper Squad' => [12, [['3. division', true], ['Danmarksserien', false]], null],
+            'only Paper Squads' => [12, [['2. division', true]], 'PAPER_SQUADS_ONLY'],
+            'a round before the qualification' => [11, [['2. division', false]], 'ROUND_NOT_COVERED'],
+            'an unknown tier before the qualification' => [11, [['Ukendt række', false]], 'ROUND_NOT_COVERED'],
+            'a tier outside the rule' => [12, [['1. division', false], ['2. division', true]], 'TIER_NOT_COVERED'],
+            'a tier outside the rule without a round' => [null, [['Badmintonligaen', false]], 'TIER_NOT_COVERED'],
+            'a covered tier before the qualification next to one outside' => [11, [['2. division', false], ['Serie 1', false]], 'ROUND_NOT_COVERED'],
+            // A missing fact that decides applicability is Kan ikke kontrolleres, not Gælder ikke.
+            'a covered tier without a round' => [null, [['2. division', false]], null],
+            'an unknown tier in the qualification' => [12, [['Ukendt række', false]], null],
+        ] as $case => [$number, $squads, $expected]) {
+            $round = $this->round(['round' => $number]);
+            foreach ($squads as [$tier, $paper]) {
+                $squad = $this->squad($round, Team::factory()->withCustomTier($tier)->create(['clubhouse_id' => $this->clubhouse->id]));
+                $squad->update(['is_paper_squad' => $paper]);
+                $this->place($squad);
+            }
+            $this->graphQL('mutation($id: ID!) { validateQualificationEligibility(teamRoundId: $id) { notApplicableReason } }', ['id' => $round->id])
+                ->assertGraphQLErrorFree()
+                ->assertJsonPath('data.validateQualificationEligibility.notApplicableReason', $expected, $case);
+            $round->delete();
+        }
     }
 
     private function round(array $attributes = []): TeamRound
@@ -220,9 +249,9 @@ class ValidateQualificationEligibilityTest extends TestCase
     private function check(Squad $squad, ?int $scenarioId = null): TestResponse
     {
         return $this->graphQL('mutation($id: ID!, $scenario: ID) {
-            validateQualificationEligibility(teamRoundId: $id, scenarioId: $scenario) {
+            validateQualificationEligibility(teamRoundId: $id, scenarioId: $scenario) { players {
                 squadIndex refId name status incompleteReasons uncountedRounds { teamRoundId name round }
-            }
+            } }
         }', ['id' => $squad->team_round_id, 'scenario' => $scenarioId])->assertGraphQLErrorFree();
     }
 }

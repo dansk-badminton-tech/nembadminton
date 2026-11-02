@@ -159,29 +159,8 @@
                         </div>
                     </b-message>
 
-                    <ValidationStatus :incomplete-team="resolveIncompleteTeam"
-                                      :invalid-category="resolveInvalidCategory"
-                                      :invalid-level="resolveInvalidLevel"
-                                      :basic-squads="validateBasicSquads"
-                                      :invalid-category-list="playingToHighSquadList"
-                                      :invalid-level-list="playingToHighList"
-                                      :reserve-findings="reserveFindings"
-                                      :show-reserves="hasReserves"
-                                      :paper-squad-validation="paperSquadValidation"
-                                      :final-round-eligibility="finalRoundValidation.findings"
-                                      :final-round-validation-status="showFinalRoundControl ? finalRoundValidation.status : null"
-                                      :final-round-validation-enabled="finalRoundValidation.enabled"
-                                      @update:finalRoundValidationEnabled="onFinalRoundValidationEnabledChange"
-                                      :playoff-participation="playoffParticipationValidation.findings"
-                                      :playoff-participation-status="showPlayoffParticipationControl ? playoffParticipationValidation.status : null"
-                                      @revalidate="refreshTeam"
-                                      :show-paper-squads="hasPaperSquad"
-                                      :ignore-incomplete-team="ignoreIncompleteTeam"
-                                      @update:ignoreIncompleteTeam="onIgnoreIncompleteTeamChange"/>
-                    <QualificationEligibilityStatus v-if="showQualificationControl"
-                                                    :validation="qualificationValidation"
-                                                    @enabled-change="onQualificationValidationEnabledChange"
-                                                    @revalidate="refreshTeam" />
+                    <CheckPanel :statuses="checkStatuses" :requests="checkRequests"
+                                @toggle="onCheckSwitch" @retry="validate" @revalidate="refreshTeam"/>
                     <TeamTable :confirm-delete="deleteTeam"
                                :delete-player="deletePlayerFromCategory"
                                :add-player="addPlayer"
@@ -214,7 +193,7 @@
 
 <script>
 import gql from "graphql-tag"
-import {computed} from "vue"
+import {computed, markRaw} from "vue"
 import {
     containsMen,
     containsWomen, extractErrorMessages,
@@ -229,14 +208,12 @@ import ValidateReservesMutation from "../../../queries/validateReserves.graphql"
 import ValidatePaperSquadsMutation from "../../../queries/validatePaperSquads.graphql"
 import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFinalRoundEligibility.graphql"
 import ValidateQualificationEligibilityMutation from "../../../queries/validateQualificationEligibility.graphql"
-import QualificationEligibilityStatus from './QualificationEligibilityStatus.vue'
 import ValidatePlayoffParticipationMutation from "../../../queries/validatePlayoffParticipation.graphql"
-import {hasPaperSquad} from "./paper-squads.js"
-import {showPlayoffParticipationControl} from "./playoff-participation.js"
-import {createValidationState, resetValidation, runValidation, setValidationEnabled, showFinalRoundControl} from './final-round-validation.mjs'
+import {checkStatuses} from "./checks/check-status.mjs"
+import {browserStorage, readCheckSwitches, writeCheckSwitches} from "./checks/check-switches.mjs"
+import {currentUser} from "@/store/user"
+import CheckPanel from "./CheckPanel.vue"
 import {
-    hasInvalidCategory,
-    hasInvalidLevel,
     wrapInTeamAndSquads,
     wrapSquadsInTeamWithoutLeague,
     timeToMonth
@@ -244,7 +221,6 @@ import {
 import AddTeamsButtons from "./AddTeamsButtons.vue";
 import ShareLinkModal from "./ShareLinkModal.vue";
 import PlayersListSearch from "./PlayersListSearch.vue";
-import ValidationStatus from "./ValidationStatus.vue";
 import RankingVersionSelect from "../common/RankingVersionSelect.vue";
 import TeamTable from "./TeamTable.vue";
 import {createLineupSession} from "./lineup-session.js";
@@ -286,8 +262,7 @@ export default {
         AddTeamsButtons,
         ShareLinkModal,
         PlayersListSearch,
-        ValidationStatus,
-        QualificationEligibilityStatus,
+        CheckPanel,
         RankingVersionSelect,
         TeamTable,
         TeamRoundSettingsModal,
@@ -315,53 +290,28 @@ export default {
                 return club.name1
             }).join(', ')
         },
-        resolveIncompleteTeam() {
-            if (this.ignoreIncompleteTeam) {
-                return null
-            }
-            if (this.validateBasicSquads.length === 0) {
-                return null
-            }
-            return this.validateBasicSquads.find(data => data.missingPlayerInCategory === true || data.spotsFulfilled === false) !== undefined
+        lineupKey() {
+            return `${this.session.teamRoundId}:${this.session.scenarioId ?? ''}`
         },
-        resolveInvalidCategory() {
-            if (this.errorValidatingCategory) {
-                return null
-            }
-            if (!this.canValidateSquads) {
-                return null
-            }
-            return hasInvalidCategory(this.playingToHighSquadList)
+        // Whose choice of Check switches applies: the user's for this Team Round, shared by all its Lineups.
+        checkSwitchesScope() {
+            return {userId: currentUser.userId, teamRoundId: this.teamRoundId}
         },
-        resolveInvalidLevel() {
-            if (this.errorValidatingLevel) {
-                return null
-            }
-            if (!this.canValidateCrossSquads) {
-                return null
-            }
-            return hasInvalidLevel(this.playingToHighList)
+        checkStatuses() {
+            return checkStatuses({teamRound: this.teamRound, switches: this.checkSwitches, responses: this.checkResponses})
         },
-        hasReserves() {
-            return (this.teamRound?.squads || []).some(squad => squad.reserves?.length)
+        // The responses the team table marks players from.
+        validateBasicSquads() {
+            return this.checkResponses.basicSquads ?? []
         },
-        hasPaperSquad() {
-            return hasPaperSquad(this.teamRound?.squads)
+        playingToHighList() {
+            return this.checkResponses.crossSquads?.findings ?? []
         },
-        showFinalRoundControl() {
-            return showFinalRoundControl(this.teamRound)
+        playingToHighSquadList() {
+            return this.checkResponses.squads?.findings ?? []
         },
-        showQualificationControl() {
-            if (this.teamRound?.round != null && Number(this.teamRound.round) !== 12) return false
-            return (this.teamRound?.squads ?? []).some(squad => {
-                if (squad.isPaperSquad) return false
-                const tier = (squad.effectiveTier ?? '').trim()
-                // Known excluded tiers stay hidden; unknown context is sent to the server for a cannot-verify result.
-                return !/^(?:badmintonligaen\b|1\.\s*division\b|(?:\d+\.\s*)?serie\b|(?:københavns|sjællands|kreds)serien\b|lf-serien\b)/i.test(tier)
-            })
-        },
-        showPlayoffParticipationControl() {
-            return showPlayoffParticipationControl(this.teamRound)
+        tooYoungPlayers() {
+            return this.checkResponses.tooYoung ?? []
         },
         usedTeamIds() {
             return (this.teamRound?.squads || [])
@@ -416,16 +366,16 @@ export default {
     data() {
         return {
             titleStack: ['Admin', 'Holdrunde'],
-            validateBasicSquads: [],
-            playingToHighList: [],
-            playingToHighSquadList: [],
-            tooYoungPlayers: [],
-            reserveFindings: [],
-            paperSquadValidation: null,
-            finalRoundValidation: createValidationState(),
-            qualificationValidation: createValidationState(),
-            // Unlike the final-round check it needs no Team links, so it runs without being switched on.
-            playoffParticipationValidation: createValidationState(true),
+            // Each Check request's last answer, keyed like CHECKS[].requests in checks/check-status.mjs; null or missing
+            // until it answers.
+            checkResponses: {},
+            // Each Check request's state: 'loading', 'failed' or 'done'.
+            checkRequests: {},
+            // Apollo's created hook can deliver cached results before our own created hook.
+            // Initialize the non-reactive run counters before any query can start validation.
+            checkRuns: markRaw({}),
+            // The "Kontrollér dette tjek" switches, remembered in this browser; on unless switched off.
+            checkSwitches: readCheckSwitches(browserStorage(), {userId: currentUser.userId, teamRoundId: this.teamRoundId}),
             teamCount: 1,
             players: [],
             // Created here, so the teamRound query below starts with its key.
@@ -439,17 +389,25 @@ export default {
             teamRound: {
                 squads: [],
                 club: {}
-            },
-            ignoreIncompleteTeam: false,
-            canValidateCrossSquads: false,
-            canValidateSquads: false,
-            errorValidatingCategory: false,
-            errorValidatingLevel: false
+            }
         }
     },
     watch: {
         teamRoundId() {
             this.session = this.createSession()
+        },
+        // The user became known, or another Team Round: its remembered switches apply.
+        checkSwitchesScope(scope) {
+            const switches = readCheckSwitches(browserStorage(), scope)
+            if (Object.keys(switches).every(key => switches[key] === this.checkSwitches[key])) return
+            this.checkSwitches = switches
+            if (this.version !== null) this.validate()
+        },
+        // Another Lineup: the last answers belong to the one before.
+        lineupKey() {
+            for (const name of Object.keys(this.checkRuns)) this.checkRuns[name]++
+            this.checkResponses = {}
+            this.checkRequests = {}
         }
     },
     apollo: {
@@ -706,17 +664,12 @@ export default {
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
         },
-        onIgnoreIncompleteTeamChange(value) {
-            this.ignoreIncompleteTeam = value
+        // A Check's "Kontrollér dette tjek" switch, remembered for this user and Team Round.
+        onCheckSwitch(key, value) {
+            this.checkSwitches = {...this.checkSwitches, [key]: value}
+            writeCheckSwitches(browserStorage(), this.checkSwitchesScope, this.checkSwitches)
+            if (value && key !== 'complete') this.checkResponses = {...this.checkResponses, [key]: null}
             this.validate()
-        },
-        onFinalRoundValidationEnabledChange(value) {
-            setValidationEnabled(this.finalRoundValidation, value)
-            if (value) this.refreshTeam()
-        },
-        onQualificationValidationEnabledChange(value) {
-            setValidationEnabled(this.qualificationValidation, value)
-            if (value) this.refreshTeam()
         },
         playerMove(event, player, sourceSquad, sourceCategory, targetSquad, targetCategory) {
             return this.session.move(player, this.place(targetSquad, targetCategory)).catch(shownByOnError)
@@ -775,256 +728,153 @@ export default {
         deletePlayerFromCategory(squad, category, player) {
             return this.session.removePlayer(player).catch(shownByOnError)
         },
-        validateSquads() {
-            this.errorValidatingCategory = false;
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation validateSquads($input: [ValidateTeam!]!){
-                            validateSquads(input: $input){
+        // Runs one Check request and keeps its answer in checkResponses. An answer that a newer run of the same request
+        // has replaced is dropped. A failed request is a panel state ("Prøv igen"), so it shows no snackbar.
+        runCheckRequest(name, fetch) {
+            const run = (this.checkRuns[name] ?? 0) + 1
+            this.checkRuns[name] = run
+            this.checkRequests = {...this.checkRequests, [name]: 'loading'}
+            const current = () => this.checkRuns[name] === run
+            return fetch()
+                .then(response => {
+                    if (!current()) return
+                    if (response === undefined || response === null) throw new Error(`No answer from ${name}`)
+                    this.checkResponses = {...this.checkResponses, [name]: response}
+                    this.checkRequests = {...this.checkRequests, [name]: 'done'}
+                })
+                .catch(() => {
+                    if (!current()) return
+                    // The last answer is outdated now; the panel offers "Prøv igen" instead.
+                    this.checkResponses = {...this.checkResponses, [name]: null}
+                    this.checkRequests = {...this.checkRequests, [name]: 'failed'}
+                })
+        },
+        // A request the panel doesn't need: its Check doesn't apply or is waiting.
+        skipCheckRequest(name) {
+            this.checkRuns[name] = (this.checkRuns[name] ?? 0) + 1
+            this.checkResponses = {...this.checkResponses, [name]: null}
+            const {[name]: _skipped, ...requests} = this.checkRequests
+            this.checkRequests = requests
+        },
+        // The Check Status as far as it is known from these responses: without any, Gælder ikke, Slået fra or null.
+        knownStatus(key, responses = {}) {
+            return checkStatuses({teamRound: this.teamRound, switches: this.checkSwitches, responses})
+                .find(check => check.key === key).status
+        },
+        mutationData(mutation, variables, field) {
+            return this.$apollo.mutate({mutation, variables}).then(({data}) => data?.[field])
+        },
+        // Runs every Check that applies and is switched on. Niveau and Kategori wait for Hold fuldendt, unless it is
+        // switched off.
+        validate() {
+            const squads = this.teamRound.squads
+            const lineup = {teamRoundId: this.teamRoundId, scenarioId: this.session.scenarioId}
+            // The requests of the Checks that may not apply to this Lineup.
+            const mayNotApply = {
+                reserves: () => this.mutationData(ValidateReservesMutation, {input: wrapInTeamAndSquads(squads)}, 'validateReserves'),
+                paperSquads: () => this.mutationData(ValidatePaperSquadsMutation, {teamRoundId: this.teamRoundId, input: wrapInTeamAndSquads(squads)}, 'validatePaperSquads'),
+                finalRound: () => this.mutationData(ValidateFinalRoundEligibilityMutation, lineup, 'validateFinalRoundEligibility'),
+                qualification: () => this.mutationData(ValidateQualificationEligibilityMutation, lineup, 'validateQualificationEligibility'),
+                playoff: () => this.mutationData(ValidatePlayoffParticipationMutation, lineup, 'validatePlayoffParticipation')
+            }
+            // Only Reserver and Papirhold are known to be Gælder ikke without asking. The history Checks are asked even
+            // when switched off: the server decides whether they apply, and Gælder ikke wins over Slået fra.
+            for (const [name, fetch] of Object.entries(mayNotApply)) {
+                if (this.knownStatus(name) === 'not-applicable') this.skipCheckRequest(name)
+                else this.runCheckRequest(name, fetch)
+            }
+            this.validateTooYoungPlayers()
+            const basicSquads = this.runCheckRequest('basicSquads', () => this.mutationData(gql`
+                mutation validateBasicSquads($input: [ValidateTeam!]!){
+                    validateBasicSquads(input: $input){
+                        index
+                        spotsFulfilled
+                    }
+                }
+            `, {input: wrapInTeamAndSquads(squads)}, 'validateBasicSquads'))
+            if (this.checkSwitches.complete === false) {
+                this.validateSquadOrder()
+                return
+            }
+            basicSquads.then(() => {
+                if (this.checkRequests.basicSquads !== 'done') return
+                if (this.knownStatus('level', {basicSquads: this.checkResponses.basicSquads}) === 'waiting') {
+                    this.skipCheckRequest('squads')
+                    this.skipCheckRequest('crossSquads')
+                } else {
+                    this.validateSquadOrder()
+                }
+            })
+        },
+        // Kategori (validateSquads) and Niveau (validateTeamRoundCrossSquads).
+        validateSquadOrder() {
+            this.runCheckRequest('squads', () => this.mutationData(gql`
+                mutation validateSquads($input: [ValidateTeam!]!){
+                    validateSquads(input: $input){
+                        playersWithoutPoints {
+                            squadIndex
+                            refId
+                            name
+                            category
+                        }
+                        findings {
+                            name
+                            id
+                            refId
+                            category
+                            gender
+                            isYouthPlayer
+                            hasYouthPlayerPartner
+                            belowPlayer {
+                                name
+                                id
+                                refId
+                            }
+                        }
+                    }
+                }
+            `, {input: wrapSquadsInTeamWithoutLeague(this.teamRound.squads)}, 'validateSquads'))
+            // The server reads the lineup itself, with the points on the TeamRound's ranking (§38 stk. 4).
+            this.runCheckRequest('crossSquads', () => this.mutationData(gql`
+                mutation validateTeamRoundCrossSquads($teamRoundId: ID!, $scenarioId: ID){
+                    validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId){
+                        findings {
+                            name
+                            id
+                            refId
+                            isYouthPlayer
+                            belowPlayer {
                                 name
                                 id
                                 refId
                                 category
-                                gender
-                                isYouthPlayer
-                                hasYouthPlayerPartner
-                                belowPlayer {
-                                    name
-                                    id
-                                    refId
-                                }
+                                balance
                             }
                         }
-                    `,
-                    variables: {
-                        input: wrapSquadsInTeamWithoutLeague(this.teamRound.squads)
-                    }
-                })
-                .then(({data}) => {
-                    this.playingToHighSquadList = data.validateSquads;
-                })
-                .catch(({graphQLErrors}) => {
-                    this.errorValidatingCategory = true;
-                    const errorMessages = extractErrorMessages(graphQLErrors);
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 5000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: 'Noget gik galt under intern valideringen af holdet. <br/><br /> ' + errorMessages.join(', ')
-                        })
-                })
-        },
-        validateCrossSquads() {
-            this.errorValidatingLevel = false
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation validateTeamRoundCrossSquads($teamRoundId: ID!, $scenarioId: ID){
-                            validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId){
-                                name
-                                id
-                                refId
-                                isYouthPlayer
-                                belowPlayer {
-                                    name
-                                    id
-                                    refId
-                                    category
-                                    balance
-                                }
-                            }
+                        unknownPairs {
+                            player { refId name squadIndex }
+                            higherPlayer { refId name squadIndex }
+                            category
                         }
-                    `,
-                    // The server reads the lineup itself, with the points on the TeamRound's ranking (§38 stk. 4).
-                    variables: {
-                        teamRoundId: this.teamRoundId,
-                        scenarioId: this.session.scenarioId
                     }
-                })
-                .then(({data}) => {
-                    this.playingToHighList = data.validateTeamRoundCrossSquads;
-                })
-                .catch((error) => {
-                    this.errorValidatingLevel = true
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Noget gik galt under valideringen af holdet (crossSquadsValidate)`
-                        })
-                })
+                }
+            `, {teamRoundId: this.teamRoundId, scenarioId: this.session.scenarioId}, 'validateTeamRoundCrossSquads'))
         },
         validateTooYoungPlayers() {
+            // Without the Season's start year the age can't be told; as before, no player is marked.
             if (!this.teamRound.seasonStartYear) {
-                this.tooYoungPlayers = [];
-                return;
-            }
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation validateTooYoungPlayers($input: [ValidateTeam!]!, $seasonStartYear: Int!){
-                            validateTooYoungPlayers(input: $input, seasonStartYear: $seasonStartYear){
-                                id
-                                refId
-                                name
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: wrapInTeamAndSquads(this.teamRound.squads),
-                        seasonStartYear: this.teamRound.seasonStartYear
-                    }
-                })
-                .then(({data}) => {
-                    this.tooYoungPlayers = data.validateTooYoungPlayers;
-                })
-                .catch(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validateTooYoungPlayers)`
-                        })
-                })
-        },
-        validateReserves() {
-            this.$apollo.mutate(
-                {
-                    mutation: ValidateReservesMutation,
-                    variables: {
-                        input: wrapInTeamAndSquads(this.teamRound.squads)
-                    }
-                })
-                .then(({data}) => {
-                    this.reserveFindings = data.validateReserves;
-                })
-                .catch(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validateReserves)`
-                        })
-                })
-        },
-        validatePaperSquads() {
-            if (!this.hasPaperSquad) {
-                this.paperSquadValidation = null;
-                return;
-            }
-            this.$apollo.mutate(
-                {
-                    mutation: ValidatePaperSquadsMutation,
-                    variables: {
-                        teamRoundId: this.teamRoundId,
-                        input: wrapInTeamAndSquads(this.teamRound.squads)
-                    }
-                })
-                .then(({data}) => {
-                    this.paperSquadValidation = data.validatePaperSquads;
-                })
-                .catch(() => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validatePaperSquads)`
-                        })
-                })
-        },
-        validate() {
-            this.validateFinalRoundEligibility();
-            this.validateQualificationEligibility();
-            this.validatePlayoffParticipation();
-            this.validateTooYoungPlayers();
-            this.validateReserves();
-            this.validatePaperSquads();
-            this.$apollo.mutate(
-                {
-                    mutation: gql`
-                        mutation validateBasicSquads($input: [ValidateTeam!]!){
-                            validateBasicSquads(input: $input){
-                                index
-                                spotsFulfilled
-                            }
-                        }
-                    `,
-                    variables: {
-                        input: wrapInTeamAndSquads(this.teamRound.squads)
-                    }
-                })
-                .then(({data}) => {
-                    this.validateBasicSquads = data.validateBasicSquads;
-                    if (!this.resolveIncompleteTeam || this.ignoreIncompleteTeam) {
-                        this.canValidateCrossSquads = true
-                        this.canValidateSquads = true
-                        this.validateSquads()
-                        this.validateCrossSquads();
-                    } else {
-                        this.canValidateCrossSquads = false
-                        this.canValidateSquads = false
-                    }
-                })
-                .catch((error) => {
-                    this.$buefy.snackbar.open(
-                        {
-                            duration: 4000,
-                            type: 'is-danger',
-                            queue: false,
-                            message: `Noget gik galt under valideringen af holdet (validateSquad)`
-                        })
-                })
-        },
-        validateFinalRoundEligibility() {
-            if (!this.showFinalRoundControl) {
-                resetValidation(this.finalRoundValidation)
+                this.runCheckRequest('tooYoung', () => Promise.resolve([]))
                 return
             }
-            return runValidation(this.finalRoundValidation, async () => {
-                const {data} = await this.$apollo.mutate({
-                    mutation: ValidateFinalRoundEligibilityMutation,
-                    variables: {
-                        teamRoundId: this.teamRoundId,
-                        scenarioId: this.session.scenarioId
+            this.runCheckRequest('tooYoung', () => this.mutationData(gql`
+                mutation validateTooYoungPlayers($input: [ValidateTeam!]!, $seasonStartYear: Int!){
+                    validateTooYoungPlayers(input: $input, seasonStartYear: $seasonStartYear){
+                        id
+                        refId
+                        name
                     }
-                })
-                return data?.validateFinalRoundEligibility
-            })
-        },
-        validateQualificationEligibility() {
-            if (!this.showQualificationControl) {
-                resetValidation(this.qualificationValidation)
-                return
-            }
-            return runValidation(this.qualificationValidation, async () => {
-                const {data} = await this.$apollo.mutate({
-                    mutation: ValidateQualificationEligibilityMutation,
-                    variables: {teamRoundId: this.teamRoundId, scenarioId: this.session.scenarioId}
-                })
-                return data?.validateQualificationEligibility
-            })
-        },
-        validatePlayoffParticipation() {
-            if (!this.showPlayoffParticipationControl) {
-                resetValidation(this.playoffParticipationValidation)
-                return
-            }
-            return runValidation(this.playoffParticipationValidation, async () => {
-                const {data} = await this.$apollo.mutate({
-                    mutation: ValidatePlayoffParticipationMutation,
-                    variables: {
-                        teamRoundId: this.teamRoundId,
-                        scenarioId: this.session.scenarioId
-                    }
-                })
-                return data?.validatePlayoffParticipation
-            })
+                }
+            `, {input: wrapInTeamAndSquads(this.teamRound.squads), seasonStartYear: this.teamRound.seasonStartYear}, 'validateTooYoungPlayers'))
         },
         deleteTeam(targetSquad) {
             this.$buefy.dialog.confirm(

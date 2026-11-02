@@ -43,20 +43,19 @@ class Validate
 
         $squads = $teams->pluck('squad');
         $squads = $this->deserializeSquads($squads);
-        $playingToHigh = $this->teamValidator->validateCrossSquadsLeagueV3($squads);
 
-        return $playingToHigh;
+        return $this->teamValidator->validateCrossSquadsWithUnknownPairs($squads)['findings'];
     }
 
     /**
      * The TeamRound's lineup across its Squads, read from the server with the points on its Ranking List (§38 stk. 4).
      *
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return Collection<int, mixed>
+     * @return array{findings: Collection<int, mixed>, unknownPairs: list<array<string, mixed>>}
      *
      * @throws ExceptionInterface
      */
-    public function validateTeamRoundCrossSquads(mixed $rootValue, array $args): Collection
+    public function validateTeamRoundCrossSquads(mixed $rootValue, array $args): array
     {
         $teamRound = TeamRound::query()->findOrFail($args['teamRoundId']);
         $scenarioId = isset($args['scenarioId']) ? (int) $args['scenarioId'] : null;
@@ -64,29 +63,20 @@ class Validate
         $lineup = new Collection($this->crossSquadsLineup->of($teamRound, $scenarioId));
         $squads = $this->deserializeSquads($lineup);
 
-        return $this->teamValidator->validateCrossSquadsLeagueV3($squads);
+        return $this->teamValidator->validateCrossSquadsWithUnknownPairs($squads);
     }
 
     /**
-     * @throws ExceptionInterface
+     * §38 stk. 2–3 for the lineup the client sent. It returns only names from that lineup.
+     *
+     * @param  array{input: array<int, array<string, mixed>>}  $args
+     * @return array{playersWithoutPoints: list<array<string, mixed>>, findings: array<int, mixed>}
      */
-    public function validateSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): array
+    public function validateSquads(mixed $rootValue, array $args): array
     {
-        $squads = new Collection($args['input']);
-        $squads = $squads->pluck('squad');
-        $squads = $this->deserializeSquads($squads);
-        //        $this->teamValidator->validateSquads($squads);
+        $squads = (new Collection($args['input']))->pluck('squad');
 
-        $playingToHigh = [];
-        foreach ($squads as $squad) {
-            // §38 stk. 7: only the paper-team rule holds for a Paper Squad's own lineup, see validatePaperSquads.
-            if ($squad->isPaperSquad) {
-                continue;
-            }
-            $playingToHigh = array_merge($this->teamValidator->validateSquad($squad), $playingToHigh);
-        }
-
-        return $playingToHigh;
+        return $this->teamValidator->validateSquads($this->deserializeSquads($squads));
     }
 
     public function validateBasicSquads($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Collection

@@ -40,7 +40,7 @@ function hasUncountedRounds({matchCount, requiredMatchCount, uncountedRounds}) {
     return matchCount < requiredMatchCount && uncountedRounds.length > 0
 }
 
-function playerMessage(player) {
+export function paperSquadPlayerMessage(player) {
     const {squadIndex, name, unplayedCategories, matchCount, requiredMatchCount, teamName, uncountedRounds} = player
     const breaches = []
     if (unplayedCategories.length) {
@@ -59,7 +59,7 @@ export function paperSquadMessages(validation) {
     if (validation.missingRound) {
         return ['Holdrunden mangler rundenummer, så papirholdsreglen (§38 stk. 7) kan ikke kontrolleres. Udfyld rundenummeret.']
     }
-    return validation.players.map(playerMessage)
+    return validation.players.map(paperSquadPlayerMessage)
 }
 
 // validation is the PaperSquadValidation from validatePaperSquads, or null before it has run.

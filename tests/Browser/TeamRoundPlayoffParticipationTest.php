@@ -20,7 +20,7 @@ class TeamRoundPlayoffParticipationTest extends DuskTestCase
 
     protected $seeder = 'TestingDataSeeder';
 
-    public function test_the_warning_shows_without_switching_it_on_and_does_not_block_saving(): void
+    public function test_the_check_fails_without_switching_it_on_and_does_not_block_saving(): void
     {
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
         $round = $this->playoffRoundWithMember('1. division', $member);
@@ -28,22 +28,21 @@ class TeamRoundPlayoffParticipationTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitForTextIn('@playoff-participation-warnings', $member->name)
-                ->assertSeeIn('@validation-playoff-participation', 'Advarsel')
-                ->assertSeeIn('@playoff-participation-warnings', "Hold 1: {$member->name} har 0 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).")
-                ->assertPresent('@playoff-participation-guide')
+                ->waitForCheckStatus('playoff', 'Fejl')
+                ->waitForCheckDetails('playoff', "Hold 1: {$member->name} har 0 af 3 kampe i sæsonen og har ikke spillet for klubben senest 20. oktober (§32 stk. 1).")
+                ->assertPresent('@check-guide-playoff')
                 ->click('@settings-button')->waitFor('@settings-name')
                 ->type('@settings-name', 'Saved despite playoff warning')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Saved despite playoff warning')
-                ->waitForTextIn('@playoff-participation-warnings', $member->name)
+                ->waitForCheckDetails('playoff', $member->name)
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
-                ->waitForTextIn('@validation-playoff-participation', 'OK')
-                ->assertMissing('@playoff-participation-warnings');
+                ->waitForCheckStatus('playoff', 'OK')
+                ->assertDontSeeIn('@check-details-playoff', $member->name);
         });
     }
 
-    public function test_the_status_is_hidden_where_the_requirement_cannot_apply(): void
+    public function test_the_check_does_not_apply_where_the_requirement_cannot_apply(): void
     {
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
         $round = $this->playoffRoundWithMember('2. division', $member);
@@ -52,8 +51,7 @@ class TeamRoundPlayoffParticipationTest extends DuskTestCase
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitFor('@team-table-section')
-                ->assertMissing('@playoff-participation-control')
-                ->assertMissing('@playoff-participation-warnings');
+                ->assertCheckNotApplicable('playoff', 'Gælder kun 1. division og Badmintonligaen.');
         });
     }
 

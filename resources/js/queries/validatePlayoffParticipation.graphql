@@ -1,17 +1,20 @@
 mutation validatePlayoffParticipation($teamRoundId: ID!, $scenarioId: ID) {
     validatePlayoffParticipation(teamRoundId: $teamRoundId, scenarioId: $scenarioId) {
-        squadIndex
-        refId
-        name
-        status
-        incompleteReasons
-        matchCount
-        requiredMatchCount
-        playedByDeadline
-        uncountedRounds {
-            teamRoundId
+        notApplicableReason
+        players {
+            squadIndex
+            refId
             name
-            round
+            status
+            incompleteReasons
+            matchCount
+            requiredMatchCount
+            playedByDeadline
+            uncountedRounds {
+                teamRoundId
+                name
+                round
+            }
         }
     }
 }

@@ -20,18 +20,19 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
 
     protected $seeder = 'TestingDataSeeder';
 
-    public function test_the_matching_status_control_can_be_refreshed_and_disabled_only_in_the_client(): void
+    private const NOT_COVERED = 'Gælder kun runde 11–12';
+
+    public function test_the_check_starts_on_can_be_run_again_and_its_switch_is_remembered(): void
     {
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
         [$round] = $this->finalRoundWithMembers(['name' => 'Client validation control'], [$member]);
 
         $this->browse(function (Browser $browser) use ($round, $member) {
-            $control = '.field.is-grouped > [dusk="final-round-validation-control"]';
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
-                ->assertMissing('@final-round-warnings')
-                ->assertDisabled('@revalidate-final-round');
+                ->waitForCheckDetails('finalRound', $member->name)
+                ->assertSeeIn('@check-status-finalRound', 'Fejl')
+                ->assertSeeIn('@check-section-action', 'Tidligere hold');
             $browser->script(<<<'JS'
                 const originalFetch = window.fetch;
                 window.finalRoundRequests = [];
@@ -43,30 +44,29 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                     return originalFetch(url, options);
                 };
             JS);
-            $browser->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
+            $browser->click('@check-revalidate-finalRound')
+                ->waitUntil('window.finalRoundRequests.length > 0')
                 ->assertScript('Object.keys(window.finalRoundRequests[0]).sort().join(",")', 'scenarioId,teamRoundId')
                 ->assertScript('window.finalRoundRequests[0].teamRoundId', $round->id)
                 ->assertScript('window.finalRoundRequests[0].scenarioId', null)
-                ->assertPresent($control.' .tags.has-addons > .tag.is-dark.is-medium')
-                ->assertPresent($control.' [dusk="validation-final-round"].tag.is-medium.is-warning')
-                ->assertAttribute('@revalidate-final-round', 'aria-label', 'Kontrollér tidligere hold igen')
-                ->assertSeeIn('@validation-final-round', 'Advarsel')
-                ->click('@revalidate-final-round')
-                ->waitForTextIn('@validation-final-round', 'Advarsel')
-                ->click('@toggle-final-round-check')
-                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
-                ->assertMissing('@final-round-warnings')
-                ->assertDisabled('@revalidate-final-round')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->assertSeeIn('@check-details-finalRound', 'Slå tjekket til herunder.')
+                ->assertDontSeeIn('@check-details-finalRound', $member->name)
+                ->assertMissing('@check-revalidate-finalRound')
+                // The choice belongs to the Team Round, not to its round number.
                 ->changeRoundNumber(12)
-                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
-                ->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
-                ->assertEnabled('@revalidate-final-round')
-                ->refresh()
-                ->waitForTextIn('@validation-final-round', 'Deaktiveret')
-                ->assertDisabled('@revalidate-final-round')
-                ->assertMissing('@final-round-warnings');
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->switchCheck('finalRound')
+                ->waitForCheckDetails('finalRound', $member->name)
+                ->assertPresent('@check-revalidate-finalRound')
+                ->switchCheck('finalRound')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->refresh()->on(new TeamFightEditPage)
+                ->waitForCheckStatus('finalRound', 'Slået fra')
+                ->openCheck('finalRound')
+                ->assertDontSeeIn('@check-details-finalRound', $member->name);
         });
     }
 
@@ -84,8 +84,9 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitFor('@scenario-selector-dropdown')
                 ->selectScenario('Udkast')->assertScenarioSelected('Udkast', false);
+            // Without Squads every Check waits for the first team, also after deleting a draft.
             $browser->confirmScenarioDeletion()->waitUntilMissing('@scenario-selector-dropdown')
-                ->assertMissing('@final-round-validation-control')
+                ->waitForCheckStatus('finalRound', 'Venter')
                 ->assertMissing('@scenario-draft-warning-banner');
         });
     }
@@ -98,13 +99,12 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
+                ->waitForCheckDetails('finalRound', $member->name)
                 ->createScenarioFromOfficial('Tomt udkast')
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
+                ->waitForCheckStatus('finalRound', 'OK')
                 ->selectScenario('Officiel opstilling')
-                ->waitForTextIn('@final-round-warnings', $member->name);
+                ->waitForCheckDetails('finalRound', $member->name);
 
             // Delay real HTTP responses at the network boundary, not Vue/Apollo internals.
             $browser->script(<<<'JS'
@@ -127,25 +127,27 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                     return new Promise(resolve => { network.release[operation] = () => resolve(response); });
                 };
             JS);
-            $browser->click('[dusk="revalidate-final-round"]')
+            // While the request is held, the row keeps its last answer and spins.
+            $browser->click('@check-revalidate-finalRound')
                 ->waitUntil('typeof window.eligibilityNetwork.release.validateFinalRoundEligibility === "function"')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'Afventer')
-                ->assertMissing('@final-round-warnings');
+                ->waitFor('[dusk="check-row-finalRound"] .mdi-spin')
+                ->assertSeeIn('@check-status-finalRound', 'Fejl');
             $browser->script('window.eligibilityNetwork.release.validateFinalRoundEligibility()');
-            $browser->waitForTextIn('@final-round-warnings', $member->name);
+            $browser->waitUntilMissing('[dusk="check-row-finalRound"] .mdi-spin')
+                ->assertSeeIn('@check-details-finalRound', $member->name);
             $browser->script('window.eligibilityNetwork.failNext = true');
-            $browser->click('[dusk="revalidate-final-round"]')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'Fejlet')
-                ->assertMissing('@final-round-warnings')
-                ->click('[dusk="revalidate-final-round"]')
-                ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
-                ->waitForTextIn('@final-round-warnings', $member->name);
+            $browser->click('@check-revalidate-finalRound')
+                ->waitForCheckStatus('finalRound', 'Tjekket kunne ikke køre')
+                ->assertDontSeeIn('@check-details-finalRound', $member->name)
+                ->click('@check-retry-finalRound')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->waitForCheckDetails('finalRound', $member->name);
 
             $browser->script('window.eligibilityNetwork.failRoundNext = true');
-            $browser->click('@revalidate-final-round')
+            $browser->click('@check-revalidate-finalRound')
                 ->waitUntil('window.eligibilityNetwork.failRoundNext === false')
-                ->assertSeeIn('@validation-final-round', 'Advarsel')
-                ->assertSeeIn('@final-round-warnings', $member->name);
+                ->assertSeeIn('@check-status-finalRound', 'Fejl')
+                ->assertSeeIn('@check-details-finalRound', $member->name);
         });
     }
 
@@ -173,33 +175,32 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member, $other) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
-                ->assertDontSeeIn('@final-round-warnings', $other->name)
+                ->waitForCheckDetails('finalRound', $member->name)
+                ->assertDontSeeIn('@check-details-finalRound', $other->name)
                 ->createScenarioFromOfficial('Uden divisionsspilleren')
-                ->waitForTextIn('@final-round-warnings', $member->name)
+                ->waitForCheckDetails('finalRound', $member->name)
                 ->removeMemberFromCategory(1, '1. DS', $member->name)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
-                ->assertMissing('@final-round-warnings')
+                ->waitForCheckStatus('finalRound', 'OK')
+                ->assertDontSeeIn('@check-details-finalRound', $member->name)
                 ->selectScenario('Officiel opstilling')
-                ->waitForTextIn('@final-round-warnings', $member->name)
+                ->waitForCheckDetails('finalRound', $member->name)
                 ->openSquadAction(1, 'edit-squad')
                 ->waitFor('[dusk="edit-squad-paper-squad-switch"]')
                 ->click('[dusk="edit-squad-paper-squad-switch"]')
                 ->click('[dusk="edit-squad-save-button"]')
                 ->waitUntilMissing('[dusk="edit-squad-save-button"]')
-                ->waitUntilMissing('@final-round-validation-control')
-                ->assertMissing('@final-round-warnings')
+                ->waitUntilMissing('@check-row-finalRound')
+                ->assertCheckNotApplicable('finalRound', self::NOT_COVERED)
                 ->selectScenario('Uden divisionsspilleren')
-                ->assertMissing('@final-round-validation-control')
+                ->assertCheckNotApplicable('finalRound', self::NOT_COVERED)
                 ->assertSeeIn('[dusk="squad-1"]', 'Papirhold')
                 ->assertDontSeeIn('@team-table-section', $member->name)
                 ->changeRoundNumber(12)
-                ->waitForTextIn('@final-round-warnings', $other->name)
-                ->assertDontSeeIn('@final-round-warnings', $member->name)
+                ->waitForCheckDetails('finalRound', $other->name)
+                ->assertDontSeeIn('@check-details-finalRound', $member->name)
                 ->changeRoundNumber(10)
-                ->waitUntilMissing('@final-round-validation-control')
-                ->assertMissing('@final-round-warnings')
+                ->waitUntilMissing('@check-row-finalRound')
+                ->assertCheckNotApplicable('finalRound', self::NOT_COVERED)
                 ->selectScenario('Officiel opstilling')
                 ->waitForTextIn('@team-table-section', $member->name)
                 ->openSquadAction(1, 'edit-squad')
@@ -207,8 +208,8 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->click('[dusk="edit-squad-paper-squad-switch"]')
                 ->click('[dusk="edit-squad-save-button"]')->waitUntilMissing('[dusk="edit-squad-save-button"]')
                 ->changeRoundNumber(11)
-                ->waitForTextIn('@final-round-warnings', $member->name)
-                ->assertDontSeeIn('@final-round-warnings', $other->name)
+                ->waitForCheckDetails('finalRound', $member->name)
+                ->assertDontSeeIn('@check-details-finalRound', $other->name)
                 ->assertSeeIn('@scenario-selector-dropdown .dropdown-trigger', '(Officiel)');
         });
     }
@@ -226,26 +227,23 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         ]);
 
         $this->browse(function (Browser $browser) use ($round, $earlier, $member, $team) {
-            $finding = '[dusk="final-round-finding-0-'.$member->refId.'"]';
+            $finding = '[dusk="check-finding-finalRound-0-'.$member->refId.'"]';
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud')
-                ->assertSeeIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen')
+                ->waitForCheckDetails('finalRound', 'spilleberettigelse kan ikke verificeres fuldt ud')
+                ->assertSeeIn('@check-details-finalRound', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen')
                 ->assertDontSeeIn($finding, 'har ikke stået på samme eller et lavere hold')
                 ->assertSeeIn($finding, 'Efterår uden holdlink (runde 2)')
-                ->assertSeeIn($finding, 'Tilknyt det aktuelle hold')
-                ->assertAttribute('[dusk="final-round-correction-'.$earlier->id.'"]', 'href', '/app/c-'.$round->clubhouse_id.'/team-fight/'.$earlier->id.'/edit')
-                ->assertVisible('[dusk="final-round-team-link-guide"]')
+                ->assertAttribute('[dusk="check-correction-finalRound-'.$earlier->id.'"]', 'href', '/app/c-'.$round->clubhouse_id.'/team-fight/'.$earlier->id.'/edit')
+                ->assertVisible('@check-guide-finalRound')
                 ->click('@settings-button')->waitFor('@settings-name')
                 ->type('@settings-name', 'Saved despite uncertainty')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Saved despite uncertainty')
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', 'Efterår uden holdlink');
+                ->waitForCheckDetails('finalRound', 'Efterår uden holdlink');
 
             $original = $browser->driver->getWindowHandle();
-            $browser->click('[dusk="final-round-correction-'.$earlier->id.'"]')
+            $browser->click('[dusk="check-correction-finalRound-'.$earlier->id.'"]')
                 ->waitUsing(5, 100, fn () => count($browser->driver->getWindowHandles()) === 2);
             $browser->driver->switchTo()->window(array_values(array_diff($browser->driver->getWindowHandles(), [$original]))[0]);
             $browser->on(new TeamFightEditPage)->waitForText('Efterår uden holdlink')
@@ -256,21 +254,20 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->waitForTextIn('[dusk="squad-0"]', 'Højbjerg 1');
             $browser->driver->close();
             $browser->driver->switchTo()->window($original);
-            $browser->click('[dusk="revalidate-final-round"]')
+            $browser->click('@check-revalidate-finalRound')
                 ->waitUntilMissing($finding)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
-                ->assertDontSeeIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud')
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->assertDontSeeIn('@check-details-finalRound', 'spilleberettigelse kan ikke verificeres fuldt ud')
                 ->assertSeeIn('@team-table-section', $member->name)
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
                 ->waitUntilMissing($finding)->refresh()->on(new TeamFightEditPage)
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold')
+                ->waitForCheckDetails('finalRound', 'har ikke stået på samme eller et lavere hold')
                 ->assertDontSeeIn('@team-table-section', $member->name)
-                ->assertDontSeeIn('@final-round-warnings', 'spilleberettigelse kan ikke verificeres fuldt ud');
+                ->assertDontSeeIn('@check-details-finalRound', 'spilleberettigelse kan ikke verificeres fuldt ud');
         });
     }
 
-    public function test_eligibility_warning_does_not_block_saving_or_editing_the_lineup(): void
+    public function test_an_eligibility_failure_does_not_block_saving_or_editing_the_lineup(): void
     {
         $member = Member::query()->where('refId', '870114-15')->firstOrFail();
         [$round] = $this->finalRoundWithMembers(['name' => 'Final round eligibility'], [$member]);
@@ -278,21 +275,19 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'Advarsel')
-                ->assertSeeIn('@final-round-warnings', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8)')
+                ->waitForCheckDetails('finalRound', $member->name)
+                ->waitForCheckStatus('finalRound', 'Fejl')
+                ->assertSeeIn('@check-details-finalRound', 'har ikke stået på samme eller et lavere hold tidligere i sæsonen (§38 stk. 8)')
                 ->click('@settings-button')->waitFor('@settings-name')
                 ->type('@settings-name', 'Saved despite eligibility warning')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Saved despite eligibility warning')
-                ->waitFor('@toggle-final-round-check')->click('@toggle-final-round-check')
-                ->waitForTextIn('@final-round-warnings', $member->name)
+                ->waitForCheckDetails('finalRound', $member->name)
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
-                ->waitForTextIn('[dusk="validation-final-round"]', 'OK')
-                ->waitUntilMissing('@final-round-warnings')->refresh()->on(new TeamFightEditPage)
-                ->waitFor('@team-table-section')->assertDontSeeIn('@team-table-section', $member->name)
-                ->assertMissing('@final-round-warnings');
+                ->waitForCheckStatus('finalRound', 'OK')
+                ->assertDontSeeIn('@check-details-finalRound', $member->name)
+                ->refresh()->on(new TeamFightEditPage)
+                ->waitFor('@team-table-section')->assertDontSeeIn('@team-table-section', $member->name);
         });
     }
 

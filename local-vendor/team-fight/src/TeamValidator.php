@@ -20,23 +20,61 @@ class TeamValidator
         'HD',
     ];
 
-    public function validateCrossSquadsLeagueV3(array $squads): Collection
+    /**
+     * §38 stk. 4 across the Squads, highest first: the players on a too low Squad, and the pairs whose result the
+     * higher player's missing points decide (one entry per such category, lowest Squad first).
+     *
+     * @param  array|Squad[]  $squads
+     * @return array{findings: Collection<int, mixed>, unknownPairs: list<array{player: array{refId: string, name: string, squadIndex: int}, higherPlayer: array{refId: string, name: string, squadIndex: int}, category: string}>}
+     */
+    public function validateCrossSquadsWithUnknownPairs(array $squads): array
     {
-        $count = count($squads);
-        if (empty($squads) || $count === 1) {
-            return new Collection;
+        $squads = array_values($squads);
+        if (count($squads) < 2) {
+            return ['findings' => new Collection, 'unknownPairs' => []];
+        }
+
+        $squadIndexOf = [];
+        foreach ($squads as $index => $squad) {
+            foreach ($squad->categories as $category) {
+                foreach ($category->players as $player) {
+                    $squadIndexOf[$player->refId] ??= $index;
+                }
+            }
         }
 
         $listOfInvalidPlayers = [];
+        $unknownPairs = [];
 
         while ($lastTeam = array_pop($squads)) {
             // §38 stk. 7: only the paper-team rule holds for a Paper Squad's players, so it isn't compared against the
             // Squads above it. The Squads below it are still compared against it.
             if (! $lastTeam->isPaperSquad) {
-                $listOfInvalidPlayers[] = $this->compare($lastTeam, $squads);
+                $comparison = $this->compare($lastTeam, $squads);
+                $listOfInvalidPlayers[] = $comparison['invalid'];
+                foreach ($comparison['unknown'] as $unknown) {
+                    $unknownPairs[] = [
+                        'player' => $this->pairPlayer($unknown['player'], count($squads)),
+                        'higherPlayer' => $this->pairPlayer($unknown['higherPlayer'], $squadIndexOf[$unknown['higherPlayer']->refId]),
+                        'category' => $unknown['category'],
+                    ];
+                }
             }
         }
 
+        return ['findings' => $this->playingToHigh($listOfInvalidPlayers), 'unknownPairs' => $unknownPairs];
+    }
+
+    /**
+     * @return array{refId: string, name: string, squadIndex: int}
+     */
+    private function pairPlayer(Player $player, int $squadIndex): array
+    {
+        return ['refId' => $player->refId, 'name' => $player->name, 'squadIndex' => $squadIndex];
+    }
+
+    private function playingToHigh(array $listOfInvalidPlayers): Collection
+    {
         return collect($listOfInvalidPlayers)->flatten(1)->map(function ($data) {
             /** @var Player $player */
             $player = $data['player'];
@@ -99,6 +137,7 @@ class TeamValidator
 
     /**
      * @param  array|Squad[]  $squads
+     * @return array{invalid: array, unknown: list<array{player: Player, higherPlayer: Player, category: string}>}
      */
     private function compare(Squad $squad, array $squads): array
     {
@@ -113,14 +152,17 @@ class TeamValidator
 
         $limit = 50;
         $summeryInvalid = [];
+        $unknown = [];
         /** @var Player $player */
         foreach ($players as $player) {
             foreach ($playersFromHighSquads as $playerHigh) {
                 $invalid = [];
+                // Categories where only the higher player lacks points: a lower player without points counts as 0.
+                $missing = [];
                 // A comparison should only be made in the category or categories in which the players on the higher-ranked team participate.
                 $categories = $playerToCategoriesLookupMap[$playerHigh->refId] ?? [];
-                foreach ($categories as $category) {
-                    $category = $this->translateCategory($category, $playerHigh->gender);
+                foreach ($categories as $lineupCategory) {
+                    $category = $this->translateCategory($lineupCategory, $playerHigh->gender);
                     if ($player->gender !== $playerHigh->gender || $this->isYoungPlayer($playerHigh) || $this->isYoungPlayer($player)) {
                         continue;
                     }
@@ -150,6 +192,15 @@ class TeamValidator
                             'player' => $playerHigh,
                         ];
                     }
+                    if ($belowPlayerCategoryPoint !== null && $abovePlayerCategoryPoint === null) {
+                        $missing[] = $lineupCategory;
+                    }
+                }
+                // The higher player's missing points decide the result when no category settles it as legal.
+                if ($missing !== [] && count($invalid) + count($missing) === count($categories)) {
+                    foreach ($missing as $missingCategory) {
+                        $unknown[] = ['player' => $player, 'higherPlayer' => $playerHigh, 'category' => $missingCategory];
+                    }
                 }
                 // Only include if conflicting in all categories
                 if (count($invalid) === count($categories)) {
@@ -168,29 +219,70 @@ class TeamValidator
             }
         }
 
-        return $summeryInvalid;
+        return ['invalid' => $summeryInvalid, 'unknown' => $unknown];
     }
 
+    /**
+     * §38 stk. 2–3 for each Squad's order within a category. The rule doesn't cover a player without points, so while
+     * anyone is missing points in a category they play, nothing is compared and only they are returned.
+     * §38 stk. 7: a Paper Squad's own lineup is left out, see validatePaperSquads.
+     *
+     * @param  Squad[]  $squads
+     * @return array{playersWithoutPoints: list<array{squadIndex: int, refId: string|null, name: string, category: string}>, findings: array<int, mixed>}
+     */
     public function validateSquads(array $squads): array
     {
-        collect($squads);
+        $playersWithoutPoints = $this->playersWithoutPoints($squads);
+        if ($playersWithoutPoints !== []) {
+            return ['playersWithoutPoints' => $playersWithoutPoints, 'findings' => []];
+        }
+
+        $findings = [];
         foreach ($squads as $squad) {
-            $categoriesGroups = collect(collect($squad)->get('categories'))->groupBy('category');
-            foreach ($categoriesGroups as $categoryName => $categoryGroup) {
-                foreach ($categoryGroup as $category) {
+            if ($squad->isPaperSquad) {
+                continue;
+            }
+            $findings = array_merge($this->validateSquad($squad), $findings);
+        }
 
+        return ['playersWithoutPoints' => [], 'findings' => $findings];
+    }
+
+    /**
+     * Players without points in a category they play, on a non-Paper Squad with more than one of that category (with
+     * one, there is nothing to compare). Youth Players are left out: Kategori leaves them out of its findings (§38 stk.
+     * 5), and validateSquad skips a comparison with a Youth Player without points.
+     *
+     * @param  Squad[]  $squads
+     * @return list<array{squadIndex: int, refId: string|null, name: string, category: string}>
+     */
+    private function playersWithoutPoints(array $squads): array
+    {
+        $missing = [];
+        foreach (array_values($squads) as $squadIndex => $squad) {
+            if ($squad->isPaperSquad) {
+                continue;
+            }
+            $categoriesByName = (new Collection($squad->categories))->groupBy('category');
+            foreach ($categoriesByName as $categoryName => $categories) {
+                if ($categories->count() < 2) {
+                    continue;
                 }
-                $categoryGroup->map(function (Category $category) use ($categoryName) {
-                    if ($this->isDoubles($categoryName)) {
-                        return $this->getPairPoints($category->players, $categoryName);
-                    } else {
-                        $player = collect($category->players)->first();
-
-                        return $this->getPlayerCategoryPoint($player, $categoryName);
+                foreach ($categories->pluck('players')->flatten(1) as $player) {
+                    /** @var Player $player */
+                    if (! $this->isYoungPlayer($player) && $this->findPlayerCategoryPoint($player, (string) $categoryName) === null) {
+                        $missing[$squadIndex.'|'.($player->refId ?? $player->name).'|'.$categoryName] = [
+                            'squadIndex' => $squadIndex,
+                            'refId' => $player->refId,
+                            'name' => $player->name,
+                            'category' => (string) $categoryName,
+                        ];
                     }
-                });
+                }
             }
         }
+
+        return array_values($missing);
     }
 
     public function validateSquad(Squad $squad): array
@@ -224,11 +316,23 @@ class TeamValidator
         return $playingToHigh;
     }
 
-    private function getPairPoints(array $pair, string $category): int
+    /**
+     * The pair's points in the category, or null when a player has none.
+     *
+     * @param  Player[]  $pair
+     */
+    private function findPairPoints(array $pair, string $category): ?int
     {
-        return array_reduce($pair, function ($points, Player $player) use ($category) {
-            return $points + $this->getPlayerCategoryPoint($player, $category);
-        });
+        $points = 0;
+        foreach ($pair as $player) {
+            $playerPoints = $this->findPlayerCategoryPoint($player, $category);
+            if ($playerPoints === null) {
+                return null;
+            }
+            $points += $playerPoints;
+        }
+
+        return $points;
     }
 
     private function isDoubles(string $category): bool
@@ -273,18 +377,26 @@ class TeamValidator
         return new Collection($pairs);
     }
 
-    private function getPlayerCategoryPoint(Player $player, string $category)
+    private function getPlayerCategoryPoint(Player $player, string $category): int
     {
-        $points = $player->points;
-        foreach ($points as $point) {
-            $category = $this->getRankingCategory($category, $player->gender);
-            if ($point->category === $category) {
+        return $this->findPlayerCategoryPoint($player, $category) ?? throw new PointNotFoundInCategoryException(
+            "Could not find points in '{$category}' for player '{$player->name}'"
+        );
+    }
+
+    /**
+     * The player's points in the category on the ranking, or null without any.
+     */
+    private function findPlayerCategoryPoint(Player $player, string $category): ?int
+    {
+        $rankingCategory = $this->getRankingCategory($category, $player->gender);
+        foreach ($player->points as $point) {
+            if ($point->category === $rankingCategory) {
                 return (int) $point->points;
             }
         }
-        throw new PointNotFoundInCategoryException(
-            "Could not find points in '{$category}' for player '{$player->name}'"
-        );
+
+        return null;
     }
 
     private function getRankingCategory(string $category, string $gender)
@@ -373,9 +485,13 @@ class TeamValidator
             if (count($belowPair) !== 2) {
                 continue;
             }
-            $belowPairsPoints = $this->getPairPoints($belowPair, $category);
+            $belowPairsPoints = $this->findPairPoints($belowPair, $category);
             foreach ($pairsInCategory as $abovePair) {
-                $abovePairsPoints = $this->getPairPoints($abovePair, $category);
+                $abovePairsPoints = $this->findPairPoints($abovePair, $category);
+                // Only a pair with a Youth Player gets here without points (see playersWithoutPoints); it is skipped.
+                if ($belowPairsPoints === null || $abovePairsPoints === null) {
+                    continue;
+                }
                 [$player1, $player2] = $abovePair;
                 if (($belowPairsPoints > $abovePairsPoints + $limitDouble)
                     && (! $this->hasYoungPlayer([
@@ -447,36 +563,36 @@ class TeamValidator
     {
         $playersInCategory = $this->getPlayersByCategory($squad->categories, $category);
         while ($playersInCategory->count() > 1) {
+            /** @var Player $belowPlayer */
             $belowPlayer = $playersInCategory->pop();
-            try {
-                $belowPlayerPoints = $this->getPlayerCategoryPoint($belowPlayer, $category);
-                /** @var Player $belowPlayer */
-                foreach ($playersInCategory as $abovePlayer) {
-                    $abovePlayerPoints = $this->getPlayerCategoryPoint($abovePlayer, $category);
-                    if ($belowPlayerPoints > $abovePlayerPoints + $limit && (! $this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
-                        $playingToHigh = $this->addOrAppend($playingToHigh, [
-                            'id' => $abovePlayer->id ?? 0,
-                            'refId' => $abovePlayer->refId,
-                            'name' => $abovePlayer->name,
-                            'category' => $category,
-                            'gender' => $abovePlayer->gender,
-                            'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
-                            'hasYouthPlayerPartner' => false,
-                            // Always false because its single and you don't have a partner in singles
-                            'belowPlayer' => [
-                                [
-                                    'id' => $belowPlayer->id ?? 0,
-                                    'refId' => $belowPlayer->refId,
-                                    'name' => $belowPlayer->name,
-                                    'category' => $category,
-                                    'gender' => $belowPlayer->gender,
-                                ],
-                            ],
-                        ]);
-                    }
+            $belowPlayerPoints = $this->findPlayerCategoryPoint($belowPlayer, $category);
+            foreach ($playersInCategory as $abovePlayer) {
+                $abovePlayerPoints = $this->findPlayerCategoryPoint($abovePlayer, $category);
+                // Only a Youth Player gets here without points (see playersWithoutPoints); the comparison is skipped.
+                if ($belowPlayerPoints === null || $abovePlayerPoints === null) {
+                    continue;
                 }
-            } catch (PointNotFoundInCategoryException $exception) {
-                continue;
+                if ($belowPlayerPoints > $abovePlayerPoints + $limit && (! $this->isYoungPlayer($belowPlayer) || $this->isYoungPlayer($abovePlayer))) {
+                    $playingToHigh = $this->addOrAppend($playingToHigh, [
+                        'id' => $abovePlayer->id ?? 0,
+                        'refId' => $abovePlayer->refId,
+                        'name' => $abovePlayer->name,
+                        'category' => $category,
+                        'gender' => $abovePlayer->gender,
+                        'isYouthPlayer' => $this->isYoungPlayer($abovePlayer),
+                        'hasYouthPlayerPartner' => false,
+                        // Always false because its single and you don't have a partner in singles
+                        'belowPlayer' => [
+                            [
+                                'id' => $belowPlayer->id ?? 0,
+                                'refId' => $belowPlayer->refId,
+                                'name' => $belowPlayer->name,
+                                'category' => $category,
+                                'gender' => $belowPlayer->gender,
+                            ],
+                        ],
+                    ]);
+                }
             }
         }
 

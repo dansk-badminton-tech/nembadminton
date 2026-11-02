@@ -27,6 +27,10 @@ compose run --rm composer run setup
 yarn build
 
 compose down -v >/dev/null 2>&1
+# The bind-mounted schema cache survives container recreation and may belong to
+# an older checkout. Clear it before Octane loads the preview's GraphQL schema.
+compose run --rm --no-deps --entrypoint php dusk \
+  artisan lighthouse:clear-schema-cache --env=dusk.local
 compose up -d dusk-serve
 compose run --rm --no-deps --entrypoint php dusk \
   artisan migrate --force --seed --seeder=PreviewDataSeeder --env=dusk.local

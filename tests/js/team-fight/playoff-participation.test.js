@@ -2,8 +2,7 @@ import {test} from 'node:test'
 import assert from 'node:assert/strict'
 import {
     playoffParticipationGuidance,
-    playoffParticipationMessage,
-    showPlayoffParticipationControl
+    playoffParticipationMessage
 } from '../../../resources/js/admin-v2/views/team-fight/playoff-participation.js'
 
 function player(fields) {
@@ -12,24 +11,6 @@ function player(fields) {
         matchCount: 3, requiredMatchCount: 4, playedByDeadline: true, uncountedRounds: [], ...fields
     }
 }
-
-test('the control shows in the playoffs and qualification of Liga and 1. division', () => {
-    const shows = (effectiveTier, round, isPaperSquad = false) =>
-        showPlayoffParticipationControl({round, squads: [{effectiveTier, isPaperSquad}]})
-    assert.equal(shows('Badmintonligaen', 9), false)
-    assert.equal(shows('Badmintonligaen', 10), true)
-    assert.equal(shows('Badmintonligaen', 12), true)
-    assert.equal(shows('1. division', 7), false)
-    assert.equal(shows('1. division', 8), true)
-    assert.equal(shows('1. division - slutspil 2026', '12'), true)
-    assert.equal(shows('2. division', 12), false)
-    assert.equal(shows('Serie 1', 12), false)
-    assert.equal(shows('1. division', 8, true), false)
-    assert.equal(shows(null, 8), true)
-    assert.equal(shows(null, 7), false)
-    assert.equal(shows('Badmintonligaen', null), false)
-    assert.equal(showPlayoffParticipationControl({round: 10, squads: [{effectiveTier: '2. division'}, {effectiveTier: 'Badmintonligaen'}]}), true)
-})
 
 test('an unmet requirement names the missing matches, the missed deadline or both', () => {
     assert.equal(playoffParticipationMessage(player({})),

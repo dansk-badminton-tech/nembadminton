@@ -24,9 +24,11 @@ class ValidateReservesTest extends TestCase
     private const SQUAD_ORDER_QUERY = /** @lang GraphQL */ '
         mutation ($input: [ValidateTeam!]!) {
           validateSquads(input: $input) {
-            refId
-            category
-            belowPlayer { refId }
+            findings {
+              refId
+              category
+              belowPlayer { refId }
+            }
           }
         }
     ';
@@ -64,7 +66,7 @@ class ValidateReservesTest extends TestCase
         $hold2 = $this->squad([['1. HS', 'HS', [$daniel]]]);
         $hold1->reserves = [$this->record('Daniel', $this->men('Lin Dan', 'HS', 900))];
 
-        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateSquads', []);
+        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateSquads.findings', []);
         $this->validate(self::CROSS_SQUADS_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateCrossSquads', []);
         $this->validate(self::RESERVES_QUERY, [$hold1, $hold2])->assertJsonPath('data.validateReserves', []);
     }
@@ -77,7 +79,7 @@ class ValidateReservesTest extends TestCase
         $hold1 = $this->squad([['1. HS', 'HS', [$daniel]], ['2. HS', 'HS', [$this->men('Jesper', 'HS', 400)]]]);
         $hold1->reserves = [$this->record('Daniel', $this->men('Lin Dan', 'HS', 900))];
 
-        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1])->assertJsonPath('data.validateSquads.0.refId', 'Daniel');
+        $this->validate(self::SQUAD_ORDER_QUERY, [$hold1])->assertJsonPath('data.validateSquads.findings.0.refId', 'Daniel');
     }
 
     #[Test]

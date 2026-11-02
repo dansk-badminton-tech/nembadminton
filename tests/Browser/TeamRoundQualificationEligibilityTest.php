@@ -31,30 +31,24 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $member) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-qualification-check')
-                ->assertScript(<<<'JS'
-                    document.querySelector('[dusk="qualification-validation-control"]').getBoundingClientRect().top
-                        - document.querySelector('.validation-status-container').getBoundingClientRect().bottom >= 8
-                JS)
-                ->click('@toggle-qualification-check')
-                ->waitForTextIn('@qualification-warnings', $member->name)
-                ->assertSeeIn('@qualification-warnings', 'Hold 1')
-                ->assertSeeIn('@qualification-warnings', '§27 stk. 5')
-                ->assertSeeIn('@qualification-warnings', 'Nembadminton vurderer ikke kalenderårsalternativet')
-                ->assertSeeIn('@validation-qualification', 'Advarsel')
+                ->waitForCheckDetails('qualification', $member->name)
+                ->assertSeeIn('@check-details-qualification', 'Hold 1')
+                ->assertSeeIn('@check-details-qualification', '§27 stk. 5')
+                ->assertSeeIn('@check-details-qualification', 'Nembadminton vurderer ikke kalenderårsalternativet')
+                ->assertSeeIn('@check-status-qualification', 'Advarsel')
                 ->click('@settings-button')->waitFor('@settings-name')
                 ->type('@settings-name', 'Gemt med kvalifikationsadvarsel')->click('@settings-save')
                 ->waitUntilMissing('@settings-modal')->refresh()->on(new TeamFightEditPage)
                 ->waitForText('Gemt med kvalifikationsadvarsel')
-                ->waitFor('@toggle-qualification-check')->click('@toggle-qualification-check')
-                ->waitForTextIn('@qualification-warnings', $member->name)
+                ->waitForCheckDetails('qualification', $member->name)
                 ->createScenarioFromOfficial('Uden spilleren')
                 ->removeMemberFromCategory(0, '1. DS', $member->name)
-                ->waitForTextIn('@validation-qualification', 'OK')
-                ->assertMissing('@qualification-warnings')
+                ->waitForCheckStatus('qualification', 'OK')
+                ->assertDontSeeIn('@check-details-qualification', $member->name)
                 ->selectScenario('Officiel opstilling')
-                ->waitForTextIn('@qualification-warnings', $member->name)
-                ->changeRoundNumber(11)->waitUntilMissing('@qualification-validation-control');
+                ->waitForCheckDetails('qualification', $member->name)
+                ->changeRoundNumber(11)
+                ->assertCheckNotApplicable('qualification', 'Gælder kun runde 12 i 2.–3. division og Danmarksserien.');
         });
     }
 
@@ -68,16 +62,16 @@ class TeamRoundQualificationEligibilityTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($round, $team, $member, $squad, $earlier) {
             $browser->visit(new LoginPage)->loginSPA('testing@gmail.com', 'Test1234')
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
-                ->waitFor('@toggle-qualification-check')->click('@toggle-qualification-check')
-                ->waitForTextIn('@qualification-warnings', 'kan ikke verificeres fuldt ud')
-                ->assertSeeIn('@qualification-warnings', 'Forår uden holdlink (runde 7)')
-                ->assertAttribute('[dusk="qualification-correction-'.$earlier->id.'"]', 'href', '/app/c-'.$round->clubhouse_id.'/team-fight/'.$earlier->id.'/edit');
+                ->waitForCheckDetails('qualification', 'kan ikke verificeres fuldt ud')
+                ->assertSeeIn('@check-status-qualification', 'Kan ikke kontrolleres')
+                ->assertSeeIn('@check-details-qualification', 'Forår uden holdlink (runde 7)')
+                ->assertAttribute('[dusk="check-correction-qualification-'.$earlier->id.'"]', 'href', '/app/c-'.$round->clubhouse_id.'/team-fight/'.$earlier->id.'/edit');
             $squad->update(['team_id' => $team->id]);
             $other = $round->replicate();
             $other->fill(['round' => 1])->save();
             $this->place($other, $team, $member);
-            $browser->click('@revalidate-qualification')->waitForTextIn('@validation-qualification', 'OK')
-                ->assertMissing('@qualification-warnings');
+            $browser->click('@check-revalidate-qualification')->waitForCheckStatus('qualification', 'OK')
+                ->assertDontSeeIn('@check-details-qualification', $member->name);
         });
     }
 
