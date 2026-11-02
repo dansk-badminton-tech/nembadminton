@@ -210,6 +210,8 @@ import ValidateFinalRoundEligibilityMutation from "../../../queries/validateFina
 import ValidateQualificationEligibilityMutation from "../../../queries/validateQualificationEligibility.graphql"
 import ValidatePlayoffParticipationMutation from "../../../queries/validatePlayoffParticipation.graphql"
 import {checkStatuses} from "./checks/check-status.mjs"
+import {browserStorage, readCheckSwitches, writeCheckSwitches} from "./checks/check-switches.mjs"
+import {currentUser} from "@/store/user"
 import CheckPanel from "./CheckPanel.vue"
 import {
     wrapInTeamAndSquads,
@@ -291,6 +293,10 @@ export default {
         lineupKey() {
             return `${this.session.teamRoundId}:${this.session.scenarioId ?? ''}`
         },
+        // Whose choice of Check switches applies: the user's for this Team Round, shared by all its Lineups.
+        checkSwitchesScope() {
+            return {userId: currentUser.userId, teamRoundId: this.teamRoundId}
+        },
         checkStatuses() {
             return checkStatuses({teamRound: this.teamRound, switches: this.checkSwitches, responses: this.checkResponses})
         },
@@ -365,8 +371,8 @@ export default {
             checkResponses: {},
             // Each Check request's state: 'loading', 'failed' or 'done'.
             checkRequests: {},
-            // Tidligere hold and Kvalifikation start switched off, as before, until slice 5 (#345) remembers them.
-            checkSwitches: {complete: true, finalRound: false, qualification: false},
+            // The "Kontrollér dette tjek" switches, remembered in this browser; on unless switched off.
+            checkSwitches: readCheckSwitches(browserStorage(), {userId: currentUser.userId, teamRoundId: this.teamRoundId}),
             teamCount: 1,
             players: [],
             // Created here, so the teamRound query below starts with its key.
@@ -386,6 +392,13 @@ export default {
     watch: {
         teamRoundId() {
             this.session = this.createSession()
+        },
+        // The user became known, or another Team Round: its remembered switches apply.
+        checkSwitchesScope(scope) {
+            const switches = readCheckSwitches(browserStorage(), scope)
+            if (Object.keys(switches).every(key => switches[key] === this.checkSwitches[key])) return
+            this.checkSwitches = switches
+            if (this.version !== null) this.validate()
         },
         // Another Lineup: the last answers belong to the one before.
         lineupKey() {
@@ -652,9 +665,10 @@ export default {
         openLinkSharingCancellationModel() {
             this.$router.push({name: 'cancellation-redirect'})
         },
-        // A Check's "Kontrollér dette tjek" switch. Not remembered yet (slice 5, #345).
+        // A Check's "Kontrollér dette tjek" switch, remembered for this user and Team Round.
         onCheckSwitch(key, value) {
             this.checkSwitches = {...this.checkSwitches, [key]: value}
+            writeCheckSwitches(browserStorage(), this.checkSwitchesScope, this.checkSwitches)
             if (value && key !== 'complete') this.checkResponses = {...this.checkResponses, [key]: null}
             this.validate()
         },
