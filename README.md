@@ -27,6 +27,14 @@ Opret en bruger `http://localhost/new-user`
 
 ## Testing
 
+### Preview
+
+Run `bin/preview` for a separate local instance with BC37 Amager's 2025/2026 showcase Season. It prints the URL and login; stop it with `bin/preview down`.
+
+Select **2025/2026** under **Holdrunder** (the date filter initially selects the current season). TeamRound names identify examples of cancellations, Reserve Players, Paper Squads and draft ordering errors. Team setup and Lineups are adapted for these examples, not an exact historical record.
+
+`PreviewDataSeeder` is independent of browser-test fixtures. Its allowlisted source fixture contains Members, seven historical Ranking Lists and participation in rounds 1–11 from BC37 Clubhouse 126, plus a small reserve pool. Production accounts, contacts, birthdates, private messages and sharing identifiers are excluded. `bin/export-preview-data CONTAINER OUTPUT.json` regenerates the fixture from an isolated `holdkamp_prod` import; the container supplies `MYSQL_ROOT_PASSWORD`. Never import a production dump into the preview itself.
+
 ### Browser tests (End-to-end)
 
 Browser tests use [Laravel Dusk](https://laravel.com/docs/11.x/dusk) and are located in `tests/Browser/`.
