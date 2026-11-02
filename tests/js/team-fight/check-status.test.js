@@ -24,26 +24,53 @@ const FULL = [{index: 0, spotsFulfilled: true}, {index: 1, spotsFulfilled: true}
 const LEVEL_FINDING = {name: 'Mads Holm', refId: 'm1', belowPlayer: [{name: 'Jonas Krog', refId: 'j1'}, {name: 'Jonas Krog', refId: 'j1'}, {name: 'Emil Berg', refId: 'e1'}]}
 const CATEGORY_FINDING = {name: 'Anna Friis', refId: 'a1', category: 'DS', belowPlayer: [{name: 'Line Bech', refId: 'l1'}]}
 
+// validateTeamRoundCrossSquads' answer: today's findings and the pairs a higher player's missing points decide.
+function crossSquads(findings, unknownPairs = []) {
+    return {findings, unknownPairs}
+}
+
+function unknownPair(category, higher = {refId: 'c1', name: 'Carl Dam', squadIndex: 0}) {
+    return {player: {refId: 'b1', name: 'Bo Lund', squadIndex: 1}, higherPlayer: higher, category}
+}
+
 test('Niveau and Kategori wait until every Squad is full', () => {
     for (const key of ['level', 'category']) {
-        const check = statusOf(key, {responses: {basicSquads: INCOMPLETE, crossSquads: [LEVEL_FINDING], squads: [CATEGORY_FINDING]}})
+        const check = statusOf(key, {responses: {basicSquads: INCOMPLETE, crossSquads: crossSquads([LEVEL_FINDING]), squads: [CATEGORY_FINDING]}})
         assert.deepEqual(check, {key, status: 'waiting', reason: 'Venter på, at alle hold er fuldt besat.', findings: []})
         assert.equal(statusOf(key, {responses: {}}).status, null, 'unknown until Hold fuldendt answers')
     }
 })
 
 test('Niveau and Kategori run on what is there when Hold fuldendt is switched off', () => {
-    const responses = {basicSquads: INCOMPLETE, crossSquads: [], squads: []}
+    const responses = {basicSquads: INCOMPLETE, crossSquads: crossSquads([]), squads: []}
     assert.equal(statusOf('level', {switches: {complete: false}, responses}).status, 'passed')
     assert.equal(statusOf('category', {switches: {complete: false}, responses}).status, 'passed')
-    assert.equal(statusOf('level', {switches: {complete: false}, responses: {crossSquads: []}}).status, 'passed', 'no need to wait for Hold fuldendt')
+    assert.equal(statusOf('level', {switches: {complete: false}, responses: {crossSquads: crossSquads([])}}).status, 'passed', 'no need to wait for Hold fuldendt')
 })
 
 test('Niveau fails with each player on a too low Squad, naming the players below once', () => {
-    const check = statusOf('level', {responses: {basicSquads: FULL, crossSquads: [LEVEL_FINDING]}})
+    const check = statusOf('level', {responses: {basicSquads: FULL, crossSquads: crossSquads([LEVEL_FINDING])}})
     assert.equal(check.status, 'failed')
     assert.deepEqual(check.findings, [{refId: 'm1', name: 'Mads Holm', status: 'failed',
         message: 'Mads Holm spiller på et for lavt rangeret hold i forhold til Jonas Krog, Emil Berg.'}])
+})
+
+test('Niveau is Kan ikke kontrolleres when a higher player\'s missing points decide a pair, one finding per pair', () => {
+    const check = statusOf('level', {responses: {basicSquads: FULL, crossSquads: crossSquads([], [unknownPair('HS'), unknownPair('HD')])}})
+    assert.deepEqual(check, {
+        key: 'level',
+        status: 'cannot-verify',
+        reason: 'En spiller på et højere hold har ingen point på holdrundens rangliste i en kategori, vedkommende spiller.',
+        findings: [{squadIndex: 1, refId: 'b1', name: 'Bo Lund', status: 'cannot-verify',
+            message: 'Carl Dam på hold 1 har ingen point i HS, HD, så det kan ikke afgøres, om Bo Lund må stå på hold 2.'}]
+    })
+})
+
+test('Niveau fails when another pair breaks the rule, listing the unknown pairs after', () => {
+    const check = statusOf('level', {responses: {basicSquads: FULL, crossSquads: crossSquads([LEVEL_FINDING], [unknownPair('HS')])}})
+    assert.equal(check.status, 'failed')
+    assert.equal(check.reason, null)
+    assert.deepEqual(check.findings.map(finding => finding.status), ['failed', 'cannot-verify'])
 })
 
 test('Kategori fails with each player too high in their category', () => {
@@ -55,7 +82,7 @@ test('Kategori fails with each player too high in their category', () => {
 
 test('Niveau and Kategori leave out Youth Players and players with a youth partner, as today', () => {
     const youth = {...LEVEL_FINDING, isYouthPlayer: true}
-    assert.equal(statusOf('level', {responses: {basicSquads: FULL, crossSquads: [youth]}}).status, 'passed')
+    assert.equal(statusOf('level', {responses: {basicSquads: FULL, crossSquads: crossSquads([youth])}}).status, 'passed')
     for (const extra of [{isYouthPlayer: true}, {hasYouthPlayerPartner: true}]) {
         assert.equal(statusOf('category', {responses: {basicSquads: FULL, squads: [{...CATEGORY_FINDING, ...extra}]}}).status, 'passed')
     }

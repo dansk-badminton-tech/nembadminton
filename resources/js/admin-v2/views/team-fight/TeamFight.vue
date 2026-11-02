@@ -305,7 +305,7 @@ export default {
             return this.checkResponses.basicSquads ?? []
         },
         playingToHighList() {
-            return this.checkResponses.crossSquads ?? []
+            return this.checkResponses.crossSquads?.findings ?? []
         },
         playingToHighSquadList() {
             return this.checkResponses.squads ?? []
@@ -828,16 +828,23 @@ export default {
             this.runCheckRequest('crossSquads', () => this.mutationData(gql`
                 mutation validateTeamRoundCrossSquads($teamRoundId: ID!, $scenarioId: ID){
                     validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId){
-                        name
-                        id
-                        refId
-                        isYouthPlayer
-                        belowPlayer {
+                        findings {
                             name
                             id
                             refId
+                            isYouthPlayer
+                            belowPlayer {
+                                name
+                                id
+                                refId
+                                category
+                                balance
+                            }
+                        }
+                        unknownPairs {
+                            player { refId name squadIndex }
+                            higherPlayer { refId name squadIndex }
                             category
-                            balance
                         }
                     }
                 }

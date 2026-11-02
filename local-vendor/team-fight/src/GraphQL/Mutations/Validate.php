@@ -52,11 +52,11 @@ class Validate
      * The TeamRound's lineup across its Squads, read from the server with the points on its Ranking List (§38 stk. 4).
      *
      * @param  array{teamRoundId: string, scenarioId?: string|null}  $args
-     * @return Collection<int, mixed>
+     * @return array{findings: Collection<int, mixed>, unknownPairs: list<array<string, mixed>>}
      *
      * @throws ExceptionInterface
      */
-    public function validateTeamRoundCrossSquads(mixed $rootValue, array $args): Collection
+    public function validateTeamRoundCrossSquads(mixed $rootValue, array $args): array
     {
         $teamRound = TeamRound::query()->findOrFail($args['teamRoundId']);
         $scenarioId = isset($args['scenarioId']) ? (int) $args['scenarioId'] : null;
@@ -64,7 +64,7 @@ class Validate
         $lineup = new Collection($this->crossSquadsLineup->of($teamRound, $scenarioId));
         $squads = $this->deserializeSquads($lineup);
 
-        return $this->teamValidator->validateCrossSquadsLeagueV3($squads);
+        return $this->teamValidator->validateCrossSquadsWithUnknownPairs($squads);
     }
 
     /**

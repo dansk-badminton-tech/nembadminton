@@ -34,6 +34,8 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
 
     private const BO = '0202902222';
 
+    private const CARL = '0303903333';
+
     protected string $seeder = 'RolesAndPermissionsSeeder';
 
     private Clubhouse $clubhouse;
@@ -53,6 +55,7 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
         ]);
         $this->member(self::ANDERS, 'Anders');
         $this->member(self::BO, 'Bo');
+        $this->member(self::CARL, 'Carl');
         // Anders stands on Hold 1 with 2000 HS on the TeamRound's Ranking List in every test.
         $this->rankingPoints(self::ANDERS, self::TEAM_ROUND_RANKING, 2000);
     }
@@ -118,6 +121,69 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
     }
 
     #[Test]
+    public function a_higher_players_missing_points_that_decide_the_result_make_the_pair_unknown(): void
+    {
+        // Carl stands on Hold 1 but isn't on the Ranking List, so Bo's 2060 HS can't be compared with him.
+        $this->squad(1, null, self::CARL, 'Carl', self::TEAM_ROUND_RANKING, 2000);
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+        $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 2060);
+
+        $this->assertSame([], $this->validate());
+        $this->assertSame([[
+            'player' => ['refId' => self::BO, 'name' => 'Bo', 'squadIndex' => 1],
+            'higherPlayer' => ['refId' => self::CARL, 'name' => 'Carl', 'squadIndex' => 0],
+            'category' => 'HS',
+        ]], $this->unknownPairs());
+    }
+
+    #[Test]
+    public function a_higher_players_missing_points_do_not_matter_when_another_category_settles_the_pair(): void
+    {
+        // Carl has no HS points but 3000 HD; Bo's 1000 HD is well within the limit there, so Bo may stand below Carl.
+        $higher = $this->squad(1, null, self::CARL, 'Carl', self::TEAM_ROUND_RANKING, 2000);
+        $this->addPlayer($higher, 'HD', self::CARL, 'Carl', 3000);
+        $this->rankingPoints(self::CARL, self::TEAM_ROUND_RANKING, 3000, 'HD');
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+        $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 2060);
+        $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 1000, 'HD');
+
+        $this->assertSame([], $this->validate());
+        $this->assertSame([], $this->unknownPairs());
+    }
+
+    #[Test]
+    public function a_lower_player_without_points_counts_as_zero_and_is_not_unknown(): void
+    {
+        // §38 stk. 4: Bo isn't on the Ranking List, so he counts as 0 points below Anders and below Carl, who has none either.
+        $higher = $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
+        $this->addPlayer($higher, 'HS', self::CARL, 'Carl', 2000);
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+
+        $this->assertSame([], $this->validate());
+        $this->assertSame([], $this->unknownPairs());
+    }
+
+    #[Test]
+    public function a_finding_and_an_unknown_pair_are_returned_together(): void
+    {
+        // Bo's 2060 HS is over the limit for Anders' 2000; Carl, beside Anders on Hold 1, has no points to compare.
+        $higher = $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
+        $this->addPlayer($higher, 'HS', self::CARL, 'Carl', 2000);
+        $this->squad(2, null, self::BO, 'Bo', self::TEAM_ROUND_RANKING, 2060);
+        $this->rankingPoints(self::BO, self::TEAM_ROUND_RANKING, 2060);
+
+        $this->assertSame([[
+            'refId' => self::BO,
+            'belowPlayer' => [['refId' => self::ANDERS, 'category' => 'HS', 'balance' => 60]],
+        ]], $this->validate());
+        $this->assertSame([[
+            'player' => ['refId' => self::BO, 'name' => 'Bo', 'squadIndex' => 1],
+            'higherPlayer' => ['refId' => self::CARL, 'name' => 'Carl', 'squadIndex' => 0],
+            'category' => 'HS',
+        ]], $this->unknownPairs());
+    }
+
+    #[Test]
     public function it_denies_validating_a_team_round_in_another_clubhouse(): void
     {
         $this->squad(1, null, self::ANDERS, 'Anders', self::TEAM_ROUND_RANKING, 2000);
@@ -130,13 +196,33 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
     private const MUTATION = /** @lang GraphQL */ '
         mutation ($teamRoundId: ID!, $scenarioId: ID) {
           validateTeamRoundCrossSquads(teamRoundId: $teamRoundId, scenarioId: $scenarioId) {
-            refId
-            belowPlayer { refId category balance }
+            findings {
+              refId
+              belowPlayer { refId category balance }
+            }
+            unknownPairs {
+              player { refId name squadIndex }
+              higherPlayer { refId name squadIndex }
+              category
+            }
           }
         }
     ';
 
+    /**
+     * Today's findings: the players on a too low Squad.
+     */
     private function validate(): array
+    {
+        return $this->validation()['findings'];
+    }
+
+    private function unknownPairs(): array
+    {
+        return $this->validation()['unknownPairs'];
+    }
+
+    private function validation(): array
     {
         return $this->graphQL(self::MUTATION, ['teamRoundId' => $this->teamRound->id])
             ->assertGraphQLErrorFree()
@@ -168,11 +254,28 @@ class ValidateTeamRoundCrossSquadsTest extends TestCase
         return $squad;
     }
 
-    private function rankingPoints(string $refId, string $version, int $points): void
+    /**
+     * Adds a man in the given category of the Squad, with stored points from the TeamRound's Ranking List.
+     */
+    private function addPlayer(Squad $squad, string $category, string $refId, string $name, int $points): void
+    {
+        $squadCategory = $squad->categories()->where('category', $category)->first()
+            ?? $squad->categories()->create(['category' => $category, 'name' => "1. {$category}"]);
+        $player = $squadCategory->players()->create(['name' => $name, 'gender' => 'M', 'member_ref_id' => $refId]);
+        $player->points()->create([
+            'category' => $category,
+            'points' => $points,
+            'position' => 1,
+            'vintage' => 'SEN',
+            'version' => self::TEAM_ROUND_RANKING,
+        ]);
+    }
+
+    private function rankingPoints(string $refId, string $version, int $points, string $category = 'HS'): void
     {
         Point::query()->create([
             'member_id' => Member::query()->where('refId', $refId)->value('id'),
-            'category' => 'HS',
+            'category' => $category,
             'points' => $points,
             'position' => 1,
             'vintage' => 'SEN',
