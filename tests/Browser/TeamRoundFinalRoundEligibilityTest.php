@@ -84,8 +84,9 @@ class TeamRoundFinalRoundEligibilityTest extends DuskTestCase
                 ->visit(new TeamFightEditPage($round->clubhouse_id, $round->id))
                 ->waitFor('@scenario-selector-dropdown')
                 ->selectScenario('Udkast')->assertScenarioSelected('Udkast', false);
+            // Without Squads the server has nothing to call Gælder ikke, so the switched-off Check stays Slået fra.
             $browser->confirmScenarioDeletion()->waitUntilMissing('@scenario-selector-dropdown')
-                ->assertMissing('@check-row-finalRound')
+                ->waitForCheckStatus('finalRound', 'Slået fra')
                 ->assertMissing('@scenario-draft-warning-banner');
         });
     }
